@@ -1,5 +1,4 @@
 import { useField } from 'formik';
-import { omit } from 'lodash';
 import type { FieldHookConfig } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -42,7 +41,7 @@ const addressServiceUnavailableOption = {
 };
 
 const AddressLookup = (
-  props: Readonly<AddressLookupProps & FieldHookConfig<AddressDetailsDto>>
+  props: Readonly<AddressLookupProps & FieldHookConfig<AddressDetailsDto>>,
 ) => {
   const {
     name,
@@ -56,7 +55,7 @@ const AddressLookup = (
 
   const [_field, _meta, _helpers] = useField<AddressDetailsDto>(name);
   const [_fieldSearch, _metaSearch, { setTouched }] = useField<string>(
-    `${name}.searchText`
+    `${name}.searchText`,
   );
   const controllerRef = useRef<AbortController | null>();
 
@@ -70,7 +69,7 @@ const AddressLookup = (
   fieldSyncRef.current.setValue = setValue;
 
   const [text, setText] = useState<string | null | undefined>(
-    address?.searchText
+    address?.searchText,
   );
   const [manual, setManual] = useState(address?.isManuallyEntered);
 
@@ -80,8 +79,12 @@ const AddressLookup = (
   useEffect(() => {
     const { value, setValue: setVal } = fieldSyncRef.current;
     if (manual !== value?.isManuallyEntered) {
+      const {
+        isManuallyEntered: _isManuallyEntered,
+        ...addressWithoutManualFlag
+      } = value ?? {};
       void setVal({
-        ...omit(value, 'isManuallyEntered'),
+        ...addressWithoutManualFlag,
         ...omitUndefined({ isManuallyEntered: manual }),
       });
     }
@@ -97,7 +100,7 @@ const AddressLookup = (
 
   const fetchAddressOptions = async (
     term: string,
-    controller: AbortController
+    controller: AbortController,
   ): Promise<AutoSuggestOption<MatchedAddress>[]> => {
     if (inProgress !== 'none' || accounts.length === 0 || !account) return [];
 
@@ -113,7 +116,7 @@ const AddressLookup = (
         displayText: a.displayText || '',
         id: a.unqiueId || i.toString(),
         value: a,
-      })
+      }),
     );
 
     if (maxResults) {
@@ -143,7 +146,7 @@ const AddressLookup = (
       }
       AppLogger.error(
         `Failed to execute address search: ${term}`,
-        error as Error
+        error as Error,
       );
     }
 

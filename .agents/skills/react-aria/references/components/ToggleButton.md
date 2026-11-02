@@ -123,7 +123,7 @@ export function ToggleButton(props: ToggleButtonProps) {
     <RACToggleButton
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        styles({ ...renderProps, className })
+        styles({ ...renderProps, className }),
       )}
     />
   );

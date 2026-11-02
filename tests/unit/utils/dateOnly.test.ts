@@ -12,46 +12,67 @@ import {
 
 describe('date-only utilities', () => {
   it('validates strict date-only strings', () => {
+    expect.hasAssertions();
+
     expect(parseDateOnlyValue('2026-06-11')).toBe('2026-06-11');
     expect(parseDateOnlyValue('2026-02-29')).toBeUndefined();
     expect(parseDateOnlyValue('11/06/2026')).toBeUndefined();
   });
 
   it('extracts calendar dates without applying timezone offsets', () => {
-    expect(parseDateOnlyInput(null)).toBeUndefined();
-    expect(parseDateOnlyInput(undefined)).toBeUndefined();
-    expect(parseDateOnlyInput(new Date(Number.NaN))).toBeUndefined();
-    expect(parseDateOnlyInput('2026-06-11')).toBe('2026-06-11');
-    expect(parseDateOnlyInput('2026-06-11T00:00:00+10:00')).toBe('2026-06-11');
-    expect(parseDateOnlyInput('2026-06-11T00:00:00-07:00')).toBe('2026-06-11');
-    expect(parseDateOnlyInput('11/06/2026')).toBe('2026-06-11');
-    expect(parseDateOnlyInput('not a date')).toBeUndefined();
+    expect.hasAssertions();
+
+    expect([
+      parseDateOnlyInput(null),
+      parseDateOnlyInput(undefined),
+      parseDateOnlyInput(new Date(Number.NaN)),
+      parseDateOnlyInput('2026-06-11'),
+      parseDateOnlyInput('2026-06-11T00:00:00+10:00'),
+      parseDateOnlyInput('2026-06-11T00:00:00-07:00'),
+      parseDateOnlyInput('11/06/2026'),
+      parseDateOnlyInput('not a date'),
+    ]).toStrictEqual([
+      undefined,
+      undefined,
+      undefined,
+      '2026-06-11',
+      '2026-06-11',
+      '2026-06-11',
+      '2026-06-11',
+      undefined,
+    ]);
   });
 
   it('serializes picker and API dates from the same calendar value', () => {
+    expect.hasAssertions();
+
     const dateOnlyValue = parseDateOnlyValue('2026-06-11');
 
     expect(dateOnlyValue).toBeDefined();
     expect(dateOnlyToStoredDateTimeString(dateOnlyValue!)).toBe(
-      '2026-06-11T00:00:00+00:00'
+      '2026-06-11T00:00:00+00:00',
     );
     expect(dateOnlyToApiDate(dateOnlyValue!).toISOString()).toBe(
-      '2026-06-11T00:00:00.000Z'
+      '2026-06-11T00:00:00.000Z',
     );
     expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue!))).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
   });
 
   it('reads API Date objects by UTC calendar components', () => {
+    expect.hasAssertions();
+
     expect(parseApiDateOnlyInput(new Date('2026-06-12T00:00:00.000Z'))).toBe(
-      '2026-06-12'
+      '2026-06-12',
     );
     expect(parseApiDateOnlyInput(new Date(Number.NaN))).toBeUndefined();
     expect(parseApiDateOnlyInput(undefined)).toBeUndefined();
   });
 
   it('pairs each Date convention with the parser that reads it back', () => {
+    expect.hasAssertions();
+
     // The local/UTC asymmetry between parseDateOnlyInput and
     // parseApiDateOnlyInput is deliberate, not an oversight. Picker Dates
     // are built at LOCAL noon by dateOnlyToPickerDate, so local getters
@@ -63,14 +84,16 @@ describe('date-only utilities', () => {
 
     expect(dateOnlyValue).toBeDefined();
     expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue!))).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
     expect(parseApiDateOnlyInput(dateOnlyToApiDate(dateOnlyValue!))).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
   });
 
   it('reads the UTC calendar date for API input and the host calendar date for picker input', () => {
+    expect.hasAssertions();
+
     // An instant late in the UTC day: east of UTC the local calendar date
     // has already rolled over, west of UTC it has not. Asserting the local
     // half against the Date's own getters keeps this true in every zone
@@ -84,6 +107,8 @@ describe('date-only utilities', () => {
   });
 
   it('formats display text from the calendar date rather than the host timezone instant', () => {
+    expect.hasAssertions();
+
     const dateOnlyValue = parseDateOnlyInput('2026-06-11T00:00:00+10:00');
 
     expect(dateOnlyValue).toBeDefined();

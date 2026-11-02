@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { ReactElement } from 'react';
-import { isEqual } from 'lodash';
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 import { ErrorType } from './types';
 import type { WizardStepError, WizardStepProps } from './types';
@@ -20,6 +19,7 @@ import {
 } from '../../../authentication/hooks';
 import { env } from '../../../env';
 import AppLogger from '../../../instrumentation/AppLogger';
+import { areFormValuesEqual } from '../../../utils/areFormValuesEqual';
 
 // The controller is form-library neutral: it loads a step, saves it, maps
 // failures to a view decision and navigates. The form shell (Formik today, React
@@ -28,6 +28,15 @@ import AppLogger from '../../../instrumentation/AppLogger';
 type StepValues = Record<string, any>;
 
 type StepElement = ReactElement<WizardStepProps<StepValues>>;
+
+const getSubmitBaseUrl = (result: unknown): string | undefined => {
+  if (typeof result !== 'object' || result === null || !('baseUrl' in result)) {
+    return undefined;
+  }
+
+  const baseUrl = result.baseUrl;
+  return typeof baseUrl === 'string' ? baseUrl : undefined;
+};
 
 type StepProps = Pick<
   WizardStepProps<StepValues>,
@@ -62,7 +71,7 @@ export interface WizardStepController {
 
 export const useWizardStepController = (
   props: Readonly<StepProps>,
-  initialValues: StepValues
+  initialValues: StepValues,
 ): WizardStepController => {
   const {
     stepStatuses,
@@ -111,21 +120,21 @@ export const useWizardStepController = (
         AppLogger.trace(
           'Could not load data for form step.',
           SeverityLevel.Error,
-          { problemDetails: loadServerError, err }
+          { problemDetails: loadServerError, err },
         );
         setErrorState(
           resolveErrorState(
             error,
             getRedirectionLocationOnError,
-            ErrorType.Load
-          )
+            ErrorType.Load,
+          ),
         );
         AppLogger.error('Failed to Load step values', err);
       } finally {
         setIsLoading(false);
       }
     },
-    [loadStepValues] // eslint-disable-line react-hooks/exhaustive-deps
+    [loadStepValues], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   useEffect(() => {
@@ -151,7 +160,7 @@ export const useWizardStepController = (
       if (accountDispatch) {
         accountDispatch.setTargetOrganisation(
           accountState?.details?.abn ?? '',
-          accountState?.details?.organisation ?? ''
+          accountState?.details?.organisation ?? '',
         );
       }
     }
@@ -170,7 +179,7 @@ export const useWizardStepController = (
 
   const nextStep =
     currentStepIndex < allSteps.length - 1
-      ? allSteps[currentStepIndex + 1]
+      ? allSteps.at(currentStepIndex + 1)
       : false;
 
   const goToStep = (step: StepElement, baseUrl?: string) =>
@@ -183,20 +192,23 @@ export const useWizardStepController = (
       abortSignal();
       setErrorState({ kind: 'none' });
       try {
-        const isDirty = !isEqual(stepValues, values);
+        const isDirty = !areFormValuesEqual(stepValues, values);
         const result = await onSaveAndNext(
           values,
           isDirty,
-          controllerRef.current?.signal
+          controllerRef.current?.signal,
         );
         // Immutable update: replace the DTO at currentStepIndex with a new
         // object, rather than mutating the existing one in place.
-        stepStatuses[currentStepIndex] = {
-          ...stepStatuses[currentStepIndex],
-          status: FormStepStatus.Completed,
-        };
+        const currentStatus = stepStatuses.at(currentStepIndex);
+        if (currentStatus !== undefined) {
+          stepStatuses.splice(currentStepIndex, 1, {
+            ...currentStatus,
+            status: FormStepStatus.Completed,
+          });
+        }
         if (nextStep) {
-          void goToStep(nextStep, result?.baseUrl);
+          void goToStep(nextStep, getSubmitBaseUrl(result));
         } else {
           void navigate(locationOnCompletion);
         }
@@ -216,8 +228,8 @@ export const useWizardStepController = (
           resolveErrorState(
             error,
             getRedirectionLocationOnError,
-            ErrorType.Update
-          )
+            ErrorType.Update,
+          ),
         );
       }
     }
@@ -228,7 +240,7 @@ export const useWizardStepController = (
       abortSignal();
       setErrorState({ kind: 'none' });
       try {
-        const isDirty = !isEqual(stepValues, values);
+        const isDirty = !areFormValuesEqual(stepValues, values);
         await onSaveAndExit(values, isDirty, controllerRef.current?.signal);
         void navigate(locationAfterExit || '/');
       } catch (error) {
@@ -248,8 +260,8 @@ export const useWizardStepController = (
           resolveErrorState(
             error,
             getRedirectionLocationOnError,
-            ErrorType.Update
-          )
+            ErrorType.Update,
+          ),
         );
       }
     } else {
@@ -267,7 +279,7 @@ export const useWizardStepController = (
     }
     const discardLocation = discard?.locationOnDiscard;
     if (discardLocation?.startsWith('https://')) {
-      globalThis.location.replace(env.EXTERNAL_REDIRECT_URL);
+      globalThis.location.replace(env.VITE_EXTERNAL_REDIRECT_URL);
       return;
     }
     void navigate(discard?.locationOnCancel || discardLocation || '/');
@@ -327,7 +339,7 @@ const resolveView = ({
 
   if (!isLoading && currentStepIndex > 0) {
     const firstIncompleteStepIndex = stepStatuses.findIndex(
-      (x) => x.status !== FormStepStatus.Completed
+      (x) => x.status !== FormStepStatus.Completed,
     );
     if (
       firstIncompleteStepIndex !== -1 &&
@@ -335,7 +347,7 @@ const resolveView = ({
     ) {
       return {
         kind: 'navigate',
-        to: `${url}${allSteps[firstIncompleteStepIndex]?.props.location}`,
+        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location}`,
       };
     }
   }

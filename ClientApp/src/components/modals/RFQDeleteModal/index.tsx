@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { useModalState, useModalDispatch } from '../ModalContext';
 import PrimaryButton from '../../Buttons/PrimaryButton';
 import ButtonGroup from '../../Buttons/ButtonGroup';
+import type { ButtonGroupProps } from '../../Buttons/ButtonGroup';
 import {
   ApplicationClient,
   ApplicationType,
@@ -32,10 +33,7 @@ const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
   );
 };
 
-interface RFQDeleteButtonsProps {
-  left: any;
-  right: any;
-}
+type RFQDeleteButtonsProps = ButtonGroupProps;
 
 const RFQDeleteButtons = (props: Readonly<RFQDeleteButtonsProps>) => {
   const { left, right } = props;
@@ -56,7 +54,7 @@ const RFQDeleteModal = () => {
     try {
       const client = new ApplicationClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const { rfqId } = modalState ?? {};
@@ -73,7 +71,7 @@ const RFQDeleteModal = () => {
     } catch (e) {
       AppLogger.error(
         `Failed to delete application: ${modalState?.rfqId}`,
-        e as Error
+        e as Error,
       );
     } finally {
       modalDispatch?.setShowRFQDeleteModal(false, '');

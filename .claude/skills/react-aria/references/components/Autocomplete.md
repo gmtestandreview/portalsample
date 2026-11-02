@@ -88,8 +88,7 @@ import { useEffect } from 'react';
 import './CommandPalette.css';
 
 export interface CommandPaletteProps<T>
-  extends Omit<AriaAutocompleteProps, 'children'>,
-    AriaMenuProps<T> {
+  extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
   isOpen: boolean;
   onOpenChange: (isOpen?: boolean) => void;
 }
@@ -209,8 +208,7 @@ import { Modal } from './Modal';
 import React, { useEffect } from 'react';
 
 export interface CommandPaletteProps<T>
-  extends Omit<AriaAutocompleteProps, 'children'>,
-    AriaMenuProps<T> {
+  extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
   isOpen: boolean;
   onOpenChange: (isOpen?: boolean) => void;
 }
@@ -1280,7 +1278,7 @@ function AsyncLoadingExample() {
     async load({ signal, filterText }) {
       let res = await fetch(
         `https://swapi.py4e.com/api/people/?search=${filterText}`,
-        { signal }
+        { signal },
       );
 
       let json = await res.json();

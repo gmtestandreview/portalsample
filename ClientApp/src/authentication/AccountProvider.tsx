@@ -19,9 +19,15 @@ interface AccountProviderProps {
   children: ReactNode;
 }
 
+type AccountTokenClaims = {
+  email?: string;
+  family_name?: string;
+  given_name?: string;
+};
+
 const toAccountDetails = (
   account: AccountInfo,
-  user: UserDto
+  user: UserDto,
 ): AccountDetails => {
   const currentTermsVersion = termsData.TermsVersion;
   const acceptedTermsAndCondition = !!(
@@ -34,7 +40,10 @@ const toAccountDetails = (
   const accountContactCompleted = !!(
     user.contact && user.contact?.isCompleted === true
   );
-  const tokenClaims = account.idTokenClaims as any;
+  const tokenClaims = account.idTokenClaims as AccountTokenClaims | undefined;
+  const email = tokenClaims?.email;
+  const familyName = tokenClaims?.family_name;
+  const givenName = tokenClaims?.given_name;
   const businessContext = getTargetOrganisation();
 
   return {
@@ -43,9 +52,9 @@ const toAccountDetails = (
     trading: user.organisation?.businessOrTradingName || '',
     branch: user.organisation?.branchOrLocationName || '',
     abn: user.organisation?.abn || user.employerAbn || '',
-    email: tokenClaims?.email,
-    familyName: tokenClaims?.family_name,
-    givenName: tokenClaims?.given_name,
+    ...(email === undefined ? {} : { email }),
+    ...(familyName === undefined ? {} : { familyName }),
+    ...(givenName === undefined ? {} : { givenName }),
     userAcceptedTermsOfUse: acceptedTermsAndCondition,
     accountCreationCompleted,
     accountContactCompleted,
@@ -66,7 +75,7 @@ const toAccountDetails = (
 
 const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
-    null
+    null,
   );
   const [userProfileDetails, setUserProfileDetails] =
     useState<UserProfileDto>();
@@ -83,7 +92,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   }, []);
 
   const setUserProfile = useCallback(
-    (profile: UserProfileDto): Promise<boolean> => {
+    (profile: UserProfileDto | undefined): Promise<boolean> => {
       if (profile !== undefined) {
         setUserProfileDetails((prev) => ({ ...prev, ...profile }));
         setAccountDetails((prev) => {
@@ -93,7 +102,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
       }
       return Promise.resolve(true);
     },
-    []
+    [],
   );
 
   const setShowBranchSelector = useCallback((show: boolean) => {
@@ -115,7 +124,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         };
       });
     },
-    []
+    [],
   );
 
   const setOrganisation = useCallback((abn: string, name: string) => {
@@ -152,7 +161,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   const setDefaultOrganisationId = useCallback(
     (
       defaultOrganisationId: number | undefined,
-      defaultOrganisationCRMId: string | undefined
+      defaultOrganisationCRMId: string | undefined,
     ) => {
       setAccountDetails((prev) => {
         if (!prev) return prev;
@@ -163,7 +172,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         };
       });
     },
-    []
+    [],
   );
 
   const setOrganisationAndBranch = useCallback(
@@ -178,7 +187,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         };
       });
     },
-    []
+    [],
   );
 
   useEffect(() => {
@@ -187,7 +196,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         try {
           const client = new UsersClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           await client.setUserProfile(
@@ -208,7 +217,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
             userProfileDetails?.patternApprovalDashboard?.filtersChanged,
             userProfileDetails?.patternApprovalDashboard?.filterCurrentPage,
             userProfileDetails?.patternApprovalDashboard?.filterActiveTab,
-            userProfileDetails?.patternApprovalDashboard?.filterSearchText
+            userProfileDetails?.patternApprovalDashboard?.filterSearchText,
           );
         } catch (error) {
           AppLogger.error('Failed to save userprofile', error as Error);
@@ -224,7 +233,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
       try {
         const client = new UsersClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(account)
+          silentRequestFor(account),
         );
         client.setAuthToken(tokenResult.accessToken);
         AppLogger.verbose('AccountProvider.loadAccountDetails', {
@@ -256,7 +265,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         } catch (redirectError) {
           AppLogger.error(
             'Failed to handle auth redirect after account-load failure',
-            redirectError as Error
+            redirectError as Error,
           );
         }
         try {
@@ -266,7 +275,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         } catch (logoutError) {
           AppLogger.error(
             'Failed to redirect after account-load failure',
-            logoutError as Error
+            logoutError as Error,
           );
         }
         AppLogger.error('Failed to load loadAccountDetails', error as Error);
@@ -302,7 +311,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
       isLoading,
       details: accountDetails,
     }),
-    [isLoading, accountDetails]
+    [isLoading, accountDetails],
   );
 
   const dispatchValue = useMemo(
@@ -327,7 +336,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
       setShowBranchSelector,
       setShowRFQSelectModal,
       setUserProfile,
-    ]
+    ],
   );
 
   return (

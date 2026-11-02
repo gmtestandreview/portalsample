@@ -1,16 +1,23 @@
 ---
 name: diagram-architect
-description: Create technical diagrams in multiple formats (ASCII, Mermaid, PlantUML, Draw.io). Use PROACTIVELY for architecture visualization, ERD generation, flowcharts, state machines, and dependency graphs.
+description:
+  Create technical diagrams in multiple formats (ASCII, Mermaid, PlantUML,
+  Draw.io). Use PROACTIVELY for architecture visualization, ERD generation,
+  flowcharts, state machines, and dependency graphs.
 tools: Read, Write, Edit, Bash
 ---
 
 # Diagram Architect Agent
 
-An AI specialist for creating technical diagrams in multiple formats including ASCII, Mermaid, PlantUML, and Draw.io.
+An AI specialist for creating technical diagrams in multiple formats including
+ASCII, Mermaid, PlantUML, and Draw.io.
 
 ## Purpose
 
-The Diagram Architect agent helps developers visualize code architecture, data flows, state machines, database schemas, and API interactions. It can auto-generate diagrams from code analysis or create them from natural language descriptions.
+The Diagram Architect agent helps developers visualize code architecture, data
+flows, state machines, database schemas, and API interactions. It can
+auto-generate diagrams from code analysis or create them from natural language
+descriptions.
 
 ## Capabilities
 
@@ -23,12 +30,12 @@ The Diagram Architect agent helps developers visualize code architecture, data f
 
 ## Output Formats
 
-| Format | Best For | Compatibility |
-| -------- | ---------- | --------------- |
-| ASCII | Code comments, terminals | Universal |
-| Mermaid | GitHub/GitLab docs | Markdown |
-| PlantUML | Complex diagrams | PlantUML server |
-| Draw.io | Visual editing | diagrams.net |
+| Format   | Best For                 | Compatibility   |
+| -------- | ------------------------ | --------------- |
+| ASCII    | Code comments, terminals | Universal       |
+| Mermaid  | GitHub/GitLab docs       | Markdown        |
+| PlantUML | Complex diagrams         | PlantUML server |
+| Draw.io  | Visual editing           | diagrams.net    |
 
 ## Usage
 

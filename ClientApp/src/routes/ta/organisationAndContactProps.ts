@@ -6,6 +6,7 @@ import {
   type FormStepStatusDto,
   type PatternApprovalOrgAndContact,
   RequestForPatternApprovalClient,
+  Title,
   YesNo,
 } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
@@ -30,12 +31,12 @@ const loadOrganisationAndContact =
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const organisationAndContact = await client.getOrganisationAndContact(
           id,
-          abortSignal
+          abortSignal,
         );
         const wizardStepValues: WizardFormStepValues<PatternApprovalOrgAndContact> =
           {
@@ -47,20 +48,20 @@ const loadOrganisationAndContact =
         AppLogger.error(
           'Failed to load PA org and contact details',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(
           `Failed to load PA org and contact details. Id: ${id}`,
-          { cause: error }
+          { cause: error },
         );
       }
     } else {
       AppLogger.verbose(
         'There are no accounts available to load PA organisation and contact details',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to load PA organisation and contact details. Id: ${id}`
+        `There are no accounts available to load PA organisation and contact details. Id: ${id}`,
       );
     }
   };
@@ -70,18 +71,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: PatternApprovalOrgAndContact,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.saveOrganisationAndContact(
@@ -91,26 +92,26 @@ const saveStep =
             formStep: values,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (error) {
         AppLogger.error(
           'Failed to save PA org and contact details',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(
           `Failed to save PA org and contact details. Id: ${id}`,
-          { cause: error }
+          { cause: error },
         );
       }
     } else {
       AppLogger.verbose(
         'There are no accounts available to save PA organisation and contact details',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to save PA organisation and contact details. Id: ${id}`
+        `There are no accounts available to save PA organisation and contact details. Id: ${id}`,
       );
     }
   };
@@ -125,7 +126,7 @@ const OrganisationAndContactProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<PatternApprovalOrgAndContact> => ({
   initialValues: {},
   stepStatuses: statuses,
@@ -133,19 +134,22 @@ const OrganisationAndContactProps = (
   location: '/organisation-details',
   title: 'Organisation details',
   hidingFields: {
-    isManufacturerHide: (x: any) =>
+    isManufacturerHide: (x: Partial<PatternApprovalOrgAndContact>) =>
       x.isManufacturer === YesNo.Yes || x.isManufacturer === undefined,
-    isCurrentOrganisationHide: (_x: any) => true,
-    principalContactHide: (x: any) =>
+    isCurrentOrganisationHide: (_x: Partial<PatternApprovalOrgAndContact>) =>
+      true,
+    principalContactHide: (x: Partial<PatternApprovalOrgAndContact>) =>
       x.isPrincipalContact === YesNo.Yes || x.isPrincipalContact === undefined,
-    principalInvoiceContactHide: (x: any) =>
+    principalInvoiceContactHide: (x: Partial<PatternApprovalOrgAndContact>) =>
       x.isPrincipalInvoiceContact === YesNo.Yes ||
       x.isPrincipalInvoiceContact === undefined,
     contact: {
-      titleOther: (x: any) => x.contact?.title !== 'Other',
+      titleOther: (x: Partial<PatternApprovalOrgAndContact>) =>
+        x.contact?.title !== Title.Other,
     },
     invoiceContact: {
-      titleOther: (x: any) => x.invoiceContact?.title !== 'Other',
+      titleOther: (x: Partial<PatternApprovalOrgAndContact>) =>
+        x.invoiceContact?.title !== Title.Other,
     },
   },
   validateHard: patternApprovalOrgAndContactSubmitValidation,

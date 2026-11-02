@@ -9,17 +9,13 @@ import {
 import { Button } from '../Button/Button';
 import { X } from '../NmiIcon';
 import './Toast.css';
-import { type CSSProperties } from 'react';
 import { queue, type MyToastContent } from './ToastQueue';
 
 export function MyToastRegion() {
   return (
     <ToastRegion queue={queue}>
       {({ toast }) => (
-        <MyToast
-          toast={toast}
-          style={{ viewTransitionName: toast.key } as CSSProperties}
-        >
+        <MyToast toast={toast} style={{ viewTransitionName: toast.key }}>
           <ToastContent>
             <Text slot='title'>{toast.content.title}</Text>
             {toast.content.description && (

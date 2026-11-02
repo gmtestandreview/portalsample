@@ -6,24 +6,21 @@ import { waitForAppReady } from './common.steps';
 
 Given(
   'quote {string} is available',
-  async ({ scenarioState }, referenceId: string) => {
+  ({ scenarioState }, referenceId: string) => {
     scenarioState.activeReferenceId = referenceId;
     scenarioState.requests.set(referenceId, 'Quote offer is available');
     scenarioState.quotes.set(referenceId, buildQuote(referenceId));
-  }
+  },
 );
 
-Given(
-  'quote {string} is expired',
-  async ({ scenarioState }, referenceId: string) => {
-    scenarioState.activeReferenceId = referenceId;
-    scenarioState.requests.set(referenceId, 'Quote offer expired');
-    scenarioState.quotes.set(
-      referenceId,
-      buildQuote(referenceId, QuoteStatus.QuoteExpired)
-    );
-  }
-);
+Given('quote {string} is expired', ({ scenarioState }, referenceId: string) => {
+  scenarioState.activeReferenceId = referenceId;
+  scenarioState.requests.set(referenceId, 'Quote offer expired');
+  scenarioState.quotes.set(
+    referenceId,
+    buildQuote(referenceId, QuoteStatus.QuoteExpired),
+  );
+});
 
 Given(
   'the user is viewing quotation {string}',
@@ -31,7 +28,7 @@ Given(
     scenarioState.activeReferenceId = referenceId;
     await page.goto(`/quotation/${referenceId}`);
     await waitForAppReady(page);
-  }
+  },
 );
 
 When(
@@ -42,9 +39,11 @@ When(
     const request = page
       .getByRole('tabpanel', { name: 'Requests' })
       .locator(`#RefId-${referenceId}`);
+
     await expect(request).toBeVisible();
+
     await request.scrollIntoViewIfNeeded();
-  }
+  },
 );
 
 When('the user selects its {string} tab', async ({ page }, tabName: string) => {
@@ -66,7 +65,7 @@ When(
     scenarioState.activeReferenceId = referenceId;
     await page.goto(`/quotation/${referenceId}`);
     await waitForAppReady(page);
-  }
+  },
 );
 
 When('the user confirms {string}', async ({ page }, name: string) => {
@@ -80,29 +79,32 @@ When('the user confirms {string}', async ({ page }, name: string) => {
 Then(
   'the quotation page for {string} is displayed',
   async ({ page }, referenceId: string) => {
-    await expect(page).toHaveURL(new RegExp(`/quotation/${referenceId}$`));
+    await expect(page).toHaveURL(
+      (url) => url.pathname === `/quotation/${referenceId}`,
+    );
     await expect(
-      page.getByRole('heading', { name: 'Quotation', exact: true })
+      page.getByRole('heading', { name: 'Quotation', exact: true }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then(
   'the quote acceptance wizard for {string} is displayed',
   async ({ page }, referenceId: string) => {
     await expect(page).toHaveURL(
-      /\/accept-quote\/QA-RFQ-2024-000892\/report-recipient$/
+      /\/accept-quote\/QA-RFQ-2024-000892\/report-recipient$/,
     );
     await expect(
-      page.getByText(referenceId, { exact: false }).first()
+      page.getByText(referenceId, { exact: false }).first(),
     ).toBeVisible();
     await expect(page.locator('.stepped-navigation')).toBeVisible();
-  }
+  },
 );
 
 Then('{string} is available', async ({ page }, name: string) => {
   const link = page.getByRole('link', { name, exact: true });
   const button = page.getByRole('button', { name, exact: true });
+
   await expect(link.or(button)).toBeVisible();
 });
 
@@ -115,17 +117,18 @@ Then(
   'a confirmation dialog titled {string} is displayed',
   async ({ page }, title: string) => {
     const dialog = page.getByRole('dialog');
+
     await expect(dialog).toBeVisible();
     await expect(
-      dialog.getByRole('heading', { name: title, exact: true })
+      dialog.getByRole('heading', { name: title, exact: true }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then('the dashboard is displayed', async ({ page }) => {
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(
-    page.getByRole('heading', { name: /currently managing/i })
+    page.getByRole('heading', { name: /currently managing/i }),
   ).toBeVisible();
 });
 
@@ -133,20 +136,20 @@ Then(
   'the quote status {string} is displayed',
   async ({ page }, status: string) => {
     await expect(page.getByText(status, { exact: true })).toBeVisible();
-  }
+  },
 );
 
 Then(
   'the quote acceptance step {string} is displayed',
   async ({ page }, title: string) => {
-    await expect(
-      page
-        .getByRole('heading', {
-          name: new RegExp(title.replace('/', String.raw`\/`), 'i'),
-        })
-        .first()
-    ).toBeVisible();
-  }
+    await expect
+      .poll(async () =>
+        (await page.getByRole('heading').allInnerTexts()).some((heading) =>
+          heading.toLowerCase().includes(title.toLowerCase()),
+        ),
+      )
+      .toBe(true);
+  },
 );
 
 When('the user completes the report recipient step', async ({ page }) => {
@@ -196,13 +199,14 @@ When('the user completes the payment details step', async ({ page }) => {
 When('the user accepts the quote terms', async ({ page }) => {
   const acceptance = page.getByLabel(
     'Yes, on behalf of my organisation, I accept the quotation',
-    { exact: true }
+    { exact: true },
   );
   await page
     .getByText('Yes, on behalf of my organisation, I accept the quotation', {
       exact: true,
     })
     .click();
+
   await expect(acceptance).toBeChecked();
 });
 
@@ -211,22 +215,22 @@ Then('the accepted quote success page is displayed', async ({ page }) => {
   await expect(
     page.getByRole('heading', {
       name: /accepted quote has been successfully submitted/i,
-    })
+    }),
   ).toBeVisible();
 });
 
 Then(
   'the quote acceptance step {string} has been saved',
-  async ({ scenarioState }, step: string) => {
+  ({ scenarioState }, step: string) => {
     expect(scenarioState.completedAcceptQuoteSteps.has(step)).toBe(true);
-  }
+  },
 );
 
 Then(
   'the quote acceptance step {string} has not been saved',
-  async ({ scenarioState }, step: string) => {
+  ({ scenarioState }, step: string) => {
     expect(scenarioState.completedAcceptQuoteSteps.has(step)).toBe(false);
-  }
+  },
 );
 
 When(
@@ -236,5 +240,5 @@ When(
       .locator('label')
       .filter({ hasText: /^\s*Other\s*$/ })
       .click();
-  }
+  },
 );

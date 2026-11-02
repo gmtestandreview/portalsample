@@ -335,7 +335,7 @@ export function Tabs(props: TabsProps) {
     <RACTabs
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        tabsStyles({ ...renderProps, className })
+        tabsStyles({ ...renderProps, className }),
       )}
     />
   );
@@ -356,7 +356,7 @@ export function TabList<T>(props: TabListProps<T>) {
     <RACTabList
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        tabListStyles({ ...renderProps, className })
+        tabListStyles({ ...renderProps, className }),
       )}
     />
   );
@@ -377,7 +377,7 @@ export function Tab(props: TabProps) {
     <RACTab
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        tabProps({ ...renderProps, className })
+        tabProps({ ...renderProps, className }),
       )}
     >
       {composeRenderProps(props.children, (children) => (
@@ -396,7 +396,7 @@ export function TabPanels<T>(props: TabPanelsProps<T>) {
       {...props}
       className={twMerge(
         'relative h-(--tab-panel-height) motion-safe:transition-[height] overflow-clip',
-        props.className
+        props.className,
       )}
     />
   );
@@ -412,7 +412,7 @@ export function TabPanel(props: TabPanelProps) {
     <RACTabPanel
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        tabPanelStyles({ ...renderProps, className })
+        tabPanelStyles({ ...renderProps, className }),
       )}
     />
   );

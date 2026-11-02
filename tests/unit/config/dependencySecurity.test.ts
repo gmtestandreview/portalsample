@@ -16,24 +16,138 @@ type RootPackage = {
   overrides?: Record<string, string | Record<string, string>>;
 };
 
-const lock = JSON.parse(
-  readFileSync('package-lock.json', 'utf8')
-) as PackageLock;
-const rootPackage = JSON.parse(
-  readFileSync('package.json', 'utf8')
-) as RootPackage;
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const parseJson = (text: string): unknown => JSON.parse(text);
+
+const parseStringRecord = (
+  value: unknown,
+  fieldName: string,
+): Record<string, string> => {
+  if (!isRecord(value)) {
+    throw new Error(`${fieldName} must be an object`);
+  }
+
+  const entries: Array<[string, string]> = [];
+  for (const [key, entry] of Object.entries(value)) {
+    if (typeof entry !== 'string') {
+      throw new Error(`${fieldName}.${key} must be a string`);
+    }
+    entries.push([key, entry]);
+  }
+  return Object.fromEntries(entries);
+};
+
+const parsePackageLock = (value: unknown): PackageLock => {
+  if (
+    !isRecord(value) ||
+    typeof value['lockfileVersion'] !== 'number' ||
+    !isRecord(value['packages'])
+  ) {
+    throw new Error('package-lock.json has an unexpected shape');
+  }
+
+  const packageEntries: Array<[string, LockPackage & { deprecated?: string }]> =
+    [];
+  for (const [packagePath, metadata] of Object.entries(value['packages'])) {
+    if (!isRecord(metadata)) {
+      throw new Error(`package-lock.json entry ${packagePath} is invalid`);
+    }
+
+    const packageMetadata: LockPackage & { deprecated?: string } = {};
+    if (metadata['version'] !== undefined) {
+      if (typeof metadata['version'] !== 'string') {
+        throw new Error(
+          `package-lock.json entry ${packagePath} has an invalid version`,
+        );
+      }
+      packageMetadata.version = metadata['version'];
+    }
+    if (metadata['deprecated'] !== undefined) {
+      if (typeof metadata['deprecated'] !== 'string') {
+        throw new Error(
+          `package-lock.json entry ${packagePath} has an invalid deprecation`,
+        );
+      }
+      packageMetadata.deprecated = metadata['deprecated'];
+    }
+    packageEntries.push([packagePath, packageMetadata]);
+  }
+
+  return {
+    lockfileVersion: value['lockfileVersion'],
+    packages: Object.fromEntries(packageEntries),
+  };
+};
+
+const parseRootPackage = (value: unknown): RootPackage => {
+  if (!isRecord(value)) {
+    throw new Error('package.json has an unexpected shape');
+  }
+
+  const overrides = value['overrides'];
+  const parsedOverrides: RootPackage['overrides'] =
+    overrides === undefined
+      ? undefined
+      : (() => {
+          if (!isRecord(overrides)) {
+            throw new Error('package.json overrides must be an object');
+          }
+          const entries: Array<[string, string | Record<string, string>]> = [];
+          for (const [key, entry] of Object.entries(overrides)) {
+            entries.push([
+              key,
+              typeof entry === 'string'
+                ? entry
+                : parseStringRecord(entry, `overrides.${key}`),
+            ]);
+          }
+          return Object.fromEntries(entries);
+        })();
+
+  const result: RootPackage = {};
+  const devDependencies = value['devDependencies'];
+  if (devDependencies !== undefined) {
+    result.devDependencies = parseStringRecord(
+      devDependencies,
+      'devDependencies',
+    );
+  }
+  if (parsedOverrides !== undefined) {
+    result.overrides = parsedOverrides;
+  }
+  return result;
+};
+
+const lock = parsePackageLock(
+  parseJson(readFileSync('package-lock.json', 'utf8')),
+);
+const rootPackage = parseRootPackage(
+  parseJson(readFileSync('package.json', 'utf8')),
+);
+
+const recordValue = <Value>(
+  record: Record<string, Value> | undefined,
+  key: string,
+): Value | undefined => {
+  const entry = Object.entries(record ?? {}).find(
+    ([entryKey]) => entryKey === key,
+  );
+  return entry?.[1];
+};
 
 const installedVersions = (packageName: string): string[] =>
   Object.entries(lock.packages)
     .filter(
       ([packagePath, metadata]) =>
         packagePath.split('node_modules/').at(-1) === packageName &&
-        metadata.version !== undefined
+        metadata.version !== undefined,
     )
     .map(([, metadata]) => metadata.version!);
 
 const exactDevDependency = (packageName: string): string => {
-  const declaredVersion = rootPackage.devDependencies?.[packageName];
+  const declaredVersion = recordValue(rootPackage.devDependencies, packageName);
 
   if (
     declaredVersion === undefined ||
@@ -41,7 +155,7 @@ const exactDevDependency = (packageName: string): string => {
     prerelease(declaredVersion) !== null
   ) {
     throw new Error(
-      `${packageName} must be an exact stable devDependency version`
+      `${packageName} must be an exact stable devDependency version`,
     );
   }
 
@@ -51,18 +165,18 @@ const exactDevDependency = (packageName: string): string => {
 const expectStableAtLeast = (
   packageName: string,
   version: string,
-  minimumVersion: string
+  minimumVersion: string,
 ): void => {
   expect(valid(version), `${packageName}@${version} must be valid semver`).toBe(
-    version
+    version,
   );
   expect(
     prerelease(version),
-    `${packageName}@${version} must not be a prerelease`
+    `${packageName}@${version} must not be a prerelease`,
   ).toBeNull();
   expect(
     gte(version, minimumVersion),
-    `${packageName}@${version} must be at least ${minimumVersion}`
+    `${packageName}@${version} must be at least ${minimumVersion}`,
   ).toBe(true);
 };
 
@@ -79,16 +193,21 @@ describe('direct security dependency floors', () => {
   it.each([...minimumVersions])(
     '%s resolves only patched versions',
     (packageName, minimumVersion) => {
+      expect.hasAssertions();
+
       const versions = installedVersions(packageName);
 
       expect(versions).not.toHaveLength(0);
+
       for (const version of versions) {
         expectStableAtLeast(packageName, version, minimumVersion);
       }
-    }
+    },
   );
 
   it('keeps the exact-peer Vitest packages on one version', () => {
+    expect.hasAssertions();
+
     const vitestPackages = [
       '@vitest/browser',
       '@vitest/browser-playwright',
@@ -99,8 +218,8 @@ describe('direct security dependency floors', () => {
 
     for (const packageName of vitestPackages) {
       expect(exactDevDependency(packageName)).toBe(expectedVersion);
-      expect(new Set(installedVersions(packageName))).toEqual(
-        new Set([expectedVersion])
+      expect(new Set(installedVersions(packageName))).toStrictEqual(
+        new Set([expectedVersion]),
       );
     }
   });
@@ -123,18 +242,25 @@ describe('transitive security dependency floors', () => {
   ]);
 
   it.each([...minimumVersions])(
-    '%s resolves only patched versions',
+    '%s resolves only patched versions when installed',
     (packageName, minimumVersion) => {
+      expect.hasAssertions();
+
       const versions = installedVersions(packageName);
 
-      expect(versions).not.toHaveLength(0);
+      expect(versions).toBeInstanceOf(Array);
+
+      // A dependency contraction may remove a transitive package entirely;
+      // absence is safe, while any remaining copy must still meet its floor.
       for (const version of versions) {
         expectStableAtLeast(packageName, version, minimumVersion);
       }
-    }
+    },
   );
 
   it('brace-expansion resolves only patched versions per major', () => {
+    expect.hasAssertions();
+
     const floors = new Map([
       [1, '1.1.21'],
       [2, '2.1.7'],
@@ -143,21 +269,24 @@ describe('transitive security dependency floors', () => {
     const versions = installedVersions('brace-expansion');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       const floor = floors.get(major(version));
 
       expect(
         floor,
-        `unexpected brace-expansion major in ${version}`
+        `unexpected brace-expansion major in ${version}`,
       ).toBeDefined();
       expect(
         gte(version, floor as string),
-        `brace-expansion@${version} must be at least ${floor}`
+        `brace-expansion@${version} must be at least ${floor}`,
       ).toBe(true);
     }
   });
 
   it('keeps every glob major off deprecated releases and pins the three scoped owners to glob 13.0.6', () => {
+    expect.hasAssertions();
+
     // Glob 7 arrives only through the deprecated ESLint 8 / rimraf 3 chain.
     // Glob 10 was a transitional allowance under Task D1; Task D2 replaces the
     // remaining remark-cli / unified-engine copies with the owner-scoped
@@ -165,14 +294,15 @@ describe('transitive security dependency floors', () => {
     const versions = installedVersions('glob');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       expect(
         gte(version, '10.0.0'),
-        `glob@${version} is a deprecated pre-10 release`
+        `glob@${version} is a deprecated pre-10 release`,
       ).toBe(true);
       expect(
         version.startsWith('10.'),
-        `glob@${version} is the deprecated glob 10 release`
+        `glob@${version} is the deprecated glob 10 release`,
       ).toBe(false);
     }
 
@@ -184,9 +314,9 @@ describe('transitive security dependency floors', () => {
 
     for (const owner of globOverrideOwners) {
       expect(
-        rootPackage.overrides?.[owner],
-        `package.json overrides must pin ${owner}'s glob dependency to 13.0.6`
-      ).toEqual({
+        recordValue(rootPackage.overrides, owner),
+        `package.json overrides must pin ${owner}'s glob dependency to 13.0.6`,
+      ).toStrictEqual({
         glob: '13.0.6',
       });
     }
@@ -195,10 +325,10 @@ describe('transitive security dependency floors', () => {
 
 describe('lint cohort', () => {
   const cohort = new Map([
-    ['eslint', '10.13.0'],
+    ['eslint', '10.14.0'],
     ['@eslint/js', '10.0.1'],
-    ['typescript-eslint', '8.71.2'],
-    ['@eslint-react/eslint-plugin', '5.28.2'],
+    ['typescript-eslint', '8.72.1'],
+    ['@eslint-react/eslint-plugin', '5.28.8'],
     ['eslint-plugin-react-hooks', '7.1.1'],
     ['@stylistic/eslint-plugin', '5.10.0'],
     ['globals', '17.13.0'],
@@ -207,19 +337,24 @@ describe('lint cohort', () => {
   it.each([...cohort])(
     'declares %s as an exact supported version',
     (packageName, expectedVersion) => {
+      expect.hasAssertions();
+
       expect(exactDevDependency(packageName)).toBe(expectedVersion);
       expect(installedVersions(packageName)).toContain(expectedVersion);
-    }
+    },
   );
 
   it('resolves ESLint only on the maintained 10 line', () => {
+    expect.hasAssertions();
+
     const versions = installedVersions('eslint');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       expect(
         gte(version, '10.0.0'),
-        `eslint@${version} is an unsupported pre-10 release`
+        `eslint@${version} is an unsupported pre-10 release`,
       ).toBe(true);
     }
   });
@@ -231,10 +366,14 @@ describe('lint cohort', () => {
     'inflight',
     'rimraf',
   ])('no longer installs the deprecated package %s', (packageName) => {
+    expect.hasAssertions();
+
     expect(installedVersions(packageName)).toHaveLength(0);
   });
 
   it('retains the Storybook lint plugin alongside the new cohort', () => {
+    expect.hasAssertions();
+
     expect(installedVersions('eslint-plugin-storybook')).not.toHaveLength(0);
   });
 });
@@ -247,11 +386,13 @@ describe('publisher deprecations', () => {
    * `deprecated` field.
    */
   it('installs no package that npm publishers have marked deprecated', () => {
+    expect.hasAssertions();
+
     const deprecatedEntries = Object.entries(lock.packages)
       .filter(([, metadata]) => Boolean(metadata.deprecated))
       .map(([packagePath]) => packagePath);
 
-    expect(deprecatedEntries).toEqual([]);
+    expect(deprecatedEntries).toStrictEqual([]);
   });
 });
 
@@ -289,25 +430,31 @@ describe('install-script approvals', () => {
   ).allowScripts;
 
   it('reviews every dependency that runs an install script', () => {
-    expect(Object.keys(allowScripts ?? {}).sort()).toEqual(
-      [...APPROVED_INSTALL_SCRIPTS].sort()
+    expect.hasAssertions();
+
+    expect(Object.keys(allowScripts ?? {}).sort()).toStrictEqual(
+      [...APPROVED_INSTALL_SCRIPTS].sort(),
     );
   });
 
   it('records each review as an explicit allow', () => {
+    expect.hasAssertions();
+
     for (const packageName of APPROVED_INSTALL_SCRIPTS) {
       expect(
-        allowScripts?.[packageName],
-        `${packageName} must be an explicit boolean allow, not a version string`
+        recordValue(allowScripts, packageName),
+        `${packageName} must be an explicit boolean allow, not a version string`,
       ).toBe(true);
     }
   });
 
   it('keeps each approved package installed at exactly one version', () => {
+    expect.hasAssertions();
+
     for (const packageName of APPROVED_INSTALL_SCRIPTS) {
       expect(
         installedVersions(packageName),
-        `${packageName} must resolve to a single version, so one name-only approval covers one reviewed build`
+        `${packageName} must resolve to a single version, so one name-only approval covers one reviewed build`,
       ).toHaveLength(1);
     }
   });
@@ -315,25 +462,29 @@ describe('install-script approvals', () => {
 
 describe('coverage remapping cohort', () => {
   // ast-v8-to-istanbul performs the V8-to-Istanbul remap that emitted the
-  // `terms-config.json?import` parse failure. It moved 1.0.4 -> 1.0.5 as an
-  // incidental lockfile re-resolution in 23f0a2f, confounding that commit's
-  // remap fix with a dependency change. Pin it so the next incidental move is
-  // visible rather than silent.
+  // `terms-config.json?import` parse failure. Keep the reviewed lockfile
+  // version visible so the next incidental move is not silent.
   it('resolves the V8-to-Istanbul remapper at exactly one reviewed version', () => {
-    expect(installedVersions('ast-v8-to-istanbul')).toEqual(['1.0.5']);
+    expect.hasAssertions();
+
+    expect(installedVersions('ast-v8-to-istanbul')).toStrictEqual(['1.0.7']);
   });
 
   it('keeps the coverage provider aligned with the Vitest cohort', () => {
-    expect(installedVersions('@vitest/coverage-v8')).toEqual(['4.1.11']);
+    expect.hasAssertions();
+
+    expect(installedVersions('@vitest/coverage-v8')).toStrictEqual(['5.0.5']);
   });
 
-  it('holds the Storybook test cohort on Vitest 4 pending dedicated Vitest 5 validation', () => {
+  it('holds the Storybook test cohort on the same Vitest 5 release', () => {
+    expect.hasAssertions();
+
     const vitestVersion = exactDevDependency('vitest');
 
-    expect(vitestVersion).toMatch(/^4\./);
+    expect(vitestVersion).toMatch(/^5\./);
     expect(exactDevDependency('@vitest/browser')).toBe(vitestVersion);
     expect(exactDevDependency('@vitest/browser-playwright')).toBe(
-      vitestVersion
+      vitestVersion,
     );
     expect(exactDevDependency('@vitest/coverage-v8')).toBe(vitestVersion);
   });

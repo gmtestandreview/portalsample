@@ -18,7 +18,7 @@ interface AttachmentItemProps {
   isSummary: boolean;
   onRemoveItem?: (attachment: AttachmentDto) => Promise<void>;
   onCategoryUpdate?: (docId: string, category: string) => Promise<void>;
-  fileBytes?: any;
+  fileBytes?: string | undefined;
 }
 
 const AttachmentItemNew = ({
@@ -33,7 +33,7 @@ const AttachmentItemNew = ({
   id,
 }: Readonly<AttachmentItemProps>) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
-  const [catField, catMeta, { setValue, setTouched }] = useField({
+  const [catField, catMeta, { setValue, setTouched }] = useField<string>({
     name: `${name}[${index}].attachmentCategory`,
   });
   const [contentField] = useField<AttachmentDto>({ name: `${name}[${index}]` });
@@ -53,7 +53,7 @@ const AttachmentItemNew = ({
         displayText: 'Photos or diagrams',
         value: 'Photos or diagrams',
       },
-      { displayText: 'Other', value: 'Other' }
+      { displayText: 'Other', value: 'Other' },
     );
     return options;
   };
@@ -61,10 +61,10 @@ const AttachmentItemNew = ({
   const onCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
     // A form control's `value` is always a string, never null, so the guard that stood here
     // could not fail. An unset category arrives as an empty string and is handled below.
-    setValue(event.target.value);
-    setTouched(true);
+    void setValue(event.target.value);
+    void setTouched(true);
     if (onCategoryUpdate && id) {
-      onCategoryUpdate(id, event.target.value);
+      void onCategoryUpdate(id, event.target.value);
     }
   };
 
@@ -133,7 +133,9 @@ const AttachmentItemNew = ({
             titleText='Confirm deletion'
             bodyText='Are you sure you want to remove this file?'
             onModalNo={closeModal}
-            onModalYes={() => onRemoveItem?.(contentField.value)}
+            onModalYes={() => {
+              void onRemoveItem?.(contentField.value);
+            }}
             noButtonTitle='Cancel'
             yesButtonTitle='Yes, delete'
           />

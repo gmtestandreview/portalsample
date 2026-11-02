@@ -4,7 +4,8 @@
 
 **Problem**: Multiple tasks consume resources inefficiently when isolated.
 
-**Solution**: Consolidate multiple tasks or operations into a single computational unit.
+**Solution**: Consolidate multiple tasks or operations into a single
+computational unit.
 
 **When to Use**:
 
@@ -24,7 +25,9 @@
 
 **Problem**: Applications need to scale across regions or customer segments.
 
-**Solution**: Deploy multiple independent copies of application components (stamps), including data stores, to serve different regions or customer segments.
+**Solution**: Deploy multiple independent copies of application components
+(stamps), including data stores, to serve different regions or customer
+segments.
 
 **When to Use**:
 
@@ -44,7 +47,8 @@
 
 **Problem**: Application configuration is embedded in deployment packages.
 
-**Solution**: Move configuration information out of the application deployment package to a centralized location.
+**Solution**: Move configuration information out of the application deployment
+package to a centralized location.
 
 **When to Use**:
 
@@ -64,7 +68,8 @@
 
 **Problem**: Users in different regions experience high latency.
 
-**Solution**: Deploy backend services into a set of geographical nodes, each of which can service any client request in any region.
+**Solution**: Deploy backend services into a set of geographical nodes, each of
+which can service any client request in any region.
 
 **When to Use**:
 
@@ -84,7 +89,8 @@
 
 **Problem**: Serving static content from compute instances is inefficient.
 
-**Solution**: Deploy static content to a cloud-based storage service that can deliver content directly to the client.
+**Solution**: Deploy static content to a cloud-based storage service that can
+deliver content directly to the client.
 
 **When to Use**:
 

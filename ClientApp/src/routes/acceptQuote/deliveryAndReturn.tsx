@@ -2,7 +2,11 @@ import { useMsal } from '@azure/msal-react';
 import Row from 'react-bootstrap/Row';
 import { Alert, Col } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { AcceptQuoteClient, AccountsClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  AccountsClient,
+  ReturnAddressTypeValues,
+} from '../../api/web-api-client';
 import type {
   AcceptQuotePreInfoDto,
   AddressDetailsDto,
@@ -50,15 +54,15 @@ const ReturnAddressSummary = ({
   const organisationName = returnOrganisationName;
 
   switch (returnAddressType) {
-    case 'BusinessAddress':
+    case ReturnAddressTypeValues.BusinessAddress:
       address = streetAddress;
       break;
-    case 'PostalAddress':
+    case ReturnAddressTypeValues.PostalAddress:
       address = rfqOrganisation?.postalAddressSameAsStreetAddress
         ? streetAddress
         : postalAddress;
       break;
-    case 'Other':
+    case ReturnAddressTypeValues.Other:
       address = returnAddress;
       break;
     default:
@@ -205,13 +209,13 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
         const acceptQuoteClient = new AcceptQuoteClient();
         const accountsClient = new AccountsClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
         accountsClient.setAuthToken(tokenResult.accessToken);
 
         const deliveryAndReturn = await acceptQuoteClient.getDeliveryAndReturn(
-          id!
+          id!,
         );
         setDeliveryAndReturnStep(deliveryAndReturn);
         setAcceptQuotePreInfo(deliveryAndReturn.acceptQuotePreInfo);

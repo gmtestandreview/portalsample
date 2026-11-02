@@ -76,7 +76,7 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
 
   const fetchAddressOptions = async (
     term: string,
-    controller: AbortController
+    controller: AbortController,
   ): Promise<AutoSuggestOption<MatchedAddress>[]> => {
     if (inProgress !== 'none' || accounts.length === 0 || !account) return [];
 
@@ -92,7 +92,7 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
         displayText: a.displayText || '',
         id: a.unqiueId || i.toString(),
         value: a,
-      })
+      }),
     );
 
     if (maxResults) {
@@ -184,8 +184,9 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
   const onEnterManually = () => {
     // Leaving the search box must not carry its touched flag into the next
     // search; resetting with the current value as default keeps the text.
+    const currentSearchText: unknown = getValues(searchTextName);
     resetField(searchTextName, {
-      defaultValue: getValues(searchTextName),
+      defaultValue: currentSearchText,
       keepDirty: true,
       keepError: true,
     });

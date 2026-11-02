@@ -1,14 +1,11 @@
 import Form from 'react-bootstrap/Form';
-import { trim } from 'lodash';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import { useRhfFieldA11y } from '../useRhfFieldA11y';
 import type { RhfTextAreaInputProps } from './types';
+import { removeSupplementaryPlaneCharacters } from '../../../utils/removeSupplementaryPlaneCharacters';
 
 const DEFAULT_ROWS = 3;
-// Supplementary-plane characters (emoji etc.) are rejected by the API.
-const SUPPLEMENTARY_PLANE_CHARACTERS = /[\u{10000}-\u{10FFFF}]/gu;
-
 /**
  * React Hook Form counterpart of `TextAreaInput`. It reads the form through
  * `useController`, so it must render inside a `FormProvider`. Typed text has
@@ -41,6 +38,9 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
     errorMessage,
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
+  const fieldValue: unknown = field.value as unknown;
+  const onChange = field.onChange as (value: unknown) => void;
+  const textValue = typeof fieldValue === 'string' ? fieldValue : '';
 
   if (isSummary) {
     return (
@@ -48,23 +48,23 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
         label={label}
         as='p'
         className='pre-wrap'
-        value={field.value}
+        value={textValue}
         id={controlId}
       />
     );
   }
 
   const handleBlur = () => {
-    const trimmed = trim(field.value);
-    if (trimmed !== field.value) {
-      field.onChange(trimmed);
+    const trimmed = typeof fieldValue === 'string' ? fieldValue.trim() : '';
+    if (trimmed !== fieldValue) {
+      onChange(trimmed);
     }
     field.onBlur();
   };
 
   const showCounter = !!maxCharacters && maxCharacters > 0;
   const usedCharacters =
-    typeof field.value === 'string' ? field.value.trim().length : 0;
+    typeof fieldValue === 'string' ? fieldValue.trim().length : 0;
   const counterText = showCounter
     ? `${usedCharacters} of ${maxCharacters} characters used`
     : '';
@@ -94,12 +94,10 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
           'aria-invalid': errorMessage ? true : undefined,
           placeholder,
         })}
-        value={field.value ?? ''}
+        value={textValue}
         onBlur={handleBlur}
         onChange={(event) => {
-          field.onChange(
-            event.target.value.replace(SUPPLEMENTARY_PLANE_CHARACTERS, '')
-          );
+          onChange(removeSupplementaryPlaneCharacters(event.target.value));
         }}
       />
       {showCounter && (

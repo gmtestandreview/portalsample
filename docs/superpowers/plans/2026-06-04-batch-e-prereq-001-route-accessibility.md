@@ -116,7 +116,7 @@ React Testing Library (target system test tooling), Bootstrap 5
     return React.createElement(
       MemoryRouter,
       { initialEntries: ['/test'] },
-      children
+      children,
     );
   }
 
@@ -147,7 +147,7 @@ React Testing Library (target system test tooling), Bootstrap 5
         vi.advanceTimersByTime(100);
       });
       expect(result.current.announcement).toBe(
-        'Navigated to Test Page | NMI Portal page.'
+        'Navigated to Test Page | NMI Portal page.',
       );
     });
 
@@ -270,7 +270,7 @@ React Testing Library (target system test tooling), Bootstrap 5
           <Layout>
             <div>content</div>
           </Layout>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       const region = screen.getByRole('status');
       expect(region).toHaveAttribute('aria-live', 'polite');
@@ -283,7 +283,7 @@ React Testing Library (target system test tooling), Bootstrap 5
           <Layout>
             <div>content</div>
           </Layout>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       // There should be exactly one role=status region (not two)
       expect(screen.getAllByRole('status')).toHaveLength(1);
@@ -296,13 +296,13 @@ React Testing Library (target system test tooling), Bootstrap 5
           <Layout>
             <div>content</div>
           </Layout>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       act(() => {
         vi.advanceTimersByTime(100);
       });
       expect(screen.getByRole('status').textContent).toBe(
-        'Navigated to Dashboard | NMI Portal page.'
+        'Navigated to Dashboard | NMI Portal page.',
       );
     });
   });

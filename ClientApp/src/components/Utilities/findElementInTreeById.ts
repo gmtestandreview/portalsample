@@ -1,6 +1,6 @@
 const findElementInTreeById = (
   element: Element | null,
-  wrapperUUID: string
+  wrapperUUID: string,
 ): boolean => {
   if (!element) {
     return false;

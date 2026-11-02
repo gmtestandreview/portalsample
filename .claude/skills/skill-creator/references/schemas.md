@@ -103,8 +103,9 @@ distinct. The accounting invariant is:
 Pipeline summaries expose `execution_status` (`complete`, `short_circuited`,
 `partial`, or `not_run`), `evidence_status` (`complete` or `incomplete`),
 `verdict` (`pass`, `fail`, `unavailable`, or `not_applicable`), `mode_ready`,
-and `release_ready`. Every applicable case appears once. A `not_run` case carries
-`evidence_code: "NHR"` and a reason; it must not disappear from the summary.
+and `release_ready`. Every applicable case appears once. A `not_run` case
+carries `evidence_code: "NHR"` and a reason; it must not disappear from the
+summary.
 
 ## Schema catalog
 

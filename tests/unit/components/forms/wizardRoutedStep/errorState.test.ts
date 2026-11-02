@@ -6,127 +6,167 @@ import { AZURE_WAF_SERVER_PREFIX } from '../../../../../ClientApp/src/types/wafE
 function makeError(
   status: number,
   title?: string,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
 ) {
   return { status, title: title ?? '', headers: headers ?? {} };
 }
 
-describe('resolveErrorState', () => {
-  describe('Load errors — HttpStatus dispatch', () => {
+describe('wizard routed step error state', () => {
+  describe('load errors — HttpStatus dispatch', () => {
     it('returns notFound for 404', () => {
+      expect.hasAssertions();
       expect(
-        resolveErrorState(makeError(404), undefined, ErrorType.Load)
-      ).toEqual({ kind: 'notFound' });
+        resolveErrorState(makeError(404), undefined, ErrorType.Load),
+      ).toStrictEqual({ kind: 'notFound' });
     });
 
     it('returns gone for 410', () => {
+      expect.hasAssertions();
       expect(
-        resolveErrorState(makeError(410), undefined, ErrorType.Load)
-      ).toEqual({ kind: 'gone' });
+        resolveErrorState(makeError(410), undefined, ErrorType.Load),
+      ).toStrictEqual({ kind: 'gone' });
     });
 
     it('returns gone for 401', () => {
+      expect.hasAssertions();
       expect(
-        resolveErrorState(makeError(401), undefined, ErrorType.Load)
-      ).toEqual({ kind: 'gone' });
+        resolveErrorState(makeError(401), undefined, ErrorType.Load),
+      ).toStrictEqual({ kind: 'gone' });
     });
 
     it('returns noThirdPartyAccess for 403 with third-party title', () => {
+      expect.hasAssertions();
       expect(
         resolveErrorState(
           makeError(403, 'No third-party access to this resource'),
           undefined,
-          ErrorType.Load
-        )
-      ).toEqual({ kind: 'noThirdPartyAccess' });
+          ErrorType.Load,
+        ),
+      ).toStrictEqual({ kind: 'noThirdPartyAccess' });
     });
 
     it('returns serverError for 403 without third-party title', () => {
+      expect.hasAssertions();
+
       const result = resolveErrorState(
         makeError(403, 'Forbidden'),
         undefined,
-        ErrorType.Load
+        ErrorType.Load,
       );
+
       expect(result.kind).toBe('serverError');
     });
 
     it('returns loading for unrecognised HTTP status — restores the previously silent failure', () => {
+      expect.hasAssertions();
       expect(
-        resolveErrorState(makeError(500), undefined, ErrorType.Load)
-      ).toEqual({ kind: 'loading' });
+        resolveErrorState(makeError(500), undefined, ErrorType.Load),
+      ).toStrictEqual({
+        kind: 'loading',
+      });
     });
 
     it('returns loading for a network error with no status property', () => {
+      expect.hasAssertions();
       expect(
-        resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load)
-      ).toEqual({ kind: 'loading' });
+        resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load),
+      ).toStrictEqual({ kind: 'loading' });
     });
 
     it('returns none for an aborted request — stays silent', () => {
+      expect.hasAssertions();
+
       const abort = new DOMException(
         'The operation was aborted.',
-        'AbortError'
+        'AbortError',
       );
-      expect(resolveErrorState(abort, undefined, ErrorType.Load)).toEqual({
-        kind: 'none',
-      });
+
+      expect(resolveErrorState(abort, undefined, ErrorType.Load)).toStrictEqual(
+        {
+          kind: 'none',
+        },
+      );
     });
   });
 
-  describe('Update errors — HttpStatus dispatch', () => {
+  describe('update errors — HttpStatus dispatch', () => {
     it('returns concurrency for 409', () => {
+      expect.hasAssertions();
+
       const err = makeError(409);
       const result = resolveErrorState(err, undefined, ErrorType.Update);
+
       expect(result.kind).toBe('concurrency');
     });
 
     it('returns wafViolation for 403 with Azure App Gateway server header (Update only)', () => {
+      expect.hasAssertions();
+
       const err = makeError(403, 'Forbidden', {
         server: `${AZURE_WAF_SERVER_PREFIX}/2.5`,
       });
       const result = resolveErrorState(err, undefined, ErrorType.Update);
+
       expect(result.kind).toBe('wafViolation');
     });
 
     it('does NOT return wafViolation on a Load error even with WAF header', () => {
+      expect.hasAssertions();
+
       const err = makeError(403, 'Forbidden', {
         server: `${AZURE_WAF_SERVER_PREFIX}/2.5`,
       });
       const result = resolveErrorState(err, undefined, ErrorType.Load);
+
       expect(result.kind).toBe('serverError');
     });
 
     it('returns serverError for 500 on Update', () => {
+      expect.hasAssertions();
+
       const result = resolveErrorState(
         makeError(500),
         undefined,
-        ErrorType.Update
+        ErrorType.Update,
       );
+
       expect(result.kind).toBe('serverError');
     });
   });
 
-  describe('Custom redirect callback — fixes stale-read bug', () => {
-    it('returns redirect when callback provides a location', () => {
-      const cb = (code: number) =>
-        code === 404 ? '/custom-not-found' : undefined;
-      expect(resolveErrorState(makeError(404), cb, ErrorType.Load)).toEqual({
+  it('returns redirect when callback provides a location', () => {
+    expect.hasAssertions();
+
+    const cb = (code: number) =>
+      code === 404 ? '/custom-not-found' : undefined;
+
+    expect(resolveErrorState(makeError(404), cb, ErrorType.Load)).toStrictEqual(
+      {
         kind: 'redirect',
         location: '/custom-not-found',
-      });
-    });
+      },
+    );
+  });
 
-    it('falls through to default dispatch when callback returns undefined', () => {
-      const cb = () => undefined;
-      expect(resolveErrorState(makeError(404), cb, ErrorType.Load).kind).toBe(
-        'notFound'
-      );
-    });
+  it('falls through to default dispatch when callback returns undefined', () => {
+    expect.hasAssertions();
+    expect(
+      resolveErrorState(makeError(404), () => undefined, ErrorType.Load).kind,
+    ).toBe('notFound');
+  });
 
-    it('redirect takes precedence over all other error kinds — stale-read fix proof', () => {
-      const cb = () => '/gone-somewhere';
-      const result = resolveErrorState(makeError(404), cb, ErrorType.Load);
-      expect(result).toEqual({ kind: 'redirect', location: '/gone-somewhere' });
+  it('redirect takes precedence over all other error kinds — stale-read fix proof', () => {
+    expect.hasAssertions();
+
+    const result = resolveErrorState(
+      makeError(404),
+      () => '/gone-somewhere',
+      ErrorType.Load,
+    );
+
+    expect(result).toStrictEqual({
+      kind: 'redirect',
+      location: '/gone-somewhere',
     });
   });
 });

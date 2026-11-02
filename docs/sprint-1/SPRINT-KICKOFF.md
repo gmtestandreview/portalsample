@@ -3,11 +3,11 @@
 **Date:** 2026-05-20  
 **Sprint Start:** 2026-05-20 (NOW — accelerated)  
 **Sprint End (Target):** 2026-06-02  
-**Duration:** 13 calendar days  
+**Duration:** 13 calendar days
 
 **Producer:** Remy  
 **Dev Agent:** Active on Phase 1  
-**QA Agent:** Standby  
+**QA Agent:** Standby
 
 ---
 
@@ -15,7 +15,8 @@
 
 **State Transition:** INTAKE → TRIAGE → IMPLEMENTING (2026-05-20 accelerated)
 
-All governance, handoff, and tracking artifacts are **ready**. Development work begins tomorrow morning.
+All governance, handoff, and tracking artifacts are **ready**. Development work
+begins tomorrow morning.
 
 ---
 
@@ -33,7 +34,8 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 ### Dev Agent (NOW — Phase 1 ACTIVE)
 
 - [x] Read [docs/sprint-1/dev-handoff.md](dev-handoff.md) — assumed complete
-- [x] Review all 15 issues in [docs/sprint-1/github-issues.md](github-issues.md) — assumed complete
+- [x] Review all 15 issues in [docs/sprint-1/github-issues.md](github-issues.md)
+      — assumed complete
 - [x] Phase 1 work COMMENCED (Issues #3, #1, #2, #9)
 - [ ] Update [docs/sprint-1/progress.md](progress.md) with daily status
 - [ ] Target Phase 1 completion: 2026-05-22 EOD
@@ -49,13 +51,13 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 
 ## 📋 Phase Timeline
 
-| Phase | Issues | Start | End | Dev Days | QA Days | Milestone |
-| ------- | -------- | ------- | ----- | ---------- | --------- | ----------- |
-| **1** | #3, #1, #2, #9 | 2026-05-21 | 2026-05-22 | 2 | 1 | Infrastructure stable |
-| **2** | #4, #5, #6 | 2026-05-22 | 2026-05-24 | 2 | 1 | Critical stories done |
-| **3** | #7, #8, #10, #11, #12 | 2026-05-24 | 2026-05-27 | 2 | 1 | High-priority coverage |
-| **4** | #13, #14, #15 | 2026-05-27 | 2026-05-29 | 2 | 1 | All stories complete |
-| **QA Final** | — | 2026-05-30 | 2026-06-02 | — | 4 | Sign-off + merge |
+| Phase        | Issues                | Start      | End        | Dev Days | QA Days | Milestone              |
+| ------------ | --------------------- | ---------- | ---------- | -------- | ------- | ---------------------- |
+| **1**        | #3, #1, #2, #9        | 2026-05-21 | 2026-05-22 | 2        | 1       | Infrastructure stable  |
+| **2**        | #4, #5, #6            | 2026-05-22 | 2026-05-24 | 2        | 1       | Critical stories done  |
+| **3**        | #7, #8, #10, #11, #12 | 2026-05-24 | 2026-05-27 | 2        | 1       | High-priority coverage |
+| **4**        | #13, #14, #15         | 2026-05-27 | 2026-05-29 | 2        | 1       | All stories complete   |
+| **QA Final** | —                     | 2026-05-30 | 2026-06-02 | —        | 4       | Sign-off + merge       |
 
 ---
 
@@ -127,12 +129,12 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 
 ## 📞 Escalation Path
 
-| Issue Type | Route | Contact |
-| ----------- | ------- | --------- |
-| Technical blocker | Dev → Producer → QA | Remy |
-| Test failure | QA → Producer → Dev | Remy |
-| Resource constraint | Any → Producer | Remy |
-| Merge decision | QA → Producer | Remy |
+| Issue Type          | Route               | Contact |
+| ------------------- | ------------------- | ------- |
+| Technical blocker   | Dev → Producer → QA | Remy    |
+| Test failure        | QA → Producer → Dev | Remy    |
+| Resource constraint | Any → Producer      | Remy    |
+| Merge decision      | QA → Producer       | Remy    |
 
 ---
 
@@ -176,7 +178,7 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 ✅ 0 new console errors  
 ✅ 0 regressions  
 ✅ QA sign-off issued  
-✅ Code merged to main  
+✅ Code merged to main
 
 ---
 

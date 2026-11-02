@@ -30,11 +30,11 @@
       "sha256": "8738e91504509c55ca3661e1e444d5285dc4258f8a389498f892e06c56491edd"
     },
     {
-      "file": "scripts/pre_tool_use_wrapper.cjs",
+      "file": "scripts/pre_tool_use_wrapper [historical CommonJS implementation]",
       "sha256": "f44dd96000cd63e41b9d22cb0aaacbe3ab424eb01e462226c4a5d1fa62c27305"
     },
     {
-      "file": "scripts/python314.cjs",
+      "file": "scripts/python314 [historical CommonJS implementation]",
       "sha256": "66d817a1c0219785827aa3de8f083c1c6ed063d07a6bdd88a0c45745b98c2d00"
     },
     {
@@ -1681,7 +1681,7 @@
     {
       "toolId": "ESLint8",
       "patternId": "ESLint8_security_detect-non-literal-fs-filename",
-      "filePath": "scripts\\pre_tool_use_wrapper.cjs",
+      "filePath": "scripts\\pre_tool_use_wrapper [historical CommonJS implementation]",
       "line": 10,
       "column": 6,
       "severity": "High",
@@ -1691,7 +1691,7 @@
     {
       "toolId": "ESLint8",
       "patternId": "ESLint8_xss_no-mixed-html",
-      "filePath": "scripts\\python314.cjs",
+      "filePath": "scripts\\python314 [historical CommonJS implementation]",
       "line": 34,
       "column": 5,
       "severity": "High",

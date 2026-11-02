@@ -4,9 +4,10 @@ Sets the portal container for all overlay elements rendered by its children.
 
 ## Introduction
 
-`UNSAFE_PortalProvider` is a utility wrapper component that can be used to set where components like
-Modals, Popovers, Toasts, and Tooltips will portal their overlay element to. This is typically used when
-your app is already portalling other elements to a location other than the `document.body` and thus requires
+`UNSAFE_PortalProvider` is a utility wrapper component that can be used to set
+where components like Modals, Popovers, Toasts, and Tooltips will portal their
+overlay element to. This is typically used when your app is already portalling
+other elements to a location other than the `document.body` and thus requires
 your React Aria components to send their overlays to the same container.
 
 <InlineAlert variant="notice">
@@ -19,22 +20,23 @@ your React Aria components to send their overlays to the same container.
 
 ## Example
 
-The example below shows how you can use `UNSAFE_PortalProvider` to portal your Toasts to an arbitrary container. Note that
-the Toast in this example is taken directly from the [React Aria Components Toast documentation](Toast.md), please visit that page for
-a detailed explanation of its implementation.
+The example below shows how you can use `UNSAFE_PortalProvider` to portal your
+Toasts to an arbitrary container. Note that the Toast in this example is taken
+directly from the [React Aria Components Toast documentation](Toast.md), please
+visit that page for a detailed explanation of its implementation.
 
 ```tsx
 'use client';
 import React from 'react';
-import {Button} from 'vanilla-starter/Button';
-import {MyToastRegion} from './MyToastRegion'
-import {UNSAFE_PortalProvider} from '@react-aria/overlays';
-import {UNSTABLE_ToastQueue as ToastQueue} from 'react-aria-components/Toast';
+import { Button } from 'vanilla-starter/Button';
+import { MyToastRegion } from './MyToastRegion';
+import { UNSAFE_PortalProvider } from '@react-aria/overlays';
+import { UNSTABLE_ToastQueue as ToastQueue } from 'react-aria-components/Toast';
 
 // Define the type for your toast content.
 interface MyToastContent {
-  title: string,
-  description?: string
+  title: string;
+  description?: string;
 }
 
 // Create a global ToastQueue.
@@ -48,21 +50,35 @@ function App() {
       <UNSAFE_PortalProvider getContainer={() => container.current}>
         <MyToastRegion queue={queue} />
         <Button
-          onPress={() => queue.add({
-            title: 'Toast complete!',
-            description: 'Great success.'
-          })}>
+          onPress={() =>
+            queue.add({
+              title: 'Toast complete!',
+              description: 'Great success.',
+            })
+          }
+        >
           Open Toast
         </Button>
       </UNSAFE_PortalProvider>
-      <div ref={container} style={{height: '110px', width: '200px',  overflow: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', padding: '5px'}}>
+      <div
+        ref={container}
+        style={{
+          height: '110px',
+          width: '200px',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          padding: '5px',
+        }}
+      >
         Toasts are portalled here!
       </div>
     </>
   );
 }
 
-<App />
+<App />;
 ```
 
 ```css
@@ -103,12 +119,12 @@ function App() {
     flex: 1 1 auto;
     min-width: 0px;
 
-    [slot=title] {
+    [slot='title'] {
       font-weight: bold;
     }
   }
 
-  .react-aria-Button[slot=close] {
+  .react-aria-Button[slot='close'] {
     flex: 0 0 auto;
     background: none;
     border: none;
@@ -123,7 +139,9 @@ function App() {
     outline: none;
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-background), 0 0 0 4px var(--highlight-foreground);
+      box-shadow:
+        0 0 0 2px var(--highlight-background),
+        0 0 0 4px var(--highlight-foreground);
     }
 
     &[data-pressed] {
@@ -131,13 +149,13 @@ function App() {
     }
   }
 }
-
 ```
 
 ## Contexts
 
-The `getContainer` set by the nearest PortalProvider can be accessed by calling `useUNSAFE_PortalContext`. This can be
-used by custom overlay components to ensure that they are also being consistently portalled throughout your app.
+The `getContainer` set by the nearest PortalProvider can be accessed by calling
+`useUNSAFE_PortalContext`. This can be used by custom overlay components to
+ensure that they are also being consistently portalled throughout your app.
 
 <FunctionAPI
   links={docs.links}
@@ -145,11 +163,11 @@ used by custom overlay components to ensure that they are also being consistentl
 />
 
 ```tsx
-import {useUNSAFE_PortalContext} from '@react-aria/overlays';
+import { useUNSAFE_PortalContext } from '@react-aria/overlays';
 
 function MyOverlay(props) {
-  let {children} = props;
-  let {getContainer} = useUNSAFE_PortalContext();
+  let { children } = props;
+  let { getContainer } = useUNSAFE_PortalContext();
   return ReactDOM.createPortal(children, getContainer());
 }
 ```

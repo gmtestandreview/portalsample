@@ -24,9 +24,8 @@
  * UNRESOLVED and left alone - guessing would reintroduce the defect this script exists to catch.
  */
 
-/* eslint-disable no-console -- this is a CLI reporter; stdout is its interface. */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 // Imported explicitly rather than relied on as a global: eslint.config.mjs gives `**/*.mjs` browser
 // globals, so a bare `process` is an undefined-variable error here.
 import process from 'node:process';
@@ -59,14 +58,21 @@ function extractAnchors(block) {
   for (const m of hay.matchAll(/'([^'\n]{8,})'|"([^"\n]{8,})"/gu)) {
     anchors.add(m[1] ?? m[2]);
   }
-  for (const m of hay.matchAll(/\b([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)\b/gu)) {
-    anchors.add(m[1]);
+  // SCREAMING_SNAKE constants: an upper-case word run that contains an underscore
+  // and does not end with one.
+  for (const m of hay.matchAll(/\b([A-Z][A-Z0-9_]*)\b/gu)) {
+    if (m[1].includes('_') && !m[1].endsWith('_')) anchors.add(m[1]);
   }
   for (const m of hay.matchAll(/\b([a-z][a-zA-Z0-9]{7,})\b/gu)) {
     anchors.add(m[1]);
   }
+  // PascalCase identifiers are useful anchors, but ordinary title-case prose is not.
+  // Require an internal capital so words such as "Australian" are excluded.
+  for (const m of hay.matchAll(/\b([A-Z][a-zA-Z0-9]*)\b/gu)) {
+    if (/[A-Z]/u.test(m[1].slice(1))) anchors.add(m[1]);
+  }
   for (const m of hay.matchAll(
-    /\b([A-Z][a-zA-Z0-9]{2,}\.[A-Za-z][a-zA-Z0-9]{2,})\b/gu
+    /\b([A-Z][a-zA-Z0-9]{2,}\.[A-Za-z][a-zA-Z0-9]{2,})\b/gu,
   )) {
     anchors.add(m[1]);
   }
@@ -156,6 +162,13 @@ function knownPathIndex() {
   return knownPaths;
 }
 
+function isRepoPath(candidate) {
+  const fromRoot = relative(REPO_ROOT, candidate);
+  return (
+    fromRoot === '' || (!fromRoot.startsWith('..') && !isAbsolute(fromRoot))
+  );
+}
+
 /**
  * Citations are written at three depths: full repo-relative path, a partial path such as
  * `quotation/index.tsx`, and a bare filename. All three name the same file, so all three are
@@ -163,17 +176,19 @@ function knownPathIndex() {
  * rather than guessed.
  */
 function resolveCitedPath(cited) {
-  const direct = join(REPO_ROOT, cited);
-  if (existsSync(direct)) return direct;
+  const direct = resolve(REPO_ROOT, cited);
+  // eslint-disable-next-line security/detect-non-literal-fs-filename -- the candidate is constrained to REPO_ROOT below
+  if (isRepoPath(direct) && existsSync(direct)) return direct;
 
   const suffix = cited.startsWith('/') ? cited : `/${cited}`;
   const matches = [...knownPathIndex()].filter(
-    (p) => p === cited || p.endsWith(suffix)
+    (p) => p === cited || p.endsWith(suffix),
   );
   const unique = [...new Set(matches)];
   if (unique.length === 1) {
-    const viaKnown = join(REPO_ROOT, unique[0]);
-    if (existsSync(viaKnown)) return viaKnown;
+    const viaKnown = resolve(REPO_ROOT, unique[0]);
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- the candidate is constrained to REPO_ROOT below
+    if (isRepoPath(viaKnown) && existsSync(viaKnown)) return viaKnown;
   }
   return null;
 }
@@ -201,23 +216,44 @@ blocks.forEach((b, i) => {
   b.text = registerLines.slice(b.start, b.end).join('\n');
 });
 
-const CITATION =
-  /`([A-Za-z0-9_\-./]+\.(?:ts|tsx|json))(?::(\d+)(?:-(\d+))?)?`/gu;
+const CITATION = /`([^`\r\n]+)`/gu;
+
+function parseCitation(value) {
+  const lastDot = value.lastIndexOf('.');
+  if (lastDot < 1) return null;
+
+  const colon = value.indexOf(':', lastDot);
+  const path = colon === -1 ? value : value.slice(0, colon);
+  const extension = path.slice(lastDot + 1);
+  if (!['ts', 'tsx', 'json'].includes(extension)) return null;
+
+  if (colon === -1) return { citedPath: path, l1: null };
+
+  const range = value.slice(colon + 1).split('-');
+  if (
+    range.length > 2 ||
+    range.some((part) => part.length === 0 || !Number.isInteger(Number(part)))
+  ) {
+    return null;
+  }
+
+  return { citedPath: path, l1: Number(range[0]) };
+}
 
 // A parser that matches nothing looks exactly like a clean pass. Refuse to report success unless
 // the register was actually understood - this is how the CRLF bug above hid on its first run.
 const MIN_EXPECTED_RULES = 40;
 if (blocks.length < MIN_EXPECTED_RULES) {
   console.error(
-    `FAIL: parsed only ${blocks.length} rule blocks from ${REGISTER}.`
+    `FAIL: parsed only ${blocks.length} rule blocks from ${REGISTER}.`,
   );
   console.error(
     'Expected at least ' +
       MIN_EXPECTED_RULES +
-      '. The register format has changed, or'
+      '. The register format has changed, or',
   );
   console.error(
-    'the parser is broken - either way this check is not validating anything.'
+    'the parser is broken - either way this check is not validating anything.',
   );
   process.exit(2);
 }
@@ -228,7 +264,7 @@ const results = [];
 // and the Source column of the summary table - which is what a reader consults first. Checking only
 // the former lets a wrong table entry sail through, so both are collected here and validated alike.
 const anchorsByRule = new Map(
-  blocks.map((b) => [b.id, extractAnchors(b.text)])
+  blocks.map((b) => [b.id, extractAnchors(b.text)]),
 );
 
 const citationSites = [];
@@ -278,7 +314,9 @@ for (const site of citationSites) {
   const anchors = anchorsByRule.get(site.id) ?? [];
 
   for (const m of sourceLine.matchAll(CITATION)) {
-    const [, citedPath, l1] = m;
+    const citation = parseCitation(m[1]);
+    if (!citation) continue;
+    const { citedPath, l1 } = citation;
     const abs = resolveCitedPath(citedPath);
     const entry = {
       rule: block.id,
@@ -296,12 +334,22 @@ for (const site of citationSites) {
       continue;
     }
     if (!l1) {
-      entry.status = 'NO_LINE';
-      entry.detail = 'citation has no line number';
+      if (site.where === 'table') {
+        // The summary table intentionally names stable files only. Precise line
+        // ownership lives in each rule's detail section (see the register note
+        // above the table), so a file-only table citation is valid when the file
+        // exists and must not be reported as missing evidence.
+        entry.detail =
+          'summary-table citation intentionally omits a line number';
+      } else {
+        entry.status = 'NO_LINE';
+        entry.detail = 'citation has no line number';
+      }
       results.push(entry);
       continue;
     }
 
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- abs is returned only for an existing path under REPO_ROOT
     const srcLines = readFileSync(abs, 'utf8').split(/\r?\n/u);
     entry.fileLines = srcLines.length;
 
@@ -324,7 +372,8 @@ for (const site of citationSites) {
       entry.status !== 'PAST_EOF' &&
       scored.some(
         (s) =>
-          s.score > 0 && Math.abs(s.line - entry.cited) <= DRIFT_TOLERANCE_LINES
+          s.score > 0 &&
+          Math.abs(s.line - entry.cited) <= DRIFT_TOLERANCE_LINES,
       );
 
     if (citedSupported) {
@@ -388,18 +437,17 @@ if (FIX) {
     // partial path or bare filename in the summary table. Match on the filename plus the stale
     // line number so every spelling of the same citation is repaired together; otherwise the
     // table keeps a wrong number that the detail block no longer has.
-    const base = r.path
-      .split('/')
-      .pop()
-      .replace(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
-    const pattern = new RegExp(
-      `\`([A-Za-z0-9_\\-./]*${base}):${r.cited}(?![0-9-])\``,
-      'gu'
-    );
-    const replaced = updated.replace(
-      pattern,
-      (_full, prefix) => `\`${prefix}:${range}\``
-    );
+    const base = r.path.split('/').pop();
+    const replaced = updated.replace(CITATION, (full, rawCitation) => {
+      const citation = parseCitation(rawCitation);
+      if (
+        citation?.l1 !== r.cited ||
+        citation.citedPath.split('/').pop() !== base
+      ) {
+        return full;
+      }
+      return `\`${citation.citedPath}:${range}\``;
+    });
     if (replaced !== updated) {
       updated = replaced;
       rewritten += 1;
@@ -408,7 +456,7 @@ if (FIX) {
 
   if (rewritten > 0) writeFileSync(REGISTER, updated, 'utf8');
   (JSON_OUT ? console.error : console.log)(
-    `re-derived ${rewritten} citation(s)`
+    `re-derived ${rewritten} citation(s)`,
   );
 }
 
@@ -418,20 +466,20 @@ if (JSON_OUT) {
   const problems = results.filter((r) => r.status !== 'OK');
   for (const r of problems) {
     console.log(
-      `${r.status.padEnd(12)} ${r.rule}  ${r.path}:${r.cited ?? '-'}  ${r.detail}`
+      `${r.status.padEnd(12)} ${r.rule}  ${r.path}:${r.cited ?? '-'}  ${r.detail}`,
     );
   }
   console.log('');
   console.log(`citations checked: ${results.length}`);
   for (const [k, v] of Object.entries(counts).sort(([a], [b]) =>
-    a.localeCompare(b)
+    a.localeCompare(b),
   ))
     console.log(`  ${k.padEnd(12)} ${v}`);
 }
 
 // Wrong and unreachable citations always fail — they are machine-decidable.
 const failing = results.filter((r) =>
-  ['MISCITED', 'PAST_EOF', 'MISSING_FILE'].includes(r.status)
+  ['MISCITED', 'PAST_EOF', 'MISSING_FILE'].includes(r.status),
 );
 
 /**
@@ -445,7 +493,7 @@ const failing = results.filter((r) =>
  * automatically would mean the ceiling is always whatever today happens to be, which catches
  * nothing — lowering it is a deliberate edit that records the gain.
  */
-const UNRESOLVED_BASELINE = 22;
+const UNRESOLVED_BASELINE = 0;
 const unresolved = counts.UNRESOLVED ?? 0;
 
 let exitCode = 0;
@@ -453,7 +501,7 @@ let exitCode = 0;
 if (failing.length > 0 && !FIX) {
   console.error('');
   console.error(
-    `FAIL: ${failing.length} citation(s) in analysis/BUSINESS_RULES.md do not resolve.`
+    `FAIL: ${failing.length} citation(s) in analysis/BUSINESS_RULES.md do not resolve.`,
   );
   console.error('Run: node scripts/verify-rule-citations.mjs --fix');
   exitCode = 1;
@@ -462,23 +510,23 @@ if (failing.length > 0 && !FIX) {
 if (!FIX && unresolved > UNRESOLVED_BASELINE) {
   console.error('');
   console.error(
-    `FAIL: ${unresolved} UNRESOLVED citation(s) against a baseline of ${UNRESOLVED_BASELINE}.`
+    `FAIL: ${unresolved} UNRESOLVED citation(s) against a baseline of ${UNRESOLVED_BASELINE}.`,
   );
   console.error(
-    `${unresolved - UNRESOLVED_BASELINE} citation(s) were added without an anchorable line.`
+    `${unresolved - UNRESOLVED_BASELINE} citation(s) were added without an anchorable line.`,
   );
   console.error(
-    'Anchor them, or raise UNRESOLVED_BASELINE with a written rationale.'
+    'Anchor them, or raise UNRESOLVED_BASELINE with a written rationale.',
   );
   exitCode = 1;
 } else if (!FIX && unresolved < UNRESOLVED_BASELINE) {
   const logNote = JSON_OUT ? console.error : console.log;
   logNote('');
   logNote(
-    `NOTE: UNRESOLVED is ${unresolved}, below the baseline of ${UNRESOLVED_BASELINE}.`
+    `NOTE: UNRESOLVED is ${unresolved}, below the baseline of ${UNRESOLVED_BASELINE}.`,
   );
   logNote(
-    'Lower UNRESOLVED_BASELINE in scripts/verify-rule-citations.mjs to lock the gain in.'
+    'Lower UNRESOLVED_BASELINE in scripts/verify-rule-citations.mjs to lock the gain in.',
   );
 }
 

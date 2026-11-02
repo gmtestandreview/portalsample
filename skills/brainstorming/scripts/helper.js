@@ -7,15 +7,6 @@
   function nextReconnectDelay(current, max) {
     return Math.min(current * 2, max);
   }
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-      nextReconnectDelay,
-      MIN_RECONNECT_MS,
-      MAX_RECONNECT_MS,
-      TOMBSTONE_AFTER_MS,
-    };
-  }
-
   // Everything below is browser-only; bail out when loaded in Node (tests).
   if (typeof window === 'undefined') return;
 

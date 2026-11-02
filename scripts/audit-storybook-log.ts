@@ -11,9 +11,9 @@
  *
  * Usage: node scripts/audit-storybook-log.ts <path-to-log>
  */
-import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
+import { readTextFile } from './safe-file-io.mjs';
 
 export type TargetHit = { target: string; count: number };
 
@@ -46,7 +46,7 @@ const COMPLETION_MARKER = /^\s*Test Files\s+\d/mu;
 export const auditLog = (log: string): LogAudit => {
   const completed = COMPLETION_MARKER.test(log);
   const truncatedBy = TRUNCATION_MARKERS.filter((marker) =>
-    log.includes(marker)
+    log.includes(marker),
   );
   const hits = TARGET_STRINGS.map((target) => ({
     target,
@@ -72,7 +72,7 @@ export const formatReport = (audit: LogAudit, source: string): string => {
   if (!audit.completed) {
     lines.push(
       '  no `Test Files` summary: the run did not reach its end-of-run phases,',
-      '  so a zero-hit scan is not evidence that the diagnostics are gone.'
+      '  so a zero-hit scan is not evidence that the diagnostics are gone.',
     );
   }
 
@@ -103,11 +103,11 @@ if (isEntryPoint()) {
 
   if (logPath === undefined) {
     process.stdout.write(
-      'usage: node scripts/audit-storybook-log.ts <path-to-log>\n'
+      'usage: node scripts/audit-storybook-log.ts <path-to-log>\n',
     );
     process.exitCode = 2;
   } else {
-    const audit = auditLog(readFileSync(logPath, 'utf8'));
+    const audit = auditLog(readTextFile(logPath));
     process.stdout.write(`${formatReport(audit, logPath)}\n`);
     process.exitCode = audit.verdict === 'clean' ? 0 : 1;
   }

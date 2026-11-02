@@ -2,7 +2,9 @@
 
 ## What is an ADR?
 
-Architecture Decision Records capture important architectural decisions made along with their context and consequences. They help maintain institutional knowledge and explain why systems are built the way they are.
+Architecture Decision Records capture important architectural decisions made
+along with their context and consequences. They help maintain institutional
+knowledge and explain why systems are built the way they are.
 
 ## ADR Template
 
@@ -15,7 +17,8 @@ Architecture Decision Records capture important architectural decisions made alo
 
 #### Context and Problem Statement
 
-[Describe the context and problem that needs to be solved. What are we trying to achieve?]
+[Describe the context and problem that needs to be solved. What are we trying to
+achieve?]
 
 #### Decision Drivers
 
@@ -78,7 +81,9 @@ Architecture Decision Records capture important architectural decisions made alo
 
 #### Context and Problem Statement
 
-Our monolithic application is becoming difficult to scale and deploy. Different teams are stepping on each other's toes, and deployment cycles are getting longer. We need to decide on our architectural approach for the next 3-5 years.
+Our monolithic application is becoming difficult to scale and deploy. Different
+teams are stepping on each other's toes, and deployment cycles are getting
+longer. We need to decide on our architectural approach for the next 3-5 years.
 
 #### Decision Drivers
 
@@ -97,7 +102,8 @@ Our monolithic application is becoming difficult to scale and deploy. Different 
 
 #### Decision Outcome
 
-**Chosen option**: "Microservices", because it best supports our team autonomy needs and scaling requirements, despite added complexity.
+**Chosen option**: "Microservices", because it best supports our team autonomy
+needs and scaling requirements, despite added complexity.
 
 ##### Positive Consequences
 
@@ -123,7 +129,9 @@ Our monolithic application is becoming difficult to scale and deploy. Different 
 
 #### Context and Problem Statement
 
-With the move to microservices (ADR-001), we need a container orchestration platform to manage deployment, scaling, and operations of application containers.
+With the move to microservices (ADR-001), we need a container orchestration
+platform to manage deployment, scaling, and operations of application
+containers.
 
 #### Decision Drivers
 
@@ -142,7 +150,8 @@ With the move to microservices (ADR-001), we need a container orchestration plat
 
 #### Decision Outcome
 
-**Chosen option**: "Kubernetes", because of its maturity, ecosystem, and multi-cloud support.
+**Chosen option**: "Kubernetes", because of its maturity, ecosystem, and
+multi-cloud support.
 
 ##### Positive Consequences
 
@@ -167,7 +176,9 @@ With the move to microservices (ADR-001), we need a container orchestration plat
 
 #### Context and Problem Statement
 
-With multiple microservices, we need a unified entry point for external clients that handles cross-cutting concerns like authentication, rate limiting, and monitoring.
+With multiple microservices, we need a unified entry point for external clients
+that handles cross-cutting concerns like authentication, rate limiting, and
+monitoring.
 
 #### Decision Drivers
 
@@ -186,7 +197,8 @@ With multiple microservices, we need a unified entry point for external clients 
 
 #### Decision Outcome
 
-**Chosen option**: "Kong", because of its flexibility and plugin ecosystem while avoiding vendor lock-in.
+**Chosen option**: "Kong", because of its flexibility and plugin ecosystem while
+avoiding vendor lock-in.
 
 ---
 
@@ -194,7 +206,8 @@ With multiple microservices, we need a unified entry point for external clients 
 
 ### 1. Frontend Architecture
 
-- **Single Page Application (SPA)** vs **Server-Side Rendering (SSR)** vs **Static Site Generation (SSG)**
+- **Single Page Application (SPA)** vs **Server-Side Rendering (SSR)** vs
+  **Static Site Generation (SSG)**
 - **React** vs **Vue** vs **Angular** vs **Svelte**
 - **Monorepo** vs **Polyrepo**
 - **Micro-frontends** vs **Monolithic frontend**
@@ -290,7 +303,8 @@ Write an ADR when:
 
 ## Anti-patterns to Avoid
 
-1. **Decision by Committee**: Too many stakeholders leading to compromise solutions
+1. **Decision by Committee**: Too many stakeholders leading to compromise
+   solutions
 2. **Analysis Paralysis**: Over-analyzing instead of deciding
 3. **Resume-Driven Development**: Choosing tech for personal goals
 4. **Hype-Driven Development**: Choosing the newest/coolest tech

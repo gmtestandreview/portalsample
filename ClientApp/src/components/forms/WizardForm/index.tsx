@@ -37,7 +37,7 @@ const WizardForm: FC<WizardFormProps> = (props: Readonly<WizardFormProps>) => {
       resolvedPath.endsWith(step.props.location)
         ? resolvedPath.slice(0, -step.props.location.length) || '/'
         : basePath,
-    parentPath
+    parentPath,
   );
 
   return (

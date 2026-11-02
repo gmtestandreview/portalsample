@@ -1,10 +1,20 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import type { ComponentProps } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import type { AttachmentDto } from '@/api/web-api-client';
 import RhfAttachmentItem from '@/components/Inputs/RhfAttachment/RhfAttachmentItem';
+
+type AttachmentItemProps = ComponentProps<typeof RhfAttachmentItem>;
+type CategoryUpdate = NonNullable<AttachmentItemProps['onCategoryUpdate']>;
+type CategoryError = NonNullable<AttachmentItemProps['onCategoryError']>;
+type RemoveItem = NonNullable<AttachmentItemProps['onRemoveItem']>;
+type UnhandledRejectionHandler = (
+  reason: unknown,
+  promise: Promise<unknown>,
+) => void;
 
 const attachment = {
   id: 'doc-1',
@@ -63,7 +73,7 @@ function ValuesProbe() {
 
 const renderItem = (
   props: Partial<React.ComponentProps<typeof RhfAttachmentItem>> = {},
-  initialAttachment: AttachmentDto = attachment
+  initialAttachment: AttachmentDto = attachment,
 ) =>
   render(
     <FormHarness initialValues={{ attachments: [initialAttachment] }}>
@@ -77,105 +87,133 @@ const renderItem = (
         {...props}
       />
       <ValuesProbe />
-    </FormHarness>
+    </FormHarness>,
   );
 
-describe('RhfAttachmentItem', () => {
+describe('rhf attachment item behavior', () => {
   it('renders the file link, file size, category options, and validation message', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderItem();
     await user.click(screen.getByRole('combobox', { name: 'Category' }));
     await user.tab();
 
     const fileLink = screen.getByRole('link', { name: 'manual.pdf' });
-    expect(fileLink).toHaveAttribute('download', 'manual.pdf');
-    expect(fileLink.getAttribute('href')).toMatch(/^blob:/);
-    expect(screen.getByText('2 kb')).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveClass(
-      'is-invalid'
-    );
+
+    expect({
+      download: fileLink.getAttribute('download'),
+      hrefIsBlob: fileLink.getAttribute('href')?.startsWith('blob:'),
+      fileSize: screen.getByText('2 kb').textContent,
+      categoryInvalid: screen
+        .getByRole('combobox', { name: 'Category' })
+        .classList.contains('is-invalid'),
+      validationMessage: screen.getByText(
+        'Select a category that best describes this document.',
+      ).textContent,
+    }).toStrictEqual({
+      download: 'manual.pdf',
+      hrefIsBlob: true,
+      fileSize: '2 kb',
+      categoryInvalid: true,
+      validationMessage: 'Select a category that best describes this document.',
+    });
     expect(
-      screen.getByText('Select a category that best describes this document.')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('option', { name: 'Photos or diagrams' })
+      screen.getByRole('option', { name: 'Photos or diagrams' }),
     ).toHaveValue('Photos or diagrams');
   });
 
   it('updates the category field and calls the persisted-category callback when a document id is present', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
     renderItem({ onCategoryUpdate });
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
 
     await user.tab();
 
     expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate');
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentCategory":"Certificate"'
-      )
+        '"attachmentCategory":"Certificate"',
+      ),
     );
     await waitFor(() =>
       expect(screen.getByTestId('touched')).toHaveTextContent(
-        '"attachmentCategory":true'
-      )
+        '"attachmentCategory":true',
+      ),
     );
   });
 
   it('reports a failed category save and puts the previous category back', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCategoryUpdate = vi
-      .fn()
+      .fn<CategoryUpdate>()
       .mockRejectedValue(new Error('token abc123 expired'));
-    const onCategoryError = vi.fn();
+    const onCategoryError = vi.fn<CategoryError>();
     renderItem(
       { onCategoryUpdate, onCategoryError },
-      { ...attachment, attachmentCategory: 'Manuals' }
+      { ...attachment, attachmentCategory: 'Manuals' },
     );
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
 
     await waitFor(() =>
       expect(onCategoryError).toHaveBeenCalledWith(
-        'Could not save the category for manual.pdf.'
-      )
+        'Could not save the category for manual.pdf.',
+      ),
     );
+
     expect(onCategoryError).toHaveBeenCalledTimes(1);
+
     await waitFor(() =>
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-        'Manuals'
-      )
+        'Manuals',
+      ),
     );
+
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"attachmentCategory":"Manuals"'
+      '"attachmentCategory":"Manuals"',
     );
   });
 
   it('survives a failed category save when no error handler is given', async () => {
-    const unhandled = vi.fn();
+    expect.hasAssertions();
+
+    const unhandled = vi.fn<UnhandledRejectionHandler>();
     process.on('unhandledRejection', unhandled);
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('boom'));
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('boom'));
     renderItem({ onCategoryUpdate });
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
 
     await waitFor(() =>
-      expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue('')
+      expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+        '',
+      ),
     );
     await new Promise((resolve) => setTimeout(resolve, 0));
     process.off('unhandledRejection', unhandled);
+
     expect(unhandled).not.toHaveBeenCalled();
   });
 
@@ -183,25 +221,31 @@ describe('RhfAttachmentItem', () => {
     const saved = { ...attachment, attachmentCategory: 'Manuals' };
     const pick = async (
       user: ReturnType<typeof userEvent.setup>,
-      category: string
+      category: string,
     ) =>
       user.selectOptions(
         screen.getByRole('combobox', { name: 'Category' }),
-        category
+        category,
       );
     const settle = async (save: Deferred, outcome: 'resolve' | 'reject') => {
       await act(async () => {
-        save[outcome]();
+        if (outcome === 'resolve') {
+          save.resolve();
+        } else {
+          save.reject();
+        }
         await save.promise.catch(() => {});
       });
     };
 
     it('ends at the saved category when two saves in a row both fail', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
       const onCategoryUpdate = vi
-        .fn()
+        .fn<CategoryUpdate>()
         .mockReturnValueOnce(first.promise)
         .mockReturnValueOnce(second.promise);
       renderItem({ onCategoryUpdate }, saved);
@@ -213,20 +257,22 @@ describe('RhfAttachmentItem', () => {
 
       await waitFor(() =>
         expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-          'Manuals'
-        )
+          'Manuals',
+        ),
       );
     });
 
     it('keeps a later successful save when an earlier one fails afterwards', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
       const onCategoryUpdate = vi
-        .fn()
+        .fn<CategoryUpdate>()
         .mockReturnValueOnce(first.promise)
         .mockReturnValueOnce(second.promise);
-      const onCategoryError = vi.fn();
+      const onCategoryError = vi.fn<CategoryError>();
       renderItem({ onCategoryUpdate, onCategoryError }, saved);
 
       await pick(user, 'Certificate');
@@ -234,19 +280,26 @@ describe('RhfAttachmentItem', () => {
       await settle(second, 'resolve');
       await settle(first, 'reject');
 
-      await waitFor(() => expect(onCategoryError).toHaveBeenCalled());
+      await waitFor(() =>
+        expect(onCategoryError).toHaveBeenCalledWith(
+          'Could not save the category for manual.pdf.',
+        ),
+      );
+
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-        'Other'
+        'Other',
       );
     });
 
     it('keeps the newest saved category when an older save succeeds late', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
       const third = deferred();
       const onCategoryUpdate = vi
-        .fn()
+        .fn<CategoryUpdate>()
         .mockReturnValueOnce(first.promise)
         .mockReturnValueOnce(second.promise)
         .mockReturnValueOnce(third.promise);
@@ -261,19 +314,23 @@ describe('RhfAttachmentItem', () => {
 
       await waitFor(() =>
         expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-          'Other'
-        )
+          'Other',
+        ),
       );
     });
 
     it('reverts to an empty category when the document never had one', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const failing = deferred();
-      const onCategoryUpdate = vi.fn().mockReturnValue(failing.promise);
+      const onCategoryUpdate = vi
+        .fn<CategoryUpdate>()
+        .mockReturnValue(failing.promise);
       const { id, attachmentName, attachmentSize, documentBytes } = attachment;
       renderItem(
         { onCategoryUpdate },
-        { id, attachmentName, attachmentSize, documentBytes }
+        { id, attachmentName, attachmentSize, documentBytes },
       );
 
       await pick(user, 'Certificate');
@@ -281,17 +338,21 @@ describe('RhfAttachmentItem', () => {
 
       await waitFor(() =>
         expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-          ''
-        )
+          '',
+        ),
       );
     });
 
     it.each([[[]], [null]])(
       'leaves the form alone when the list no longer holds the document (%j)',
       async (replacement) => {
+        expect.hasAssertions();
+
         const user = userEvent.setup();
         const pending = deferred();
-        const onCategoryUpdate = vi.fn().mockReturnValue(pending.promise);
+        const onCategoryUpdate = vi
+          .fn<CategoryUpdate>()
+          .mockReturnValue(pending.promise);
         renderItem({ onCategoryUpdate }, saved);
 
         await pick(user, 'Certificate');
@@ -300,16 +361,20 @@ describe('RhfAttachmentItem', () => {
         });
         await settle(pending, 'reject');
 
-        expect(methodsRef.current?.getValues('attachments')).toEqual(
-          replacement
+        expect(methodsRef.current?.getValues('attachments')).toStrictEqual(
+          replacement,
         );
-      }
+      },
     );
 
     it('writes nothing to the form when the row has gone before the save fails', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const pending = deferred();
-      const onCategoryUpdate = vi.fn().mockReturnValue(pending.promise);
+      const onCategoryUpdate = vi
+        .fn<CategoryUpdate>()
+        .mockReturnValue(pending.promise);
       const { unmount } = renderItem({ onCategoryUpdate }, saved);
 
       await pick(user, 'Certificate');
@@ -317,32 +382,43 @@ describe('RhfAttachmentItem', () => {
       await settle(pending, 'reject');
 
       expect(
-        methodsRef.current?.getValues('attachments.0.attachmentCategory')
+        methodsRef.current?.getValues('attachments.0.attachmentCategory'),
       ).toBe('Certificate');
     });
   });
 
   it('does not report an error when the category saves', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
-    const onCategoryError = vi.fn();
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
+    const onCategoryError = vi.fn<CategoryError>();
     renderItem({ onCategoryUpdate, onCategoryError });
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
 
-    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate'),
+    );
+
     expect(onCategoryError).not.toHaveBeenCalled();
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-      'Certificate'
+      'Certificate',
     );
   });
 
   it('updates the category locally when no persisted document id is available', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
     const withoutId: AttachmentDto = {
       ...attachment,
       attachmentSize: undefined,
@@ -352,83 +428,97 @@ describe('RhfAttachmentItem', () => {
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Manuals'
+      'Manuals',
     );
 
     expect(onCategoryUpdate).not.toHaveBeenCalled();
     expect(screen.queryByText('2 kb')).not.toBeInTheDocument();
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentCategory":"Manuals"'
-      )
+        '"attachmentCategory":"Manuals"',
+      ),
     );
   });
 
   it('does not render removal controls in summary mode and tolerates missing file bytes', () => {
+    expect.hasAssertions();
+
     renderItem(
       {
         canRemove: false,
         isSummary: true,
       },
-      { ...attachment, documentBytes: undefined as never }
+      { ...attachment, documentBytes: undefined as never },
     );
 
     expect(screen.getByText('manual.pdf').closest('a')).not.toHaveAttribute(
-      'href'
+      'href',
     );
     expect(
-      screen.queryByRole('button', { name: /^Delete / })
+      screen.queryByRole('button', { name: /^Delete / }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('manual.pdf').closest('.attachment')).toHaveClass(
-      'p-1'
+      'p-1',
     );
   });
 
   it('opens and closes the delete confirmation without removing the file', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onRemoveItem = vi.fn();
+    const onRemoveItem = vi.fn<RemoveItem>();
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
+
     expect(
-      screen.getByRole('heading', { name: 'Confirm deletion' })
+      screen.getByRole('heading', { name: 'Confirm deletion' }),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(onRemoveItem).not.toHaveBeenCalled();
+
     await waitFor(() =>
       expect(
-        screen.queryByRole('heading', { name: 'Confirm deletion' })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('heading', { name: 'Confirm deletion' }),
+      ).not.toBeInTheDocument(),
     );
   });
 
   it('confirms deletion with the current attachment value', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onRemoveItem = vi.fn().mockResolvedValue(undefined);
+    const onRemoveItem = vi.fn<RemoveItem>().mockResolvedValue(undefined);
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onRemoveItem).toHaveBeenCalledWith(attachment);
+
     await waitFor(() =>
       expect(
-        screen.queryByRole('heading', { name: 'Confirm deletion' })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('heading', { name: 'Confirm deletion' }),
+      ).not.toBeInTheDocument(),
     );
   });
 
   it('names each delete button after its file', () => {
+    expect.hasAssertions();
+
     renderItem();
 
     expect(
-      screen.getByRole('button', { name: 'Delete manual.pdf' })
+      screen.getByRole('button', { name: 'Delete manual.pdf' }),
     ).toBeInTheDocument();
   });
 
   it('creates one object URL per document and revokes it when the row goes', () => {
+    expect.hasAssertions();
+
     const create = vi.spyOn(URL, 'createObjectURL');
     const revoke = vi.spyOn(URL, 'revokeObjectURL');
     const { rerender, unmount } = renderItem();
@@ -445,14 +535,15 @@ describe('RhfAttachmentItem', () => {
           isSummary={false}
         />
         <ValuesProbe />
-      </FormHarness>
+      </FormHarness>,
     );
 
-    expect(create.mock.calls.length).toBe(created);
+    expect(create).toHaveBeenCalledTimes(created);
 
     unmount();
 
-    expect(revoke).toHaveBeenCalled();
+    expect(revoke).toHaveBeenCalledWith('blob:unit-test');
+
     create.mockRestore();
     revoke.mockRestore();
   });

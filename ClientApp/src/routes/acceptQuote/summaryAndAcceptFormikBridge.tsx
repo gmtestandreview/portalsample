@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useFormikContext } from 'formik';
 import { FormProvider } from 'react-hook-form';
+import type { Hideable } from '../../components/forms/types';
 import { useFormikRhfBridge } from '../../components/forms/useFormikRhfBridge';
 import { RhfHiddenRulesProvider } from '../../components/forms/RhfHidableField';
 import {
@@ -20,6 +21,18 @@ const isBridgedFieldName = createBridgedNamePredicate({
   names: ['associatedDisputes', 'associatedDispute', 'acceptanceOfQuote'],
 });
 
+const isHideable = (value: unknown): value is Hideable =>
+  typeof value === 'object' && value !== null;
+
+const getHiddenRules = (status: unknown): Hideable => {
+  if (!isHideable(status)) {
+    return NO_HIDDEN_RULES;
+  }
+
+  const hidden = status['hidden'];
+  return isHideable(hidden) ? hidden : NO_HIDDEN_RULES;
+};
+
 interface SummaryAndAcceptFormikBridgeProps {
   children?: ReactNode;
 }
@@ -34,7 +47,7 @@ interface SummaryAndAcceptFormikBridgeProps {
 const SummaryAndAcceptFormikBridge = ({
   children,
 }: Readonly<SummaryAndAcceptFormikBridgeProps>) => {
-  const { status } = useFormikContext<SummaryAndAcceptFormValues>();
+  const status: unknown = useFormikContext<SummaryAndAcceptFormValues>().status;
   const methods = useFormikRhfBridge<SummaryAndAcceptFormValues>({
     softSchema: summaryAndAcceptSaveValidation,
     hardSchema: summaryAndAcceptSubmitValidation,
@@ -44,7 +57,7 @@ const SummaryAndAcceptFormikBridge = ({
 
   return (
     <FormProvider {...methods}>
-      <RhfHiddenRulesProvider rules={status?.hidden ?? NO_HIDDEN_RULES}>
+      <RhfHiddenRulesProvider rules={getHiddenRules(status)}>
         {children}
       </RhfHiddenRulesProvider>
     </FormProvider>

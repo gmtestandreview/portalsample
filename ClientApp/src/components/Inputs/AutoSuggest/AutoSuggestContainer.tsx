@@ -34,7 +34,7 @@ const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
 };
 
 const AutoSuggestContainer = <T,>(
-  props: Readonly<AutoSuggestContainerProps<T>>
+  props: Readonly<AutoSuggestContainerProps<T>>,
 ) => {
   const {
     id,

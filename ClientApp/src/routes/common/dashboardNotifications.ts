@@ -67,7 +67,7 @@ export class DashBoardNotifications {
   };
 
   static readonly getThirdPartyAccessNotification = (
-    orgName: string
+    orgName: string,
   ): Notification => {
     const message = {
       message: `You no longer have access to the records for ${orgName}.  Your changes have not been saved.`,
@@ -87,7 +87,7 @@ export class DashBoardNotifications {
 
   static readonly getDashboardErrorNotification = (
     statusCode: HttpStatusCode,
-    _orgName?: string
+    _orgName?: string,
   ): Notification => {
     switch (statusCode) {
       case HttpStatusCode.Conflict:

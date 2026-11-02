@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useField } from 'formik';
 import { Form, ListGroup } from 'react-bootstrap';
 import TextInput from '../TextInput';
-import type { GetAccountValuesDto } from '../../../api/web-api-client';
+import type { OrgNameOption } from '../../../api/web-api-client';
 import { getFilteredSuggestions } from './suggestionUtils';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
@@ -22,7 +22,7 @@ export interface OrganisationNameLookupProps {
 }
 
 const OrganisationNameLookup = (
-  props: Readonly<OrganisationNameLookupProps>
+  props: Readonly<OrganisationNameLookupProps>,
 ) => {
   const {
     id,
@@ -38,17 +38,17 @@ const OrganisationNameLookup = (
     maxResults = 30,
   } = props;
 
-  const [_field, _meta, _fieldHelper] = useField(name);
-  const [_orgNameOptions] = useField<GetAccountValuesDto>('orgNameOptions');
-  const [_parentField] = useField(parentName ?? name);
+  const [_field, _meta, _fieldHelper] = useField<string>(name);
+  const [_orgNameOptions] = useField<OrgNameOption[]>('orgNameOptions');
+  const [_parentField] = useField<string | undefined>(parentName ?? name);
 
   const [inputValue, setInputValue] = useState('');
-  const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
 
   // Debounced filtering
@@ -62,7 +62,10 @@ const OrganisationNameLookup = (
         setFilteredSuggestions((prev) => (prev.length === 0 ? prev : []));
         return;
       }
-      const options = (_orgNameOptions.value || []) as any[];
+      const options = (_orgNameOptions.value ?? []) as unknown as Record<
+        string,
+        unknown
+      >[];
 
       if (inputValue.length >= 2) {
         if (optionsFieldName === undefined) {
@@ -113,8 +116,10 @@ const OrganisationNameLookup = (
 
   // Auto-scroll to active item
   useEffect(() => {
-    if (activeIndex >= 0 && itemRefs.current[activeIndex]) {
-      itemRefs.current[activeIndex]?.scrollIntoView({
+    const activeItem =
+      activeIndex >= 0 ? itemRefs.current.at(activeIndex) : undefined;
+    if (activeItem) {
+      activeItem.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
@@ -154,12 +159,12 @@ const OrganisationNameLookup = (
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActiveIndex((prev) =>
-        prev <= 0 ? filteredSuggestions.length - 1 : prev - 1
+        prev <= 0 ? filteredSuggestions.length - 1 : prev - 1,
       );
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (activeIndex >= 0 && activeIndex < filteredSuggestions.length) {
-        handleSelect(filteredSuggestions[activeIndex]);
+        handleSelect(filteredSuggestions.at(activeIndex) ?? inputValue);
       } else {
         handleSelect(inputValue);
       }
@@ -195,7 +200,10 @@ const OrganisationNameLookup = (
             placeholder={placeholder ?? ''}
             inlineHelpTitle={inlineHelpTitle ?? ''}
             inlineHelp={inlineHelp ?? ''}
-            onChange={(e: any) => setInputValue(e.target.value)}
+            onChange={(event: unknown) => {
+              const changeEvent = event as React.ChangeEvent<HTMLInputElement>;
+              setInputValue(changeEvent.target.value);
+            }}
             onKeyDown={handleKeyDown}
             role='combobox'
             autoComplete='off'
@@ -256,8 +264,8 @@ const OrganisationNameLookup = (
                     onClick={() => {
                       handleSelect(item, () => setActiveIndex(index));
                     }}
-                    ref={(el: any) => {
-                      itemRefs.current[index] = el;
+                    ref={(el: HTMLLIElement | null) => {
+                      itemRefs.current.splice(index, 1, el);
                     }}
                   >
                     <span aria-hidden='true'>{item}</span>

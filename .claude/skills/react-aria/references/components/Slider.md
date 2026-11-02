@@ -310,7 +310,7 @@ export function Slider<T extends number | number[]>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64 orientation-horizontal:max-w-[calc(100%-10px)]'
+        'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64 orientation-horizontal:max-w-[calc(100%-10px)]',
       )}
     >
       <Label>{label}</Label>

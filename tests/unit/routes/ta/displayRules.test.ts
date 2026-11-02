@@ -23,17 +23,16 @@ type DtoOverrides = Omit<
 };
 
 const content = (
-  overrides: Partial<InstrumentTypeContent> = {}
-): InstrumentTypeContent =>
-  ({
-    instrumentTypeId: 'type-1',
-    instrumentCategoryId: 'category-1',
-    eligibleForOiml: true,
-    ...overrides,
-  }) as InstrumentTypeContent;
+  overrides: Partial<InstrumentTypeContent> = {},
+): InstrumentTypeContent => ({
+  instrumentTypeId: 'type-1',
+  instrumentCategoryId: 'category-1',
+  eligibleForOiml: true,
+  ...overrides,
+});
 
 const dto = (
-  overrides: DtoOverrides = {}
+  overrides: DtoOverrides = {},
 ): Partial<ApplicationAndInstrumentStepDto> => {
   const { newSubOptions, instrumentTypeContent, ...otherOverrides } = overrides;
   const result: Partial<ApplicationAndInstrumentStepDto> = {
@@ -60,20 +59,23 @@ const dto = (
 };
 
 const step = (
-  patternApprovalType?: PatternApprovalRequiredValues
-): ApplicationAndInstrumentStep =>
-  ({ patternApprovalType }) as ApplicationAndInstrumentStep;
+  patternApprovalType?: PatternApprovalRequiredValues,
+): ApplicationAndInstrumentStep => ({ patternApprovalType });
 
-describe('DisplayRules.isOIMLHiddenP', () => {
+describe('displayRules.isOIMLHiddenP', () => {
   it('hides the OIML option when the sub-option is not ticked', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHiddenP(dto({ newSubOptions: [] }));
 
     expect(result).toBe(true);
   });
 
   it('treats an absent sub-option list as ticked and falls through to content', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHiddenP(
-      dto({ newSubOptions: undefined, instrumentTypeContent: undefined })
+      dto({ newSubOptions: undefined, instrumentTypeContent: undefined }),
     );
 
     // No content can be resolved, so eligibility cannot be determined.
@@ -81,71 +83,83 @@ describe('DisplayRules.isOIMLHiddenP', () => {
   });
 
   it('hides the option when no content matches the selected type and category', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHiddenP(
       dto({
         instrumentTypeContent: [
           content({ instrumentTypeId: 'a-different-type' }),
         ],
-      })
+      }),
     );
 
     expect(result).toBe(true);
   });
 
   it('requires both the type and the category to match before using content', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHiddenP(
       dto({
         instrumentTypeContent: [
           content({ instrumentCategoryId: 'a-different-category' }),
         ],
-      })
+      }),
     );
 
     expect(result).toBe(true);
   });
 
   it('reports hidden for matching content that is eligible for OIML', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHiddenP(
-      dto({ instrumentTypeContent: [content({ eligibleForOiml: true })] })
+      dto({ instrumentTypeContent: [content({ eligibleForOiml: true })] }),
     );
 
     expect(result).toBe(true);
   });
 
   it('reports not hidden for matching content that is ineligible for OIML', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHiddenP(
       dto({
         instrumentTypeContent: [content({ eligibleForOiml: false })],
-      })
+      }),
     );
 
     expect(result).toBe(false);
   });
 });
 
-describe('DisplayRules.isOIMLHidden', () => {
+describe('displayRules.isOIMLHidden', () => {
   it('hides the option when the sub-option list excludes the OIML certificate', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHidden({
       newSubOptions: [
         PatternApprovalRequiredValueOptions.CertificateofApproval,
       ],
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(true);
   });
 
   it('shows the option when the sub-option list includes the OIML certificate', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isOIMLHidden({
       newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(false);
   });
 
   it('hides the option when no sub-options have been chosen', () => {
-    const result = DisplayRules.isOIMLHidden(
-      {} as ApplicationAndInstrumentStep
-    );
+    expect.hasAssertions();
+
+    const result = DisplayRules.isOIMLHidden({});
 
     expect(result).toBe(true);
   });
@@ -154,90 +168,109 @@ describe('DisplayRules.isOIMLHidden', () => {
 describe.each([
   {
     name: 'isApplOtherHiddenP',
-    rule: DisplayRules.isApplOtherHiddenP,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isApplOtherHiddenP(input),
     shows: PatternApprovalRequiredValues.OtherApproval,
   },
   {
     name: 'isVariationHiddenP',
-    rule: DisplayRules.isVariationHiddenP,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isVariationHiddenP(input),
     shows: PatternApprovalRequiredValues.Variation,
   },
   {
     name: 'isNewCertificateHiddenP',
-    rule: DisplayRules.isNewCertificateHiddenP,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isNewCertificateHiddenP(input),
     shows: PatternApprovalRequiredValues.NewCertificate,
   },
   {
     name: 'isApplOtherHidden',
-    rule: DisplayRules.isApplOtherHidden,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isApplOtherHidden(input),
     shows: PatternApprovalRequiredValues.OtherApproval,
   },
   {
     name: 'isVariationHidden',
-    rule: DisplayRules.isVariationHidden,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isVariationHidden(input),
     shows: PatternApprovalRequiredValues.Variation,
   },
   {
     name: 'isNewCertificateHidden',
-    rule: DisplayRules.isNewCertificateHidden,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isNewCertificateHidden(input),
     shows: PatternApprovalRequiredValues.NewCertificate,
   },
-])('DisplayRules.$name', ({ rule, shows }) => {
+])('displayRules.$name', ({ rule, shows }) => {
   it('shows the section for its own pattern approval type', () => {
+    expect.hasAssertions();
     expect(rule(step(shows))).toBe(false);
   });
 
   it('hides the section for a different pattern approval type', () => {
+    expect.hasAssertions();
     expect(rule(step(PatternApprovalRequiredValues.Cancellation))).toBe(true);
   });
 
   it('hides the section when no pattern approval type is chosen', () => {
+    expect.hasAssertions();
     expect(rule(step(undefined))).toBe(true);
   });
 });
 
-describe('DisplayRules.isApplNewInstrumentHiddenP', () => {
+describe('displayRules.isApplNewInstrumentHiddenP', () => {
   it('hides the instrument section for a non new-certificate application', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isApplNewInstrumentHiddenP(
-      step(PatternApprovalRequiredValues.Variation)
+      step(PatternApprovalRequiredValues.Variation),
     );
 
     expect(result).toBe(true);
   });
 
   it('hides the instrument section when no pattern approval type is chosen', () => {
+    expect.hasAssertions();
     expect(DisplayRules.isApplNewInstrumentHiddenP(step(undefined))).toBe(true);
   });
 
   it('hides the instrument section when neither category nor type is selected', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isApplNewInstrumentHiddenP({
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(true);
   });
 
   it('shows the instrument section once a category is selected', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isApplNewInstrumentHiddenP({
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
       instrumentCategory: 'category-1',
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(false);
   });
 
   it('shows the instrument section once a type is selected', () => {
+    expect.hasAssertions();
+
     const result = DisplayRules.isApplNewInstrumentHiddenP({
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
       instrumentType: 'type-1',
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(false);
   });
 });
 
-describe('DisplayRules.defaultIsHidden', () => {
+describe('displayRules.defaultIsHidden', () => {
   it('defaults sections to hidden', () => {
+    expect.hasAssertions();
     expect(DisplayRules.defaultIsHidden).toBe(true);
   });
 });

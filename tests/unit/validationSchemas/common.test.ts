@@ -26,6 +26,8 @@ describe('common validation helpers', () => {
     [undefined, false, true],
     [null, false, true],
   ])('classifies %s with NotEmpty and IsEmpty', (value, notEmpty, empty) => {
+    expect.hasAssertions();
+
     expect(NotEmpty(value)).toBe(notEmpty);
     expect(IsEmpty(value)).toBe(empty);
   });
@@ -39,10 +41,14 @@ describe('common validation helpers', () => {
     [new Date(2026, 0, 1), false],
     [{}, false],
   ])('classifies empty date values', (value, expected) => {
+    expect.hasAssertions();
+
     expect(isEmptyDate(value)).toBe(expected);
   });
 
   it('trims nullable strings and defaults non-strings to empty string', () => {
+    expect.hasAssertions();
+
     const schema = nullableString('Name');
 
     expect(schema.validateSync('  NMI  ')).toBe('NMI');
@@ -52,6 +58,8 @@ describe('common validation helpers', () => {
   });
 
   it('requires nullable strings after trimming', async () => {
+    expect.hasAssertions();
+
     const schema = requiredNullableString('Name');
 
     await expect(schema.validate(' NMI ')).resolves.toBe('NMI');
@@ -61,17 +69,21 @@ describe('common validation helpers', () => {
   });
 
   it('validates required nullable dates', async () => {
+    expect.hasAssertions();
+
     const schema = requiredNullableDate('Preferred date');
 
     await expect(schema.validate('01/01/2026')).resolves.toBeDefined();
     await expect(schema.validate('')).rejects.toThrow(
-      'Preferred date is required'
+      'Preferred date is required',
     );
     await expect(schema.validate('31/02/2026')).rejects.toThrow('DD/MM/YYYY');
     await expect(schema.validate({})).rejects.toThrow('DD/MM/YYYY');
   });
 
   it('allows empty optional dates and rejects invalid populated dates', async () => {
+    expect.hasAssertions();
+
     const schema = nullableDate('Preferred date');
 
     await expect(schema.validate('')).resolves.toBeUndefined();
@@ -81,13 +93,19 @@ describe('common validation helpers', () => {
   });
 
   it('creates enum oneOf schemas', async () => {
+    expect.hasAssertions();
+
     const schema = oneOfEnum({ Yes: 'Yes', No: 'No' });
 
     await expect(schema.validate('Yes')).resolves.toBe('Yes');
-    await expect(schema.validate('Maybe')).rejects.toThrow();
+    await expect(schema.validate('Maybe')).rejects.toThrow(
+      'must be one of the following values',
+    );
   });
 
   it('checks future dates while ignoring empty and invalid values', () => {
+    expect.hasAssertions();
+
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
@@ -103,30 +121,53 @@ describe('common validation helpers', () => {
   });
 
   it('validates website URLs with excludeEmpty enabled and disabled', async () => {
+    expect.hasAssertions();
+
     const optionalWebsite = websiteUrlSchema('Invalid website');
     const nonEmptyWebsite = websiteUrlSchema('Invalid website', false);
 
-    await expect(
-      optionalWebsite.validate('https://measurement.gov.au')
-    ).resolves.toBe('https://measurement.gov.au');
-    await expect(optionalWebsite.validate('')).resolves.toBe('');
-    await expect(optionalWebsite.validate('not a website')).rejects.toThrow(
-      'Invalid website'
-    );
-    await expect(nonEmptyWebsite.validate('')).rejects.toThrow(
-      'Invalid website'
-    );
+    const outcomes = await Promise.allSettled([
+      optionalWebsite.validate('https://measurement.gov.au'),
+      optionalWebsite.validate('https://example-domain.com'),
+      optionalWebsite.validate('http://example.com/path?query=value'),
+      optionalWebsite.validate('www.example.com'),
+      optionalWebsite.validate(''),
+      optionalWebsite.validate('not a website'),
+      optionalWebsite.validate('.example.com'),
+      optionalWebsite.validate('example.com.'),
+      nonEmptyWebsite.validate(''),
+    ]);
+
+    expect(
+      outcomes.map((outcome) =>
+        outcome.status === 'fulfilled'
+          ? outcome.value
+          : (outcome.reason as { message: string }).message,
+      ),
+    ).toStrictEqual([
+      'https://measurement.gov.au',
+      'https://example-domain.com',
+      'http://example.com/path?query=value',
+      'www.example.com',
+      '',
+      'Invalid website',
+      'Invalid website',
+      'Invalid website',
+      'Invalid website',
+    ]);
   });
 
   it('validates required and optional email schemas', async () => {
+    expect.hasAssertions();
+
     await expect(
-      emailSchema('Email').validate('user@example.com')
+      emailSchema('Email').validate('user@example.com'),
     ).resolves.toBe('user@example.com');
     await expect(emailSchema('Email').validate('bad')).rejects.toThrow(
-      'Email is not a valid email address'
+      'Email is not a valid email address',
     );
     await expect(emailSchema('Email').validate('')).rejects.toThrow(
-      'Email is required'
+      'Email is required',
     );
     await expect(emailSchema('Email', false).validate('')).resolves.toBe('');
   });
@@ -137,16 +178,22 @@ describe('common validation helpers', () => {
     ['51 824 753 556', false],
     ['1234567890', false],
   ])('validates ABN %s', (value, expected) => {
+    expect.hasAssertions();
+
     expect(isValidAbn(value)).toBe(expected);
   });
 
   it('converts known digits to text and falls back to the number string', () => {
+    expect.hasAssertions();
+
     expect(numberToText(1)).toBe('one');
     expect(numberToText(10)).toBe('ten');
     expect(numberToText(11)).toBe('11');
   });
 
   it('exposes registered string extensions through the side-effect index', () => {
-    expect(typeof yup.string().maxLength).toBe('function');
+    expect.hasAssertions();
+
+    expect(yup.string().maxLength.bind(yup.string())).toBeTypeOf('function');
   });
 });

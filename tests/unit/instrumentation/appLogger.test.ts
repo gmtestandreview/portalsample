@@ -1,25 +1,27 @@
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const importLoggerWithInsights = async (insights: unknown) => {
   vi.resetModules();
-  const getAppInsights = vi.fn(() => insights);
-  vi.doMock('@/instrumentation/AppInsightsService', () => ({
-    getAppInsights,
-  }));
+  vi.restoreAllMocks();
+  const getAppInsights = vi.fn<() => unknown>(() => insights);
+  vi.doMock(
+    import('@/instrumentation/AppInsightsService') as unknown as string,
+    () =>
+      ({
+        getAppInsights,
+      }) satisfies __ExactMockModule<__TestMockModule15>,
+  );
   const { default: AppLogger } = await import('@/instrumentation/AppLogger');
   return { AppLogger, getAppInsights };
 };
 
-describe('AppLogger', () => {
-  afterEach(() => {
-    vi.resetModules();
-    vi.restoreAllMocks();
-  });
-
+describe('appLogger', () => {
   it('delegates trace severity helpers to App Insights', async () => {
+    expect.hasAssertions();
+
     const insights = {
-      trackTrace: vi.fn(),
+      trackTrace: vi.fn<(...args: unknown[]) => void>(),
     };
     const { AppLogger } = await importLoggerWithInsights(insights);
     const properties = { requestId: 'abc-123' };
@@ -30,7 +32,6 @@ describe('AppLogger', () => {
     AppLogger.critical('Critical message', properties);
     AppLogger.trace('Trace message', SeverityLevel.Error, properties);
 
-    expect(insights.trackTrace).toHaveBeenCalledTimes(5);
     expect(insights.trackTrace).toHaveBeenNthCalledWith(1, {
       message: 'Information message',
       severityLevel: SeverityLevel.Information,
@@ -59,13 +60,15 @@ describe('AppLogger', () => {
   });
 
   it('delegates exception, event, page, and event timing calls to App Insights', async () => {
+    expect.hasAssertions();
+
     const insights = {
-      trackException: vi.fn(),
-      trackEvent: vi.fn(),
-      startTrackPage: vi.fn(),
-      stopTrackPage: vi.fn(),
-      startTrackEvent: vi.fn(),
-      stopTrackEvent: vi.fn(),
+      trackException: vi.fn<(...args: unknown[]) => void>(),
+      trackEvent: vi.fn<(...args: unknown[]) => void>(),
+      startTrackPage: vi.fn<(...args: unknown[]) => void>(),
+      stopTrackPage: vi.fn<(...args: unknown[]) => void>(),
+      startTrackEvent: vi.fn<(...args: unknown[]) => void>(),
+      stopTrackEvent: vi.fn<(...args: unknown[]) => void>(),
     };
     const { AppLogger } = await importLoggerWithInsights(insights);
     const error = new Error('Boom');
@@ -88,13 +91,22 @@ describe('AppLogger', () => {
       name: 'Save clicked',
       properties,
     });
-    expect(insights.startTrackPage).toHaveBeenCalledWith('Dashboard');
-    expect(insights.stopTrackPage).toHaveBeenCalledWith('Dashboard');
-    expect(insights.startTrackEvent).toHaveBeenCalledWith('Save');
-    expect(insights.stopTrackEvent).toHaveBeenCalledWith('Save');
+    expect({
+      startTrackPage: insights.startTrackPage.mock.calls,
+      stopTrackPage: insights.stopTrackPage.mock.calls,
+      startTrackEvent: insights.startTrackEvent.mock.calls,
+      stopTrackEvent: insights.stopTrackEvent.mock.calls,
+    }).toStrictEqual({
+      startTrackPage: [['Dashboard']],
+      stopTrackPage: [['Dashboard']],
+      startTrackEvent: [['Save']],
+      stopTrackEvent: [['Save']],
+    });
   });
 
   it('does not throw or delegate when App Insights is unavailable', async () => {
+    expect.hasAssertions();
+
     const { AppLogger, getAppInsights } = await importLoggerWithInsights(null);
     const error = new Error('Unavailable');
 

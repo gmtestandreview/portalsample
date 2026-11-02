@@ -1,6 +1,8 @@
 import { http, HttpResponse } from 'msw/http';
 import {
+  ApplicationType,
   CRMLookupTypes,
+  FormStepStatus,
   type LookupResponse,
 } from '../ClientApp/src/api/web-api-client';
 import {
@@ -8,6 +10,7 @@ import {
   lookupResponses,
   paCategoryResponses,
   paInstrumentTypeResponses,
+  requestForQuoteDetailsFixture,
   serviceResponses,
 } from '../ClientApp/src/storybook/storybookFixtures';
 
@@ -50,6 +53,83 @@ const pdfResponse = (request: Request, filename: string) => {
     : HttpResponse.json({ fileSizeBytes: 2048 });
 };
 
+const accountStepValues = {
+  id: 1,
+  abn: '00000000000',
+  name: 'Storybook Organisation',
+  businessOrTradingName: 'Storybook Organisation Pty Ltd',
+  branchOrLocationName: 'Main Branch',
+  businessWebsiteAddress: 'https://example.gov.au',
+  isDefaultOrganisation: true,
+  streetAddress: {
+    line1: '1 Example Street',
+    suburb: 'Sydney',
+    state: 'NSW',
+    postcode: '2000',
+    isManuallyEntered: true,
+  },
+  postalAddressSameAsStreetAddress: true,
+  contact: {},
+  status: FormStepStatus.NotStarted,
+};
+
+const contactForm = {
+  contact: {
+    title: 'Mr',
+    firstName: 'Taylor',
+    lastName: 'Nguyen',
+    phone: '0200000000',
+    mobile: '0400000000',
+    email: 'taylor.nguyen@example.com',
+  },
+  formStepStatus: FormStepStatus.NotStarted,
+};
+
+const applicationReferenceIds: Partial<Record<ApplicationType, string>> = {
+  [ApplicationType.QuoteAccept]: 'AQ-NEW-0001',
+  [ApplicationType.PatternApproval]: 'TA-NEW-0001',
+  [ApplicationType.QuoteRequest]: 'RFQ-NEW-0001',
+};
+
+const applicationResponse = (applicationType: string | undefined) => {
+  const referenceId =
+    applicationType !== undefined &&
+    Object.hasOwn(applicationReferenceIds, applicationType)
+      ? applicationReferenceIds[applicationType as ApplicationType]
+      : undefined;
+
+  if (referenceId === undefined) {
+    return HttpResponse.json(
+      {
+        error: `No Storybook fixture for applicationType=${applicationType ?? '(missing)'}`,
+      },
+      { status: 501 },
+    );
+  }
+
+  return HttpResponse.json({ referenceId, applicationType });
+};
+
+const quoteDetailsResponse = (request: Request) => {
+  const applicationType = new URL(request.url).searchParams.get(
+    'ApplicationType',
+  );
+
+  if (
+    applicationType !== ApplicationType.QuoteRequest &&
+    applicationType !== ApplicationType.QuoteAccept
+  ) {
+    return HttpResponse.json(
+      {
+        error: `No Storybook fixture for ApplicationType=${applicationType ?? '(missing)'}`,
+      },
+      { status: 501 },
+    );
+  }
+
+  return HttpResponse.json(requestForQuoteDetailsFixture);
+};
+
 /**
  * One entry per CRMLookupTypes value that application code passes to
  * getLookup(). tests/unit/storybook/mswHandlers.test.ts enumerates those call
@@ -65,31 +145,74 @@ export const lookupResponsesByType: Partial<
 };
 
 export const mswHandlers = [
+  // react-ga4 injects this script when the Storybook runtime env fixture sets a
+  // GA tracking id. Answer it with an empty no-op so no real Google code or
+  // network is reached while the MSW policy still fails every other foreign
+  // origin closed.
+  http.get('https://www.googletagmanager.com/gtag/js', () =>
+    HttpResponse.text('', {
+      headers: { 'Content-Type': 'application/javascript' },
+    }),
+  ),
   http.get('/api/dashboard', () => HttpResponse.json([])),
   http.get('/api/dashboard/get-filtered-dashboard-quotes', () =>
-    HttpResponse.json(dashboardPageResponse)
+    HttpResponse.json(dashboardPageResponse),
   ),
   http.get('/api/dashboard/get-filtered-dashboard-drafts', () =>
-    HttpResponse.json(dashboardPageResponse)
+    HttpResponse.json(dashboardPageResponse),
   ),
   http.get('/api/dashboard/get-filtered-dashboard-artefacts', () =>
-    HttpResponse.json(dashboardPageResponse)
+    HttpResponse.json(dashboardPageResponse),
   ),
   http.get('/api/dashboard/get-dashboard-instrument-artefact-reports', () =>
-    HttpResponse.json(instrumentReportPageResponse)
+    HttpResponse.json(instrumentReportPageResponse),
   ),
   http.get('/api/dashboard/get-quote-offer-pdf', ({ request }) =>
-    pdfResponse(request, 'quote-offer.pdf')
+    pdfResponse(request, 'quote-offer.pdf'),
   ),
   http.get('/api/dashboard/get-quote-request-accepted-pdf', ({ request }) =>
-    pdfResponse(request, 'quote-request-accepted.pdf')
+    pdfResponse(request, 'quote-request-accepted.pdf'),
   ),
   http.get('/api/dashboard/get-quote-request-rejected-pdf', ({ request }) =>
-    pdfResponse(request, 'quote-request-rejected.pdf')
+    pdfResponse(request, 'quote-request-rejected.pdf'),
   ),
   http.get('/api/dashboard/get-quote-report-pdf', ({ request }) =>
-    pdfResponse(request, 'measurement-report.pdf')
+    pdfResponse(request, 'measurement-report.pdf'),
   ),
+  http.get('/api/quote/get-quote-request-details-byrefid', ({ request }) =>
+    quoteDetailsResponse(request),
+  ),
+  http.get('/api/forms/accounts/branch', () =>
+    HttpResponse.json({
+      id: 1,
+      stepValues: { ...accountStepValues, branchOrLocationName: '' },
+    }),
+  ),
+  http.get('/api/forms/accounts/create-account/new', () =>
+    HttpResponse.json({ id: 1, stepValues: accountStepValues }),
+  ),
+  http.get('/api/contact/usercontact', () => HttpResponse.json(contactForm)),
+  http.post('/api/application', async ({ request }) => {
+    const command = (await request.json()) as { applicationType?: string };
+    return applicationResponse(command.applicationType);
+  }),
+  http.get('/api/organisations/byabn', ({ request }) => {
+    const abn = new URL(request.url).searchParams.get('abn');
+
+    return HttpResponse.json([
+      {
+        organisationId: 1,
+        abn: abn ?? accountStepValues.abn,
+        name: accountStepValues.name,
+        businessOrTradingName: accountStepValues.businessOrTradingName,
+        branchOrLocationName: accountStepValues.branchOrLocationName,
+        crmGuid: 'org-crm-guid-001',
+        isCompleted: true,
+        accountCompleted: true,
+        acceptedTermsOfUse: true,
+      },
+    ]);
+  }),
   http.get('/api/lookup/services', () => HttpResponse.json(serviceResponses)),
   // A single handler scoped to one endpoint the application owns. Returning
   // undefined here would fall through to MSW's unhandled-request path - the
@@ -97,19 +220,22 @@ export const mswHandlers = [
   // and surfaces inside the story that needs the fixture.
   http.get('/api/lookup', ({ request }) => {
     const lookupType = new URL(request.url).searchParams.get(
-      'LookupType'
+      'LookupType',
     ) as CRMLookupTypes | null;
     const fixture =
       lookupType === null || !Object.hasOwn(lookupResponsesByType, lookupType)
         ? undefined
-        : lookupResponsesByType[lookupType];
+        : Reflect.get<typeof lookupResponsesByType, CRMLookupTypes>(
+            lookupResponsesByType,
+            lookupType,
+          );
 
     if (fixture === undefined) {
       return HttpResponse.json(
         {
           error: `No Storybook fixture for LookupType=${lookupType ?? '(missing)'}`,
         },
-        { status: 501 }
+        { status: 501 },
       );
     }
 

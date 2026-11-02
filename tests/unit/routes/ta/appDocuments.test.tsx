@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   AttachmentDto,
   FileParameter,
@@ -16,8 +16,19 @@ import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 import { defined } from '../../helpers/defined';
 
+type CommitAppDocumentsValues = {
+  form: {
+    documents: Array<{
+      documentBytes?: unknown;
+      attachmentName?: string;
+    }>;
+  };
+};
+
+type CommitAppDocumentsCall = [string, CommitAppDocumentsValues];
+
 const mocks = vi.hoisted(() => ({
-  appLoggerError: vi.fn(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 const clients = vi.hoisted(() => ({
@@ -37,7 +48,7 @@ const documentsStep = vi.hoisted(() => ({
   props: undefined as unknown as {
     onUploadAttachment: (
       token: string,
-      files: FileParameter[]
+      files: FileParameter[],
     ) => Promise<AttachmentDto[]>;
     handleCancelFile: (fileName: string) => Promise<void>;
     attachment: { onUploadFiles: () => Promise<unknown[]> };
@@ -48,60 +59,75 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
-});
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
+
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
+
+  clients.patternApproval = createClientMockFor(
+    'getAppDocuments',
+    'addDocuments',
+    'commitAppDocuments',
+  );
+  clients.progress = createClientMockFor(
+    'getProgressUploadId',
+    'getProgress',
+    'deleteProgressStatistics',
+    'cancelFile',
+  );
+
+  return webApiClientModuleMock(original, {
+    RequestForPatternApprovalClient: clients.patternApproval,
+    ProgressClient: clients.progress,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
-
-    clients.patternApproval = createClientMockFor(
-      'getAppDocuments',
-      'addDocuments',
-      'commitAppDocuments'
-    );
-    clients.progress = createClientMockFor(
-      'getProgressUploadId',
-      'getProgress',
-      'deleteProgressStatistics',
-      'cancelFile'
-    );
-
-    return webApiClientModuleMock(original, {
-      RequestForPatternApprovalClient: clients.patternApproval,
-      ProgressClient: clients.progress,
-    });
-  }
+  import('../../../../ClientApp/src/authentication/authConfig'),
+  (() =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
+  (() =>
+    ({
+      default: (props: typeof documentsStep.props) => {
+        documentsStep.props = props;
 
-vi.mock('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments', () => ({
-  default: (props: typeof documentsStep.props) => {
-    documentsStep.props = props;
-
-    return (
-      <div
-        data-testid='supporting-documents'
-        data-uploading={String(props.uploading)}
-        data-disable-upload={String(props.disableUpload)}
-        data-errors={props.externalErrors.join('|')}
-      />
-    );
-  },
-}));
+        return (
+          <div
+            data-testid='supporting-documents'
+            data-uploading={String(props.uploading)}
+            data-disable-upload={String(props.disableUpload)}
+            data-errors={props.externalErrors.join('|')}
+          />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule130>) as unknown as __DynamicPartialMockFactory<__TestMockModule130>,
+);
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({
   id: 'doc-1',
@@ -118,7 +144,7 @@ const document1 = (overrides: Record<string, unknown> = {}) => ({
 
 const appDocuments = (
   documents: unknown[],
-  form: Record<string, unknown> = {}
+  form: Record<string, unknown> = {},
 ) => ({
   form: {
     documents,
@@ -130,7 +156,7 @@ const appDocuments = (
 
 const renderRoute = async (
   path = '/ta/manage/APP-1/documents',
-  routePath = '/ta/manage/:id/documents'
+  routePath = '/ta/manage/:id/documents',
 ) => {
   const ApplicationDocuments = (
     await import('../../../../ClientApp/src/routes/ta/manage/appDocuments')
@@ -151,14 +177,14 @@ const renderRoute = async (
 const renderLoaded = async () => {
   const result = await renderRoute();
   await waitFor(() =>
-    expect(screen.getByTestId('supporting-documents')).toBeInTheDocument()
+    expect(screen.getByTestId('supporting-documents')).toBeInTheDocument(),
   );
 
   return result;
 };
 
 describe('application documents', () => {
-  beforeEach(async () => {
+  const resetApplicationDocumentsState = async () => {
     await import('../../../../ClientApp/src/api/web-api-client');
 
     resetMsalMock();
@@ -173,14 +199,14 @@ describe('application documents', () => {
     }
 
     clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
-      appDocuments([document1()])
+      appDocuments([document1()]),
     );
     clients.patternApproval.methods.addDocuments.mockResolvedValue({
       uploadId: 'upload-1',
       form: { documents: [document1()] },
     });
     clients.patternApproval.methods.commitAppDocuments.mockResolvedValue(
-      undefined
+      undefined,
     );
     clients.progress.methods.getProgressUploadId.mockResolvedValue('upload-1');
     clients.progress.methods.getProgress.mockResolvedValue({
@@ -188,44 +214,60 @@ describe('application documents', () => {
       status: 'Completed',
     });
     clients.progress.methods.deleteProgressStatistics.mockResolvedValue(
-      undefined
+      undefined,
     );
     clients.progress.methods.cancelFile.mockResolvedValue(undefined);
-  });
+  };
 
   describe('loading existing documents', () => {
     it('fetches the application documents with an auth token', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
-        DEFAULT_ACCESS_TOKEN
+        DEFAULT_ACCESS_TOKEN,
       );
       expect(
-        clients.patternApproval.methods.getAppDocuments
+        clients.patternApproval.methods.getAppDocuments,
       ).toHaveBeenCalledWith('APP-1');
     });
 
     it('offers a commit when at least one document is still unlocked', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
 
       expect(
-        screen.getByRole('button', { name: 'Commit' })
+        screen.getByRole('button', { name: 'Commit' }),
       ).toBeInTheDocument();
     });
 
     it('offers no commit when every document is locked', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
-        appDocuments([document1({ documentLocked: true })])
+        appDocuments([document1({ documentLocked: true })]),
       );
 
       await renderLoaded();
 
       expect(
-        screen.queryByRole('button', { name: 'Commit' })
+        screen.queryByRole('button', { name: 'Commit' }),
       ).not.toBeInTheDocument();
     });
 
     it('offers no commit when the application carries no documents', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       // `?? false` covers a response with no documents array at all.
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue({
         form: {},
@@ -234,56 +276,72 @@ describe('application documents', () => {
       await renderLoaded();
 
       expect(
-        screen.queryByRole('button', { name: 'Commit' })
+        screen.queryByRole('button', { name: 'Commit' }),
       ).not.toBeInTheDocument();
     });
 
     it('blocks further upload once the application is complete', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
-        appDocuments([document1()], { applicationStatus: 'Completed' })
+        appDocuments([document1()], { applicationStatus: 'Completed' }),
       );
 
       await renderLoaded();
 
       expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
         'data-disable-upload',
-        'true'
+        'true',
       );
     });
 
     it('allows upload while the application is still open', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
 
       expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
         'data-disable-upload',
-        'false'
+        'false',
       );
     });
 
     it('shows a spinner while the documents are loading', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       let release: (value: unknown) => void = () => undefined;
       clients.patternApproval.methods.getAppDocuments.mockReturnValue(
         new Promise((resolve) => {
           release = resolve;
-        })
+        }),
       );
 
       await renderRoute();
 
       expect(screen.getByText('Loading...')).toBeInTheDocument();
 
-      await act(async () => {
+      act(() => {
         release(appDocuments([document1()]));
       });
 
       await waitFor(() =>
-        expect(screen.getByTestId('supporting-documents')).toBeInTheDocument()
+        expect(screen.getByTestId('supporting-documents')).toBeInTheDocument(),
       );
     });
 
     it('logs a failed load and clears the spinner', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       clients.patternApproval.methods.getAppDocuments.mockRejectedValue(
-        new Error('docs down')
+        new Error('docs down'),
       );
 
       await renderRoute();
@@ -292,40 +350,54 @@ describe('application documents', () => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to load application documents',
           expect.any(Error),
-          { Id: 'APP-1' }
-        )
+          { Id: 'APP-1' },
+        ),
       );
+
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
 
     it('does not fetch without a signed-in account', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       signOut();
 
       await renderRoute();
 
       expect(
-        clients.patternApproval.methods.getAppDocuments
+        clients.patternApproval.methods.getAppDocuments,
       ).not.toHaveBeenCalled();
     });
 
     it('does not fetch without an application id', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderRoute('/ta/manage/documents', '/ta/manage/documents');
 
       expect(
-        clients.patternApproval.methods.getAppDocuments
+        clients.patternApproval.methods.getAppDocuments,
       ).not.toHaveBeenCalled();
     });
   });
 
   describe('uploading attachments', () => {
     it('maps the returned documents and re-enables the commit', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
-        appDocuments([document1({ documentLocked: true })])
+        appDocuments([document1({ documentLocked: true })]),
       );
 
       await renderLoaded();
+
       expect(
-        screen.queryByRole('button', { name: 'Commit' })
+        screen.queryByRole('button', { name: 'Commit' }),
       ).not.toBeInTheDocument();
 
       clients.patternApproval.methods.addDocuments.mockResolvedValue({
@@ -345,14 +417,19 @@ describe('application documents', () => {
         id: 'doc-2',
         documentReference: 'doc-2',
       });
+
       await waitFor(() =>
         expect(
-          screen.getByRole('button', { name: 'Commit' })
-        ).toBeInTheDocument()
+          screen.getByRole('button', { name: 'Commit' }),
+        ).toBeInTheDocument(),
       );
     });
 
     it('returns an empty list when the response carries no form', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       // The same cast defect that was fixed in routes/ta/index.tsx lived here too, and here it
       // was worse: `attachments.some(...)` on the next line threw a TypeError that the catch
       // then logged as a document load failure, hiding the real cause.
@@ -366,14 +443,18 @@ describe('application documents', () => {
         attachments = await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      expect(attachments).toEqual([]);
+      expect(attachments).toStrictEqual([]);
       expect(mocks.appLoggerError).not.toHaveBeenCalled();
     });
 
     it('logs an upload failure', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
       clients.patternApproval.methods.addDocuments.mockRejectedValue(
-        new Error('upload failed')
+        new Error('upload failed'),
       );
 
       await act(async () => {
@@ -383,11 +464,15 @@ describe('application documents', () => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application documents',
         expect.any(Error),
-        { Id: 'APP-1' }
+        { Id: 'APP-1' },
       );
     });
 
     it('skips progress polling when no upload id is issued', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
       clients.progress.methods.getProgressUploadId.mockResolvedValue(undefined);
 
@@ -399,16 +484,24 @@ describe('application documents', () => {
     });
 
     it('hands the documents step an inert onUploadFiles stub', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
 
       await expect(
-        documentsStep.props.attachment.onUploadFiles()
-      ).resolves.toEqual([]);
+        documentsStep.props.attachment.onUploadFiles(),
+      ).resolves.toStrictEqual([]);
     });
   });
 
   describe('progress polling', () => {
     it('stops once the upload completes and cleans up', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
       clients.progress.methods.getProgress
         .mockResolvedValueOnce({ percent: 30, status: 'InProgress' })
@@ -420,12 +513,16 @@ describe('application documents', () => {
 
       await waitFor(() =>
         expect(
-          clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalledWith('upload-1')
+          clients.progress.methods.deleteProgressStatistics,
+        ).toHaveBeenCalledWith('upload-1'),
       );
     });
 
     it('also stops when the upload completes with errors', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
       clients.progress.methods.getProgress.mockResolvedValue({
         percent: 100,
@@ -438,15 +535,19 @@ describe('application documents', () => {
 
       await waitFor(() =>
         expect(
-          clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalled()
+          clients.progress.methods.deleteProgressStatistics,
+        ).toHaveBeenCalledWith('upload-1'),
       );
     });
 
     it('logs a failed cleanup', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
       clients.progress.methods.deleteProgressStatistics.mockRejectedValue(
-        new Error('gone')
+        new Error('gone'),
       );
 
       await act(async () => {
@@ -457,12 +558,16 @@ describe('application documents', () => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to delete progress statistics',
           expect.any(Error),
-          { uploadId: 'upload-1' }
-        )
+          { uploadId: 'upload-1' },
+        ),
       );
     });
 
     it('retries after a failed poll and still finishes', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
       clients.progress.methods.getProgress
         .mockRejectedValueOnce(new Error('poll blipped'))
@@ -478,32 +583,41 @@ describe('application documents', () => {
       await waitFor(
         () =>
           expect(
-            clients.progress.methods.deleteProgressStatistics
-          ).toHaveBeenCalled(),
-        { timeout: 10000 }
+            clients.progress.methods.deleteProgressStatistics,
+          ).toHaveBeenCalledWith('upload-1'),
+        { timeout: 10000 },
       );
+
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(2);
     }, 20000);
 
     it('abandons polling when the component unmounts mid-flight', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       const { unmount } = await renderLoaded();
 
       let failPoll: (reason: Error) => void = () => undefined;
       clients.progress.methods.getProgress.mockReturnValue(
         new Promise((_resolve, reject) => {
           failPoll = reject;
-        })
+        }),
       );
 
       await act(async () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
       await waitFor(() =>
-        expect(clients.progress.methods.getProgress).toHaveBeenCalled()
+        expect(clients.progress.methods.getProgress).toHaveBeenCalledWith(
+          'upload-1',
+          -1,
+          expect.any(AbortSignal),
+        ),
       );
 
       unmount();
-      await act(async () => {
+      act(() => {
         failPoll(new Error('aborted'));
       });
 
@@ -512,14 +626,19 @@ describe('application documents', () => {
       await act(async () => {
         await Promise.resolve();
       });
+
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(
-        callsAfterUnmount
+        callsAfterUnmount,
       );
     });
   });
 
   describe('cancelling a file', () => {
     it('does nothing before an upload has started', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
 
       await act(async () => {
@@ -530,6 +649,10 @@ describe('application documents', () => {
     });
 
     it('cancels the named file against the current upload', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
 
       await act(async () => {
@@ -541,14 +664,18 @@ describe('application documents', () => {
 
       expect(clients.progress.methods.cancelFile).toHaveBeenCalledWith(
         'upload-1',
-        'spec.pdf'
+        'spec.pdf',
       );
     });
 
     it('swallows a failed cancellation', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       await renderLoaded();
       clients.progress.methods.cancelFile.mockRejectedValue(
-        new Error('too late')
+        new Error('too late'),
       );
 
       await act(async () => {
@@ -558,13 +685,17 @@ describe('application documents', () => {
       await expect(
         act(async () => {
           await documentsStep.props.handleCancelFile('spec.pdf');
-        })
+        }),
       ).resolves.toBeUndefined();
     });
   });
 
   describe('committing', () => {
     it('strips document bytes before sending the commit', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       const user = userEvent.setup();
       await renderLoaded();
 
@@ -572,19 +703,31 @@ describe('application documents', () => {
 
       await waitFor(() =>
         expect(
-          clients.patternApproval.methods.commitAppDocuments
-        ).toHaveBeenCalled()
+          clients.patternApproval.methods.commitAppDocuments,
+        ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
       );
       const [applicationId, values] = defined(
-        clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
+        clients.patternApproval.methods.commitAppDocuments.mock
+          .calls[0] as unknown as CommitAppDocumentsCall,
       );
+
       expect(applicationId).toBe('APP-1');
+
+      const committedDocument = defined(
+        values.form.documents[0],
+        'committed document',
+      );
+
       // Bytes are cleared so the commit payload stays small.
-      expect(values.form.documents[0].documentBytes).toBeUndefined();
-      expect(values.form.documents[0].attachmentName).toBe('spec.pdf');
+      expect(committedDocument.documentBytes).toBeUndefined();
+      expect(committedDocument.attachmentName).toBe('spec.pdf');
     });
 
     it('refetches the documents after a successful commit', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       const user = userEvent.setup();
       await renderLoaded();
 
@@ -595,12 +738,16 @@ describe('application documents', () => {
 
       await waitFor(() =>
         expect(
-          clients.patternApproval.methods.getAppDocuments.mock.calls.length
-        ).toBeGreaterThan(fetchesBefore)
+          clients.patternApproval.methods.getAppDocuments.mock.calls.length,
+        ).toBeGreaterThan(fetchesBefore),
       );
     });
 
     it('reports a blocked commit distinctly', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       const user = userEvent.setup();
       clients.patternApproval.methods.commitAppDocuments.mockRejectedValue({
         status: 403,
@@ -612,17 +759,22 @@ describe('application documents', () => {
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
-          'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.'
-        )
+          'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
+        ),
       );
+
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application documents',
         expect.anything(),
-        { Id: 'APP-1', Status: 403 }
+        { Id: 'APP-1', Status: 403 },
       );
     });
 
     it('reports a server error for a 5xx', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       const user = userEvent.setup();
       clients.patternApproval.methods.commitAppDocuments.mockRejectedValue({
         status: 502,
@@ -634,15 +786,19 @@ describe('application documents', () => {
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
-          'A server error occurred. Please try again.'
-        )
+          'A server error occurred. Please try again.',
+        ),
       );
     });
 
     it('falls back to a generic message when the failure carries no status', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
       const user = userEvent.setup();
       clients.patternApproval.methods.commitAppDocuments.mockRejectedValue(
-        new Error('network')
+        new Error('network'),
       );
 
       await renderLoaded();
@@ -651,8 +807,8 @@ describe('application documents', () => {
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
-          'Failed to commit documents.'
-        )
+          'Failed to commit documents.',
+        ),
       );
     });
   });

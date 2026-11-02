@@ -57,7 +57,7 @@ const UpdateAccount = () => {
           instance,
           statuses,
           account,
-          accountId
+          accountId,
         )}
       >
         <OrganisationDetails />

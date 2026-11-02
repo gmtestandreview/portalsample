@@ -2,7 +2,8 @@
 
 ## Pattern 1: Basic TimeZoneInfo
 
-Use this only when the application is Windows-only and Windows timezone IDs are acceptable.
+Use this only when the application is Windows-only and Windows timezone IDs are
+acceptable.
 
 ```csharp
 DateTime utcNow = DateTime.UtcNow;
@@ -15,7 +16,8 @@ TimeZoneInfo tokyoTz = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time"
 DateTime tokyoTime = TimeZoneInfo.ConvertTime(localTime, sriLankaTz, tokyoTz);
 ```
 
-Use `TimeZoneConverter` or `NodaTime` instead for Linux, containers, or mixed environments.
+Use `TimeZoneConverter` or `NodaTime` instead for Linux, containers, or mixed
+environments.
 
 ## Pattern 2: Cross-Platform With TimeZoneConverter
 
@@ -40,7 +42,8 @@ TimeZoneInfo tz = TZConvert.GetTimeZoneInfo("Sri Lanka Standard Time");
 
 ## Pattern 3: NodaTime
 
-Use this for strict timezone arithmetic, recurring schedules, or DST edge cases where correctness matters more than minimal dependencies.
+Use this for strict timezone arithmetic, recurring schedules, or DST edge cases
+where correctness matters more than minimal dependencies.
 
 ```xml
 <PackageReference Include="NodaTime" Version="3.*" />
@@ -113,7 +116,8 @@ RecurringJob.AddOrUpdate(
 
 ## Pattern 7: Ambiguous And Invalid DST Times
 
-Check for repeated or skipped local timestamps when the timezone observes daylight saving time.
+Check for repeated or skipped local timestamps when the timezone observes
+daylight saving time.
 
 ```csharp
 using TimeZoneConverter;
@@ -136,14 +140,14 @@ if (tz.IsInvalidTime(localTime))
 
 ## Common Mistakes
 
-| Wrong | Better |
-| --- | --- |
-| `DateTime.Now` in server code | `DateTime.UtcNow` |
-| Storing local timestamps in the database | Store UTC and convert for display |
-| Hardcoding offsets such as `+05:30` | Use timezone IDs |
+| Wrong                                                     | Better                                          |
+| --------------------------------------------------------- | ----------------------------------------------- |
+| `DateTime.Now` in server code                             | `DateTime.UtcNow`                               |
+| Storing local timestamps in the database                  | Store UTC and convert for display               |
+| Hardcoding offsets such as `+05:30`                       | Use timezone IDs                                |
 | Using `FindSystemTimeZoneById("Asia/Colombo")` on Windows | Use `TZConvert.GetTimeZoneInfo("Asia/Colombo")` |
-| Comparing local `DateTime` values from different zones | Compare UTC or use `DateTimeOffset` |
-| Creating `DateTime` without intentional kind semantics | Use `Utc`, `Local`, or deliberate `Unspecified` |
+| Comparing local `DateTime` values from different zones    | Compare UTC or use `DateTimeOffset`             |
+| Creating `DateTime` without intentional kind semantics    | Use `Utc`, `Local`, or deliberate `Unspecified` |
 
 ## Decision Guide
 

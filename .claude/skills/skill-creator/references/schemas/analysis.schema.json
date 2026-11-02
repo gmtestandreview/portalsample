@@ -23,10 +23,7 @@
       "properties": {
         "winner": {
           "type": "string",
-          "enum": [
-            "A",
-            "B"
-          ]
+          "enum": ["A", "B"]
         },
         "winner_skill": {
           "type": "string",
@@ -56,10 +53,7 @@
     },
     "instruction_following": {
       "type": "object",
-      "required": [
-        "winner",
-        "loser"
-      ],
+      "required": ["winner", "loser"],
       "properties": {
         "winner": {
           "$ref": "#/$defs/instructionSide"
@@ -74,20 +68,11 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "priority",
-          "category",
-          "suggestion",
-          "expected_impact"
-        ],
+        "required": ["priority", "category", "suggestion", "expected_impact"],
         "properties": {
           "priority": {
             "type": "string",
-            "enum": [
-              "high",
-              "medium",
-              "low"
-            ]
+            "enum": ["high", "medium", "low"]
           },
           "category": {
             "type": "string",
@@ -107,10 +92,7 @@
     },
     "transcript_insights": {
       "type": "object",
-      "required": [
-        "winner_execution_pattern",
-        "loser_execution_pattern"
-      ],
+      "required": ["winner_execution_pattern", "loser_execution_pattern"],
       "properties": {
         "winner_execution_pattern": {
           "type": "string"
@@ -125,10 +107,7 @@
   "$defs": {
     "instructionSide": {
       "type": "object",
-      "required": [
-        "score",
-        "issues"
-      ],
+      "required": ["score", "issues"],
       "properties": {
         "score": {
           "type": "number",

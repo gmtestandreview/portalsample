@@ -10,7 +10,7 @@ import { removeEmptyKeys } from '../../../utils';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 const FormikForm = <Values extends FormikValues>(
-  props: Readonly<FormikFormProps<Values>>
+  props: Readonly<FormikFormProps<Values>>,
 ) => {
   const {
     initialValues,
@@ -58,7 +58,7 @@ const FormikForm = <Values extends FormikValues>(
 
   const handleSubmit = async (
     values: Values,
-    formikHelpers: FormikHelpers<Values>
+    formikHelpers: FormikHelpers<Values>,
   ) => {
     const removedHidden = removeHidden(values, values, hiddenFields);
     const normalizedValues = removeEmptyKeys(removedHidden, ([k, _]) => {

@@ -30,17 +30,21 @@ export default defineConfig({
   testDir,
   outputDir: 'reports/test-results/app',
   globalSetup: './tests/e2e/support/warm-dev-server.ts',
+  // The first authenticated route can still trigger Vite's lazy module graph
+  // compilation after the HTTP warm-up. Keep that cold-start budget explicit.
+  timeout: 60_000,
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 2 : 0,
-  // Default (half the cores) starves the single webpack dev server locally.
-  workers: isCi ? 1 : 4,
+  // The single local Vite dev server is not reliable under parallel app E2E load.
+  workers: 1,
   reporter: [
     ['html', { open: 'never', outputFolder: 'reports/playwright/app' }],
     ['list'],
   ],
   use: {
     baseURL: 'http://localhost:3000',
+    navigationTimeout: 60_000,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -51,7 +55,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm start',
+    command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !isCi,
     timeout: 120_000,

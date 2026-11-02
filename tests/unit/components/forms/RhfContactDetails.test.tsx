@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -93,16 +94,18 @@ const contactValue = (): ContactValues =>
 const renderDetails = (
   contact: ContactValues | '',
   props: Partial<ComponentProps<typeof RhfContactDetails>> = {},
-  rules?: Hideable
+  rules?: Hideable,
 ) =>
   render(
     <Harness contact={contact} {...(rules ? { rules } : {})}>
       <RhfContactDetails name={CONTACT_NAME} {...props} />
-    </Harness>
+    </Harness>,
   );
 
-describe('RhfContactDetails edit mode', () => {
+describe('rhfContactDetails edit mode', () => {
   it('renders the default labels and the "Other" title field', () => {
+    expect.hasAssertions();
+
     renderDetails(EMPTY_CONTACT);
 
     for (const label of [
@@ -117,26 +120,32 @@ describe('RhfContactDetails edit mode', () => {
     ]) {
       expect(screen.getByLabelText(label)).toBeInTheDocument();
     }
+
     expect(screen.getByPlaceholderText('Please enter title')).toBeVisible();
   });
 
   it('renders every supplied label', () => {
+    expect.hasAssertions();
+
     renderDetails(EMPTY_CONTACT, CUSTOM_LABELS);
 
     for (const label of Object.values(CUSTOM_LABELS)) {
       expect(screen.getByLabelText(label)).toBeInTheDocument();
     }
+
     expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
   });
 
   it('offers a blank option then every title with spaced display text', () => {
+    expect.hasAssertions();
+
     renderDetails(EMPTY_CONTACT);
 
     const options = screen
       .getAllByRole('option')
       .map((option) => [option.textContent, option.getAttribute('value')]);
 
-    expect(options[0]).toEqual(['Please select', '']);
+    expect(options[0]).toStrictEqual(['Please select', '']);
     expect(options).toContainEqual([
       'Associate Professor',
       'AssociateProfessor',
@@ -146,6 +155,8 @@ describe('RhfContactDetails edit mode', () => {
   });
 
   it('writes typed and chosen values into the form', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderDetails(EMPTY_CONTACT);
 
@@ -158,7 +169,7 @@ describe('RhfContactDetails edit mode', () => {
     await user.type(screen.getByLabelText('Mobile phone'), '0400000000');
     await user.type(screen.getByLabelText('Email address'), 'a@example.test');
 
-    expect(contactValue()).toEqual({
+    expect(contactValue()).toStrictEqual({
       title: 'Dr',
       titleOther: 'Chief',
       firstName: 'Alex',
@@ -171,21 +182,26 @@ describe('RhfContactDetails edit mode', () => {
   });
 
   it('shows the "Other" title field only while the hide rule allows it', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderDetails(EMPTY_CONTACT, {}, hideTitleOtherUnlessOther);
+
     expect(screen.queryByLabelText('If "Other"')).not.toBeInTheDocument();
 
     await user.selectOptions(
       screen.getByLabelText('Title (optional)'),
-      'Other'
+      'Other',
     );
 
     expect(screen.getByLabelText('If "Other"')).toBeInTheDocument();
   });
 });
 
-describe('RhfContactDetails summary mode', () => {
+describe('rhfContactDetails summary mode', () => {
   it('shows a placeholder when no contact has been added', () => {
+    expect.hasAssertions();
+
     renderDetails('', { isSummary: true });
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
@@ -193,6 +209,8 @@ describe('RhfContactDetails summary mode', () => {
   });
 
   it('renders each label with its value and no inputs', () => {
+    expect.hasAssertions();
+
     renderDetails(FILLED_CONTACT, { isSummary: true });
 
     for (const label of [
@@ -209,25 +227,31 @@ describe('RhfContactDetails summary mode', () => {
     for (const value of ['Dr', 'Alex', 'Smith', 'Scientist']) {
       expect(screen.getByText(value)).toBeInTheDocument();
     }
+
     expect(screen.getByText('alex@example.test')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
 
   it('renders the supplied labels and the "Other" title label', () => {
+    expect.hasAssertions();
+
     renderDetails(
       { ...FILLED_CONTACT, title: 'Other', titleOther: 'Chief' },
-      { isSummary: true, ...CUSTOM_LABELS }
+      { isSummary: true, ...CUSTOM_LABELS },
     );
 
     for (const label of Object.values(CUSTOM_LABELS)) {
       expect(screen.getByText(label)).toBeInTheDocument();
     }
+
     expect(screen.getByText('Title, if "Other"')).toBeInTheDocument();
     expect(screen.getByText('Chief')).toBeInTheDocument();
   });
 
   it('falls back to a title row when the title is empty', () => {
+    expect.hasAssertions();
+
     renderDetails({ ...FILLED_CONTACT, title: '' }, { isSummary: true });
 
     // An empty title hides the select row, so the fallback is the only
@@ -238,6 +262,8 @@ describe('RhfContactDetails summary mode', () => {
   });
 
   it('keys the title fallback off the supplied name', () => {
+    expect.hasAssertions();
+
     const Other = () => {
       const methods = useForm({
         defaultValues: { applicant: { ...FILLED_CONTACT, title: '' } },
@@ -258,6 +284,8 @@ describe('RhfContactDetails summary mode', () => {
   });
 
   it('omits the title fallback row when a title is set', () => {
+    expect.hasAssertions();
+
     renderDetails(FILLED_CONTACT, { isSummary: true });
 
     expect(screen.getAllByText('Title (optional)')).toHaveLength(1);

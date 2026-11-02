@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import PreConditions from '../../../ClientApp/src/routes/preConditions/PreConditions';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
@@ -11,94 +11,139 @@ import { NotificationSeverity } from '../../../ClientApp/src/storage/types';
 
 // ── Mock factories ─────────────────────────────────────────────────────────────
 
-let mockIsAuthenticated = false;
-let mockAccountStateDetails: AccountDetails | null = null;
-let mockAccountDispatchAvailable = true;
+let mockIsAuthenticated: boolean;
+let mockAccountStateDetails: AccountDetails | null;
+let mockAccountDispatchAvailable: boolean;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useIsAuthenticated: () => mockIsAuthenticated,
-  useMsal: vi.fn(() => ({
-    inProgress: 'none',
-    accounts: [],
-    instance: {},
-  })),
-}));
-
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: () => ({ details: mockAccountStateDetails }),
-  useAccountDispatch: () =>
-    mockAccountDispatchAvailable
-      ? {
-          setAgree: vi.fn(),
-          setCompleted: vi.fn(),
-          setContactCompleted: vi.fn(),
-          setDefaultOrganisationId: vi.fn(),
-          setTargetOrganisation: vi.fn(),
-          setOrganisationAndBranch: vi.fn(),
-          setUserProfile: vi.fn(),
-        }
-      : undefined,
-}));
-
-vi.mock('../../../ClientApp/src/components/Layout', () => ({
-  default: ({ children }: any) => <div data-testid='layout'>{children}</div>,
-}));
-
-vi.mock('../../../ClientApp/src/components/modals/TermsAndCondition', () => ({
-  default: () => <div data-testid='terms-modal'>Terms Modal</div>,
-}));
-
-vi.mock('../../../ClientApp/src/components/modals/BranchSelectorModal', () => ({
-  default: () => (
-    <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
-  ),
-}));
-
 vi.mock(
-  '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
-  () => ({
-    BranchSelectionModalMode: {
-      SelectAndEditOrg: 'SelectAndEditOrg',
-      RFQSelectOrg: 'RFQSelectOrg',
-    },
-  })
+  import('@azure/msal-react'),
+  (() =>
+    ({
+      useIsAuthenticated: () => mockIsAuthenticated,
+      useMsal: vi.fn<(...args: unknown[]) => unknown>(() => ({
+        inProgress: 'none',
+        accounts: [],
+        instance: {},
+      })),
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
-vi.mock('../../../ClientApp/src/components/modals/RFQDeleteModal', () => ({
-  default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
-}));
-
-vi.mock('../../../ClientApp/src/components/modals/ModalContext', () => ({
-  ModalStateCtx: React.createContext(null),
-  ModalDispatchCtx: React.createContext(null),
-  useModalState: vi.fn(),
-  useModalDispatch: vi.fn(),
-}));
-
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/routeChangeScrollTop',
-  () => ({
-    default: () => null,
-  })
+  import('../../../ClientApp/src/authentication/hooks'),
+  (() =>
+    ({
+      useAccountState: () => ({ details: mockAccountStateDetails }),
+      useAccountDispatch: () =>
+        mockAccountDispatchAvailable
+          ? {
+              setAgree: vi.fn<(...args: unknown[]) => unknown>(),
+              setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+              setContactCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+              setDefaultOrganisationId:
+                vi.fn<(...args: unknown[]) => unknown>(),
+              setTargetOrganisation: vi.fn<(...args: unknown[]) => unknown>(),
+              setOrganisationAndBranch:
+                vi.fn<(...args: unknown[]) => unknown>(),
+              setUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
+            }
+          : undefined,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
-vi.mock('../../../ClientApp/src/components/Utilities/backToTopButton', () => ({
-  default: () => null,
-}));
-
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/routeAccessibleNavigation',
-  () => ({
-    default: () => null,
-  })
+  import('../../../ClientApp/src/components/Layout'),
+  (() =>
+    ({
+      default: ({ children }: any) => (
+        <div data-testid='layout'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule110>) as unknown as __DynamicPartialMockFactory<__TestMockModule110>,
 );
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  clearDashboardNotification: vi.fn(),
-  getBranchModalNotification: vi.fn(() => undefined),
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/modals/TermsAndCondition'),
+  (() =>
+    ({
+      default: () => <div data-testid='terms-modal'>Terms Modal</div>,
+    }) satisfies __ExactMockModule<__TestMockModule111>) as unknown as __DynamicPartialMockFactory<__TestMockModule111>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/modals/BranchSelectorModal'),
+  (() =>
+    ({
+      default: () => (
+        <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule112>) as unknown as __DynamicPartialMockFactory<__TestMockModule112>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/modals/BranchSelectorModal/enums'),
+  (() =>
+    ({
+      BranchSelectionModalMode: {
+        SelectAndEditOrg: 'SelectAndEditOrg',
+        RFQSelectOrg: 'RFQSelectOrg',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule109>) as unknown as __DynamicPartialMockFactory<__TestMockModule109>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/modals/RFQDeleteModal'),
+  (() =>
+    ({
+      default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
+    }) satisfies __ExactMockModule<__TestMockModule113>) as unknown as __DynamicPartialMockFactory<__TestMockModule113>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/modals/ModalContext'),
+  (() =>
+    ({
+      ModalStateCtx: React.createContext(null),
+      ModalDispatchCtx: React.createContext(null),
+      useModalState: vi.fn<(...args: unknown[]) => unknown>(),
+      useModalDispatch: vi.fn<(...args: unknown[]) => unknown>(),
+    }) satisfies __ExactMockModule<__TestMockModule27>) as unknown as __DynamicPartialMockFactory<__TestMockModule27>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/routeChangeScrollTop'),
+  (() =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule44>) as unknown as __DynamicPartialMockFactory<__TestMockModule44>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/backToTopButton'),
+  (() =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule43>) as unknown as __DynamicPartialMockFactory<__TestMockModule43>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/routeAccessibleNavigation'),
+  (() =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule114>) as unknown as __DynamicPartialMockFactory<__TestMockModule114>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/storage/notification'),
+  (() =>
+    ({
+      clearDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+      getBranchModalNotification: vi.fn<typeof getBranchModalNotification>(
+        () => undefined,
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule46>) as unknown as __DynamicPartialMockFactory<__TestMockModule46>,
+);
 
 // ── Fixtures ───────────────────────────────────────────────────────────────────
 
@@ -213,7 +258,7 @@ function renderAt(initialPath: string, displayHeaderAndFooter = true) {
           }
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -255,34 +300,43 @@ function renderAtPathWithPlainRoot(initialPath: string) {
           element={<div data-testid='root-page'>Root Dashboard</div>}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
-describe('PreConditions state machine', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.mocked(getBranchModalNotification).mockReturnValue(undefined);
-    mockIsAuthenticated = false;
-    mockAccountStateDetails = null;
-    mockAccountDispatchAvailable = true;
-  });
+const resetPreConditionsState = () => {
+  vi.clearAllMocks();
+  mockIsAuthenticated = false;
+  mockAccountStateDetails = null;
+  mockAccountDispatchAvailable = true;
+  vi.mocked(getBranchModalNotification).mockReturnValue(undefined);
+};
 
+describe('preConditions state machine', () => {
   // ── 1. Unauthenticated ────────────────────────────────────────────────────
 
   it('1. unauthenticated: renders children without any redirect', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = false;
     mockAccountStateDetails = null;
     // No account state → no precondition fires → children render
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   // ── 2-4. redirectToCreateAccount ─────────────────────────────────────────
 
   it('2. redirectToCreateAccount: navigates to /create-account when org exists and account not created', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -291,15 +345,20 @@ describe('PreConditions state machine', () => {
     };
     // Start at /some-path → Navigate to /create-account → on /create-account path is suppressed
     renderAt('/some-path');
+
     // After redirect, current path is /create-account
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
     // Children render on /create-account because redirect is suppressed there
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   it('3. redirectToCreateAccount suppressed: children render when already on /create-account', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -307,13 +366,18 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/create-account');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
   });
 
   it('4. redirectToCreateAccount not triggered when defaultOrganisationId is exactly null', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -326,6 +390,7 @@ describe('PreConditions state machine', () => {
     // redirectToDashboard: accountCreationCompleted=false → condition false (both must be true).
     // No redirects → children render.
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
@@ -342,6 +407,10 @@ describe('PreConditions state machine', () => {
    */
 
   it('4a. redirectToCreateAccount not triggered when defaultOrganisationId is undefined (no organisation)', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -351,11 +420,16 @@ describe('PreConditions state machine', () => {
     // No organisation -> create-account redirect must not fire.
     // accountContactCompleted=true from BASE -> no contact redirect either.
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe('/some-path');
   });
 
   it('4b. no organisation + incomplete account and contact redirects to /create-contact', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -365,12 +439,17 @@ describe('PreConditions state machine', () => {
     };
     // create-account is suppressed (no org), so this falls through to create-contact.
     renderAt('/some-path');
+
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-contact'
+      '/create-contact',
     );
   });
 
   it('4c. organisation exists + incomplete account and contact redirects to /create-account', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -380,14 +459,19 @@ describe('PreConditions state machine', () => {
     };
     // Mirror of 4b: with an organisation present, create-account wins on precedence.
     renderAt('/some-path');
+
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
   });
 
   // ── 5-7. redirectToCreateContact ─────────────────────────────────────────
 
   it('5. redirectToCreateContact: navigates to /create-contact when account created but contact not completed', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -395,14 +479,19 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: false,
     };
     renderAt('/some-path');
+
     // Navigate fires → lands on /create-contact (suppressed there)
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-contact'
+      '/create-contact',
     );
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   it('6. redirectToCreateContact suppressed: children render when on /create-contact', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -410,13 +499,18 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: false,
     };
     renderAt('/create-contact');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-contact'
+      '/create-contact',
     );
   });
 
   it('7. redirectToCreateContact not triggered when on /create-account (create-account path suppresses it)', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -424,16 +518,21 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: false,
     };
     renderAt('/create-account');
+
     // redirectToCreateContact has guard: !path.includes('create-account') → suppressed
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
   });
 
   // ── 8-9. redirectToDashboard ──────────────────────────────────────────────
 
   it('8. redirectToDashboard NOT triggered on authenticated app routes when account setup is complete', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -441,12 +540,17 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAtPathWithPlainRoot('/wizard');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.queryByTestId('root-page')).not.toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe('/wizard');
   });
 
   it('9. redirectToDashboard: completed users are redirected out of /create-account', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -454,6 +558,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAtPathWithPlainRoot('/create-account');
+
     expect(screen.queryByTestId('child-content')).not.toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe('/');
   });
@@ -468,6 +573,10 @@ describe('PreConditions state machine', () => {
   // NOTE: 'success-creating-account' does NOT contain 'create-account' as substring
 
   it('10. showTermsAndConditions: TermsAndConditionModal renders when terms not accepted', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -477,11 +586,16 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/dashboard');
+
     expect(screen.getByTestId('terms-modal')).toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   it('11. showTermsAndConditions: modal absent when terms accepted', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -491,6 +605,7 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/dashboard');
+
     expect(screen.queryByTestId('terms-modal')).not.toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
@@ -507,6 +622,10 @@ describe('PreConditions state machine', () => {
   // Use authenticated app routes so setup-route redirection does not mask the modal state.
 
   it('12. autoShowBranchSelector: BranchSelectorModal renders when defaultOrganisationId is null and contact active', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -517,10 +636,15 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAt('/dashboard');
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
   });
 
   it('13. autoShowBranchSelector suppressed when path contains success-creating-account', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -530,8 +654,9 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAt('/success-creating-account');
+
     expect(
-      screen.queryByTestId('branch-selector-modal')
+      screen.queryByTestId('branch-selector-modal'),
     ).not.toBeInTheDocument();
   });
 
@@ -550,18 +675,27 @@ describe('PreConditions state machine', () => {
    * selected, and providing an exit when no organisation is set.
    */
   it('14a. autoShowBranchSelector does NOT fire when defaultOrganisationId is undefined (known gap)', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
       defaultOrganisationId: undefined,
     };
     renderAt('/dashboard');
+
     expect(
-      screen.queryByTestId('prompt-branchselector-modal')
+      screen.queryByTestId('prompt-branchselector-modal'),
     ).not.toBeInTheDocument();
   });
 
   it('14. autoShowBranchSelector not triggered when defaultOrganisationId is set (not null)', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -571,12 +705,17 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAt('/dashboard');
+
     expect(
-      screen.queryByTestId('branch-selector-modal')
+      screen.queryByTestId('branch-selector-modal'),
     ).not.toBeInTheDocument();
   });
 
   it('initializes the branch selector from a persisted notification', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     vi.mocked(getBranchModalNotification).mockReturnValue({
       message: 'Select a branch to continue.',
       severity: NotificationSeverity.Information,
@@ -593,35 +732,51 @@ describe('PreConditions state machine', () => {
   // Use /create-account to suppress redirectToDashboard.
 
   it('15. renders with Layout wrapper when displayHeaderAndFooter is true', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
       defaultOrganisationId: 1,
     };
     renderAt('/create-account', true);
+
     expect(screen.getByTestId('layout')).toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   it('16. renders without Layout wrapper when displayHeaderAndFooter is false', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
       defaultOrganisationId: 1,
     };
     renderAt('/create-account', false);
+
     expect(screen.queryByTestId('layout')).not.toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   it('renders terms and branch modals without the Layout wrapper', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
       userAcceptedTermsOfUse: false,
     };
     const { unmount } = renderAt('/dashboard', false);
+
     expect(screen.getByTestId('terms-modal')).toBeInTheDocument();
+
     unmount();
 
     mockAccountStateDetails = {
@@ -629,16 +784,26 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: null as unknown as number,
     };
     renderAt('/dashboard', false);
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
   });
 
   it('renders without a merged account when account dispatch is unavailable', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockAccountDispatchAvailable = false;
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
   it('17. exposes modal dispatch callbacks to protected route children', () => {
+    expect.hasAssertions();
+
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = { ...BASE };
 
@@ -647,16 +812,19 @@ describe('PreConditions state machine', () => {
         <PreConditions displayHeaderAndFooter>
           <ModalControls />
         </PreConditions>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Show branch' }));
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Show delete' }));
+
     expect(screen.getByTestId('rfq-delete-modal')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Show RFQ branch' }));
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
   });
 });

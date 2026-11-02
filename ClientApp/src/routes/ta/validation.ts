@@ -25,7 +25,7 @@ export const organisationAndContactSubmitValidation = yup.object<
   Validation<OrganisationAndContact>
 >({
   businessWebsiteAddress: websiteUrlSchema(
-    'Business website address is not a valid website address'
+    'Business website address is not a valid website address',
   )
     .label('Business website address')
     .maxLength(100)
@@ -66,7 +66,7 @@ export const organisationAndContactSaveValidation = yup.object<
   Validation<OrganisationAndContact>
 >({
   businessWebsiteAddress: websiteUrlSchema(
-    'Business website address is not a valid website address'
+    'Business website address is not a valid website address',
   )
     .label('Business website address')
     .nullable()
@@ -83,7 +83,7 @@ export const supportingDocsSaveValidation = yup.object().shape({
     documents: yup.array().of(
       yup.object().shape({
         attachmentCategory: yup.string().nullable(),
-      })
+      }),
     ),
   }),
 });
@@ -95,7 +95,7 @@ export const supportingDocsSubmitValidation = yup.object().shape({
       .of(
         yup.object().shape({
           attachmentCategory: yup.string().nullable(),
-        })
+        }),
       )
       .min(1, ValidationMessages.RequiredDoc)
       .test('all-have-category', function (docs) {
@@ -163,7 +163,8 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+      is: (x: PatternApprovalRequiredValues | undefined) =>
+        x === PatternApprovalRequiredValues.NewCertificate,
       then: () =>
         yup
           .array()
@@ -176,7 +177,8 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+      is: (x: PatternApprovalRequiredValues | undefined) =>
+        x === PatternApprovalRequiredValues.Variation,
       then: () =>
         yup
           .array()
@@ -184,17 +186,18 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
           .label('Variation or request a minor edit options')
           .min(
             1,
-            'At least one Variation or request a minor edit options option is required'
+            'At least one Variation or request a minor edit options option is required',
           )
           .required(
-            'Variation or request a minor edit options options are required'
+            'Variation or request a minor edit options options are required',
           ),
     }),
   othSubOptions: yup
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: string) => x === PatternApprovalRequiredValues.OtherApproval,
+      is: (x: PatternApprovalRequiredValues | undefined) =>
+        x === PatternApprovalRequiredValues.OtherApproval,
       then: () =>
         yup
           .array()
@@ -218,31 +221,36 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
               // The reverse phrasing is the same condition, so it needs no second check.
               if (hasCertCancel && (hasReview || hasProvisional)) return false;
               return true;
-            }
+            },
           ),
     }),
   instrumentCategory: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument category').required(),
     otherwise: () => yup.string().label('Instrument category').nullable(),
   }),
   instrumentType: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument type').required(),
     otherwise: () => yup.string().label('Instrument type').nullable(),
   }),
   make: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () =>
       yup.string().label('Make').nullable().minEntered(2).maxLength(100),
   }),
   model: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () =>
       yup.string().label('Model').nullable().minEntered(2).maxLength(100),
   }),
   certificateNumber: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.Variation,
     then: () =>
       yup
         .string()
@@ -265,7 +273,7 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
       is: (
         patternApprovalType: string | undefined,
         instrumentCategory: string | undefined,
-        instrumentType: string | undefined
+        instrumentType: string | undefined,
       ) => {
         if (
           patternApprovalType ===
@@ -297,7 +305,7 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
           return true; // Skip validation if the field is blank or null
         }
         return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      }
+      },
     ),
 });
 
@@ -305,23 +313,28 @@ export const applicationAndInstrumentSaveValidation = yup.object<
   Validation<ApplicationAndInstrumentStep>
 >({
   instrumentCategory: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument category').nullable(),
   }),
   instrumentType: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument Type').nullable(),
   }),
   make: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Make').nullable().maxLength(100),
   }),
   model: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Model').nullable().maxLength(100),
   }),
   certificateNumber: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.Variation,
     then: () =>
       yup.string().label('Certificate Number').nullable().maxLength(100),
     otherwise: () =>
@@ -340,7 +353,7 @@ export const applicationAndInstrumentSaveValidation = yup.object<
           return true; // Skip validation if the field is blank or null
         }
         return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      }
+      },
     ),
 });
 
@@ -351,19 +364,19 @@ export const summaryAndSubmitValidation = yup.object<
     .boolean()
     .oneOf(
       [true],
-      'You must accept NMI P 106 before submitting this application'
+      'You must accept NMI P 106 before submitting this application',
     ),
   acceptTermsAndConditions: yup
     .boolean()
     .oneOf(
       [true],
-      'You must accept our terms and conditions before submitting this application'
+      'You must accept our terms and conditions before submitting this application',
     ),
   acceptDeclaration: yup
     .boolean()
     .oneOf(
       [true],
-      'You must accept the declaration before submitting this application'
+      'You must accept the declaration before submitting this application',
     ),
 });
 

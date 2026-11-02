@@ -229,7 +229,7 @@ export function Popover({
       offset={offset}
       {...props}
       className={composeRenderProps(className, (className, renderProps) =>
-        styles({ ...renderProps, className })
+        styles({ ...renderProps, className }),
       )}
     >
       {showArrow && (

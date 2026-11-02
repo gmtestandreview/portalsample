@@ -231,7 +231,7 @@ const ReturnMethodFields = () => (
 );
 
 const DeliveryAndReturnFormFields = (
-  props: Readonly<ReturnAddressFieldsProps>
+  props: Readonly<ReturnAddressFieldsProps>,
 ) => (
   <>
     <ReturnContactFields />

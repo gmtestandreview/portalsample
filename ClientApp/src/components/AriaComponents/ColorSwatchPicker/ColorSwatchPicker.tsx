@@ -16,7 +16,7 @@ export function ColorSwatchPicker({
 }
 
 export function ColorSwatchPickerItem(
-  props: Readonly<ColorSwatchPickerItemProps>
+  props: Readonly<ColorSwatchPickerItemProps>,
 ) {
   return (
     <AriaColorSwatchPickerItem {...props}>

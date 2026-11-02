@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import {
   ReturnAddressTypeValues,
@@ -22,34 +22,48 @@ import { removeHidden, validateForm } from '@/components/forms/utils';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  search: vi.fn(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  search: vi.fn<(...args: unknown[]) => unknown>(),
   account: { homeAccountId: 'mock-id' },
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-    accounts: [mocks.account],
-    inProgress: 'none',
-  }),
-  useAccount: () => mocks.account,
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+        accounts: [mocks.account],
+        inProgress: 'none',
+      }),
+      useAccount: () => mocks.account,
+    }) satisfies __ExactMockModule<__TestMockModule2>,
+);
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AddressClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
       search = mocks.search;
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>,
+);
 
 const hidingFields = deliveryAndReturnHidingFields;
 
@@ -58,6 +72,7 @@ type Values = DeliveryAndReturnStep & { saveAndExit?: boolean };
 interface HarnessProps {
   values?: Values;
   withHiddenRules?: boolean;
+  status?: unknown;
   withErrorSummary?: boolean;
   onSubmit?: (values: DeliveryAndReturnStep) => void;
 }
@@ -74,22 +89,23 @@ function Probe() {
 function Harness({
   values = {},
   withHiddenRules = true,
+  status,
   withErrorSummary = false,
-  onSubmit = vi.fn(),
+  onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
   return (
     <MemoryRouter>
       <Formik<Values>
         initialValues={values}
-        {...(withHiddenRules
-          ? { initialStatus: { hidden: hidingFields } }
-          : {})}
+        initialStatus={
+          status ?? (withHiddenRules ? { hidden: hidingFields } : undefined)
+        }
         validate={(formValues) =>
           validateForm(
             formValues.saveAndExit
               ? deliveryAndReturnSaveValidation
               : deliveryAndReturnSubmitValidation,
-            hidingFields
+            hidingFields,
           )(formValues)
         }
         onSubmit={(submitted) =>
@@ -107,24 +123,30 @@ function Harness({
   );
 }
 
-const submitted = (onSubmit: ReturnType<typeof vi.fn>) =>
-  defined(onSubmit.mock.calls[0], 'submit call')[0];
+const submitted = (
+  onSubmit: ReturnType<typeof vi.fn<(values: DeliveryAndReturnStep) => void>>,
+): DeliveryAndReturnStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
-describe('DeliveryAndReturnFormikBridge', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
-    mocks.search.mockResolvedValue({ matches: [] });
-  });
+const resetDeliveryAndReturnMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
+  mocks.search.mockResolvedValue({ matches: [] });
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(DeliveryAndReturnFormikBridge, () => {
   it('mirrors a manually entered return address into the submit payload', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
@@ -134,7 +156,8 @@ describe('DeliveryAndReturnFormikBridge', () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(submitted(onSubmit)).toMatchObject({
       returnAddressType: ReturnAddressTypeValues.Other,
       returnAddress: {
@@ -148,8 +171,12 @@ describe('DeliveryAndReturnFormikBridge', () => {
   });
 
   it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{
@@ -164,25 +191,31 @@ describe('DeliveryAndReturnFormikBridge', () => {
           returnOrganisationName: 'Loaded return organisation',
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     const organisationName = screen.getByLabelText(
-      'Return organisation name (optional)'
+      'Return organisation name (optional)',
     );
+
     expect(organisationName).toHaveValue('Loaded return organisation');
 
     await user.clear(organisationName);
     await user.type(organisationName, 'Edited return organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(submitted(onSubmit)).toMatchObject({
       returnOrganisationName: 'Edited return organisation',
     });
   });
 
   it('mirrors a selected return address as a whole object', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     mocks.search.mockResolvedValue({
       matches: [
         {
@@ -196,24 +229,25 @@ describe('DeliveryAndReturnFormikBridge', () => {
       ],
     });
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.type(
       screen.getByRole('combobox', { name: /Return address/ }),
-      '1 Street'
+      '1 Street',
     );
     await user.click(
-      await screen.findByText('1 Street Road, Lindfield NSW 2070')
+      await screen.findByText('1 Street Road, Lindfield NSW 2070'),
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(submitted(onSubmit)).toMatchObject({
       returnAddress: {
         isManuallyEntered: false,
@@ -225,27 +259,36 @@ describe('DeliveryAndReturnFormikBridge', () => {
   });
 
   it('shows address messages only after a failed submit', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
+
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/Address line 1 is required/i)
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/Address line 1 is required/i),
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('shows messages for fields that were never given a value', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -253,43 +296,55 @@ describe('DeliveryAndReturnFormikBridge', () => {
           returnContactType: ReturnContactTypeValues.DifferentPerson,
           returnMethod: ReturnMethodValues.ClientWillProvide,
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText('Carrier name is required')
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText('Carrier name is required'),
+    ).resolves.toBeInTheDocument();
     expect(screen.getByText('First name is required')).toBeInTheDocument();
     expect(screen.getByLabelText('Carrier name')).toBeInvalid();
     expect(screen.getByLabelText('Carrier name')).toHaveAccessibleDescription(
-      'Carrier name is required'
+      'Carrier name is required',
     );
   });
 
   it('does not dirty the outer form when a failed submit touches an undefined address', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
     render(
       <Harness
         values={{
           returnAddressType: ReturnAddressTypeValues.Other,
-          returnAddress: undefined as never,
+          returnAddress: undefined,
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await screen.findByText(/is required/i);
 
-    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '');
+    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
+      address?: unknown;
+      dirty: boolean;
+    };
+
     expect(probe.dirty).toBe(false);
     expect(probe.address).toBeUndefined();
   });
 
   it('applies the soft schema once the outer form is saving and exiting', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{
@@ -298,37 +353,63 @@ describe('DeliveryAndReturnFormikBridge', () => {
           saveAndExit: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
 
   it('follows the hide rules from the form status', () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const { unmount } = render(
       <Harness
         values={{ returnContactType: ReturnContactTypeValues.SamePerson }}
-      />
+      />,
     );
-    expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('combobox', { name: /Return address/ })
-    ).not.toBeInTheDocument();
+
+    expect([
+      screen.queryByLabelText('Carrier name'),
+      screen.queryByLabelText('First name'),
+      screen.queryByRole('combobox', { name: /Return address/ }),
+    ]).toStrictEqual([null, null, null]);
+
     unmount();
 
     render(<Harness withHiddenRules={false} />);
+
+    expect([
+      screen.getByLabelText('Carrier name'),
+      screen.getByLabelText('First name'),
+      screen.getByRole('combobox', { name: /Return address/ }),
+    ]).toStrictEqual([
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+    ]);
+  });
+
+  it('falls back to no hide rules when the status has non-object hidden rules', () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
+    render(<Harness status={{ hidden: null }} />);
+
     expect(screen.getByLabelText('Carrier name')).toBeInTheDocument();
-    expect(screen.getByLabelText('First name')).toBeInTheDocument();
-    expect(
-      screen.getByRole('combobox', { name: /Return address/ })
-    ).toBeInTheDocument();
   });
 
   it('renders a field for every error summary link after a failed submit', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -338,7 +419,7 @@ describe('DeliveryAndReturnFormikBridge', () => {
           returnAddressType: ReturnAddressTypeValues.Other,
           returnMethod: ReturnMethodValues.ClientWillProvide,
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -347,12 +428,12 @@ describe('DeliveryAndReturnFormikBridge', () => {
     const keys = within(summary)
       .getAllByRole('link')
       .map((link) => link.getAttribute('href')?.replace(/^#/, '') ?? '');
-    expect(keys).toEqual(
-      expect.arrayContaining(['carrierName', 'contact.firstName'])
+
+    expect(keys).toStrictEqual(
+      expect.arrayContaining(['carrierName', 'contact.firstName']),
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
-    keys.forEach((key) =>
-      expect(document.getElementById(key), key).not.toBeNull()
-    );
+
+    keys.forEach((key) => expect(document.getElementById(key)).not.toBeNull());
   });
 });

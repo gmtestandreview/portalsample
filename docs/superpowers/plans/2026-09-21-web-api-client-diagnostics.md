@@ -86,4 +86,3 @@ evidence.
   distinguishes server settings from scanner overrides.
 - [Biome configuration](https://biomejs.dev/reference/configuration/) documents
   the precise force-ignore pattern used here.
-  

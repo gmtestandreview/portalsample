@@ -1,6 +1,5 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
-import { startCase, capitalize } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useFormState } from 'react-hook-form';
@@ -20,13 +19,13 @@ type ErrorData = Record<string, unknown> | readonly unknown[];
 type FlatErrorData = Record<string, string>;
 
 const isValidationProblemDetails = (
-  value?: ProblemDetails | ValidationProblemDetails
+  value?: ProblemDetails | ValidationProblemDetails,
 ): value is ValidationProblemDetails => value != null && 'errors' in value;
 
 const handleAlertScroll = (): ReturnType<typeof setTimeout> =>
   setTimeout(() => {
     const summaryRef: HTMLElement = document.querySelector(
-      '#form-error-summary'
+      '#form-error-summary',
     ) as HTMLElement;
     if (summaryRef && typeof summaryRef.scrollIntoView === 'function') {
       summaryRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -37,7 +36,7 @@ const handleAlertScroll = (): ReturnType<typeof setTimeout> =>
 const renderErrorListItem = (
   key: string,
   text: string,
-  disableLinkedError?: boolean
+  disableLinkedError?: boolean,
 ): JSX.Element => {
   if (disableLinkedError) {
     return (
@@ -57,14 +56,22 @@ const renderErrorListItem = (
 };
 
 const keyToSentenceCase = (key: string, depth?: number, separator = '.') => {
+  const formatKeyPart = (keyPart: string) => {
+    const formatted = keyPart
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+      .replace(/([a-z\d])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .trim();
+    return formatted
+      ? `${formatted.charAt(0).toUpperCase()}${formatted.slice(1).toLowerCase()}`
+      : formatted;
+  };
   const keyParts = key.split(separator);
   let sentenceBuilder = '';
   keyParts.forEach((keyPart, i) => {
     if (Number.isNaN(+keyPart)) {
       if ((depth && i < depth) || !depth) {
-        sentenceBuilder = sentenceBuilder.concat(
-          `${capitalize(startCase(keyPart))}: `
-        );
+        sentenceBuilder = sentenceBuilder.concat(`${formatKeyPart(keyPart)}: `);
       }
     } else {
       sentenceBuilder = sentenceBuilder.concat(`(#${+keyPart + 1}): `);
@@ -93,12 +100,12 @@ const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
         The following issue(s) must be corrected before you can continue:
       </Alert.Heading>
       <ul>
-        {Object.keys(errors).map((key) =>
+        {Object.entries(errors).map(([key, value]) =>
           renderErrorListItem(
             key,
-            `${keyToSentenceCase(key, 1)}${errors[key]}`,
-            disableLinkedError
-          )
+            `${keyToSentenceCase(key, 1)}${value}`,
+            disableLinkedError,
+          ),
         )}
       </ul>
     </div>
@@ -129,7 +136,7 @@ const renderServerError = (error: string | JSX.Element) => (
 const sanitizeErrorData = (
   errorData: ErrorData,
   prefixToAdd: false | string = false,
-  resultBuilder: FlatErrorData | null = null
+  resultBuilder: FlatErrorData | null = null,
 ): FlatErrorData => {
   const result: FlatErrorData = resultBuilder ?? {};
 
@@ -147,13 +154,13 @@ const sanitizeErrorData = (
 
 const formatServerErrorKeys = (
   validationErrors: Record<string, string[]>,
-  prefixToRemove?: string
+  prefixToRemove?: string,
 ): FlatErrorData =>
-  Object.entries(validationErrors).reduce<FlatErrorData>(
-    (result, [key, messages]) => {
+  Object.fromEntries(
+    Object.entries(validationErrors).flatMap(([key, messages]) => {
       const message = messages[0];
       if (message === undefined) {
-        return result;
+        return [];
       }
 
       let keyBuilder = key;
@@ -166,10 +173,8 @@ const formatServerErrorKeys = (
         .split('.')
         .map((part) => `${part.charAt(0).toLowerCase()}${part.slice(1)}`) // lowercase first letter of each subkey
         .join('.');
-      result[keyBuilder] = message;
-      return result;
-    },
-    {}
+      return [[keyBuilder, message]];
+    }),
   );
 
 interface SummaryFocusState {
@@ -190,7 +195,7 @@ const useFocusSummaryOnFailedSubmit = ({
 }: SummaryFocusState) => {
   const focusedSubmitCount = useRef(0);
   const focusTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined
+    undefined,
   );
 
   useEffect(() => {
@@ -215,7 +220,7 @@ const FormikErrorsSummary = ({
   const { errors, submitCount, isValidating, isSubmitting } =
     useFormikContext<FormikValues>();
   const [errorSummary, setErrorSummary] = useState<FormikErrors<FormikValues>>(
-    {}
+    {},
   );
   const sanitizedErrorSummary = sanitizeErrorData(errorSummary);
   const hasErrors = Object.keys(sanitizedErrorSummary).length > 0;
@@ -283,9 +288,9 @@ const ErrorSummary = ({
     if (validationErrors) {
       return renderErrors(
         sanitizeErrorData(
-          formatServerErrorKeys(validationErrors, prefixToRemove)
+          formatServerErrorKeys(validationErrors, prefixToRemove),
         ),
-        disableLinkedError
+        disableLinkedError,
       );
     }
   }

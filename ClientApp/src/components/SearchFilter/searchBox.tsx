@@ -15,7 +15,7 @@ const SearchBox = (props: Readonly<SearchBoxProps>) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleSearchClear(
-    _e?: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    _e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ): void {
     setSearchValue('');
     inputRef.current?.focus();

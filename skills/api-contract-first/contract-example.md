@@ -1,11 +1,12 @@
 ---
 name: contract-example
-Description: Example of contract for the api-contract-first skill 
+Description: Example of contract for the api-contract-first skill
 ---
 
 # Contract Examples
 
-Below are Examples of OpenAPI and Events contracts choose the best format for your project
+Below are Examples of OpenAPI and Events contracts choose the best format for
+your project
 
 ## REST → OpenAPI 3.x
 
@@ -270,14 +271,14 @@ components:
             $ref: '#/components/schemas/Problem'
 ```
 
-**Compatibility classification:** New contract — no previous approved
-consumer contract exists.
+**Compatibility classification:** New contract — no previous approved consumer
+contract exists.
 
-If modifying an existing `/orders` operation, compare this contract against
-the approved baseline before implementation. Do not introduce required
-headers, tighter input constraints, changed status codes, or changed
-authentication/authorization behaviour without classifying their
-compatibility impact.
+If modifying an existing `/orders` operation, compare this contract against the
+approved baseline before implementation. Do not introduce required headers,
+tighter input constraints, changed status codes, or changed
+authentication/authorization behaviour without classifying their compatibility
+impact.
 
 ## Events / Webhooks → AsyncAPI or Approved Payload Schema
 

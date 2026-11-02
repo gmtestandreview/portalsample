@@ -1424,10 +1424,10 @@ export type DateOnlyValue = string & {
 export function parseDateOnlyValue(value: string): DateOnlyValue | undefined;
 
 export function parseApiDateOnly(
-  value: Date | string
+  value: Date | string,
 ): DateOnlyValue | undefined;
 export function parseDateOnlyInput(
-  value: Date | string
+  value: Date | string,
 ): DateOnlyValue | undefined;
 export function dateOnlyToPickerDate(value: DateOnlyValue): Date;
 export function dateOnlyToApiDate(value: DateOnlyValue): Date;
@@ -1543,7 +1543,7 @@ export async function expectConsoleMessage(
   level: GuardedConsoleLevel,
   pattern: RegExp,
   count: number,
-  action: () => void | Promise<void>
+  action: () => void | Promise<void>,
 ): Promise<void>;
 ```
 
@@ -1705,7 +1705,7 @@ Add initial-render assertions on the actual control:
 
 ```ts
 expect(
-  screen.getByRole('combobox', { name: /expected visible label/i })
+  screen.getByRole('combobox', { name: /expected visible label/i }),
 ).toBeInTheDocument();
 ```
 
@@ -1971,7 +1971,7 @@ the signature, not the hashed name.
 Two findings were recorded rather than fixed, both pre-existing and outside C3's
 owner list:
 
-1. `.storybook/preview.ts` mounts every story under a single `path: '*'` route,
+1. `.storybook/preview.tsx` mounts every story under a single `path: '*'` route,
    so no story ever binds a route param. That is why `indexList > Shell` renders
    an empty `<h1>{id}</h1>` and reports an axe `empty-heading` violation.
 2. The `Organisation Details Validation` fixture seeds errors for

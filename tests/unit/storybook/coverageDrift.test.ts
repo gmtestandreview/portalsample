@@ -1,58 +1,68 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+  readDirectorySync,
+  readTextFileSync,
+} from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const sourceRoot = path.join(repoRoot, 'ClientApp', 'src');
 const coverageMatrixPath = path.join(
   sourceRoot,
   'storybook',
-  'CoverageMatrix.docs.mdx'
+  'CoverageMatrix.docs.mdx',
 );
 
 const readDirs = (dir: string) =>
-  fs
-    .readdirSync(dir, { withFileTypes: true })
+  readDirectorySync(dir, repoRoot)
     .filter((e) => e.isDirectory() && !e.name.startsWith('.'))
     .map((e) => e.name);
 
-describe('Storybook coverage drift', () => {
-  const coverageDoc = fs.readFileSync(coverageMatrixPath, 'utf8');
+describe('storybook coverage drift', () => {
+  const coverageDoc = readTextFileSync(coverageMatrixPath, repoRoot);
 
   it('every route family directory is registered in CoverageMatrix.docs.mdx', () => {
+    expect.hasAssertions();
+
     const routesDir = path.join(sourceRoot, 'routes');
     const families = readDirs(routesDir);
     const unregistered = families.filter((f) => !coverageDoc.includes(f));
 
     expect(
       unregistered,
-      `New route families not registered in CoverageMatrix.docs.mdx — add them to the Route Coverage Matrix or the explicit exclusion table:\n  ${unregistered.join('\n  ')}`
+      `New route families not registered in CoverageMatrix.docs.mdx — add them to the Route Coverage Matrix or the explicit exclusion table:\n  ${unregistered.join('\n  ')}`,
     ).toHaveLength(0);
   });
 
   it('every component family directory is registered in CoverageMatrix.docs.mdx', () => {
+    expect.hasAssertions();
+
     const componentsDir = path.join(sourceRoot, 'components');
     const families = readDirs(componentsDir);
     const unregistered = families.filter((f) => !coverageDoc.includes(f));
 
     expect(
       unregistered,
-      `New component families not registered in CoverageMatrix.docs.mdx — add them to the Component Coverage Matrix with an "Interactive", "Docs only", or "Explicit exclusion" status:\n  ${unregistered.join('\n  ')}`
+      `New component families not registered in CoverageMatrix.docs.mdx — add them to the Component Coverage Matrix with an "Interactive", "Docs only", or "Explicit exclusion" status:\n  ${unregistered.join('\n  ')}`,
     ).toHaveLength(0);
   });
 
-  it('Phase 4 is marked Complete in the phase status table', () => {
+  it('phase 4 remains open until closure evidence passes', () => {
+    expect.hasAssertions();
     expect(coverageDoc).toContain('Phase 4: Closure');
-    expect(coverageDoc).toContain("['Phase 4: Closure', 'Complete'");
+    expect(coverageDoc).toMatch(/'Phase 4: Closure',\s*'Open'/);
   });
 
-  it('RouteLeavingGuard is registered with a non-Docs-only status', () => {
+  it('routeLeavingGuard is registered with a non-Docs-only status', () => {
+    expect.hasAssertions();
+
     const guardRow = coverageDoc
       .split('\n')
       .find((l) => l.includes('RouteLeavingGuard'));
+
     expect(
       guardRow,
-      'RouteLeavingGuard row not found in CoverageMatrix'
+      'RouteLeavingGuard row not found in CoverageMatrix',
     ).toBeDefined();
     expect(guardRow).not.toContain('Docs only');
   });

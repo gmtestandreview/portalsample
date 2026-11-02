@@ -61,7 +61,7 @@ export const renderWithRouter = (
     loader,
     extraRoutes = [],
     ...options
-  }: RenderWithRouterOptions = {}
+  }: RenderWithRouterOptions = {},
 ): RenderWithRouterResult => {
   const routes: RouteObject[] = [
     {

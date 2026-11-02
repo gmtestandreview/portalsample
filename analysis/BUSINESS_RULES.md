@@ -113,7 +113,7 @@ SEC-011 closed 2026-06-01 (CRD-029, CRD-031).
 ### RULE-001: Account Creation Gate
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/routes/preConditions/PreConditions.tsx:64-67` **Plain English:**
+`ClientApp/src/routes/preConditions/PreConditions.tsx:91-95` **Plain English:**
 A newly authenticated user who has not completed account creation is always
 redirected to `/create-account`, overriding any other navigation target.
 **Specification:**
@@ -191,6 +191,7 @@ And    on acceptance, call AccountLoginClient.acceptTerms; setAgree() in Account
 **Parameters:**
 
 - Current terms version: `"1"` (from `ClientApp/src/terms-config.json`)
+- Config key: `"TermsVersion"`
 - Comparison is string equality: `user.termsVersion.toString() === "1"` **Edge
   cases handled:** Version is string-compared; a stored integer `1` and config
   string `"1"` match via `.toString()`. Incrementing the JSON value forces all
@@ -202,7 +203,7 @@ And    on acceptance, call AccountLoginClient.acceptTerms; setAgree() in Account
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
 `ClientApp/src/routes/preConditions/PreConditions.tsx:84-88`,
-`ClientApp/src/components/modals/BranchSelectorModal/index.tsx:173` **Plain
+`ClientApp/src/components/modals/BranchSelectorModal/index.tsx:154-162` **Plain
 English:** After accepting T&C, if the user has no default organisation
 selected, a blocking branch-selector modal is shown. The user cannot dismiss it
 without selecting an organisation. **Specification:**
@@ -227,10 +228,10 @@ immediately after the create-account wizard completes **Confidence:** High
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
 `ClientApp/src/routes/common/enums.ts:1-28`,
-`ClientApp/src/routes/common/quoteStatus.ts` **Plain English:** Every RFQ and
-quote request moves through a defined set of statuses controlled by the NMI CRM.
-The portal can only trigger two transitions (Accept, Decline); all others are
-server-side. **Specification:**
+`ClientApp/src/routes/common/quoteStatus.ts:1-44` **Plain English:** Every RFQ
+and quote request moves through a defined set of statuses controlled by the NMI
+CRM. The portal can only trigger two transitions (Accept, Decline); all others
+are server-side. **Specification:**
 
 ```text
 Given  a RequestForQuoteDto with field quoteRequestStatus
@@ -355,8 +356,8 @@ perspective **Confidence:** High
 ### RULE-010: Dashboard Action Menu by Status
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:394-478`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:254-310` _(corrected
+`ClientApp/src/components/RequestList/requestItem.tsx:439-523`,
+`ClientApp/src/components/RequestList/instrumentItem.tsx:281-345` _(corrected
 2026-09-02, CRD-045 - previous citation was past end of file)_ **Plain
 English:** Each dashboard card exposes a specific subset of actions depending on
 the record's status. This is the master gating table for all customer-initiated
@@ -393,7 +394,8 @@ InstrumentItem differences:
   ReportIssued: "View latest report" + "Request recalibration" (no "View request" fallback)
 ```
 
-**Confidence:** High
+Implementation status identifiers include `QuoteDrafted`, `QuoteAvailable`,
+`ReportIssued`, and `ReportWithdrawn`. **Confidence:** High
 
 ---
 
@@ -435,7 +437,7 @@ diverge over a longer period?
 ### RULE-012: Decline is Irreversible
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/quotation/index.tsx:122-142` _(corrected 2026-09-02,
+`ClientApp/src/routes/quotation/index.tsx:118-141` _(corrected 2026-09-02,
 CRD-045 - previous citation was past end of file)_ - the `declineQuote` handler
 **Plain English:** Declining a quotation permanently ends that quote
 opportunity; the action cannot be undone from the portal. **Specification:**
@@ -448,15 +450,15 @@ Then   status transitions to QuoteDeclined (server-side)
   And  the UI displays: "Note: Declining this quote cannot be undone"
 ```
 
-**Confidence:** High
+**Implementation client:** `QuoteClient` **Confidence:** High
 
 ---
 
 ### RULE-013: RFQ Submission is Irreversible
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/requestForQuote/index.tsx:83-86` **Plain English:** Once a
-Request for Quote has been submitted, the customer cannot make further changes
+`ClientApp/src/routes/requestForQuote/index.tsx:132-138` **Plain English:** Once
+a Request for Quote has been submitted, the customer cannot make further changes
 through the portal. **Specification:**
 
 ```text
@@ -523,7 +525,7 @@ is complete.
 ### RULE-016: Dashboard Item Suppression
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:492` **Plain English:** An
+`ClientApp/src/components/RequestList/requestItem.tsx:535` **Plain English:** An
 RFQ record with `hideFromDashboard = true` is completely hidden from the
 customer's view, even if it exists in CRM. **Specification:**
 
@@ -669,7 +671,7 @@ Then   navigate to /quotation/{referenceId}                     (RFQ reference I
 ### RULE-022: ABN Checksum Algorithm
 
 **Category:** Calculation **Priority:** P0 **Source:**
-`ClientApp/src/validationSchemas/common.ts:133-149` **Plain English:**
+`ClientApp/src/validationSchemas/common.ts:155-168` **Plain English:**
 Australian Business Numbers are validated using the official Australian Taxation
 Office weighted checksum algorithm. **Specification:**
 
@@ -695,14 +697,14 @@ Example: "51824753556"
 - Required length: `11`
 - First-digit adjustment: subtract `1` **Edge cases handled:** Whitespace →
   immediate fail; NaN → sum is NaN → modulo fails; wrong length → immediate fail
-  **Confidence:** High
+  **Implementation function:** `isValidAbn` **Confidence:** High
 
 ---
 
 ### RULE-026: AUD Currency Formatting
 
 **Category:** Calculation **Priority:** P1 **Source:**
-`ClientApp/src/utils/index.ts:248-256` **Plain English:** All monetary amounts
+`ClientApp/src/utils/index.ts:301-310` **Plain English:** All monetary amounts
 are displayed in Australian dollars with locale-correct symbol, thousands
 separators, and two decimal places. **Specification:**
 
@@ -722,7 +724,7 @@ Example: 12500.5 → "$12,500.50"
 ### RULE-027: Date Parsing Dispatch
 
 **Category:** Calculation **Priority:** P1 **Source:**
-`ClientApp/src/utils/index.ts:77-103` **Plain English:** The portal accepts
+`ClientApp/src/utils/index.ts:92-115` **Plain English:** The portal accepts
 dates in two formats — Australian short form (dd/MM/yyyy) and ISO 8601 — and
 selects the parser based on string length. **Specification:**
 
@@ -734,7 +736,9 @@ Then:
   else                   → parse with format "yyyy-MM-dd'T'HH:mm:ssxxx" (ISO 8601)
   In both cases: time components zeroed (setHours/Minutes/Seconds/Milliseconds = 0)
 
-parseDateUTC always uses ISO format regardless of length
+  parseDateUTC always uses ISO format regardless of length
+
+Implementation constants: `DATE_DDMMYYY_FORMAT`, `DATE_TIME_LOCALE_FORMAT`
 ```
 
 **Parameters:** The 10-character branch encodes Australian date convention
@@ -745,12 +749,12 @@ parseDateUTC always uses ISO format regardless of length
 ### RULE-028: Reporting Period Abbreviation
 
 **Category:** Calculation **Priority:** P2 **Source:**
-`ClientApp/src/utils/index.ts:197-204` **Plain English:** Financial year strings
+`ClientApp/src/utils/index.ts:241-258` **Plain English:** Financial year strings
 are shortened to a compact form for display. **Specification:**
 
 ```text
 Given  a period string
-When   abbreviateReportingPeriod(period) runs
+When   formatReportingPeriod(period) runs
 Then:
   "FY 2021-2022" → "2021-22"   (first year + last 2 digits of second year)
   "CY 2021"      → "2021"      (calendar year — strip prefix only)
@@ -766,7 +770,7 @@ malformed strings **Confidence:** High
 ### RULE-031: Australian Postcode Range
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:349-357`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:389-434`
 **Plain English:** Postcodes must be exactly 4 digits and fall within valid
 Australian ranges. **Specification:**
 
@@ -783,16 +787,17 @@ Then:
 "0100" → INVALID           "200"  → INVALID (length ≠ 4)
 ```
 
-**Parameters:** Ranges hardcoded: `200–299`, `800–9999` **Confidence:** High —
-SME note: Postcodes 1000–1999 (NSW/ACT PO Box ranges) fall within 800–9999 and
-are accepted. Is this intentional for postal addresses?
+**Parameters:** Ranges hardcoded: `200–299`, `800–9999` **Implementation method
+constant:** `YUP_AUSTPOSTCODE_METHOD` **Confidence:** High — SME note: Postcodes
+1000–1999 (NSW/ACT PO Box ranges) fall within 800–9999 and are accepted. Is this
+intentional for postal addresses?
 
 ---
 
 ### RULE-032: Australian Phone Number Format
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:426-427`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:472-524`
 **Plain English:** Phone numbers must match a recognised Australian format —
 landline, mobile, 1800/1300 freecall, or 13-series short number.
 **Specification:**
@@ -809,18 +814,19 @@ Field limits (contactValidation.ts):
   Mobile: minEntered(10), maxLength(12)
 ```
 
-**Parameters:** Regex literals hardcoded; area codes `[2-47-8]` (excludes 5 and
-6, per AU geography) **Confidence:** High — SME question: Does maxLength(12)
-intentionally exclude some `+61`-prefixed variants with spaces?
+**Parameters:** Regex literals hardcoded; implementation method constant:
+`YUP_PHONE_METHOD`; area codes `[2-47-8]` (excludes 5 and 6, per AU geography)
+**Confidence:** High — SME question: Does maxLength(12) intentionally exclude
+some `+61`-prefixed variants with spaces?
 
 ---
 
 ### RULE-033: Email Address Format
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:467` **Plain
-English:** Email addresses must match a custom RFC 5321-aligned regex and cannot
-exceed 100 characters. **Specification:**
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:594-628`
+**Plain English:** Email addresses must match a custom RFC 5321-aligned regex
+and cannot exceed 100 characters. **Specification:**
 
 ```text
 Regex: /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9-]){0,62}\.[a-zA-Z](-?[a-zA-Z0-9])+$/
@@ -831,14 +837,14 @@ Max length: 100 chars (common.ts:131)
 "user@example" → INVALID (no TLD)
 ```
 
-**Confidence:** High
+**Implementation method constant:** `YUP_EMAIL_METHOD` **Confidence:** High
 
 ---
 
 ### RULE-034: Name Field Charset (No Accented Characters)
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:644-676`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:833-876`
 **Plain English:** Person name fields (first name, last name, title) only accept
 ASCII letters, hyphen, space, and apostrophe — accented characters are rejected.
 **Specification:**
@@ -852,7 +858,8 @@ nameAllowedFormat(extended=false) regex: /^[-–—A-Za-z ']*$/
 "Müller" → INVALID
 ```
 
-**Parameters:** `extended = false` used for all person-name fields **Suspected
+**Parameters:** `extended = false` used for all person-name fields;
+implementation method constant: `YUP_NAMEALLOWEDFORMAT_METHOD` **Suspected
 defect:** The `extended = true` mode regex has only an end-anchor `$` but no
 start-anchor `^` — only validates the last character **Confidence:** High for
 normal case — **SME question: Should person names accept diacritical characters
@@ -863,7 +870,7 @@ normal case — **SME question: Should person names accept diacritical character
 ### RULE-035: Business Name Charset (ASIC-Aligned)
 
 **Category:** Validation **Priority:** P0 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:713-741`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:878-916`
 _(corrected 2026-09-02, CRD-043 — the previously cited 678-707 range is a
 different validator)_ **Plain English:** Business and trading names must conform
 to the character set defined in the ASIC CompanyName Business Rules message
@@ -877,9 +884,9 @@ businessName() regex: /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/
 "ACME Corp. Pty Ltd" → VALID
 ```
 
-**Parameters:** Character set referenced to ASIC BRS message implementation
-guide v1.7 (comment in source) **Confidence:** High _(raised from Medium
-2026-09-02, CRD-043)_
+**Parameters:** Implementation method constant: `YUP_BUSINESSNAME_METHOD`.
+Character set referenced to ASIC BRS message implementation guide v1.7 (comment
+in source) **Confidence:** High _(raised from Medium 2026-09-02, CRD-043)_
 
 > **CORRECTION — 2026-09-02 (CRD-043). The previous entry was factually wrong
 > and its SME question rested on a false premise.** It stated that the
@@ -917,7 +924,7 @@ guide v1.7 (comment in source) **Confidence:** High _(raised from Medium
 ### RULE-036: No Consecutive Identical Characters
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:568-607`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:738-786`
 **Plain English:** Fields cannot contain a run of the same letter repeated more
 than the threshold number of times (default: 3 in a row is rejected).
 **Specification:**
@@ -931,18 +938,19 @@ Then   regex = /([a-z])\1{2,}/i  (matches 3+ consecutive identical letters)
 "aaaa" → INVALID
 ```
 
-**Parameters:** Default threshold: `3` (hardcoded in `stringExtensions.ts:573`)
-**Edge cases handled:** Minimum enforced threshold is `2`; case-insensitive;
-only applies to letters, not digits or punctuation **Confidence:** High
+**Parameters:** Default threshold: `3` (hardcoded in `stringExtensions.ts:733`);
+implementation method constant: `YUP_NOCONSECUTIVECHARS_METHOD` **Edge cases
+handled:** Minimum enforced threshold is `2`; case-insensitive; only applies to
+letters, not digits or punctuation **Confidence:** High
 
 ---
 
 ### RULE-037: No Consecutive Punctuation
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:502` **Plain
-English:** Adjacent apostrophes, hyphens, or spaces (including Unicode variants)
-are rejected in name and text fields. **Specification:**
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:630-666`
+**Plain English:** Adjacent apostrophes, hyphens, or spaces (including Unicode
+variants) are rejected in name and text fields. **Specification:**
 
 ```text
 Characters covered: space, ASCII apostrophe ', U+2019 ', ASCII hyphen -, U+2013 –, U+2014 —
@@ -954,6 +962,7 @@ Regex: /([ '’\-–—])\1+/
 "O'Brien"    → VALID
 ```
 
+**Implementation method constant:** `YUP_NOCONSECUTIVEPUNCUATION_METHOD`
 **Confidence:** High
 
 ---
@@ -961,7 +970,7 @@ Regex: /([ '’\-–—])\1+/
 ### RULE-038: At Least One Phone Number (Contact Form)
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/contactValidation.ts:42-53` **Plain English:**
+`ClientApp/src/validationSchemas/contactValidation.ts:38-57` **Plain English:**
 A contact record must have at least one phone number (landline or mobile); both
 cannot be blank simultaneously. **Specification:**
 
@@ -973,7 +982,7 @@ When   either phone OR mobile has a valid value
 Then   the empty one is accepted (optional)
 ```
 
-**Confidence:** High
+**Implementation helpers:** `phoneRequired`, `NotEmpty` **Confidence:** High
 
 ---
 
@@ -1125,7 +1134,7 @@ Then   contact fields not required
 ### RULE-045: Date Format and Ceiling
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/common.ts:65-75`, `common.ts:40` **Plain
+`ClientApp/src/validationSchemas/common.ts:28-32`, `common.ts:40` **Plain
 English:** All date inputs must be in DD/MM/YYYY format and cannot exceed
 year 9999. **Specification:**
 
@@ -1210,12 +1219,14 @@ most cases minimum) character length. **Specification:**
 ### RULE-048: Website URL Format
 
 **Category:** Validation **Priority:** P2 **Source:**
-`ClientApp/src/validationSchemas/common.ts:111` **Plain English:** Business
+`ClientApp/src/validationSchemas/common.ts:102-129` **Plain English:** Business
 website URLs may omit the protocol but must have a valid domain with a 2–6
 character TLD. **Specification:**
 
 ```text
 Regex: /^(?!\.)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)(?<!\.)$/
+
+Implementation constants: `URL_HOST_PREFIX`, `URL_TLD`, `URL_PATH`
 
 "measurement.gov.au" → VALID (protocol optional)
 "https://example.com" → VALID

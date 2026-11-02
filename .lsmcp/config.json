@@ -3,7 +3,11 @@
   "preset": "typescript",
   "bin": "node",
   "args": ["node_modules/typescript-language-server/lib/cli.mjs", "--stdio"],
-  "files": ["ClientApp/src/**/*.ts", "ClientApp/src/**/*.tsx", ".storybook/**/*.{ts,tsx}"],
+  "files": [
+    "ClientApp/src/**/*.ts",
+    "ClientApp/src/**/*.tsx",
+    ".storybook/**/*.{ts,tsx}"
+  ],
   "settings": {
     "autoIndex": true,
     "indexConcurrency": 5

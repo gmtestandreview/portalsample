@@ -5,27 +5,27 @@ import { describe, expect, it } from 'vitest';
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const steps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'storybook.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const quoteSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'quote.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const accountMaintenanceSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'account-maintenance.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const commonSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'common.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const rfqLifecycleSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'rfq-lifecycle.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const reportSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'report.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const workflowErrorsFeature = fs.readFileSync(
   path.join(
@@ -34,95 +34,124 @@ const workflowErrorsFeature = fs.readFileSync(
     'e2e',
     'features',
     'resilience',
-    'workflow-errors.feature'
+    'workflow-errors.feature',
   ),
-  'utf8'
+  'utf8',
 );
 const mockApi = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'support', 'mock-api.ts'),
-  'utf8'
+  'utf8',
 );
 
 const routeHandler = (routePattern: string) => {
-  const escapedPattern = routePattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const handler = new RegExp(
-    `await page\\.route\\(\\s*'${escapedPattern}'\\s*,[\\s\\S]+?(?=\\n\\s*await page\\.route\\(|\\n}\\s*$)`
-  ).exec(mockApi)?.[0];
+  const marker = `'${routePattern}',`;
+  const markerStart = mockApi.indexOf(marker);
+  const start =
+    markerStart === -1
+      ? -1
+      : mockApi.lastIndexOf('await page.route(', markerStart);
+  const nextRoute = mockApi.indexOf(
+    '\n    await page.route(',
+    markerStart + marker.length,
+  );
+  const end = nextRoute === -1 ? mockApi.length : nextRoute;
+  const handler = start === -1 ? undefined : mockApi.slice(start, end);
 
-  expect(handler).toBeTruthy();
+  expect(handler).toBeDefined();
+
   return handler ?? '';
 };
 
 const extractSection = (source: string, pattern: RegExp) =>
   pattern.exec(source)?.[0];
 
-describe('Storybook Playwright step quality', () => {
+describe('storybook Playwright step quality', () => {
   it('does not use body-wide text assertions', () => {
+    expect.hasAssertions();
+
     expect(steps).not.toContain("page.locator('body')");
   });
 
   it('does not convert failed visibility checks into false', () => {
+    expect.hasAssertions();
+
     expect(steps).not.toMatch(/isVisible\(\)\.catch\(\(\) => false\)/);
   });
 
   it('does not branch on locator counts for optional assertions', () => {
+    expect.hasAssertions();
+
     expect(steps).not.toMatch(/if \(count > 0\)/);
   });
 
   it('interacts with controls when completing quote wizard steps', () => {
+    expect.hasAssertions();
+
     const completionSteps = extractSection(
       quoteSteps,
-      /When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/
+      /When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/,
     );
 
-    expect(completionSteps).toBeTruthy();
+    expect(completionSteps).toBeDefined();
     expect(completionSteps).toContain('.click()');
     expect(completionSteps).toContain('.fill(');
     expect(completionSteps).not.toContain('toBeChecked()');
   });
 
   it('waits for the RFQ route and form before treating a wizard step as ready', () => {
+    expect.hasAssertions();
+
     const readinessHelper = extractSection(
       commonSteps,
-      /const waitForRfqStep = async[\s\S]+?(?=\nGiven\()/
+      /const waitForRfqStep = async[\s\S]+?(?=\nGiven\()/,
     );
     const numericStepAssertion = extractSection(
       commonSteps,
-      /Then\(\s*'the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/
+      /Then\(\s*'the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/,
     );
 
-    expect(readinessHelper).toBeTruthy();
-    expect(numericStepAssertion).toBeTruthy();
+    expect(readinessHelper).toBeDefined();
+    expect(numericStepAssertion).toBeDefined();
     expect(readinessHelper).toContain('toHaveURL');
     expect(readinessHelper).toContain("getByTestId('form')");
     expect(numericStepAssertion).toContain('waitForRfqStep(page, step)');
   });
 
   it('scopes success notifications to the alert role', () => {
+    expect.hasAssertions();
+
     expect(accountMaintenanceSteps).toContain("getByRole('alert')");
   });
 
   it('opens an existing RFQ draft through its visible dashboard action', () => {
+    expect.hasAssertions();
+
     const actionStep = extractSection(
       rfqLifecycleSteps,
-      /When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/
+      /When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/,
     );
 
-    expect(actionStep).toBeTruthy();
+    expect(actionStep).toBeDefined();
     expect(actionStep).toContain("page.goto('/dashboard')");
     expect(actionStep).toMatch(/getByRole\('button', \{\s+name: 'Actions'/);
-    expect(actionStep).toMatch(/getByRole\('link', \{\s+name: 'Edit request'/);
+    expect(actionStep).toMatch(
+      /getByRole\('menuitem', \{\s+name: 'Edit request'/,
+    );
   });
 
   it('asserts the accessible measurement report history table', () => {
+    expect.hasAssertions();
+
     expect(reportSteps).toMatch(
-      /getByRole\('table', \{\s+name: \/Measurement reports history\/i/
+      /getByRole\('table', \{\s+name: \/Measurement reports history\/i/,
     );
   });
 
   it('attempts unsaved navigation with the visible discard action', () => {
+    expect.hasAssertions();
+
     expect(workflowErrorsFeature).toContain(
-      'And the user clicks "Discard changes"'
+      'And the user clicks "Discard changes"',
     );
   });
 
@@ -140,8 +169,10 @@ describe('Storybook Playwright step quality', () => {
     '**/api/contact/save-contact',
     '**/api/dashboard/get-quote-report-pdf?**',
   ])('delegates configured failures for mutable handler %s', (routePattern) => {
+    expect.hasAssertions();
+
     expect(routeHandler(routePattern)).toContain(
-      'fulfillConfiguredFailure(route, state)'
+      'fulfillConfiguredFailure(route, state)',
     );
   });
 });

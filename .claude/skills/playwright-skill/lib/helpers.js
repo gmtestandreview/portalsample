@@ -1,8 +1,8 @@
-const http = require('node:http');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { chromium, firefox, webkit } = require('playwright');
+import http from 'node:http';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { chromium, firefox, webkit } from 'playwright';
 
 function getExtraHeadersFromEnv() {
   const name = process.env.PW_HEADER_NAME;
@@ -23,7 +23,7 @@ function getExtraHeadersFromEnv() {
 
 async function launchBrowser(
   browserType = process.env.PW_BROWSER || 'chromium',
-  options = {}
+  options = {},
 ) {
   const browser = { chromium, firefox, webkit }[browserType];
   if (!browser) throw new Error(`Invalid browser type: ${browserType}`);
@@ -67,7 +67,7 @@ async function takeScreenshot(page, name, options = {}) {
     fs.mkdirSync(outputDirectory, { recursive: true });
     filename = path.join(
       outputDirectory,
-      `${name}-${new Date().toISOString().replace(/[:.]/g, '-')}.png`
+      `${name}-${new Date().toISOString().replace(/[:.]/g, '-')}.png`,
     );
   }
   await page.screenshot({
@@ -138,7 +138,7 @@ async function detectDevServers(customPorts = []) {
             if (response.statusCode < 500) servers.push(port);
             response.resume();
             resolve();
-          }
+          },
         );
         request.on('error', resolve);
         request.on('timeout', () => {
@@ -147,14 +147,14 @@ async function detectDevServers(customPorts = []) {
         });
         request.end();
       });
-    })
+    }),
   );
   return servers
     .toSorted((a, b) => a - b)
     .map((port) => `http://localhost:${port}`);
 }
 
-module.exports = {
+export {
   createContext,
   detectDevServers,
   getExtraHeadersFromEnv,

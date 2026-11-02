@@ -9,8 +9,34 @@ import { omitUndefined } from '../../../utils/omitUndefined';
 
 const DATE_INPUT_FORMAT = 'dd/MM/yyyy';
 
+interface DatePickerWithOpenState {
+  state: {
+    open: boolean;
+  };
+}
+
+const hasOpenState = (value: unknown): value is DatePickerWithOpenState => {
+  if (typeof value !== 'object' || value === null || !('state' in value)) {
+    return false;
+  }
+
+  const { state } = value;
+  return (
+    typeof state === 'object' &&
+    state !== null &&
+    'open' in state &&
+    typeof state.open === 'boolean'
+  );
+};
+
+const setDatePickerOpenState = (value: unknown, open: boolean): void => {
+  if (hasOpenState(value)) {
+    value.state.open = open;
+  }
+};
+
 const CustomDatePicker = (
-  customDatePickerProps: Readonly<CustomDatePickerProps>
+  customDatePickerProps: Readonly<CustomDatePickerProps>,
 ) => {
   const {
     calendarButtonTitle,
@@ -34,7 +60,7 @@ const CustomDatePicker = (
   const [showCalendar, setShowCalendar] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    currentDate || startDate || null
+    currentDate || startDate || null,
   );
 
   // Impure during render: the argument is re-evaluated every render even though
@@ -58,13 +84,11 @@ const CustomDatePicker = (
   const handleOpenCalendar = () => {
     setShowCalendar(true);
 
-    // react-datepicker does not expose this state through its TypeScript API.
-    (datePickerRef.current as any).state.open = true;
+    setDatePickerOpenState(datePickerRef.current, true);
   };
 
   const handleEnsureCalendarClosed = () => {
-    // react-datepicker does not expose this state through its TypeScript API.
-    (datePickerRef.current as any).state.open = false;
+    setDatePickerOpenState(datePickerRef.current, false);
   };
 
   const handleCloseCalendar = () => {
@@ -145,7 +169,7 @@ const CustomDatePicker = (
         },
       },
     }),
-    [isInvalid]
+    [isInvalid],
   );
 
   const CustomInput = (
@@ -198,7 +222,7 @@ const CustomDatePicker = (
         placeholderText={placeholder ?? ''}
         popperModifiers={[offSetModifier as never]}
         preventOpenOnFocus
-        ref={datePickerRef as any}
+        ref={datePickerRef}
         selected={selectedDate}
         strictParsing
         showPopperArrow={false}

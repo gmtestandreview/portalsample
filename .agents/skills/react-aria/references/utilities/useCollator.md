@@ -1,24 +1,28 @@
 # useCollator
 
-Provides localized string collation for the current locale. Automatically updates when the locale
-changes, and handles caching of the collator for performance.
+Provides localized string collation for the current locale. Automatically
+updates when the locale changes, and handles caching of the collator for
+performance.
 
 ## Introduction
 
-`useCollator` wraps a builtin browser [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator)
-object to provide a React Hook that integrates with the i18n system in React Aria. It handles string comparison according to the current locale,
-updating when the locale changes, and caching of collators for performance. See the
-[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator) docs for
-information.
+`useCollator` wraps a builtin browser
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator)
+object to provide a React Hook that integrates with the i18n system in React
+Aria. It handles string comparison according to the current locale, updating
+when the locale changes, and caching of collators for performance. See the
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator)
+docs for information.
 
 ## Example
 
-This example includes two textfields and compares the values of the two fields using a collator according to the current locale.
+This example includes two textfields and compares the values of the two fields
+using a collator according to the current locale.
 
 ```tsx
 'use client';
 import React from 'react';
-import {useCollator} from 'react-aria/useCollator';
+import { useCollator } from 'react-aria/useCollator';
 
 function Example() {
   let [first, setFirst] = React.useState('');
@@ -30,24 +34,25 @@ function Example() {
   return (
     <>
       <div>
-        <label htmlFor="first-string">First string</label>
+        <label htmlFor='first-string'>First string</label>
         <input
-          id="first-string"
+          id='first-string'
           value={first}
-          onChange={e => setFirst(e.target.value)} />
-        <label htmlFor="second-string">Second string</label>
+          onChange={(e) => setFirst(e.target.value)}
+        />
+        <label htmlFor='second-string'>Second string</label>
         <input
-          id="second-string"
+          id='second-string'
           value={second}
-          onChange={e => setSecond(e.target.value)} />
+          onChange={(e) => setSecond(e.target.value)}
+        />
       </div>
       <p>
         {result === 0
           ? 'The strings are the same'
           : result < 0
             ? 'First comes before second'
-            : 'Second comes before first'
-        }
+            : 'Second comes before first'}
       </p>
     </>
   );

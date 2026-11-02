@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { YesNo, type SummaryAndAcceptStep } from '@/api/web-api-client';
 import SummaryAndAccept from '@/routes/acceptQuote/summaryAndAccept';
@@ -18,65 +18,100 @@ import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => {
   const acquireTokenSilent = vi
-    .fn()
+    .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ accessToken: 'mock-token' });
   return {
     acquireTokenSilent,
-    getSummaryAndAccept: vi.fn(),
-    error: vi.fn(),
+    getSummaryAndAccept: vi.fn<(...args: unknown[]) => unknown>(),
+    error: vi.fn<(...args: unknown[]) => unknown>(),
     accounts: [{ homeAccountId: 'mock-id' }],
     instance: { acquireTokenSilent },
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: mocks.instance,
-    accounts: mocks.accounts,
-    inProgress: 'none',
-  }),
-  useAccount: () => ({ homeAccountId: 'mock-id' }),
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: mocks.instance,
+        accounts: mocks.accounts,
+        inProgress: 'none',
+      }),
+      useAccount: () => ({ homeAccountId: 'mock-id' }),
+    }) satisfies __ExactMockModule<__TestMockModule2>,
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: () => ({
-    isLoading: false,
-    details: { givenName: 'Taylor', familyName: 'Nguyen' },
-  }),
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({
+        isLoading: false,
+        details: { givenName: 'Taylor', familyName: 'Nguyen' },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>,
+);
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AcceptQuoteClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
       getSummaryAndAccept = mocks.getSummaryAndAccept;
     },
     DashboardClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: mocks.error },
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: mocks.error,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>,
+);
 
 // The read-only summaries of the other steps are separate components with
 // their own suites; stand in markers so this suite pins only this step.
-vi.mock('@/routes/acceptQuote/reportRecipient', () => ({
-  default: () => <div>Report recipient summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/deliveryAndReturn', () => ({
-  default: () => <div>Delivery and return summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/paymentDetails', () => ({
-  default: () => <div>Payment details summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/quotationSummary', () => ({
-  default: () => <div>Quotation summary marker</div>,
-}));
+vi.mock(
+  import('@/routes/acceptQuote/reportRecipient'),
+  () =>
+    ({
+      default: () => <div>Report recipient summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule61>,
+);
+vi.mock(
+  import('@/routes/acceptQuote/deliveryAndReturn'),
+  () =>
+    ({
+      default: () => <div>Delivery and return summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule62>,
+);
+vi.mock(
+  import('@/routes/acceptQuote/paymentDetails'),
+  () =>
+    ({
+      default: () => <div>Payment details summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule63>,
+);
+vi.mock(
+  import('@/routes/acceptQuote/quotationSummary'),
+  () =>
+    ({
+      default: () => <div>Quotation summary marker</div>,
+    }) satisfies __ExactMockModule<__TestMockModule73>,
+);
 
 type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
 
@@ -88,7 +123,7 @@ interface StepHarnessProps {
 // Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
 function StepHarness({
   values = {},
-  onSubmit = vi.fn(),
+  onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
   return (
     <MemoryRouter initialEntries={['/summary/quote-1']}>
@@ -105,7 +140,7 @@ function StepHarness({
                   formValues.saveAndExit
                     ? summaryAndAcceptSaveValidation
                     : summaryAndAcceptSubmitValidation,
-                  summaryAndAcceptOwnHidingFields
+                  summaryAndAcceptOwnHidingFields,
                 )(formValues)
               }
               onSubmit={(submitted) =>
@@ -113,8 +148,8 @@ function StepHarness({
                   removeHidden(
                     submitted,
                     submitted,
-                    summaryAndAcceptOwnHidingFields
-                  )
+                    summaryAndAcceptOwnHidingFields,
+                  ),
                 )
               }
             >
@@ -138,8 +173,9 @@ function StepHarness({
 const renderStep = (options: StepHarnessProps = {}) =>
   render(<StepHarness {...options} />);
 
-const submittedValues = (onSubmit: ReturnType<typeof vi.fn>) =>
-  defined(onSubmit.mock.calls[0], 'submit call')[0];
+const submittedValues = (
+  onSubmit: ReturnType<typeof vi.fn<(values: SummaryAndAcceptStep) => void>>,
+): SummaryAndAcceptStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
 const ACCEPT_LABEL =
   'Yes, on behalf of my organisation, I accept the quotation';
@@ -148,8 +184,8 @@ const ACCEPT_MESSAGE =
 const DISPUTE_LABEL = /Please provide details of the associated dispute/;
 const waitForLoad = () => screen.findByText('Acme Pty Ltd');
 
-describe('SummaryAndAccept behavior', () => {
-  beforeEach(() => {
+describe('summaryAndAccept behavior', () => {
+  const resetSummaryAndAcceptMocks = () => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
     mocks.getSummaryAndAccept.mockResolvedValue({
@@ -157,22 +193,42 @@ describe('SummaryAndAccept behavior', () => {
       requestForQuote: { contact: { firstName: 'Rae', lastName: 'Quote' } },
       rfqOrganisation: { name: 'Acme Pty Ltd' },
     });
-  });
+  };
 
   it('renders the read-only summaries and the parties to the contract', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     renderStep();
     await waitForLoad();
 
-    expect(screen.getByText('Quotation summary marker')).toBeInTheDocument();
-    expect(screen.getByText('Report recipient summary')).toBeInTheDocument();
-    expect(screen.getByText('Delivery and return summary')).toBeInTheDocument();
-    expect(screen.getByText('Payment details summary')).toBeInTheDocument();
-    expect(screen.getByText(/Taylor Nguyen/)).toBeInTheDocument();
-    expect(screen.getByText('Nina Checker')).toBeInTheDocument();
-    expect(screen.getByText(/Rae/)).toBeInTheDocument();
+    expect([
+      screen.getByText('Quotation summary marker'),
+      screen.getByText('Report recipient summary'),
+      screen.getByText('Delivery and return summary'),
+      screen.getByText('Payment details summary'),
+      screen.getByText(/Taylor Nguyen/),
+      screen.getByText('Nina Checker'),
+      screen.getByText(/Rae/),
+    ]).toStrictEqual([
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+    ]);
   });
 
   it('hides the dispute details only once No is selected', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
     renderStep();
     await waitForLoad();
@@ -182,28 +238,36 @@ describe('SummaryAndAccept behavior', () => {
     expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
 
     await user.click(screen.getByRole('radio', { name: 'No' }));
+
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('radio', { name: 'Yes' }));
+
     expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
   });
 
   it('submits the typed dispute and the acceptance', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ onSubmit });
     await waitForLoad();
 
     await user.click(screen.getByRole('radio', { name: 'Yes' }));
     await user.type(
       screen.getByLabelText(DISPUTE_LABEL),
-      'Pricing disagreement'
+      'Pricing disagreement',
     );
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(submittedValues(onSubmit)).toEqual({
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'Yes',
       associatedDispute: 'Pricing disagreement',
       acceptanceOfQuote: true,
@@ -211,8 +275,13 @@ describe('SummaryAndAccept behavior', () => {
   });
 
   it('strips the hidden dispute details when there is no dispute', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.No,
@@ -225,14 +294,20 @@ describe('SummaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(submittedValues(onSubmit)).toEqual({
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
       acceptanceOfQuote: true,
     });
   });
 
   it('links the error summary to the dispute and acceptance fields', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
     renderStep({
       values: {
@@ -253,31 +328,39 @@ describe('SummaryAndAccept behavior', () => {
         ?.replace(/^#/, '');
     const disputeId = targetIdOf(/Associated dispute/);
     const acceptanceId = targetIdOf(/Acceptance of quote/);
+
     expect(disputeId).toBe('associatedDispute');
     expect(acceptanceId).toBe('acceptanceOfQuote');
     expect(document.getElementById(defined(disputeId, 'dispute id'))).toBe(
-      screen.getByLabelText(DISPUTE_LABEL)
+      screen.getByLabelText(DISPUTE_LABEL),
     );
     expect(document.getElementById(defined(acceptanceId, 'accept id'))).toBe(
-      screen.getByLabelText(ACCEPT_LABEL)
+      screen.getByLabelText(ACCEPT_LABEL),
     );
   });
 
   it('strips dispute details typed before switching to No', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ onSubmit });
     await waitForLoad();
 
     await user.type(screen.getByLabelText(DISPUTE_LABEL), 'Typed then dropped');
     await user.click(screen.getByRole('radio', { name: 'No' }));
+
     // Precondition: the textarea hides on No, so the typed text is now stale.
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
       acceptanceOfQuote: true,
@@ -285,8 +368,13 @@ describe('SummaryAndAccept behavior', () => {
   });
 
   it('requires the acceptance and the dispute details after a failed submit', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -298,18 +386,26 @@ describe('SummaryAndAccept behavior', () => {
     await waitForLoad();
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(ACCEPT_MESSAGE)).toBeInTheDocument();
+    await expect(
+      screen.findByText(ACCEPT_MESSAGE),
+    ).resolves.toBeInTheDocument();
     expect(
-      screen.getByLabelText(DISPUTE_LABEL).closest('.form-field-container')
+      screen.getByLabelText(DISPUTE_LABEL).closest('.form-field-container'),
     ).toHaveTextContent('Associated dispute is a required field');
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('shows the acceptance message after the checkbox is cleared', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ values: { associatedDisputes: YesNo.No }, onSubmit });
     await waitForLoad();
 
@@ -317,25 +413,38 @@ describe('SummaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(ACCEPT_MESSAGE)).toBeInTheDocument();
+    await expect(
+      screen.findByText(ACCEPT_MESSAGE),
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('submits an untouched acceptance (the schema only rejects an explicit false)', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ values: { associatedDisputes: YesNo.No }, onSubmit });
     await waitForLoad();
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
 
   it('rejects dispute details longer than 300 characters', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -348,27 +457,38 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' }),
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('does not require the acceptance on save and exit', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ onSubmit });
     await waitForLoad();
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
 
   it('still enforces the dispute length on save and exit', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -380,29 +500,44 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' }),
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
+    expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
+
     const { rerender } = renderStep({ values: {} });
     await waitForLoad();
+
     expect(screen.getByLabelText(ACCEPT_LABEL)).not.toBeChecked();
 
     rerender(<StepHarness values={{ acceptanceOfQuote: true }} />);
 
     await waitFor(() =>
-      expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked()
+      expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked(),
     );
   });
 
   it('keeps rendering and logs when the summary fails to load', async () => {
+    expect.hasAssertions();
+
     mocks.getSummaryAndAccept.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mocks.error).toHaveBeenCalledWith(
+        'Failed to retrieve getAcceptQuotePreInfo',
+        expect.any(Error),
+        { Id: 'quote-1' },
+      ),
+    );
+
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInTheDocument();
   });
 });

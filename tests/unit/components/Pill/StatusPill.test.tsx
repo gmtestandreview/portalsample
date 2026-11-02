@@ -8,177 +8,215 @@ import {
   ReportStatus,
 } from '../../../../ClientApp/src/routes/common/enums';
 
-describe('StatusPill', () => {
-  describe('DashboardItemStatus', () => {
+describe('status pill', () => {
+  describe('dashboard item status', () => {
     it('renders QuoteAvailable text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.QuoteAvailable} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAvailable)
+          screen.getByText(DashboardItemStatus.QuoteAvailable),
         ).toBeInTheDocument();
       });
     });
 
     it('renders QuoteAccepted text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.QuoteAccepted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAccepted)
+          screen.getByText(DashboardItemStatus.QuoteAccepted),
         ).toBeInTheDocument();
       });
     });
 
     it('renders QuoteDrafted text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.QuoteDrafted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteDrafted)
+          screen.getByText(DashboardItemStatus.QuoteDrafted),
         ).toBeInTheDocument();
       });
     });
 
     it('renders QuoteDeclined text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.QuoteDeclined} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteDeclined)
+          screen.getByText(DashboardItemStatus.QuoteDeclined),
         ).toBeInTheDocument();
       });
     });
 
     it('renders QuoteExpired text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.QuoteExpired} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteExpired)
+          screen.getByText(DashboardItemStatus.QuoteExpired),
         ).toBeInTheDocument();
       });
     });
 
     it('renders QuoteSubmitted text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.QuoteSubmitted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteSubmitted)
+          screen.getByText(DashboardItemStatus.QuoteSubmitted),
         ).toBeInTheDocument();
       });
     });
 
     it('renders ReportIssued text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.ReportIssued} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportIssued)
+          screen.getByText(DashboardItemStatus.ReportIssued),
         ).toBeInTheDocument();
       });
     });
 
     it('renders ReportInProgress text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.ReportInProgress} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportInProgress)
+          screen.getByText(DashboardItemStatus.ReportInProgress),
         ).toBeInTheDocument();
       });
     });
 
     it('renders ReportWithdrawn text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.ReportWithdrawn} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportWithdrawn)
+          screen.getByText(DashboardItemStatus.ReportWithdrawn),
         ).toBeInTheDocument();
       });
     });
 
     it('renders ArtifactReceived text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.ArtifactReceived} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ArtifactReceived)
+          screen.getByText(DashboardItemStatus.ArtifactReceived),
         ).toBeInTheDocument();
       });
     });
   });
 
-  describe('QuoteStatus — stacked cases resolve to DashboardItemStatus labels', () => {
-    it('QuoteStatus.QuoteAccepted resolves to DashboardItemStatus.QuoteAccepted text', async () => {
+  describe('quoteStatus — stacked cases resolve to DashboardItemStatus labels', () => {
+    it('quoteStatus.QuoteAccepted resolves to DashboardItemStatus.QuoteAccepted text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.QuoteAccepted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAccepted)
+          screen.getByText(DashboardItemStatus.QuoteAccepted),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.QuoteAvailable resolves to DashboardItemStatus.QuoteAvailable text', async () => {
+    it('quoteStatus.QuoteAvailable resolves to DashboardItemStatus.QuoteAvailable text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.QuoteAvailable} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAvailable)
+          screen.getByText(DashboardItemStatus.QuoteAvailable),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.QuoteDeclined resolves to DashboardItemStatus.QuoteDeclined text', async () => {
+    it('quoteStatus.QuoteDeclined resolves to DashboardItemStatus.QuoteDeclined text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.QuoteDeclined} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteDeclined)
+          screen.getByText(DashboardItemStatus.QuoteDeclined),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.QuoteExpired resolves to DashboardItemStatus.QuoteExpired text', async () => {
+    it('quoteStatus.QuoteExpired resolves to DashboardItemStatus.QuoteExpired text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.QuoteExpired} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteExpired)
+          screen.getByText(DashboardItemStatus.QuoteExpired),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.QuoteSubmitted resolves to DashboardItemStatus.QuoteSubmitted text', async () => {
+    it('quoteStatus.QuoteSubmitted resolves to DashboardItemStatus.QuoteSubmitted text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.QuoteSubmitted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteSubmitted)
+          screen.getByText(DashboardItemStatus.QuoteSubmitted),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.ReportIssued resolves to DashboardItemStatus.ReportIssued text', async () => {
+    it('quoteStatus.ReportIssued resolves to DashboardItemStatus.ReportIssued text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.ReportIssued} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportIssued)
+          screen.getByText(DashboardItemStatus.ReportIssued),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.ReportInProgress resolves to DashboardItemStatus.ReportInProgress text', async () => {
+    it('quoteStatus.ReportInProgress resolves to DashboardItemStatus.ReportInProgress text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.ReportInProgress} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportInProgress)
+          screen.getByText(DashboardItemStatus.ReportInProgress),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.ReportWithdrawn resolves to DashboardItemStatus.ReportWithdrawn text', async () => {
+    it('quoteStatus.ReportWithdrawn resolves to DashboardItemStatus.ReportWithdrawn text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.ReportWithdrawn} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportWithdrawn)
+          screen.getByText(DashboardItemStatus.ReportWithdrawn),
         ).toBeInTheDocument();
       });
     });
 
-    it('QuoteStatus.ArtifactReceived resolves to DashboardItemStatus.ArtifactReceived text', async () => {
+    it('quoteStatus.ArtifactReceived resolves to DashboardItemStatus.ArtifactReceived text', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={QuoteStatus.ArtifactReceived} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ArtifactReceived)
+          screen.getByText(DashboardItemStatus.ArtifactReceived),
         ).toBeInTheDocument();
       });
     });
@@ -186,6 +224,8 @@ describe('StatusPill', () => {
 
   describe('default case', () => {
     it('renders the raw status string when the value is unrecognised', async () => {
+      expect.hasAssertions();
+
       const unknownStatus = 'some-unknown-status-xyz';
       render(<StatusPill status={unknownStatus} />);
       await waitFor(() => {
@@ -194,6 +234,8 @@ describe('StatusPill', () => {
     });
 
     it('renders default styling for recognised statuses without a custom mapping', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={DashboardItemStatus.QuoteClosed} />);
 
       const pill = await screen.findByText(DashboardItemStatus.QuoteClosed);
@@ -202,8 +244,10 @@ describe('StatusPill', () => {
     });
   });
 
-  describe('ReportStatus mappings', () => {
+  describe('reportStatus mappings', () => {
     it('maps ReportStatus.Issued to the dashboard report-issued label', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={ReportStatus.Issued} />);
 
       const pill = await screen.findByText(DashboardItemStatus.ReportIssued);
@@ -212,6 +256,8 @@ describe('StatusPill', () => {
     });
 
     it('maps ReportStatus.Withdrawn to the report-withdrawn label with secondary styling', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={ReportStatus.Withdrawn} />);
 
       const pill = await screen.findByText(DashboardItemStatus.ReportWithdrawn);
@@ -222,6 +268,8 @@ describe('StatusPill', () => {
 
   describe('pattern approval status mappings', () => {
     it('maps a draft pattern approval status to light styling', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={PaDashboardItemStatus.PaDraft} />);
 
       const pill = await screen.findByText(PaDashboardItemStatus.PaDraft);
@@ -230,6 +278,8 @@ describe('StatusPill', () => {
     });
 
     it('uses the quote-submitted label for the shared Submitted status value', async () => {
+      expect.hasAssertions();
+
       render(<StatusPill status={PaDashboardItemStatus.PaSubmitted} />);
 
       const pill = await screen.findByText(DashboardItemStatus.QuoteSubmitted);

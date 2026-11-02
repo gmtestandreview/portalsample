@@ -1,10 +1,19 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export default defineConfig({
-    test: {
-        environment: 'jsdom',
-        setupFiles: ['vitest.setup.ts'],
-        include: ['quality/test_regression.ts'],
-        globals: true,
+  resolve: {
+    alias: {
+      '@': path.resolve(dirname, '../ClientApp/src'),
     },
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['vitest.setup.ts'],
+    include: ['quality/test_regression.ts'],
+    globals: true,
+  },
 });

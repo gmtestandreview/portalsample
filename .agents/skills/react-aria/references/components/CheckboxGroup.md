@@ -155,7 +155,7 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex flex-col gap-2 font-sans'
+        'flex flex-col gap-2 font-sans',
       )}
     >
       <Label>{props.label}</Label>

@@ -9,14 +9,14 @@ const RouteChangeScrollTop = () => {
     setTimeout(() => {
       if (document.querySelector('#page-title')) {
         const el: HTMLElement = document.querySelector(
-          '#page-title'
+          '#page-title',
         ) as HTMLElement;
         setTimeout(() => {
           el?.focus();
         }, 500);
       } else {
         const el: HTMLElement = document.querySelector(
-          '#page-top'
+          '#page-top',
         ) as HTMLElement;
         el?.focus();
       }

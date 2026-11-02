@@ -4,16 +4,17 @@ description: >-
   Use when writing, reviewing, debugging, refactoring, migrating, or hardening
   TypeScript projects targeting 5.9.3 strict mode, including compiler or emit
   failures, ESLint or SonarQube findings or gate/profile evidence behind a
-  TypeScript completion claim, module resolution, declaration/public typing, advanced types, project references, monorepos, or type-check
-  performance. Do not use for unrelated JavaScript-only or UI/UX tasks.
+  TypeScript completion claim, module resolution, declaration/public typing,
+  advanced types, project references, monorepos, or type-check performance. Do
+  not use for unrelated JavaScript-only or UI/UX tasks.
 compatibility: >-
   Claude Code project skill. Requires Python 3.10+ for scripts/ts_diagnostic.py
-  and project/workspace-local or PATH TypeScript 5.9.3; optional lint/build/test/Sonar
-  gates depend on project tools. Sonar also requires configured network access
-  and credentials.
+  and project/workspace-local or PATH TypeScript 5.9.3; optional
+  lint/build/test/Sonar gates depend on project tools. Sonar also requires
+  configured network access and credentials.
 metadata:
-  version: "1.3.0"
-  typescript: "5.9.3"
+  version: '1.3.0'
+  typescript: '5.9.3'
 ---
 
 # TypeScript Expert
@@ -30,11 +31,11 @@ monorepos, and performance. Use it for JavaScript only for a TypeScript
 migration, `checkJs` hardening, or TypeScript/JavaScript interop.
 
 Do not use it for UI/UX design or unrelated JavaScript-only work. Running or
-administering Sonar (scans, quality gates, profiles) belongs to the `sonarqube:*`
-skills and project CI; this skill only governs which Sonar claims a TypeScript
-task may make, and still requires authorization before any external scan.
-Reading Sonar findings the user or editor supplies needs no scan and is covered
-by the editor-diagnostics gate in step 5.
+administering Sonar (scans, quality gates, profiles) belongs to the
+`sonarqube:*` skills and project CI; this skill only governs which Sonar claims
+a TypeScript task may make, and still requires authorization before any external
+scan. Reading Sonar findings the user or editor supplies needs no scan and is
+covered by the editor-diagnostics gate in step 5.
 
 Composition: this skill owns TypeScript-specific diagnosis and gates. Its steps
 4–5 narrow, and do not replace, `systematic-debugging` (cause not yet
@@ -93,9 +94,9 @@ lockfile/package-manager declaration, applicable `tsconfig*.json` (including
 `extends`/references), ESLint and Sonar configuration, nearby source/tests,
 generated-type boundaries, and public exports.
 
-Prefer existing project scripts. In monorepos, distinguish the **project
-root** (package/TSConfig being diagnosed) from the **tool root** (workspace
-lockfile and hoisted `node_modules`). Pass `--root <project>` and
+Prefer existing project scripts. In monorepos, distinguish the **project root**
+(package/TSConfig being diagnosed) from the **tool root** (workspace lockfile
+and hoisted `node_modules`). Pass `--root <project>` and
 `--tool-root <workspace>` when they differ; do not guess from the current
 directory.
 
@@ -114,10 +115,10 @@ python <skill-dir>/scripts/ts_diagnostic.py \
 ```
 
 Add `--emit` only for a single-project emit check. If project references are
-present, prefer the repository build or an existing `tsc --build` workflow.
-Add `--build` or `--test` only when those gates apply. `--sonar`, and `--all`
-(which includes it), run external analysis: add them only when Sonar is
-configured and authorized. Use `--format json` for machine-readable output.
+present, prefer the repository build or an existing `tsc --build` workflow. Add
+`--build` or `--test` only when those gates apply. `--sonar`, and `--all` (which
+includes it), run external analysis: add them only when Sonar is configured and
+authorized. Use `--format json` for machine-readable output.
 
 When the request names files, add `--files <path-fragment>` (repeatable, needs
 `--typecheck`): the gate fails only on errors in those files and reports the
@@ -162,10 +163,9 @@ For errors from `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, or
 `references/typescript-5.9.3-practices.md` before choosing a fix.
 
 Do not raise lint or Sonar findings in code you touch. When a fix would add
-branches or guards to an already complex function (for example, an
-index-access guard inside a long handler), extract a helper instead of
-inlining. For a floating promise, use `await` where the caller is async and
-`void` otherwise.
+branches or guards to an already complex function (for example, an index-access
+guard inside a long handler), extract a helper instead of inlining. For a
+floating promise, use `await` where the caller is async and `void` otherwise.
 
 After each batch of edits, re-run the scoped typecheck (`--typecheck --files`)
 before the next batch. Before adding an import, confirm it is not already
@@ -201,25 +201,25 @@ based on evidence rather than fixed thresholds.
 ### 5. Validate before completion
 
 For code changes, run the project's applicable gates and keep fixing until they
-pass. If the same gate still fails after three distinct fix attempts, or the
-fix would require weakening a rule, stop and report that gate as unresolved:
+pass. If the same gate still fails after three distinct fix attempts, or the fix
+would require weakening a rule, stop and report that gate as unresolved:
 
 - TypeScript 5.9.3 version check and strict-profile check;
 - `tsc` type checking;
 - `tsc` emit when the project is required to emit with `tsc`;
-- ESLint using the project's configured rules, and the project formatter's
-  check on changed files;
+- ESLint using the project's configured rules, and the project formatter's check
+  on changed files;
 - project build/tests when behavior or generated output can change;
-- SonarQube with quality-gate waiting when Sonar is configured and
-  authorized. Use the project's assigned quality profile. If the requirement
-  specifically says **Sonar way**, verify that server-side assignment from
-  project/server evidence when accessible.
+- SonarQube with quality-gate waiting when Sonar is configured and authorized.
+  Use the project's assigned quality profile. If the requirement specifically
+  says **Sonar way**, verify that server-side assignment from project/server
+  evidence when accessible.
 
-If the user supplies editor or Sonar diagnostics, or says the code is judged
-on them, treat the findings for every file you touched as a required gate:
-fix them or list each as unresolved with the reason. This needs no scan. A
-clean `tsc`, ESLint, and test run does not satisfy it. State when no
-diagnostics were available to you, instead of reporting the files clean.
+If the user supplies editor or Sonar diagnostics, or says the code is judged on
+them, treat the findings for every file you touched as a required gate: fix them
+or list each as unresolved with the reason. This needs no scan. A clean `tsc`,
+ESLint, and test run does not satisfy it. State when no diagnostics were
+available to you, instead of reporting the files clean.
 
 Use `scripts/ts_diagnostic.py` as orchestration/inspection, not as a substitute
 for project CI. A successful waited scanner proves the quality-gate result, not
@@ -243,11 +243,10 @@ source-of-truth types.
 State what changed and why; which compiler/lint/build/test/Sonar commands
 actually ran; the actual status of each required gate; and any remaining
 blocker, suppression, assumption, or unverified external gate. List unrelated
-problems you found but did not fix, any gate failure that already existed
-before your first edit, and each shared type you widened outside the named
-files.
+problems you found but did not fix, any gate failure that already existed before
+your first edit, and each shared type you widened outside the named files.
 
 Report a result only for a command that ran. For a plan or dry run, write "not
-run" for every gate: no bracketed placeholders such as `[result]`, and no "fixed"
-or "done" opening before evidence supports it. Never convert an unavailable
-check into a pass.
+run" for every gate: no bracketed placeholders such as `[result]`, and no
+"fixed" or "done" opening before evidence supports it. Never convert an
+unavailable check into a pass.

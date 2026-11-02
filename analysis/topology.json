@@ -36,103 +36,53 @@
   },
   "domain_api_edges": {
     "API Client": {
-      "DashboardClient": [
-        "read"
-      ],
-      "AccountsClient": [
-        "read"
-      ],
-      "ContactClient": [
-        "read"
-      ],
-      "RequestForQuoteClient": [
-        "read"
-      ],
-      "ApplicationClient": [
-        "read"
-      ],
-      "QuoteClient": [
-        "read"
-      ],
-      "AcceptQuoteClient": [
-        "read"
-      ]
+      "DashboardClient": ["read"],
+      "AccountsClient": ["read"],
+      "ContactClient": ["read"],
+      "RequestForQuoteClient": ["read"],
+      "ApplicationClient": ["read"],
+      "QuoteClient": ["read"],
+      "AcceptQuoteClient": ["read"]
     },
     "Accept Quote": {
-      "AccountsClient": [
-        "read"
-      ],
-      "QuoteClient": [
-        "read"
-      ],
-      "AcceptQuoteClient": [
-        "read"
-      ],
-      "DashboardClient": [
-        "read"
-      ],
-      "ApplicationClient": [
-        "read"
-      ]
+      "AccountsClient": ["read"],
+      "QuoteClient": ["read"],
+      "AcceptQuoteClient": ["read"],
+      "DashboardClient": ["read"],
+      "ApplicationClient": ["read"]
     },
     "Account Management": {
-      "ContactClient": [
-        "read"
-      ],
-      "AccountsClient": [
-        "read"
-      ]
+      "ContactClient": ["read"],
+      "AccountsClient": ["read"]
     },
     "Dashboard": {
-      "DashboardClient": [
-        "read"
-      ]
+      "DashboardClient": ["read"]
     },
     "Measurement Reports": {
-      "QuoteClient": [
-        "read"
-      ],
-      "DashboardClient": [
-        "read"
-      ]
+      "QuoteClient": ["read"],
+      "DashboardClient": ["read"]
     },
     "Modals": {
-      "ApplicationClient": [
-        "read"
-      ]
+      "ApplicationClient": ["read"]
     },
     "Quotation": {
-      "QuoteClient": [
-        "read"
-      ]
+      "QuoteClient": ["read"]
     },
     "Request for Quote": {
-      "RequestForQuoteClient": [
-        "read"
-      ],
-      "QuoteClient": [
-        "read"
-      ],
-      "ApplicationClient": [
-        "read"
-      ]
+      "RequestForQuoteClient": ["read"],
+      "QuoteClient": ["read"],
+      "ApplicationClient": ["read"]
     },
     "Shared Route Helpers": {
-      "DashboardClient": [
-        "read"
-      ]
+      "DashboardClient": ["read"]
     },
     "UI Components": {
-      "DashboardClient": [
-        "read"
-      ]
+      "DashboardClient": ["read"]
     }
   },
   "domain_session_edges": {
     "API Client": {
-      "targetOrganisation": [
-        "read"
-      ]
+      "targetOrganisation": ["read"]
     }
   },
   "entry_routes": [
@@ -172,10 +122,7 @@
     "/update-contact/*",
     "/update-organisation/:id/*"
   ],
-  "entry_files": [
-    "ClientApp/src/App.tsx",
-    "ClientApp/src/index.tsx"
-  ],
+  "entry_files": ["ClientApp/src/App.tsx", "ClientApp/src/index.tsx"],
   "dead_candidates": [
     "ClientApp/src/api/web-api-client.ts",
     "ClientApp/src/authentication/hooks.tsx",
@@ -281,14 +228,8 @@
     "ClientApp/src/validationSchemas/contactValidation.ts"
   ],
   "missing_relative_imports": [
-    [
-      "ClientApp/src/App.tsx",
-      "./styles/index.scss"
-    ],
-    [
-      "ClientApp/src/analytics/GoogleAnalytics.tsx",
-      "../env"
-    ],
+    ["ClientApp/src/App.tsx", "./styles/index.scss"],
+    ["ClientApp/src/analytics/GoogleAnalytics.tsx", "../env"],
     [
       "ClientApp/src/authentication/accountContext.tsx",
       "../api/web-api-client"
@@ -325,10 +266,7 @@
       "ClientApp/src/authentication/AccountProvider.tsx",
       "../routes/common/helperFunctions"
     ],
-    [
-      "ClientApp/src/authentication/authConfig.ts",
-      "../env"
-    ],
+    ["ClientApp/src/authentication/authConfig.ts", "../env"],
     [
       "ClientApp/src/authentication/AuthenticatedElement.tsx",
       "../components/BlockUISpinner"
@@ -345,31 +283,16 @@
       "ClientApp/src/authentication/AuthenticatedElement.tsx",
       "../instrumentation/AppInsightsService"
     ],
-    [
-      "ClientApp/src/instrumentation/AppInsightsService.ts",
-      "../env"
-    ],
-    [
-      "ClientApp/src/storybook/storybookFixtures.ts",
-      "../routes/common/enums"
-    ],
-    [
-      "ClientApp/src/storybook/storybookFixtures.ts",
-      "../api/web-api-client"
-    ],
+    ["ClientApp/src/instrumentation/AppInsightsService.ts", "../env"],
+    ["ClientApp/src/storybook/storybookFixtures.ts", "../routes/common/enums"],
+    ["ClientApp/src/storybook/storybookFixtures.ts", "../api/web-api-client"],
     [
       "ClientApp/src/storybook/storybookHarness.tsx",
       "../authentication/accountContext"
     ]
   ],
   "non_code_relative_imports": [
-    [
-      "ClientApp/src/App.tsx",
-      "./styles/index.scss"
-    ],
-    [
-      "ClientApp/src/authentication/AccountProvider.tsx",
-      "../terms-config.json"
-    ]
+    ["ClientApp/src/App.tsx", "./styles/index.scss"],
+    ["ClientApp/src/authentication/AccountProvider.tsx", "../terms-config.json"]
   ]
 }

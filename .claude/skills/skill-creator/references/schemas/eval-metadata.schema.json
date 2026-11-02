@@ -3,12 +3,7 @@
   "$id": "eval-metadata.schema.json",
   "title": "Skill Creator Eval Metadata",
   "type": "object",
-  "required": [
-    "eval_id",
-    "eval_name",
-    "prompt",
-    "expectations"
-  ],
+  "required": ["eval_id", "eval_name", "prompt", "expectations"],
   "properties": {
     "eval_id": {
       "$ref": "common.schema.json#/$defs/evalId"

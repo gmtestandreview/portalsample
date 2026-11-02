@@ -203,7 +203,7 @@ export function Checkbox(props: CheckboxProps) {
         className={composeRenderProps(
           props.className,
           (className, renderProps) =>
-            checkboxStyles({ ...renderProps, className })
+            checkboxStyles({ ...renderProps, className }),
         )}
       >
         {composeRenderProps(
@@ -224,7 +224,7 @@ export function Checkbox(props: CheckboxProps) {
               </div>
               {children}
             </>
-          )
+          ),
         )}
       </CheckboxButton>
       {props.description && (

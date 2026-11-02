@@ -59,24 +59,13 @@
             "minimum": 1
           },
           "op": {
-            "enum": [
-              "CREATE_DIRECTORY",
-              "MOVE",
-              "RENAME",
-              "DELETE"
-            ]
+            "enum": ["CREATE_DIRECTORY", "MOVE", "RENAME", "DELETE"]
           },
           "source": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "destination": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "source_identity": {
             "oneOf": [
@@ -85,10 +74,7 @@
               },
               {
                 "type": "object",
-                "required": [
-                  "kind",
-                  "value"
-                ],
+                "required": ["kind", "value"],
                 "additionalProperties": false,
                 "properties": {
                   "kind": {
@@ -108,31 +94,17 @@
             ]
           },
           "size": {
-            "type": [
-              "integer",
-              "null"
-            ],
+            "type": ["integer", "null"],
             "minimum": 0
           },
           "mtime": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "classification": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "confidence": {
-            "enum": [
-              "High",
-              "Medium",
-              "Low",
-              null
-            ]
+            "enum": ["High", "Medium", "Low", null]
           },
           "confidence_evidence_classes": {
             "type": "array",
@@ -141,11 +113,7 @@
             }
           },
           "duplicate_state": {
-            "enum": [
-              "none",
-              "approved-duplicate-action",
-              null
-            ]
+            "enum": ["none", "approved-duplicate-action", null]
           },
           "collision_policy": {
             "type": "string",
@@ -153,10 +121,7 @@
           },
           "rollback": {
             "type": "object",
-            "required": [
-              "op",
-              "preconditions"
-            ],
+            "required": ["op", "preconditions"],
             "additionalProperties": false,
             "properties": {
               "op": {
@@ -192,19 +157,13 @@
                   "minLength": 1
                 }
               },
-              "required": [
-                "source",
-                "destination"
-              ]
+              "required": ["source", "destination"]
             },
             "else": {
               "if": {
                 "properties": {
                   "op": {
-                    "enum": [
-                      "MOVE",
-                      "RENAME"
-                    ]
+                    "enum": ["MOVE", "RENAME"]
                   }
                 }
               },
@@ -219,10 +178,7 @@
                     "minLength": 1
                   }
                 },
-                "required": [
-                  "source",
-                  "destination"
-                ]
+                "required": ["source", "destination"]
               },
               "else": {
                 "if": {
@@ -242,10 +198,7 @@
                       "type": "null"
                     }
                   },
-                  "required": [
-                    "source",
-                    "destination"
-                  ]
+                  "required": ["source", "destination"]
                 }
               }
             }
@@ -257,9 +210,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "state"
-        ],
+        "required": ["state"],
         "properties": {
           "state": {
             "const": "HOLD_FOR_REVIEW"
@@ -274,10 +225,7 @@
     },
     "declared_counts": {
       "type": "object",
-      "required": [
-        "actions",
-        "review_items"
-      ],
+      "required": ["actions", "review_items"],
       "additionalProperties": false,
       "properties": {
         "actions": {

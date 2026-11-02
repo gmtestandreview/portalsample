@@ -1,5 +1,5 @@
 import type React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -8,33 +8,58 @@ import { FormStepStatus } from '../../../../../ClientApp/src/api/web-api-client'
 import {
   AccountStateCtx,
   AccountDispatchCtx,
+  type AccountDispatchContext,
 } from '../../../../../ClientApp/src/authentication/accountContext';
 import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep';
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
 import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
 import type { FormikValues } from 'formik';
+import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
+
+type AppLogger = typeof AppLoggerModule;
+type SaveHandler = NonNullable<
+  WizardRoutedStepProps<FormikValues>['onSaveAndNext']
+>;
+type LoadStepHandler = WizardRoutedStepProps<FormikValues>['loadStepValues'];
 
 // Characterisation of the Formik wizard shell, recorded before the React Hook
 // Form shell exists. These assertions pin what the shell does today; they are
 // not a statement of what it should do. The same suite is meant to run against
 // the RHF shell (see the design addendum, parity contract).
 
-vi.mock('../../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
+    ({
+      default: {
+        verbose: vi.fn<AppLogger['verbose']>(),
+        error: vi.fn<AppLogger['error']>(),
+        trace: vi.fn<AppLogger['trace']>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
+);
 
 // The real WizardStep wraps an error boundary and analytics that are not under
 // test; render its children directly.
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  (() =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>) as unknown as __DynamicPartialMockFactory<__TestMockModule24>,
 );
 
-vi.mock('../../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock(
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
+  (() =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
+);
 
 const accountState = {
   isLoading: false,
@@ -63,15 +88,20 @@ const accountState = {
 };
 
 const accountDispatch = {
-  setAgree: vi.fn(),
-  setCompleted: vi.fn(),
-  setContactCompleted: vi.fn(),
-  setDefaultOrganisationId: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  setOrganisationAndBranch: vi.fn(),
-  setUserProfile: vi.fn(),
-  setShowBranchSelector: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setAgree: vi.fn<AccountDispatchContext['setAgree']>(),
+  setCompleted: vi.fn<AccountDispatchContext['setCompleted']>(),
+  setContactCompleted: vi.fn<AccountDispatchContext['setContactCompleted']>(),
+  setDefaultOrganisationId:
+    vi.fn<AccountDispatchContext['setDefaultOrganisationId']>(),
+  setTargetOrganisation:
+    vi.fn<AccountDispatchContext['setTargetOrganisation']>(),
+  setOrganisationAndBranch:
+    vi.fn<AccountDispatchContext['setOrganisationAndBranch']>(),
+  setUserProfile: vi.fn<AccountDispatchContext['setUserProfile']>(),
+  setShowBranchSelector:
+    vi.fn<AccountDispatchContext['setShowBranchSelector']>(),
+  setShowRFQSelectModal:
+    vi.fn<AccountDispatchContext['setShowRFQSelectModal']>(),
 };
 
 const schema = Yup.object({ name: Yup.string().required('Name is required') });
@@ -83,7 +113,7 @@ const stepElement = (
 );
 
 const renderStep = (
-  overrides: Partial<WizardRoutedStepProps<FormikValues>>
+  overrides: Partial<WizardRoutedStepProps<FormikValues>>,
 ) => {
   const props: WizardRoutedStepProps<FormikValues> = {
     title: 'Step',
@@ -91,7 +121,7 @@ const renderStep = (
     url: '',
     initialValues: { name: '' },
     stepStatuses: [{ status: FormStepStatus.NotStarted }],
-    loadStepValues: async () => ({ stepValues: { name: '' } }),
+    loadStepValues: () => ({ stepValues: { name: '' } }),
     allSteps: [stepElement as never],
     currentStepIndex: 0,
     locationOnCompletion: '/done',
@@ -113,23 +143,27 @@ const renderStep = (
       },
       { path: '/done', element: <div>Done Page</div> },
     ],
-    { initialEntries: ['/step-1'] }
+    { initialEntries: ['/step-1'] },
   );
   render(<RouterProvider router={router} />);
 };
 
 const NEXT = 'save-and-next-button';
 
-describe('Formik wizard shell characterisation', () => {
-  beforeEach(() => {
+describe('formik wizard shell characterisation', () => {
+  const resetWizardRoutedStepCharacterization = () => {
     vi.clearAllMocks();
-  });
+  };
 
   it('moves focus to the error summary and scrolls it into view after an invalid submit', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
+
     const user = userEvent.setup();
-    const scrollIntoView = vi.fn();
+    const scrollIntoView = vi.fn<typeof HTMLElement.prototype.scrollIntoView>();
     HTMLElement.prototype.scrollIntoView = scrollIntoView;
-    renderStep({ onSaveAndNext: vi.fn() });
+    renderStep({ onSaveAndNext: vi.fn<SaveHandler>() });
     await screen.findByLabelText('Name');
 
     await user.click(await screen.findByTestId(NEXT));
@@ -137,13 +171,20 @@ describe('Formik wizard shell characterisation', () => {
     const summary = await screen.findByTestId('form-error-summary');
     // Decision D-2: the summary takes focus (Formik left it on the button).
     await waitFor(() => expect(document.activeElement).toBe(summary));
+
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
   });
 
   it('focuses the summary again on each further failed submit', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
+
     const user = userEvent.setup();
-    HTMLElement.prototype.scrollIntoView = vi.fn();
-    renderStep({ onSaveAndNext: vi.fn() });
+    const scrollIntoView = vi
+      .spyOn(HTMLElement.prototype, 'scrollIntoView')
+      .mockImplementation(() => {});
+    renderStep({ onSaveAndNext: vi.fn<SaveHandler>() });
     await screen.findByLabelText('Name');
 
     await user.click(await screen.findByTestId(NEXT));
@@ -151,23 +192,26 @@ describe('Formik wizard shell characterisation', () => {
     await waitFor(() => expect(document.activeElement).toBe(summary));
 
     await user.click(screen.getByTestId(NEXT));
-    await waitFor(() =>
-      expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledTimes(2)
-    );
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(2));
+
     expect(document.activeElement).toBe(
-      screen.getByTestId('form-error-summary')
+      screen.getByTestId('form-error-summary'),
     );
   });
 
   it('replaces dirty edits with server values after a 409 and keeps the conflict banner', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
+
     const user = userEvent.setup();
     let loads = 0;
-    const loadStepValues = vi.fn(async () => {
+    const loadStepValues = vi.fn<LoadStepHandler>(() => {
       loads += 1;
       return { stepValues: { name: loads === 1 ? '' : 'from server' } };
     });
-    const onSaveAndNext = vi.fn(async () => {
-      throw { status: 409 };
+    const onSaveAndNext = vi.fn<SaveHandler>(() => {
+      throw Object.assign(new Error('Conflict'), { status: 409 });
     });
     renderStep({ loadStepValues, onSaveAndNext, validateHard: undefined });
 
@@ -176,23 +220,30 @@ describe('Formik wizard shell characterisation', () => {
 
     await waitFor(() => expect(loadStepValues).toHaveBeenCalledTimes(2));
     await waitFor(() =>
-      expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
-        'from server'
-      )
+      expect(screen.getByLabelText<HTMLInputElement>('Name').value).toBe(
+        'from server',
+      ),
     );
+
     // Decision D-1: the banner stays up so the user knows why their edits
     // were replaced (Formik cleared it immediately).
     expect(screen.getByTestId('form-error-summary').textContent).toContain(
-      'Another person has already saved this page'
+      'Another person has already saved this page',
     );
   });
 
   it('save and exit skips hard validation and navigates to the exit location', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
+
     const user = userEvent.setup();
-    const onSaveAndExit = vi.fn(async (_values: FormikValues) => undefined);
+    const onSaveAndExit = vi.fn<SaveHandler>(
+      (_values: FormikValues) => undefined,
+    );
     renderStep({
       onSaveAndExit,
-      onSaveAndNext: vi.fn(),
+      onSaveAndNext: vi.fn<SaveHandler>(),
       locationAfterExit: '/done',
     });
     await screen.findByLabelText('Name');
@@ -200,15 +251,20 @@ describe('Formik wizard shell characterisation', () => {
     await user.click(await screen.findByTestId('save-and-exit-button'));
 
     await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
-    expect(onSaveAndExit.mock.calls[0]?.[0]).toEqual({});
-    expect(await screen.findByText('Done Page')).toBeTruthy();
+
+    expect(onSaveAndExit.mock.calls[0]?.[0]).toStrictEqual({});
+    await expect(screen.findByText('Done Page')).resolves.toBeInTheDocument();
   });
 
   it('control: without a prior save and exit, clearing the field shows the hard-schema message', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
+
     const user = userEvent.setup();
     renderStep({
-      onSaveAndExit: vi.fn(),
-      onSaveAndNext: vi.fn(),
+      onSaveAndExit: vi.fn<SaveHandler>(),
+      onSaveAndNext: vi.fn<SaveHandler>(),
       validateSoft: Yup.object({}),
     });
     const input = await screen.findByLabelText('Name');
@@ -217,17 +273,23 @@ describe('Formik wizard shell characterisation', () => {
     await user.clear(input);
     await user.tab();
 
-    expect(await screen.findByText('Name is required')).toBeTruthy();
+    await expect(
+      screen.findByText('Name is required'),
+    ).resolves.toBeInTheDocument();
   });
 
   it('keeps using the soft schema after a failed save and exit (sticky saveAndExit flag)', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
+
     const user = userEvent.setup();
-    const onSaveAndExit = vi.fn(async () => {
-      throw { status: 500 };
+    const onSaveAndExit = vi.fn<SaveHandler>(() => {
+      throw Object.assign(new Error('Server error'), { status: 500 });
     });
     renderStep({
       onSaveAndExit,
-      onSaveAndNext: vi.fn(),
+      onSaveAndNext: vi.fn<SaveHandler>(),
       validateSoft: Yup.object({}),
     });
     const input = await screen.findByLabelText('Name');
@@ -241,6 +303,7 @@ describe('Formik wizard shell characterisation', () => {
     await user.clear(input);
     await user.tab();
     await new Promise((resolve) => setTimeout(resolve, 200));
+
     expect(screen.queryByText('Name is required')).toBeNull();
   });
 });

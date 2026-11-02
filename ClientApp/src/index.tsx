@@ -9,7 +9,6 @@ import App from './App';
 import { TrustedTypes } from './trustedtypes';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ai } from './instrumentation/AppInsightsService';
-import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement!);
@@ -23,12 +22,12 @@ TrustedTypes.createTrustedTypePolicy();
 // exception. StrictMode emits nothing in a production build.
 root.render(
   <StrictMode>
-    <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+    <ErrorBoundary appInsights={ai.reactPlugin}>
       <MsalProvider instance={pca}>
         <AccountProvider>
           <RouterProvider router={App} />
         </AccountProvider>
       </MsalProvider>
     </ErrorBoundary>
-  </StrictMode>
+  </StrictMode>,
 );

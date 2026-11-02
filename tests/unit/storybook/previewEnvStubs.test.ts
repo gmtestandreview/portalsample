@@ -4,25 +4,35 @@ import { describe, expect, it, vi } from 'vitest';
 // decide whether the real Application Insights SDK boots inside Storybook, so
 // they are behaviour, not decoration: a connection string the service treats as
 // live makes every story load reach out to js.monitor.azure.com.
-describe('Storybook runtime env stubs', () => {
+describe('storybook runtime env stubs', () => {
   it('disables Application Insights telemetry', async () => {
+    expect.hasAssertions();
+
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     vi.resetModules();
 
     await import('../../../.storybook/preview-setup');
 
-    const loadAppInsights = vi.fn();
-    const applicationInsightsCtor = vi.fn(function ApplicationInsights(this: {
-      loadAppInsights: () => void;
-    }) {
+    const loadAppInsights = vi.fn<() => void>();
+    const applicationInsightsCtor = vi.fn<
+      (this: { loadAppInsights: () => void }) => void
+    >(function ApplicationInsights(this: { loadAppInsights: () => void }) {
       this.loadAppInsights = loadAppInsights;
     });
-    vi.doMock('@microsoft/applicationinsights-web', () => ({
-      ApplicationInsights: applicationInsightsCtor,
-    }));
-    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
-      ReactPlugin: vi.fn(function ReactPlugin() {}),
-    }));
+    vi.doMock(
+      import('@microsoft/applicationinsights-web') as unknown as string,
+      () =>
+        ({
+          ApplicationInsights: applicationInsightsCtor,
+        }) satisfies __ExactMockModule<__TestMockModule57>,
+    );
+    vi.doMock(
+      import('@microsoft/applicationinsights-react-js') as unknown as string,
+      () =>
+        ({
+          ReactPlugin: vi.fn<() => void>(function ReactPlugin() {}),
+        }) satisfies __ExactMockModule<__TestMockModule58>,
+    );
 
     const module = await import('@/instrumentation/AppInsightsService');
 

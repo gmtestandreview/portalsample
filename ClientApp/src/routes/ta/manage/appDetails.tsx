@@ -1,6 +1,14 @@
 import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useMsal } from '@azure/msal-react';
 import { FormProvider, useForm } from 'react-hook-form';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
@@ -27,9 +35,10 @@ import appDetailsProps from './appDetailsProps';
 import OrganisationSummary from '../summary/OrganisationSummary';
 import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import ApplicationDocuments from './appDocuments';
-import ApplicationMessages from './appMessages';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
+
+const ApplicationMessages = lazy(() => import('./appMessages'));
 
 const POLL_MS = 5000;
 
@@ -49,7 +58,7 @@ const ApplicationDetails = () => {
   const { accounts, instance } = useMsal();
   const options = useMemo(
     () => appDetailsProps(id!, accounts, instance),
-    [accounts, id, instance]
+    [accounts, id, instance],
   );
   const { loadStepValues, hidingFields } = options;
   const hidden = hidingFields ?? {};
@@ -74,7 +83,7 @@ const ApplicationDetails = () => {
     try {
       const client = new RequestForPatternApprovalClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const count = await client.getAppMessageCount(id, id);
@@ -105,7 +114,7 @@ const ApplicationDetails = () => {
 
   const [activeTab, setActiveTab] = useState(getTabFromQuery);
   const [loadMessagesTab, setLoadMessagesTab] = useState(
-    () => getTabFromQuery() === 'messages'
+    () => getTabFromQuery() === 'messages',
   );
   const [messagesRefreshKey, setMessagesRefreshKey] = useState(0);
 
@@ -127,7 +136,9 @@ const ApplicationDetails = () => {
         // which this effect's cleanup calls and which does invoke
         // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
         // eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
-        pollTimeoutRef.current = setTimeout(poll, POLL_MS);
+        pollTimeoutRef.current = setTimeout(() => {
+          void poll();
+        }, POLL_MS);
       }
     };
 
@@ -143,7 +154,7 @@ const ApplicationDetails = () => {
       disposedRef.current = true;
       clearPollTimeout();
     },
-    []
+    [],
   );
 
   const refreshMessagesTab = () => {
@@ -364,7 +375,7 @@ const ApplicationDetails = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             const params = new URLSearchParams(
-                              window.location.search
+                              window.location.search,
                             );
                             params.set('tab', 'documents');
                             const newUrl = `${window.location.pathname}?${params.toString()}`;
@@ -496,7 +507,15 @@ const ApplicationDetails = () => {
             </Tab.Pane>
             <Tab.Pane eventKey='messages' tabIndex={0}>
               {loadMessagesTab ? (
-                <ApplicationMessages key={messagesRefreshKey} />
+                <Suspense
+                  fallback={
+                    <BlockUISpinner partial>
+                      <p>Loading messages...</p>
+                    </BlockUISpinner>
+                  }
+                >
+                  <ApplicationMessages key={messagesRefreshKey} />
+                </Suspense>
               ) : null}
             </Tab.Pane>
             <Tab.Pane eventKey='documents' tabIndex={0}>

@@ -23,20 +23,20 @@ High-performance web server and reverse proxy.
 server {
     listen 80;
     server_name example.com;
-    
+
     # Serve static files
     location / {
         root /var/www/html;
         index index.html;
     }
-    
+
     # Proxy to backend
     location /api {
         proxy_pass http://localhost:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
-    
+
     # SSL configuration
     listen 443 ssl;
     ssl_certificate /path/to/cert.pem;
@@ -198,7 +198,7 @@ services:
   web:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - DATABASE_URL=postgres://db:5432
   db:
@@ -249,14 +249,14 @@ Translates domain names to IP addresses.
 
 ### DNS Records
 
-| Type | Purpose | Example |
-| ------ | --------- | --------- |
-| A | IPv4 address | `example.com → 192.0.2.1` |
-| AAAA | IPv6 address | `example.com → 2001:db8::1` |
-| CNAME | Alias to another domain | `www → example.com` |
-| MX | Mail server | `mail.example.com` |
-| TXT | Text information | SPF, DKIM records |
-| NS | Nameserver | DNS delegation |
+| Type  | Purpose                 | Example                     |
+| ----- | ----------------------- | --------------------------- |
+| A     | IPv4 address            | `example.com → 192.0.2.1`   |
+| AAAA  | IPv6 address            | `example.com → 2001:db8::1` |
+| CNAME | Alias to another domain | `www → example.com`         |
+| MX    | Mail server             | `mail.example.com`          |
+| TXT   | Text information        | SPF, DKIM records           |
+| NS    | Nameserver              | DNS delegation              |
 
 **DNS Lookup**:
 
@@ -301,10 +301,10 @@ sudo certbot --nginx -d example.com
 server {
     listen 443 ssl http2;
     server_name example.com;
-    
+
     ssl_certificate /path/to/fullchain.pem;
     ssl_certificate_key /path/to/privkey.pem;
-    
+
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 }
@@ -388,7 +388,7 @@ const client = redis.createClient();
 
 // Cache data
 await client.set('user:1', JSON.stringify(user), {
-  EX: 3600 // Expire after 1 hour
+  EX: 3600, // Expire after 1 hour
 });
 
 // Retrieve cached data

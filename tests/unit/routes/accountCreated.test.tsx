@@ -1,39 +1,69 @@
 import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
+import type * as AccountHooksModule from '../../../ClientApp/src/authentication/hooks';
 
 const mocks = vi.hoisted(() => ({
-  useAccountState: vi.fn(),
+  useAccountState: vi.fn<typeof AccountHooksModule.useAccountState>(),
 }));
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-}));
+vi.mock(
+  import('../../../ClientApp/src/authentication/hooks'),
+  () =>
+    ({
+      useAccountState: mocks.useAccountState,
+    }) satisfies __ExactMockModule<__TestMockModule26>,
+);
 
-vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
-  default: ({ title }: { title: string }) => (
-    <div data-testid='form-banner'>{title}</div>
-  ),
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '../../../ClientApp/src/components/forms/FormBanner',
+  () =>
+    ({
+      default: ({ title }: { title: string }) => (
+        <div data-testid='form-banner'>{title}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule90>,
+);
 
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/HeaderIntroText'),
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <p>{children}</p>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule76>,
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>,
+);
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>,
+);
+
+const resetAccountCreatedMocks = () => {
+  vi.clearAllMocks();
+};
 
 describe('account created route', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('renders the account holder name and dashboard action', async () => {
-    mocks.useAccountState.mockReturnValue({ details: { givenName: 'Alex' } });
+    expect.hasAssertions();
+
+    resetAccountCreatedMocks();
+
+    mocks.useAccountState.mockReturnValue({
+      details: { givenName: 'Alex' },
+    } as unknown as ReturnType<typeof AccountHooksModule.useAccountState>);
     const AccountCreated = (
       await import('../../../ClientApp/src/routes/account/created')
     ).default;
@@ -41,25 +71,33 @@ describe('account created route', () => {
     render(
       <MemoryRouter>
         <AccountCreated />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Create portal account'
+      'Create portal account',
     );
     expect(
       screen.getByRole('heading', {
         name: 'Your portal account is ready, Alex',
-      })
+      }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('go-to-dashboard-button')).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
   });
 
   it('renders without a name when account details are unavailable', async () => {
-    mocks.useAccountState.mockReturnValue(undefined);
+    expect.hasAssertions();
+
+    resetAccountCreatedMocks();
+
+    mocks.useAccountState.mockReturnValue(
+      undefined as unknown as ReturnType<
+        typeof AccountHooksModule.useAccountState
+      >,
+    );
     const AccountCreated = (
       await import('../../../ClientApp/src/routes/account/created')
     ).default;
@@ -67,11 +105,11 @@ describe('account created route', () => {
     render(
       <MemoryRouter>
         <AccountCreated />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Your portal account is ready,' })
+      screen.getByRole('heading', { name: 'Your portal account is ready,' }),
     ).toBeInTheDocument();
   });
 });

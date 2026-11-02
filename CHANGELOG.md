@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to A Team are documented here.
-Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes to A Team are documented here. Format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Versioning follows
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
@@ -12,8 +12,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 **Consistency shield — counts can no longer drift silently:**
 
-- `packs.json` — single truth source for the builder-* domain packs
-  (name, repo, pages URL, version, skill/agent counts).
+- `packs.json` — single truth source for the builder-* domain packs (name, repo,
+  pages URL, version, skill/agent counts).
 - `check_consistency.py` extended from 23 to 75 checks: agent count is now
   enforced from the real truth source (`.claude/agents/*.md` file count) across
   23 references, skill-count coverage extended to `CLAUDE.md`, the claude plugin
@@ -23,8 +23,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `scripts/check_packs_remote.py` + `packs-sync` workflow — daily cron,
   `workflow_dispatch`, and `repository_dispatch` (type `pack-updated`) compare
   packs.json against the LIVE builder-* repos: roster, real file-tree
-  skill/agent counts, manifest version, and GitHub description. Drift opens
-  (or updates) a `pack-drift` issue automatically and closes it when resolved.
+  skill/agent counts, manifest version, and GitHub description. Drift opens (or
+  updates) a `pack-drift` issue automatically and closes it when resolved.
 
 ### Fixed
 
@@ -41,13 +41,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 **1 new skill** (total: 19 → 20):
 
-- `architecture-audit` — systematic architecture review workflow. Maps the system
-  as-built (not as-documented), identifies load-bearing decisions, dispatches parallel
-  specialist reviews (architect, security-reviewer, performance-profiler,
-  database-reviewer, infra-reviewer), and produces evidence-backed findings with
-  severity verdicts (SOUND / SOUND-WITH-RISKS / INTERVENTION-REQUIRED). Every finding
-  requires a file reference and a consequence. Registered in `using-a-team` under
-  Architectural Decisions.
+- `architecture-audit` — systematic architecture review workflow. Maps the
+  system as-built (not as-documented), identifies load-bearing decisions,
+  dispatches parallel specialist reviews (architect, security-reviewer,
+  performance-profiler, database-reviewer, infra-reviewer), and produces
+  evidence-backed findings with severity verdicts (SOUND / SOUND-WITH-RISKS /
+  INTERVENTION-REQUIRED). Every finding requires a file reference and a
+  consequence. Registered in `using-a-team` under Architectural Decisions.
 
 ### Changed
 
@@ -58,8 +58,8 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Corrected unsupported sparse-checkout arguments in both installers and added
   end-to-end regression coverage for Bash and PowerShell.
-- Restored runtime enforcement scripts to the installed `scripts/` directory while
-  keeping generated project state under `.agent-sync/`.
+- Restored runtime enforcement scripts to the installed `scripts/` directory
+  while keeping generated project state under `.agent-sync/`.
 - Made watcher process detection safe on Windows.
 
 ---
@@ -70,11 +70,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 **Platform: GitHub Copilot CLI** (4 → 5 supported platforms):
 
-- New `.copilot-plugin/plugin.json` declaring A Team's agents (`../.claude/agents/`)
-  and skills (`../skills/`) for Copilot CLI auto-install.
+- New `.copilot-plugin/plugin.json` declaring A Team's agents
+  (`../.claude/agents/`) and skills (`../skills/`) for Copilot CLI auto-install.
 - New `.copilot-plugin/hooks/hooks.json` carrying `SessionStart`, `PreToolUse`,
-  `PostToolUse`, and `SessionEnd` hooks — full enforcement parity with Claude Code's
-  `.claude/settings.json` (not just SessionStart like Codex CLI today).
+  `PostToolUse`, and `SessionEnd` hooks — full enforcement parity with Claude
+  Code's `.claude/settings.json` (not just SessionStart like Codex CLI today).
 - Install command: `copilot plugin install RBraga01/a-team:.copilot-plugin`.
 - No new agents, skills, or rules — purely additive platform plumbing.
 
@@ -114,11 +114,11 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   agents to escalate through causal layers before proposing a fix
 - `smart-init` — ROADMAP-aware session initialisation; reads ROADMAP.md at
   session start to set context, runs an interview script when none exists, and
-  writes INIT.md
-**Observability stack:**
+  writes INIT.md **Observability stack:**
 - `scripts/metrics.py` — Shared module with `append_metric` and `read_events`
   for structured event logging
-- `scripts/metrics-report.py` — CLI with `parse`, `report`, and log rotation subcommands
+- `scripts/metrics-report.py` — CLI with `parse`, `report`, and log rotation
+  subcommands
 - `scripts/status.py` — Cross-platform status line script with staleness
   detection; wired into Claude Code `statusLine` and all platform `SessionStart`
   hooks
@@ -139,27 +139,27 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Leadership: orchestrator, architect, planner
 - Quality: code-reviewer, security-reviewer, tdd-guide, debugger,
   refactor-cleaner, build-error-resolver
-- Language specialists: go, python, rust, kotlin (Android), swift (iOS),
-  flutter (Dart), database (PostgreSQL)
-- Domain: infra-reviewer (IaC), compliance-reviewer
-  (GDPR/COPPA/PCI/SOC2/HIPAA), ai-reviewer (LLM code), performance-profiler
-- Operations: e2e-runner, doc-updater, chief-of-staff, loop-operator, harness-optimizer
-**18 workflow skills** — 6 hard gates + 12 workflow skills:
+- Language specialists: go, python, rust, kotlin (Android), swift (iOS), flutter
+  (Dart), database (PostgreSQL)
+- Domain: infra-reviewer (IaC), compliance-reviewer (GDPR/COPPA/PCI/SOC2/HIPAA),
+  ai-reviewer (LLM code), performance-profiler
+- Operations: e2e-runner, doc-updater, chief-of-staff, loop-operator,
+  harness-optimizer **18 workflow skills** — 6 hard gates + 12 workflow skills:
 - Hard gates: verification-before-completion, test-driven-development,
   brainstorming, systematic-debugging, api-contract-first, data-migration
 - Workflow: using-git-worktrees, subagent-driven-development, executing-plans,
   writing-plans, dispatching-parallel-agents, finishing-a-development-branch,
   incident-response, performance-audit, writing-skills, using-a-team (meta),
-  five-whys, smart-init
-**Key capabilities:**
+  five-whys, smart-init **Key capabilities:**
 - Orchestrator init + prune protocol (INIT.md → automatic team sizing)
-- File Lock Protocol with worktree path normalisation (prevents parallel agent collisions)
+- File Lock Protocol with worktree path normalisation (prevents parallel agent
+  collisions)
 - Pipeline Auditor (harness-optimizer) with merge blocking on rule evasion
 - Surgical Changes enforcement across all agents
 - Model-agnostic tier system: Claude, OpenAI (GPT-4.1/o3/GPT-5.5), Google
   (Gemini 2.5)
-- Cross-platform support: Claude Code, Codex CLI, Cursor, OpenCode
-**Platforms supported:**
+- Cross-platform support: Claude Code, Codex CLI, Cursor, OpenCode **Platforms
+  supported:**
 - Claude Code (full: hooks, slash commands, sub-agent dispatch)
 - Codex CLI (full: agents, skills, rules, session hook)
 - Cursor (strong: agents, skills, rules, session hook)

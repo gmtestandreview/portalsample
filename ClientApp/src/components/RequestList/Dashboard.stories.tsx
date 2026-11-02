@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import type { ComponentType } from 'react';
 import {
   AccountStateCtx,
@@ -22,7 +22,7 @@ const mockAccountContext: AccountContextState = {
     givenName: 'Test',
     familyName: 'User',
     email: 'test@example.com',
-    abn: '00000000000',
+    abn: '12345678901',
     userAcceptedTermsOfUse: true,
     accountCreationCompleted: true,
     accountContactCompleted: true,
@@ -176,37 +176,34 @@ const DashboardDecorator = (Story: ComponentType) => (
   </AccountStateCtx.Provider>
 );
 
-const meta = {
+const meta = preview.meta({
   title: 'Dashboard/RequestItem',
   component: RequestItem,
   parameters: {
     layout: 'padded',
   },
   decorators: [DashboardDecorator],
-} satisfies Meta<typeof RequestItem>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const DraftRequest: Story = {
+export const DraftRequest = meta.story({
   args: {
     request: draftRequest,
   },
-};
+});
 
-export const QuoteAvailable: Story = {
+export const QuoteAvailable = meta.story({
   args: {
     request: quoteAvailableRequest,
   },
-};
+});
 
-export const ReportIssued: Story = {
+export const ReportIssued = meta.story({
   args: {
     request: reportIssuedRequest,
   },
-};
+});
 
-export const AllRequestStates: Story = {
+export const AllRequestStates = meta.story({
   args: { request: draftRequest },
   render: () => (
     <>
@@ -215,4 +212,4 @@ export const AllRequestStates: Story = {
       <RequestItem request={reportIssuedRequest} />
     </>
   ),
-};
+});

@@ -21,28 +21,33 @@ const validInstrument = {
   testingAndCalibrationRequirements: 'Calibrate against standard',
   measurementReportAndCertificateRequired: 'MeasurementReportOnly',
   preferredInstrumentOrArtefactAvailabilityDate: new Date(
-    Date.now() + 86_400_000
+    Date.now() + 86_400_000,
   ),
 };
 
+const expectedErrors = (messages: string[]): unknown =>
+  expect.arrayContaining<string>(messages);
+
 describe('organisationAndContact validation', () => {
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSubmitValidation.validate({
         businessWebsiteAddress: 'https://measurement.gov.au',
         isPrincipalContact: YesNo.Yes,
         organisationCount: 1,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       organisationAndContactSaveValidation.validate({
         businessWebsiteAddress: '',
         isPrincipalContact: YesNo.Yes,
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('requires conditional contact and branch confirmation on submit', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSubmitValidation.validate(
         {
@@ -51,10 +56,10 @@ describe('organisationAndContact validation', () => {
           isCorrectBranchOrLocation: YesNo.No,
           contact: {},
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Please select a branch/location name before proceeding.',
         'Title other is required',
         'First name is required',
@@ -65,46 +70,51 @@ describe('organisationAndContact validation', () => {
   });
 
   it('validates website format and length', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSubmitValidation.validate({
         businessWebsiteAddress: 'not a website',
         isPrincipalContact: YesNo.Yes,
-      })
+      }),
     ).rejects.toThrow(
-      'Business website address is not a valid website address'
+      'Business website address is not a valid website address',
     );
     await expect(
       organisationAndContactSaveValidation.validate({
         businessWebsiteAddress: `${'a'.repeat(97)}.com`,
         isPrincipalContact: YesNo.Yes,
-      })
+      }),
     ).rejects.toThrow(
-      'Business website address cannot be greater than 100 characters'
+      'Business website address cannot be greater than 100 characters',
     );
   });
 
   it('uses soft contact validation for saves when principal contact differs', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSaveValidation.validate({
         isPrincipalContact: YesNo.No,
         contact: {
           email: 'bad',
         },
-      })
+      }),
     ).rejects.toThrow('Email address is not a valid email address');
   });
 });
 
 describe('instrumentAndRequest validation', () => {
   it('accepts a valid submit object', async () => {
+    expect.hasAssertions();
     await expect(
-      instrumentAndRequestSubmitValidation.validate(validInstrument)
+      instrumentAndRequestSubmitValidation.validate(validInstrument),
     ).resolves.toMatchObject({
       serialNumber: 'SN-123',
     });
   });
 
   it('validates RFQ availability dates as calendar dates rather than timezone-shifted instants', async () => {
+    expect.hasAssertions();
+
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const year = tomorrow.getFullYear();
@@ -115,17 +125,18 @@ describe('instrumentAndRequest validation', () => {
       instrumentAndRequestSubmitValidation.validate({
         ...validInstrument,
         preferredInstrumentOrArtefactAvailabilityDate: `${year}-${month}-${day}T00:00:00+10:00`,
-      })
+      }),
     ).resolves.toMatchObject({
       preferredInstrumentOrArtefactAvailabilityDate: `${year}-${month}-${day}T00:00:00+10:00`,
     });
   });
 
   it('requires missing submit fields', async () => {
+    expect.hasAssertions();
     await expect(
-      instrumentAndRequestSubmitValidation.validate({}, { abortEarly: false })
+      instrumentAndRequestSubmitValidation.validate({}, { abortEarly: false }),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Does this instrument/artefact have a serial number available? is a required field',
         'Enter a manufacturer.',
         'Model is a required field',
@@ -139,6 +150,7 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('validates invalid formats and conditional serial number', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate(
         {
@@ -151,13 +163,13 @@ describe('instrumentAndRequest validation', () => {
           testingAndCalibrationRequirements: 'bad|',
           numberOfItems: 0,
           preferredInstrumentOrArtefactAvailabilityDate: new Date(
-            Date.now() - 86_400_000
+            Date.now() - 86_400_000,
           ),
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Serial number has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         'Manufacturer cannot be less than 2 characters',
         'Model cannot be less than 2 characters',
@@ -173,21 +185,23 @@ describe('instrumentAndRequest validation', () => {
         ...validInstrument,
         hasSerialNumber: YesNo.No,
         serialNumber: '',
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('allows whitespace-only optional custom text checks after required validation passes', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate({
         ...validInstrument,
         description: '   ',
         testingAndCalibrationRequirements: '   ',
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('accepts max length boundaries and rejects over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate({
         ...validInstrument,
@@ -198,7 +212,7 @@ describe('instrumentAndRequest validation', () => {
         previousQuoteOrReportNumber: 'p'.repeat(100),
         testingAndCalibrationRequirements: 't'.repeat(2000),
         numberOfItems: 100,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       instrumentAndRequestSubmitValidation.validate(
@@ -212,10 +226,10 @@ describe('instrumentAndRequest validation', () => {
           testingAndCalibrationRequirements: 't'.repeat(2001),
           numberOfItems: 101,
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Serial number cannot be greater than 100 characters',
         'Manufacturer cannot be greater than 100 characters',
         'Model cannot be greater than 100 characters',
@@ -228,12 +242,20 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('allows sparse saves but validates populated save fields', async () => {
+    expect.hasAssertions();
+    await expect(
+      instrumentAndRequestSaveValidation.validate({
+        numberOfItems: null,
+        description: '',
+        testingAndCalibrationRequirements: '',
+      }),
+    ).resolves.toBeDefined();
     await expect(
       instrumentAndRequestSaveValidation.validate({
         numberOfItems: Number.NaN,
         description: '',
         testingAndCalibrationRequirements: '',
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       instrumentAndRequestSaveValidation.validate(
@@ -243,10 +265,10 @@ describe('instrumentAndRequest validation', () => {
           testingAndCalibrationRequirements: 'bad|',
           numberOfItems: 101,
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Description has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         'Testing and calibration requirements has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         'Number of items cannot be greater than 100',

@@ -202,7 +202,7 @@ the code review demanded.
   // Wait for the component to mount. Welcome renders unconditionally; if it
   // appears without the API being called, the org-GUID guard is working.
   await waitFor(() =>
-    expect(screen.getByTestId('welcome')).toBeInTheDocument()
+    expect(screen.getByTestId('welcome')).toBeInTheDocument(),
   );
   expect(mockGetDrafts).not.toHaveBeenCalled();
   expect(mockGetQuotes).not.toHaveBeenCalled();
@@ -655,7 +655,7 @@ making changes. Run the dashboard tests after each change.
   ```ts
   const resolveFilterParams = (
     filterYearType: string | undefined,
-    filterStatusType: string | undefined
+    filterStatusType: string | undefined,
   ) => ({
     actualYear:
       filterYearType === defaultFilter.filterYearType
@@ -686,7 +686,7 @@ making changes. Run the dashboard tests after each change.
   ```ts
   const { actualYear, actualStatus } = resolveFilterParams(
     stableFilters.filterYearType,
-    stableFilters.filterStatusType
+    stableFilters.filterStatusType,
   );
   ```
 
@@ -715,21 +715,21 @@ making changes. Run the dashboard tests after each change.
         forbidden: boolean;
         noThirdPartyAccess: boolean;
       }>
-    >
+    >,
   ) => {
     if (errorStatus.forbidden) {
       setDashboardNotification(
-        DashBoardNotifications.getForbiddenNotification()
+        DashBoardNotifications.getForbiddenNotification(),
       );
     }
     if (errorStatus.noThirdPartyAccess) {
       setDashboardNotification(
-        DashBoardNotifications.getThirdPartyAccessNotification(orgName ?? '')
+        DashBoardNotifications.getThirdPartyAccessNotification(orgName ?? ''),
       );
       if (accountDispatch) {
         accountDispatch.setTargetOrganisation(
           accountState?.details?.abn ?? '',
-          accountState?.details?.organisation ?? ''
+          accountState?.details?.organisation ?? '',
         );
       }
       setErrorStatus((prevState) => ({
@@ -750,7 +750,7 @@ making changes. Run the dashboard tests after each change.
     orgName,
     accountDispatch,
     accountState,
-    setErrorStatus
+    setErrorStatus,
   );
   ```
 
@@ -820,7 +820,7 @@ the previous sprint, the following gaps have been closed:
 
   Also update/add status for:
   - **Storybook assets**: ✅ "Resolved — font import paths corrected in
-    .storybook/preview.ts"
+    .storybook/preview.tsx"
   - **SEC-010 IDOR**: 🔶 "In progress — backend verification checklist created
     (docs/sec/SEC-010-idor-backend-verification.md); backend review pending"
 

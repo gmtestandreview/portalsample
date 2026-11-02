@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useIsAuthenticated } from '@azure/msal-react';
 import GetStarted from '@/components/get-started/get-started';
 import {
@@ -10,9 +10,13 @@ import {
 } from '@/storage/notification';
 import { NotificationSeverity } from '@/storage/types';
 
-vi.mock('@azure/msal-react', () => ({
-  useIsAuthenticated: vi.fn(),
-}));
+vi.mock(
+  import('@azure/msal-react'),
+  (() =>
+    ({
+      useIsAuthenticated: vi.fn<typeof useIsAuthenticated>(),
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
+);
 
 const renderGetStarted = () =>
   render(
@@ -25,45 +29,60 @@ const renderGetStarted = () =>
           element={<main>Setup guide</main>}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
-describe('GetStarted', () => {
-  beforeEach(() => {
+describe('get started', () => {
+  const resetGetStarted = () => {
     vi.mocked(useIsAuthenticated).mockReturnValue(false);
     clearGetStartedNotification();
     document.body.className = '';
     document.title = '';
-  });
+  };
 
   it('renders the unauthenticated entry content and pathway links', () => {
+    expect.hasAssertions();
+
+    resetGetStarted();
+
     renderGetStarted();
 
     expect(
       screen.getByRole('heading', {
         name: /National Measurement Institute .* Services portal/i,
         level: 1,
-      })
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/request, receive and accept quotes/i)
+      screen.getByText(/request, receive and accept quotes/i),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /How to set up access/i })
-    ).toHaveAttribute('href', '/help-guide/how-to-setup-access');
-    expect(screen.getByRole('link', { name: /Log in/i })).toHaveAttribute(
-      'href',
-      '/dashboard'
-    );
-    expect(screen.getByRole('link', { name: /^Digital ID/i })).toHaveAttribute(
-      'href',
-      'https://www.digitalidsystem.gov.au'
-    );
-    expect(document.title).toBe('NMI Services portal | NMI');
-    expect(document.body).toHaveClass('home');
+    expect({
+      howToSetUpAccess: screen
+        .getByRole('link', { name: /How to set up access/i })
+        .getAttribute('href'),
+      login: screen.getByRole('link', { name: /Log in/i }).getAttribute('href'),
+      digitalId: screen
+        .getByRole('link', { name: /^Digital ID/i })
+        .getAttribute('href'),
+    }).toStrictEqual({
+      howToSetUpAccess: '/help-guide/how-to-setup-access',
+      login: '/dashboard',
+      digitalId: 'https://www.digitalidsystem.gov.au',
+    });
+    expect({
+      title: document.title,
+      bodyHasHomeClass: document.body.classList.contains('home'),
+    }).toStrictEqual({
+      title: 'NMI Services portal | NMI',
+      bodyHasHomeClass: true,
+    });
   });
 
   it('renders and clears a stored get-started notification', async () => {
+    expect.hasAssertions();
+
+    resetGetStarted();
+
     const user = userEvent.setup();
     setGetStartedNotification({
       severity: NotificationSeverity.Information,
@@ -73,26 +92,32 @@ describe('GetStarted', () => {
     renderGetStarted();
 
     expect(
-      screen.getByText('Your session expired. Please sign in again.')
+      screen.getByText('Your session expired. Please sign in again.'),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /close alert/i }));
 
     await waitFor(() => {
       expect(
-        screen.queryByText('Your session expired. Please sign in again.')
+        screen.queryByText('Your session expired. Please sign in again.'),
       ).not.toBeInTheDocument();
     });
   });
 
   it('redirects authenticated users to the dashboard', () => {
+    expect.hasAssertions();
+
+    resetGetStarted();
+
     vi.mocked(useIsAuthenticated).mockReturnValue(true);
 
     renderGetStarted();
 
     expect(screen.getByRole('main')).toHaveTextContent('Dashboard route');
     expect(
-      screen.queryByRole('heading', { name: /National Measurement Institute/i })
+      screen.queryByRole('heading', {
+        name: /National Measurement Institute/i,
+      }),
     ).not.toBeInTheDocument();
   });
 });

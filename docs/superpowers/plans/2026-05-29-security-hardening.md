@@ -140,7 +140,7 @@ that uniquely identifies the session in logs without disclosing personal data.
   ```ts
   AppLogger.verbose(
     'DeliveryAndReturn.getAcceptQuotePreInfo.',
-    account?.details
+    account?.details,
   );
   ```
 
@@ -161,7 +161,7 @@ that uniquely identifies the session in logs without disclosing personal data.
   ```ts
   AppLogger.verbose(
     'DeliveryAndReturn.getAcceptQuotePreInfo.',
-    account?.details
+    account?.details,
   );
   ```
 
@@ -337,7 +337,7 @@ The dev default in `webpack.config.js` is `http://localhost:3000` — hostname
     try {
       const { hostname } = new URL(urlStr);
       return ALLOWED_REDIRECT_HOSTS.some(
-        (h) => hostname === h || hostname.endsWith(`.${h}`)
+        (h) => hostname === h || hostname.endsWith(`.${h}`),
       );
     } catch {
       return false;
@@ -347,7 +347,7 @@ The dev default in `webpack.config.js` is `http://localhost:3000` — hostname
   const externalRedirectUrl = globalThis.EXTERNAL_REDIRECT_URL ?? '';
   if (externalRedirectUrl && !isAllowedRedirectHost(externalRedirectUrl)) {
     throw new Error(
-      `[env] EXTERNAL_REDIRECT_URL "${externalRedirectUrl}" is not in the allowed domain list (measurement.gov.au or localhost).`
+      `[env] EXTERNAL_REDIRECT_URL "${externalRedirectUrl}" is not in the allowed domain list (measurement.gov.au or localhost).`,
     );
   }
   ```
@@ -412,11 +412,10 @@ The dev default in `webpack.config.js` is `http://localhost:3000` — hostname
 - Modify: `ClientApp/src/routes/measurementReport/nMIContactDetails.tsx`
   (line 40)
 
-**Root cause:** Both files build
-`href={`mailto:${email}?subject="Reviewing Quotation ID: ${id}"`}`. The
-`subject` value is server-supplied and unencoded. A quotation ID containing `&`,
-`=`, or `%` characters would malform the URI; a crafted value could inject
-additional mailto parameters (e.g., `&body=...`).
+**Root cause:** Both files build `href={`mailto:${email}?subject="Reviewing
+Quotation ID: ${id}"`}`. The `subject` value is server-supplied and unencoded. A
+quotation ID containing `&`, `=`, or `%` characters would malform the URI; a
+crafted value could inject additional mailto parameters (e.g., `&body=...`).
 
 **Fix:** Apply `encodeURIComponent` to the `subject` query-parameter value. The
 email address in the `to` field does not need encoding (it is already a
@@ -520,7 +519,7 @@ inline script creation should be permitted.
     createHTML: (toEscape) => DOMPurify.sanitize(toEscape),
     createScript: () => {
       throw new Error(
-        'Inline script creation is not allowed by the NMI TrustedTypes policy.'
+        'Inline script creation is not allowed by the NMI TrustedTypes policy.',
       );
     },
   });
@@ -539,7 +538,7 @@ inline script creation should be permitted.
           createHTML: (toEscape) => DOMPurify.sanitize(toEscape),
           createScript: () => {
             throw new Error(
-              'Inline script creation is not allowed by the NMI TrustedTypes policy.'
+              'Inline script creation is not allowed by the NMI TrustedTypes policy.',
             );
           },
         });
@@ -635,7 +634,7 @@ exact same pattern already used in `AuthenticatedElement.tsx`.
           <RouterProvider router={App} />
         </StrictMode>
       </AccountProvider>
-    </MsalProvider>
+    </MsalProvider>,
   );
   ```
 
@@ -651,7 +650,7 @@ exact same pattern already used in `AuthenticatedElement.tsx`.
           </StrictMode>
         </AccountProvider>
       </MsalProvider>
-    </ErrorBoundary>
+    </ErrorBoundary>,
   );
   ```
 

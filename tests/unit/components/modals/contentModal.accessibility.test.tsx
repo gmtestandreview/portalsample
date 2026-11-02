@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import ContentModal from '@/components/modals/ContentModal';
 
@@ -25,28 +26,30 @@ const renderTwoOpenModals = () =>
     <>
       <ContentModal
         showModal
-        onCancelModal={vi.fn()}
+        onCancelModal={vi.fn<() => void>()}
         modalTitle={TERMS}
         modalBody={<p>Terms body content.</p>}
       />
       <ContentModal
         showModal
-        onCancelModal={vi.fn()}
+        onCancelModal={vi.fn<() => void>()}
         modalTitle={PRIVACY}
         modalBody={<p>Privacy body content.</p>}
       />
-    </>
+    </>,
   );
 
-describe('ContentModal accessibility', () => {
+describe('contentModal accessibility', () => {
   it('names the dialog from the visible modal title', () => {
+    expect.hasAssertions();
+
     render(
       <ContentModal
         showModal
-        onCancelModal={vi.fn()}
+        onCancelModal={vi.fn<() => void>()}
         modalTitle='Accessible modal title'
         modalBody={<p>Modal body content.</p>}
-      />
+      />,
     );
 
     const dialog = screen.getByRole('dialog', {
@@ -60,6 +63,8 @@ describe('ContentModal accessibility', () => {
   });
 
   it('gives each instance a distinct title id', () => {
+    expect.hasAssertions();
+
     renderTwoOpenModals();
 
     const termsTitle = screen.getByRole('heading', { name: TERMS });
@@ -69,6 +74,8 @@ describe('ContentModal accessibility', () => {
   });
 
   it('leaves no duplicate label id across concurrently open dialogs', () => {
+    expect.hasAssertions();
+
     renderTwoOpenModals();
 
     const labelIds = screen
@@ -79,6 +86,8 @@ describe('ContentModal accessibility', () => {
   });
 
   it('names each concurrently open dialog from its own title', () => {
+    expect.hasAssertions();
+
     renderTwoOpenModals();
 
     expect(screen.getByRole('dialog', { name: TERMS })).toBeInTheDocument();

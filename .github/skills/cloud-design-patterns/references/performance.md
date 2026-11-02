@@ -2,9 +2,11 @@
 
 ## Asynchronous Request-Reply Pattern
 
-**Problem**: Client applications expect synchronous responses, but back-end processing is asynchronous.
+**Problem**: Client applications expect synchronous responses, but back-end
+processing is asynchronous.
 
-**Solution**: Decouple back-end processing from a front-end host where back-end processing must be asynchronous, but the front end requires a clear response.
+**Solution**: Decouple back-end processing from a front-end host where back-end
+processing must be asynchronous, but the front end requires a clear response.
 
 **When to Use**:
 
@@ -43,9 +45,11 @@
 
 ## CQRS (Command Query Responsibility Segregation) Pattern
 
-**Problem**: Read and write workloads have different requirements and scaling needs.
+**Problem**: Read and write workloads have different requirements and scaling
+needs.
 
-**Solution**: Separate operations that read data from those that update data by using distinct interfaces.
+**Solution**: Separate operations that read data from those that update data by
+using distinct interfaces.
 
 **When to Use**:
 
@@ -64,9 +68,11 @@
 
 ## Index Table Pattern
 
-**Problem**: Queries frequently reference fields that aren't indexed efficiently.
+**Problem**: Queries frequently reference fields that aren't indexed
+efficiently.
 
-**Solution**: Create indexes over the fields in data stores that queries frequently reference.
+**Solution**: Create indexes over the fields in data stores that queries
+frequently reference.
 
 **When to Use**:
 
@@ -85,7 +91,8 @@
 
 **Problem**: Data is poorly formatted for required query operations.
 
-**Solution**: Generate prepopulated views over the data in one or more data stores when the data isn't ideally formatted for query operations.
+**Solution**: Generate prepopulated views over the data in one or more data
+stores when the data isn't ideally formatted for query operations.
 
 **When to Use**:
 
@@ -104,7 +111,8 @@
 
 **Problem**: Some requests need faster processing than others.
 
-**Solution**: Prioritize requests sent to services so that requests with a higher priority are processed more quickly.
+**Solution**: Prioritize requests sent to services so that requests with a
+higher priority are processed more quickly.
 
 **When to Use**:
 
@@ -123,7 +131,8 @@
 
 **Problem**: Intermittent heavy loads can overwhelm services.
 
-**Solution**: Use a queue as a buffer between a task and a service to smooth intermittent heavy loads.
+**Solution**: Use a queue as a buffer between a task and a service to smooth
+intermittent heavy loads.
 
 **When to Use**:
 
@@ -141,9 +150,11 @@
 
 ## Rate Limiting Pattern
 
-**Problem**: Service consumption must be controlled to prevent resource exhaustion.
+**Problem**: Service consumption must be controlled to prevent resource
+exhaustion.
 
-**Solution**: Control the consumption of resources by applications, tenants, or services to prevent resource exhaustion and throttling.
+**Solution**: Control the consumption of resources by applications, tenants, or
+services to prevent resource exhaustion and throttling.
 
 **When to Use**:
 
@@ -161,7 +172,8 @@
 
 ## Sharding Pattern
 
-**Problem**: A single data store may have limitations in storage capacity and performance.
+**Problem**: A single data store may have limitations in storage capacity and
+performance.
 
 **Solution**: Divide a data store into a set of horizontal partitions or shards.
 
@@ -183,7 +195,8 @@
 
 **Problem**: Resource consumption must be limited to prevent system overload.
 
-**Solution**: Control the consumption of resources used by an application, tenant, or service.
+**Solution**: Control the consumption of resources used by an application,
+tenant, or service.
 
 **When to Use**:
 

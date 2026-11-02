@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, waitFor } from 'storybook/test';
 import OrganisationAndContact from './organisationAndContact';
 import InstrumentAndRequest from './instrumentAndRequest';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/RequestForQuote',
   component: OrganisationAndContact,
   decorators: [withPortalProviders],
@@ -18,7 +18,7 @@ const meta = {
           name: 'Storybook Organisation',
           businessOrTradingName: 'Precision Testing',
           branchOrLocationName: 'Sydney Laboratory',
-          abn: '00000000000',
+          abn: '12345678901',
           organisationCount: '2',
           isCorrectBranchOrLocation: 'No',
           isPrincipalContact: 'Yes',
@@ -52,16 +52,13 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof OrganisationAndContact>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const OrganisationAndContactStep: Story = {
+export const OrganisationAndContactStep = meta.story({
   render: () => <OrganisationAndContact />,
-};
+});
 
-export const InstrumentAndRequestStep: Story = {
+export const InstrumentAndRequestStep = meta.story({
   render: () => <InstrumentAndRequest />,
   parameters: {
     portal: {
@@ -85,9 +82,7 @@ export const InstrumentAndRequestStep: Story = {
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // The component renders a BlockUISpinner until both lookup setters have run, so
     // awaiting this heading is the settled-state contract: it cannot appear before
@@ -95,23 +90,28 @@ export const InstrumentAndRequestStep: Story = {
     const heading = await canvas.findByRole('heading', {
       name: 'Instrument/artefact details',
     });
+
     await expect(heading).toBeVisible();
     // Both lookups reached the DOM: the category list, and the artefact types filtered
     // to the story's initial 'electrical' category.
     await expect(
-      canvas.getByRole('option', { name: 'Electrical' })
+      canvas.getByRole('option', { name: 'Electrical' }),
     ).toBeInTheDocument();
     await expect(
-      canvas.getByRole('option', { name: 'Digital thermometer' })
+      canvas.getByRole('option', { name: 'Digital thermometer' }),
     ).toBeInTheDocument();
-    const availabilityDate = canvas.getByLabelText(
-      'Preferred Instrument/artefact availability date (optional)'
-    );
-    await waitFor(() => expect(availabilityDate).toHaveValue('01/06/2026'));
-  },
-};
 
-export const OrganisationAndContactValidation: Story = {
+    await waitFor(() =>
+      expect(
+        canvas.getByLabelText(
+          'Preferred Instrument/artefact availability date (optional)',
+        ),
+      ).toHaveValue('01/06/2026'),
+    );
+  },
+});
+
+export const OrganisationAndContactValidation = meta.story({
   render: () => <OrganisationAndContact />,
   parameters: {
     portal: {
@@ -121,7 +121,7 @@ export const OrganisationAndContactValidation: Story = {
           name: 'Storybook Organisation',
           businessOrTradingName: '',
           branchOrLocationName: '',
-          abn: '00000000000',
+          abn: '12345678901',
           organisationCount: '2',
           isCorrectBranchOrLocation: '',
           isPrincipalContact: 'No',
@@ -159,9 +159,9 @@ export const OrganisationAndContactValidation: Story = {
       },
     },
   },
-};
+});
 
-export const InstrumentAndRequestValidation: Story = {
+export const InstrumentAndRequestValidation = meta.story({
   render: () => <InstrumentAndRequest />,
   parameters: {
     portal: {
@@ -204,20 +204,19 @@ export const InstrumentAndRequestValidation: Story = {
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Same settled-state contract as Instrument And Request Step: the heading is behind
     // the component's BlockUISpinner branch and appears only once /api/lookup resolves.
     const heading = await canvas.findByRole('heading', {
       name: 'Instrument/artefact details',
     });
+
     await expect(heading).toBeVisible();
     // The seeded validation state survives the lookup settling rather than being
     // cleared by the re-render it causes.
     await expect(
-      canvas.getByText('Select a measurement category.')
+      canvas.getByText('Select a measurement category.'),
     ).toBeVisible();
   },
-};
+});

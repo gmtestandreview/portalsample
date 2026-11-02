@@ -7,8 +7,8 @@ placeholders; use [missing] or NHR rather than inventing evidence. -->
 Input: two candidate artifacts/resources, their completeness/revisions, target
 purpose, and source evidence. Output: a supported keep/merge/split/deprecate or
 companion recommendation with preservation/conflict decisions. Use the
-[full merge workflow](../prompt-2-full-audit+conditional-merge.md)
-for conditional construction and validation; this comparison grants no edit or
+[full merge workflow](../prompt-2-full-audit+conditional-merge.md) for
+conditional construction and validation; this comparison grants no edit or
 deployment permission. Update the template when that decision contract changes.
 
 ## Scope and recommendation

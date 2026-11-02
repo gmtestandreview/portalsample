@@ -1,6 +1,7 @@
 'use strict';
 
-const stringify = require('./stringify');
+import stringify from './stringify.js';
+import constants from './constants.js';
 
 /**
  * Constants
@@ -9,21 +10,21 @@ const stringify = require('./stringify');
 const {
   MAX_DEPTH,
   MAX_LENGTH,
-  CHAR_BACKSLASH, /* \ */
-  CHAR_BACKTICK, /* ` */
-  CHAR_COMMA, /* , */
-  CHAR_DOT, /* . */
-  CHAR_LEFT_PARENTHESES, /* ( */
-  CHAR_RIGHT_PARENTHESES, /* ) */
-  CHAR_LEFT_CURLY_BRACE, /* { */
-  CHAR_RIGHT_CURLY_BRACE, /* } */
-  CHAR_LEFT_SQUARE_BRACKET, /* [ */
-  CHAR_RIGHT_SQUARE_BRACKET, /* ] */
-  CHAR_DOUBLE_QUOTE, /* " */
-  CHAR_SINGLE_QUOTE, /* ' */
+  CHAR_BACKSLASH /* \ */,
+  CHAR_BACKTICK /* ` */,
+  CHAR_COMMA /* , */,
+  CHAR_DOT /* . */,
+  CHAR_LEFT_PARENTHESES /* ( */,
+  CHAR_RIGHT_PARENTHESES /* ) */,
+  CHAR_LEFT_CURLY_BRACE /* { */,
+  CHAR_RIGHT_CURLY_BRACE /* } */,
+  CHAR_LEFT_SQUARE_BRACKET /* [ */,
+  CHAR_RIGHT_SQUARE_BRACKET /* ] */,
+  CHAR_DOUBLE_QUOTE /* " */,
+  CHAR_SINGLE_QUOTE /* ' */,
   CHAR_NO_BREAK_SPACE,
-  CHAR_ZERO_WIDTH_NOBREAK_SPACE
-} = require('./constants');
+  CHAR_ZERO_WIDTH_NOBREAK_SPACE,
+} = constants;
 
 /**
  * parse
@@ -35,10 +36,17 @@ const parse = (input, options = {}) => {
   }
 
   const opts = options || {};
-  const max = typeof opts.maxLength === 'number' ? Math.min(MAX_LENGTH, opts.maxLength) : MAX_LENGTH;
-  const maxDepth = Number.isFinite(opts.maxDepth) ? Math.min(MAX_DEPTH, opts.maxDepth) : MAX_DEPTH;
+  const max =
+    typeof opts.maxLength === 'number'
+      ? Math.min(MAX_LENGTH, opts.maxLength)
+      : MAX_LENGTH;
+  const maxDepth = Number.isFinite(opts.maxDepth)
+    ? Math.min(MAX_DEPTH, opts.maxDepth)
+    : MAX_DEPTH;
   if (input.length > max) {
-    throw new SyntaxError(`Input length (${input.length}), exceeds max characters (${max})`);
+    throw new SyntaxError(
+      `Input length (${input.length}), exceeds max characters (${max})`,
+    );
   }
 
   const ast = { type: 'root', input, nodes: [] };
@@ -57,7 +65,7 @@ const parse = (input, options = {}) => {
    */
 
   const advance = () => input[index++];
-  const push = node => {
+  const push = (node) => {
     if (node.type === 'text' && prev.type === 'dot') {
       prev.type = 'text';
     }
@@ -84,7 +92,10 @@ const parse = (input, options = {}) => {
      * Invalid chars
      */
 
-    if (value === CHAR_ZERO_WIDTH_NOBREAK_SPACE || value === CHAR_NO_BREAK_SPACE) {
+    if (
+      value === CHAR_ZERO_WIDTH_NOBREAK_SPACE ||
+      value === CHAR_NO_BREAK_SPACE
+    ) {
       continue;
     }
 
@@ -93,7 +104,10 @@ const parse = (input, options = {}) => {
      */
 
     if (value === CHAR_BACKSLASH) {
-      push({ type: 'text', value: (options.keepEscaping ? value : '') + advance() });
+      push({
+        type: 'text',
+        value: (options.keepEscaping ? value : '') + advance(),
+      });
       continue;
     }
 
@@ -147,7 +161,9 @@ const parse = (input, options = {}) => {
 
     if (value === CHAR_LEFT_PARENTHESES) {
       if (nesting + 1 > maxDepth) {
-        throw new SyntaxError(`Input depth (${nesting + 1}), exceeds max depth (${maxDepth})`);
+        throw new SyntaxError(
+          `Input depth (${nesting + 1}), exceeds max depth (${maxDepth})`,
+        );
       }
       nesting++;
       block = push({ type: 'paren', nodes: [] });
@@ -172,11 +188,18 @@ const parse = (input, options = {}) => {
      * Quotes: '|"|`
      */
 
-    if (value === CHAR_DOUBLE_QUOTE || value === CHAR_SINGLE_QUOTE || value === CHAR_BACKTICK) {
+    if (
+      value === CHAR_DOUBLE_QUOTE ||
+      value === CHAR_SINGLE_QUOTE ||
+      value === CHAR_BACKTICK
+    ) {
       const leftQuote = value;
       // Looking for the nearest unescaped quote of the same type.
       // @todo Use negative lookbehind after targeting the node@8.10+
-      const hasRightQuote = input.slice(index).search(new RegExp(`[^\\\\]${leftQuote}|^${leftQuote}`)) !== -1;
+      const hasRightQuote =
+        input
+          .slice(index)
+          .search(new RegExp(`[^\\\\]${leftQuote}|^${leftQuote}`)) !== -1;
 
       let next;
 
@@ -212,12 +235,15 @@ const parse = (input, options = {}) => {
 
     if (value === CHAR_LEFT_CURLY_BRACE) {
       if (nesting + 1 > maxDepth) {
-        throw new SyntaxError(`Input depth (${nesting + 1}), exceeds max depth (${maxDepth})`);
+        throw new SyntaxError(
+          `Input depth (${nesting + 1}), exceeds max depth (${maxDepth})`,
+        );
       }
       nesting++;
       depth++;
 
-      const dollar = prev.value && prev.value.slice(-1) === '$' || block.dollar === true;
+      const dollar =
+        (prev.value && prev.value.slice(-1) === '$') || block.dollar === true;
       const brace = {
         type: 'brace',
         open: true,
@@ -226,7 +252,7 @@ const parse = (input, options = {}) => {
         depth,
         commas: 0,
         ranges: 0,
-        nodes: []
+        nodes: [],
       };
 
       block = push(brace);
@@ -329,7 +355,7 @@ const parse = (input, options = {}) => {
     block = stack.pop();
 
     if (block.type !== 'root') {
-      block.nodes.forEach(node => {
+      block.nodes.forEach((node) => {
         if (!node.nodes) {
           if (node.type === 'open') node.isOpen = true;
           if (node.type === 'close') node.isClose = true;
@@ -350,4 +376,4 @@ const parse = (input, options = {}) => {
   return ast;
 };
 
-module.exports = parse;
+export default parse;

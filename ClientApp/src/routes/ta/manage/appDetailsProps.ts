@@ -6,12 +6,15 @@ import type { SinglePageFormValues, SinglePageFormProps } from '../types';
 import AppLogger from '../../../instrumentation/AppLogger';
 import {
   PatternApprovalRequiredValues,
+  Title,
   type RequestForPatternApprovalAppDetails,
   RequestForPatternApprovalClient,
   YesNo,
 } from '../../../api/web-api-client';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import { DisplayRules } from '../displayRules';
+
+type AppDetailsHidingValues = Partial<RequestForPatternApprovalAppDetails>;
 
 const loadAppDetails =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -20,12 +23,12 @@ const loadAppDetails =
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const instrumentAndRequest = await client.getAppDetails(
-          id as string,
-          abortSignal
+          id,
+          abortSignal,
         );
         const values: SinglePageFormValues<RequestForPatternApprovalAppDetails> =
           {
@@ -47,7 +50,7 @@ const loadAppDetails =
         Accounts: accounts,
       });
       throw new Error(
-        `There are no accounts available to load app details. Id: ${id}`
+        `There are no accounts available to load app details. Id: ${id}`,
       );
     }
   };
@@ -55,7 +58,7 @@ const loadAppDetails =
 const appDetailsProps = (
   id: string,
   accounts: AccountInfo[],
-  instance: IPublicClientApplication
+  instance: IPublicClientApplication,
 ): SinglePageFormProps<RequestForPatternApprovalAppDetails> => ({
   initialValues: {},
   loadStepValues: loadAppDetails(id, accounts, instance),
@@ -63,40 +66,40 @@ const appDetailsProps = (
   title: 'Summary and submit',
   hidingFields: {
     organisationAndContact: {
-      branchOrLocationName: (x: any) =>
+      branchOrLocationName: (x: AppDetailsHidingValues) =>
         !x.organisationAndContact?.branchOrLocationName,
-      isManufacturerHide: (x: any) =>
+      isManufacturerHide: (x: AppDetailsHidingValues) =>
         x.organisationAndContact?.isManufacturer === YesNo.Yes ||
         x.organisationAndContact?.isManufacturer === undefined,
-      principalInvoiceContactHide: (x: any) =>
+      principalInvoiceContactHide: (x: AppDetailsHidingValues) =>
         x.organisationAndContact?.isPrincipalInvoiceContact === YesNo.Yes ||
         x.organisationAndContact?.isPrincipalInvoiceContact === undefined,
-      isCurrentOrganisationHide: (x: any) =>
+      isCurrentOrganisationHide: (x: AppDetailsHidingValues) =>
         x.organisationAndContact?.isManufacturer === YesNo.No,
       contact: {
-        titleOther: (x: any) =>
-          x.organisationAndContact?.contact?.title !== 'Other',
+        titleOther: (x: AppDetailsHidingValues) =>
+          x.organisationAndContact?.contact?.title !== Title.Other,
       },
       invoiceContact: {
-        titleOther: (x: any) =>
-          x.organisationAndContact?.invoiceContact?.title !== 'Other',
+        titleOther: (x: AppDetailsHidingValues) =>
+          x.organisationAndContact?.invoiceContact?.title !== Title.Other,
       },
     },
     applicationAndInstrument: {
-      isApplNewHide: (x: any) =>
+      isApplNewHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.NewCertificate ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplVariationHide: (x: any) =>
+      isApplVariationHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.Variation ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplOtherHide: (x: any) =>
+      isApplOtherHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.OtherApproval ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplOIMLHide: (x: any) =>
-        DisplayRules.isOIMLHidden(x.applicationAndInstrument),
+      isApplOIMLHide: (x: AppDetailsHidingValues) =>
+        DisplayRules.isOIMLHidden(x.applicationAndInstrument ?? {}),
     },
   },
   // bannerRefTitle: `Ref ID: ${id}`,

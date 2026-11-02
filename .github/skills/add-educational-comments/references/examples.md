@@ -1,6 +1,7 @@
 # Commenting Examples
 
-Use this reference to calibrate tone, placement, note numbering, and supported/unsupported handling.
+Use this reference to calibrate tone, placement, note numbering, and
+supported/unsupported handling.
 
 ## Python: Beginner, Note Numbering Enabled
 
@@ -68,4 +69,5 @@ service:
 
 ## Unsupported JSON
 
-Do not directly comment standard JSON. Offer a sidecar file such as `package.json.notes.md`.
+Do not directly comment standard JSON. Offer a sidecar file such as
+`package.json.notes.md`.

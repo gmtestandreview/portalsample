@@ -90,12 +90,12 @@ const MeasurementReport = () => {
         AppLogger.verbose('MeasurementReport.getReportDetails', { Id: id });
         const client = new QuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const details = await client.getQuoteRequestDetailsByRefId(
           ApplicationType.QuoteAccept,
-          id
+          id,
         );
         setMeasurementReportData(details);
       } catch (e) {
@@ -132,7 +132,7 @@ const MeasurementReport = () => {
   ]);
 
   useHtmlTitle(
-    'Report - Testing and calibration service | NMI Services portal'
+    'Report - Testing and calibration service | NMI Services portal',
   );
   useBodyClass('report');
 

@@ -2,14 +2,421 @@
 
 # Storybook coverage and MCP remediation plan
 
-Date: 2026-10-14 (Australia/Sydney). Branch:
-`feat/formik-to-react-hooks-migration`. Audit baseline: `5bc51af1`; final
-planning checkout: `15f82afa87f3fcf33ac50f99d27431329361f08a`; base branch:
-`main`. Revised 2026-10-15 at `234dd9ad8b617c5bc3786c106e20c1278c7bc524`.
-Status: pressure-review recommendations applied to planning contracts on
-2026-10-15 at `9a8575b240c31d779fb79fd3ccebe78b94e149bb`. The earlier 99/100
-review is historical; current pressure retest and reassessment are recorded in
-the scorecard and retest report. Implementation has not started.
+Date: 2026-10-14 (Australia/Sydney). Active execution-state amendment:
+2026-10-19 (Australia/Sydney). Branch: `feat/storybook-coverage-remediation`.
+Original branch point: `aae45ca18284d8bb5d289a73ab423649fa05f4fb`; recovery
+parent: `5855da341871fcd0c0ef86f00c23ff49071a13de`; current checkout:
+`030af69c18e5468ee0f3a2df215bb41755f4df0c`. Revised planning contracts were
+applied on 2026-10-15; the earlier 99/100 review is historical. The scorecard,
+pressure retest and this amendment are planning/evidence records, not runtime
+closure proof.
+
+Overall plan status (2026-10-30): **INCOMPLETE — not closed.** T6c and the T7
+shell stories are done; see
+[Status update — 2026-10-30 (evening)](#status-update--2026-10-30-evening). The
+[Status review — 2026-10-29](#status-review--2026-10-29) supersedes the
+2026-10-19 status paragraph below and the 2026-10-19 package table.
+
+Status as of 2026-10-19 (superseded): Gate 3 package-specific approval is
+explicitly recorded from the user. The HEAD commit contains the T1a
+endpoint-target slice and T2a manifest/recursive-validator slice. The approved
+T4a contract packet and seven T4 story files are present as current worktree
+changes, and the Sheet internal composition fix is present as a current worktree
+change. The T1b receipt and producer-identity validators, T2b
+freshness/freeze/reference helpers, and T3 focused verification have now been
+implemented in the current worktree, but T1/T2/T3 package exits remain partial.
+T1c, T2c/T2d, T5, T6, T7 and T8 remain incomplete unless the evidence ledger
+below says otherwise. This amendment supersedes stale statements below that say
+implementation has not started, while preserving the original contracts, stable
+package IDs and historical review narrative.
+
+## Status review — 2026-10-29
+
+Verdict: **INCOMPLETE.** The plan's own source gate fails, T8 closure is not
+achievable as specified because its launcher was deliberately removed, and T5–T7
+have no attributable closure evidence. Checkout reviewed: branch
+`feat/storybook-coverage-remediation`, HEAD `199a7350`. This review re-ran only
+the checks listed below; nothing else was re-executed.
+
+### Checks run in this review
+
+| Check                                                                                                                                                                             | Result                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `npm run type-check`                                                                                                                                                              | Pass (exit 0)                                         |
+| `npm run test:unit` for `tests/unit/storybook` plus the vitestTopology, storybookVitestContract, storybookRuntimePolicy, storybookEndpoint and storybookCoverageLint config tests | Pass: 27 files, 216 tests                             |
+| `node scripts/storybook-coverage.mjs --mode source` (T8 gate 4)                                                                                                                   | **Fail (exit 1): 659 `EVIDENCE_MISSING` findings**    |
+| File-existence check of every file the T4, T6, T7 and T8 file tables promise                                                                                                      | T4 complete; T6, T7 and T8 launcher/test files absent |
+
+Not run in this review, so their status is NOT VERIFIED: `npm run lint`,
+`lint:mdx`, `build-storybook`, `verify-storybook-docs.mjs`, native MCP
+`test-run`, Storybook BDD and app BDD.
+
+### Source gate failures (659)
+
+- 325 findings: `reviewed source digest is stale`. Source files changed after
+  their manifest claims were reviewed, so the claims need re-review.
+- 330 findings: `story export has no play property`. The referenced story
+  exports have no `play` function, so the baseline claim has no executable
+  assertion. Many are in route-module records (measurementReport, quotation,
+  requestForQuote, ta, sign-in/sign-out).
+- 4 findings: `discovered export has no reviewed claim` (`FilterMenuProps`,
+  `isBreakTag`, `isEmptyParagraphContent`, `useInstrumentAndRequestLookups`).
+
+The manifest itself exists and parses: schemaVersion 1, 667 records (233 direct,
+93 consumer, 1 forwarding, 340 nonvisual).
+
+The follow-on plan
+[2026-10-20-storybook-coverage-manifest-resolution.md](2026-10-20-storybook-coverage-manifest-resolution.md)
+owns the manifest claim queue. It reported 621 remaining diagnostics on
+2026-10-20; the count is 659 at HEAD `199a7350`, so the queue has grown since
+then rather than shrunk.
+
+### T8 launcher removed by decision
+
+Commit `159b4b04` (2026-10-29, "remove storybook closure references and related
+tests") deleted `scripts/storybook-closure.mjs`, all of
+`scripts/storybook-closure/`, `closureOrchestration.test.ts`,
+`closureModules.test.ts` and the closure diagnostics in
+`vitest.storybook.runtime.ts`, and edited `.github/workflows/pr.yml`. The RT7
+contract in this plan (owned producer identity, ACL write-denial freeze, serial
+eight-gate launcher) is therefore no longer implemented anywhere in the
+repository.
+
+The files under `reports/storybook-coverage/` (receipts, frozen indexes,
+`mcp-complete.json`, dated 2026-10-19 to 2026-10-27) were produced by that
+launcher against earlier source. They predate the current source changes, were
+not re-validated here, and cannot be reproduced. They are not closure evidence.
+
+Decision (2026-10-29, user): T8 becomes a **simplified local closure**. The
+ACL-freeze launcher, owned producer/child identity and write-denial freeze (RT7
+and the `scripts/storybook-closure.mjs` interface) are withdrawn from this plan,
+matching commit `159b4b04`. The remaining T8 contract is: run the serial gates
+1–8 by hand against one commit, hash inputs with `computeInputDigest` before and
+after, call native MCP `test-run` serially with a11y enabled and keep the
+exact-ID receipts, and report planned versus executed results separately.
+Receipts from the removed launcher are discarded. Because the write-denial
+freeze is withdrawn, closure can only claim "no input change between the
+boundary hashes", not immutability during the run. RT7 is superseded; RT1–RT6
+stand.
+
+### Package status
+
+| Package | Status        | Basis                                                                                                                                       |
+| ------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| T1      | Not verified  | Unit tests pass, but native structured MCP execution and cold/warm/repeat receipts are unreproduced; the producer-identity launcher is gone |
+| T2      | Incomplete    | Manifest and validators exist and unit tests pass, but source mode exits 1 with 659 findings                                                |
+| T3      | Not verified  | Not re-checked beyond the unit tests; rendered ownership, Guard table and stable-ID checks were not re-run                                  |
+| T4      | Files present | All seven story files exist; their stories were not re-executed in this review                                                              |
+| T5      | Incomplete    | No attributable evidence; the source gate reports missing play assertions and stale digests                                                 |
+| T6      | Incomplete    | None of the ten proposed route story files exist and the manifest does not justify their absence under the source gate                      |
+| T7      | Incomplete    | None of the five proposed shell story files exist; same source-gate failures                                                                |
+| T8      | Blocked       | Launcher, closure tests and orchestration removed; no fresh eight-gate result                                                               |
+
+### Progress after the review — 2026-10-29
+
+Source mode still exits 1, now with 207 findings (was 659): 58 stale digests and
+149 marker findings.
+
+1. **T8 decision:** recorded above.
+2. **Stale digests (325 → 58 records).** The cause was commit `3e25186c`, a
+   formatting pass. For each stale file I located the git revision whose hash
+   matched the recorded digest and compared its Prettier-normalised content with
+   HEAD. 150 of 172 files were identical, so their 267 records had only
+   `reviewedSourceDigest` refreshed. The other 22 files changed in substance and
+   are still stale: CommandPalette, useWizardStepController, rhfErrors, Meter,
+   SearchField, Slider, ErrorBoundary and ErrorDisplay, CertificateNumberLookup,
+   OrganisationNameLookup and its suggestionUtils, SlateEditor, TextAreaInput,
+   RhfTextAreaInput, BranchSelectorModal, ErrorSummary, WizardRoutedStep,
+   dashboard/index, instrumentAndRequest, services-we-offer/index,
+   supportingDocuments and routes/common/helperFunctions. Each needs a human
+   re-review of the claim against the new source.
+3. **330 play-less findings were a validator gap, not missing assertions.** The
+   stories were migrated to CSF Factories (`meta.story({ ... })`), which
+   `findPlayProperty` did not recognise. It now resolves the config object of a
+   `.story(...)` call. Tests added in `storyEvidence.test.ts` first (RED), then
+   the fix (GREEN); a `meta.story` story with no `play`, or with a play lacking
+   the marker, is still rejected.
+4. **Marker rule relaxed to its intended meaning.** The 2026-10-23 hardening
+   (`0a13927b`) required the marker to be a direct string argument of an
+   assertion call, which rejected `expect(canvas.getByText('marker'))`. The
+   marker may now appear anywhere inside an assertion call's arguments; a
+   literal outside any assertion still fails (tested). This cut 301 marker
+   findings to 149 findings across 64 distinct story/marker pairs.
+5. **Four unclaimed exports:** added as reviewed `nonvisual` records
+   (`FilterMenuProps`, `isBreakTag`, `isEmptyParagraphContent`,
+   `useInstrumentAndRequestLookups`); each has a unit test. Source mode no
+   longer reports any missing claim.
+
+Checks after these changes: `storyEvidence.test.ts` 13/13;
+`tests/unit/storybook` plus `storybookCoverageLint` 23 files, 168 tests;
+Prettier and ESLint (including the dedicated coverage-script config) clean.
+
+### Marker findings cleared — 2026-10-29 (later)
+
+Decision taken: hybrid of options (b) and (c). Source mode now reports 58
+findings, all `reviewed source digest is stale` (the 22 substantively changed
+files); marker findings are 0.
+
+- **Validator:** a marker is also accepted as the argument of a matcher chained
+  from `expect(...)` (for example `toHaveAccessibleName('x')`,
+  `toHaveValue('x')`, `not.toHaveTextContent('x')`), tested in
+  `storyEvidence.test.ts`. A literal passed to a non-assertion call is still
+  rejected. This cleared 19 of the 64 pairs without touching any story.
+- **Stories (28 files):** 31 pairs were fixed by inlining an existing locator
+  into the `expect` that already asserted it, and by removing the `const` that
+  became unused. The remaining 14 pairs got one added assertion each, such as
+  `toHaveAccessibleName('Save changes')` for the AriaButton and Button Primary
+  stories.
+- **Checks:** ESLint with `--max-warnings 0` (the repo applies
+  `vitest.configs.all` to stories and tests) and Prettier pass on every touched
+  file; the 41 Storybook test files that match the changed stories pass (106
+  tests); `tests/unit/storybook` plus `storybookCoverageLint` pass (23 files,
+  171 tests); `npm run type-check` passes. This used the Storybook Vitest
+  project, not native MCP `test-run`; the MCP server was not running.
+
+An earlier cleanup script removed whole story exports from 25 files (it matched
+the outermost variable statement). Those files were restored from HEAD with
+`git restore`, the codemod was re-run with an innermost-declaration guard and an
+export-count check, and the final diff was reviewed.
+
+### Stale digests re-reviewed and gates run — 2026-10-29 (latest)
+
+The 22 substantively changed sources were diffed (Prettier-normalised) against
+the version each record originally reviewed. Most changes are behaviour-
+preserving hardening (`.at()`, `Reflect.get`, `Object.defineProperty`, a `Map`
+in `ErrorDisplay`, a shared `removeSupplementaryPlaneCharacters`). Behaviour-
+touching changes: CommandPalette/SearchField focus via forwarded ref and a
+dialog `aria-label`; Meter no longer maps `label` to `aria-label`;
+CertificateNumberLookup's sort is now `localeCompare`; SlateEditor's character
+count is model-level; Dashboard clears its notification in an effect. The 17
+story files owning those claims pass (41 tests), then all 58 digests were
+refreshed with reviewer and rationale updated.
+
+| Gate                                           | Result                                                                                         |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `--mode source`                                | exit 0                                                                                         |
+| `type-check`, ESLint, `lint:mdx`, `lint:rules` | pass                                                                                           |
+| `test:unit`                                    | 261 files, 2,898 tests pass                                                                    |
+| `test:storybook`                               | 150 files, 372 tests pass                                                                      |
+| `storybook:verify:docs`                        | pass                                                                                           |
+| `format:check`                                 | fails on `CLAUDE.md` only (uncommitted edit outside this work)                                 |
+| `validate:json`                                | fails on `eslint-configs.-policy.json` (invalid at line 3891; identical to HEAD, pre-existing) |
+| Native MCP `test-run`, Storybook/app BDD       | not run (MCP server down; BDD not attempted)                                                   |
+
+### Remaining actions
+
+Native MCP `test-run` (a11y on, exact story IDs) was run later the same day
+against the 17 stories behind the re-reviewed claims: 17/17 component tests
+pass, a11y 15 pass / 2 warnings / 0 errors. The warnings are
+`components-slateeditor--default` (`target-size`, 3 nodes) and
+`routes-typeapproval-supportingdocuments--edit-step` (`color-contrast-enhanced`,
+1 node). Both are visual/design findings and were not changed without user
+approval. A full-suite `test-run` (no story filter) failed to start the runner
+and took the server down; it was not retried.
+
+1. Fix or accept the two pre-existing failures above.
+2. Decide on the two a11y warnings; run the full-suite native `test-run` and the
+   Storybook/app BDD suites; complete T5–T7 evidence lanes and T8 closure.
+
+Items 1–2 above are partly superseded by the 2026-10-30 update below.
+
+### Status update — 2026-10-30
+
+The plan remains **INCOMPLETE**: T5–T7 evidence lanes, the T8 local closure and
+both BDD suites are still outstanding.
+
+- **a11y warnings fixed (2026-10-29).** `SlateEditor` B/I/U toolbar buttons get
+  a 24px minimum width from the named constant `TOOLBAR_BUTTON_MIN_WIDTH_PX`
+  (`target-size`). `.btn-nmi-secondary` text colour in `_buttons.scss` changed
+  from `$interactive` (5.35:1) to `$nmi-primary` (7.9:1)
+  (`color-contrast-enhanced`). The second change affects every secondary button
+  in the app. Both affected stories passed on re-run; the five SlateEditor
+  digests were refreshed.
+- **Conformance target is WCAG AA, not AAA (user decision, 2026-10-30).** The
+  `color-contrast-enhanced` rule is AAA and has been removed from
+  `.storybook/preview.tsx` by the user (not re-verified here). The
+  `.btn-nmi-secondary` colour change was made to satisfy that rule, so it was
+  reverted (see "`.btn-nmi-secondary` reverted" below).
+- **`sonar-project.properties` regression resolved.** The 90-line deletion that
+  made `sonarCoverageContract` fail is no longer present: the file has no
+  difference from HEAD and the sonar test files pass (4 files, 25 tests). What
+  restored it was not established.
+- **Gates re-run on 2026-10-30:**
+
+| Gate                                                         | Result                      |
+| ------------------------------------------------------------ | --------------------------- |
+| `type-check`, `lint` (incl. source formatting), `lint:rules` | pass                        |
+| `--mode source`                                              | exit 0                      |
+| `test:unit`                                                  | 261 files, 2,898 tests pass |
+| `test:storybook`                                             | 150 files, 372 tests pass   |
+
+- **Native MCP `test-run` (a11y on, exact story IDs, serial).** The Storybook
+  dev server from the previous session was hung on port 6006 and was stopped by
+  the user; a fresh server then answered. 180 stories were run in four batches
+  (24, 46, 64, 46), covering the button and Slate editor stories, the react-aria
+  evaluation stories, and the other component, form, modal and route stories.
+  Component tests: 180/180 pass. a11y: 179 pass, 1 warning, 0 errors. The
+  warning is `color-contrast-enhanced` (5.27:1, needs 7:1) on
+  `#help-associatedDispute` in `routes-acceptquote--summary-and-accept-step`; it
+  is an AAA-only finding and is out of scope under the AA decision. This was a
+  sample (one to a few stories per component), not every story, and the
+  unfiltered full-suite run was deliberately not retried.
+- **Run by the user later on 2026-10-30 (results as reported by the user, not
+  re-executed here):**
+
+| Gate                                 | Result                                                                                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `test:e2e:storybook` (Storybook BDD) | 140 passed (3.3m)                                                                                                                                |
+| `lint`, `lint:mdx`                   | pass, no issues                                                                                                                                  |
+| `build-storybook`                    | pass                                                                                                                                             |
+| `build-storybook-docs`               | pass                                                                                                                                             |
+| `test:storybook`                     | 150 files, 372 tests pass                                                                                                                        |
+| `storybook:verify:docs`              | pass: 533 entries (161 docs, 372 stories), 150 components (118 reusable, 32 route/page), internal docs links valid, 9 accepted docgen exceptions |
+| `test:storybook:coverage`            | 59.33% statements, 49.82% branches, 50.55% functions, 59.33% lines (all files)                                                                   |
+| `test:e2e:app` (app BDD)             | 41 passed (2.5m)                                                                                                                                 |
+| `format:check`                       | one issue, in this plan file; fixed by the user                                                                                                  |
+| `validate:json`                      | pass: 218 files, 2 schemas compiled (see below)                                                                                                  |
+
+The coverage figures are below the 80% minimum in `.claude/rules/testing.md`;
+this plan sets no numeric coverage gate, so they are recorded, not judged.
+
+- **`validate:json` fix.** The earlier failure was in
+  `eslint-configs.-policy.json`, which held five concatenated configs. The user
+  converted it into one keyed JSON object, so the file now differs from HEAD
+  (the 2026-10-29 table above described it as identical to HEAD).
+- **Not run in this session:** every 2026-10-30 result in the table above except
+  those under "Gates re-run" was run by the user and not re-executed here.
+- **Commit state.** Commit `74d97a6a` (2026-10-30 15:31) contains the 41 story
+  files, `CLAUDE.md`, `SlateEditor.tsx`, the coverage manifest and the earlier
+  `_buttons.scss` change. The user confirmed (2026-10-30) that the `CLAUDE.md`
+  rewrite and the 13 previously unattributed story files are intended and
+  accepted as committed. Uncommitted at the time of writing: this plan,
+  `.storybook/preview.tsx`, `eslint-configs.-policy.json` and the
+  `_buttons.scss` revert below.
+- **`.btn-nmi-secondary` reverted (user decision, 2026-10-30).** `color` is back
+  to `$interactive`; `_buttons.scss` is identical to its pre-`74d97a6a` version
+  (`3f827e2c`). Native `test-run` on five secondary-button stories (the two
+  SecondaryButton stories, the react-aria evaluation Button secondary story, the
+  button group edit-section story and the supporting-documents edit step): 5/5
+  component tests and 5/5 a11y pass with the AAA rule removed. This supersedes
+  the 2026-10-29 colour change described above.
+
+Remaining: T5–T7 evidence lanes, T8 closure per the simplified local closure
+decision (one serial run of all gates against a single commit with input hashes
+before and after), and the commit decisions above.
+
+### Status update — 2026-10-30 (evening)
+
+Verdict: still **INCOMPLETE**, but T6c and the T7 shell stories are now done and
+verified. T5, the T6b/T6a harness audit, the T7 forwarding fixtures and T8
+closure remain.
+
+| Package | Status                  | Basis                                                                                                                                                                                                                                                                              |
+| ------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T5      | Not started             | No claim review, no `Indirect evidence isolation` scenario.                                                                                                                                                                                                                        |
+| T6a     | Present, not audited    | `destinationRoutes`/`observeLocation` exist in `storybookHarness.tsx` and `.storybook/preview.tsx`, with `tests/unit/storybook/routeHarness.test.tsx` and `route-harness.feature`. Used by all 15 new story files below; the plan's full T6a test list was not audited.            |
+| T6b     | Not verified            | MSW fail-closed work (`msw-policy.ts`, startup-pressure and Docs-frame isolation tests) not checked in this session.                                                                                                                                                               |
+| T6c     | Stories done (10 of 10) | One story file per entry module, listed below; manifest records re-pointed from the mount-only coverage story. A -> B -> A, args-rerender and unmount cases not written.                                                                                                           |
+| T7      | Shell stories done (5)  | `acceptQuote`, `requestForQuote`, `ta`, `quotation`, `measurementReport`; 8 `Route shell ownership` BDD scenarios pass. Open: `ta/manage` forwarding fixtures in `moduleCoverage.test.ts`; re-verify account/created, RFQ/created, summary subfolders and sign-out/helper stories. |
+| T8      | Pending                 | Simplified local closure decision stands: serial gates 1–8 against one commit with before/after input hashes.                                                                                                                                                                      |
+
+New story files (15, 43 stories), each with a negative control run during
+authoring (a deliberately wrong assertion made the right story fail, then
+reverted):
+
+- T6c: `ta/created/TypeApprovalCreated`, `ta/create/TypeApprovalCreate`,
+  `requestForQuote/create/RequestForQuoteCreate`,
+  `requestForQuote/copy/RequestForQuoteCopy`,
+  `acceptQuote/create/AcceptQuoteCreate`, `account/update/UpdateAccount`,
+  `account/addBranch/AddBranch`, `account/create/CreateAccount`,
+  `contact/create/CreateContact`, `contact/update/UpdateContact`.
+- T7: `acceptQuote/AcceptQuoteShell`, `requestForQuote/RequestForQuoteShell`,
+  `ta/TypeApprovalShell`, `quotation/QuotationShell`,
+  `measurementReport/MeasurementReportShell`.
+
+Fifteen manifest records (the 10 route entry modules and 5 shells) now point at
+these stories instead of `routes-exportcoverage--*`, each with several required
+states and an exact-string assertion marker. The mount-only stories in
+`ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx` for these
+modules are still present.
+
+Coverage characterisations recorded rather than changed: `contact/update` and
+`contact/create` swallow save failures and still navigate; the create/copy
+routes stay on "Loading..." after a failed request without retrying; the TA
+shell has no identifier validation.
+
+Gaps against the T6c/T7 tables: no cancel-confirmation story for
+`account/create`; no failed-save (412/generic) story for `account/addBranch`; no
+form-level Cancel button story for `account/update`; none of the routes has
+args-rerender, unmount or A -> B -> A coverage.
+
+Evidence run 2026-10-30 evening (this session, after the Storybook upgrade):
+
+| Check                                                                | Result                                                              |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Native MCP `test-run`, 43 exact story IDs, a11y on, Storybook 10.6.5 | 43/43 component tests; a11y 43 success, 0 warnings, 0 errors        |
+| `test:e2e:storybook -- --grep 'Route shell ownership' --workers=1`   | 8 passed                                                            |
+| `storybook-coverage.mjs --mode source`                               | exit 0                                                              |
+| `test:unit`                                                          | 261 files, 2,899 tests pass                                         |
+| `storybook:verify:docs`                                              | exit 0; 415 stories and 176 docs entries; internal docs links valid |
+| `lint:mdx`                                                           | exit 0                                                              |
+| `docsOwnerId` resolution                                             | all 141 manifest `docsOwnerId` values resolve to a built docs entry |
+
+Storybook and configuration changes made alongside (user changes and mine):
+
+- **Storybook 10.5/10.6.3 -> 10.6.5** (user).
+  `.storybook/component-docs-guide.mdx` and the version pins in
+  `storybookDocsConfig.test.ts` updated to 10.6.5; the guide's RouteLeavingGuard
+  `docs-show` serializer claim was re-checked on the upgraded server and still
+  reproduces.
+- **`.storybook/preview.ts` -> `preview.tsx`** (user, CSF Next).
+- **Docs mode.** A `docs: { defaultName, docsMode }` object nested in the
+  `@storybook/addon-docs` options forced docs-only mode: the addon preset reads
+  `options.docs` as the `--docs` CLI flag and any object is truthy. The block is
+  back at top level (`docs: { defaultName: 'Documentation', docsMode: false }`)
+  and `storybookDocsConfig.test.ts` fails if `docs` is nested again.
+- **Docs naming.** In 10.6.5 the `Documentation` name also renames MDX docs
+  entries, which broke 20 `/docs/...--docs` links. Decision (user, Option B):
+  keep `Documentation` and rewrite those 20 links to `--documentation`.
+- **Story glob** narrowed to `*.stories.tsx` (user decision; all 150 existing
+  stories are `.tsx`), with a test guard against multi-extension globs.
+- **Docgen** excludes `**/.storybook/**` (removes the "not included in the
+  active TypeScript project" warning for `preview.tsx`).
+- **Dev server** ignores `**/storybook-static/**` in `server.watch`. A running
+  `npm run storybook` otherwise raced the build's static copy on Windows and
+  broke `storybook:verify:docs` with `ENOENT` on `chmod`/`utime`.
+
+Commit state: the route and shell stories and the manifest changes are in
+`f451a60c`, `60bcc1b8` and `8c90c9d2`. The tree was clean at 21:35; later
+uncommitted edits (for example `package.json`, several `docs/` files and a few
+Storybook files) are the user's and are not covered by the evidence above.
+
+Remaining: T5; the T6a/T6b audit and the isolation scenarios (`Route harness`,
+`Indirect evidence isolation`); the `ta/manage` forwarding check in
+`storybook-coverage.mjs` with `moduleCoverage.test.ts` fixtures (needs
+approval); removal or justified retention of the mount-only
+`RouteExportCoverage` stories; and T8 closure.
+
+### Superseded: open decision (resolved above)
+
+The remaining 64 pairs record a marker that only appears in a locator query such
+as `canvas.getByRole('button', { name: 'Save changes' })` which is not itself
+inside `expect(...)`. Locator queries throw when nothing matches, so they are an
+implicit assertion, but the 2026-10-23 hardening deliberately did not count
+them. Choose one: (a) accept `getBy*`/`findBy*` queries in a play function as
+assertions, (b) re-point each claim's marker to a literal that is inside an
+`expect`, or (c) add an explicit `expect` to each story.
+
+1. Decide among (a)–(c) and clear the 64 pairs.
+2. Re-review the 22 substantively changed source files and refresh their
+   digests.
+3. Re-run `--mode source` to exit 0, then lint, `lint:mdx`, docs verification,
+   native MCP `test-run` (serial, a11y on, exact IDs) and Storybook/app BDD, and
+   record the results here. None of these were run for this progress update.
+
+The user-owned uncommitted change to
+`ClientApp/src/components/AriaComponents/ToolTip/Tooltip.stories.tsx` is outside
+this plan and was not touched.
 
 ## Goal and confirmed premise
 
@@ -53,12 +460,17 @@ submission, navigation, or error behavior.
 - `RouteLeavingGuard/types.ts` contains valid TypeScript. MCP combines types and
   default values into a type-like prose block. Verify the rendered Docs table
   and manifest before proposing a runtime/type edit.
-- Current MCP test-run still returns `Failed to start test runner process`.
-  Installed addon-vitest wraps startup in a 30-second timeout.
-  `vitest.config.ts` already contains a direct Storybook-child configuration
-  branch intended to avoid slow workspace discovery. Root cause of the
-  **current** failure remains unproved.
-- `.storybook/main.ts`, `.storybook/preview.ts`, `vitest.storybook.config.ts`,
+- Earlier recovery MCP test-run attempts returned
+  `Failed to start test runner process`; a later focused native run for the
+  approved T4 story IDs passed after restoring the live Storybook/browser leader
+  state. These are separate observations: the focused T4 receipt does not close
+  T1's cold/warm/repeat producer-identity contract or T8. Installed addon-vitest
+  wraps startup in a 30-second timeout. `vitest.config.ts` already contains a
+  direct Storybook-child configuration branch intended to avoid slow workspace
+  discovery. Root cause of the earlier generic startup failure remains unproved;
+  the later focused pass is not evidence that the cold-start cause has been
+  repaired.
+- `.storybook/main.ts`, `.storybook/preview.tsx`, `vitest.storybook.config.ts`,
   `vitest.storybook.runtime.ts`, `storybookHarness.tsx`, preview setup, existing
   story metadata, root scripts and local patch mechanism were inspected.
 - Official references:
@@ -69,10 +481,249 @@ submission, navigation, or error behavior.
   Installed version is 10.6.1; use installed contracts when documentation
   versions differ.
 
+## Execution-state reconciliation — 2026-10-19
+
+This section records the conversation atoms that change execution planning. It
+does not convert a report, a baseline, a score, or a focused receipt into
+package closure. Evidence marked as reported remains attributable to the
+conversation but must be reproduced by the T8 frozen closure before it is a
+final claim.
+
+### Latest execution update — 2026-10-19
+
+The following implementation slices were executed after the prior reconciliation
+without changing the approved T1–T8 acceptance boundaries:
+
+- T1b added `normalizeMcpReceipt` and `validateProducerIdentity` coverage for
+  exact requested IDs, duplicate/unknown/missing results, per-ID accessibility
+  parity, counts, cancellation/unhandled errors, freeze binding, producer
+  binding, child provenance, PID reuse and native URL mismatch.
+- T2b added canonical `computeInputDigest` freshness checks, including the
+  required canonical coverage manifest, plus freeze and generated-reference
+  validation. The canonical manifest requirement has a focused regression test.
+- T1 runtime diagnostics now write a redacted child record only when both
+  closure identity variables are present; they do not perform diagnostic IO by
+  default.
+- The MCP BDD step now parses JSON/SSE responses and fails closed when the
+  native response lacks the structured completion and accessibility evidence
+  required by this plan. It does not substitute CLI Vitest or an HTTP GET for
+  native MCP execution.
+- T3 documentation-ownership scenarios passed against the owned Storybook
+  server, and the MCP initialization scenario passed. The new MCP execution
+  scenario did not qualify because the installed endpoint returned text-only
+  passing-story output without `structuredContent`, per-ID accessibility status,
+  or structured counts.
+- The root `AGENTS.md` now mandates English for assistant responses and all new
+  or modified authored repository text, and instructs agents to ignore localized
+  runtime/tool status text when selecting the language. This is a repository
+  governance correction; it does not alter the Storybook acceptance gates.
+
+Validation reproduced for this update: `npm run type-check`, `npm run lint`,
+`npm run test:unit -- tests/unit/storybook tests/unit/config/storybookRuntimePolicy.test.ts tests/unit/config/storybookEndpoint.test.ts`
+(16 files, 140 tests), `git diff --check`, and the targeted secret scan all
+passed. The owned Storybook server was stopped and port 6006 was confirmed free.
+No commit was created and no unrelated dirty file was staged, reset or
+overwritten.
+
+The native MCP execution limitation, missing cold/warm/repeat producer receipts,
+incomplete T5–T7 evidence, and missing T8 closure launcher remain blocking
+conditions. Focused local passes do not qualify as package closure.
+
+### Checkout and preservation boundary
+
+The exact checkout is
+`C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\.worktrees\feat-storybook-coverage-remediation`,
+branch `feat/storybook-coverage-remediation`, HEAD
+`030af69c18e5468ee0f3a2df215bb41755f4df0c`, with parent
+`5855da341871fcd0c0ef86f00c23ff49071a13de` and original branch point
+`aae45ca18284d8bb5d289a73ab423649fa05f4fb`. Existing dirty files are user-owned
+unless explicitly attributable to the remediation; they must not be stashed,
+reset, staged, overwritten, or committed as part of this plan.
+
+The current dirty set includes command/instruction and hook files, Codacy
+configuration, the active plan and contract packet, Storybook coverage/tests,
+the Sheet source, and seven untracked T4 stories. The exact set must be captured
+with `git status --short` before each implementation slice; this plan does not
+authorize cleanup of any of them.
+
+At this amendment, the named dirty paths are:
+
+- `.claude/commands/adr.md`, `architecture-review.md`, `build-fix.md`,
+  `code-review.md`, `incident-response.md`, `refactor.md`;
+- `.claude/docs/plans/2026-09-09-a-team-wiring-review.md`, `.codex/hooks.json`,
+  `.github/instructions/code-review-generic.instructions.md`;
+- `.codacy/codacy.config.json`, `.codacy/codacy.config.baseline.json`;
+- `.storybook/undocumented-component-contracts.mdx`,
+  `ClientApp/src/components/AriaComponents/Sheet/Sheet.tsx`;
+- `docs/plans/2026-10-14-storybook-coverage-and-mcp-remediation.md` (this
+  amendment);
+- `scripts/apply-local-patches.mjs`, `scripts/post_tool_use.py`,
+  `scripts/storybook-coverage.mjs`, `tests/hooks/test_post_tool_use.py`,
+  `tests/unit/storybook/moduleCoverage.test.ts`,
+  `tests/unit/storybook/storybookDocsConfig.test.ts`;
+- seven untracked story files: AriaButton, Link, SegmentedControl, Sheet,
+  AlertMessage, PageHeader and React Aria StatusPill at the exact T4 paths
+  listed in the T4 file table.
+
+### Conversation decision and evidence ledger
+
+| Atom                                                 | Current plan treatment                                                                                                                                                             | Evidence boundary                                                                                                                  |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Recovery request and revised T1–T8/RT1–RT7 contracts | Retained as the governing implementation contract and dependency order                                                                                                             | Authoritative plan, scorecard and pressure retest; their model checks are not live closure                                         |
+| Separate BDD standard recovery                       | Retained as a separate documentation/governance appendix with 22 scenarios                                                                                                         | Scratchpad exists at the supplied Claude session path; its A–G “Complete” report is not Gate 3 approval                            |
+| Material discrepancies                               | Corrected in this plan: configuration/text/governance evidence is not one-to-one runtime evidence; native MCP and CLI Vitest are separate                                          | No AR is promoted to runtime proof solely from the scratchpad                                                                      |
+| CLI baseline                                         | Preserved as supplemental evidence: initial 142 files/324 tests, later approved-T4 run 149 files/344 tests                                                                         | CLI Vitest does not prove native MCP execution, producer identity, freeze identity or T8                                           |
+| Native MCP discovery                                 | Docs-list, docs-show, story discovery and instructions were observed to work; the T4 contract packet is now discoverable as `documentation-t4a-component-contracts--documentation` | Discovery reachability is separate from test-run capability                                                                        |
+| Native MCP test-run                                  | Earlier startup failure was captured; a later focused 20-ID T4 run passed after restoring the live Storybook/browser leader state                                                  | Focused T4 success does not close T1 cold/warm/repeat or T8                                                                        |
+| Native review-create                                 | A review receipt was created for the focused T4 stories and verified as a 20-story review                                                                                          | It is closure evidence for that review only; it does not replace T8's frozen receipt set                                           |
+| Gate 3 approval                                      | Explicitly approved by the user before the T4 implementation lane                                                                                                                  | The approval is for the T1–T8 package scenario packet, not the separate 22 documentation scenarios                                 |
+| Seven T4 API contracts                               | Explicitly approved; the contract packet records import identity, props/defaults, composition, forwarding and semantics                                                            | Do not infer additional props from React Aria or source types                                                                      |
+| Legacy StatusPill                                    | Kept distinct from React Aria StatusPill                                                                                                                                           | Legacy IDs remain `components-pill--dashboard-statuses` and `components-pill--quote-statuses`; they are not T4 React Aria evidence |
+| Sheet internal composition                           | Resolved by keeping the public non-forwarding contract while making `Modal` the direct child of `ModalOverlay` and adapting children inside `Modal` with `composeRenderProps`      | RED was the failed click/open story; GREEN was dialog discovery, close/removal, focus return and a11y success                      |
+| Existing user changes                                | Preserved                                                                                                                                                                          | No unrelated dirty file is part of the remediation acceptance set                                                                  |
+
+### Seven prior handoff dispositions
+
+The previous handoffs are reconciled as follows; none is treated as authority
+over the current checkout when it conflicts with current repository evidence.
+
+| Handoff                                                                        | Disposition in this plan                                                                                                                                                    |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Recovery baseline: branch, `b64b58c8`, clean/dirty claims and 142/324 baseline | Replaced by the current `git` identity and dirty-set evidence above; the 142/324 result remains historical supplemental evidence                                            |
+| BDD documentation-standard report                                              | Recovered at the supplied scratchpad path; retained as a separate A–G/AR record, not implementation or Gate 3 proof                                                         |
+| Material-discrepancy correction                                                | Adopted: no one-to-one AR traceability claim, no broad MCP-operational claim, no CLI-to-native substitution, and RT5/RT6 remain explicit                                    |
+| 22-scenario plan request                                                       | Already represented in the separate-scenarios table below; the 22 scenarios remain documentation/governance contracts, not the T1–T8 packet                                 |
+| Native MCP reconnect, `test-run` and `review-create` attempts                  | Discovery and focused T4 results are recorded separately; earlier startup failure, later recovery conditions, exact IDs and review receipt remain distinct evidence classes |
+| T4 API approval and StatusPill reconciliation                                  | Approved contract packet is authoritative; React Aria StatusPill and legacy Pill/StatusPill remain separate owners and IDs                                                  |
+| Sheet systematic-debugging/react-aria handoff                                  | Resolved by the direct-child `Modal` composition fix and focused open/close/focus/a11y story; no public forwarding change is authorized                                     |
+
+### Current package status
+
+| Package | Planned exit                                                                                                                                                         | Current observation                                                                                                                                                                                                                                                                           | Status                                                                                   |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| T1      | Exact validated endpoint, native protocol, child/producer identity, cold/warm/repeat and diagnostic closure                                                          | T1a target resolver and endpoint unit tests are in HEAD; T1b receipt/producer validators and BDD response checks are implemented, but native structured execution, cold/warm/repeat receipts and T1c diagnostic closure remain open                                                           | Partial; next closure work remains                                                       |
+| T2      | Recursive v1 manifest, canonical exports/classifications, meaningful baseline, freshness, patch/freeze and lint contracts                                            | Manifest, recursive discovery, schema/claim validator, guarded CLI, T2b digest/freeze/reference helpers and RED fixtures are present; T2c docs wiring, T2d lint/closure and frozen integration remain open                                                                                    | Partial; next closure work remains                                                       |
+| T3      | Correct owners, five AcceptQuote APIs, Guard type/default presentation, IDs and version attribution                                                                  | HEAD changes AutoSuggest, AcceptQuote, RouteLeavingGuard and the component documentation guide; three ownership scenarios and MCP initialization passed, but full rendered five-step ownership, Guard table/default, stable-ID and version checks remain open                                 | Partial; verification remains                                                            |
+| T4      | Seven approved contracts with direct semantic/interaction/a11y evidence, inherited-prop negatives where applicable, responsive/focus evidence and legacy distinction | Seven stories are present; 20 focused native IDs passed with a11y enabled; CLI is reported at 149/344; docs verification is reported at 504 entries (160 docs + 344 stories), 149 components and 9 accepted docgen exceptions; Sheet composition is fixed and typecheck/contract tests passed | T4 story slice evidenced; package closure remains subject to T4 acceptance and T8 freeze |
+| T5      | Sufficient indirect consumer evidence for forms, inputs, modals, buttons and conditional states                                                                      | No current attributable closure evidence for all T5 claims                                                                                                                                                                                                                                    | Incomplete                                                                               |
+| T6      | Ten route bootstrap obligations plus RT5/RT6 fail-closed MSW and concurrent Docs ownership                                                                           | No current attributable closure evidence                                                                                                                                                                                                                                                      | Incomplete                                                                               |
+| T7      | Shell-owned layout/outlet/error/guard behavior and forwarding-equivalence reassessment                                                                               | No current attributable closure evidence                                                                                                                                                                                                                                                      | Incomplete                                                                               |
+| T8      | Frozen local closure with exact inventories, producer/install/native identity, ACL restoration, eight serial gates and review receipts                               | No frozen closure launcher/receipt set or complete eight-gate result is evidenced                                                                                                                                                                                                             | Blocked pending prerequisites                                                            |
+
+The T1/T2 commit changed only the owned implementation surfaces shown by its
+commit diff; the current worktree also contains the seven T4 story files and the
+Sheet fix. The following reported checks are retained as current conversation
+evidence, not rerun by this plan edit: full Storybook CLI 149/344, native
+focused T4 20/20 with `a11y: true`, docs verification 504/160/344, TypeScript
+no-emit, the focused Storybook docs contract test 29/29, Prettier for the Sheet
+files, and `git diff --check`. T8 must rerun qualifying gates after freeze and
+record attributable receipts.
+
+### Approved T4 contracts and Sheet decision
+
+The approved owners are AriaButton, Link, SegmentedControl and Item, Sheet,
+AlertMessage, PageHeader and React Aria StatusPill. The public Sheet contract
+remains non-forwarding: `ModalOverlayProps` is the declared type, but `isOpen`,
+`defaultOpen`, `onOpenChange`, dismissal props, class names and other inherited
+props are not passed through. Its supported composition is the surrounding
+trigger/context plus local `Modal` → `Dialog` composition.
+
+The implementation defect found during the approved Sheet slice was internal
+composition, not a request to broaden that public contract. The old nesting made
+`Modal` a render-prop result of `ModalOverlay`; the corrected shape keeps
+`Modal` as the direct overlay child and applies `composeRenderProps` to
+`props.children` inside `Modal`. The required regression story is
+`components-ariacomponents-sheet--context-driven-open-and-dismiss`: click the
+trigger, find the named dialog in the document body, assert content and close
+control, close it, assert removal and trigger focus, and retain a11y failure
+enforcement. Do not add prop-forwarding assertions that contradict the approved
+contract.
+
+The focused native receipt requested these exact current story IDs and returned
+20/20 passing results with a11y enabled:
+
+- `components-ariacomponents-ariabutton--primary`,
+  `components-ariacomponents-ariabutton--keyboard-activation`,
+  `components-ariacomponents-ariabutton--disabled`,
+  `components-ariacomponents-ariabutton--pending`;
+- `components-ariacomponents-link--navigates-with-href`,
+  `components-ariacomponents-link--link-role-without-href`,
+  `components-ariacomponents-link--disabled`;
+- `components-ariacomponents-segmentedcontrol--selection-changes`,
+  `components-ariacomponents-segmentedcontrol--keyboard-selection`,
+  `components-ariacomponents-segmentedcontrol--disabled-item`;
+- `components-ariacomponents-sheet--context-driven-open-and-dismiss`;
+- `components-react-aria-alertmessage--default`,
+  `components-react-aria-alertmessage--warning-tone`,
+  `components-react-aria-alertmessage--long-message`;
+- `components-react-aria-pageheader--title-only`,
+  `components-react-aria-pageheader--with-context-and-actions`,
+  `components-react-aria-pageheader--long-content`;
+- `components-react-aria-statuspill--neutral`,
+  `components-react-aria-statuspill--tone-variants`,
+  `components-react-aria-statuspill--long-label`.
+
+The associated local review receipt was created at
+`http://localhost:6006/?path=/review/` with title “Approved T4 component stories
+with Sheet composition fix”; it showed five groups and 20 stories. This receipt
+is retained as focused review evidence, not as a replacement for the T8 frozen
+full/docs index and eight serial gates.
+
+### Gate 3 packet and approval boundary
+
+Gate 3 is approved. The approved packet still consists of the current T1–T8
+scenario groups in this plan: T1 CLI/native protocol and identity; T2 schema,
+recursive evidence and freeze; T3 ownership/defaults/IDs/version; T4 the seven
+contracts and semantic/a11y stories; T5 indirect consumer sufficiency; T6
+route/bootstrap and RT5/RT6 isolation; T7 shell boundaries and forwarding
+equivalence; and T8 frozen local closure. The separate 22-scenario BDD standard
+is not substituted for these groups.
+
+The T1b receipt/producer-identity slice below is now an executed slice and must
+not be repeated except to reproduce a regression. It did not redo the T1a/T2a
+files already present in HEAD. T2b freshness/receipt work and focused T3
+verification followed its contract. The next implementation work is the
+remaining T5–T7 evidence lanes, followed by T8a closure orchestration; those
+lanes must preserve the native MCP, freeze and identity boundaries below. A
+green baseline, the 97/100 planning score, the BDD-standard “Complete” label or
+the focused T4 review does not waive any package exit criterion.
+
+### Executed atomic task: T1b receipt and producer identity
+
+This was the reviewable task after the T1a/T2a slices. It was not a request to
+repair the runner speculatively. The exact targets were
+`tests/unit/storybook/mcpExecutionReceipt.test.ts`,
+`tests/unit/storybook/producerIdentity.test.ts`,
+`tests/e2e/features/storybook/integrations/mcp.feature`,
+`tests/e2e/steps/storybook.steps.ts` and, only where the already-landed T2a
+module provides the dependency, the receipt-normalizer surface in
+`scripts/storybook-coverage.mjs`.
+
+RED tests must fail on requested/executed ID mismatch, one-of-two results,
+duplicate status, unknown ID, no stories, missing per-ID a11y, cancellation,
+`isError`/unhandled errors, missing child provenance, wrong producer/native URL,
+PID reuse and a result from a different source freeze. The minimal GREEN
+implementation normalizes the advertised native structured response, matches
+exact requested IDs and per-ID a11y statuses, and joins the result to the owned
+producer/child identity without requiring optional timestamps or a public run
+ID. The focused BDD scenario uses the existing MCP schema and an owned external
+Storybook process only after port, checkout, PID/cwd and cleanup ownership are
+recorded; it does not replace the native MCP call with an SSE GET or CLI Vitest.
+
+Acceptance requires targeted RED/GREEN unit evidence, one cold request followed
+by the warm pair and repeat request under the same producer/freeze identity,
+explicit wrong-native-URL rejection, preserved 6006 ownership and redacted
+startup/child diagnostics. A reproduced child failure remains a T1 blocker until
+a supported fix or an explicitly recorded upstream blocker exists. The
+downstream effects are T2b receipt freshness and T8 serial closure; no T8 claim
+is made from this slice alone. Roll back only the owned T1b files if the receipt
+contract regresses, and preserve all current dirty user files.
+
 ## Assumptions, boundaries, and unknowns
 
-Planning artifacts only in this turn. No app implementation, dependency upgrade,
-server restart, commit, or publishing is performed by this plan review. At
+This plan amendment records partial implementation and verification, but does
+not authorize app feature redesign, dependency upgrades, publishing, or commits.
+Any server used for verification must be owned and stopped after the run. At
 intake the worktree contained user changes in `WizardRoutedStep.tsx`, new
 `useWizardStepController.ts`, and `package-lock.json`. During review the wizard
 extraction was committed externally as `15f82afa`; only the lockfile remained
@@ -125,6 +776,53 @@ stories use deterministic local fixtures and existing API contracts.
 | Runner compatibility     | Existing Vitest config branch, single worker and runtime plugin                                              |
 | BDD integration          | Existing `tests/e2e/features/storybook/integrations/mcp.feature`, documentation and routes coverage features |
 | Testing configuration    | Existing tests under `tests/unit/config/` and `tests/unit/storybook/`                                        |
+
+## Separate Storybook 10.6 documentation-standard scenarios
+
+The separately supplied `storybook-10.6-bdd-documentation-standard.md` contains
+eight embedded Gherkin features and 22 documentation/governance scenarios.
+Record them here for traceability, but do not treat them as the
+implementation-specific Gate 3 approval packet. They are baseline contracts for
+documentation, configuration, accessibility policy, isolation, CI policy, and
+existing governance tests; they are not proof that corresponding `.feature`
+files were registered or executed.
+
+The AR comments below preserve the source report's traceability. An em dash
+means that the source scenario had no AR comment; this is intentional and is a
+known limitation of the separate standard, not a new T1–T8 requirement.
+
+| Feature                          | AR     | Scenario                                                           |
+| -------------------------------- | ------ | ------------------------------------------------------------------ |
+| Autodocs Contract                | AR-001 | Autodocs is activated globally at project level                    |
+| Autodocs Contract                | AR-002 | Components opt out of Autodocs using negative tag syntax           |
+| Autodocs Contract                | AR-001 | No custom Autodocs template overrides the Storybook default        |
+| Code Panel and Source Contract   | AR-003 | Code Panel is enabled globally                                     |
+| Code Panel and Source Contract   | AR-004 | Generated source excludes preview decorators                       |
+| MDX and Doc Blocks Contract      | AR-007 | All standalone MDX documentation pages render                      |
+| MDX and Doc Blocks Contract      | AR-006 | GFM tables render as HTML tables in MDX                            |
+| MDX and Doc Blocks Contract      | AR-008 | Style Guide uses native design-system Doc Blocks                   |
+| MDX and Doc Blocks Contract      | —      | Documentation navigation includes project guides                   |
+| Documentation Ownership Contract | AR-012 | TypeScript owns public prop types via react-docgen-typescript      |
+| Documentation Ownership Contract | —      | JSDoc descriptions populate component documentation                |
+| Documentation Ownership Contract | AR-013 | Controls sort required props and exclude internals                 |
+| Documentation Ownership Contract | —      | Args represent runtime story state without custom render functions |
+| Accessibility Enforcement        | AR-005 | a11y violations cause test failures in CI                          |
+| Accessibility Enforcement        | —      | a11y enforcement level is documented in configuration              |
+| Network and Routing Isolation    | AR-010 | MSW intercepts HTTP requests in stories                            |
+| Network and Routing Isolation    | AR-011 | Memory router provides route isolation                             |
+| CI Quality Gate                  | AR-009 | Documentation build is a CI quality gate                           |
+| CI Quality Gate                  | AR-015 | Interaction tests run via Vitest browser mode                      |
+| CI Quality Gate                  | AR-014 | MCP integration endpoint is operational                            |
+| Governance Tests                 | —      | Storybook documentation architecture test enforces configuration   |
+| Governance Tests                 | —      | Workflow policy test enforces CI gates                             |
+
+These 22 scenarios do not replace the revised Gate 3 package scenarios. Gate 3
+still requires separate approval for T1 native MCP protocol and producer
+identity, T2 recursive evidence and freeze validation, T3 named documentation
+ownership corrections, the seven T4 component contracts, T5 conditional consumer
+evidence, T6/T7 route behavior and isolation, and T8 frozen local closure. The
+standard's generic MCP, CLI, MSW, router, and governance scenarios remain
+insufficient for those package-specific acceptance gates.
 
 ## Alternatives and selected approach
 
@@ -612,7 +1310,7 @@ evidence-backed addendum, not a guessed patch.
   `playwright.storybook.config.ts` and `tests/e2e/steps/storybook.steps.ts`.
   Export proposed resolveStorybookTestTarget({ url, serverMode, ci }) returning
   { baseURL, mcpURL, command, webServer }; default URL stays
-  http://localhost:6006. Accept only http loopback hosts, valid ports, and no
+  <http://localhost:6006>. Accept only http loopback hosts, valid ports, and no
   credentials/query/hash/subpath. Derive baseURL, MCP URL and
   `node --max-old-space-size=8192 ./node_modules/storybook/dist/bin/dispatcher.js dev --host HOST -p PORT --no-open`
   from the same validated target; HOST/PORT are validated resolver outputs, not
@@ -1023,7 +1721,7 @@ one commit.
 
 ### T6a — Destination capability
 
-Modify `.storybook/preview.ts`, `ClientApp/src/storybook/storybookHarness.tsx`
+Modify `.storybook/preview.tsx`, `ClientApp/src/storybook/storybookHarness.tsx`
 and `ClientApp/src/storybook/storybookFixtures.ts`; create
 `tests/unit/storybook/routeHarness.test.tsx` and
 `tests/e2e/features/storybook/routes/route-harness.feature` with existing common
@@ -2178,7 +2876,7 @@ accurate docs or complete source classification.
 
 Exact network/fixture ownership paths:
 `tests/unit/config/storybookMswPolicy.test.ts`, `.storybook/preview-setup.ts`,
-`.storybook/preview.ts`, `ClientApp/src/storybook/storybookFixtures.ts` and
+`.storybook/preview.tsx`, `ClientApp/src/storybook/storybookFixtures.ts` and
 `ClientApp/src/storybook/storybookHarness.tsx`. These are conditional edits only
 for their corresponding reproduced isolation/harness gap; the T8 unit gate also
 includes the MSW policy test. The historical 258-TSX scan seeds, but never
@@ -2283,7 +2981,7 @@ implementation obligations, not completed changes.
     `ClientApp/src/routes/requestForQuote/create/CreateRequestForQuote.stories.tsx`,
     `ClientApp/src/routes/ta/create/CreateRequestForTypeApproval.stories.tsx`,
     `ClientApp/src/routes/ta/created/RequestForPatternApprovalCreated.stories.tsx`,
-    `ClientApp/src/storybook/storybookHarness.tsx`, `.storybook/preview.ts`.
+    `ClientApp/src/storybook/storybookHarness.tsx`, `.storybook/preview.tsx`.
 - [ ] T7 (P2, human 1 day / agent 3-5 hours) — Cover shell obligations and
       retain sufficient success/auth/summary examples
   - Phase: eng-review; finding: Five shells lack candidates; forwarding
@@ -2331,6 +3029,12 @@ the user's work before executing.
 
 ## GSTACK REVIEW REPORT
 
+Historical planning-review record (2026-10-15). The 2026-10-19 execution-state
+reconciliation near the top of this document supersedes its then-current “no
+implementation” and “rebaseline before execution” statements for the present
+checkout; it does not erase the review evidence or change the T1–T8/RT1–RT7
+contracts.
+
 Updated 2026-10-15. Scope: all eight packages, the companion test plan, current
 task artifacts, scorecard and pressure retest. No
 application/configuration/story implementation was performed.
@@ -2356,7 +3060,11 @@ report; diff whitespace and unchanged application source. All checks must be
 rerun after relevant edits. Runtime/install/permission/maintainer prerequisites
 remain mandatory before implementation closure.
 
-VERDICT: PLANNING RECOMMENDATIONS APPLIED; RETEST EVIDENCE AND CURRENT SCORES
-ARE IN THE LINKED ARTIFACTS. Sufficient indirect coverage remains accepted.
-Rebaseline the moving checkout before execution. No implementation, Storybook
-coverage or runtime test-success claim is made.
+CURRENT VERDICT (2026-10-29): INCOMPLETE. See the status review near the top of
+this document; the paragraphs below are historical.
+
+HISTORICAL VERDICT (2026-10-15): PLANNING RECOMMENDATIONS APPLIED; RETEST
+EVIDENCE AND THEN-CURRENT SCORES ARE IN THE LINKED ARTIFACTS. Sufficient
+indirect coverage remains accepted. The present checkout is governed by the
+2026-10-19 execution-state reconciliation above, which records partial T1/T2/T3
+implementation, the approved T4 story slice and the remaining closure work.

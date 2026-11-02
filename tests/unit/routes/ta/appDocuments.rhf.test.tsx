@@ -1,6 +1,6 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 
 import { resetMsalMock } from '../../helpers/mockMsal';
@@ -10,7 +10,7 @@ import { defined } from '../../helpers/defined';
 import { ValidationMessages } from '../../../../ClientApp/src/routes/ta/types';
 
 const mocks = vi.hoisted(() => ({
-  appLoggerError: vi.fn(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 const clients = vi.hoisted(() => ({
@@ -25,46 +25,57 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
-});
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
+
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
+
+  clients.patternApproval = createClientMockFor(
+    'getAppDocuments',
+    'addDocuments',
+    'commitAppDocuments',
+    'updateCategory',
+  );
+  clients.progress = createClientMockFor(
+    'getProgressUploadId',
+    'getProgress',
+    'deleteProgressStatistics',
+    'cancelFile',
+  );
+
+  return webApiClientModuleMock(original, {
+    RequestForPatternApprovalClient: clients.patternApproval,
+    ProgressClient: clients.progress,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
-
-    clients.patternApproval = createClientMockFor(
-      'getAppDocuments',
-      'addDocuments',
-      'commitAppDocuments',
-      'updateCategory'
-    );
-    clients.progress = createClientMockFor(
-      'getProgressUploadId',
-      'getProgress',
-      'deleteProgressStatistics',
-      'cancelFile'
-    );
-
-    return webApiClientModuleMock(original, {
-      RequestForPatternApprovalClient: clients.patternApproval,
-      ProgressClient: clients.progress,
-    });
-  }
+  import('../../../../ClientApp/src/authentication/authConfig'),
+  (() =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
-
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
+);
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({
   id: 'doc-1',
@@ -81,7 +92,7 @@ const document1 = (overrides: Record<string, unknown> = {}) => ({
 
 const appDocuments = (
   documents: unknown[],
-  form: Record<string, unknown> = {}
+  form: Record<string, unknown> = {},
 ) => ({
   form: {
     documents,
@@ -91,9 +102,21 @@ const appDocuments = (
   },
 });
 
+type CommitAppDocumentsValues = {
+  form: {
+    documents: Array<{
+      documentBytes?: unknown;
+      attachmentName?: string;
+      attachmentCategory?: string;
+    }>;
+    instrumentCategory?: string;
+  };
+};
+type CommitAppDocumentsCall = [string, CommitAppDocumentsValues];
+
 const renderRoute = async (
   path = '/ta/manage/APP-1/documents',
-  routePath = '/ta/manage/:id/documents'
+  routePath = '/ta/manage/:id/documents',
 ) => {
   const ApplicationDocuments = (
     await import('../../../../ClientApp/src/routes/ta/manage/appDocuments')
@@ -113,15 +136,16 @@ const renderRoute = async (
 
 const renderLoaded = async (documents: unknown[]) => {
   clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
-    appDocuments(documents)
+    appDocuments(documents),
   );
+
   const result = await renderRoute();
   await screen.findByRole('heading', { name: 'Documents' });
   return result;
 };
 
 describe('application documents with the real RHF form', () => {
-  beforeEach(async () => {
+  const resetApplicationDocumentsRHFState = async () => {
     await import('../../../../ClientApp/src/api/web-api-client');
 
     resetMsalMock();
@@ -134,12 +158,16 @@ describe('application documents with the real RHF form', () => {
       }
     }
     clients.patternApproval.methods.commitAppDocuments.mockResolvedValue(
-      undefined
+      undefined,
     );
     clients.patternApproval.methods.updateCategory.mockResolvedValue(undefined);
-  });
+  };
 
   it('commits the documents without their bytes and leaves the form data intact', async () => {
+    expect.hasAssertions();
+
+    await resetApplicationDocumentsRHFState();
+
     const user = userEvent.setup();
     await renderLoaded([document1()]);
 
@@ -147,67 +175,97 @@ describe('application documents with the real RHF form', () => {
 
     await waitFor(() =>
       expect(
-        clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalled()
+        clients.patternApproval.methods.commitAppDocuments,
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
     );
     const [applicationId, values] = defined(
-      clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
+      clients.patternApproval.methods.commitAppDocuments.mock
+        .calls[0] as unknown as CommitAppDocumentsCall,
     );
+
     expect(applicationId).toBe('APP-1');
-    expect(values.form.documents[0].documentBytes).toBeUndefined();
-    expect(values.form.documents[0].attachmentName).toBe('spec.pdf');
+
+    const firstDocument = defined(
+      values.form.documents[0],
+      'first committed document',
+    );
+
+    expect(firstDocument.documentBytes).toBeUndefined();
+    expect(firstDocument.attachmentName).toBe('spec.pdf');
     expect(values.form.instrumentCategory).toBe('Mass');
   });
 
   it('blocks the commit and asks for a category while a document has none', async () => {
+    expect.hasAssertions();
+
+    await resetApplicationDocumentsRHFState();
+
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
 
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-    expect(
-      await screen.findByText(ValidationMessages.RequiredTag, {
+    await expect(
+      screen.findByText(ValidationMessages.RequiredTag, {
         selector: 'li',
-      })
-    ).toBeInTheDocument();
+      }),
+    ).resolves.toBeInTheDocument();
     expect(
-      clients.patternApproval.methods.commitAppDocuments
+      clients.patternApproval.methods.commitAppDocuments,
     ).not.toHaveBeenCalled();
   });
 
   it('commits once a category has been chosen', async () => {
+    expect.hasAssertions();
+
+    await resetApplicationDocumentsRHFState();
+
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
+
     expect(clients.patternApproval.methods.updateCategory).toHaveBeenCalledWith(
       'APP-1',
       'doc-1',
-      'Certificate'
+      'Certificate',
     );
+
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
     await waitFor(() =>
       expect(
-        clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalled()
+        clients.patternApproval.methods.commitAppDocuments,
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
     );
     const [, values] = defined(
-      clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
+      clients.patternApproval.methods.commitAppDocuments.mock
+        .calls[0] as unknown as CommitAppDocumentsCall,
     );
-    expect(values.form.documents[0].attachmentCategory).toBe('Certificate');
+
+    const firstDocument = defined(
+      values.form.documents[0],
+      'first committed document',
+    );
+
+    expect(firstDocument.attachmentCategory).toBe('Certificate');
   });
 
   it('shows the saved documents as rows with their category', async () => {
+    expect.hasAssertions();
+
+    await resetApplicationDocumentsRHFState();
+
     await renderLoaded([document1({ attachmentCategory: 'Certificate' })]);
 
     const row = screen.getByText('spec.pdf').closest('.attachment');
+
     expect(row).not.toBeNull();
     expect(
-      within(row as HTMLElement).getByRole('combobox', { name: 'Category' })
+      within(row as HTMLElement).getByRole('combobox', { name: 'Category' }),
     ).toHaveValue('Certificate');
   });
 });

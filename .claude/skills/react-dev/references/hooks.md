@@ -1,6 +1,7 @@
 # Hook TypeScript Patterns
 
-Type-safe hook patterns for useState, useRef, useReducer, useContext, and custom hooks.
+Type-safe hook patterns for useState, useRef, useReducer, useContext, and custom
+hooks.
 
 ## useState
 
@@ -225,7 +226,9 @@ function useCounter(initial: number) {
 const { count, increment } = useCounter(0);
 
 // Tuple return - positional destructuring
-function useToggle(initial = false): [boolean, () => void, () => void, () => void] {
+function useToggle(
+  initial = false,
+): [boolean, () => void, () => void, () => void] {
   const [value, setValue] = useState(initial);
   const toggle = () => setValue((v) => !v);
   const setTrue = () => setValue(true);
@@ -433,7 +436,7 @@ function useStore<T>(store: Store<T>): T {
   return useSyncExternalStore(
     store.subscribe,
     store.getState,
-    store.getState // Server snapshot
+    store.getState, // Server snapshot
   );
 }
 
@@ -450,7 +453,7 @@ function useWindowWidth() {
   return useSyncExternalStore(
     widthStore.subscribe,
     widthStore.getState,
-    () => 0 // Server fallback
+    () => 0, // Server fallback
   );
 }
 ```

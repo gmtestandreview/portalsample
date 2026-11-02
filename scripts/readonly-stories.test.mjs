@@ -1,17 +1,12 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import {
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { it } from 'node:test';
 import { isEligible, transformStory } from './readonly-stories.mjs';
+import { makeDirectory, readTextFile, writeTextFile } from './safe-file-io.mjs';
 
 it('annotates a CSF3 (StoryObj) render/play pair and is idempotent', () => {
   const source = `type Story = StoryObj<typeof meta>;
@@ -24,15 +19,15 @@ export const Example: Story = {
   assert.equal(result.changes.length, 2);
   assert.match(
     result.source,
-    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u
+    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u,
   );
   assert.match(
     result.source,
-    /play: async \(\{ canvas \}: Readonly<Parameters<NonNullable<Story\['play'\]>>\[0\]>\) =>/u
+    /play: async \(\{ canvas \}: Readonly<Parameters<NonNullable<Story\['play'\]>>\[0\]>\) =>/u,
   );
   assert.equal(
     transformStory(result.source, 'Widget.stories.tsx').changes.length,
-    0
+    0,
   );
 });
 
@@ -44,14 +39,14 @@ export const Example: Story = (args) => <Widget {...args} />;
   assert.equal(result.changes.length, 1);
   assert.match(
     result.source,
-    /Example: Story = \(args: Readonly<Parameters<Story>\[0\]>\) =>/u
+    /Example: Story = \(args: Readonly<Parameters<Story>\[0\]>\) =>/u,
   );
 });
 
 it('leaves files with no local Story alias untouched', () => {
   const result = transformStory(
     'export const Example = (args) => <Widget {...args} />;\n',
-    'Widget.stories.tsx'
+    'Widget.stories.tsx',
   );
   assert.equal(result.changes.length, 0);
   assert.equal(result.skipped.length, 0);
@@ -67,7 +62,7 @@ export const Rest: Story = {
   render: (...args: unknown[]) => <Widget />,
 };
 `,
-    'Widget.stories.tsx'
+    'Widget.stories.tsx',
   );
   assert.equal(result.changes.length, 0);
 });
@@ -80,7 +75,7 @@ export const Broken: Story = {
   render: existingRenderFunction,
 };
 `,
-    'Widget.stories.tsx'
+    'Widget.stories.tsx',
   );
   assert.equal(result.changes.length, 0);
   assert.equal(result.skipped.length, 2);
@@ -102,8 +97,8 @@ const script = path.join(import.meta.dirname, 'readonly-stories.mjs');
 function fixture(context) {
   const root = mkdtempSync(path.join(tmpdir(), 'readonly-stories-'));
   context.after(() => rmSync(root, { recursive: true, force: true }));
-  mkdirSync(path.join(root, 'ClientApp/src'), { recursive: true });
-  writeFileSync(
+  makeDirectory(path.join(root, 'ClientApp/src'), root);
+  writeTextFile(
     path.join(root, 'tsconfig.json'),
     JSON.stringify({
       compilerOptions: {
@@ -114,10 +109,12 @@ function fixture(context) {
         skipLibCheck: true,
       },
       include: ['ClientApp/src/**/*'],
-    })
+    }),
+    undefined,
+    root,
   );
   const filename = path.join(root, 'ClientApp/src/Widget.stories.tsx');
-  writeFileSync(
+  writeTextFile(
     filename,
     `declare global { namespace JSX { interface IntrinsicElements { div: { children?: unknown } } } }
 interface StoryObj<T> {
@@ -134,7 +131,9 @@ export const Example: Story = {
   render: (args) => <div>{args.name}</div>,
   play: async ({ canvas }) => { canvas.getByText('default'); },
 };
-`
+`,
+    undefined,
+    root,
   );
   const git = (...args) =>
     execFileSync('git', ['-C', root, ...args], { stdio: 'pipe' });
@@ -149,7 +148,7 @@ export const Example: Story = {
     'commit.gpgsign=false',
     'commit',
     '-qm',
-    'fixture'
+    'fixture',
   );
   return {
     root,
@@ -165,17 +164,18 @@ export const Example: Story = {
 
 it('CLI previews without writing, checks, applies after validation and is idempotent', (context) => {
   const { filename, run } = fixture(context);
-  const original = readFileSync(filename, 'utf8');
+  const root = path.dirname(path.dirname(path.dirname(filename)));
+  const original = readTextFile(filename, root);
   const preview = run();
   assert.equal(preview.status, 0, preview.stderr);
   assert.match(preview.stdout, /2 proposed parameter annotations/u);
-  assert.equal(readFileSync(filename, 'utf8'), original);
+  assert.equal(readTextFile(filename, root), original);
   assert.equal(run('--check').status, 1);
   const write = run('--write');
   assert.equal(write.status, 0, write.stderr);
   assert.match(
-    readFileSync(filename, 'utf8'),
-    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u
+    readTextFile(filename, root),
+    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u,
   );
   assert.equal(run('--check').status, 0);
 });

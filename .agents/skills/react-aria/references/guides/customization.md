@@ -251,7 +251,7 @@ const MyCustomLabel = React.forwardRef(
 
     // ... your existing Label component
     return <label {...mergedProps} ref={mergedRef} />;
-  }
+  },
 );
 ```
 
@@ -373,7 +373,7 @@ const MyCheckbox = React.forwardRef(
     let state = useToggleState(mergedProps);
     let { inputProps } = useCheckbox(mergedProps, state, mergedRef);
     return <input {...inputProps} ref={mergedRef} />;
-  }
+  },
 );
 ```
 

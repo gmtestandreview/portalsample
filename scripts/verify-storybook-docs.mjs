@@ -1,9 +1,34 @@
 import { access, readdir, readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { isAbsolute, relative, resolve } from 'node:path';
 import process from 'node:process';
 
 const root = process.cwd();
 const staticDir = resolve(root, 'storybook-static');
+
+const ownedPath = (parent, candidate) => {
+  const relativePath = relative(resolve(parent), resolve(candidate));
+  if (
+    relativePath !== '' &&
+    (relativePath.startsWith('..') || isAbsolute(relativePath))
+  ) {
+    throw new Error(`path escapes owned Storybook directory: ${candidate}`);
+  }
+  return resolve(candidate);
+};
+
+const readOwnedFile = async (parent, filePath) => {
+  const safePath = ownedPath(parent, filePath);
+  // safePath is confined to the generated/source tree selected by this verifier.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  return readFile(safePath, 'utf8');
+};
+
+const readOwnedDirectory = async (parent, directoryPath) => {
+  const safePath = ownedPath(parent, directoryPath);
+  // safePath is confined to the generated/source tree selected by this verifier.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  return readdir(safePath, { withFileTypes: true });
+};
 
 const requiredFiles = ['index.html', 'iframe.html', 'index.json'];
 
@@ -12,7 +37,7 @@ for (const file of requiredFiles) {
 }
 
 const index = JSON.parse(
-  await readFile(resolve(staticDir, 'index.json'), 'utf8')
+  await readOwnedFile(staticDir, resolve(staticDir, 'index.json')),
 );
 
 const entries = Object.values(index.entries ?? {});
@@ -33,12 +58,12 @@ if (storyEntries.length === 0) {
 }
 
 const hasDocumentationSection = docsEntries.some((entry) =>
-  String(entry.title ?? '').startsWith('Documentation/')
+  String(entry.title ?? '').startsWith('Documentation/'),
 );
 
 if (!hasDocumentationSection) {
   throw new Error(
-    'Expected at least one standalone Documentation/* MDX entry.'
+    'Expected at least one standalone Documentation/* MDX entry.',
   );
 }
 
@@ -52,7 +77,7 @@ const readDocsSources = async (dir) => {
 
   while (pending.length > 0) {
     const current = pending.pop();
-    const children = await readdir(current, { withFileTypes: true });
+    const children = await readOwnedDirectory(root, current);
 
     for (const child of children) {
       const childPath = resolve(current, child.name);
@@ -78,7 +103,7 @@ const internalDocsLinkFailures = [];
 for (const sourceFile of (
   await Promise.all(docsSourceDirs.map(readDocsSources))
 ).flat()) {
-  const source = await readFile(sourceFile, 'utf8');
+  const source = await readOwnedFile(root, sourceFile);
 
   for (const match of source.matchAll(markdownLinkPattern)) {
     const href = match[1] ?? match[2];
@@ -95,12 +120,15 @@ for (const sourceFile of (
 
 if (internalDocsLinkFailures.length > 0) {
   throw new Error(
-    `Internal Storybook docs links that do not resolve in generated index.json:\n  ${internalDocsLinkFailures.join('\n  ')}`
+    `Internal Storybook docs links that do not resolve in generated index.json:\n  ${internalDocsLinkFailures.join('\n  ')}`,
   );
 }
 
 const manifest = JSON.parse(
-  await readFile(resolve(staticDir, 'manifests/components.json'), 'utf8')
+  await readOwnedFile(
+    staticDir,
+    resolve(staticDir, 'manifests/components.json'),
+  ),
 );
 
 const components = Object.values(manifest.components ?? {});
@@ -111,12 +139,12 @@ if (components.length === 0) {
 
 const reusableComponentStoryPrefix = './ClientApp/src/components/';
 const reusableComponents = components.filter((component) =>
-  String(component.path ?? '').startsWith(reusableComponentStoryPrefix)
+  String(component.path ?? '').startsWith(reusableComponentStoryPrefix),
 );
 
 if (reusableComponents.length === 0) {
   throw new Error(
-    'Storybook component manifest contains no reusable components.'
+    'Storybook component manifest contains no reusable components.',
   );
 }
 
@@ -167,7 +195,7 @@ const acceptedDocgenExceptions = new Map([
 const reusableDocgenFailureIds = new Set(
   reusableComponents
     .filter((component) => component.error)
-    .map((component) => component.id)
+    .map((component) => component.id),
 );
 const staleAcceptedDocgenExceptions = [
   ...acceptedDocgenExceptions.keys(),
@@ -175,7 +203,7 @@ const staleAcceptedDocgenExceptions = [
 
 if (staleAcceptedDocgenExceptions.length > 0) {
   throw new Error(
-    `Stale accepted docgen exceptions (remove or re-audit):\n  ${staleAcceptedDocgenExceptions.join('\n  ')}`
+    `Stale accepted docgen exceptions (remove or re-audit):\n  ${staleAcceptedDocgenExceptions.join('\n  ')}`,
   );
 }
 
@@ -184,12 +212,12 @@ const docgenFailures = reusableComponents
   .filter((component) => !acceptedDocgenExceptions.has(component.id))
   .map(
     (component) =>
-      `${component.name} (${component.id}): ${component.error.name}`
+      `${component.name} (${component.id}): ${component.error.name}`,
   );
 
 if (docgenFailures.length > 0) {
   throw new Error(
-    `Components without generated prop metadata:\n  ${docgenFailures.join('\n  ')}`
+    `Components without generated prop metadata:\n  ${docgenFailures.join('\n  ')}`,
   );
 }
 
@@ -207,6 +235,6 @@ console.warn(
       acceptedDocgenExceptions: Object.fromEntries(acceptedDocgenExceptions),
     },
     null,
-    2
-  )
+    2,
+  ),
 );

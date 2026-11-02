@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest';
 import CustomBreadcrumb from '../../../ClientApp/src/components/Breadcrumb';
 import { renderWithProviders } from '../helpers/renderWithProviders';
 
-describe('CustomBreadcrumb', () => {
+describe('breadcrumb', () => {
   it('marks the final breadcrumb item as the current page', () => {
+    expect.hasAssertions();
+
     renderWithProviders(
       <CustomBreadcrumb
         breadcrumbs={[
@@ -12,28 +14,30 @@ describe('CustomBreadcrumb', () => {
           { to: '/dashboard', text: 'Dashboard' },
           { text: 'Request for quote' },
         ]}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('navigation', { name: /breadcrumb/i })
+      screen.getByRole('navigation', { name: /breadcrumb/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/request for quote/i)).toHaveAttribute(
       'aria-current',
-      'page'
+      'page',
     );
   });
 
   it('renders previous breadcrumb items as links', () => {
+    expect.hasAssertions();
+
     renderWithProviders(
       <CustomBreadcrumb
         breadcrumbs={[{ to: '/', text: 'Home' }, { text: 'Request for quote' }]}
-      />
+      />,
     );
 
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute(
       'href',
-      '/'
+      '/',
     );
   });
 });

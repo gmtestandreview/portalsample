@@ -10,7 +10,7 @@ export function ColorSwatch(props: Readonly<ColorSwatchProps>) {
     <AriaColorSwatch
       {...props}
       style={({ color }) => ({
-        background: `linear-gradient(${color}, ${color}),
+        background: `linear-gradient(${String(color)}, ${String(color)}),
           repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`,
       })}
     />

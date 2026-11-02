@@ -328,7 +328,7 @@ function Draggable() {
   let ref = React.useRef(null);
   let { buttonProps } = useButton(
     { ...dragButtonProps, elementType: 'div' },
-    ref
+    ref,
   );
   /*- end highlight -*/
   return (

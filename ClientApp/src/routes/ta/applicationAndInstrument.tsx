@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { Alert, Card, Col, Container } from 'react-bootstrap';
-import { forEach } from 'lodash';
 import HidableField from '../../components/forms/HidableField';
 import SelectInput from '../../components/Inputs/SelectInput';
 import TextAreaInput from '../../components/Inputs/TextAreaInput';
@@ -12,7 +11,9 @@ import type { TAApplicationAndInstrumentProps } from './types';
 import {
   type LookupResponse,
   PatternApprovalRequiredValues,
+  type PatternApprovalRequiredValueOptions,
 } from '../../api/web-api-client';
+import type { ApplicationAndInstrumentStepDto } from '../../api/web-api-client';
 import {
   applicationTypes,
   newCertificateSubOptions,
@@ -38,18 +39,18 @@ export {
 } from './applicationOptions';
 
 const ApplicationAndInstrument = (
-  props: Readonly<TAApplicationAndInstrumentProps>
+  props: Readonly<TAApplicationAndInstrumentProps>,
 ) => {
   const { isSummary, name } = props;
   const getName = (localName: string) =>
     name ? `${name}.${localName}` : localName;
-  const context = useFormikContext();
+  const context = useFormikContext<ApplicationAndInstrumentStepDto>();
   const { accounts, instance } = useMsal();
   const [isDataLoading, setIsDataLoading] = useState(false);
   const initialKey = context.getFieldMeta('patternApprovalType')
     .initialValue as string | null;
   const [selectedApplication, setSelectedApplication] = useState<string | null>(
-    () => initialKey || 'new'
+    () => initialKey || 'new',
   );
   const [instrumentCategories, setInstrumentCategories] =
     useState<LookupResponse[]>();
@@ -61,37 +62,37 @@ const ApplicationAndInstrument = (
 
   // Lookup values are loaded in the parent component and passed through Formik context, so we can access them via context.values
   // without needing to make separate API calls here. We just need to transform them into the format needed for the dropdowns.
-  const [_instrumentTypeField, _instrumentTypeMeta] = useField(
-    getName('instrumentType')
-  );
-  const [_instrumentCatField, _instrumentCatMeta] = useField(
-    getName('instrumentCategory')
-  );
-  const [_typeLookupField, _typeLookupMeta] = useField(
-    getName('instrumentTypeLookup')
-  );
-  const [_categoryLookupField, _categoryLookupMeta] = useField(
-    getName('instrumentCategoryLookup')
-  );
+  const [_instrumentTypeField, _instrumentTypeMeta] = useField<
+    string | undefined
+  >(getName('instrumentType'));
+  const [_instrumentCatField, _instrumentCatMeta] = useField<
+    string | undefined
+  >(getName('instrumentCategory'));
+  const [_typeLookupField, _typeLookupMeta] = useField<
+    LookupResponse[] | undefined
+  >(getName('instrumentTypeLookup'));
+  const [_categoryLookupField, _categoryLookupMeta] = useField<
+    LookupResponse[] | undefined
+  >(getName('instrumentCategoryLookup'));
 
   const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
     useState(false);
 
   const getInstrumentTypes = (
     values: LookupResponse[],
-    parentId: string
+    parentId: string,
   ): SelectInputOption<string>[] => {
     const options: SelectInputOption<string>[] = [];
     if (parentId !== undefined && parentId !== '') {
-      forEach(values, (l) => {
+      for (const l of values) {
         if (l.parentId === parentId) {
           options.push({ displayText: l.label!, value: l.id! });
         }
-      });
+      }
     } else if (isSummary) {
-      forEach(values, (l) => {
+      for (const l of values) {
         options.push({ displayText: l.label!, value: l.id! });
-      });
+      }
     }
     const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
     noInstrumentTypeId.current = lastId;
@@ -114,7 +115,7 @@ const ApplicationAndInstrument = (
   }, [initialKey, selectedApplication]);
 
   useEffect(() => {
-    const loadInstrumentCategories = async () => {
+    const loadInstrumentCategories = () => {
       try {
         if (!instrumentCategories) {
           const result = _categoryLookupField.value as LookupResponse[];
@@ -123,7 +124,7 @@ const ApplicationAndInstrument = (
             const [sorted, lastId] = sortList(
               result,
               'No measurement',
-              'label'
+              'label',
             );
             noInstrumentCategoriestId.current = lastId;
             setInstrumentCategories(sorted);
@@ -136,8 +137,8 @@ const ApplicationAndInstrument = (
               setInstrumentTypesSelected(
                 getInstrumentTypes(
                   artefactTypeResult,
-                  _instrumentCatField.value as string
-                )
+                  _instrumentCatField.value as string,
+                ),
               );
               if (
                 !isSummary &&
@@ -171,45 +172,54 @@ const ApplicationAndInstrument = (
 
   const getInstrumentCategories = () => {
     const options: SelectInputOption<string>[] = [];
-    forEach(instrumentCategories, (l) => {
+    for (const l of instrumentCategories ?? []) {
       options.push({ displayText: l.label!, value: l.id! });
-    });
+    }
     return options;
   };
 
   // function getNameForUse(cname: string | keyof ApplicationAndInstrumentStep): string { return getName2(cname, isSummary); }
 
   // TO DO - move this and Radio + CheckboxGroup into a new component
-  const [_field, _meta] = useField(getName('patternApprovalType'));
+  const [_field, _meta] = useField<PatternApprovalRequiredValues | undefined>(
+    getName('patternApprovalType'),
+  );
   // console.log('Selected application type: ', _field.value);
 
-  const [_newField, _newMeta] = useField(getName('newSubOptions'));
+  const [_newField, _newMeta] = useField<
+    PatternApprovalRequiredValueOptions[] | undefined
+  >(getName('newSubOptions'));
   // console.log('Selected application new options: ', _newField.value);
 
-  const [_varField, _varMeta] = useField(getName('varSubOptions'));
+  const [_varField, _varMeta] = useField<
+    PatternApprovalRequiredValueOptions[] | undefined
+  >(getName('varSubOptions'));
   // console.log('Selected application var options: ', _varField.value);
 
-  const [_othField, _othMeta] = useField(getName('othSubOptions'));
+  const [_othField, _othMeta] = useField<
+    PatternApprovalRequiredValueOptions[] | undefined
+  >(getName('othSubOptions'));
   // console.log('Selected application oth options: ', _othField.value);
 
-  const onInstrumentCategoryChange = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const onInstrumentCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIsInstrumentTypeDisabled(false);
-    context.setFieldValue('instrumentType', '');
-    context.setFieldTouched('instrumentType', false);
+    void context.setFieldValue('instrumentType', '');
+    void context.setFieldTouched('instrumentType', false);
     if (event.target.value !== null && instrumentTypes !== undefined) {
       setInstrumentTypesSelected(
-        getInstrumentTypes(instrumentTypes, event.target.value)
+        getInstrumentTypes(instrumentTypes, event.target.value),
       );
       if (event.target.value === noInstrumentCategoriestId.current) {
-        context.setFieldValue('instrumentType', noInstrumentTypeId.current);
+        void context.setFieldValue(
+          'instrumentType',
+          noInstrumentTypeId.current,
+        );
         setIsInstrumentTypeDisabled(true);
       }
     }
   };
-  const instrumentCategoryId = _instrumentCatField.value as string | undefined;
-  const instrumentTypeId = _instrumentTypeField.value as string | undefined;
+  const instrumentCategoryId = _instrumentCatField.value;
+  const instrumentTypeId = _instrumentTypeField.value;
 
   // return !instrumentCategories || !instrumentTypesSelected ? (
   //     <BlockUISpinner>
@@ -222,7 +232,7 @@ const ApplicationAndInstrument = (
       // Helper to get labels for suboption arrays
       const getSubOptionLabels = (
         value: string[] | string | undefined,
-        options: { label: string; value: string }[]
+        options: { label: string; value: string }[],
       ) => {
         if (!value || (Array.isArray(value) && value.length === 0))
           return 'Not selected';
@@ -259,7 +269,7 @@ const ApplicationAndInstrument = (
                 className='mb-0'
                 value={getSubOptionLabels(
                   _newField.value,
-                  newCertificateSubOptions
+                  newCertificateSubOptions,
                 )}
               />
             )}
@@ -280,7 +290,7 @@ const ApplicationAndInstrument = (
                 className='mb-0'
                 value={getSubOptionLabels(
                   _othField.value,
-                  otherApprovalSubOptions
+                  otherApprovalSubOptions,
                 )}
               />
             )}
@@ -472,7 +482,7 @@ const ApplicationAndInstrument = (
             options={getInstrumentCategories()}
             onChange={(event) => {
               onInstrumentCategoryChange(
-                event as React.ChangeEvent<HTMLInputElement>
+                event as React.ChangeEvent<HTMLInputElement>,
               );
             }}
             isSummary={isSummary}

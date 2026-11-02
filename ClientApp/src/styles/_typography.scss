@@ -108,7 +108,8 @@ h6,
   color: $body-color;
 }
 
-.text-body, .text-dark {
+.text-body,
+.text-dark {
   color: $body-color !important; // set default BS5 text body style
 }
 .text-muted {
@@ -184,7 +185,7 @@ ol {
 }
 
 .text-truncate-2 {
- @include textTruncateBase;
+  @include textTruncateBase;
   @include lineClamp(2);
 }
 .text-truncate-3 {

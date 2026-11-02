@@ -164,7 +164,7 @@ export function SearchField({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'group flex flex-col gap-1 min-w-[40px] font-sans max-w-full'
+        'group flex flex-col gap-1 min-w-[40px] font-sans max-w-full',
       )}
     >
       {label && <Label>{label}</Label>}

@@ -2,7 +2,11 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  ReportAddressTypeValues,
+  Title,
+} from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   ReportRecipientStep,
@@ -31,7 +35,7 @@ const loadReportRecipient =
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const reportRecipient = await client.getReportRecipient(id, abortSignal);
@@ -50,18 +54,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: ReportRecipientStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.saveReportRecipient(
@@ -71,7 +75,7 @@ const saveStep =
             formStep: values,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (e) {
         AppLogger.error('Failed to save payment report recipient', e as Error, {
@@ -97,14 +101,14 @@ const discardChanges = (id: string): DiscardProps => ({
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) => {
     if (
-      errorCode === HttpStatusCode.PreconditionFailed &&
+      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
       errorType === ErrorType.Load
     ) {
       return `/accept-quote/${id}/view-summary`;
     }
 
     if (
-      errorCode === HttpStatusCode.NotFound &&
+      errorCode === Number(HttpStatusCode.NotFound) &&
       errorType === ErrorType.Update
     ) {
       setDashboardNotification({
@@ -125,7 +129,7 @@ const reportRecipientProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<ReportRecipientStep> => ({
   initialValues: {
     businessStreetAddress: {},
@@ -137,10 +141,10 @@ const reportRecipientProps = (
   title: 'Report recipient',
   hidingFields: {
     contact: {
-      titleOther: (x: ReportRecipientStep) => x.contact?.title !== 'Other',
+      titleOther: (x: ReportRecipientStep) => x.contact?.title !== Title.Other,
     },
     businessStreetAddress: (x: ReportRecipientStep) =>
-      x.reportAddressType !== 'Other',
+      x.reportAddressType !== ReportAddressTypeValues.Other,
   },
   validateHard: reportRecipientSubmitValidation,
   validateSoft: reportRecipientSaveValidation,

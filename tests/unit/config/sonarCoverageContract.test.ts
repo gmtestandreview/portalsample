@@ -44,15 +44,15 @@ function expandBraces(pattern: string): string[] {
       expandBraces(
         pattern.slice(0, match.index) +
           alternative +
-          pattern.slice(match.index + match[0].length)
-      )
+          pattern.slice(match.index + match[0].length),
+      ),
     );
 }
 
 function readSonarProperty(name: string): string[] {
   const source = readFileSync(
     path.join(repositoryRoot, 'sonar-project.properties'),
-    'utf8'
+    'utf8',
   );
   // Property values continue across lines with a trailing backslash.
   const unwrapped = source.replace(/\\r?\n\s*/g, '');
@@ -75,41 +75,47 @@ const vitestExcludes = unitConfig.test?.coverage?.exclude ?? [];
 
 describe('sonar coverage denominator contract', () => {
   it('carries every Vitest coverage exclude into sonar.coverage.exclusions', () => {
+    expect.hasAssertions();
+
     const sonarCoverageExclusions = readSonarProperty(
-      'sonar.coverage.exclusions'
+      'sonar.coverage.exclusions',
     );
     const required = vitestExcludes.flatMap(expandBraces);
 
     const missing = required.filter(
-      (pattern) => !sonarCoverageExclusions.includes(pattern)
+      (pattern) => !sonarCoverageExclusions.includes(pattern),
     );
 
     expect(
       missing,
-      'these Vitest coverage excludes have no counterpart in sonar.coverage.exclusions, so SonarCloud measures files lcov does not'
-    ).toEqual([]);
+      'these Vitest coverage excludes have no counterpart in sonar.coverage.exclusions, so SonarCloud measures files lcov does not',
+    ).toStrictEqual([]);
   });
 
   it('does not carry coverage carve-outs into sonar.exclusions', () => {
+    expect.hasAssertions();
+
     // sonar.exclusions removes files from analysis entirely. A coverage
     // carve-out must never be laundered through it.
     const sonarExclusions = readSonarProperty('sonar.exclusions');
 
     expect(sonarExclusions).not.toContain(
-      'ClientApp/src/components/reactaria_components/**'
+      'ClientApp/src/components/reactaria_components/**',
     );
     expect(sonarExclusions.some((entry) => entry.endsWith('types.ts'))).toBe(
-      false
+      false,
     );
   });
 
   it('keeps the analysed sources aligned with the measured sources', () => {
+    expect.hasAssertions();
+
     const sources = readSonarProperty('sonar.sources');
 
-    expect(sources).toEqual(['ClientApp/src', 'webpack.config.js']);
-    expect(unitConfig.test?.coverage?.include).toEqual([
+    expect(sources).toStrictEqual(['ClientApp/src', 'vite.config.mts']);
+    expect(unitConfig.test?.coverage?.include).toStrictEqual([
       'ClientApp/src/**/*.{ts,tsx}',
-      'webpack.config.js',
+      'vite.config.mts',
     ]);
   });
 });

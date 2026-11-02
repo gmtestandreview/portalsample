@@ -2,7 +2,6 @@ import { Alert, Col, Row } from 'react-bootstrap';
 import { useEffect, useState, useRef } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
-import { get } from 'lodash';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { type TASupportingDocumentsProps, ValidationMessages } from './types';
 import {
@@ -13,7 +12,6 @@ import {
   type AttachmentDto,
   type FileParameter,
   PatternApprovalRequiredValues,
-  type ProblemDetails,
   RequestForPatternApprovalClient,
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
@@ -26,6 +24,13 @@ import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import RhfAttachment from '../../components/Inputs/RhfAttachment';
 import InstrumentInfoPanel from './instrumentInfoPanel';
+import { getIn } from '../../components/forms/formPath';
+
+type UploadProblemDetails = {
+  status?: number;
+  title?: string;
+  errors?: Record<string, string[]>;
+};
 
 const ALLOWED_FILE_TYPES =
   '.pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .rtf, .odt, .gif, .csv';
@@ -40,7 +45,7 @@ const RhfSupportingDocuments = (
     TASupportingDocumentsProps & {
       onDeleteSuccess?: (success: boolean) => void;
     }
-  >
+  >,
 ) => {
   const { accounts, instance } = useMsal();
   const [noThirdPartyAccess, setNoThirdPartyAccess] = useState(false);
@@ -73,11 +78,17 @@ const RhfSupportingDocuments = (
   // Filter out upload errors that are handled by form validation
   const filteredUploadErrors = uploadErrors.filter(
     (err) =>
-      err !== ValidationMessages.RequiredDoc &&
-      err !== ValidationMessages.RequiredTag
+      err !== String(ValidationMessages.RequiredDoc) &&
+      err !== String(ValidationMessages.RequiredTag),
   );
 
-  const validationMessage: unknown = get(formErrors, name)?.message;
+  const fieldError: unknown = getIn(formErrors, name);
+  const validationMessage =
+    typeof fieldError === 'object' &&
+    fieldError !== null &&
+    'message' in fieldError
+      ? fieldError.message
+      : undefined;
   const formFieldErrors =
     typeof validationMessage === 'string' ? [validationMessage] : [];
   const fileErrors = getFailedFileErrors(progress);
@@ -87,7 +98,7 @@ const RhfSupportingDocuments = (
       ...formFieldErrors,
       ...fileErrors,
       ...externalErrors,
-    ])
+    ]),
   );
 
   // Only allow handleAlertScroll to run once
@@ -108,15 +119,15 @@ const RhfSupportingDocuments = (
         setProgress?.(undefined);
       }
     },
-    [setProgress, uploading]
+    [setProgress, uploading],
   );
 
   const uploadAttachment = async (
     files: File[],
     uploadFunc: (
       token: string,
-      fileData: FileParameter[]
-    ) => Promise<AttachmentDto[]>
+      fileData: FileParameter[],
+    ) => Promise<AttachmentDto[]>,
   ) => {
     if (files.length === 0) {
       throw new Error('No file to upload');
@@ -126,7 +137,7 @@ const RhfSupportingDocuments = (
     setExternalErrors?.([]);
 
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
 
     const fileDataArray: FileParameter[] = files.map((file) => ({
@@ -140,17 +151,17 @@ const RhfSupportingDocuments = (
       result = await uploadFunc(tokenResult.accessToken, fileDataArray);
       return result;
     } catch (error: unknown) {
-      const uploadServerError = error as ProblemDetails;
+      const uploadServerError = error as UploadProblemDetails;
       if (
         uploadServerError.status === HttpStatusCode.Forbidden &&
         uploadServerError.title?.includes('No third-party access')
       ) {
         setNoThirdPartyAccess(true);
-      } else if (uploadServerError['errors']) {
+      } else if (uploadServerError.errors) {
         // If server returns error messages, set as upload errors (strings only)
-        const flatErrors = Object.values(uploadServerError['errors']).flat();
+        const flatErrors = Object.values(uploadServerError.errors).flat();
         setUploadErrors(
-          flatErrors.filter((e): e is string => typeof e === 'string')
+          flatErrors.filter((e): e is string => typeof e === 'string'),
         );
       } else if (uploadServerError.title) {
         setUploadErrors([uploadServerError.title]);
@@ -172,14 +183,14 @@ const RhfSupportingDocuments = (
     });
     accountDispatch?.setTargetOrganisation(
       accountContext?.details?.abn ?? '',
-      accountContext?.details?.organisation ?? ''
+      accountContext?.details?.organisation ?? '',
     );
   }
 
   const onDeleteAttachment = async (docId: string) => {
     const client = new RequestForPatternApprovalClient();
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
 
     client.setAuthToken(tokenResult.accessToken);
@@ -191,19 +202,16 @@ const RhfSupportingDocuments = (
     if (!id || !category) return;
     const client = new RequestForPatternApprovalClient();
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
     client.setAuthToken(tokenResult.accessToken);
     await client.updateCategory(id, docId, category);
   };
 
   const renderInstrumentInfoPanel = () => {
-    const instrumentCategoryId = formData.form?.instrumentCategory as
-      string | undefined;
-    const instrumentTypeId = formData.form?.instrumentType as
-      string | undefined;
-    const patternApprovalType = formData.form?.patternApprovalType as
-      PatternApprovalRequiredValues | undefined;
+    const instrumentCategoryId = formData.form?.instrumentCategory;
+    const instrumentTypeId = formData.form?.instrumentType;
+    const patternApprovalType = formData.form?.patternApprovalType;
     const isVisibilityApplicationType =
       patternApprovalType === PatternApprovalRequiredValues.NewCertificate;
     return (
@@ -246,7 +254,7 @@ const RhfSupportingDocuments = (
                 {errors.map((err, idx) => {
                   // Only show the 'documents' error if submitCount is 0
                   if (
-                    err === ValidationMessages.RequiredTag &&
+                    err === String(ValidationMessages.RequiredTag) &&
                     submitCount === 0
                   ) {
                     return null;

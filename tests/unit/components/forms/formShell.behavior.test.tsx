@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest';
 import {
   act,
   fireEvent,
@@ -9,20 +10,39 @@ import userEvent from '@testing-library/user-event';
 import { Form, useFormikContext } from 'formik';
 import { MemoryRouter } from 'react-router';
 import FormikForm from '@/components/forms/FormikForm';
+import type { FormikFormProps } from '@/components/forms/FormikForm/types';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import ContactDetailsInput from '@/components/forms/CommonForms/ContactDetails';
 import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
 
-vi.mock('@/components/forms/UnsavedFormPrompt', () => ({
-  default: () => <div data-testid='unsaved-form-prompt' />,
-}));
+type TestValues = Record<string, unknown>;
+type SubmitResult = ReturnType<FormikFormProps<TestValues>['onSubmit']>;
+type Submit = () => SubmitResult;
+type AsyncSubmit = () => Promise<void>;
+type Validate = (values: TestValues) => Record<string, unknown>;
+type FormikSubmitCall = [
+  TestValues,
+  { setSubmitting: (...args: never[]) => unknown },
+];
 
-vi.mock('@/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <output>{children}</output>
-  ),
-}));
+vi.mock(
+  import('@/components/forms/UnsavedFormPrompt'),
+  (() =>
+    ({
+      default: () => <div data-testid='unsaved-form-prompt' />,
+    }) satisfies __ExactMockModule<__TestMockModule21>) as unknown as __DynamicPartialMockFactory<__TestMockModule21>,
+);
+
+vi.mock(
+  import('@/components/BlockUISpinner'),
+  (() =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <output>{children}</output>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>) as unknown as __DynamicPartialMockFactory<__TestMockModule14>,
+);
 
 function ValuesProbe() {
   const { values, setFieldValue, submitForm } =
@@ -32,9 +52,8 @@ function ValuesProbe() {
       <pre data-testid='values'>{JSON.stringify(values)}</pre>
       <button
         type='button'
-        onClick={async () => {
-          await setFieldValue('saveAndExit', true);
-          await submitForm();
+        onClick={() => {
+          void setFieldValue('saveAndExit', true).then(() => submitForm());
         }}
       >
         Save draft
@@ -44,15 +63,15 @@ function ValuesProbe() {
 }
 
 describe('form shell behavior slice', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  it('formikForm validates hard, renders function children, and submits normalized values', async () => {
+    expect.hasAssertions();
 
-  it('FormikForm validates hard, renders function children, and submits normalized values', async () => {
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const onSubmit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
     const validateHard = vi
-      .fn()
+      .fn<Validate>()
       .mockReturnValueOnce({ firstName: 'First name is required' })
       .mockReturnValue({});
 
@@ -75,7 +94,7 @@ describe('form shell behavior slice', () => {
               <div>{errors.firstName as string}</div>
               <button
                 type='button'
-                onClick={() => setFieldValue('firstName', 'Alex')}
+                onClick={() => void setFieldValue('firstName', 'Alex')}
               >
                 Fill name
               </button>
@@ -83,32 +102,42 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
 
-    expect(
-      await screen.findByText('First name is required')
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText('First name is required'),
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('button', { name: 'Fill name' }));
     await user.click(screen.getByRole('button', { name: 'Submit' }));
 
-    await waitFor(() =>
-      expect(onSubmit).toHaveBeenCalledWith(
-        { firstName: 'Alex', keep: 'value' },
-        expect.objectContaining({ setSubmitting: expect.any(Function) })
-      )
-    );
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    const submitCall = (
+      onSubmit.mock.calls as unknown as FormikSubmitCall[]
+    )[0];
+
+    expect(submitCall?.[0]).toStrictEqual({
+      firstName: 'Alex',
+      keep: 'value',
+    });
+
+    expect(submitCall?.[1]?.setSubmitting).toBeTypeOf('function');
   });
 
-  it('FormikForm uses soft validation and onSaveAndExit for draft saves', async () => {
+  it('formikForm uses soft validation and onSaveAndExit for draft saves', async () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
-    const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
-    const validateSoft = vi.fn().mockReturnValue({});
+    const onSubmit = vi.fn<Submit>();
+    const onSaveAndExit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
+    const validateSoft = vi.fn<Validate>().mockReturnValue({});
 
     render(
       <MemoryRouter>
@@ -129,29 +158,39 @@ describe('form shell behavior slice', () => {
             <ValuesProbe />
           </Form>
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Save draft' }));
 
     await waitFor(() => {
       expect(validateSoft).toHaveBeenCalledWith(
-        expect.objectContaining({ saveAndExit: true })
+        expect.objectContaining({ saveAndExit: true }),
       );
-      expect(onSaveAndExit).toHaveBeenCalledWith(
-        { notes: 'draft' },
-        expect.objectContaining({ setSubmitting: expect.any(Function) })
-      );
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
     });
+
+    const saveCall = (
+      onSaveAndExit.mock.calls as unknown as FormikSubmitCall[]
+    )[0];
+
+    expect(saveCall?.[0]).toStrictEqual({ notes: 'draft' });
+
+    expect(saveCall?.[1]?.setSubmitting).toBeTypeOf('function');
+
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('FormikForm shows loading and custom banner branches', () => {
+  it('formikForm shows loading and custom banner branches', () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     render(
       <MemoryRouter>
         <FormikForm
           initialValues={{}}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           isLoading
           banner={<div>Custom banner</div>}
           promptPath='/loading'
@@ -160,7 +199,7 @@ describe('form shell behavior slice', () => {
             <span>Loaded form</span>
           </Form>
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Custom banner')).toBeInTheDocument();
@@ -168,7 +207,11 @@ describe('form shell behavior slice', () => {
     expect(screen.getByTestId('unsaved-form-prompt')).toBeInTheDocument();
   });
 
-  it('FormikForm validates soft and hard Yup schemas and supports empty children', async () => {
+  it('formikForm validates soft and hard Yup schemas and supports empty children', async () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     const softSchema = Yup.object({
       draftName: Yup.string().required('Draft name required'),
     });
@@ -181,7 +224,7 @@ describe('form shell behavior slice', () => {
         <FormikForm
           initialValues={{ saveAndExit: true, draftName: '' }}
           validateSoft={softSchema}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ errors, validateForm }) => (
@@ -190,22 +233,23 @@ describe('form shell behavior slice', () => {
             </button>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Validate soft' })
+      screen.getByRole('button', { name: 'Validate soft' }),
     );
-    expect(
-      await screen.findByRole('button', { name: 'Draft name required' })
-    ).toBeInTheDocument();
+
+    await expect(
+      screen.findByRole('button', { name: 'Draft name required' }),
+    ).resolves.toBeInTheDocument();
 
     rerender(
       <MemoryRouter>
         <FormikForm
           initialValues={{ saveAndExit: false, finalName: '' }}
           validateHard={hardSchema}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ errors, validateForm }) => (
@@ -214,27 +258,37 @@ describe('form shell behavior slice', () => {
             </button>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Validate hard' })
+      screen.getByRole('button', { name: 'Validate hard' }),
     );
-    expect(
-      await screen.findByRole('button', { name: 'Final name required' })
-    ).toBeInTheDocument();
+
+    await expect(
+      screen.findByRole('button', { name: 'Final name required' }),
+    ).resolves.toBeInTheDocument();
 
     rerender(
       <MemoryRouter>
-        <FormikForm initialValues={{}} onSubmit={vi.fn()} showBanner={false}>
+        <FormikForm
+          initialValues={{}}
+          onSubmit={vi.fn<Submit>()}
+          showBanner={false}
+        >
           {null}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
+
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('FormikForm renders the saving spinner while submission is pending', async () => {
+  it('formikForm renders the saving spinner while submission is pending', async () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
     render(
       <MemoryRouter>
@@ -250,42 +304,44 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Pending form')).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Start save' }));
-    expect(await screen.findByText('Saving...')).toBeInTheDocument();
+
+    await expect(screen.findByText('Saving...')).resolves.toBeInTheDocument();
   });
 
-  it('ErrorSummary renders remaining server error branches and Formik nested errors', async () => {
+  it('errorSummary renders remaining server error branches and Formik nested errors', async () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
-        <ErrorSummary
-          serverErrors={{ status: HttpStatusCode.Conflict } as any}
-        />
-      </MemoryRouter>
+        <ErrorSummary serverErrors={{ status: HttpStatusCode.Conflict }} />
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByText(/Another person has already saved this page/i)
+      screen.getByText(/Another person has already saved this page/i),
     ).toBeInTheDocument();
 
     rerender(
       <MemoryRouter>
-        <ErrorSummary
-          serverErrors={{ status: HttpStatusCode.Forbidden } as any}
-        />
-      </MemoryRouter>
+        <ErrorSummary serverErrors={{ status: HttpStatusCode.Forbidden }} />
+      </MemoryRouter>,
     );
 
     expect(screen.getByText(/Please contact support/i)).toBeInTheDocument();
 
     rerender(
       <MemoryRouter>
-        <ErrorSummary serverErrors={{ status: 500 } as any} />
-      </MemoryRouter>
+        <ErrorSummary serverErrors={{ status: 500 }} />
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Server error')).toBeInTheDocument();
@@ -295,7 +351,7 @@ describe('form shell behavior slice', () => {
         <FormikForm
           initialValues={{ contacts: [{ firstName: '' }] }}
           validateHard={() => ({ contacts: [{ firstName: 'Required' }] })}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ handleSubmit }) => (
@@ -305,22 +361,26 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Contacts: (#1): Required'
+    await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
+      'Contacts: (#1): Required',
     );
     expect(
-      screen.getByRole('link', { name: 'Contacts: (#1): Required' })
+      screen.getByRole('link', { name: 'Contacts: (#1): Required' }),
     ).toHaveAttribute('href', '#contacts.0.firstName');
   });
 
-  it('ErrorSummary ignores empty nested errors instead of stringifying them', async () => {
+  it('errorSummary ignores empty nested errors instead of stringifying them', async () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     vi.useFakeTimers();
-    const scrollIntoView = vi.fn();
+    const scrollIntoView = vi.fn<HTMLElement['scrollIntoView']>();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
       configurable: true,
       value: scrollIntoView,
@@ -331,7 +391,7 @@ describe('form shell behavior slice', () => {
         <FormikForm
           initialValues={{ group: {} }}
           validateHard={() => ({ group: {} })}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ handleSubmit }) => (
@@ -341,13 +401,13 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     try {
       await act(async () => {
         fireEvent.click(
-          screen.getByRole('button', { name: 'Validate empty group' })
+          screen.getByRole('button', { name: 'Validate empty group' }),
         );
         await Promise.resolve();
       });
@@ -358,14 +418,18 @@ describe('form shell behavior slice', () => {
       expect(scrollIntoView).not.toHaveBeenCalled();
       expect(screen.queryByText('[object Object]')).not.toBeInTheDocument();
       expect(
-        screen.queryByTestId('form-error-summary')
+        screen.queryByTestId('form-error-summary'),
       ).not.toBeInTheDocument();
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it('ContactDetails renders editable labels and summary fallback/details branches', async () => {
+  it('contactDetails renders editable labels and summary fallback/details branches', async () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
@@ -384,7 +448,7 @@ describe('form shell behavior slice', () => {
               },
             },
           }}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           <Form>
@@ -396,24 +460,21 @@ describe('form shell behavior slice', () => {
             <ValuesProbe />
           </Form>
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.type(
       screen.getByRole('textbox', { name: 'Given name' }),
-      'Priya'
+      'Priya',
     );
     await user.type(
       screen.getByRole('textbox', { name: 'Office phone' }),
-      '0299998888'
+      '0299998888',
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"firstName":"Priya"'
-      );
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"phone":"02 9999 8888"'
+      expect(screen.getByTestId('values').textContent).toMatch(
+        /"firstName":"Priya"[\s\S]*"phone":"02 9999 8888"/,
       );
     });
 
@@ -433,7 +494,7 @@ describe('form shell behavior slice', () => {
               },
             },
           }}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           <ContactDetailsInput
@@ -441,19 +502,26 @@ describe('form shell behavior slice', () => {
             isSummary
           />
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    expect(screen.getByText('First name')).toBeInTheDocument();
-    expect(screen.getByText('Priya')).toBeInTheDocument();
-    expect(screen.getByText('Business phone')).toBeInTheDocument();
-    expect(screen.getByText('02 9999 8888')).toBeInTheDocument();
+    expect({
+      firstNameLabel: screen.getByText('First name').textContent,
+      firstName: screen.getByText('Priya').textContent,
+      businessPhoneLabel: screen.getByText('Business phone').textContent,
+      businessPhone: screen.getByText('02 9999 8888').textContent,
+    }).toMatchObject({
+      firstNameLabel: 'First name',
+      firstName: 'Priya',
+      businessPhoneLabel: 'Business phone',
+      businessPhone: '02 9999 8888',
+    });
 
     rerender(
       <MemoryRouter>
         <FormikForm
           initialValues={{ organisationAndContact: { contact: '' } }}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           <ContactDetailsInput
@@ -461,7 +529,7 @@ describe('form shell behavior slice', () => {
             isSummary
           />
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('No details added')).toBeInTheDocument();

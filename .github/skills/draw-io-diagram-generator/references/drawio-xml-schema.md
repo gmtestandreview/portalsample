@@ -1,6 +1,7 @@
 # draw.io XML Schema Reference
 
-Complete reference for the `.drawio` file format (mxGraph XML). Use this when generating, parsing, or validating diagram files.
+Complete reference for the `.drawio` file format (mxGraph XML). Use this when
+generating, parsing, or validating diagram files.
 
 ---
 
@@ -26,51 +27,51 @@ Every `.drawio` file is XML with this root structure:
 
 ### `<mxfile>` Attributes
 
-| Attribute | Required | Default | Description |
-| ----------- | ---------- | --------- | ------------- |
-| `host` | No | `"app.diagrams.net"` | Origin editor (`"Electron"` for desktop/VS Code) |
-| `modified` | No | — | ISO 8601 timestamp |
-| `agent` | No | — | User agent string |
-| `version` | No | — | draw.io version |
-| `type` | No | `"device"` | Storage type |
+| Attribute  | Required | Default              | Description                                      |
+| ---------- | -------- | -------------------- | ------------------------------------------------ |
+| `host`     | No       | `"app.diagrams.net"` | Origin editor (`"Electron"` for desktop/VS Code) |
+| `modified` | No       | —                    | ISO 8601 timestamp                               |
+| `agent`    | No       | —                    | User agent string                                |
+| `version`  | No       | —                    | draw.io version                                  |
+| `type`     | No       | `"device"`           | Storage type                                     |
 
 ### `<diagram>` Attributes
 
-| Attribute | Required | Description |
-| ----------- | ---------- | ------------- |
-| `id` | Yes | Unique page identifier (any string) |
-| `name` | Yes | Tab label shown in editor |
+| Attribute | Required | Description                         |
+| --------- | -------- | ----------------------------------- |
+| `id`      | Yes      | Unique page identifier (any string) |
+| `name`    | Yes      | Tab label shown in editor           |
 
 ### `<mxGraphModel>` Attributes
 
-| Attribute | Type | Default | Description |
-| ----------- | ------ | --------- | ------------- |
-| `dx` | int | `1422` | Scroll X offset |
-| `dy` | int | `762` | Scroll Y offset |
-| `grid` | `0`/`1` | `1` | Show grid |
-| `gridSize` | int | `10` | Grid snap size in px |
-| `guides` | `0`/`1` | `1` | Show alignment guides |
-| `tooltips` | `0`/`1` | `1` | Enable tooltips |
-| `connect` | `0`/`1` | `1` | Enable connection arrows on hover |
-| `arrows` | `0`/`1` | `1` | Show directional arrows |
-| `fold` | `0`/`1` | `1` | Enable group fold/collapse |
-| `page` | `0`/`1` | `1` | Show page boundary |
-| `pageScale` | float | `1` | Page zoom scale |
-| `pageWidth` | int | `1169` | Page width in px (A4 landscape) |
-| `pageHeight` | int | `827` | Page height in px (A4 landscape) |
-| `math` | `0`/`1` | `0` | Enable LaTeX math rendering |
-| `shadow` | `0`/`1` | `0` | Global shadow on shapes |
+| Attribute    | Type    | Default | Description                       |
+| ------------ | ------- | ------- | --------------------------------- |
+| `dx`         | int     | `1422`  | Scroll X offset                   |
+| `dy`         | int     | `762`   | Scroll Y offset                   |
+| `grid`       | `0`/`1` | `1`     | Show grid                         |
+| `gridSize`   | int     | `10`    | Grid snap size in px              |
+| `guides`     | `0`/`1` | `1`     | Show alignment guides             |
+| `tooltips`   | `0`/`1` | `1`     | Enable tooltips                   |
+| `connect`    | `0`/`1` | `1`     | Enable connection arrows on hover |
+| `arrows`     | `0`/`1` | `1`     | Show directional arrows           |
+| `fold`       | `0`/`1` | `1`     | Enable group fold/collapse        |
+| `page`       | `0`/`1` | `1`     | Show page boundary                |
+| `pageScale`  | float   | `1`     | Page zoom scale                   |
+| `pageWidth`  | int     | `1169`  | Page width in px (A4 landscape)   |
+| `pageHeight` | int     | `827`   | Page height in px (A4 landscape)  |
+| `math`       | `0`/`1` | `0`     | Enable LaTeX math rendering       |
+| `shadow`     | `0`/`1` | `0`     | Global shadow on shapes           |
 
 **Common page sizes (px at 96dpi):**
 
-| Format | Width | Height |
-| -------- | ------- | -------- |
-| A4 landscape | `1169` | `827` |
-| A4 portrait | `827` | `1169` |
-| A3 landscape | `1654` | `1169` |
-| Letter landscape | `1100` | `850` |
-| Letter portrait | `850` | `1100` |
-| Screen (16:9) | `1654` | `931` |
+| Format           | Width  | Height |
+| ---------------- | ------ | ------ |
+| A4 landscape     | `1169` | `827`  |
+| A4 portrait      | `827`  | `1169` |
+| A3 landscape     | `1654` | `1169` |
+| Letter landscape | `1100` | `850`  |
+| Letter portrait  | `850`  | `1100` |
+| Screen (16:9)    | `1654` | `931`  |
 
 ---
 
@@ -81,7 +82,8 @@ Every `.drawio` file is XML with this root structure:
 <mxCell id="1" parent="0" />     <!-- Default layer — all cells are children of this -->
 ```
 
-These two cells MUST be the first entries inside `<root>`. IDs `0` and `1` are reserved and must not be used for any other cell.
+These two cells MUST be the first entries inside `<root>`. IDs `0` and `1` are
+reserved and must not be used for any other cell.
 
 ---
 
@@ -100,23 +102,23 @@ These two cells MUST be the first entries inside `<root>`. IDs `0` and `1` are r
 
 ### `<mxCell>` Vertex Attributes
 
-| Attribute | Required | Type | Description |
-| ----------- | ---------- | ------ | ------------- |
-| `id` | Yes | string | Unique identifier within this diagram |
-| `value` | Yes | string | Label text (HTML allowed if style has `html=1`) |
-| `style` | Yes | string | Semicolon-delimited key=value style string |
-| `vertex` | Yes | `"1"` | Must be `"1"` to declare this as a shape |
-| `parent` | Yes | string | Parent cell ID (`"1"` for default layer) |
+| Attribute | Required | Type   | Description                                     |
+| --------- | -------- | ------ | ----------------------------------------------- |
+| `id`      | Yes      | string | Unique identifier within this diagram           |
+| `value`   | Yes      | string | Label text (HTML allowed if style has `html=1`) |
+| `style`   | Yes      | string | Semicolon-delimited key=value style string      |
+| `vertex`  | Yes      | `"1"`  | Must be `"1"` to declare this as a shape        |
+| `parent`  | Yes      | string | Parent cell ID (`"1"` for default layer)        |
 
 ### `<mxGeometry>` Vertex Attributes
 
-| Attribute | Required | Type | Description |
-| ----------- | ---------- | ------ | ------------- |
-| `x` | Yes | float | Left edge of shape (px from canvas origin) |
-| `y` | Yes | float | Top edge of shape (px from canvas origin) |
-| `width` | Yes | float | Shape width in px |
-| `height` | Yes | float | Shape height in px |
-| `as` | Yes | `"geometry"` | Always `"geometry"` |
+| Attribute | Required | Type         | Description                                |
+| --------- | -------- | ------------ | ------------------------------------------ |
+| `x`       | Yes      | float        | Left edge of shape (px from canvas origin) |
+| `y`       | Yes      | float        | Top edge of shape (px from canvas origin)  |
+| `width`   | Yes      | float        | Shape width in px                          |
+| `height`  | Yes      | float        | Shape height in px                         |
+| `as`      | Yes      | `"geometry"` | Always `"geometry"`                        |
 
 ---
 
@@ -137,22 +139,22 @@ These two cells MUST be the first entries inside `<root>`. IDs `0` and `1` are r
 
 ### `<mxCell>` Edge Attributes
 
-| Attribute | Required | Type | Description |
-| ----------- | ---------- | ------ | ------------- |
-| `id` | Yes | string | Unique identifier |
-| `value` | Yes | string | Connector label (empty string for no label) |
-| `style` | Yes | string | Style string (see Edge Styles) |
-| `edge` | Yes | `"1"` | Must be `"1"` to declare as connector |
-| `source` | No | string | ID of source vertex |
-| `target` | No | string | ID of target vertex |
-| `parent` | Yes | string | Parent cell ID (usually `"1"`) |
+| Attribute | Required | Type   | Description                                 |
+| --------- | -------- | ------ | ------------------------------------------- |
+| `id`      | Yes      | string | Unique identifier                           |
+| `value`   | Yes      | string | Connector label (empty string for no label) |
+| `style`   | Yes      | string | Style string (see Edge Styles)              |
+| `edge`    | Yes      | `"1"`  | Must be `"1"` to declare as connector       |
+| `source`  | No       | string | ID of source vertex                         |
+| `target`  | No       | string | ID of target vertex                         |
+| `parent`  | Yes      | string | Parent cell ID (usually `"1"`)              |
 
 ### `<mxGeometry>` Edge Attributes
 
-| Attribute | Required | Type | Description |
-| ----------- | ---------- | ------ | ------------- |
-| `relative` | No | `"1"` | Always `"1"` for edges |
-| `as` | Yes | `"geometry"` | Always `"geometry"` |
+| Attribute  | Required | Type         | Description            |
+| ---------- | -------- | ------------ | ---------------------- |
+| `relative` | No       | `"1"`        | Always `"1"` for edges |
+| `as`       | Yes      | `"geometry"` | Always `"geometry"`    |
 
 ### Edge with Label Offset
 
@@ -162,7 +164,8 @@ These two cells MUST be the first entries inside `<root>`. IDs `0` and `1` are r
 </mxGeometry>
 ```
 
-The `x` on relative geometry moves the label along the edge (-1 to 1). `y` is perpendicular offset in px.
+The `x` on relative geometry moves the label along the edge (-1 to 1). `y` is
+perpendicular offset in px.
 
 ### Edge with Manual Waypoints (Control Points)
 
@@ -190,13 +193,15 @@ The `x` on relative geometry moves the label along the edge (-1 to 1). `y` is pe
 </mxfile>
 ```
 
-Each `<diagram>` is a separate page/tab. Cell IDs are scoped to their own `<diagram>` — the same ID value can appear in different pages without conflict.
+Each `<diagram>` is a separate page/tab. Cell IDs are scoped to their own
+`<diagram>` — the same ID value can appear in different pages without conflict.
 
 ---
 
 ## Layer Cells
 
-Layers replace the default `id="1"` layer. Cells are assigned to a layer via `parent`:
+Layers replace the default `id="1"` layer. Cells are assigned to a layer via
+`parent`:
 
 ```xml
 <mxCell id="0" />
@@ -222,25 +227,26 @@ Toggle layer visibility:
 
 ```xml
 <!-- Swimlane container -->
-<mxCell id="swim1" value="Process" style="shape=pool;startSize=30;horizontal=1;" 
+<mxCell id="swim1" value="Process" style="shape=pool;startSize=30;horizontal=1;"
         vertex="1" parent="1">
   <mxGeometry x="40" y="40" width="800" height="340" as="geometry" />
 </mxCell>
 
 <!-- Lane 1 (child of swimlane container) -->
-<mxCell id="lane1" value="Customer" style="swimlane;startSize=30;" 
+<mxCell id="lane1" value="Customer" style="swimlane;startSize=30;"
         vertex="1" parent="swim1">
   <mxGeometry x="0" y="30" width="800" height="150" as="geometry" />
 </mxCell>
 
 <!-- Shape inside lane (child of lane) -->
-<mxCell id="step1" value="Place Order" style="rounded=1;whiteSpace=wrap;html=1;" 
+<mxCell id="step1" value="Place Order" style="rounded=1;whiteSpace=wrap;html=1;"
         vertex="1" parent="lane1">
   <mxGeometry x="80" y="50" width="120" height="60" as="geometry" />
 </mxCell>
 ```
 
-> **Key**: Cells inside a swimlane have `parent` set to the **lane's ID**, not `"1"`.  
+> **Key**: Cells inside a swimlane have `parent` set to the **lane's ID**, not
+> `"1"`.  
 > Coordinates inside lanes are **relative to the lane origin**.
 
 ---
@@ -279,7 +285,8 @@ HTML must be XML-escaped:
 - `&` → `&amp;`
 - `"` → `&quot;`
 
-Common HTML tags supported: `<b>`, `<i>`, `<u>`, `<br>`, `<font color="#hex">`, `<span style="...">`, `<hr/>`
+Common HTML tags supported: `<b>`, `<i>`, `<u>`, `<br>`, `<font color="#hex">`,
+`<span style="...">`, `<hr/>`
 
 ---
 
@@ -295,12 +302,12 @@ Common HTML tags supported: `<b>`, `<i>`, `<u>`, `<br>`, `<font color="#hex">`, 
 
 ## ID Generation Rules
 
-| Rule | Detail |
-| ------ | -------- |
-| IDs `0` and `1` | Reserved — always the root and default layer |
-| All other IDs | Must be unique within their `<diagram>` |
-| Safe pattern | Sequential integers starting at `2`, or UUID strings |
-| Cross-page | IDs do not need to be unique across different `<diagram>` pages |
+| Rule            | Detail                                                          |
+| --------------- | --------------------------------------------------------------- |
+| IDs `0` and `1` | Reserved — always the root and default layer                    |
+| All other IDs   | Must be unique within their `<diagram>`                         |
+| Safe pattern    | Sequential integers starting at `2`, or UUID strings            |
+| Cross-page      | IDs do not need to be unique across different `<diagram>` pages |
 
 **Safe sequential ID example:**
 
@@ -327,12 +334,12 @@ id="a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 
 ## Recommended Spacing
 
-| Context | Value |
-| --------- | ------- |
-| Minimum gap between shapes | `40px` |
-| Comfortable gap | `80px` |
-| Swimlane inner padding | `20px` |
-| Page margin from edge | `40px` |
+| Context                     | Value  |
+| --------------------------- | ------ |
+| Minimum gap between shapes  | `40px` |
+| Comfortable gap             | `80px` |
+| Swimlane inner padding      | `20px` |
+| Page margin from edge       | `40px` |
 | Connector routing clearance | `10px` |
 
 ---
@@ -361,13 +368,15 @@ id="a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 
 ### Must Pass
 
-- [ ] `id="0"` and `id="1"` cells always present as first two children of `<root>`
+- [ ] `id="0"` and `id="1"` cells always present as first two children of
+      `<root>`
 - [ ] No other cell uses `id="0"` or `id="1"`
 - [ ] All `id` values are unique within each `<diagram>`
 - [ ] Every `<mxCell>` has exactly one `<mxGeometry>` child
 - [ ] `<mxGeometry>` has `as="geometry"` attribute
 - [ ] Vertex cells have `vertex="1"`, edge cells have `edge="1"`
-- [ ] Edge `source`/`target` IDs reference existing vertex IDs in the same diagram
+- [ ] Edge `source`/`target` IDs reference existing vertex IDs in the same
+      diagram
 - [ ] Swimlane children have `parent` set to the swimlane/lane ID, not `"1"`
 - [ ] HTML in `value` attributes is XML-escaped
 

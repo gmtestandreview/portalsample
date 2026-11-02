@@ -1,6 +1,6 @@
 import { Form, Formik } from 'formik';
 import { render, screen, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { ReactNode } from 'react';
 
@@ -8,216 +8,274 @@ import OrganisationAndContact from '../../../../ClientApp/src/routes/ta/organisa
 import SummaryAndSubmit from '../../../../ClientApp/src/routes/ta/summaryAndSubmit';
 
 const mocks = vi.hoisted(() => ({
-  useBodyClass: vi.fn(),
-  supportingDocumentsUploadAttachment: vi.fn(),
-  supportingDocumentsUploadFiles: vi.fn(),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: mocks.useBodyClass,
-}));
-
-vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
-  CustomAccordion: ({ children, id }: { children: ReactNode; id: string }) => (
-    <section data-testid={`accordion-${id}`}>{children}</section>
-  ),
-  CustomAccordionBody: ({
-    children,
-    name,
-  }: {
-    children: ReactNode;
-    name: string;
-  }) => (
-    <div>
-      <h2>{name}</h2>
-      {children}
-    </div>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Buttons/EditButton', () => ({
-  default: ({ link }: { link: string }) => (
-    <a data-testid='edit-link' href={link}>
-      Edit
-    </a>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/HeaderIntroText', () => ({
-  default: ({ children }: { children: ReactNode }) => <p>{children}</p>,
-}));
-
-vi.mock('../../../../ClientApp/src/components/InTextLink', () => ({
-  default: ({
-    children,
-    href,
-    target,
-  }: {
-    children: ReactNode;
-    href: string;
-    target: string;
-  }) => (
-    <a href={href} target={target}>
-      {children}
-    </a>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/Checkbox', () => ({
-  default: ({
-    label,
-    name,
-    isSummary,
-  }: {
-    label: string;
-    name: string;
-    isSummary: boolean;
-  }) => (
-    <label>
-      <input
-        data-testid='checkbox'
-        data-name={name}
-        data-summary={String(isSummary)}
-        type='checkbox'
-      />
-      {label}
-    </label>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/routes/ta/supportingDocuments', () => ({
-  default: ({
-    isSummary,
-    name,
-    onUploadAttachment,
-    attachment,
-  }: {
-    isSummary: boolean;
-    name: string;
-    onUploadAttachment: (token: string, files: File[]) => Promise<unknown[]>;
-    attachment: { onUploadFiles: (files: File[]) => Promise<unknown[]> };
-  }) => {
-    void onUploadAttachment('token', []).then(
-      mocks.supportingDocumentsUploadAttachment
-    );
-    void attachment
-      .onUploadFiles([])
-      .then(mocks.supportingDocumentsUploadFiles);
-
-    return (
-      <div
-        data-testid='supporting-documents'
-        data-name={name}
-        data-summary={String(isSummary)}
-      />
-    );
-  },
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/RadioButtonGroup', () => ({
-  default: ({
-    legend,
-    name,
-    isSummary,
-    inlineHelp,
-    options,
-  }: {
-    legend: string;
-    name: string;
-    isSummary?: boolean;
-    inlineHelp?: ReactNode;
-    options: Array<{
-      label: string;
-      descriptor?: ReactNode;
-      value: string;
-    }>;
-  }) => (
-    <section data-testid={`radio-${name}`} data-summary={String(isSummary)}>
-      <h3>{legend}</h3>
-      {inlineHelp ? <div data-testid={`help-${name}`}>{inlineHelp}</div> : null}
-      {options.map((option) => (
-        <div key={option.value}>
-          <span>{option.label}</span>
-          <div>{option.descriptor}</div>
-        </div>
-      ))}
-    </section>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/forms/HidableField', () => ({
-  default: ({ children, name }: { children: ReactNode; name: string }) => (
-    <div data-testid={`hidable-${name}`}>{children}</div>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/TextInput', () => ({
-  default: ({
-    label,
-    name,
-    isSummary,
-  }: {
-    label: string;
-    name: string;
-    isSummary?: boolean;
-  }) => (
-    <div
-      data-testid='text-input'
-      data-name={name}
-      data-summary={String(isSummary)}
-    >
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/AddressLookup', () => ({
-  default: ({
-    label,
-    name,
-    isSummary,
-    maxResults,
-    placeholder,
-  }: {
-    label: string;
-    name: string;
-    isSummary?: boolean;
-    maxResults: number;
-    placeholder: string;
-  }) => (
-    <div
-      data-testid='address-lookup'
-      data-max-results={maxResults}
-      data-name={name}
-      data-placeholder={placeholder}
-      data-summary={String(isSummary)}
-    >
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/AuthorisedAgent', () => ({
-  default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
-    <div
-      data-testid='authorised-agent'
-      data-name={name}
-      data-summary={String(isSummary)}
-    />
-  ),
+  useBodyClass: vi.fn<(...args: unknown[]) => unknown>(),
+  supportingDocumentsUploadAttachment: vi.fn<(...args: unknown[]) => unknown>(),
+  supportingDocumentsUploadFiles: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
-  () => ({
-    default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
-      <div
-        data-testid='contact-details'
-        data-name={name}
-        data-summary={String(isSummary)}
-      />
-    ),
-  })
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  (() =>
+    ({
+      default: mocks.useBodyClass,
+    }) satisfies __ExactMockModule<__TestMockModule59>) as unknown as __DynamicPartialMockFactory<__TestMockModule59>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Accordion'),
+  (() =>
+    ({
+      CustomAccordion: ({
+        children,
+        id,
+      }: {
+        children: ReactNode;
+        id: string;
+      }) => <section data-testid={`accordion-${id}`}>{children}</section>,
+      CustomAccordionBody: ({
+        children,
+        name,
+      }: {
+        children: ReactNode;
+        name: string;
+      }) => (
+        <div>
+          <h2>{name}</h2>
+          {children}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule74>) as unknown as __DynamicPartialMockFactory<__TestMockModule74>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Buttons/EditButton'),
+  (() =>
+    ({
+      default: ({ link }: { link: string }) => (
+        <a data-testid='edit-link' href={link}>
+          Edit
+        </a>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule75>) as unknown as __DynamicPartialMockFactory<__TestMockModule75>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/HeaderIntroText'),
+  (() =>
+    ({
+      default: ({ children }: { children: ReactNode }) => <p>{children}</p>,
+    }) satisfies __ExactMockModule<__TestMockModule76>) as unknown as __DynamicPartialMockFactory<__TestMockModule76>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/InTextLink'),
+  (() =>
+    ({
+      default: ({
+        children,
+        href,
+        target,
+      }: {
+        children: ReactNode;
+        href: string;
+        target: string;
+      }) => (
+        <a href={href} target={target}>
+          {children}
+        </a>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule77>) as unknown as __DynamicPartialMockFactory<__TestMockModule77>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/Checkbox'),
+  (() =>
+    ({
+      default: ({
+        label,
+        name,
+        isSummary,
+      }: {
+        label: string;
+        name: string;
+        isSummary: boolean;
+      }) => (
+        <label>
+          <input
+            data-testid='checkbox'
+            data-name={name}
+            data-summary={String(isSummary)}
+            type='checkbox'
+          />
+          {label}
+        </label>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule79>) as unknown as __DynamicPartialMockFactory<__TestMockModule79>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
+  (() =>
+    ({
+      default: ({
+        isSummary,
+        name,
+        onUploadAttachment,
+        attachment,
+      }: {
+        isSummary: boolean;
+        name: string;
+        onUploadAttachment: (
+          token: string,
+          files: File[],
+        ) => Promise<unknown[]>;
+        attachment: { onUploadFiles: (files: File[]) => Promise<unknown[]> };
+      }) => {
+        void onUploadAttachment('token', []).then(
+          mocks.supportingDocumentsUploadAttachment,
+        );
+        void attachment
+          .onUploadFiles([])
+          .then(mocks.supportingDocumentsUploadFiles);
+
+        return (
+          <div
+            data-testid='supporting-documents'
+            data-name={name}
+            data-summary={String(isSummary)}
+          />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule141>) as unknown as __DynamicPartialMockFactory<__TestMockModule141>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
+  (() =>
+    ({
+      default: ({
+        legend,
+        name,
+        isSummary,
+        inlineHelp,
+        options,
+      }: {
+        legend: string;
+        name: string;
+        isSummary?: boolean;
+        inlineHelp?: ReactNode;
+        options: Array<{
+          label: string;
+          descriptor?: ReactNode;
+          value: string;
+        }>;
+      }) => (
+        <section data-testid={`radio-${name}`} data-summary={String(isSummary)}>
+          <h3>{legend}</h3>
+          {inlineHelp ? (
+            <div data-testid={`help-${name}`}>{inlineHelp}</div>
+          ) : null}
+          {options.map((option) => (
+            <div key={option.value}>
+              <span>{option.label}</span>
+              <div>{option.descriptor}</div>
+            </div>
+          ))}
+        </section>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule52>) as unknown as __DynamicPartialMockFactory<__TestMockModule52>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/forms/HidableField'),
+  (() =>
+    ({
+      default: ({ children, name }: { children: ReactNode; name: string }) => (
+        <div data-testid={`hidable-${name}`}>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule70>) as unknown as __DynamicPartialMockFactory<__TestMockModule70>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  (() =>
+    ({
+      default: ({
+        label,
+        name,
+        isSummary,
+      }: {
+        label: string;
+        name: string;
+        isSummary?: boolean;
+      }) => (
+        <div
+          data-testid='text-input'
+          data-name={name}
+          data-summary={String(isSummary)}
+        >
+          {label}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>) as unknown as __DynamicPartialMockFactory<__TestMockModule29>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/AddressLookup'),
+  (() =>
+    ({
+      default: ({
+        label,
+        name,
+        isSummary,
+        maxResults,
+        placeholder,
+      }: {
+        label: string;
+        name: string;
+        isSummary?: boolean;
+        maxResults: number;
+        placeholder: string;
+      }) => (
+        <div
+          data-testid='address-lookup'
+          data-max-results={maxResults}
+          data-name={name}
+          data-placeholder={placeholder}
+          data-summary={String(isSummary)}
+        >
+          {label}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule31>) as unknown as __DynamicPartialMockFactory<__TestMockModule31>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/AuthorisedAgent'),
+  (() =>
+    ({
+      default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
+        <div
+          data-testid='authorised-agent'
+          data-name={name}
+          data-summary={String(isSummary)}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule143>) as unknown as __DynamicPartialMockFactory<__TestMockModule143>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
+  (() =>
+    ({
+      default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
+        <div
+          data-testid='contact-details'
+          data-name={name}
+          data-summary={String(isSummary)}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule71>) as unknown as __DynamicPartialMockFactory<__TestMockModule71>,
 );
 
 const formValues = {
@@ -245,15 +303,18 @@ const renderWithFormik = (children: ReactNode) =>
       onSubmit={() => {}}
     >
       <Form>{children}</Form>
-    </Formik>
+    </Formik>,
   );
 
-const renderSummary = (isSubmitted = false) =>
+const renderSummary = (
+  isSubmitted = false,
+  initialStatus: unknown = { hidden: {} },
+) =>
   render(
     <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
       <Formik
         initialValues={formValues}
-        initialStatus={{ hidden: {} }}
+        initialStatus={initialStatus}
         onSubmit={() => {}}
       >
         <Form>
@@ -270,107 +331,126 @@ const renderSummary = (isSubmitted = false) =>
           </Routes>
         </Form>
       </Formik>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
-describe('OrganisationAndContact', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const resetTaComponentsMocks = () => {
+  vi.clearAllMocks();
+  mocks.supportingDocumentsUploadAttachment.mockClear();
+  mocks.supportingDocumentsUploadFiles.mockClear();
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(OrganisationAndContact, () => {
   it('renders the editable organisation and contact fields with prefixed field names', () => {
-    renderWithFormik(
-      <OrganisationAndContact isSummary={false} name='organisationAndContact' />
-    );
+    expect.hasAssertions();
 
-    expect(
-      screen.getByTestId('radio-organisationAndContact.isManufacturer')
-    ).toHaveAttribute('data-summary', 'false');
-    expect(screen.getByTestId('text-input')).toHaveAttribute(
-      'data-name',
-      'organisationAndContact.name'
+    resetTaComponentsMocks();
+
+    renderWithFormik(
+      <OrganisationAndContact
+        isSummary={false}
+        name='organisationAndContact'
+      />,
     );
-    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
-      'data-name',
-      'organisationAndContact.streetAddress'
-    );
-    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
-      'data-max-results',
-      '10'
-    );
-    expect(screen.getByTestId('authorised-agent')).toHaveAttribute(
-      'data-name',
-      'organisationAndContact.authorisedAgent'
-    );
-    expect(
-      screen
-        .getAllByTestId('contact-details')
-        .map((node) => node.getAttribute('data-name'))
-    ).toEqual([
-      'organisationAndContact.contact',
-      'organisationAndContact.invoiceContact',
-    ]);
-    expect(
-      screen.getByRole('heading', { name: 'Contact information' })
-    ).toBeInTheDocument();
 
     const principalContact = screen.getByTestId(
-      'radio-organisationAndContact.isPrincipalContact'
+      'radio-organisationAndContact.isPrincipalContact',
     );
-    expect(principalContact).toHaveTextContent('Use my contact details');
-    expect(principalContact).toHaveTextContent('Dr Ada Lovelace');
-    expect(principalContact).toHaveTextContent('ada@example.gov.au');
-    expect(principalContact).toHaveTextContent('A different contact person');
-    expect(
-      screen.getByTestId('help-organisationAndContact.isPrincipalContact')
-    ).toHaveTextContent('Dashboard > Settings menu > My contact details');
+
+    expect({
+      manufacturerSummary: screen
+        .getByTestId('radio-organisationAndContact.isManufacturer')
+        .getAttribute('data-summary'),
+      name: screen.getByTestId('text-input').getAttribute('data-name'),
+      streetAddress: screen
+        .getByTestId('address-lookup')
+        .getAttribute('data-name'),
+      maxResults: screen
+        .getByTestId('address-lookup')
+        .getAttribute('data-max-results'),
+      authorisedAgent: screen
+        .getByTestId('authorised-agent')
+        .getAttribute('data-name'),
+      contactNames: screen
+        .getAllByTestId('contact-details')
+        .map((node) => node.getAttribute('data-name')),
+      heading: screen.getByRole('heading', { name: 'Contact information' })
+        .textContent,
+      principalContact: [
+        principalContact.textContent?.includes('Use my contact details'),
+        principalContact.textContent?.includes('Dr Ada Lovelace'),
+        principalContact.textContent?.includes('ada@example.gov.au'),
+        principalContact.textContent?.includes('A different contact person'),
+      ],
+      help: screen
+        .getByTestId('help-organisationAndContact.isPrincipalContact')
+        .textContent?.replace(/\s+/g, ' ')
+        .includes('Dashboard > Settings menu > My contact details'),
+    }).toStrictEqual({
+      manufacturerSummary: 'false',
+      name: 'organisationAndContact.name',
+      streetAddress: 'organisationAndContact.streetAddress',
+      maxResults: '10',
+      authorisedAgent: 'organisationAndContact.authorisedAgent',
+      contactNames: [
+        'organisationAndContact.contact',
+        'organisationAndContact.invoiceContact',
+      ],
+      heading: 'Contact information',
+      principalContact: [true, true, true, true],
+      help: true,
+    });
   });
 
   it('renders the summary field names without a prefix when no name is supplied', () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
     renderWithFormik(<OrganisationAndContact isSummary name='' />);
 
-    expect(screen.getByTestId('radio-isManufacturer')).toHaveAttribute(
-      'data-summary',
-      'true'
-    );
-    expect(screen.getByTestId('text-input')).toHaveAttribute(
-      'data-name',
-      'name'
-    );
-    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
-      'data-name',
-      'streetAddress'
-    );
-    expect(screen.getByTestId('authorised-agent')).toHaveAttribute(
-      'data-name',
-      'authorisedAgent'
-    );
-    expect(
-      screen
-        .getAllByTestId('contact-details')
-        .map((node) => node.getAttribute('data-name'))
-    ).toEqual(['contact', 'invoiceContact']);
-    expect(
-      screen.getByRole('heading', { name: 'Contact' })
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('heading', { name: 'Contact information' })
-    ).not.toBeInTheDocument();
-
     const principalContact = screen.getByTestId('radio-isPrincipalContact');
-    expect(principalContact).toHaveTextContent('Ms Grace Hopper');
-    expect(principalContact).toHaveTextContent('grace@example.gov.au');
+
+    expect({
+      manufacturerSummary: screen
+        .getByTestId('radio-isManufacturer')
+        .getAttribute('data-summary'),
+      name: screen.getByTestId('text-input').getAttribute('data-name'),
+      streetAddress: screen
+        .getByTestId('address-lookup')
+        .getAttribute('data-name'),
+      authorisedAgent: screen
+        .getByTestId('authorised-agent')
+        .getAttribute('data-name'),
+      contactNames: screen
+        .getAllByTestId('contact-details')
+        .map((node) => node.getAttribute('data-name')),
+      heading: screen.getByRole('heading', { name: 'Contact' }).textContent,
+      noInformationHeading: screen.queryByRole('heading', {
+        name: 'Contact information',
+      }),
+      principalContact: principalContact.textContent,
+    }).toStrictEqual({
+      manufacturerSummary: 'true',
+      name: 'name',
+      streetAddress: 'streetAddress',
+      authorisedAgent: 'authorisedAgent',
+      contactNames: ['contact', 'invoiceContact'],
+      heading: 'Contact',
+      noInformationHeading: null,
+      principalContact: expect.stringContaining('Ms Grace Hopper') as unknown,
+    });
   });
 });
 
-describe('SummaryAndSubmit', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.supportingDocumentsUploadAttachment.mockClear();
-    mocks.supportingDocumentsUploadFiles.mockClear();
-  });
-
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(SummaryAndSubmit, () => {
   it('renders the summaries when the form carries no hiding rules', () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
     render(
       <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
         <Formik initialValues={formValues} onSubmit={() => {}}>
@@ -383,55 +463,68 @@ describe('SummaryAndSubmit', () => {
             </Routes>
           </Form>
         </Formik>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Application type')).toBeInTheDocument();
   });
 
   it('renders editable summary sections with edit links and declaration fields', async () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
     renderSummary();
 
-    expect(mocks.useBodyClass).toHaveBeenCalledWith('summary');
-    expect(
-      screen.getByText(/Before you submit your request/)
-    ).toBeInTheDocument();
-    // Organisation and application read from the wizard's Formik values.
-    expect(screen.getByText('Organisation name')).toBeInTheDocument();
-    expect(screen.getByText('Application type')).toBeInTheDocument();
-    expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
-      'data-name',
-      'supportingDocuments.form.documents'
-    );
-    expect(
-      screen
-        .getAllByTestId('edit-link')
-        .map((link) => link.getAttribute('href'))
-    ).toEqual([
-      '/ta/PA-300/organisation-details',
-      '/ta/PA-300/application-details',
-      '/ta/PA-300/supporting-documents',
-    ]);
-
     const checkboxes = screen.getAllByTestId('checkbox');
-    expect(
-      checkboxes.map((checkbox) => checkbox.getAttribute('data-name'))
-    ).toEqual([
-      'acceptNMIP106',
-      'acceptTermsAndConditions',
-      'acceptDeclaration',
-    ]);
-    expect(
-      within(
-        screen.getByTestId('accordion-applicationTermsAndConditions')
-      ).getByText(/You must read and accept the NMI P 106/)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', {
-        name: 'NMI P 106 Procedures for approval and certification of patterns of measuring instruments (PDF)',
-      })
-    ).toHaveAttribute('target', '_blank');
-    expect(screen.queryByTestId('back-button')).not.toBeInTheDocument();
+
+    expect({
+      bodyClassCalls: mocks.useBodyClass.mock.calls,
+      guidance: screen.getByText(/Before you submit your request/).textContent,
+      organisation: screen.getByText('Organisation name').textContent,
+      application: screen.getByText('Application type').textContent,
+      supportingDocuments: screen
+        .getByTestId('supporting-documents')
+        .getAttribute('data-name'),
+      editLinks: screen
+        .getAllByTestId('edit-link')
+        .map((link) => link.getAttribute('href')),
+      checkboxes: checkboxes.map((checkbox) =>
+        checkbox.getAttribute('data-name'),
+      ),
+      terms: within(
+        screen.getByTestId('accordion-applicationTermsAndConditions'),
+      ).getByText(/You must read and accept the NMI P 106/).textContent,
+      pdfTarget: screen
+        .getByRole('link', {
+          name: 'NMI P 106 Procedures for approval and certification of patterns of measuring instruments (PDF)',
+        })
+        .getAttribute('target'),
+      backButton: screen.queryByTestId('back-button'),
+    }).toStrictEqual({
+      bodyClassCalls: [['summary']],
+      guidance: expect.stringMatching(
+        /Before you submit your request/,
+      ) as unknown,
+      organisation: 'Organisation name',
+      application: 'Application type',
+      supportingDocuments: 'supportingDocuments.form.documents',
+      editLinks: [
+        '/ta/PA-300/organisation-details',
+        '/ta/PA-300/application-details',
+        '/ta/PA-300/supporting-documents',
+      ],
+      checkboxes: [
+        'acceptNMIP106',
+        'acceptTermsAndConditions',
+        'acceptDeclaration',
+      ],
+      terms: expect.stringMatching(
+        /You must read and accept the NMI P 106/,
+      ) as unknown,
+      pdfTarget: '_blank',
+      backButton: null,
+    });
     await expect
       .poll(() => mocks.supportingDocumentsUploadAttachment)
       .toHaveBeenCalledWith([]);
@@ -440,19 +533,33 @@ describe('SummaryAndSubmit', () => {
       .toHaveBeenCalledWith([]);
   });
 
+  it('uses empty hiding rules when hidden status is undefined', () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
+    renderSummary(false, { hidden: undefined });
+
+    expect(screen.getByText('Application type')).toBeInTheDocument();
+  });
+
   it('renders the submitted summary without edit controls and with a dashboard return link', () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
     renderSummary(true);
 
     expect(
-      screen.queryByText(/Before you submit your request/)
+      screen.queryByText(/Before you submit your request/),
     ).not.toBeInTheDocument();
     expect(screen.queryByTestId('edit-link')).not.toBeInTheDocument();
     expect(screen.getByTestId('back-button')).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
     expect(screen.getByTestId('back-button')).toHaveTextContent(
-      'Back to dashboard'
+      'Back to dashboard',
     );
   });
 });

@@ -3,7 +3,8 @@ name: structured-autonomy-generate
 description: 'Structured Autonomy Implementation Generator Prompt'
 ---
 
-You are a PR implementation plan generator that creates complete, copy-paste ready implementation documentation.
+You are a PR implementation plan generator that creates complete, copy-paste
+ready implementation documentation.
 
 Your SOLE responsibility is to:
 
@@ -12,7 +13,8 @@ Your SOLE responsibility is to:
 3. Generate comprehensive step documentation with complete code
 4. Save plan to: `plans/{feature-name}/implementation.md`
 
-Follow the <workflow> below to generate and save implementation files for each step in the plan.
+Follow the <workflow> below to generate and save implementation files for each
+step in the plan.
 
 <workflow>
 
@@ -22,12 +24,14 @@ Follow the <workflow> below to generate and save implementation files for each s
    - Feature name and branch (determines root folder: `plans/{feature-name}/`)
    - Implementation steps (numbered 1, 2, 3, etc.)
    - Files affected by each step
-2. Run comprehensive research ONE TIME using <research_task>. Use `runSubagent` to execute. Do NOT pause.
+2. Run comprehensive research ONE TIME using <research_task>. Use `runSubagent`
+   to execute. Do NOT pause.
 3. Once research returns, proceed to Step 2 (file generation).
 
 ## Step 2: Generate Implementation File
 
-Output the plan as a COMPLETE markdown document using the <plan_template>, ready to be saved as a `.md` file.
+Output the plan as a COMPLETE markdown document using the <plan_template>, ready
+to be saved as a `.md` file.
 
 The plan MUST include:
 
@@ -42,8 +46,8 @@ The plan MUST include:
 
 </workflow>
 
-<research_task>
-For the entire project described in the master plan, research and gather:
+<research_task> For the entire project described in the master plan, research
+and gather:
 
 1. **Project-Wide Analysis:**
    - Project type, technology stack, versions
@@ -86,8 +90,9 @@ Return a comprehensive research package covering the entire project context.
 
 ## Prerequisites
 
-Make sure that the use is currently on the `{feature-name}` branch before beginning implementation.
-If not, move them to the correct branch. If the branch does not exist, create it from main.
+Make sure that the use is currently on the `{feature-name}` branch before
+beginning implementation. If not, move them to the correct branch. If the branch
+does not exist, create it from main.
 
 ### Step-by-Step Instructions
 
@@ -114,7 +119,8 @@ If not, move them to the correct branch. If the branch does not exist, create it
 
 #### Step 1 STOP & COMMIT
 
-**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
+**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage,
+and commit the change.
 
 #### Step 2: {Action}
 
@@ -132,5 +138,5 @@ If not, move them to the correct branch. If the branch does not exist, create it
 
 #### Step 2 STOP & COMMIT
 
-**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage, and commit the change.
-</plan_template>
+**STOP & COMMIT:** Agent must stop here and wait for the user to test, stage,
+and commit the change. </plan_template>

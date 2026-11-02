@@ -23,6 +23,8 @@ const BUDGET_MS = 250;
 
 describe('emailSchema - ReDoS resistance', () => {
   it('rejects a backtracking-bait address without catastrophic slowdown', () => {
+    expect.hasAssertions();
+
     const schema = emailSchema('Email address');
 
     const start = performance.now();
@@ -34,6 +36,8 @@ describe('emailSchema - ReDoS resistance', () => {
   });
 
   it('rejects a long unbroken domain without catastrophic slowdown', () => {
+    expect.hasAssertions();
+
     // No hyphens at all - the old regex still backtracked here, because the
     // domain cannot fit the bounded {0,62} group and every split is tried.
     const schema = emailSchema('Email address');
@@ -56,6 +60,8 @@ describe('emailSchema - accepted addresses', () => {
     ['user@national-measurement.gov.au', 'hyphen inside a label'],
     ['user@xn--80ak6aa92e.com', 'punycode, consecutive hyphens'],
   ])('accepts %s (%s)', (address) => {
+    expect.hasAssertions();
+
     expect(emailSchema('Email address').isValidSync(address)).toBe(true);
   });
 });
@@ -71,20 +77,26 @@ describe('emailSchema - rejected addresses', () => {
     ['a@example.1com', 'TLD does not start with a letter'],
     ['a@b@c.com', 'two @ characters'],
   ])('rejects %s (%s)', (address) => {
+    expect.hasAssertions();
+
     expect(emailSchema('Email address').isValidSync(address)).toBe(false);
   });
 
   it('rejects a domain label that ends with a hyphen', () => {
+    expect.hasAssertions();
+
     // Behaviour change, deliberate. The previous regex accepted this; a
     // trailing hyphen is not a legal DNS label (RFC 1035), and the old
     // pattern only allowed it because its ambiguous domain group could
     // absorb the hyphen. Nothing resolvable is lost.
     expect(emailSchema('Email address').isValidSync('a@trail-.com')).toBe(
-      false
+      false,
     );
   });
 
   it('rejects a domain label longer than the 63-character DNS limit', () => {
+    expect.hasAssertions();
+
     const tooLong = `a@${'y'.repeat(64)}.com`;
 
     expect(emailSchema('Email address').isValidSync(tooLong)).toBe(false);

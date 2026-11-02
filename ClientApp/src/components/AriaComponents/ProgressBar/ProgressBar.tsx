@@ -3,6 +3,7 @@ import {
   ProgressBar as AriaProgressBar,
   type ProgressBarProps as AriaProgressBarProps,
 } from 'react-aria-components/ProgressBar';
+import type { CSSProperties } from 'react';
 import { Label } from '../Form/Form';
 import './ProgressBar.css';
 
@@ -23,7 +24,7 @@ export function ProgressBar({ label, ...props }: Readonly<ProgressBarProps>) {
               style={
                 {
                   '--percent': (isIndeterminate ? 100 : percentage) + '%',
-                } as any
+                } as CSSProperties & { '--percent': string }
               }
             />
           </div>

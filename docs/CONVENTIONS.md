@@ -79,7 +79,7 @@
 
   ```ts
   import { env } from '../env';
-  env.REACT_APP_B2C_CLIENTID; // correct
+  env.VITE_B2C_CLIENTID; // correct
   ```
 
 ## 4) Component Conventions
@@ -209,7 +209,7 @@
 ## 9) Storybook Test Conventions
 
 - Storybook route-aware stories should use the global data-router decorator from
-  `.storybook/preview.ts`.
+  `.storybook/preview.tsx`.
 - Do not add story-local `MemoryRouter` wrappers where global router context is
   already provided.
 - `withPortalProviders` from `ClientApp/src/storybook/storybookHarness.tsx` must
@@ -259,7 +259,7 @@ other: the **application** Node that `setup-node` installs, and the **action**
 Node that GitHub uses to execute an action's own JavaScript.
 
 - **Application/tooling floor** — `engines.node` and
-  `devEngines.runtime.version` are both `>=24.0.0`, with
+  `devEngines.runtime.version` are both `>=24.21.0`, with
   `devEngines.runtime.onFail: error`. The floor deliberately excludes EOL Node
   20, Node 22, and odd-numbered Node 23. `packageManager` stays on `npm@11.17.0`
   (Task D3; the floor itself landed early in Task D1 because
@@ -267,8 +267,8 @@ Node that GitHub uses to execute an action's own JavaScript.
 - **Action runtime** — supplied by the reviewed `checkout`/`setup-node` v7 and
   `upload-artifact` v6 majors, independent of the application version above.
 - **Local dev runtime** — `.node-version` records the exact Node the repository
-  is developed against (`24.20.0`). It is a _hint_, not a gate: no workflow
-  reads it, and it must always satisfy the `>=24.0.0` floor above. Bump it when
+  is developed against (`24.21.0`). It is a _hint_, not a gate: no workflow
+  reads it, and it must always satisfy the `>=24.21.0` floor above. Bump it when
   the team's local runtime moves; do not raise `engines.node` to match, because
   the `lower-bound-node24` job deliberately installs the floor itself.
 - **Version-manager hazard (Windows)** — `fnm` and `nvm4w` prepend their own
@@ -278,7 +278,7 @@ Node that GitHub uses to execute an action's own JavaScript.
   own bundled `npm` — removing the manager can drop `npm` below the
   `packageManager` declaration.
 - **Exact-pinned workflow** — `.github/workflows/chromatic.yml` is the only
-  workflow pinned to a full patch version (`24.20.0`) rather than the floating
+  workflow pinned to a full patch version (`24.21.0`) rather than the floating
   `'24'`, so visual-regression baselines are captured on a reproducible runtime.
   `tests/unit/config/workflowPolicy.test.ts` asserts the exact string, so the
   pin and its assertion must be changed in the same commit.
@@ -307,7 +307,7 @@ are `static-quality-node24`, `build-node24`, `date-timezone`, `e2e-node24`, and
 `lower-bound-node24`.
 
 - `lower-bound-node24` installs on the **exact** floor
-  (`node-version: '24.0.0'`) with `npm ci --strict-peer-deps`, proving the
+  (`node-version: '24.21.0'`) with `npm ci --strict-peer-deps`, proving the
   declared floor resolves rather than merely "some Node 24".
 - `date-timezone` runs the focused date suite under `TZ` of UTC,
   Australia/Sydney, and America/Los_Angeles with `fail-fast: false`. **Its UTC

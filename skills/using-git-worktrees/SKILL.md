@@ -1,17 +1,23 @@
 ---
 name: using-git-worktrees
-description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification
+description:
+  Use when starting feature work that needs isolation from current workspace or
+  before executing implementation plans - creates isolated git worktrees with
+  smart directory selection and safety verification
 ---
 
 # Using Git Worktrees
 
 ## Overview
 
-Git worktrees create isolated workspaces sharing the same repository, allowing work on multiple branches simultaneously without switching.
+Git worktrees create isolated workspaces sharing the same repository, allowing
+work on multiple branches simultaneously without switching.
 
-**Core principle:** Systematic directory selection + safety verification = reliable isolation.
+**Core principle:** Systematic directory selection + safety verification =
+reliable isolation.
 
-**Announce at start:** "I'm using the using-git-worktrees skill to set up an isolated workspace."
+**Announce at start:** "I'm using the using-git-worktrees skill to set up an
+isolated workspace."
 
 ## Directory Selection Process
 
@@ -67,7 +73,8 @@ Per Jesse's rule "Fix broken things immediately":
 2. Commit the change
 3. Proceed with worktree creation
 
-**Why critical:** Prevents accidentally committing worktree contents to repository.
+**Why critical:** Prevents accidentally committing worktree contents to
+repository.
 
 ### For Global Directory (~/.config/superpowers/worktrees)
 
@@ -144,15 +151,15 @@ Ready to implement <feature-name>
 
 ## Quick Reference
 
-| Situation | Action |
-| ----------- | -------- |
-| `.worktrees/` exists | Use it (verify ignored) |
-| `worktrees/` exists | Use it (verify ignored) |
-| Both exist | Use `.worktrees/` |
-| Neither exists | Check CLAUDE.md → Ask user |
-| Directory not ignored | Add to .gitignore + commit |
-| Tests fail during baseline | Report failures + ask |
-| No package.json/Cargo.toml | Skip dependency install |
+| Situation                  | Action                     |
+| -------------------------- | -------------------------- |
+| `.worktrees/` exists       | Use it (verify ignored)    |
+| `worktrees/` exists        | Use it (verify ignored)    |
+| Both exist                 | Use `.worktrees/`          |
+| Neither exists             | Check CLAUDE.md → Ask user |
+| Directory not ignored      | Add to .gitignore + commit |
+| Tests fail during baseline | Report failures + ask      |
+| No package.json/Cargo.toml | Skip dependency install    |
 
 ## Common Mistakes
 
@@ -213,10 +220,12 @@ Ready to implement auth feature
 
 **Called by:**
 
-- **brainstorming** (Phase 4) - REQUIRED when design is approved and implementation follows
+- **brainstorming** (Phase 4) - REQUIRED when design is approved and
+  implementation follows
 - Any skill needing isolated workspace
 
 **Pairs with:**
 
 - **finishing-a-development-branch** - REQUIRED for cleanup after work complete
-- **executing-plans** or **subagent-driven-development** - Work happens in this worktree
+- **executing-plans** or **subagent-driven-development** - Work happens in this
+  worktree

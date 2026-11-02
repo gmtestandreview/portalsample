@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { FormikProps } from 'formik';
 import type { ChangeEvent, ReactNode } from 'react';
 import {
@@ -13,23 +13,23 @@ import { FormikWrapper } from '../../helpers/formik';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  appLoggerError: vi.fn(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 /** Captures what the leaf inputs are handed, so this file's own logic can be observed. */
 const captured = vi.hoisted(() => ({
-  selects: {} as Record<
+  selects: new Map<
     string,
     {
       options: { displayText: string; value: string }[];
       readOnly?: boolean | undefined;
       onChange?: ((event: unknown) => void) | undefined;
     }
-  >,
-  checkboxGroups: {} as Record<
+  >(),
+  checkboxGroups: new Map<
     string,
     { options: { label: string; value: string }[] }
-  >,
+  >(),
   infoPanel: undefined as unknown as {
     category?: string | undefined;
     type?: string | undefined;
@@ -38,158 +38,201 @@ const captured = vi.hoisted(() => ({
 
 /** The select the step rendered under `name`; fails the test if the step never rendered it. */
 const selectNamed = (name: string) =>
-  defined(captured.selects[name], `select "${name}"`);
+  defined(captured.selects.get(name), `select "${name}"`);
 
 /** The checkbox group the step rendered under `name`; fails the test if it was never rendered. */
 const checkboxGroupNamed = (name: string) =>
-  defined(captured.checkboxGroups[name], `checkbox group "${name}"`);
+  defined(captured.checkboxGroups.get(name), `checkbox group "${name}"`);
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
-});
-
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
-
-// HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
-vi.mock('../../../../ClientApp/src/components/forms/HidableField', () => ({
-  default: ({ children }: { children: ReactNode }) => <>{children}</>,
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/SelectInput', () => ({
-  default: ({
-    name,
-    label,
-    options,
-    onChange,
-    readOnly,
-  }: {
-    name: string;
-    label: string;
-    options: { displayText: string; value: string }[];
-    onChange?: (event: unknown) => void;
-    readOnly?: boolean;
-  }) => {
-    captured.selects[name] = { options, readOnly, onChange };
-
-    return (
-      <select
-        aria-label={label}
-        data-testid={`select-${name}`}
-        data-readonly={String(readOnly ?? false)}
-        onChange={(event: ChangeEvent<HTMLSelectElement>) => onChange?.(event)}
-      >
-        <option value='' />
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.displayText}
-          </option>
-        ))}
-      </select>
-    );
-  },
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/CheckboxGroup', () => ({
-  default: ({
-    name,
-    options,
-  }: {
-    name: string;
-    options: { label: string; value: string }[];
-  }) => {
-    captured.checkboxGroups[name] = { options };
-
-    return (
-      <div data-testid={`checkboxes-${name}`} data-count={options.length} />
-    );
-  },
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/RadioButton', () => ({
-  default: ({
-    id,
-    label,
-    checked,
-    onChange,
-    value,
-  }: {
-    id: string;
-    label: string;
-    checked: boolean;
-    onChange: (event: unknown) => void;
-    value: string;
-  }) => (
-    <label htmlFor={id}>
-      <input
-        type='radio'
-        id={id}
-        name='applicationType'
-        value={value}
-        checked={checked}
-        onChange={onChange}
-      />
-      {label}
-    </label>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/TextInput', () => ({
-  default: ({ name, label }: { name: string; label: string }) => (
-    <div data-testid={`text-${name}`}>{label}</div>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/TextAreaInput', () => ({
-  default: ({ name, label }: { name: string; label: string }) => (
-    <div data-testid={`textarea-${name}`}>{label}</div>
-  ),
-}));
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/CertificateNumberLookup',
-  () => ({
-    default: ({ name, label }: { name: string; label: string }) => (
-      <div data-testid={`certificate-${name}`}>{label}</div>
-    ),
-  })
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
-vi.mock('../../../../ClientApp/src/routes/ta/instrumentInfoPanel', () => ({
-  default: ({
-    selectedInstrumentCategoryId,
-    selectedInstrumentTypeId,
-  }: {
-    selectedInstrumentCategoryId?: string;
-    selectedInstrumentTypeId?: string;
-  }) => {
-    captured.infoPanel = {
-      category: selectedInstrumentCategoryId,
-      type: selectedInstrumentTypeId,
-    };
+// HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
+vi.mock(
+  import('../../../../ClientApp/src/components/forms/HidableField'),
+  (() =>
+    ({
+      default: ({ children }: { children: ReactNode }) => <>{children}</>,
+    }) satisfies __ExactMockModule<__TestMockModule70>) as unknown as __DynamicPartialMockFactory<__TestMockModule70>,
+);
 
-    return <div data-testid='instrument-info-panel' />;
-  },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/SelectInput'),
+  (() =>
+    ({
+      default: ({
+        name,
+        label,
+        options,
+        onChange,
+        readOnly,
+      }: {
+        name: string;
+        label: string;
+        options: { displayText: string; value: string }[];
+        onChange?: (event: unknown) => void;
+        readOnly?: boolean;
+      }) => {
+        captured.selects.set(name, { options, readOnly, onChange });
 
-vi.mock('../../../../ClientApp/src/components/SummaryDisplay', () => ({
-  default: ({
-    id,
-    label,
-    value,
-  }: {
-    id: string;
-    label: string;
-    value: string;
-  }) => (
-    <div data-testid={`summary-${id}`} data-label={label}>
-      {value}
-    </div>
-  ),
-}));
+        return (
+          <select
+            aria-label={label}
+            data-testid={`select-${name}`}
+            data-readonly={String(readOnly ?? false)}
+            onChange={(event: ChangeEvent<HTMLSelectElement>) =>
+              onChange?.(event)
+            }
+          >
+            <option value='' />
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.displayText}
+              </option>
+            ))}
+          </select>
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule131>) as unknown as __DynamicPartialMockFactory<__TestMockModule131>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/CheckboxGroup'),
+  (() =>
+    ({
+      default: ({
+        name,
+        options,
+      }: {
+        name: string;
+        options: { label: string; value: string }[];
+      }) => {
+        captured.checkboxGroups.set(name, { options });
+
+        return (
+          <div data-testid={`checkboxes-${name}`} data-count={options.length} />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule132>) as unknown as __DynamicPartialMockFactory<__TestMockModule132>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/RadioButton'),
+  (() =>
+    ({
+      default: ({
+        id,
+        label,
+        checked,
+        onChange,
+        value,
+      }: {
+        id: string;
+        label: string;
+        checked: boolean;
+        onChange: (event: unknown) => void;
+        value: string;
+      }) => (
+        <label htmlFor={id}>
+          <input
+            type='radio'
+            id={id}
+            name='applicationType'
+            value={value}
+            checked={checked}
+            onChange={onChange}
+          />
+          {label}
+        </label>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule133>) as unknown as __DynamicPartialMockFactory<__TestMockModule133>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  (() =>
+    ({
+      default: ({ name, label }: { name: string; label: string }) => (
+        <div data-testid={`text-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>) as unknown as __DynamicPartialMockFactory<__TestMockModule29>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/TextAreaInput'),
+  (() =>
+    ({
+      default: ({ name, label }: { name: string; label: string }) => (
+        <div data-testid={`textarea-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule134>) as unknown as __DynamicPartialMockFactory<__TestMockModule134>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/Inputs/CertificateNumberLookup'),
+  (() =>
+    ({
+      default: ({ name, label }: { name: string; label: string }) => (
+        <div data-testid={`certificate-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule135>) as unknown as __DynamicPartialMockFactory<__TestMockModule135>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel'),
+  (() =>
+    ({
+      default: ({
+        selectedInstrumentCategoryId,
+        selectedInstrumentTypeId,
+      }: {
+        selectedInstrumentCategoryId?: string;
+        selectedInstrumentTypeId?: string;
+      }) => {
+        captured.infoPanel = {
+          category: selectedInstrumentCategoryId,
+          type: selectedInstrumentTypeId,
+        };
+
+        return <div data-testid='instrument-info-panel' />;
+      },
+    }) satisfies __ExactMockModule<__TestMockModule136>) as unknown as __DynamicPartialMockFactory<__TestMockModule136>,
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/SummaryDisplay'),
+  (() =>
+    ({
+      default: ({
+        id,
+        label,
+        value,
+      }: {
+        id: string;
+        label: string;
+        value: string;
+      }) => (
+        <div data-testid={`summary-${id}`} data-label={label}>
+          {value}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule137>) as unknown as __DynamicPartialMockFactory<__TestMockModule137>,
+);
 
 const categoryLookup = () => [
   { id: 'cat-weighing', label: 'Weighing instruments', parentId: undefined },
@@ -235,11 +278,11 @@ const renderStep = async ({
     <FormikWrapper
       initialValues={values}
       innerRef={(bag) => {
-        formik = bag as FormikProps<Record<string, unknown>>;
+        formik = bag;
       }}
     >
       <ApplicationAndInstrument name={name} isSummary={isSummary} />
-    </FormikWrapper>
+    </FormikWrapper>,
   );
 
   await act(async () => {
@@ -249,40 +292,52 @@ const renderStep = async ({
   return result;
 };
 
-describe('application and instrument step', () => {
-  beforeEach(() => {
-    resetMsalMock();
-    mocks.appLoggerError.mockReset();
-    formik = undefined;
-    captured.selects = {};
-    captured.checkboxGroups = {};
-    captured.infoPanel = undefined as unknown as typeof captured.infoPanel;
-  });
+const resetApplicationAndInstrumentMocks = () => {
+  resetMsalMock();
+  mocks.appLoggerError.mockReset();
+  formik = undefined;
+  captured.selects.clear();
+  captured.checkboxGroups.clear();
+  captured.infoPanel = undefined as unknown as typeof captured.infoPanel;
+};
 
+describe('application and instrument step', () => {
   describe('choosing an application type', () => {
     it('offers all three application types with the stored one selected', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
       expect(
-        screen.getByLabelText('New Certificate of Approval (CoA)')
+        screen.getByLabelText('New Certificate of Approval (CoA)'),
       ).toBeChecked();
       expect(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       ).not.toBeChecked();
       expect(screen.getByLabelText('Other options')).not.toBeChecked();
     });
 
     it('starts on a new certificate when nothing is stored', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({ patternApprovalType: undefined }),
       });
 
       await waitFor(() =>
-        expect(screen.getByText('Loading data...')).toBeInTheDocument()
+        expect(screen.getByText('Loading data...')).toBeInTheDocument(),
       );
     });
 
     it('follows the stored type when it is a variation', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           patternApprovalType: PatternApprovalRequiredValues.Variation,
@@ -290,7 +345,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       ).toBeChecked();
     });
 
@@ -303,6 +358,10 @@ describe('application and instrument step', () => {
       // Formik field it still writes the new value, so the stored answer and the highlighted
       // one can disagree. Reading `.value` rather than `.initialValue` is the likely fix, but
       // that changes form behaviour and wants a decision rather than a guess.
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       const user = userEvent.setup();
       await renderStep();
 
@@ -310,11 +369,15 @@ describe('application and instrument step', () => {
 
       expect(screen.getByLabelText('Other options')).not.toBeChecked();
       expect(
-        screen.getByLabelText('New Certificate of Approval (CoA)')
+        screen.getByLabelText('New Certificate of Approval (CoA)'),
       ).toBeChecked();
     });
 
     it('clears stale validation when the type changes after a failed submit', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       const user = userEvent.setup();
       await renderStep();
 
@@ -323,59 +386,75 @@ describe('application and instrument step', () => {
       });
       await act(async () => {
         formik?.setErrors({ instrumentCategory: 'Category is required' });
-        formik?.setTouched({ instrumentCategory: true });
+        await formik?.setTouched({ instrumentCategory: true });
+        await Promise.resolve();
       });
 
       await user.click(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       );
 
       // Switching type changes which fields even apply, so errors about the old branch go.
-      await waitFor(() => expect(formik?.errors).toEqual({}));
-      expect(formik?.touched).toEqual({});
+      await waitFor(() => expect(formik?.errors).toStrictEqual({}));
+
+      expect(formik?.touched).toStrictEqual({});
     });
 
     it('leaves validation alone when the type changes before any submit', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       const user = userEvent.setup();
       await renderStep();
 
       await act(async () => {
         formik?.setErrors({ instrumentCategory: 'Category is required' });
+        await Promise.resolve();
       });
 
       await user.click(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       );
 
-      expect(formik?.errors).toEqual({
+      expect(formik?.errors).toStrictEqual({
         instrumentCategory: 'Category is required',
       });
     });
 
     it('offers the sub-options belonging to each application type', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
       expect(checkboxGroupNamed('newSubOptions').options).toHaveLength(3);
       expect(
-        checkboxGroupNamed('varSubOptions').options.length
+        checkboxGroupNamed('varSubOptions').options.length,
       ).toBeGreaterThan(0);
       expect(
-        checkboxGroupNamed('othSubOptions').options.length
+        checkboxGroupNamed('othSubOptions').options.length,
       ).toBeGreaterThan(0);
     });
   });
 
   describe('instrument lookups', () => {
     it('lists the categories with the none option last', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
       await waitFor(() =>
-        expect(captured.selects['instrumentCategory']).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
       const labels = selectNamed('instrumentCategory').options.map(
-        (o) => o.displayText
+        (o) => o.displayText,
       );
-      expect(labels).toEqual([
+
+      expect(labels).toStrictEqual([
         'Length measures',
         'Weighing instruments',
         'No measurement instrument',
@@ -383,15 +462,24 @@ describe('application and instrument step', () => {
     });
 
     it('offers no instrument types until a category is chosen', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
       await waitFor(() =>
-        expect(captured.selects['instrumentType']).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
-      expect(selectNamed('instrumentType').options).toEqual([]);
+
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
     });
 
     it('narrows the types to the chosen category', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategory: 'cat-weighing',
@@ -400,29 +488,39 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0)
+        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0),
       );
+
       expect(
-        selectNamed('instrumentType').options.map((o) => o.displayText)
-      ).toEqual(['Automatic scale', 'Beam balance']);
+        selectNamed('instrumentType').options.map((o) => o.displayText),
+      ).toStrictEqual(['Automatic scale', 'Beam balance']);
     });
 
     it('shows every type in summary mode regardless of category', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ instrumentCategory: '', instrumentType: '' }),
       });
 
       await waitFor(() =>
-        expect(captured.selects['instrumentType']).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
+
       // Summary is a record of what was chosen, so it must resolve any stored id to a label.
-      expect(selectNamed('instrumentType').options.length).toBe(
-        typeLookup().length
+      expect(selectNamed('instrumentType').options).toHaveLength(
+        typeLookup().length,
       );
     });
 
     it('offers nothing when the lookups have not arrived', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategoryLookup: undefined,
@@ -431,27 +529,37 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(captured.selects['instrumentType']).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
-      expect(selectNamed('instrumentType').options).toEqual([]);
-      expect(selectNamed('instrumentCategory').options).toEqual([]);
+
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
+      expect(selectNamed('instrumentCategory').options).toStrictEqual([]);
     });
 
     it('offers no types when the instrument field has never been set', async () => {
       // Distinct from an empty string: a step whose values omit instrumentType entirely has
       // nothing to resolve against, so the type list starts empty rather than unfiltered.
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       const values = baseValues();
       delete (values as Record<string, unknown>)['instrumentType'];
 
       await renderStep({ values });
 
       await waitFor(() =>
-        expect(captured.selects['instrumentType']).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
-      expect(selectNamed('instrumentType').options).toEqual([]);
+
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
     });
 
     it('ignores a category change before the type lookup has arrived', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategoryLookup: undefined,
@@ -459,23 +567,29 @@ describe('application and instrument step', () => {
         }),
       });
       await waitFor(() =>
-        expect(captured.selects['instrumentCategory']).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
 
       await act(async () => {
         selectNamed('instrumentCategory').onChange?.({
           target: { value: 'cat-weighing' },
         });
+        await Promise.resolve();
       });
 
       // No lookup means no options to narrow; the field is still cleared for re-entry.
-      expect(selectNamed('instrumentType').options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
+
       await waitFor(() => expect(formik?.values['instrumentType']).toBe(''));
     });
 
     it('logs a failure while shaping the lookups', async () => {
       // A lookup entry that is not an object at all makes sortList throw while reading its
       // display field - the catch exists so a malformed payload cannot blank the whole step.
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategoryLookup: [null],
@@ -486,57 +600,71 @@ describe('application and instrument step', () => {
       await waitFor(() =>
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to retrieve look ups',
-          expect.any(Error)
-        )
+          expect.any(Error),
+        ),
       );
     });
   });
 
   describe('changing the instrument category', () => {
     it('re-narrows the types and clears the previous choice', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       const user = userEvent.setup();
       await renderStep();
       await waitFor(() =>
-        expect(captured.selects['instrumentCategory']).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
 
       await user.selectOptions(
         screen.getByTestId('select-instrumentCategory'),
-        'cat-length'
+        'cat-length',
       );
 
       await waitFor(() =>
         expect(
-          selectNamed('instrumentType').options.map((o) => o.displayText)
-        ).toEqual(['Tape measure'])
+          selectNamed('instrumentType').options.map((o) => o.displayText),
+        ).toStrictEqual(['Tape measure']),
       );
+
       expect(formik?.values['instrumentType']).toBe('');
     });
 
     it('picks the none instrument and locks the type when no measurement applies', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       const user = userEvent.setup();
       await renderStep();
       await waitFor(() =>
-        expect(captured.selects['instrumentCategory']).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
 
       await user.selectOptions(
         screen.getByTestId('select-instrumentCategory'),
-        'cat-none'
+        'cat-none',
       );
 
       // Choosing "no measurement instrument" has exactly one valid type, so it is chosen for
       // the user and the field is locked rather than left as an empty required box.
       await waitFor(() =>
-        expect(formik?.values['instrumentType']).toBe('type-none')
+        expect(formik?.values['instrumentType']).toBe('type-none'),
       );
+
       expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
         'data-readonly',
-        'true'
+        'true',
       );
     });
 
     it('locks the type on load when the stored category is the none option', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategory: 'cat-none',
@@ -547,14 +675,18 @@ describe('application and instrument step', () => {
       await waitFor(() =>
         expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
           'data-readonly',
-          'true'
-        )
+          'true',
+        ),
       );
     });
   });
 
   describe('supporting panels', () => {
     it('shows the instrument info and OIML warning while editing', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategory: 'cat-weighing',
@@ -563,22 +695,27 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(screen.getByTestId('instrument-info-panel')).toBeInTheDocument()
+        expect(screen.getByTestId('instrument-info-panel')).toBeInTheDocument(),
       );
-      expect(captured.infoPanel).toEqual({
+
+      expect(captured.infoPanel).toStrictEqual({
         category: 'cat-weighing',
         type: 'type-beam',
       });
       expect(screen.getByRole('alert')).toHaveTextContent(
-        'OIML certificates apply only to specific instrument types'
+        'OIML certificates apply only to specific instrument types',
       );
     });
 
     it('drops both panels in summary mode', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({ isSummary: true });
 
       expect(
-        screen.queryByTestId('instrument-info-panel')
+        screen.queryByTestId('instrument-info-panel'),
       ).not.toBeInTheDocument();
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
@@ -586,6 +723,10 @@ describe('application and instrument step', () => {
 
   describe('summary mode', () => {
     it('names the chosen application type and its options', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({
@@ -597,16 +738,20 @@ describe('application and instrument step', () => {
       });
 
       expect(screen.getByTestId('summary-applicationType')).toHaveTextContent(
-        'New Certificate of Approval (CoA)'
+        'New Certificate of Approval (CoA)',
       );
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent(
-        'NMI Pattern Approval Certificate, International Organisation of Legal Metrology (OIML) Certificate'
+        'NMI Pattern Approval Certificate, International Organisation of Legal Metrology (OIML) Certificate',
       );
     });
 
     it('reads a single stored option that is not in a list', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({
@@ -616,79 +761,107 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Conversion Certificate');
     });
 
     it('says nothing was selected for an empty option list', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ newSubOptions: [] }),
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
     it('says nothing was selected when the options are absent', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ newSubOptions: undefined }),
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
     it('says nothing was selected for a single option it cannot name', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ newSubOptions: 'no-such-option' }),
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
     it('says nothing was selected for options it cannot name', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ newSubOptions: ['no-such-option'] }),
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
     it('says nothing was selected for an application type it cannot name', async () => {
       // A stored type this build does not know about - a retired option, or one added by a
       // later release. The summary says so rather than printing a raw enum value.
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ patternApprovalType: 'Retired' }),
       });
 
       expect(screen.getByTestId('summary-applicationType')).toHaveTextContent(
-        'Not selected'
+        'Not selected',
       );
     });
 
     it('says nothing was selected when no application type is stored', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ patternApprovalType: undefined }),
       });
 
       expect(screen.getByTestId('summary-applicationType')).toHaveTextContent(
-        'Not selected'
+        'Not selected',
       );
     });
 
     it('summarises a variation application', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({
@@ -700,14 +873,18 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-variationSubOptions')
+        screen.getByTestId('summary-variationSubOptions'),
       ).toBeInTheDocument();
       expect(
-        screen.queryByTestId('summary-newCertificateSubOptions')
+        screen.queryByTestId('summary-newCertificateSubOptions'),
       ).not.toBeInTheDocument();
     });
 
     it('summarises an other-approval application', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({
@@ -716,30 +893,38 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-otherApprovalSubOptions')
+        screen.getByTestId('summary-otherApprovalSubOptions'),
       ).toBeInTheDocument();
     });
   });
 
   describe('field naming', () => {
     it('addresses fields at the root when given no prefix', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
-      expect(captured.selects['instrumentCategory']).toBeDefined();
-      expect(captured.checkboxGroups['newSubOptions']).toBeDefined();
+      expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      expect(captured.checkboxGroups.get('newSubOptions')).toBeDefined();
     });
 
     it('prefixes every field when nested under a name', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({ name: 'applicationAndInstrument' });
 
       expect(
-        captured.selects['applicationAndInstrument.instrumentCategory']
+        captured.selects.get('applicationAndInstrument.instrumentCategory'),
       ).toBeDefined();
       expect(
-        captured.selects['applicationAndInstrument.instrumentType']
+        captured.selects.get('applicationAndInstrument.instrumentType'),
       ).toBeDefined();
       expect(
-        captured.checkboxGroups['applicationAndInstrument.newSubOptions']
+        captured.checkboxGroups.get('applicationAndInstrument.newSubOptions'),
       ).toBeDefined();
     });
 
@@ -748,11 +933,15 @@ describe('application and instrument step', () => {
       // getFieldMeta('patternApprovalType'). Nested under a name the radio therefore writes to
       // `<name>.patternApprovalType` while the selection is read from the root. Harmless today
       // because the only nested use is a summary, which never reaches the radio.
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({ name: 'applicationAndInstrument' });
 
       // Selection came from the root value, not from applicationAndInstrument.*.
       expect(
-        screen.getByLabelText('New Certificate of Approval (CoA)')
+        screen.getByLabelText('New Certificate of Approval (CoA)'),
       ).toBeChecked();
     });
   });

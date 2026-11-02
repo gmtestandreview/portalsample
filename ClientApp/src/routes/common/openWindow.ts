@@ -23,7 +23,7 @@ export const openInternalRouteInNewTab = (route: string): void => {
 
 export const openPdfPageInSecureNewTab = (
   fileUrl: string,
-  pageNumber: string
+  pageNumber: string,
 ): void => {
   openUrlInSecureNewTab(`${fileUrl}#page=${encodeURIComponent(pageNumber)}`);
 };

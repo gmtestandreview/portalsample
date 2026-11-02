@@ -15,10 +15,10 @@ import type { AccountContextState } from '../../authentication/accountContext';
 
 const getAccessToken = async (
   accounts: AccountInfo[],
-  instance: IPublicClientApplication
+  instance: IPublicClientApplication,
 ) => {
   const tokenResult = await instance.acquireTokenSilent(
-    silentRequestFor(accounts[0])
+    silentRequestFor(accounts[0]),
   );
 
   return tokenResult.accessToken;
@@ -36,7 +36,7 @@ export const loadContactDetails =
 
     return {
       stepValues: {
-        ...(await client.getUserContact(abortSignal)),
+        ...(await client.getUserContact(undefined, abortSignal)),
       },
     };
   };
@@ -63,12 +63,12 @@ export const completeContactDetails =
   (
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    accountContext: AccountContextState | null
+    accountContext: AccountContextState | null,
   ) =>
   async (
     values: ContactFormStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length === 0) {
       throw new Error('There was an error saving your contact details.');
@@ -83,7 +83,7 @@ export const completeContactDetails =
             ...values,
           },
         },
-        abortSignal
+        abortSignal,
       );
       accountContext?.setContactCompleted();
       setDashboardNotification({

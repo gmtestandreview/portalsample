@@ -1,9 +1,14 @@
 ---
 name: localize-markdown
-description: Localize selected Markdown documents into a target locale while preserving structure, code, links, and repository policy.
+description:
+  Localize selected Markdown documents into a target locale while preserving
+  structure, code, links, and repository policy.
 disable-model-invocation: true
-argument-hint: 'Target locale, source files or folders, output location, exclusions, and overwrite behavior for Markdown localization.'
+argument-hint:
+  'Target locale, source files or folders, output location, exclusions, and
+  overwrite behavior for Markdown localization.'
 ---
+
 # Localize Markdown Documents
 
 Use this prompt only when the user explicitly requests Markdown localization.

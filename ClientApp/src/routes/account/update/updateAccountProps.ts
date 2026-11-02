@@ -2,7 +2,7 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AccountsClient } from '../../../api/web-api-client';
+import { AccountsClient, Title } from '../../../api/web-api-client';
 import type {
   AccountDto,
   GetAccountValuesDto,
@@ -26,19 +26,19 @@ const loadAccountDetails =
   (
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    accountId: number
+    accountId: number,
   ) =>
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
 
       const businessDetailsStep = await client.getAccountDetailsByOrgId(
         accountId,
-        abortSignal
+        abortSignal,
       );
 
       const wizardStepValues: WizardFormStepValues<GetAccountValuesDto> = {
@@ -55,14 +55,14 @@ const completeAccountDetails =
   (
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    accountContext: AccountContextState | null
+    accountContext: AccountContextState | null,
   ) =>
   async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       try {
         const client = new AccountsClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.completeAccountDetails(
@@ -71,7 +71,7 @@ const completeAccountDetails =
               ...values,
             },
           },
-          abortSignal
+          abortSignal,
         );
         accountContext?.setCompleted();
         if (
@@ -83,7 +83,7 @@ const completeAccountDetails =
           accountContext?.setOrganisationAndBranch(
             values.name,
             tradingName,
-            branchName
+            branchName,
           );
         }
         setDashboardNotification({
@@ -121,7 +121,7 @@ const discardChanges: DiscardProps = {
 
 const getRedirectionLocationOnError = (
   errorCode: number,
-  _errorType: ErrorType
+  _errorType: ErrorType,
 ) => {
   if (errorCode === 412) {
     return '/';
@@ -135,7 +135,7 @@ const updateAccountProps = (
   instance: IPublicClientApplication,
   statuses: FormStepStatusDto[],
   accountContext: AccountContextState | null,
-  accountId: number
+  accountId: number,
 ): WizardStepProps<GetAccountValuesDto> => ({
   initialValues: {
     id: '',
@@ -160,7 +160,7 @@ const updateAccountProps = (
     postalAddress: (x: GetAccountValuesDto) =>
       x.postalAddressSameAsStreetAddress === true,
     contact: {
-      titleOther: (x: GetAccountValuesDto) => x.contact?.title !== 'Other',
+      titleOther: (x: GetAccountValuesDto) => x.contact?.title !== Title.Other,
     },
   },
   validateHard: organisationSubmitValidation,

@@ -7,7 +7,8 @@ tags: bundle, third-party, analytics, defer
 
 ## Defer Non-Critical Third-Party Libraries
 
-Analytics, logging, and error tracking don't block user interaction. Load them after hydration.
+Analytics, logging, and error tracking don't block user interaction. Load them
+after hydration.
 
 **Incorrect (blocks initial bundle):**
 
@@ -33,7 +34,7 @@ import dynamic from 'next/dynamic';
 
 const Analytics = dynamic(
   () => import('@vercel/analytics/react').then((m) => m.Analytics),
-  { ssr: false }
+  { ssr: false },
 );
 
 export default function RootLayout({ children }) {

@@ -72,8 +72,10 @@ const instrumentFixture: DashboardItemDto = {
   },
 };
 
-describe('InstrumentItem accessibility', () => {
+describe('instrumentItem accessibility', () => {
   it('does not emit aria-prohibited-attr for the card container', async () => {
+    expect.hasAssertions();
+
     render(
       <MemoryRouter initialEntries={['/']}>
         <AccountStateCtx.Provider
@@ -124,12 +126,12 @@ describe('InstrumentItem accessibility', () => {
             </ModalStateCtx.Provider>
           </AccountDispatchCtx.Provider>
         </AccountStateCtx.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const results = await axe.run(document.body);
     const target = results.incomplete.find(
-      (item) => item.id === 'aria-prohibited-attr'
+      (item) => item.id === 'aria-prohibited-attr',
     );
 
     expect(target).toBeUndefined();

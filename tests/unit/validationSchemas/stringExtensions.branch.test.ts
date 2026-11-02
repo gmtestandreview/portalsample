@@ -7,7 +7,7 @@ import { registerYupStringExtensions } from '../../../ClientApp/src/validationSc
 const valid = (schema: Yup.StringSchema, value: unknown) =>
   schema.isValidSync(value);
 
-describe('Yup string extension branch coverage', () => {
+describe('yup string extension branch coverage', () => {
   it.each([
     ['fixedDigits', Yup.string().fixedDigits(2), null],
     ['numbersOnly', Yup.string().numbersOnly(), null],
@@ -29,6 +29,8 @@ describe('Yup string extension branch coverage', () => {
     ['numberWithinRange', Yup.string().numberWithinRange(1, 2), null],
     ['maxLength', Yup.string().maxLength(2), null],
   ])('rejects null for non-nullable %s schemas', (_name, schema, value) => {
+    expect.hasAssertions();
+
     expect(valid(schema, value)).toBe(false);
   });
 
@@ -60,22 +62,28 @@ describe('Yup string extension branch coverage', () => {
     ],
     ['maxLength', Yup.string().nullable().maxLength(2), null],
   ])('allows null for nullable %s schemas', (_name, schema, value) => {
+    expect.hasAssertions();
+
     expect(valid(schema, value)).toBe(true);
   });
 
   it('uses explicit error messages before label and fallback messages', async () => {
+    expect.hasAssertions();
+
     await expect(
-      Yup.string().fixedDigits(2, 'Code', 'Custom fixed').validate('1')
+      Yup.string().fixedDigits(2, 'Code', 'Custom fixed').validate('1'),
     ).rejects.toThrow('Custom fixed');
     await expect(
-      Yup.string().numbersOnly('Code').validate('A')
+      Yup.string().numbersOnly('Code').validate('A'),
     ).rejects.toThrow('Code must only include numbers');
     await expect(
-      Yup.object({ code: Yup.string().numbersOnly() }).validate({ code: 'A' })
+      Yup.object({ code: Yup.string().numbersOnly() }).validate({ code: 'A' }),
     ).rejects.toThrow('code must only include numbers');
   });
 
   it('casts numbers before applying string extension tests', () => {
+    expect.hasAssertions();
+
     expect(valid(Yup.string().fixedDigits(2), 12)).toBe(true);
     expect(valid(Yup.string().postcode(), 2600)).toBe(true);
     expect(valid(Yup.string().phone(), 412345678)).toBe(false);
@@ -171,10 +179,12 @@ describe('Yup string extension branch coverage', () => {
   ])(
     'uses fallback path messages for %s',
     async (_name, schema, value, message) => {
+      expect.hasAssertions();
+
       await expect(
-        Yup.object({ code: schema }).validate({ code: value })
+        Yup.object({ code: schema }).validate({ code: value }),
       ).rejects.toThrow(message);
-    }
+    },
   );
 
   it.each([
@@ -287,22 +297,39 @@ describe('Yup string extension branch coverage', () => {
       'Code cannot be greater than 2 characters',
     ],
   ])('uses label messages for %s', async (_name, schema, value, message) => {
+    expect.hasAssertions();
+
     await expect(schema.validate(value)).rejects.toThrow(message);
   });
 
   it('covers postcode and businessName empty-value paths', () => {
+    expect.hasAssertions();
+
     expect(Yup.string().postcode().isValidSync('')).toBe(true);
     expect(Yup.string().postcode().isValidSync('   ')).toBe(true);
     expect(Yup.string().businessName().isValidSync('')).toBe(true);
   });
 
   it('executes the yupExtensions barrel module explicitly', () => {
-    expect(typeof Yup.string().maxLength).toBe('function');
+    expect.hasAssertions();
+
+    expect(Yup.string().maxLength.bind(Yup.string())).toBeTypeOf('function');
   });
 
   it('allows repeat registration without adding duplicate methods', () => {
+    expect.hasAssertions();
+
     registerYupStringExtensions();
 
-    expect(typeof Yup.string().maxLength).toBe('function');
+    expect(Yup.string().maxLength.bind(Yup.string())).toBeTypeOf('function');
+  });
+
+  it('resets consecutive-letter tracking at non-letter characters', () => {
+    expect.hasAssertions();
+
+    const schema = Yup.string().noConsecutiveChars(2);
+
+    expect(valid(schema, 'ab1a')).toBe(true);
+    expect(valid(schema, 'ab1aa')).toBe(false);
   });
 });

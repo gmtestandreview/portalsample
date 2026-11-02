@@ -1,22 +1,38 @@
 #!/usr/bin/env node
 
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import {
+  listDirectory,
+  makeDirectory,
+  pathExists,
+  readTextFile,
+  writeTextFile,
+} from './safe-file-io.mjs';
 
 const DEFAULT_OUT = 'analysis/sonar-issues-backlog.md';
 const PAGE_SIZE = 500;
+const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+const DEFAULT_MAX_REQUEST_ATTEMPTS = 3;
+const DEFAULT_RETRY_DELAY_MS = 250;
 const MARKDOWN_PIPE_ESCAPE = String.raw`\|`;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
   return index === -1 ? null : process.argv[index + 1];
+}
+
+function positiveIntegerEnv(name, fallback) {
+  const value = Number.parseInt(Reflect.get(process.env, name) ?? '', 10);
+  return Number.isInteger(value) && value > 0 ? value : fallback;
+}
+
+function isRetryableStatus(status) {
+  return status === 429 || status >= 500;
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function rankIssue(issue) {
@@ -67,17 +83,92 @@ function normalizeIssue(issue) {
   };
 }
 
+function validateIssuePayload(payload, source) {
+  if (
+    !payload ||
+    typeof payload !== 'object' ||
+    !Array.isArray(payload.issues)
+  ) {
+    throw new Error(`${source} must contain an issues array.`);
+  }
+
+  const issueValue = (issue, field) => Reflect.get(issue, field);
+
+  payload.issues.forEach((issue, index) => {
+    if (
+      !issue ||
+      typeof issue !== 'object' ||
+      Array.isArray(issue) ||
+      typeof issue.key !== 'string' ||
+      issue.key.length === 0
+    ) {
+      throw new Error(
+        `${source} contains invalid issue at index ${index}: expected an object with a non-empty key.`,
+      );
+    }
+
+    for (const field of [
+      'component',
+      'effort',
+      'impactSeverity',
+      'impactSoftwareQuality',
+      'issueStatus',
+      'message',
+      'rule',
+      'severity',
+      'status',
+      'type',
+      'updateDate',
+    ]) {
+      if (field in issue && typeof issueValue(issue, field) !== 'string') {
+        throw new Error(
+          `${source} contains invalid issue at index ${index}: ${field} must be a string.`,
+        );
+      }
+    }
+
+    for (const field of ['impactSeverities', 'impactSoftwareQualities']) {
+      if (
+        field in issue &&
+        (!Array.isArray(issueValue(issue, field)) ||
+          issueValue(issue, field).some((value) => typeof value !== 'string'))
+      ) {
+        throw new Error(
+          `${source} contains invalid issue at index ${index}: ${field} must be an array of strings.`,
+        );
+      }
+    }
+
+    if ('line' in issue && (!Number.isInteger(issue.line) || issue.line < 1)) {
+      throw new Error(
+        `${source} contains invalid issue at index ${index}: line must be a positive integer.`,
+      );
+    }
+  });
+
+  return payload.issues;
+}
+
+function validateUniqueIssueKeys(issues, source) {
+  const issueKeys = new Set();
+  for (const issue of issues) {
+    if (issueKeys.has(issue.key)) {
+      throw new Error(`${source} contains duplicate issue key ${issue.key}.`);
+    }
+    issueKeys.add(issue.key);
+  }
+}
+
 function priorityWeight(priority) {
-  return (
-    {
-      P0: 0,
-      P1: 1,
-      P2: 2,
-      P3: 3,
-      P4: 4,
-      'Needs triage': 5,
-    }[priority] ?? 6
-  );
+  const weights = new Map([
+    ['P0', 0],
+    ['P1', 1],
+    ['P2', 2],
+    ['P3', 3],
+    ['P4', 4],
+    ['Needs triage', 5],
+  ]);
+  return weights.get(priority) ?? 6;
 }
 
 function formatMarkdown(issues) {
@@ -87,11 +178,11 @@ function formatMarkdown(issues) {
       (a, b) =>
         priorityWeight(a.priority) - priorityWeight(b.priority) ||
         a.status.localeCompare(b.status) ||
-        a.key.localeCompare(b.key)
+        a.key.localeCompare(b.key),
     );
 
   const amberCount = rows.filter(
-    (issue) => issue.priority === 'Needs triage'
+    (issue) => issue.priority === 'Needs triage',
   ).length;
   const lines = [
     '# Sonar Issues Backlog',
@@ -107,7 +198,7 @@ function formatMarkdown(issues) {
 
   for (const issue of rows) {
     lines.push(
-      `| ${issue.priority} | ${issue.key} | ${issue.status} | ${issue.severity} | ${issue.quality} | ${issue.rule} | ${issue.path}:${issue.line} | ${issue.effort} | ${issue.message.replaceAll('|', MARKDOWN_PIPE_ESCAPE)} |`
+      `| ${issue.priority} | ${issue.key} | ${issue.status} | ${issue.severity} | ${issue.quality} | ${issue.rule} | ${issue.path}:${issue.line} | ${issue.effort} | ${issue.message.replaceAll('|', MARKDOWN_PIPE_ESCAPE)} |`,
     );
   }
 
@@ -115,15 +206,110 @@ function formatMarkdown(issues) {
 }
 
 function readFixtureIssues(fixtureDirectory) {
-  return readdirSync(fixtureDirectory)
+  const fixtureRoot = path.isAbsolute(fixtureDirectory)
+    ? fixtureDirectory
+    : process.cwd();
+  const issues = listDirectory(fixtureDirectory, undefined, fixtureRoot)
     .filter((file) => file.endsWith('.json'))
     .sort()
     .flatMap((file) => {
-      const payload = JSON.parse(
-        readFileSync(path.join(fixtureDirectory, file), 'utf8')
-      );
-      return payload.issues ?? [];
+      const fixturePath = path.join(fixtureDirectory, file);
+      let payload;
+      try {
+        payload = JSON.parse(readTextFile(fixturePath, fixtureRoot));
+      } catch (error) {
+        throw new Error(
+          `${fixturePath} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
+          { cause: error },
+        );
+      }
+      return validateIssuePayload(payload, fixturePath);
     });
+  validateUniqueIssueKeys(issues, fixtureDirectory);
+  return issues;
+}
+
+function normalizeSonarRequestError(error, timeoutMs) {
+  if (error instanceof Error && error.name === 'AbortError') {
+    return new Error(`Sonar API request timed out after ${timeoutMs}ms.`);
+  }
+  if (error instanceof Error) return error;
+  return new Error(String(error));
+}
+
+async function requestSonarPage(url, token, timeoutMs) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal,
+    });
+    const responseBody = await response.text();
+    return { response, responseBody };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function parseSonarResponse(responseBody) {
+  try {
+    return JSON.parse(responseBody);
+  } catch (error) {
+    throw new Error(
+      `Sonar API returned invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
+    );
+  }
+}
+
+async function waitBeforeSonarRetry(retryDelayMs, attempt) {
+  await wait(retryDelayMs * 2 ** (attempt - 1));
+}
+
+async function fetchSonarPage(url, token) {
+  const timeoutMs = positiveIntegerEnv(
+    'SONAR_REQUEST_TIMEOUT_MS',
+    DEFAULT_REQUEST_TIMEOUT_MS,
+  );
+  const maxAttempts = positiveIntegerEnv(
+    'SONAR_MAX_REQUEST_ATTEMPTS',
+    DEFAULT_MAX_REQUEST_ATTEMPTS,
+  );
+  const retryDelayMs = positiveIntegerEnv(
+    'SONAR_RETRY_DELAY_MS',
+    DEFAULT_RETRY_DELAY_MS,
+  );
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    let request;
+    try {
+      request = await requestSonarPage(url, token, timeoutMs);
+    } catch (error) {
+      lastError = normalizeSonarRequestError(error, timeoutMs);
+      if (attempt === maxAttempts) throw lastError;
+      await waitBeforeSonarRetry(retryDelayMs, attempt);
+      continue;
+    }
+
+    const { response, responseBody } = request;
+    if (!response.ok) {
+      lastError = new Error(
+        `Sonar API request failed ${response.status}: ${responseBody}`,
+      );
+      if (!isRetryableStatus(response.status) || attempt === maxAttempts) {
+        throw lastError;
+      }
+      await waitBeforeSonarRetry(retryDelayMs, attempt);
+      continue;
+    }
+
+    return parseSonarResponse(responseBody);
+  }
+
+  throw lastError ?? new Error('Sonar API request failed without an error.');
 }
 
 async function fetchLiveIssues() {
@@ -133,7 +319,7 @@ async function fetchLiveIssues() {
 
   if (!(host && token && projectKey)) {
     throw new Error(
-      'Set SONAR_HOST_URL, SONAR_TOKEN, and SONAR_PROJECT_KEY, or run with --fixture <dir>.'
+      'Set SONAR_HOST_URL, SONAR_TOKEN, and SONAR_PROJECT_KEY, or run with --fixture <dir>.',
     );
   }
 
@@ -147,19 +333,34 @@ async function fetchLiveIssues() {
     url.searchParams.set('p', String(page));
     url.searchParams.set('ps', String(PAGE_SIZE));
 
-    const response = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) {
+    const payload = await fetchSonarPage(url, token);
+    const pageIssues = validateIssuePayload(payload, `Sonar API page ${page}`);
+    const nextTotal = payload.paging?.total ?? payload.total;
+
+    if (!Number.isInteger(nextTotal) || nextTotal < 0) {
       throw new Error(
-        `Sonar API request failed ${response.status}: ${await response.text()}`
+        `Sonar API page ${page} must include a non-negative integer total.`,
       );
     }
 
-    const payload = await response.json();
-    issues.push(...(payload.issues ?? []));
-    total = payload.paging?.total ?? payload.total ?? issues.length;
+    if (pageIssues.length === 0 && issues.length < nextTotal) {
+      throw new Error(
+        `Sonar API pagination made no progress on page ${page}: expected ${nextTotal} issue(s), received ${issues.length}.`,
+      );
+    }
+
+    issues.push(...pageIssues);
+    total = nextTotal;
     page += 1;
+
+    try {
+      validateUniqueIssueKeys(issues, `Sonar API page ${page - 1}`);
+    } catch (error) {
+      throw new Error(
+        `Sonar API pagination made no progress on page ${page - 1}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
+      );
+    }
   }
 
   return issues;
@@ -172,16 +373,20 @@ const issues = fixtureDirectory
   : await fetchLiveIssues();
 const markdown = formatMarkdown(issues);
 const outputDirectory = path.dirname(outputPath);
+const outputRoot = path.isAbsolute(outputDirectory)
+  ? outputDirectory
+  : process.cwd();
 
-if (!existsSync(outputDirectory))
-  mkdirSync(outputDirectory, { recursive: true });
-writeFileSync(outputPath, markdown, 'utf8');
+if (!pathExists(outputDirectory, outputRoot)) {
+  makeDirectory(outputDirectory, outputRoot);
+}
+writeTextFile(outputPath, markdown, undefined, outputRoot);
 
 if (issues.some((issue) => rankIssue(issue) === 'Needs triage')) {
   process.stdout.write(
-    'analysis/sonar-issues-backlog.md(1,1): warning SONAR-BACKLOG: [AMBER] backlog contains Sonar issues with unknown severity/quality fields; triage them manually.\n'
+    'analysis/sonar-issues-backlog.md(1,1): warning SONAR-BACKLOG: [AMBER] backlog contains Sonar issues with unknown severity/quality fields; triage them manually.\n',
   );
 }
 process.stdout.write(
-  `Captured ${issues.length} Sonar issue(s) in ${outputPath}.\n`
+  `Captured ${issues.length} Sonar issue(s) in ${outputPath}.\n`,
 );

@@ -28,14 +28,13 @@
       font-weight: normal;
     }
     [slot='description'] {
-    display: none;
+      display: none;
     }
   }
 
   .lucide-chevron-down {
     margin-inline-start: var(--spacing-2);
   }
-
 }
 
 .select-popover[data-trigger='Select'] {

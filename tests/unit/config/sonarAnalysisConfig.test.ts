@@ -5,16 +5,18 @@ import { describe, expect, it } from 'vitest';
 
 const workspaceSettingsPath = path.resolve('.vscode/settings.json');
 
-describe('Sonar analysis configuration', () => {
+describe('sonar analysis configuration', () => {
   it('excludes the generated NSwag client from standalone analysis', () => {
+    expect.hasAssertions();
+
     const workspaceSettings = JSON.parse(
-      fs.readFileSync(workspaceSettingsPath, 'utf8')
+      fs.readFileSync(workspaceSettingsPath, 'utf8'),
     ) as {
       'sonarlint.analysisExcludesStandalone'?: string;
     };
 
     expect(workspaceSettings['sonarlint.analysisExcludesStandalone']).toContain(
-      'ClientApp/src/api/web-api-client.ts'
+      'ClientApp/src/api/web-api-client.ts',
     );
   });
 });

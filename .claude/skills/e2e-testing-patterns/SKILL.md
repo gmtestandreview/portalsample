@@ -1,14 +1,17 @@
 ---
 name: e2e-testing-patterns
-description: "Build reliable, fast, and maintainable end-to-end test suites that provide confidence to ship code quickly and catch regressions before users do."
+description:
+  'Build reliable, fast, and maintainable end-to-end test suites that provide
+  confidence to ship code quickly and catch regressions before users do.'
 risk: safe
 source: community
-date_added: "2026-02-27"
+date_added: '2026-02-27'
 ---
 
 # E2E Testing Patterns
 
-Build reliable, fast, and maintainable end-to-end test suites that provide confidence to ship code quickly and catch regressions before users do.
+Build reliable, fast, and maintainable end-to-end test suites that provide
+confidence to ship code quickly and catch regressions before users do.
 
 ## Use this skill when
 
@@ -41,4 +44,5 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 
 ## Resources
 
-- `resources/implementation-playbook.md` for detailed E2E patterns and templates.
+- `resources/implementation-playbook.md` for detailed E2E patterns and
+  templates.

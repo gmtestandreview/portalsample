@@ -1,7 +1,7 @@
 type FlatErrors = Record<string, string>;
 
 const isFieldError = (
-  value: object
+  value: object,
 ): value is { type: string; message?: unknown } =>
   'type' in value && typeof value.type === 'string';
 
@@ -17,20 +17,27 @@ const isFieldError = (
 export const flattenRhfErrors = (
   errors: unknown,
   prefix = '',
-  result: FlatErrors = {}
+  result: FlatErrors = {},
 ): FlatErrors => {
   if (errors === null || typeof errors !== 'object') {
     return result;
   }
 
-  Object.entries(errors).forEach(([key, value]) => {
+  const entries = Object.entries(errors) as Array<[string, unknown]>;
+
+  entries.forEach(([key, value]) => {
     if (value === null || typeof value !== 'object') {
       return;
     }
     const path = prefix === '' ? key : `${prefix}.${key}`;
     if (isFieldError(value)) {
       if (typeof value.message === 'string' && value.message !== '') {
-        result[path] = value.message;
+        Object.defineProperty(result, path, {
+          configurable: true,
+          enumerable: true,
+          value: value.message,
+          writable: true,
+        });
       }
       return;
     }

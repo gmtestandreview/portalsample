@@ -13,7 +13,7 @@ const resolve = async (
     soft?: Pick<Yup.AnyObjectSchema, 'validate'> | undefined;
     hard?: Pick<Yup.AnyObjectSchema, 'validate'> | undefined;
   },
-  options: { mode?: SubmitMode; hidden?: Hideable; values?: object } = {}
+  options: { mode?: SubmitMode; hidden?: Hideable; values?: object } = {},
 ) => {
   const resolver = createWizardYupResolver({
     softSchema: schemas.soft,
@@ -21,58 +21,72 @@ const resolve = async (
     getMode: () => options.mode ?? 'next',
     getHidden: () => options.hidden ?? {},
   });
-  return resolver((options.values ?? { name: '' }) as never, undefined, {
+  return resolver(options.values ?? { name: '' }, undefined, {
     fields: {},
     shouldUseNativeValidation: false,
-  } as never);
+  });
 };
 
 const required = Yup.object({
   name: Yup.string().required('Name is required'),
 });
 
-describe('createWizardYupResolver', () => {
+describe('wizard yup resolver', () => {
   it('passes values through when the mode has no schema', async () => {
+    expect.hasAssertions();
+
     const result = await resolve({ hard: undefined });
-    expect(result).toEqual({ values: { name: '' }, errors: {} });
+
+    expect(result).toStrictEqual({ values: { name: '' }, errors: {} });
   });
 
   it('uses the soft schema for saveAndExit and the hard schema for next', async () => {
+    expect.hasAssertions();
+
     const soft = Yup.object({});
+
     expect(
-      (await resolve({ soft, hard: required }, { mode: 'saveAndExit' })).errors
-    ).toEqual({});
+      (await resolve({ soft, hard: required }, { mode: 'saveAndExit' })).errors,
+    ).toStrictEqual({});
     expect(
-      (await resolve({ soft, hard: required }, { mode: 'next' })).errors
+      (await resolve({ soft, hard: required }, { mode: 'next' })).errors,
     ).toMatchObject({
       name: { message: 'Name is required' },
     });
   });
 
   it('keeps only the first message per path', async () => {
+    expect.hasAssertions();
+
     const twoRules = Yup.object({
       name: Yup.string().min(3, 'Too short').matches(/^x/, 'Must start with x'),
     });
     const { errors } = await resolve(
       { hard: twoRules },
-      { values: { name: 'a' } }
+      { values: { name: 'a' } },
     );
+
     expect(errors).toMatchObject({ name: { message: 'Too short' } });
   });
 
   it('maps a ValidationError that has no inner errors by its own path', async () => {
+    expect.hasAssertions();
+
     const throwing = {
-      validate: async () => {
+      validate: () => {
         throw new Yup.ValidationError('Bad value', 'v', 'name');
       },
     };
     const { errors } = await resolve({ hard: throwing });
+
     expect(errors).toMatchObject({ name: { message: 'Bad value' } });
   });
 
   it('treats a validation error without an inner list as a single error', async () => {
+    expect.hasAssertions();
+
     const throwing = {
-      validate: async () => {
+      validate: () => {
         throw Object.assign(new Error('Odd error'), {
           name: 'ValidationError',
           path: 'name',
@@ -80,41 +94,53 @@ describe('createWizardYupResolver', () => {
       },
     };
     const { errors } = await resolve({ hard: throwing });
+
     expect(errors).toMatchObject({ name: { message: 'Odd error' } });
   });
 
   it('ignores a pathless error with no inner errors', async () => {
+    expect.hasAssertions();
+
     const throwing = {
-      validate: async () => {
+      validate: () => {
         throw new Yup.ValidationError('No path');
       },
     };
-    expect(await resolve({ hard: throwing })).toEqual({
+
+    await expect(resolve({ hard: throwing })).resolves.toStrictEqual({
       values: { name: '' },
       errors: {},
     });
   });
 
   it('drops errors on hidden fields, and passes when only hidden fields fail', async () => {
+    expect.hasAssertions();
+
     const result = await resolve(
       { hard: required },
-      { hidden: { name: true } }
+      { hidden: { name: true } },
     );
-    expect(result).toEqual({ values: { name: '' }, errors: {} });
+
+    expect(result).toStrictEqual({ values: { name: '' }, errors: {} });
   });
 
   it('rethrows failures that are not validation errors', async () => {
+    expect.hasAssertions();
+
     const broken = {
-      validate: async () => {
+      validate: () => {
         throw new TypeError('schema bug');
       },
     };
+
     await expect(resolve({ hard: broken })).rejects.toThrow('schema bug');
   });
 });
 
-describe('RhfForm api', () => {
+describe('rhfForm api', () => {
   it('throws when the api hook is used outside the form', () => {
+    expect.hasAssertions();
+
     const expectedError = 'useRhfFormApi must be used inside RhfForm';
     const expectedReactError =
       'The above error occurred in the <Probe> component:';
@@ -133,28 +159,36 @@ describe('RhfForm api', () => {
         originalConsoleError(...args);
       }
     });
-    const suppressExpectedError = vi.fn((event: ErrorEvent) => {
-      if (
-        event.error instanceof Error &&
-        event.error.message === expectedError
-      ) {
-        event.preventDefault();
-      }
-    });
+    const suppressExpectedError = vi.fn<(event: ErrorEvent) => void>(
+      (event: ErrorEvent) => {
+        if (
+          event.error instanceof Error &&
+          event.error.message === expectedError
+        ) {
+          event.preventDefault();
+        }
+      },
+    );
     globalThis.addEventListener('error', suppressExpectedError);
     try {
       expect(() => render(<Probe />)).toThrow(expectedError);
       expect(spy).toHaveBeenCalledWith(
-        expect.stringContaining(expectedReactError)
+        expect.stringContaining(expectedReactError),
       );
       expect(spy.mock.calls.every(isExpectedConsoleError)).toBe(true);
-      expect(suppressExpectedError).toHaveBeenCalled();
+      expect(suppressExpectedError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.objectContaining({
+            message: expectedError,
+          }) as unknown as Error,
+        }),
+      );
       expect(
         suppressExpectedError.mock.calls.every(
           ([event]) =>
             event.error instanceof Error &&
-            event.error.message === expectedError
-        )
+            event.error.message === expectedError,
+        ),
       ).toBe(true);
     } finally {
       globalThis.removeEventListener('error', suppressExpectedError);
@@ -163,6 +197,8 @@ describe('RhfForm api', () => {
   });
 
   it('hands the api to a render-prop child', () => {
+    expect.hasAssertions();
+
     render(
       <RhfForm initialValues={{}} onSubmit={() => undefined}>
         {(api) => (
@@ -170,8 +206,9 @@ describe('RhfForm api', () => {
             {typeof api.submit} {typeof api.onFormSubmit}
           </span>
         )}
-      </RhfForm>
+      </RhfForm>,
     );
+
     expect(screen.getByTestId('probe').textContent).toBe('function function');
   });
 });

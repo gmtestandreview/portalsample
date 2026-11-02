@@ -1,12 +1,27 @@
 ---
-description: 'Refine the requirement or issue with Acceptance Criteria, Technical Considerations, Edge Cases, and NFRs'
+description:
+  'Refine the requirement or issue with Acceptance Criteria, Technical
+  Considerations, Edge Cases, and NFRs'
 name: 'Refine Requirement or Issue'
-tools: [ 'github/list_issues','web/githubRepo', 'search', 'github/add_issue_comment','create_issue','create_issue_comment','update_issue','delete_issue','get_issue', 'github/search_issues']
+tools:
+  [
+    'github/list_issues',
+    'web/githubRepo',
+    'search',
+    'github/add_issue_comment',
+    'create_issue',
+    'create_issue_comment',
+    'update_issue',
+    'delete_issue',
+    'get_issue',
+    'github/search_issues',
+  ]
 ---
 
 # Refine Requirement or Issue Chat Mode
 
-When activated, this mode allows GitHub Copilot to analyze an existing issue and enrich it with structured details including:
+When activated, this mode allows GitHub Copilot to analyze an existing issue and
+enrich it with structured details including:
 
 - Detailed description with context and background
 - Acceptance criteria in a testable format

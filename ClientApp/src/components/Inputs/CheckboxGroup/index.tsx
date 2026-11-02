@@ -10,7 +10,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 const CheckboxGroup = <T,>(
-  props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>
+  props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>,
 ) => {
   const {
     displayHorizontally,
@@ -88,7 +88,7 @@ const CheckboxGroup = <T,>(
         {displayHorizontally ? (
           <Row>
             {options.map((option) => (
-              <Col key={`${option.value}`}>
+              <Col key={String(option.value)}>
                 <Checkbox
                   name={name}
                   onChange={onChange}
@@ -105,7 +105,7 @@ const CheckboxGroup = <T,>(
         ) : (
           options.map((option) => (
             <Checkbox
-              key={`${option.value}`}
+              key={String(option.value)}
               name={name}
               onChange={onChange}
               containerClassName='mb-0'

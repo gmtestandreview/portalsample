@@ -1,0 +1,3 @@
+exclude_dirs:
+  - tests/hooks
+  - skills/writing-skills/scripts/tests

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -5,49 +6,59 @@ import DatePicker from '@/components/Inputs/DatePicker';
 import type { CustomDatePickerProps } from '@/components/Inputs/DatePicker/types';
 import { parseDateOnlyInput } from '@/utils/dateOnly';
 
-vi.mock('@/components/Inputs/DatePicker/CustomDatePicker', () => ({
-  default: ({
-    currentDate,
-    dateOnBlur,
-    dateOnChange,
-    errorMessage,
-    hasError,
-    label,
-    name,
-    placeholder,
-  }: CustomDatePickerProps) => (
-    <div>
-      <label htmlFor={name}>{label}</label>
-      <input
-        id={name}
-        aria-invalid={hasError ? 'true' : undefined}
-        aria-describedby={hasError ? `${name}-error` : undefined}
-        placeholder={placeholder}
-        defaultValue={currentDate ? currentDate.toISOString() : ''}
-        onBlur={dateOnBlur}
-      />
-      {hasError ? <div id={`${name}-error`}>{errorMessage}</div> : null}
-      <button type='button' onClick={() => dateOnChange(new Date(2026, 5, 12))}>
-        Pick date object
-      </button>
-      <button
-        type='button'
-        onClick={() => dateOnChange('2026-07-13T00:00:00+10:00')}
-      >
-        Pick valid string
-      </button>
-      <button type='button' onClick={() => dateOnChange('not a date')}>
-        Pick invalid string
-      </button>
-      <button type='button' onClick={() => dateOnChange(new Date(Number.NaN))}>
-        Pick invalid date object
-      </button>
-      <button type='button' onClick={() => dateOnChange(null)}>
-        Clear date
-      </button>
-    </div>
-  ),
-}));
+vi.mock(
+  import('@/components/Inputs/DatePicker/CustomDatePicker'),
+  () =>
+    ({
+      default: ({
+        currentDate,
+        dateOnBlur,
+        dateOnChange,
+        errorMessage,
+        hasError,
+        label,
+        name,
+        placeholder,
+      }: CustomDatePickerProps) => (
+        <div>
+          <label htmlFor={name}>{label}</label>
+          <input
+            id={name}
+            aria-invalid={hasError ? 'true' : undefined}
+            aria-describedby={hasError ? `${name}-error` : undefined}
+            placeholder={placeholder}
+            defaultValue={currentDate ? currentDate.toISOString() : ''}
+            onBlur={dateOnBlur}
+          />
+          {hasError ? <div id={`${name}-error`}>{errorMessage}</div> : null}
+          <button
+            type='button'
+            onClick={() => void dateOnChange(new Date(2026, 5, 12))}
+          >
+            Pick date object
+          </button>
+          <button
+            type='button'
+            onClick={() => void dateOnChange('2026-07-13T00:00:00+10:00')}
+          >
+            Pick valid string
+          </button>
+          <button type='button' onClick={() => void dateOnChange('not a date')}>
+            Pick invalid string
+          </button>
+          <button
+            type='button'
+            onClick={() => void dateOnChange(new Date(Number.NaN))}
+          >
+            Pick invalid date object
+          </button>
+          <button type='button' onClick={() => void dateOnChange(null)}>
+            Clear date
+          </button>
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule35>,
+);
 
 interface HarnessProps {
   readonly children: React.ReactNode;
@@ -68,7 +79,7 @@ function Harness({
       {...(initialErrors === undefined ? {} : { initialErrors })}
       {...(initialTouched === undefined ? {} : { initialTouched })}
       initialValues={initialValues}
-      onSubmit={vi.fn()}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>
         {children}
@@ -88,8 +99,14 @@ function ValuesProbe() {
   );
 }
 
-describe('DatePicker wrapper', () => {
-  it('parses initial Formik values, forwards validation state, and normalizes date changes', async () => {
+const expectClearedDueDate = () => {
+  expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null');
+};
+
+describe('datePicker wrapper', () => {
+  it('parses initial Formik values and normalizes valid date changes', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -99,12 +116,13 @@ describe('DatePicker wrapper', () => {
         initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}
       >
         <DatePicker name='dueDate' label='Due date' placeholder='dd/mm/yyyy' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
+
     expect(parseDateOnlyInput((input as HTMLInputElement).value)).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
     expect(input).toHaveAccessibleDescription('Enter a valid date');
     expect(input).toHaveAttribute('placeholder', 'dd/mm/yyyy');
@@ -112,46 +130,56 @@ describe('DatePicker wrapper', () => {
     await user.click(screen.getByRole('button', { name: 'Pick date object' }));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"2026-06-12T00:00:00+00:00"'
-      )
+        '"dueDate":"2026-06-12T00:00:00+00:00"',
+      ),
     );
 
     await user.click(screen.getByRole('button', { name: 'Pick valid string' }));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"2026-07-13T00:00:00+00:00"'
-      )
-    );
-
-    await user.click(
-      screen.getByRole('button', { name: 'Pick invalid string' })
-    );
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"not a date"'
-      )
-    );
-
-    await user.click(
-      screen.getByRole('button', { name: 'Pick invalid date object' })
-    );
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null')
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Clear date' }));
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null')
+        '"dueDate":"2026-07-13T00:00:00+00:00"',
+      ),
     );
   });
 
+  it('normalizes invalid and cleared date values', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+
+    render(
+      <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
+        <DatePicker name='dueDate' label='Due date' placeholder='dd/mm/yyyy' />
+      </Harness>,
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: 'Pick invalid string' }),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"dueDate":"not a date"',
+      ),
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: 'Pick invalid date object' }),
+    );
+    await waitFor(expectClearedDueDate);
+
+    await user.click(screen.getByRole('button', { name: 'Clear date' }));
+    await waitFor(expectClearedDueDate);
+  });
+
   it('normalizes blur values only when the input value changed and marks the field touched', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
@@ -161,32 +189,36 @@ describe('DatePicker wrapper', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"2026-08-14T00:00:00+00:00"'
+        '"dueDate":"2026-08-14T00:00:00+00:00"',
       );
       expect(screen.getByTestId('touched')).toHaveTextContent('"dueDate":true');
     });
   });
 
   it('keeps invalid initial values unparsed', () => {
+    expect.hasAssertions();
+
     render(
       <Harness initialValues={{ dueDate: 'not a date' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByLabelText('Due date')).toHaveValue('');
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"dueDate":"not a date"'
+      '"dueDate":"not a date"',
     );
   });
 
   it('skips normalization on an unchanged empty blur', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
       <Harness initialValues={{ dueDate: '' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
@@ -200,12 +232,14 @@ describe('DatePicker wrapper', () => {
   });
 
   it('normalizes a cleared non-empty date to null on blur', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
@@ -213,15 +247,17 @@ describe('DatePicker wrapper', () => {
     await user.tab();
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null')
+      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'),
     );
   });
 
   it('renders summary values for string, Date, and empty inputs', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Due date')).toBeInTheDocument();
@@ -232,7 +268,7 @@ describe('DatePicker wrapper', () => {
         initialValues={{ dueDate: new Date('2026-06-12T00:00:00.000Z') }}
       >
         <DatePicker name='dueDate' label='Due date' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('12 Jun 2026')).toBeInTheDocument();
@@ -240,7 +276,7 @@ describe('DatePicker wrapper', () => {
     rerender(
       <Harness initialValues={{ dueDate: '' }}>
         <DatePicker name='dueDate' label='Due date' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Due date')).toBeInTheDocument();

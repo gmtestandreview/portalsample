@@ -9,7 +9,8 @@ const defaultError = {
   severity: NotificationSeverity.Error,
 };
 
-describe('DashBoardNotifications', () => {
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(DashBoardNotifications, () => {
   it.each([
     ['forbidden', DashBoardNotifications.getForbiddenNotification],
     ['conflict', DashBoardNotifications.getConflictNotification],
@@ -27,22 +28,24 @@ describe('DashBoardNotifications', () => {
   ])(
     'returns the default dashboard error notification for %s',
     (_name, factory) => {
-      expect(factory()).toEqual(defaultError);
-    }
+      expect.hasAssertions();
+      expect(factory()).toStrictEqual(defaultError);
+    },
   );
 
   it('returns contextual third-party access and report generated notifications', () => {
+    expect.hasAssertions();
     expect(
-      DashBoardNotifications.getThirdPartyAccessNotification('NMI Branch')
-    ).toEqual({
+      DashBoardNotifications.getThirdPartyAccessNotification('NMI Branch'),
+    ).toStrictEqual({
       message:
         'You no longer have access to the records for NMI Branch.  Your changes have not been saved.',
       severity: NotificationSeverity.Error,
     });
 
     expect(
-      DashBoardNotifications.getReportFormsGeneratedNotification()
-    ).toEqual({
+      DashBoardNotifications.getReportFormsGeneratedNotification(),
+    ).toStrictEqual({
       message:
         'New initial reporting and/or ongoing reporting forms have been generated',
       severity: NotificationSeverity.Information,
@@ -59,8 +62,9 @@ describe('DashBoardNotifications', () => {
     [HttpStatusCode.InternalServerError],
     [HttpStatusCode.NotFound],
   ])('maps dashboard error status %s to an error notification', (status) => {
+    expect.hasAssertions();
     expect(
-      DashBoardNotifications.getDashboardErrorNotification(status)
-    ).toEqual(defaultError);
+      DashBoardNotifications.getDashboardErrorNotification(status),
+    ).toStrictEqual(defaultError);
   });
 });

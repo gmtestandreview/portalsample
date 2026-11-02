@@ -37,12 +37,12 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
         crmQuoteRequestId: quotationData?.crmQuoteRequestId,
       });
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       const fileResponse = await getQuotationFileDetails(
         tokenResult.accessToken,
         quotationData!,
-        true
+        true,
       );
       if (
         fileResponse?.fileData &&
@@ -69,12 +69,12 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
         });
         setPdfSizeLoaded(false);
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         const fileResponse = await getQuotationFileDetails(
           tokenResult.accessToken,
           quotationData!,
-          false
+          false,
         );
         if (fileResponse?.fileSizeBytes) {
           const spnFileSize = getFileSize(fileResponse.fileSizeBytes);
@@ -87,7 +87,7 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
         setFileError(true);
         AppLogger.error(
           'Failed to retrieve the Offered Quotation file size.',
-          e as Error
+          e as Error,
         );
       }
     };
@@ -100,7 +100,9 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
       text={text}
       fileSize={fileSize as string}
       isLoaded={pdfSizeLoaded}
-      getPdf={viewOfferedQuotePdf}
+      getPdf={() => {
+        void viewOfferedQuotePdf();
+      }}
       gaLabel='Quote'
     />
   );

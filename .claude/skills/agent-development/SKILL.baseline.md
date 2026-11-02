@@ -1,6 +1,7 @@
 # Agent Triggering Examples: Best Practices
 
-Complete guide to writing effective `<example>` blocks in agent descriptions for reliable triggering.
+Complete guide to writing effective `<example>` blocks in agent descriptions for
+reliable triggering.
 
 ## Example Block Format
 
@@ -53,8 +54,8 @@ user: "Why is this test failing?"
 user: "Add docs for these functions"
 ```
 
-**Vary the phrasing:**
-Include multiple examples with different phrasings for the same intent:
+**Vary the phrasing:** Include multiple examples with different phrasings for
+the same intent:
 
 ```
 Example 1: user: "Review my code"
@@ -459,8 +460,7 @@ Explicit validation request triggers the agent.
 3. Commentary explains triggering logic clearly
 4. Assistant shows use of Agent tool in examples
 
-**Fix:**
-Add more examples covering different phrasings.
+**Fix:** Add more examples covering different phrasings.
 
 ### Agent Triggers Too Often
 
@@ -470,8 +470,7 @@ Add more examples covering different phrasings.
 2. Triggering conditions overlap with other agents
 3. Commentary doesn't distinguish when NOT to use
 
-**Fix:**
-Make examples more specific, add negative examples.
+**Fix:** Make examples more specific, add negative examples.
 
 ### Agent Triggers in Wrong Scenarios
 
@@ -480,8 +479,7 @@ Make examples more specific, add negative examples.
 1. Examples don't match actual intended use
 2. Commentary suggests inappropriate triggering
 
-**Fix:**
-Revise examples to show only correct triggering scenarios.
+**Fix:** Revise examples to show only correct triggering scenarios.
 
 ## Best Practices Summary
 
@@ -505,4 +503,6 @@ Revise examples to show only correct triggering scenarios.
 
 ## Conclusion
 
-Well-crafted examples are crucial for reliable agent triggering. Invest time in creating diverse, specific examples that clearly demonstrate when and why the agent should be used.
+Well-crafted examples are crucial for reliable agent triggering. Invest time in
+creating diverse, specific examples that clearly demonstrate when and why the
+agent should be used.

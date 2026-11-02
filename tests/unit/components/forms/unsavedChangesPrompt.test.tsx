@@ -1,24 +1,35 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { Formik, useFormikContext } from 'formik';
+import { Formik, type FormikConfig, useFormikContext } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import UnsavedChangesPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedChangesPrompt';
 import UnsavedFormPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt';
+
+type NameFormikSubmit = FormikConfig<{ name: string }>['onSubmit'];
+type Proceed = NonNullable<
+  React.ComponentProps<typeof UnsavedChangesPrompt>['onProceed']
+>;
 
 const guardProps = vi.hoisted(() => ({
   last: undefined as undefined | { when?: boolean; onProceed?: () => void },
 }));
 
-vi.mock('../../../../ClientApp/src/components/RouteLeavingGuard', () => ({
-  default: (props: { when?: boolean; onProceed?: () => void }) => {
-    guardProps.last = props;
-    return <div data-testid='guard' data-when={String(Boolean(props.when))} />;
-  },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/RouteLeavingGuard'),
+  () =>
+    ({
+      default: (props: { when?: boolean; onProceed?: () => void }) => {
+        guardProps.last = props;
+        return (
+          <div data-testid='guard' data-when={String(Boolean(props.when))} />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule20>,
+);
 
 const base = { isDirty: false, isValid: true, submitCount: 0 };
 const whenOf = () => screen.getByTestId('guard').getAttribute('data-when');
 
-describe('UnsavedChangesPrompt', () => {
+describe('unsaved changes prompt', () => {
   it.each([
     ['clean and unsubmitted', base, 'false'],
     ['dirty and unsubmitted', { ...base, isDirty: true }, 'true'],
@@ -43,15 +54,21 @@ describe('UnsavedChangesPrompt', () => {
       'false',
     ],
   ])('when %s the guard is %s', (_name, state, expected) => {
+    expect.hasAssertions();
+
     render(<UnsavedChangesPrompt {...state} />);
+
     expect(whenOf()).toBe(expected);
   });
 
   it('passes onProceed to the guard on both wordings', () => {
-    const onProceed = vi.fn();
+    expect.hasAssertions();
+
+    const onProceed = vi.fn<Proceed>();
     const { rerender } = render(
-      <UnsavedChangesPrompt {...base} onProceed={onProceed} />
+      <UnsavedChangesPrompt {...base} onProceed={onProceed} />,
     );
+
     expect(guardProps.last?.onProceed).toBe(onProceed);
 
     rerender(
@@ -59,39 +76,43 @@ describe('UnsavedChangesPrompt', () => {
         {...base}
         path='/create-account/'
         onProceed={onProceed}
-      />
+      />,
     );
+
     expect(guardProps.last?.onProceed).toBe(onProceed);
   });
 });
 
-describe('UnsavedFormPrompt (Formik)', () => {
+describe('unsavedFormPrompt (Formik)', () => {
   const Probe = () => {
     const { errors } = useFormikContext();
     return <pre data-testid='errors'>{JSON.stringify(errors)}</pre>;
   };
 
   it('clears Formik errors when the guard confirms leaving', async () => {
+    expect.hasAssertions();
+
     render(
       <Formik
         initialValues={{ name: '' }}
         initialErrors={{ name: 'Required' }}
-        onSubmit={vi.fn()}
+        onSubmit={vi.fn<NameFormikSubmit>()}
       >
         <>
           <UnsavedFormPrompt />
           <Probe />
         </>
-      </Formik>
+      </Formik>,
     );
+
     expect(screen.getByTestId('errors')).toHaveTextContent('Required');
 
-    await act(async () => {
+    act(() => {
       guardProps.last?.onProceed?.();
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('errors')).toHaveTextContent('{}')
+      expect(screen.getByTestId('errors')).toHaveTextContent('{}'),
     );
   });
 });

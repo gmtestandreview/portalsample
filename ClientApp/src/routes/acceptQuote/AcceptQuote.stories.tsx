@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { http, HttpResponse } from 'msw/http';
 import { expect, within } from 'storybook/test';
 import ReportRecipient from './reportRecipient';
@@ -32,7 +32,7 @@ const reportRecipientHandler = http.get(
       acceptQuotePreInfo: {
         quotationIdNum: 'Q-2024-000456',
       },
-    })
+    }),
 );
 
 const reportRecipientOtherAddressHandler = http.get(
@@ -65,29 +65,46 @@ const reportRecipientOtherAddressHandler = http.get(
       acceptQuotePreInfo: {
         quotationIdNum: 'Q-2024-000456',
       },
-    })
+    }),
 );
 
 const paymentDetailsHandler = http.get(
   '/api/accept-quote/:id/payment-details',
   () =>
-    HttpResponse.json({
-      acceptQuotePreInfo: {
-        paymentTerms: 'Prepaid',
-        quotationIdNum: 'Q-2024-000456',
+    HttpResponse.json(
+      {
+        acceptQuotePreInfo: {
+          paymentTerms: 'Prepaid',
+          quotationIdNum: 'Q-2024-000456',
+        },
       },
-    })
+      {
+        headers: { 'x-storybook-mock': 'payment-details-prepaid' },
+      },
+    ),
 );
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/AcceptQuote',
   component: ReportRecipient,
+  subcomponents: {
+    PaymentDetails,
+    DeliveryAndReturn,
+    QuotationSummary,
+    SummaryAndAccept,
+  },
   decorators: [withPortalProviders],
   beforeEach({ msw }) {
     msw.use(reportRecipientHandler, paymentDetailsHandler);
   },
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'This page groups five peer AcceptQuote workflow step APIs. The peer entries are documentation groupings, not child controls of ReportRecipient.',
+      },
+    },
     portal: {
       initialEntries: ['/accept-quote/123/report-recipient'],
       formik: {
@@ -108,42 +125,42 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof ReportRecipient>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const ReportRecipientStep: Story = {
+export const ReportRecipientStep = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   render: () => <ReportRecipient id='123' />,
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     await expect(
-      canvas.getByRole('heading', { name: /report recipient organisation/i })
+      canvas.getByRole('heading', { name: /report recipient organisation/i }),
     ).toBeVisible();
     await expect(
-      canvas.getByLabelText(/organisation name for report/i)
+      canvas.getByLabelText(/organisation name for report/i),
     ).toBeVisible();
     await expect(
-      canvas.getByText(/organisation address for report/i)
+      canvas.getByText(/organisation address for report/i),
     ).toBeVisible();
+
     // The spinner here overlays the form rather than replacing it, so the headings above
     // are present before the fetch resolves. The address descriptors are not: they are
     // rendered from the loaded rfqOrganisation, so awaiting them is the settled-state
     // contract for all three setters in the effect. Both the street and postal options
     // carry it, because this fixture sets postalAddressSameAsStreetAddress.
     const addressDescriptors = await canvas.findAllByText(/100 Example Street/);
+
     await expect(addressDescriptors).toHaveLength(2);
   },
-};
+});
 
-export const ReportRecipientSummaryOtherAddress: Story = {
+export const ReportRecipientSummaryOtherAddress = meta.story({
   render: () => <ReportRecipient id='123' isSummary />,
   beforeEach({ msw }) {
     msw.use(reportRecipientOtherAddressHandler);
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/summary-and-accept'],
       formik: {
@@ -161,15 +178,14 @@ export const ReportRecipientSummaryOtherAddress: Story = {
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     await expect(
-      canvas.getByText(/report recipient organisation/i)
+      canvas.getByText(/report recipient organisation/i),
     ).toBeVisible();
     await expect(
-      canvas.getByText(/organisation name for report/i)
+      canvas.getByText(/organisation name for report/i),
     ).toBeVisible();
     // Both assertions above are static summary chrome and pass before the fetch resolves.
     // The "Other" address is the settled-state contract: its value comes from Formik and
@@ -177,13 +193,17 @@ export const ReportRecipientSummaryOtherAddress: Story = {
     // loaded and reports reportAddressType 'Other'.
     await expect(await canvas.findByText(/200 Custom Street/)).toBeVisible();
   },
-};
+});
 
-export const PaymentDetailsStep: Story = {
+export const PaymentDetailsStep = meta.story({
   render: () => <PaymentDetails id='123' />,
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
+      providerLifecycleSentinel: 'payment-details-prepaid',
+      accountContextLifecycleSentinel: 'payment-details-prepaid',
+      sessionStorageSentinel: 'storybook:accept-quote:payment-details:prepaid',
       formik: {
         initialValues: {
           purchaseOrderNo: 'PO-4455',
@@ -199,35 +219,43 @@ export const PaymentDetailsStep: Story = {
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     // The Prepaid paragraph is rendered only once acceptQuotePreInfo has loaded and
     // reports paymentTerms 'Prepaid'. Its negative counterpart is not usable as a
     // settlement anchor, because `paymentTerms !== 'Prepaid'` is already true while the
     // value is undefined.
     await expect(await canvas.findByText(/Prepayment required/)).toBeVisible();
   },
-};
+});
 
-export const PaymentDetailsPostpaid: Story = {
+export const PaymentDetailsPostpaid = meta.story({
   render: () => <PaymentDetails id='123' />,
   beforeEach({ msw }) {
     msw.use(
       http.get('/api/accept-quote/:id/payment-details', () =>
-        HttpResponse.json({
-          acceptQuotePreInfo: {
-            paymentTerms: 'Invoice',
-            quotationIdNum: 'Q-2024-000456',
+        HttpResponse.json(
+          {
+            acceptQuotePreInfo: {
+              paymentTerms: 'Invoice',
+              quotationIdNum: 'Q-2024-000456',
+            },
           },
-        })
-      )
+          {
+            headers: { 'x-storybook-mock': 'payment-details-postpaid' },
+          },
+        ),
+      ),
     );
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
+      providerLifecycleSentinel: 'payment-details-postpaid',
+      accountContextLifecycleSentinel: 'payment-details-postpaid',
+      sessionStorageSentinel: 'storybook:accept-quote:payment-details:postpaid',
       formik: {
         initialValues: {
           purchaseOrderNo: '',
@@ -243,16 +271,15 @@ export const PaymentDetailsPostpaid: Story = {
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     // This story's handler returns paymentTerms 'Invoice', whose paragraph also renders
     // pre-settlement, so the quotation id in the PO inline help is the anchor instead:
     // it appears only when acceptQuotePreInfo has arrived.
     await expect(await canvas.findByText(/Q-2024-000456/)).toBeVisible();
   },
-};
+});
 
 const deliveryAndReturnHandler = http.get(
   '/api/accept-quote/:id/delivery-and-return',
@@ -282,15 +309,16 @@ const deliveryAndReturnHandler = http.get(
       returnContactType: 'SamePerson',
       returnAddressType: 'BusinessAddress',
       returnMethod: 'ClientToArrange',
-    })
+    }),
 );
 
-export const DeliveryAndReturnStep: Story = {
+export const DeliveryAndReturnStep = meta.story({
   render: () => <DeliveryAndReturn id='123' />,
   beforeEach({ msw }) {
     msw.use(deliveryAndReturnHandler);
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/delivery-and-return'],
       formik: {
@@ -303,17 +331,18 @@ export const DeliveryAndReturnStep: Story = {
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     // DeliveryInstructions renders acceptQuotePreInfo.nmiFacilityDeliveryInstructions,
     // so this text is the settled-state contract for the four setters in the effect.
     await expect(
-      await canvas.findByText(/loading dock at the rear of the building/)
+      await canvas.findByText(
+        'Please deliver to the loading dock at the rear of the building.',
+      ),
     ).toBeVisible();
   },
-};
+});
 
 const quotationSummaryHandler = http.get(
   '/api/quote/get-quote-request-details',
@@ -328,15 +357,16 @@ const quotationSummaryHandler = http.get(
         email: 'taylor@example.com',
         phone: '02 7000 0000',
       },
-    })
+    }),
 );
 
-export const QuotationSummaryStep: Story = {
+export const QuotationSummaryStep = meta.story({
   render: () => <QuotationSummary cRMQuoteRequestId='crm-456' />,
   beforeEach({ msw }) {
     msw.use(quotationSummaryHandler);
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/quotation-summary'],
       formik: {
@@ -344,15 +374,14 @@ export const QuotationSummaryStep: Story = {
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     // QuoteDetails renders the quotation id only when quotationData has arrived, so this
     // is the settled-state contract for the QuotationSummary and ViewPdfQuote subtree.
     await expect(await canvas.findByText('Q-2024-000456')).toBeVisible();
   },
-};
+});
 
 const summaryAndAcceptHandler = http.get(
   '/api/accept-quote/:id/summary-and-accept',
@@ -386,10 +415,10 @@ const summaryAndAcceptHandler = http.get(
           postcode: '2601',
         },
       },
-    })
+    }),
 );
 
-export const SummaryAndAcceptStep: Story = {
+export const SummaryAndAcceptStep = meta.story({
   render: () => <SummaryAndAccept id='123' />,
   beforeEach({ msw }) {
     msw.use(
@@ -397,10 +426,11 @@ export const SummaryAndAcceptStep: Story = {
       deliveryAndReturnHandler,
       reportRecipientHandler,
       paymentDetailsHandler,
-      quotationSummaryHandler
+      quotationSummaryHandler,
     );
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/summary-and-accept'],
       formik: {
@@ -411,16 +441,15 @@ export const SummaryAndAcceptStep: Story = {
       },
     },
   },
-  play: async ({
-    canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvas }) => {
     const heading = await canvas.findByText(
-      /Before you accept and submit our offer/i
+      /Before you accept and submit our offer/i,
     );
+
     await expect(heading).toBeVisible();
     // The heading is static chrome and appears before the fetches resolve. The embedded
     // QuotationSummary's quotation id is the actual settled-state contract, and is what
     // holds the story open until ViewPdfQuote has stopped scheduling updates.
     await expect(await canvas.findByText('Q-2024-000456')).toBeVisible();
   },
-};
+});

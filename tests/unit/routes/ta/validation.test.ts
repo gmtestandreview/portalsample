@@ -26,14 +26,14 @@ import { ValidationMessages } from '../../../../ClientApp/src/routes/ta/types';
 type ValidatableSchema = {
   validate(
     value: unknown,
-    options?: { abortEarly?: boolean }
+    options?: { abortEarly?: boolean },
   ): Promise<unknown>;
 };
 
 /** Collects every message so conditional branches are asserted, not just the first. */
 const errorsFor = async (
   schema: ValidatableSchema,
-  value: unknown
+  value: unknown,
 ): Promise<string[]> => {
   try {
     await schema.validate(value, { abortEarly: false });
@@ -50,14 +50,18 @@ const contactDetails = {
   phoneNumber: '0400000000',
 };
 
-describe('organisationAndContactSubmitValidation', () => {
+describe('organisation and contact submit validation', () => {
   it('requires the organisation type', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {});
 
     expect(errors).toContain('Organisation type is a required field');
   });
 
   it('rejects an organisation type outside the Yes/No options', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: 'Maybe',
     });
@@ -66,6 +70,8 @@ describe('organisationAndContactSubmitValidation', () => {
   });
 
   it('requires manufacturer details when the organisation is not the manufacturer', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.No,
     });
@@ -75,6 +81,8 @@ describe('organisationAndContactSubmitValidation', () => {
   });
 
   it('does not require manufacturer details when the organisation is the manufacturer', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
     });
@@ -84,6 +92,8 @@ describe('organisationAndContactSubmitValidation', () => {
   });
 
   it('validates a nominated contact when the user is not the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
       isPrincipalContact: YesNo.No,
@@ -94,67 +104,81 @@ describe('organisationAndContactSubmitValidation', () => {
   });
 
   it('skips contact validation when the user is the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
       isPrincipalContact: YesNo.Yes,
       contact: {},
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('rejects a malformed business website address', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
       businessWebsiteAddress: 'not a website',
     });
 
     expect(errors).toContain(
-      'Business website address is not a valid website address'
+      'Business website address is not a valid website address',
     );
   });
 });
 
-describe('organisationAndContactSaveValidation', () => {
+describe('organisation and contact save validation', () => {
   it('applies the soft contact schema when the user is not the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSaveValidation, {
       isPrincipalContact: YesNo.No,
       contact: contactDetails,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('skips contact validation when the user is the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSaveValidation, {
       isPrincipalContact: YesNo.Yes,
       contact: {},
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('still rejects a malformed website address on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSaveValidation, {
       businessWebsiteAddress: 'not a website',
     });
 
     expect(errors).toContain(
-      'Business website address is not a valid website address'
+      'Business website address is not a valid website address',
     );
   });
 });
 
 describe('supportingDocs validation', () => {
   it('accepts an incomplete document list on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSaveValidation, {
       form: { documents: [{ attachmentCategory: null }] },
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('requires at least one document on submit', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: { documents: [] },
     });
@@ -163,6 +187,8 @@ describe('supportingDocs validation', () => {
   });
 
   it('requires every document to be categorised on submit', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: {
         documents: [
@@ -176,14 +202,18 @@ describe('supportingDocs validation', () => {
   });
 
   it('accepts a fully categorised document list', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: { documents: [{ attachmentCategory: 'Manual' }] },
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('skips the category check when no document array is present', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: {},
     });
@@ -210,68 +240,80 @@ const allPrincipal = {
   authorisedAgent: {},
 };
 
-describe('patternApprovalOrgAndContactSubmitValidation', () => {
+describe('pattern approval organisation and contact submit validation', () => {
   it('skips every nominated party when the principal is used throughout', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSubmitValidation,
-      allPrincipal
+      allPrincipal,
     );
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('validates the contact, invoice contact and authorised agent separately', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSubmitValidation,
-      allNominated
+      allNominated,
     );
 
     // Each of the three nominated parties contributes its own required-field
     // set, so a shared message appears once per party.
     expect(errors.filter((e) => e === 'First name is required')).toHaveLength(
-      3
+      3,
     );
     expect(errors).toContain('Email address is required');
   });
 });
 
-describe('patternApprovalOrgAndContactSaveValidation', () => {
+describe('pattern approval organisation and contact save validation', () => {
   it('skips every nominated party when the principal is used throughout', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSaveValidation,
-      allPrincipal
+      allPrincipal,
     );
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('accepts empty nominated parties because save uses the soft schemas', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSaveValidation,
-      allNominated
+      allNominated,
     );
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });
 
-describe('applicationAndInstrumentSubmitValidation', () => {
+describe('application and instrument submit validation', () => {
   const newCertificate = {
     patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
   };
 
   it('requires at least one new-certificate sub-option', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: [],
     });
 
     expect(errors).toContain(
-      'At least one New Certificate of Approval option is required'
+      'At least one New Certificate of Approval option is required',
     );
   });
 
   it('requires the instrument category and type for a new certificate', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
@@ -282,6 +324,8 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   });
 
   it('leaves make and model optional for a new certificate', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
@@ -290,22 +334,26 @@ describe('applicationAndInstrumentSubmitValidation', () => {
       summary: 'A valid summary',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('requires a variation sub-option and certificate number for a variation', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Variation,
       varSubOptions: [],
     });
 
     expect(errors).toContain(
-      'At least one Variation or request a minor edit options option is required'
+      'At least one Variation or request a minor edit options option is required',
     );
     expect(errors.some((e) => e.includes('Certificate Number'))).toBe(true);
   });
 
   it('requires at least one other-approval sub-option', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: [],
@@ -318,6 +366,8 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   it.each([['ReviewofApproval'], ['ProvisionalCertificate']])(
     'rejects certificate cancellation combined with %s',
     async (conflicting) => {
+      expect.hasAssertions();
+
       const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
         patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         othSubOptions: ['CertificateCancellation', conflicting],
@@ -325,10 +375,12 @@ describe('applicationAndInstrumentSubmitValidation', () => {
       });
 
       expect(errors.some((e) => e.includes('cannot select'))).toBe(true);
-    }
+    },
   );
 
   it('reports the required rule when no options array is supplied', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       summary: 'A valid summary',
@@ -339,6 +391,8 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   });
 
   it('skips the mutual-exclusion check for a non-array options value', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: 'CertificateCancellation',
@@ -351,6 +405,8 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   });
 
   it('treats the mutual-exclusion custom test as passing for non-array values', () => {
+    expect.hasAssertions();
+
     type ConditionalArraySchema = {
       resolve(options: { parent: unknown; value: unknown }): {
         tests: Array<{
@@ -375,33 +431,39 @@ describe('applicationAndInstrumentSubmitValidation', () => {
       value: 'CertificateCancellation',
     });
     const customTest = otherOptionsSchema.tests.find(
-      (test) => test.OPTIONS?.name === 'mutually-exclusive-options'
+      (test) => test.OPTIONS?.name === 'mutually-exclusive-options',
     );
 
     expect(customTest?.OPTIONS?.test?.('CertificateCancellation')).toBe(true);
   });
 
   it('accepts certificate cancellation on its own', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: ['CertificateCancellation'],
       summary: 'A valid summary',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('accepts a review of approval on its own', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: ['ReviewofApproval'],
       summary: 'A valid summary',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('requires a summary once an instrument category is chosen', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
@@ -416,19 +478,23 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   });
 
   it('does not require a summary for a new certificate with no instrument chosen', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
     });
 
     expect(
-      errors.some((e) => e.includes('Summary of application is a required'))
+      errors.some((e) => e.includes('Summary of application is a required')),
     ).toBe(false);
   });
 
   it.each([['°'], [';'], ['\\'], ['|']])(
     'rejects the invalid summary character %s',
     async (character) => {
+      expect.hasAssertions();
+
       const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
         patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         othSubOptions: ['ReviewofApproval'],
@@ -436,10 +502,12 @@ describe('applicationAndInstrumentSubmitValidation', () => {
       });
 
       expect(errors.some((e) => e.includes('invalid characters'))).toBe(true);
-    }
+    },
   );
 
   it('skips the character check for a blank summary', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Amendment,
       summary: '   ',
@@ -449,6 +517,8 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   });
 
   it('rejects a summary longer than 500 characters', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Amendment,
       summary: 'a'.repeat(501),
@@ -458,8 +528,10 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   });
 });
 
-describe('applicationAndInstrumentSaveValidation', () => {
+describe('application and instrument save validation', () => {
   it('allows empty instrument details for a new certificate', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
       instrumentCategory: null,
@@ -468,28 +540,34 @@ describe('applicationAndInstrumentSaveValidation', () => {
       model: null,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('allows an empty certificate number for a variation', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Variation,
       certificateNumber: null,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('allows an empty certificate number for other approval types', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Amendment,
       certificateNumber: null,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('still rejects invalid summary characters on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       summary: 'Summary ; text',
     });
@@ -498,20 +576,24 @@ describe('applicationAndInstrumentSaveValidation', () => {
   });
 
   it('skips the character check for a blank summary on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       summary: '',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });
 
-describe('summaryAndSubmitValidation', () => {
+describe('summary and submit validation', () => {
   it.each([
     ['acceptNMIP106', 'NMI P 106'],
     ['acceptTermsAndConditions', 'terms and conditions'],
     ['acceptDeclaration', 'declaration'],
   ])('requires %s to be accepted', async (field, message) => {
+    expect.hasAssertions();
+
     const allAccepted = {
       acceptNMIP106: true,
       acceptTermsAndConditions: true,
@@ -526,22 +608,26 @@ describe('summaryAndSubmitValidation', () => {
   });
 
   it('accepts the declaration set when every box is ticked', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(summaryAndSubmitValidation, {
       acceptNMIP106: true,
       acceptTermsAndConditions: true,
       acceptDeclaration: true,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });
 
-describe('summaryAndSaveValidation', () => {
+describe('summary and save validation', () => {
   it('accepts an unfinished declaration on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(summaryAndSaveValidation, {
       acceptNMIP106: false,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });

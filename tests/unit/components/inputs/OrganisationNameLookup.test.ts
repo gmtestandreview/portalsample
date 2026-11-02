@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { getFilteredSuggestions } from '@/components/Inputs/OrganisationNameLookup/suggestionUtils';
 
-describe('getFilteredSuggestions', () => {
+describe('suggestion filtering', () => {
   it('sorts matching suggestions with a case-insensitive comparator and removes duplicates', () => {
+    expect.hasAssertions();
+
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',
@@ -16,7 +18,7 @@ describe('getFilteredSuggestions', () => {
       ],
     });
 
-    expect(suggestions).toEqual([
+    expect(suggestions).toStrictEqual([
       'Alpha Pty Ltd',
       'apple Pty Ltd',
       'beta Pty Ltd',
@@ -26,34 +28,40 @@ describe('getFilteredSuggestions', () => {
   });
 
   it('returns an empty array when the trimmed input is shorter than 2 characters', () => {
+    expect.hasAssertions();
     expect(
       getFilteredSuggestions({
         inputValue: 'a',
         optionsFieldName: 'name',
         options: [{ name: 'Alpha Pty Ltd' }],
-      })
-    ).toEqual([]);
+      }),
+    ).toStrictEqual([]);
 
     expect(
       getFilteredSuggestions({
         inputValue: '  ',
         optionsFieldName: 'name',
         options: [{ name: 'Alpha Pty Ltd' }],
-      })
-    ).toEqual([]);
+      }),
+    ).toStrictEqual([]);
   });
 
   it('returns empty when parentValue is set but parentOptionsName is not provided', () => {
+    expect.hasAssertions();
+
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',
       options: [{ name: 'Alpha Pty Ltd', parent: 'Acme' }],
       parentValue: 'acme',
     });
-    expect(suggestions).toEqual([]);
+
+    expect(suggestions).toStrictEqual([]);
   });
 
   it('applies the same ordering when parent filtering is enabled', () => {
+    expect.hasAssertions();
+
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',
@@ -68,7 +76,7 @@ describe('getFilteredSuggestions', () => {
       parentOptionsName: 'parent',
     });
 
-    expect(suggestions).toEqual([
+    expect(suggestions).toStrictEqual([
       'Alpha Pty Ltd',
       'apple Pty Ltd',
       'beta Pty Ltd',

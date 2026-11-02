@@ -186,7 +186,7 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'group flex flex-col gap-1 font-sans'
+        'group flex flex-col gap-1 font-sans',
       )}
     >
       <Label>{label}</Label>

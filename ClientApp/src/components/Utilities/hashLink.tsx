@@ -4,23 +4,23 @@ import { omitUndefined } from '../../utils/omitUndefined';
 const handleHashLinkClick = (
   e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
   id: string,
-  scrollToBlock?: 'center' | 'start'
+  scrollToBlock?: 'center' | 'start',
 ): void => {
   e.preventDefault();
 
-  const linkedElement = document.querySelector(
-    `[id="${id.replaceAll('#', '')}"]`
-  ) as HTMLElement | null;
+  const linkedElement = document.querySelector<HTMLElement>(
+    `[id="${id.replaceAll('#', '')}"]`,
+  );
 
   // if the linked element is within an accordion, expand it and toggle the button
   const accordionHeader = linkedElement?.closest(
-    '[class="accordion-collapse collapse"]'
+    '[class="accordion-collapse collapse"]',
   ) as HTMLElement | null;
 
   const accordionButton = linkedElement
     ?.closest('[class*="accordion-item"]')
     ?.querySelector(
-      '[class="accordion-button collapsed"]'
+      '[class="accordion-button collapsed"]',
     ) as HTMLElement | null;
 
   let waitForAccordionInMs = 0;

@@ -80,40 +80,40 @@ const timeout = config.timeouts.default; // number, with fallback
 
 ```typescript
 export interface UnifiedConfig {
-    database: {
-        host: string;
-        port: number;
-        username: string;
-        password: string;
-        database: string;
-    };
-    server: {
-        port: number;
-        sessionSecret: string;
-    };
-    tokens: {
-        jwt: string;
-        inactivity: string;
-        internal: string;
-    };
-    keycloak: {
-        realm: string;
-        client: string;
-        baseUrl: string;
-        secret: string;
-    };
-    aws: {
-        region: string;
-        emailQueueUrl: string;
-        accessKeyId: string;
-        secretAccessKey: string;
-    };
-    sentry: {
-        dsn: string;
-        environment: string;
-        tracesSampleRate: number;
-    };
-    // ... more sections
+  database: {
+    host: string;
+    port: number;
+    username: string;
+    password: string;
+    database: string;
+  };
+  server: {
+    port: number;
+    sessionSecret: string;
+  };
+  tokens: {
+    jwt: string;
+    inactivity: string;
+    internal: string;
+  };
+  keycloak: {
+    realm: string;
+    client: string;
+    baseUrl: string;
+    secret: string;
+  };
+  aws: {
+    region: string;
+    emailQueueUrl: string;
+    accessKeyId: string;
+    secretAccessKey: string;
+  };
+  sentry: {
+    dsn: string;
+    environment: string;
+    tracesSampleRate: number;
+  };
+  // ... more sections
 }
 ```
 
@@ -130,23 +130,26 @@ const configPath = path.join(__dirname, '../../config.ini');
 const iniConfig = ini.parse(fs.readFileSync(configPath, 'utf-8'));
 
 export const config: UnifiedConfig = {
-    database: {
-        host: iniConfig.database?.host || process.env.DB_HOST || 'localhost',
-        port: parseInt(iniConfig.database?.port || process.env.DB_PORT || '3306'),
-        username: iniConfig.database?.username || process.env.DB_USER || 'root',
-        password: iniConfig.database?.password || process.env.DB_PASSWORD || '',
-        database: iniConfig.database?.database || process.env.DB_NAME || 'blog_dev',
-    },
-    server: {
-        port: parseInt(iniConfig.server?.port || process.env.PORT || '3002'),
-        sessionSecret: iniConfig.server?.sessionSecret || process.env.SESSION_SECRET || 'dev-secret',
-    },
-    // ... more configuration
+  database: {
+    host: iniConfig.database?.host || process.env.DB_HOST || 'localhost',
+    port: parseInt(iniConfig.database?.port || process.env.DB_PORT || '3306'),
+    username: iniConfig.database?.username || process.env.DB_USER || 'root',
+    password: iniConfig.database?.password || process.env.DB_PASSWORD || '',
+    database: iniConfig.database?.database || process.env.DB_NAME || 'blog_dev',
+  },
+  server: {
+    port: parseInt(iniConfig.server?.port || process.env.PORT || '3002'),
+    sessionSecret:
+      iniConfig.server?.sessionSecret ||
+      process.env.SESSION_SECRET ||
+      'dev-secret',
+  },
+  // ... more configuration
 };
 
 // Validate critical config
 if (!config.tokens.jwt) {
-    throw new Error('JWT secret not configured!');
+  throw new Error('JWT secret not configured!');
 }
 ```
 
@@ -230,12 +233,12 @@ sentry.ini
 // Production: Environment variables
 
 export const config: UnifiedConfig = {
-    database: {
-        password: process.env.DB_PASSWORD || iniConfig.database?.password || '',
-    },
-    tokens: {
-        jwt: process.env.JWT_SECRET || iniConfig.tokens?.jwt || '',
-    },
+  database: {
+    password: process.env.DB_PASSWORD || iniConfig.database?.password || '',
+  },
+  tokens: {
+    jwt: process.env.JWT_SECRET || iniConfig.tokens?.jwt || '',
+  },
 };
 ```
 

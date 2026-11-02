@@ -1,4 +1,3 @@
-import { map } from 'lodash';
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
@@ -23,7 +22,7 @@ const isAllowedFile = (file: File, allowedTypes: string[]) =>
 const getUploadValidationErrors = (
   files: File[],
   allowedTypes: string[],
-  maxFiles: number
+  maxFiles: number,
 ): string[] => {
   const typeError =
     `${files.length > 1 ? 'Files' : 'File'} must be` +
@@ -35,11 +34,14 @@ const getUploadValidationErrors = (
 
   if (files.length > maxFiles) {
     errors.push(
-      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`
+      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`,
     );
   }
   return errors;
 };
+
+const isAttachmentDto = (value: unknown): value is AttachmentDto =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /**
  * React Hook Form counterpart of `AttachmentNew`. It reads the attachment list
@@ -74,11 +76,13 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const value: unknown = field.value;
   // A form may hand us a bare object or null; normalise once so every reader
   // below, and each item's `name.index.category` path, sees a list.
-  const attachments: AttachmentDto[] = Array.isArray(value) ? value : [];
+  const attachments: AttachmentDto[] = Array.isArray(value)
+    ? value.filter(isAttachmentDto)
+    : [];
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const unidentifiedAttachmentKeys = useRef(
-    new WeakMap<AttachmentDto, string>()
+    new WeakMap<AttachmentDto, string>(),
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -90,7 +94,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   // Repeated failures for one document would otherwise list the same line twice.
   const onCategoryError = (message: string) =>
     setErrors((current) =>
-      current.includes(message) ? current : [...current, message]
+      current.includes(message) ? current : [...current, message],
     );
 
   const clearFileInput = () => {
@@ -101,7 +105,10 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
 
   const uploadFiles = async (files: File[]) => {
     const result = await onUploadFiles(files);
-    field.onChange([...(result as AttachmentDto[])]);
+    const uploadedAttachments: AttachmentDto[] = Array.isArray(result)
+      ? result
+      : [result];
+    field.onChange(uploadedAttachments);
   };
 
   const uploadSelectedFiles = async (files: File[]) => {
@@ -109,8 +116,8 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
     addErrors(
       oversizeFiles.map(
         (file) =>
-          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInBytes)} limit.`
-      )
+          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInBytes)} limit.`,
+      ),
     );
 
     if (files.length === 1) {
@@ -135,7 +142,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
       const validationErrors = getUploadValidationErrors(
         files,
         allowedTypeList,
-        maxFiles
+        maxFiles,
       );
 
       if (validationErrors.length > 0) {
@@ -144,8 +151,12 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
         try {
           await uploadSelectedFiles(files);
         } catch (error_) {
+          const problemDetails = error_ as ProblemDetails;
           addErrors(
-            map((error_ as ProblemDetails)['errors'], (error) => error)
+            Object.values(
+              (problemDetails['errors'] as
+                Record<string, string[]> | undefined) ?? {},
+            ).flat(),
           );
         }
       }
@@ -160,12 +171,14 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
       if (attachment.id) {
         await onDeleteFile(attachment.id);
         field.onChange(
-          attachments.filter((item: AttachmentDto) => item.id !== attachment.id)
+          attachments.filter(
+            (item: AttachmentDto) => item.id !== attachment.id,
+          ),
         );
         clearFileInput();
       }
     } catch (error_) {
-      setErrors((newErrors) => [...newErrors, `${error_}`]);
+      setErrors((newErrors) => [...newErrors, String(error_)]);
     }
     setIsDeleting(false);
   };
@@ -260,7 +273,9 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                   cursor: 'grab',
                   zIndex: 2,
                 }}
-                onChange={onInputFileChange}
+                onChange={(event) => {
+                  void onInputFileChange(event);
+                }}
               />
               <input
                 disabled={disableUpload}

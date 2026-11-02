@@ -1,60 +1,68 @@
 import { render, screen } from '@testing-library/react';
 import type React from 'react';
 import { MemoryRouter } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import LinkButton from '@/components/Buttons/LinkButton';
 
 const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock('react-aria-components/Link', () => ({
-  Link: ({
-    children,
-    className,
-    href,
-    render: renderLink,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    href?: string;
-    render?: (props: {
-      children: React.ReactNode;
-      className?: string;
-      href?: string;
-    }) => React.ReactNode;
-  }) =>
-    renderLink ? (
-      renderLink(
-        ariaLinkMockState.includeHref
-          ? {
-              children,
-              ...(className === undefined ? {} : { className }),
-              ...(href === undefined ? {} : { href }),
-            }
-          : {
-              children,
-              ...(className === undefined ? {} : { className }),
-            }
-      )
-    ) : (
-      <a className={className} href={href}>
-        {children}
-      </a>
-    ),
-}));
+vi.mock(
+  import('react-aria-components/Link'),
+  (() =>
+    ({
+      Link: ({
+        children,
+        className,
+        href,
+        render: renderLink,
+      }: {
+        children: React.ReactNode;
+        className?: string;
+        href?: string;
+        render?: (props: {
+          children: React.ReactNode;
+          className?: string;
+          href?: string;
+        }) => React.ReactNode;
+      }) =>
+        renderLink ? (
+          renderLink(
+            ariaLinkMockState.includeHref
+              ? {
+                  children,
+                  ...(className === undefined ? {} : { className }),
+                  ...(href === undefined ? {} : { href }),
+                }
+              : {
+                  children,
+                  ...(className === undefined ? {} : { className }),
+                },
+          )
+        ) : (
+          <a className={className} href={href}>
+            {children}
+          </a>
+        ),
+    }) satisfies __ExactMockModule<__TestMockModule18>) as unknown as __DynamicPartialMockFactory<__TestMockModule18>,
+);
 
-describe('LinkButton React Aria render fallback', () => {
-  afterEach(() => {
+describe('linkButton React Aria render fallback', () => {
+  const resetMockState = () => {
     ariaLinkMockState.includeHref = false;
-  });
+  };
 
   it('renders a span when React Aria render props do not include an href', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     render(
       // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
       <LinkButton as='Link' to='/dashboard' variant='btn btn-outline-primary'>
         Dashboard
-      </LinkButton>
+      </LinkButton>,
     );
 
     const fallback = screen.getByText('Dashboard');
@@ -62,11 +70,15 @@ describe('LinkButton React Aria render fallback', () => {
     expect(fallback.tagName).toBe('SPAN');
     expect(fallback).toHaveClass('btn', 'btn-outline-primary');
     expect(
-      screen.queryByRole('link', { name: 'Dashboard' })
+      screen.queryByRole('link', { name: 'Dashboard' }),
     ).not.toBeInTheDocument();
   });
 
   it('renders a router link when React Aria render props include an href', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     ariaLinkMockState.includeHref = true;
 
     render(
@@ -75,20 +87,24 @@ describe('LinkButton React Aria render fallback', () => {
         <LinkButton as='Link' to='/dashboard' variant='secondary'>
           Dashboard
         </LinkButton>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveClass(
       'btn',
-      'btn-secondary'
+      'btn-secondary',
     );
   });
 
   it('renders an anchor link when configured as an anchor', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     render(
       <LinkButton
         as='a'
@@ -96,29 +112,33 @@ describe('LinkButton React Aria render fallback', () => {
         variant='nmi-primary'
       >
         NMI
-      </LinkButton>
+      </LinkButton>,
     );
 
     expect(screen.getByRole('link', { name: 'NMI' })).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
     expect(screen.getByRole('link', { name: 'NMI' })).toHaveClass(
       'btn',
-      'btn-nmi-primary'
+      'btn-nmi-primary',
     );
   });
 
   it('uses the NMI primary variant by default', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     render(
       <LinkButton as='a' href='/requests'>
         Requests
-      </LinkButton>
+      </LinkButton>,
     );
 
     expect(screen.getByRole('link', { name: 'Requests' })).toHaveClass(
       'btn',
-      'btn-nmi-primary'
+      'btn-nmi-primary',
     );
   });
 });

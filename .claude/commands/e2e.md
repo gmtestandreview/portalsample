@@ -19,8 +19,8 @@ Run, generate, or maintain end-to-end tests for critical user flows.
 - MEDIUM: Search, navigation, form submissions
 - LOW: UI polish, cosmetic interactions
 
-**Flaky test protocol:**
-Run locally 3-5 times. If flaky → quarantine with `test.fixme()` and file issue.
+**Flaky test protocol:** Run locally 3-5 times. If flaky → quarantine with
+`test.fixme()` and file issue.
 
 **Success metrics:**
 

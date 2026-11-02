@@ -37,7 +37,7 @@ export function Breadcrumbs<T>(props: BreadcrumbsProps<T>) {
 }
 
 export function Breadcrumb(
-  props: BreadcrumbProps & Omit<LinkProps, 'className'>
+  props: BreadcrumbProps & Omit<LinkProps, 'className'>,
 ) {
   return (
     <RACBreadcrumb {...props}>
@@ -144,14 +144,14 @@ export function Breadcrumbs<T>(props: BreadcrumbsProps<T>) {
 }
 
 export function Breadcrumb(
-  props: BreadcrumbProps & Omit<LinkProps, 'className'>
+  props: BreadcrumbProps & Omit<LinkProps, 'className'>,
 ) {
   return (
     <AriaBreadcrumb
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex items-center gap-1'
+        'flex items-center gap-1',
       )}
     >
       {({ isCurrent }) => (

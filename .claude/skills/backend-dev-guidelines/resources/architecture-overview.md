@@ -1,6 +1,7 @@
 # Architecture Overview - Backend Services
 
-Complete guide to the layered architecture pattern used in backend microservices.
+Complete guide to the layered architecture pattern used in backend
+microservices.
 
 ## Table of Contents
 
@@ -128,15 +129,15 @@ Complete guide to the layered architecture pattern used in backend microservices
 **Critical:** Middleware executes in registration order
 
 ```typescript
-app.use(Sentry.Handlers.requestHandler());  // 1. Sentry tracing (FIRST)
-app.use(express.json());                     // 2. Body parsing
+app.use(Sentry.Handlers.requestHandler()); // 1. Sentry tracing (FIRST)
+app.use(express.json()); // 2. Body parsing
 app.use(express.urlencoded({ extended: true })); // 3. URL encoding
-app.use(cookieParser());                     // 4. Cookie parsing
-app.use(SSOMiddleware.initialize());         // 5. Auth initialization
+app.use(cookieParser()); // 4. Cookie parsing
+app.use(SSOMiddleware.initialize()); // 5. Auth initialization
 // ... routes registered here
-app.use(auditMiddleware);                    // 6. Audit (if global)
-app.use(errorBoundary);                      // 7. Error handler (LAST)
-app.use(Sentry.Handlers.errorHandler());     // 8. Sentry errors (LAST)
+app.use(auditMiddleware); // 6. Audit (if global)
+app.use(errorBoundary); // 7. Error handler (LAST)
+app.use(Sentry.Handlers.errorHandler()); // 8. Sentry errors (LAST)
 ```
 
 **Rule:** Error handlers must be registered AFTER routes!
@@ -212,8 +213,8 @@ form/src/
     └── auditMiddleware.ts         ✅ AsyncLocalStorage pattern
 ```
 
-**Learn from:** workflow/, middleware/auditMiddleware.ts
-**Avoid:** responseRoutes.ts, direct process.env
+**Learn from:** workflow/, middleware/auditMiddleware.ts **Avoid:**
+responseRoutes.ts, direct process.env
 
 ---
 
@@ -426,10 +427,11 @@ src/
 **Route:**
 
 ```typescript
-router.post('/users',
-    SSOMiddleware.verifyLoginStatus,
-    auditMiddleware,
-    (req, res) => userController.create(req, res)
+router.post(
+  '/users',
+  SSOMiddleware.verifyLoginStatus,
+  auditMiddleware,
+  (req, res) => userController.create(req, res),
 );
 ```
 
@@ -479,5 +481,7 @@ async findByEmail(email: string): Promise<User | null> {
 **Related Files:**
 
 - [SKILL.md](SKILL.md) - Main guide
-- [routing-and-controllers.md](routing-and-controllers.md) - Routes and controllers details
-- [services-and-repositories.md](services-and-repositories.md) - Service and repository patterns
+- [routing-and-controllers.md](routing-and-controllers.md) - Routes and
+  controllers details
+- [services-and-repositories.md](services-and-repositories.md) - Service and
+  repository patterns

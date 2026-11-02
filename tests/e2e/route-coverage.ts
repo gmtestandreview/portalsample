@@ -48,7 +48,7 @@ export const routeCoverage: RouteCoverageEntry[] = [
     scenario: 'User updates organisation details',
   },
   {
-    path: '/create-contact',
+    path: '/create-contact/*',
     status: 'app-bdd',
     feature: 'tests/e2e/features/account/create-account.feature',
     scenario: 'User creates organisation and contact details',

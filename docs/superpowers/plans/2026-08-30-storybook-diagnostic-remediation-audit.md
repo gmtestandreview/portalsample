@@ -344,7 +344,7 @@ describe('storybook run log audit', () => {
   it('still reports a positive hit found in a truncated log', () => {
     // Presence of evidence IS valid evidence, even when the run died early.
     const audit = auditLog(
-      `${oomRun}\n[MSW] Warning: intercepted a request without a matching handler`
+      `${oomRun}\n[MSW] Warning: intercepted a request without a matching handler`,
     );
 
     expect(audit.completed).toBe(false);
@@ -354,7 +354,7 @@ describe('storybook run log audit', () => {
 
   it('counts every occurrence of each target string', () => {
     const audit = auditLog(
-      `${completedRun}\nunhandled request\nunhandled request`
+      `${completedRun}\nunhandled request\nunhandled request`,
     );
 
     expect(audit.verdict).toBe('dirty');
@@ -426,7 +426,7 @@ const COMPLETION_MARKER = /^\s*Test Files\s+\d/m;
 export const auditLog = (log: string): LogAudit => {
   const completed = COMPLETION_MARKER.test(log);
   const truncatedBy = TRUNCATION_MARKERS.filter((marker) =>
-    log.includes(marker)
+    log.includes(marker),
   );
   const hits = TARGET_STRINGS.map((target) => ({
     target,
@@ -443,10 +443,10 @@ export const formatReport = (audit: LogAudit, source: string): string => {
 
   if (!audit.completed) {
     lines.push(
-      '  no `Test Files` summary: the run did not reach its end-of-run phases,'
+      '  no `Test Files` summary: the run did not reach its end-of-run phases,',
     );
     lines.push(
-      '  so a zero-hit scan is not evidence that the diagnostics are gone.'
+      '  so a zero-hit scan is not evidence that the diagnostics are gone.',
     );
   }
 
@@ -650,7 +650,7 @@ not Vitest ever applies that object. Assert the emitted coverage report instead.
   };
   export const auditCoverageReport: (
     report: Record<string, unknown>,
-    minimumExecutableEntries: number
+    minimumExecutableEntries: number,
   ) => CoverageReportAudit;
   ```
 
@@ -698,7 +698,7 @@ describe('storybook coverage report audit', () => {
     // application source that imports it.
     const audit = auditCoverageReport(
       Object.fromEntries([entry('C:/repo/ClientApp/src/env.ts')]),
-      3
+      3,
     );
 
     expect(audit.executableEntryCount).toBe(1);
@@ -743,12 +743,12 @@ const withoutQuery = (id: string): string => id.split('?')[0];
 
 const isExecutable = (id: string): boolean =>
   EXECUTABLE_EXTENSIONS.some((extension) =>
-    withoutQuery(id).endsWith(extension)
+    withoutQuery(id).endsWith(extension),
   );
 
 export const auditCoverageReport = (
   report: Record<string, unknown>,
-  minimumExecutableEntries: number
+  minimumExecutableEntries: number,
 ): CoverageReportAudit => {
   const ids = Object.keys(report);
   const nonExecutableEntries = ids.filter((id) => !isExecutable(id));
@@ -777,7 +777,7 @@ if (reportPath !== undefined) {
       `  executable entries: ${audit.executableEntryCount}\n` +
       audit.nonExecutableEntries
         .map((id) => `  non-executable: ${id}\n`)
-        .join('')
+        .join(''),
   );
   process.exitCode = audit.verdict === 'clean' ? 0 : 1;
 }
@@ -847,7 +847,7 @@ const readInstalled = (specifier: string): string =>
 
 const vitestNodeSource = readInstalled('vitest/node');
 const addonSource = readInstalled(
-  '@storybook/addon-vitest/dist/node/vitest.js'
+  '@storybook/addon-vitest/dist/node/vitest.js',
 );
 
 describe('Storybook/Vitest runtime bridge contract', () => {
@@ -869,7 +869,7 @@ describe('Storybook/Vitest runtime bridge contract', () => {
     // Vitest's own init() is a deprecation log plus a delegation to standalone(),
     // which is what makes the bridge a no-op in behaviour rather than a change.
     expect(vitestNodeSource).toMatch(
-      /init\(\)\s*\{[^}]*deprecate[^}]*return this\.standalone\(\)/s
+      /init\(\)\s*\{[^}]*deprecate[^}]*return this\.standalone\(\)/s,
     );
   });
 
@@ -990,10 +990,10 @@ const requestedLookupTypes = [
       .flatMap((file) =>
         [
           ...readFileSync(file, 'utf8').matchAll(
-            /getLookup\(\s*CRMLookupTypes\.(\w+)/g
+            /getLookup\(\s*CRMLookupTypes\.(\w+)/g,
           ),
-        ].map((match) => match[1])
-      )
+        ].map((match) => match[1]),
+      ),
   ),
 ];
 
@@ -1028,9 +1028,9 @@ describe('Storybook MSW handlers', () => {
 
       expect(response.status).toBe(200);
       await expect(response.json()).resolves.toEqual(
-        lookupResponsesByType[lookupType]
+        lookupResponsesByType[lookupType],
       );
-    }
+    },
   );
 
   it('fails closed with 501 on an unmapped lookup type instead of falling through', async () => {
@@ -1123,7 +1123,7 @@ export const mswHandlers = [
       currentPage: 1,
       totalPages: 0,
       totalCount: 0,
-    })
+    }),
   ),
   http.get('/api/lookup/services', () => HttpResponse.json(serviceResponses)),
   // A single handler scoped to one endpoint the application owns. Returning
@@ -1132,7 +1132,7 @@ export const mswHandlers = [
   // and surfaces inside the story that needs the fixture.
   http.get('/api/lookup', ({ request }) => {
     const lookupType = new URL(request.url).searchParams.get(
-      'LookupType'
+      'LookupType',
     ) as CRMLookupTypes | null;
     const fixture =
       lookupType === null ? undefined : lookupResponsesByType[lookupType];
@@ -1142,7 +1142,7 @@ export const mswHandlers = [
         {
           error: `No Storybook fixture for LookupType=${lookupType ?? '(missing)'}`,
         },
-        { status: 501 }
+        { status: 501 },
       );
     }
 
@@ -1210,7 +1210,7 @@ it('owns the Storybook coverage policy for the one path that applies it', () => 
   // file the root - i.e. the `test:storybook` script - and is inert when the
   // project is loaded through the aggregate `vitest.config.ts`.
   expect(storybook.coverage?.reportsDirectory).toBe(
-    './reports/coverage/storybook'
+    './reports/coverage/storybook',
   );
   expect(storybook.coverage?.include).toEqual(['ClientApp/src/**/*.{ts,tsx}']);
 });
@@ -1226,7 +1226,7 @@ it('never lets a script enable coverage through the aggregate root config', asyn
     .scripts as Record<string, string>;
   const aggregateRunsWithCoverage = Object.entries(scripts).filter(
     ([, command]) =>
-      command.includes('--coverage') && !command.includes('--config')
+      command.includes('--coverage') && !command.includes('--config'),
   );
 
   expect(aggregateRunsWithCoverage).toEqual([]);

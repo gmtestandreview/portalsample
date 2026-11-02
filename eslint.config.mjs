@@ -5,12 +5,16 @@ import stylistic from '@stylistic/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import reactHooks from 'eslint-plugin-react-hooks';
+import pluginSecurity from 'eslint-plugin-security';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
+import vitest from '@vitest/eslint-plugin';
+import vitestGlobals from 'eslint-plugin-vitest-globals';
 
 const packageJsonPath = fileURLToPath(
-  new URL('./package.json', import.meta.url)
+  new URL('./package.json', import.meta.url),
 );
 
 /**
@@ -28,28 +32,21 @@ export default defineConfig(
       'node_modules/**',
       'dist/**',
       'storybook-static/**',
-      'coverage/**',
       'reports/**',
-      'test-results/**',
-      'playwright-report/**',
+      'vendor/**',
       'ClientApp/src/api/web-api-client.ts',
-      'ClientApp/src/external/**',
-      'ClientApp/src/parent/node_modules/**',
-      'ClientApp/src/parent/packages/**',
-      'ClientApp/source-map-http-downloads/**',
-      'ClientApp/webpack/**',
     ],
   },
   {
     name: 'nmi/javascript-recommended',
-    files: ['**/*.{js,ts,tsx}'],
+    files: ['**/*.{js,ts,tsx,mts}'],
     extends: [js.configs.recommended],
   },
 
   {
     name: 'nmi/typescript-parser',
-    files: ['**/*.{ts,tsx}'],
-    extends: [tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx,mts}'],
+    extends: [tseslint.configs.recommendedTypeChecked],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -64,7 +61,7 @@ export default defineConfig(
   },
   {
     name: 'nmi/react',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     ...eslintReact.configs['recommended-typescript'],
   },
 
@@ -90,6 +87,8 @@ export default defineConfig(
     },
   },
 
+  pluginSecurity.configs.recommended,
+
   ...storybook.configs['flat/recommended'],
 
   {
@@ -105,7 +104,7 @@ export default defineConfig(
 
   {
     name: 'nmi/base',
-    files: ['**/*.{ts,tsx,js,jsx,cjs,mjs}'],
+    files: ['**/*.{ts,tsx,js,jsx,cjs,mjs,mts}'],
     plugins: { '@stylistic': stylistic, '@typescript-eslint': tseslint.plugin },
     languageOptions: {
       ecmaVersion: 'latest',
@@ -128,7 +127,7 @@ export default defineConfig(
 
   {
     name: 'nmi/typescript-rules',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     rules: {
       '@typescript-eslint/consistent-type-imports': [
         'error',
@@ -161,24 +160,20 @@ export default defineConfig(
     },
   },
   {
-    name: 'nmi/commonjs-and-scripts',
-    files: ['**/*.cjs', '**/*.js', 'webpack.config.js'],
+    name: 'nmi/node-scripts',
+    files: [
+      'scripts/**/*.{js,mjs,ts,mts}',
+      'quality/**/*.{js,mjs,ts,mts}',
+      '*.config.{js,mjs,ts,mts}',
+      'remark.config.mjs',
+      'storybook-vite-policies.ts',
+      'test-import.mjs',
+    ],
     languageOptions: {
-      sourceType: 'script',
       globals: { ...globals.node },
     },
     rules: {
-      '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
-    },
-  },
-  {
-    // This standalone script uses native ESM syntax while the rest of the
-    // repository's .js surface remains CommonJS-compatible by default.
-    name: 'nmi/esm-script',
-    files: ['skills/writing-skills/scripts/render-graphs.js'],
-    languageOptions: {
-      sourceType: 'module',
+      'no-console': ['error', { allow: ['log', 'warn', 'error'] }],
     },
   },
 
@@ -248,7 +243,7 @@ export default defineConfig(
 
   {
     name: 'nmi/node-config-files',
-    files: ['*.config.{ts,js}', 'vitest*.ts', 'playwright.config.ts'],
+    files: ['*.config.{ts,js,mts}', 'vitest*.ts', 'playwright.config.ts'],
     languageOptions: {
       globals: { ...globals.node },
     },
@@ -277,5 +272,121 @@ export default defineConfig(
     },
   },
 
-  eslintPluginPrettierRecommended
+  {
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    ...jsxA11yX.configs.recommended,
+    languageOptions: {
+      ...jsxA11yX.configs.recommended.languageOptions,
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
+    },
+  },
+  {
+    files: [
+      'tests/unit/**/*.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'vitest.setup.ts',
+      'vitest.storybook.setup.ts',
+    ],
+    ...vitest.configs.all,
+  },
+  {
+    name: 'nmi/vitest-partial-mock-fix-safety',
+    files: [
+      'tests/unit/**/*.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'vitest.setup.ts',
+      'vitest.storybook.setup.ts',
+    ],
+    rules: {
+      // Partial mock factories are intentionally not full module shapes. The
+      // dynamic-import fixer makes TypeScript reject those factories.
+      'vitest/prefer-import-in-mock': ['warn', { fixable: false }],
+    },
+  },
+  {
+    files: [
+      'tests/unit/**/*.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'vitest.setup.ts',
+      'vitest.storybook.setup.ts',
+    ],
+    ...vitestGlobals.configs['flat/recommended'],
+  },
+  {
+    name: 'nmi/playwright-runner-boundaries',
+    files: ['tests/e2e/**/*.{ts,tsx}', 'tests/api-contract/**/*.{ts,tsx}'],
+    rules: {
+      'vitest/prefer-importing-vitest-globals': 'off',
+      'vitest/require-hook': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'vitest',
+              message:
+                'Use the Playwright test API in Playwright and API-contract files.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    name: 'nmi/storybook-runner-boundaries',
+    files: [
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      '.storybook/**/*.{ts,tsx,js,jsx,mjs}',
+    ],
+    rules: {
+      // Storybook stories use @storybook/test. Do not let Vitest's
+      // auto-fixer rewrite those globals to imports from 'vitest'.
+      'vitest/prefer-importing-vitest-globals': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'vitest',
+              importNames: ['expect', 'test'],
+              message:
+                'Use @storybook/test for Storybook assertions and interactions.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    // Setup files intentionally register global hooks and browser shims at
+    // module scope so they are installed before each test file is imported.
+    name: 'nmi/vitest-setup-files',
+    files: ['vitest.setup.ts', 'vitest.storybook.setup.ts'],
+    rules: {
+      'vitest/require-hook': 'off',
+    },
+  },
+  {
+    // Storybook setup restores its global error listener after the project ends.
+    name: 'nmi/storybook-vitest-setup-hooks',
+    files: ['vitest.storybook.setup.ts'],
+    rules: {
+      'vitest/no-hooks': 'off',
+      'vitest/require-top-level-describe': 'off',
+    },
+  },
+  eslintPluginPrettierRecommended,
 );

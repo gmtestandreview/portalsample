@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, useField } from 'formik';
+import { Form, type FormikHelpers, useField } from 'formik';
 import { useFormContext } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import * as Yup from 'yup';
@@ -12,10 +12,27 @@ import SaveAndExitButton from '../../../../ClientApp/src/components/forms/SaveAn
 import SubmitFormButton from '../../../../ClientApp/src/components/forms/SubmitFormButton';
 import RhfUnsavedFormPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
+import type AppLogger from '../../../../ClientApp/src/instrumentation/AppLogger';
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => {
+  class MockAppLogger {
+    static info = vi.fn<typeof AppLogger.info>();
+    static warning = vi.fn<typeof AppLogger.warning>();
+    static verbose = vi.fn<typeof AppLogger.verbose>();
+    static critical = vi.fn<typeof AppLogger.critical>();
+    static trace = vi.fn<typeof AppLogger.trace>();
+    static error = vi.fn<typeof AppLogger.error>();
+    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
+    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
+    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
+    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
+    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
+  }
+
+  return {
+    default: MockAppLogger,
+  } satisfies Partial<__TestMockModule5>;
+});
 
 /**
  * The shell contract: one suite, run against the Formik shell and the RHF
@@ -26,6 +43,11 @@ vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
 interface Values {
   name: string;
 }
+
+type ShellSubmit = (
+  values: Values,
+  formikHelpers?: FormikHelpers<Values>,
+) => void | Promise<unknown>;
 
 const hard = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -83,10 +105,10 @@ const Body = ({
 
 const renderShell = async (
   kind: 'formik' | 'rhf',
-  { banner, showButtons }: Setup = {}
+  { banner, showButtons }: Setup = {},
 ) => {
-  const onSubmit = vi.fn(async (..._args: unknown[]) => undefined);
-  const onSaveAndExit = vi.fn(async (..._args: unknown[]) => undefined);
+  const onSubmit = vi.fn<ShellSubmit>();
+  const onSaveAndExit = vi.fn<ShellSubmit>();
   const initialValues: Values = { name: '' };
 
   const element =
@@ -153,6 +175,8 @@ describe.each(['formik', 'rhf'] as const)(
   (kind) => {
     describe('error summary', () => {
       it('stays hidden until the first submit, even with a field error', async () => {
+        expect.hasAssertions();
+
         const { user } = await renderShell(kind);
         const input = screen.getByLabelText('name');
 
@@ -160,36 +184,43 @@ describe.each(['formik', 'rhf'] as const)(
         await user.clear(input);
 
         expect(
-          screen.queryByTestId('form-error-summary')
+          screen.queryByTestId('form-error-summary'),
         ).not.toBeInTheDocument();
       });
 
       it('lists the message with a link to the field after an invalid submit', async () => {
+        expect.hasAssertions();
+
         const { user, onSubmit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('submit-button'));
 
-        expect(await screen.findByRole('alert')).toHaveTextContent(
-          'Name: Name is required'
+        await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
+          'Name: Name is required',
         );
         expect(
-          screen.getByRole('link', { name: 'Name: Name is required' })
+          screen.getByRole('link', { name: 'Name: Name is required' }),
         ).toHaveAttribute('href', '#name');
         expect(onSubmit).not.toHaveBeenCalled();
       });
 
       it('takes focus after an invalid submit and leaves the field unfocused', async () => {
+        expect.hasAssertions();
+
         const { user } = await renderShell(kind);
 
         await user.click(screen.getByTestId('submit-button'));
 
         await waitFor(() =>
-          expect(screen.getByTestId('form-error-summary')).toHaveFocus()
+          expect(screen.getByTestId('form-error-summary')).toHaveFocus(),
         );
+
         expect(screen.getByLabelText('name')).not.toHaveFocus();
       });
 
       it('clears once the field is corrected and the form is submitted', async () => {
+        expect.hasAssertions();
+
         const { user, onSubmit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('submit-button'));
@@ -198,51 +229,63 @@ describe.each(['formik', 'rhf'] as const)(
         await user.click(screen.getByTestId('submit-button'));
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-        expect(payloadOf(onSubmit)).toEqual({ name: 'Alex' });
+
+        expect(payloadOf(onSubmit)).toStrictEqual({ name: 'Alex' });
         expect(
-          screen.queryByTestId('form-error-summary')
+          screen.queryByTestId('form-error-summary'),
         ).not.toBeInTheDocument();
       });
     });
 
     describe('save and submit buttons', () => {
       it('submits with the hard schema and the default labels', async () => {
+        expect.hasAssertions();
+
         const { user, onSubmit, onSaveAndExit } = await renderShell(kind);
+
         expect(screen.getByTestId('submit-button')).toHaveTextContent('Submit');
         expect(screen.getByTestId('save-and-exit-button')).toHaveTextContent(
-          'Save and exit'
+          'Save and exit',
         );
 
         await user.type(screen.getByLabelText('name'), 'Alex');
         await user.click(screen.getByTestId('submit-button'));
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
         expect(onSaveAndExit).not.toHaveBeenCalled();
       });
 
       it('save and exit uses the soft schema, calls its handler and sends no mode flags', async () => {
+        expect.hasAssertions();
+
         const { user, onSubmit, onSaveAndExit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('save-and-exit-button'));
 
         await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+
         expect(onSubmit).not.toHaveBeenCalled();
+
         const payload = payloadOf(onSaveAndExit) as Record<string, unknown>;
+
         expect(payload).not.toHaveProperty('saveAndExit');
         expect(payload).not.toHaveProperty('saveAndExitClick');
         expect(
-          screen.queryByTestId('form-error-summary')
+          screen.queryByTestId('form-error-summary'),
         ).not.toBeInTheDocument();
       });
 
       it('a submit after a save and exit is validated with the hard schema again', async () => {
+        expect.hasAssertions();
+
         const { user, onSubmit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('save-and-exit-button'));
         await user.click(screen.getByTestId('submit-button'));
 
-        expect(await screen.findByRole('alert')).toHaveTextContent(
-          'Name is required'
+        await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
+          'Name is required',
         );
         expect(onSubmit).not.toHaveBeenCalled();
       });
@@ -250,6 +293,8 @@ describe.each(['formik', 'rhf'] as const)(
 
     describe('unsaved route-leaving prompt', () => {
       it('lets a clean form leave', async () => {
+        expect.hasAssertions();
+
         const { leave, currentPath } = await renderShell(kind);
 
         await leave();
@@ -258,6 +303,8 @@ describe.each(['formik', 'rhf'] as const)(
       });
 
       it('blocks a dirty form, stays on cancel and leaves on discard', async () => {
+        expect.hasAssertions();
+
         const { user, leave, currentPath } = await renderShell(kind);
         await user.type(screen.getByLabelText('name'), 'x');
         // Blur now, inside user-event's act: the modal would otherwise take
@@ -266,19 +313,22 @@ describe.each(['formik', 'rhf'] as const)(
         await act(async () => {});
 
         await leave();
-        expect(
-          await screen.findByTestId('prompt-save-modal')
-        ).toBeInTheDocument();
+
+        await expect(
+          screen.findByTestId('prompt-save-modal'),
+        ).resolves.toBeInTheDocument();
         expect(currentPath()).toBe('/form');
+
         // The modal takes focus from the input: the blur validates asynchronously.
         await act(async () => {});
 
         await user.click(screen.getByTestId('prompt-cancel-button'));
         await waitFor(() =>
           expect(
-            screen.queryByTestId('prompt-save-modal')
-          ).not.toBeInTheDocument()
+            screen.queryByTestId('prompt-save-modal'),
+          ).not.toBeInTheDocument(),
         );
+
         expect(currentPath()).toBe('/form');
 
         await leave();
@@ -289,6 +339,8 @@ describe.each(['formik', 'rhf'] as const)(
       });
 
       it('lets a dirty form leave once a valid submit has succeeded', async () => {
+        expect.hasAssertions();
+
         const { user, onSubmit, leave, currentPath } = await renderShell(kind);
         await user.type(screen.getByLabelText('name'), 'Alex');
         await user.click(screen.getByTestId('submit-button'));
@@ -300,41 +352,50 @@ describe.each(['formik', 'rhf'] as const)(
       });
 
       it('blocks a clean form whose last submit was rejected', async () => {
+        expect.hasAssertions();
+
         const { user, leave, currentPath } = await renderShell(kind);
         await user.click(screen.getByTestId('submit-button'));
         await screen.findByTestId('form-error-summary');
 
         await leave();
 
-        expect(
-          await screen.findByTestId('prompt-save-modal')
-        ).toBeInTheDocument();
+        await expect(
+          screen.findByTestId('prompt-save-modal'),
+        ).resolves.toBeInTheDocument();
         expect(currentPath()).toBe('/form');
       });
     });
 
     describe('banner slot', () => {
       it('renders nothing unless asked', async () => {
+        expect.hasAssertions();
+
         await renderShell(kind, { showButtons: false });
 
         expect(
-          screen.queryByTestId('save-and-exit-button')
+          screen.queryByTestId('save-and-exit-button'),
         ).not.toBeInTheDocument();
       });
 
       it('renders the title and a Save and exit that runs the shell save', async () => {
+        expect.hasAssertions();
+
         const { user, onSaveAndExit } = await renderShell(kind, {
           showButtons: false,
           banner: { showBanner: true, bannerTitle: 'Accept quote' },
         });
 
         expect(screen.getByText('Accept quote')).toBeInTheDocument();
+
         await user.click(screen.getByTestId('save-and-exit-button'));
 
         await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
       });
 
       it('renders a caller-supplied banner instead of the standard one', async () => {
+        expect.hasAssertions();
+
         await renderShell(kind, {
           showButtons: false,
           banner: { showBanner: true, banner: <div>Custom banner</div> },
@@ -342,11 +403,13 @@ describe.each(['formik', 'rhf'] as const)(
 
         expect(screen.getByText('Custom banner')).toBeInTheDocument();
         expect(
-          screen.queryByTestId('save-and-exit-button')
+          screen.queryByTestId('save-and-exit-button'),
         ).not.toBeInTheDocument();
       });
 
       it('discard navigates to its location', async () => {
+        expect.hasAssertions();
+
         const { user, currentPath } = await renderShell(kind, {
           showButtons: false,
           banner: {
@@ -360,17 +423,20 @@ describe.each(['formik', 'rhf'] as const)(
         await waitFor(() => expect(currentPath()).toBe('/other'));
       });
     });
-  }
+  },
 );
 
-describe('RHF summary sanitisation', () => {
+describe('rHF summary sanitisation', () => {
   it('renders messages only: no DOM ref text reaches the summary', async () => {
+    expect.hasAssertions();
+
     const { user, container } = await renderShell('rhf');
 
     await user.click(screen.getByTestId('submit-button'));
     await screen.findByTestId('form-error-summary');
 
     const summary = screen.getByTestId('form-error-summary');
+
     expect(summary.textContent).not.toMatch(/HTML|\[object/);
     expect(container.querySelector('#form-error-summary')).toBe(summary);
   });

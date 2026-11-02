@@ -1,22 +1,25 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import { defineMain } from '@storybook/react-vite/node';
 import remarkGfm from 'remark-gfm';
 import { clientDirectives } from './clientDirectives.ts';
 import { onLog } from './rollupOnLog.ts';
+import {
+  APPLICATION_VENDOR_CHUNK_GROUPS,
+  SASS_PREPROCESSOR_OPTIONS,
+} from '../storybook-vite-policies.ts';
 
-const sassDeprecationsToSilence = [
-  'import',
-  'global-builtin',
-  'color-functions',
-  'if-function',
-];
+// The Chromatic addon registers as a Storybook test provider. In development,
+// that makes the component-test runner start a remote Chromatic build as well,
+// which can exhaust Node's heap before the tests finish starting. Keep the
+// provider in production builds, where the visual-test workflow is supported.
+const isStorybookDevelopment = process.env['NODE_ENV'] !== 'production';
 
-const config = {
+export default defineMain({
   framework: '@storybook/react-vite',
 
   stories: [
     '../.storybook/*.mdx',
     '../ClientApp/src/**/*.mdx',
-    '../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../ClientApp/src/**/*.stories.tsx',
   ],
 
   features: {
@@ -28,7 +31,13 @@ const config = {
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
+      compilerOptions: {
+        allowSyntheticDefaultImports: false,
+        esModuleInterop: false,
+      },
+      include: ['**/*.tsx'],
       shouldExtractLiteralValuesFromEnum: true,
+      exclude: ['**/*.stories.tsx', '**/.storybook/**'],
       propFilter: (prop) =>
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
     },
@@ -38,10 +47,12 @@ const config = {
     '@storybook/addon-a11y',
     '@storybook/addon-links',
     '@storybook/addon-vitest',
-    '@chromatic-com/storybook',
+    ...(!isStorybookDevelopment ? ['@chromatic-com/storybook'] : []),
     {
       name: '@storybook/addon-docs',
       options: {
+        // Do not nest `docs` here: the addon preset reads options.docs as the
+        // --docs CLI flag, and any object is truthy, which forces docs-only mode.
         mdxPluginOptions: {
           mdxCompileOptions: {
             remarkPlugins: [remarkGfm],
@@ -78,18 +89,27 @@ const config = {
     // preserve Storybook's client directive on each output chunk.
     return mergeConfig(viteConfig, {
       plugins: [clientDirectives()],
+      server: {
+        watch: {
+          // Build output lives inside the project root. A running dev server
+          // otherwise watches storybook-static, and on Windows those watch
+          // handles race the build's staticDirs copy (ENOENT on chmod/utime),
+          // which breaks `storybook:verify:docs` while `npm run storybook` runs.
+          ignored: ['**/storybook-static/**'],
+        },
+      },
       css: {
         preprocessorOptions: {
           scss: {
-            quietDeps: true,
-            silenceDeprecations: sassDeprecationsToSilence,
+            ...SASS_PREPROCESSOR_OPTIONS,
           },
         },
       },
       build: {
-        // Keep the existing size budget while splitting the preview runtime
-        // away from the renderer, router, and story registry below.
-        chunkSizeWarningLimit: 1024,
+        // Storybook's generated iframe includes the preview runtime and is
+        // currently just over 1 MB minified. Keep warnings enabled for chunks
+        // materially larger than that known baseline.
+        chunkSizeWarningLimit: 1152,
         // `onLog` drops vendor `INVALID_ANNOTATION` / `PLUGIN_TIMINGS`
         // noise and forwards everything else untouched. Extracted to
         // ./rollupOnLog so the pass-through guarantee is unit-tested.
@@ -105,6 +125,7 @@ const config = {
             strictExecutionOrder: true,
             codeSplitting: {
               groups: [
+                ...APPLICATION_VENDOR_CHUNK_GROUPS,
                 {
                   name: 'storybook-runtime',
                   test: /[\\/]node_modules[\\/]storybook[\\/]dist[\\/]preview[\\/]runtime\.js$/,
@@ -116,6 +137,4 @@ const config = {
       },
     });
   },
-} satisfies StorybookConfig;
-
-export default config;
+});

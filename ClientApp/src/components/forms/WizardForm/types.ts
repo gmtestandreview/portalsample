@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import type { FormikValues } from 'formik';
 import type { InitialValue } from '../../../types';
-import type { DiscardProps, ModalProps } from '../types';
+import type { DiscardProps, Hideable, ModalProps, Validation } from '../types';
 import type {
   FormStepStatusDto,
   ProblemDetails,
@@ -31,7 +31,7 @@ export interface WizardFormStepValues<T extends FormikValues> {
  */
 export type WizardRoutedStepProps<T extends FormikValues> = WizardStepProps<T> &
   WizardFormProps & {
-    allSteps: React.ReactElement<any>[];
+    allSteps: React.ReactElement<WizardStepProps<T>>[];
     currentStepIndex: number;
     url: string;
   };
@@ -101,26 +101,26 @@ export interface WizardStepProps<T extends FormikValues> {
   isSummaryPage?: boolean;
   getRedirectionLocationOnError?: (
     errorCode: number,
-    errorType: ErrorType
+    errorType: ErrorType,
   ) => string | undefined;
   discard?: DiscardProps;
   onSaveAndExit?: (
     values: T,
     isDirty: boolean,
-    abortSignal?: AbortSignal
-  ) => void | Promise<any>;
+    abortSignal?: AbortSignal,
+  ) => void | Promise<unknown>;
   onSaveAndNext?: (
     values: T,
     isDirty: boolean,
-    abortSignal?: AbortSignal
-  ) => void | Promise<any>;
+    abortSignal?: AbortSignal,
+  ) => void | Promise<unknown>;
   stepStatuses: FormStepStatusDto[];
   loadStepValues: (
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => WizardFormStepValues<T> | Promise<WizardFormStepValues<T>>;
-  validateHard?: any;
-  validateSoft?: any;
-  hidingFields?: any;
+  validateHard?: Validation<T> | undefined;
+  validateSoft?: Validation<T> | undefined;
+  hidingFields?: Hideable<Partial<T>, Partial<T>> | undefined;
   bannerTitle?: string;
   bannerRefTitle?: string;
   bannerSubTitle?: string;
@@ -171,7 +171,7 @@ export interface WizardFormProps {
   confirmationOnSubmission?: ModalProps;
   getRedirectionLocationOnError?: (
     errorCode: number,
-    errorType: ErrorType
+    errorType: ErrorType,
   ) => string | undefined;
   [key: string]: any;
 }

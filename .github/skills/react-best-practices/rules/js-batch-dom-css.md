@@ -1,13 +1,17 @@
 ---
 title: Avoid Layout Thrashing
 impact: MEDIUM
-impactDescription: prevents forced synchronous layouts and reduces performance bottlenecks
+impactDescription:
+  prevents forced synchronous layouts and reduces performance bottlenecks
 tags: javascript, dom, css, performance, reflow, layout-thrashing
 ---
 
 ## Avoid Layout Thrashing
 
-Avoid interleaving style writes with layout reads. When you read a layout property (like `offsetWidth`, `getBoundingClientRect()`, or `getComputedStyle()`) between style changes, the browser is forced to trigger a synchronous reflow.
+Avoid interleaving style writes with layout reads. When you read a layout
+property (like `offsetWidth`, `getBoundingClientRect()`, or
+`getComputedStyle()`) between style changes, the browser is forced to trigger a
+synchronous reflow.
 
 **This is OK (browser batches style changes):**
 
@@ -105,6 +109,10 @@ function Box({ isHighlighted }: { isHighlighted: boolean }) {
 }
 ```
 
-Prefer CSS classes over inline styles when possible. CSS files are cached by the browser, and classes provide better separation of concerns and are easier to maintain.
+Prefer CSS classes over inline styles when possible. CSS files are cached by the
+browser, and classes provide better separation of concerns and are easier to
+maintain.
 
-See [this gist](https://gist.github.com/paulirish/5d52fb081b3570c81e3a) and [CSS Triggers](https://csstriggers.com/) for more information on layout-forcing operations.
+See [this gist](https://gist.github.com/paulirish/5d52fb081b3570c81e3a) and
+[CSS Triggers](https://csstriggers.com/) for more information on layout-forcing
+operations.

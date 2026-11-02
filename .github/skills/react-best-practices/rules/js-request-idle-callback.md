@@ -9,7 +9,9 @@ tags: javascript, performance, idle, scheduling, analytics
 
 **Impact: MEDIUM (keeps UI responsive during background tasks)**
 
-Use `requestIdleCallback()` to schedule non-critical work during browser idle periods. This keeps the main thread free for user interactions and animations, reducing jank and improving perceived performance.
+Use `requestIdleCallback()` to schedule non-critical work during browser idle
+periods. This keeps the main thread free for user interactions and animations,
+reducing jank and improving perceived performance.
 
 **Incorrect (blocks main thread during user interaction):**
 
@@ -53,7 +55,7 @@ function handleSearch(query: string) {
 // Ensure analytics fires within 2 seconds even if browser stays busy
 requestIdleCallback(
   () => analytics.track('page_view', { path: location.pathname }),
-  { timeout: 2000 }
+  { timeout: 2000 },
 );
 ```
 

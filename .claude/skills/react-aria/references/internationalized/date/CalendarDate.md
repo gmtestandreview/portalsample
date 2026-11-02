@@ -339,7 +339,7 @@ isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 4, 30)); // tr
 isSameMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 8, 2)); // false
 isSameMonth(
   new CalendarDate(2021, 4, 16),
-  new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+  new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
 ); // true
 ```
 
@@ -357,7 +357,7 @@ isEqualMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 4, 30)); // t
 isEqualMonth(new CalendarDate(2021, 4, 16), new CalendarDate(2021, 8, 2)); // false
 isEqualMonth(
   new CalendarDate(2021, 4, 16),
-  new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4)
+  new CalendarDate(new IslamicUmalquraCalendar(), 1442, 9, 4),
 ); // false
 ```
 

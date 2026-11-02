@@ -61,8 +61,8 @@ After installation, the `skills-ref` executable will be available on your `PATH`
 Run commands from this `scripts/` directory so the local package and
 `pyproject.toml` settings resolve correctly.
 
-The test environment is pinned to Python **3.14.7** in `.python-version`.
-Use `uv sync --group dev` to create or update it, then confirm
+The test environment is pinned to Python **3.14.7** in `.python-version`. Use
+`uv sync --group dev` to create or update it, then confirm
 `uv run python --version` before running tests. Pip-based test environments
 should also use Python 3.14.7.
 

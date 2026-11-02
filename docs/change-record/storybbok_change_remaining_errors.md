@@ -1533,7 +1533,7 @@ Chromatic: i Uploading 6 metadata files to
 
            - main.ts
 
-           - preview.ts
+           - preview.tsx
 
            - index.html
 

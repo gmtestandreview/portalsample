@@ -34,9 +34,8 @@ tool execution summary.
   contextual review is required.
 - Lizard reports cyclomatic complexity 22 against a threshold of 20 for the
   secret scanner's `main`.
-- ESLint 8 reports a nonliteral `existsSync` filename in
-  `scripts/pre_tool_use_wrapper.cjs:10` and an HTML-flow warning for
-  `process.stderr.write` in `scripts/python314.cjs:34`.
+- ESLint 8 reports a nonliteral `existsSync` filename in the pre-tool wrapper
+  and an HTML-flow warning for `process.stderr.write` in the Python launcher.
 
 No source remediation was performed during this check.
 

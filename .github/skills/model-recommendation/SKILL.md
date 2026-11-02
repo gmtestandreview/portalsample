@@ -1,31 +1,46 @@
 ---
 name: model-recommendation
-description: 'Analyze chatmode or prompt files and recommend optimal AI models based on task complexity, required capabilities, and cost-efficiency'
+description:
+  'Analyze chatmode or prompt files and recommend optimal AI models based on
+  task complexity, required capabilities, and cost-efficiency'
 ---
 
 # AI Model Recommendation for Copilot Chat Modes and Prompts
 
 ## Mission
 
-Analyze `.agent.md` or `.prompt.md` files to understand their purpose, complexity, and required capabilities, then recommend the most suitable AI model(s) from GitHub Copilot's available options. Provide rationale based on task characteristics, model strengths, cost-efficiency, and performance trade-offs.
+Analyze `.agent.md` or `.prompt.md` files to understand their purpose,
+complexity, and required capabilities, then recommend the most suitable AI
+model(s) from GitHub Copilot's available options. Provide rationale based on
+task characteristics, model strengths, cost-efficiency, and performance
+trade-offs.
 
 ## Scope & Preconditions
 
 - **Input**: Path to a `.agent.md` or `.prompt.md` file
-- **Available Models**: GPT-4.1, GPT-5, GPT-5 mini, GPT-5 Codex, Claude Sonnet 3.5, Claude Sonnet 4, Claude Sonnet 4.5, Claude Opus 4.1, Gemini 2.5 Pro, Gemini 2.0 Flash, Grok Code Fast 1, o3, o4-mini (with deprecation dates)
-- **Model Auto-Selection**: Available in VS Code (Sept 2025+) - selects from GPT-4.1, GPT-5 mini, GPT-5, Claude Sonnet 3.5, Claude Sonnet 4.5 (excludes premium multipliers > 1)
-- **Context**: GitHub Copilot subscription tiers (Free: 2K completions + 50 chat/month with 0x models only; Pro: unlimited 0x + 1000 premium/month; Pro+: unlimited 0x + 5000 premium/month)
+- **Available Models**: GPT-4.1, GPT-5, GPT-5 mini, GPT-5 Codex, Claude Sonnet
+  3.5, Claude Sonnet 4, Claude Sonnet 4.5, Claude Opus 4.1, Gemini 2.5 Pro,
+  Gemini 2.0 Flash, Grok Code Fast 1, o3, o4-mini (with deprecation dates)
+- **Model Auto-Selection**: Available in VS Code (Sept 2025+) - selects from
+  GPT-4.1, GPT-5 mini, GPT-5, Claude Sonnet 3.5, Claude Sonnet 4.5 (excludes
+  premium multipliers > 1)
+- **Context**: GitHub Copilot subscription tiers (Free: 2K completions + 50
+  chat/month with 0x models only; Pro: unlimited 0x + 1000 premium/month; Pro+:
+  unlimited 0x + 5000 premium/month)
 
 ## Inputs
 
 Required:
 
-- `${input:filePath:Path to .agent.md or .prompt.md file}` - Absolute or workspace-relative path to the file to analyze
+- `${input:filePath:Path to .agent.md or .prompt.md file}` - Absolute or
+  workspace-relative path to the file to analyze
 
 Optional:
 
-- `${input:subscriptionTier:Pro}` - User's Copilot subscription tier (Free, Pro, Pro+) - defaults to Pro
-- `${input:priorityFactor:Balanced}` - Optimization priority (Speed, Cost, Quality, Balanced) - defaults to Balanced
+- `${input:subscriptionTier:Pro}` - User's Copilot subscription tier (Free, Pro,
+  Pro+) - defaults to Pro
+- `${input:priorityFactor:Balanced}` - Optimization priority (Speed, Cost,
+  Quality, Balanced) - defaults to Balanced
 
 ## Workflow
 
@@ -49,26 +64,32 @@ Identify the primary task category based on content analysis:
 
 1. **Simple Repetitive Tasks**:
 
-   - Pattern: Formatting, simple refactoring, adding comments/docstrings, basic CRUD
-   - Characteristics: Straightforward logic, minimal context, fast execution preferred
+   - Pattern: Formatting, simple refactoring, adding comments/docstrings, basic
+     CRUD
+   - Characteristics: Straightforward logic, minimal context, fast execution
+     preferred
    - Keywords: format, comment, simple, basic, add docstring, rename, move
 
 2. **Code Generation & Implementation**:
 
-   - Pattern: Writing functions/classes, implementing features, API endpoints, tests
+   - Pattern: Writing functions/classes, implementing features, API endpoints,
+     tests
    - Characteristics: Moderate complexity, domain knowledge, idiomatic code
    - Keywords: implement, create, generate, write, build, scaffold
 
 3. **Complex Refactoring & Architecture**:
 
-   - Pattern: System design, architectural review, large-scale refactoring, performance optimization
+   - Pattern: System design, architectural review, large-scale refactoring,
+     performance optimization
    - Characteristics: Deep reasoning, multiple components, trade-off analysis
    - Keywords: architect, refactor, optimize, design, scale, review architecture
 
 4. **Debugging & Problem-Solving**:
 
-   - Pattern: Bug fixing, error analysis, systematic troubleshooting, root cause analysis
-   - Characteristics: Step-by-step reasoning, debugging context, verification needs
+   - Pattern: Bug fixing, error analysis, systematic troubleshooting, root cause
+     analysis
+   - Characteristics: Step-by-step reasoning, debugging context, verification
+     needs
    - Keywords: debug, fix, troubleshoot, diagnose, error, investigate
 
 5. **Planning & Research**:
@@ -79,29 +100,38 @@ Identify the primary task category based on content analysis:
 
 6. **Code Review & Quality Analysis**:
 
-   - Pattern: Security analysis, performance review, best practices validation, compliance checking
+   - Pattern: Security analysis, performance review, best practices validation,
+     compliance checking
    - Characteristics: Critical thinking, pattern recognition, domain expertise
    - Keywords: review, analyze, security, performance, compliance, validate
 
 7. **Specialized Domain Tasks**:
 
-   - Pattern: Django/framework-specific, accessibility (WCAG), testing (TDD), API design
-   - Characteristics: Deep domain knowledge, framework conventions, standards compliance
+   - Pattern: Django/framework-specific, accessibility (WCAG), testing (TDD),
+     API design
+   - Characteristics: Deep domain knowledge, framework conventions, standards
+     compliance
    - Keywords: django, accessibility, wcag, rest, api, testing, tdd
 
 8. **Advanced Reasoning & Multi-Step Workflows**:
-   - Pattern: Algorithmic optimization, complex data transformations, multi-phase workflows
-   - Characteristics: Advanced reasoning, mathematical/algorithmic thinking, sequential logic
+   - Pattern: Algorithmic optimization, complex data transformations,
+     multi-phase workflows
+   - Characteristics: Advanced reasoning, mathematical/algorithmic thinking,
+     sequential logic
    - Keywords: algorithm, optimize, transform, sequential, reasoning, calculate
 
 **Extract Capability Requirements**:
 
 Based on `tools` in frontmatter and body instructions:
 
-- **Read-only tools** (search, fetch, usages, githubRepo): Lower complexity, faster models suitable
-- **Write operations** (edit/editFiles, new): Moderate complexity, accuracy important
-- **Execution tools** (runCommands, runTests, runTasks): Validation needs, iterative approach
-- **Advanced tools** (context7/\*, sequential-thinking/\*): Complex reasoning, premium models beneficial
+- **Read-only tools** (search, fetch, usages, githubRepo): Lower complexity,
+  faster models suitable
+- **Write operations** (edit/editFiles, new): Moderate complexity, accuracy
+  important
+- **Execution tools** (runCommands, runTests, runTasks): Validation needs,
+  iterative approach
+- **Advanced tools** (context7/\*, sequential-thinking/\*): Complex reasoning,
+  premium models beneficial
 - **Multi-modal** (image analysis references): Requires vision-capable models
 
 ### 2. Model Evaluation Phase
@@ -186,21 +216,25 @@ START
 
 **Auto-Selection Guidance**:
 
-- Assess if task is suitable for auto model selection (excludes premium models > 1x)
+- Assess if task is suitable for auto model selection (excludes premium models >
+  1x)
 - Explain when manual selection is beneficial vs. letting Copilot choose
 - Note any limitations of auto-selection for the specific task
 
 **Deprecation Warnings**:
 
-- Flag if file currently specifies a deprecated model (o3, o4-mini, Claude Sonnet 3.7, Gemini 2.0 Flash)
+- Flag if file currently specifies a deprecated model (o3, o4-mini, Claude
+  Sonnet 3.7, Gemini 2.0 Flash)
 - Provide migration path to recommended replacement
 - Include timeline for deprecation (e.g., "o3 deprecating 2025-10-23")
 
 **Subscription Tier Considerations**:
 
-- **Free Tier**: Recommend only 0x multiplier models (GPT-4.1, GPT-5 mini, Grok Code Fast 1)
+- **Free Tier**: Recommend only 0x multiplier models (GPT-4.1, GPT-5 mini, Grok
+  Code Fast 1)
 - **Pro Tier**: Balance between 0x (unlimited) and 1x (1000/month) models
-- **Pro+ Tier**: More freedom with 1x models (5000/month), justify 10x usage for exceptional cases
+- **Pro+ Tier**: More freedom with 1x models (5000/month), justify 10x usage for
+  exceptional cases
 
 ### 4. Integration Recommendations
 
@@ -211,26 +245,21 @@ If file does not specify a `model` field:
 ```markdown
 ## Recommendation: Add Model Specification
 
-Current frontmatter:
-\`\`\`yaml
+Current frontmatter: \`\`\`yaml
 
 ---
 
-description: "..."
-tools: [...]
+description: "..." tools: [...]
 
 ---
 
 \`\`\`
 
-Recommended frontmatter:
-\`\`\`yaml
+Recommended frontmatter: \`\`\`yaml
 
 ---
 
-description: "..."
-model: "[Recommended Model Name]"
-tools: [...]
+description: "..." model: "[Recommended Model Name]" tools: [...]
 
 ---
 
@@ -255,15 +284,19 @@ Rationale: [Explanation]
 
 Verify model capabilities align with specified tools:
 
-- If tools include `context7/*` or `sequential-thinking/*`: Recommend advanced reasoning models (Claude Sonnet 4.5, GPT-5, Claude Opus 4.1)
-- If tools include vision-related references: Ensure model supports images (flag if GPT-5 Codex, Claude Sonnet 4, or mini models selected)
-- If tools are read-only (search, fetch): Suggest cost-effective models (GPT-5 mini, Grok Code Fast 1)
+- If tools include `context7/*` or `sequential-thinking/*`: Recommend advanced
+  reasoning models (Claude Sonnet 4.5, GPT-5, Claude Opus 4.1)
+- If tools include vision-related references: Ensure model supports images (flag
+  if GPT-5 Codex, Claude Sonnet 4, or mini models selected)
+- If tools are read-only (search, fetch): Suggest cost-effective models (GPT-5
+  mini, Grok Code Fast 1)
 
 ### 5. Context7 Integration for Up-to-Date Information
 
 **Leverage Context7 for Model Documentation**:
 
-When uncertainty exists about current model capabilities, use Context7 to fetch latest information:
+When uncertainty exists about current model capabilities, use Context7 to fetch
+latest information:
 
 ```markdown
 **Verification with Context7**:
@@ -292,19 +325,15 @@ Generate a structured markdown report with the following sections:
 ```markdown
 # AI Model Recommendation Report
 
-**File Analyzed**: `[file path]`
-**File Type**: [chatmode | prompt]
-**Analysis Date**: [YYYY-MM-DD]
-**Subscription Tier**: [Free | Pro | Pro+]
+**File Analyzed**: `[file path]` **File Type**: [chatmode | prompt] **Analysis
+Date**: [YYYY-MM-DD] **Subscription Tier**: [Free | Pro | Pro+]
 
 ---
 
 ## File Summary
 
-**Description**: [from frontmatter]
-**Mode**: [ask | edit | agent]
-**Tools**: [tool list]
-**Current Model**: [specified model or "Not specified"]
+**Description**: [from frontmatter] **Mode**: [ask | edit | agent] **Tools**:
+[tool list] **Current Model**: [specified model or "Not specified"]
 
 ## Task Analysis
 
@@ -330,15 +359,14 @@ Generate a structured markdown report with the following sections:
 
 ### 🏆 Primary Recommendation: [Model Name]
 
-**Multiplier**: [X]x ([cost implications for subscription tier])
-**Strengths**:
+**Multiplier**: [X]x ([cost implications for subscription tier]) **Strengths**:
 
 - Strength 1: [specific to task]
 - Strength 2: [specific to task]
 - Strength 3: [specific to task]
 
-**Rationale**:
-[Detailed explanation connecting task characteristics to model capabilities]
+**Rationale**: [Detailed explanation connecting task characteristics to model
+capabilities]
 
 **Cost Impact** (for [Subscription Tier]):
 
@@ -409,8 +437,7 @@ Generate a structured markdown report with the following sections:
 
 [Check results: Are specified tools compatible with recommended model?]
 
-✅ **Compatible Tools**: [list]
-⚠️ **Potential Limitations**: [list if any]
+✅ **Compatible Tools**: [list] ⚠️ **Potential Limitations**: [list if any]
 
 ## Deprecation Notices
 
@@ -443,7 +470,8 @@ Generate a structured markdown report with the following sections:
 
 ### Priority Factor Adjustments
 
-[If user specified Speed/Cost/Quality/Balanced, explain how recommendation aligns]
+[If user specified Speed/Cost/Quality/Balanced, explain how recommendation
+aligns]
 
 ### Long-Term Model Strategy
 
@@ -453,20 +481,22 @@ Generate a structured markdown report with the following sections:
 
 ## Quick Reference
 
-**TL;DR**: Use **[Primary Model]** for this task due to [one-sentence rationale]. Cost: [X]x multiplier.
+**TL;DR**: Use **[Primary Model]** for this task due to [one-sentence
+rationale]. Cost: [X]x multiplier.
 
-**One-Line Update**:
-\`\`\`yaml
-model: "[Recommended Model Name]"
-\`\`\`
+**One-Line Update**: \`\`\`yaml model: "[Recommended Model Name]" \`\`\`
 ```
 
 ### Output Quality Standards
 
-- **Specific**: Tie all recommendations directly to file content, not generic advice
-- **Actionable**: Provide exact frontmatter code, VS Code steps, clear migration paths
-- **Contextualized**: Consider subscription tier, priority factor, deprecation timelines
-- **Evidence-Based**: Reference model capabilities from Context7 documentation when available
+- **Specific**: Tie all recommendations directly to file content, not generic
+  advice
+- **Actionable**: Provide exact frontmatter code, VS Code steps, clear migration
+  paths
+- **Contextualized**: Consider subscription tier, priority factor, deprecation
+  timelines
+- **Evidence-Based**: Reference model capabilities from Context7 documentation
+  when available
 - **Balanced**: Present trade-offs honestly (speed vs. quality vs. cost)
 - **Up-to-Date**: Flag deprecated models, suggest current alternatives
 
@@ -486,13 +516,15 @@ model: "[Recommended Model Name]"
 - [ ] Frontmatter update example provided (valid YAML)
 - [ ] Tool alignment verified (model capabilities match specified tools)
 - [ ] Context7 used when verification needed for latest model information
-- [ ] Report includes all required sections (summary, analysis, recommendation, implementation)
+- [ ] Report includes all required sections (summary, analysis, recommendation,
+      implementation)
 
 ### Success Criteria
 
 - Recommendation is justified by specific file characteristics
 - Cost impact is clear and appropriate for subscription tier
-- Alternative models cover different priority factors (speed vs. quality vs. cost)
+- Alternative models cover different priority factors (speed vs. quality vs.
+  cost)
 - Frontmatter update is ready to copy-paste (no placeholders)
 - User can immediately act on recommendation (clear steps)
 - Report is readable and scannable (good structure, tables, emoji markers)
@@ -501,9 +533,12 @@ model: "[Recommended Model Name]"
 
 - File path is invalid or unreadable → Stop and request valid path
 - File is not `.agent.md` or `.prompt.md` → Stop and clarify file type
-- Cannot determine task complexity from content → Request more specific file or clarification
-- Model recommendation contradicts documented capabilities → Use Context7 to verify current info
-- Subscription tier is invalid (not Free/Pro/Pro+) → Default to Pro and note assumption
+- Cannot determine task complexity from content → Request more specific file or
+  clarification
+- Model recommendation contradicts documented capabilities → Use Context7 to
+  verify current info
+- Subscription tier is invalid (not Free/Pro/Pro+) → Default to Pro and note
+  assumption
 
 ## Advanced Use Cases
 
@@ -514,7 +549,8 @@ If user provides multiple files:
 1. Analyze each file individually
 2. Generate separate recommendations per file
 3. Provide summary table comparing recommendations
-4. Note any patterns (e.g., "All debug-related modes benefit from Claude Sonnet 4.5")
+4. Note any patterns (e.g., "All debug-related modes benefit from Claude Sonnet
+   4.5")
 
 ### Comparative Analysis
 
@@ -538,36 +574,39 @@ If file specifies a deprecated model:
 
 ### Example 1: Simple Formatting Task
 
-**File**: `format-code.prompt.md`
-**Content**: "Format Python code with Black style, add type hints"
-**Recommendation**: GPT-5 mini (0x multiplier, fastest, sufficient for repetitive formatting)
-**Alternative**: Grok Code Fast 1 (0.25x, even faster, preview feature)
-**Rationale**: Task is simple and repetitive; premium reasoning not needed; speed prioritized
+**File**: `format-code.prompt.md` **Content**: "Format Python code with Black
+style, add type hints" **Recommendation**: GPT-5 mini (0x multiplier, fastest,
+sufficient for repetitive formatting) **Alternative**: Grok Code Fast 1 (0.25x,
+even faster, preview feature) **Rationale**: Task is simple and repetitive;
+premium reasoning not needed; speed prioritized
 
 ### Example 2: Complex Architecture Review
 
-**File**: `architect.agent.md`
-**Content**: "Review system design for scalability, security, maintainability; analyze trade-offs; provide ADR-level recommendations"
-**Recommendation**: Claude Sonnet 4.5 (1x multiplier, expert reasoning, excellent for architecture)
-**Alternative**: Claude Opus 4.1 (10x, use for very large codebases >500K tokens)
-**Rationale**: Requires deep reasoning, architectural expertise, design pattern knowledge; Sonnet 4.5 excels at this
+**File**: `architect.agent.md` **Content**: "Review system design for
+scalability, security, maintainability; analyze trade-offs; provide ADR-level
+recommendations" **Recommendation**: Claude Sonnet 4.5 (1x multiplier, expert
+reasoning, excellent for architecture) **Alternative**: Claude Opus 4.1 (10x,
+use for very large codebases >500K tokens) **Rationale**: Requires deep
+reasoning, architectural expertise, design pattern knowledge; Sonnet 4.5 excels
+at this
 
 ### Example 3: Django Expert Mode
 
-**File**: `django.agent.md`
-**Content**: "Django 5.x expert with ORM optimization, async views, REST API design; uses context7 for up-to-date Django docs"
-**Recommendation**: GPT-5 (1x multiplier, advanced reasoning, excellent code quality)
-**Alternative**: Claude Sonnet 4.5 (1x, alternative perspective, strong with frameworks)
-**Rationale**: Domain expertise + context7 integration benefits from advanced reasoning; 1x cost justified for expert mode
+**File**: `django.agent.md` **Content**: "Django 5.x expert with ORM
+optimization, async views, REST API design; uses context7 for up-to-date Django
+docs" **Recommendation**: GPT-5 (1x multiplier, advanced reasoning, excellent
+code quality) **Alternative**: Claude Sonnet 4.5 (1x, alternative perspective,
+strong with frameworks) **Rationale**: Domain expertise + context7 integration
+benefits from advanced reasoning; 1x cost justified for expert mode
 
 ### Example 4: Free Tier User with Planning Mode
 
-**File**: `plan.agent.md`
-**Content**: "Research and planning mode with read-only tools (search, fetch, githubRepo)"
-**Subscription**: Free (2K completions + 50 chat requests/month, 0x models only)
-**Recommendation**: GPT-4.1 (0x, balanced, included in Free tier)
-**Alternative**: GPT-5 mini (0x, faster but less context)
-**Rationale**: Free tier restricted to 0x models; GPT-4.1 provides best balance of quality and context for planning tasks
+**File**: `plan.agent.md` **Content**: "Research and planning mode with
+read-only tools (search, fetch, githubRepo)" **Subscription**: Free (2K
+completions + 50 chat requests/month, 0x models only) **Recommendation**:
+GPT-4.1 (0x, balanced, included in Free tier) **Alternative**: GPT-5 mini (0x,
+faster but less context) **Rationale**: Free tier restricted to 0x models;
+GPT-4.1 provides best balance of quality and context for planning tasks
 
 ## Knowledge Base
 
@@ -587,10 +626,12 @@ If file specifies a deprecated model:
 **Deprecated Models** (Effective 2025-10-23):
 
 - ❌ o3 (1x) → Replace with GPT-5 or Claude Sonnet 4.5 for reasoning
-- ❌ o4-mini (0.33x) → Replace with GPT-5 mini (0x) for cost, GPT-5 (1x) for quality
+- ❌ o4-mini (0.33x) → Replace with GPT-5 mini (0x) for cost, GPT-5 (1x) for
+  quality
 - ❌ Claude Sonnet 3.7 (1x) → Replace with Claude Sonnet 4 or 4.5
 - ❌ Claude Sonnet 3.7 Thinking (1.25x) → Replace with Claude Sonnet 4.5
-- ❌ Gemini 2.0 Flash (0.25x) → Replace with Grok Code Fast 1 (0.25x) or GPT-5 mini (0x)
+- ❌ Gemini 2.0 Flash (0.25x) → Replace with Grok Code Fast 1 (0.25x) or GPT-5
+  mini (0x)
 
 **Preview Models** (Subject to Change):
 
@@ -667,6 +708,6 @@ Library: /websites/github_en_copilot
 
 ---
 
-**Last Updated**: 2025-10-28
-**Model Data Current As Of**: October 2025
-**Deprecation Deadline**: 2025-10-23 for o3, o4-mini, Claude Sonnet 3.7 variants, Gemini 2.0 Flash
+**Last Updated**: 2025-10-28 **Model Data Current As Of**: October 2025
+**Deprecation Deadline**: 2025-10-23 for o3, o4-mini, Claude Sonnet 3.7
+variants, Gemini 2.0 Flash

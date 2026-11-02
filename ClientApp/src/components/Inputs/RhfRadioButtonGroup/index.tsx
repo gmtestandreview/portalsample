@@ -15,7 +15,7 @@ import type { RhfRules } from '../useRhfFieldA11y';
  * updated by the group itself, with the option's typed value.
  */
 const RhfRadioButtonGroup = <T,>(
-  props: Readonly<RhfRadioButtonGroupProps<T> & { rules?: RhfRules }>
+  props: Readonly<RhfRadioButtonGroupProps<T> & { rules?: RhfRules }>,
 ) => {
   const {
     displayHorizontally,
@@ -45,7 +45,7 @@ const RhfRadioButtonGroup = <T,>(
   if (isSummary) {
     if (!field.value) return null;
     const selectedOption = options.find(
-      (option) => option.value === field.value
+      (option) => option.value === field.value,
     );
     return (
       <SummaryDisplay

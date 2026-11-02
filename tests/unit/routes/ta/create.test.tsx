@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type {
   AccountInfo,
@@ -11,48 +11,70 @@ import CreateRequestForTypeApproval from '../../../../ClientApp/src/routes/ta/cr
 
 const mocks = vi.hoisted(() => ({
   accounts: [{ homeAccountId: 'account-1' }] as AccountInfo[],
-  acquireTokenSilent: vi.fn(),
-  setAuthToken: vi.fn(),
-  createApplication: vi.fn(),
-  appLoggerError: vi.fn(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  createApplication: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: mocks.accounts,
-    instance: {
-      acquireTokenSilent: mocks.acquireTokenSilent,
-    } as unknown as IPublicClientApplication,
-  }),
-}));
+vi.mock(
+  import('@azure/msal-react'),
+  (() =>
+    ({
+      useMsal: () => ({
+        accounts: mocks.accounts,
+        instance: {
+          acquireTokenSilent: mocks.acquireTokenSilent,
+        } as unknown as IPublicClientApplication,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
+);
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['type-approval.scope'] },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/authentication/authConfig'),
+  (() =>
+    ({
+      tokenRequest: { scopes: ['type-approval.scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
+);
 
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
-  ApplicationType: {
-    PatternApproval: 'PatternApproval',
-  },
-  ApplicationClient: vi.fn(function ApplicationClientMock() {
-    return {
-      setAuthToken: mocks.setAuthToken,
-      createApplication: mocks.createApplication,
-    };
-  }),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/api/web-api-client'),
+  (() =>
+    ({
+      ApplicationType: {
+        PatternApproval: 'PatternApproval',
+      },
+      ApplicationClient: vi.fn<(...args: unknown[]) => unknown>(
+        function ApplicationClientMock() {
+          return {
+            setAuthToken: mocks.setAuthToken,
+            createApplication: mocks.createApplication,
+          };
+        },
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule4>) as unknown as __DynamicPartialMockFactory<__TestMockModule4>,
+);
 
-vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: ReactNode }) => (
-    <div data-testid='block-ui-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/BlockUISpinner'),
+  (() =>
+    ({
+      default: ({ children }: { children: ReactNode }) => (
+        <div data-testid='block-ui-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>) as unknown as __DynamicPartialMockFactory<__TestMockModule14>,
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-  },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
+);
 
 const renderCreateRoute = () =>
   render(
@@ -64,29 +86,35 @@ const renderCreateRoute = () =>
           element={<div>Organisation details destination</div>}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
-describe('CreateRequestForTypeApproval', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
-    mocks.createApplication.mockResolvedValue({ referenceId: 'PA-100' });
-  });
+const resetCreateRequestForTypeApprovalMocks = () => {
+  vi.clearAllMocks();
+  mocks.accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
+  mocks.createApplication.mockResolvedValue({ referenceId: 'PA-100' });
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(CreateRequestForTypeApproval, () => {
   it('creates a pattern approval application and redirects to organisation details', async () => {
+    expect.hasAssertions();
+
+    resetCreateRequestForTypeApprovalMocks();
+
     renderCreateRoute();
 
     expect(screen.getByTestId('block-ui-spinner')).toHaveTextContent(
-      'Loading...'
+      'Loading...',
     );
 
     await waitFor(() => {
       expect(
-        screen.getByText('Organisation details destination')
+        screen.getByText('Organisation details destination'),
       ).toBeInTheDocument();
     });
+
     expect(mocks.acquireTokenSilent).toHaveBeenCalledWith({
       scopes: ['type-approval.scope'],
       account: mocks.accounts[0],
@@ -98,6 +126,10 @@ describe('CreateRequestForTypeApproval', () => {
   });
 
   it('logs a client failure and leaves the user on the loading state', async () => {
+    expect.hasAssertions();
+
+    resetCreateRequestForTypeApprovalMocks();
+
     const error = new Error('create failed');
     mocks.createApplication.mockRejectedValue(error);
 
@@ -106,14 +138,15 @@ describe('CreateRequestForTypeApproval', () => {
     await waitFor(() => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to create application',
-        error
+        error,
       );
     });
+
     expect(screen.getByTestId('block-ui-spinner')).toHaveTextContent(
-      'Loading...'
+      'Loading...',
     );
     expect(
-      screen.queryByText('Organisation details destination')
+      screen.queryByText('Organisation details destination'),
     ).not.toBeInTheDocument();
   });
 });

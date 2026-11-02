@@ -159,7 +159,7 @@ export function Button(props: ButtonProps) {
     <RACButton
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        button({ ...renderProps, variant: props.variant, className })
+        button({ ...renderProps, variant: props.variant, className }),
       )}
     >
       {composeRenderProps(props.children, (children, { isPending }) => (

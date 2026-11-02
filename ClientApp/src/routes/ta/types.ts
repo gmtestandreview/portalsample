@@ -38,7 +38,7 @@ export interface TASupportingDocumentsProps {
   attachment: AttachmentFunction;
   onUploadAttachment: (
     token: string,
-    fileData: FileParameter[]
+    fileData: FileParameter[],
   ) => Promise<AttachmentDto[]>;
   progress?: UploadProgress | undefined;
   setProgress?: React.Dispatch<
@@ -130,7 +130,7 @@ export type SinglePageFormProps<T extends FormikValues> = Omit<
   location: string;
   initialValues: InitialValue<T>;
   loadStepValues: (
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => SinglePageFormValues<T> | Promise<SinglePageFormValues<T>>;
   hidingFields: Hideable<Partial<T>, Partial<T>> | undefined;
   isSummaryPage?: boolean;

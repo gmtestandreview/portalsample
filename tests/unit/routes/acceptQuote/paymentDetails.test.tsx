@@ -1,17 +1,17 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   InvoiceSentToValues,
   type AcceptQuotePreInfoDto,
 } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
-import PaymentDetails from '@/routes/acceptQuote/paymentDetails';
+import paymentDetails from '@/routes/acceptQuote/paymentDetails';
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
-  const acquireTokenSilentMock = vi.fn();
+  const acquireTokenSilentMock = vi.fn<(...args: unknown[]) => unknown>();
   // Stable object prevents useEffect re-firing due to new object identity on every useMsal() call
   const msalContext = {
     accounts: [{ homeAccountId: 'test-account' }],
@@ -20,65 +20,119 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
   return { acquireTokenSilentMock, msalContext };
 });
 
-const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
+const mockGetPaymentDetails = vi.hoisted(() =>
+  vi.fn<(...args: unknown[]) => unknown>(),
+);
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => msalContext,
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => msalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>,
+);
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
+  const MockAcceptQuoteClient = vi.fn<typeof actual.AcceptQuoteClient>(
+    class extends actual.AcceptQuoteClient {
+      constructor(
+        ...args: ConstructorParameters<typeof actual.AcceptQuoteClient>
+      ) {
+        super(...args);
+        Object.defineProperty(this, 'setAuthToken', {
+          configurable: true,
+          value: vi.fn<(token: string) => void>(),
+          writable: true,
+        });
+        Object.defineProperty(this, 'getPaymentDetails', {
+          configurable: true,
+          value: mockGetPaymentDetails,
+          writable: true,
+        });
+      }
+    },
+  );
+
   return {
     ...actual,
-    AcceptQuoteClient: vi.fn(function (this: Record<string, unknown>) {
-      this['setAuthToken'] = vi.fn();
-      this['getPaymentDetails'] = mockGetPaymentDetails;
-    }),
-  };
+    AcceptQuoteClient: MockAcceptQuoteClient,
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>,
+);
 
 // Stub form-input children — they require Formik context which is outside this component's scope
-vi.mock('@/components/Inputs/TextInput', () => ({
-  default: ({
-    inlineHelp,
-    name,
-  }: {
-    inlineHelp?: React.ReactNode;
-    name: string;
-  }) => (
-    <div data-testid={`text-input`} data-name={name}>
-      {inlineHelp}
-    </div>
-  ),
-}));
-vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid={`radio-group`} data-name={name} />
-  ),
-}));
-vi.mock('@/components/forms/HidableField', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-vi.mock('@/components/forms/CommonForms/ContactDetails', () => ({
-  default: () => <div data-testid='contact-details' />,
-}));
-vi.mock('@/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  import('@/components/Inputs/TextInput'),
+  () =>
+    ({
+      default: ({
+        inlineHelp,
+        name,
+      }: {
+        inlineHelp?: React.ReactNode;
+        name: string;
+      }) => (
+        <div data-testid={`text-input`} data-name={name}>
+          {inlineHelp}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>,
+);
+vi.mock(
+  import('@/components/Inputs/RadioButtonGroup'),
+  () =>
+    ({
+      default: ({ name }: { name: string }) => (
+        <div data-testid={`radio-group`} data-name={name} />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule52>,
+);
+// eslint-disable-next-line vitest/prefer-import-in-mock
+vi.mock(
+  '@/components/forms/HidableField',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    }) satisfies __ExactMockModule<__TestMockModule70>,
+);
+vi.mock(
+  import('@/components/forms/CommonForms/ContactDetails'),
+  () =>
+    ({
+      default: () => <div data-testid='contact-details' />,
+    }) satisfies __ExactMockModule<__TestMockModule71>,
+);
+vi.mock(
+  import('@/components/BlockUISpinner'),
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>,
+);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function makePreInfo(
   paymentTerms: string,
-  quotationIdNum?: string
+  quotationIdNum?: string,
 ): {
   acceptQuotePreInfo: AcceptQuotePreInfoDto;
 } {
@@ -86,14 +140,15 @@ function makePreInfo(
     acceptQuotePreInfo: {
       paymentTerms,
       quotationIdNum,
-    } as AcceptQuotePreInfoDto,
+    },
   };
 }
 
 const defaultProps = { id: 'TEST-001' };
+const PaymentDetails = paymentDetails;
 
 const renderPaymentDetails = (
-  props: React.ComponentProps<typeof PaymentDetails> = defaultProps
+  props: React.ComponentProps<typeof PaymentDetails> = defaultProps,
 ) =>
   render(
     <Formik
@@ -110,61 +165,90 @@ const renderPaymentDetails = (
       onSubmit={() => {}}
     >
       <PaymentDetails {...props} />
-    </Formik>
+    </Formik>,
   );
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('PaymentDetails', () => {
-  beforeEach(() => {
+describe('payment details', () => {
+  const resetPaymentDetailsMocks = () => {
     vi.clearAllMocks();
     acquireTokenSilentMock.mockResolvedValue({ accessToken: 'test-token' });
     msalContext.instance.acquireTokenSilent = acquireTokenSilentMock;
     mockGetPaymentDetails.mockResolvedValue(makePreInfo('Standard'));
-  });
+  };
 
   describe('info Alert visibility', () => {
     it('renders the info Alert in non-summary mode', () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails();
+
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
     });
 
     it('does not render the info Alert in summary mode', () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails({ ...defaultProps, isSummary: true });
+
       expect(screen.queryByTestId('info-summary')).not.toBeInTheDocument();
     });
   });
 
   describe('payment-terms conditional copy', () => {
     it('shows the 30-day invoice warning when paymentTerms is not Prepaid', async () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Standard'));
       renderPaymentDetails();
 
       await waitFor(() => {
         expect(
-          screen.getByText(/30 days of NMI invoice date/)
+          screen.getByText(/30 days of NMI invoice date/),
         ).toBeInTheDocument();
       });
+
       expect(screen.queryByText(/Prepayment required/)).not.toBeInTheDocument();
     });
 
     it('shows the prepayment required notice when paymentTerms is Prepaid', async () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Prepaid'));
       renderPaymentDetails();
 
       await waitFor(() => {
         expect(screen.getByText(/Prepayment required/)).toBeInTheDocument();
       });
+
       expect(
-        screen.queryByText(/30 days of NMI invoice date/)
+        screen.queryByText(/30 days of NMI invoice date/),
       ).not.toBeInTheDocument();
     });
   });
 
   describe('loading spinner', () => {
     it('shows the spinner during the API fetch in non-summary mode', () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
 
       renderPaymentDetails();
@@ -173,6 +257,11 @@ describe('PaymentDetails', () => {
     });
 
     it('does not show the spinner in summary mode even while loading', () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
 
       renderPaymentDetails({ ...defaultProps, isSummary: true });
@@ -183,6 +272,11 @@ describe('PaymentDetails', () => {
 
   describe('field name prefixing (getNameForUse)', () => {
     it('passes raw key names to inputs in non-summary mode', async () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       renderPaymentDetails({ ...defaultProps, isSummary: false });
 
       await waitFor(() => {
@@ -190,57 +284,75 @@ describe('PaymentDetails', () => {
       });
 
       expect(
-        screen.getByLabelText('Purchase Order (PO) number (optional)')
+        screen.getByLabelText('Purchase Order (PO) number (optional)'),
       ).toHaveAttribute('name', 'purchaseOrderNo');
       expect(
-        screen.getByLabelText('The main contact person for this request')
+        screen.getByLabelText('The main contact person for this request'),
       ).toHaveAttribute('name', 'invoiceSentTo');
     });
 
     it('prefixes key names with paymentDetails. in summary mode', async () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       mockGetPaymentDetails.mockResolvedValue(
-        makePreInfo('Standard', 'Q-SUMMARY-001')
+        makePreInfo('Standard', 'Q-SUMMARY-001'),
       );
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.getByTestId('text-input')).toHaveAttribute(
         'data-name',
-        'paymentDetails.purchaseOrderNo'
+        'paymentDetails.purchaseOrderNo',
       );
-      expect(await screen.findByText(/Q-SUMMARY-001/)).toBeInTheDocument();
+      await expect(
+        screen.findByText(/Q-SUMMARY-001/),
+      ).resolves.toBeInTheDocument();
       expect(screen.getByTestId('radio-group')).toHaveAttribute(
         'data-name',
-        'paymentDetails.invoiceSentTo'
+        'paymentDetails.invoiceSentTo',
       );
     });
 
     it('includes the loaded quotation ID in summary help copy', async () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       mockGetPaymentDetails.mockResolvedValue(
-        makePreInfo('Standard', 'RFQ-2026-042')
+        makePreInfo('Standard', 'RFQ-2026-042'),
       );
 
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
-      expect(
-        await screen.findByText('Your NMI Quotation ID RFQ-2026-042')
-      ).toBeInTheDocument();
+      await expect(
+        screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
+      ).resolves.toBeInTheDocument();
     });
   });
 
-  describe('API error handling', () => {
+  describe('aPI error handling', () => {
     it('logs an error and remains rendered when the API call fails', async () => {
+      expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
+
       const AppLogger = (await import('@/instrumentation/AppLogger')).default;
       acquireTokenSilentMock.mockRejectedValue(new Error('Token failed'));
 
       renderPaymentDetails();
 
       await waitFor(() => {
-        expect(AppLogger.error).toHaveBeenCalledWith(
+        expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
           'Failed to load Payment details',
           expect.any(Error),
-          { Id: 'TEST-001' }
+          { Id: 'TEST-001' },
         );
       });
+
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
     });
   });

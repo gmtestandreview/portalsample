@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Use this checklist when auditing, modernising, repairing, or hardening a Python script or module.
+Use this checklist when auditing, modernising, repairing, or hardening a Python
+script or module.
 
 The objective is not simply to make Ruff and Pylance quiet.
 
@@ -29,8 +30,10 @@ The objective is to produce code that is:
 - [ ] Identify the minimum supported Python version.
 - [ ] Identify the Python version currently used by CI.
 - [ ] Identify the Python version used locally.
-- [ ] Do not recommend syntax or typing features newer than the supported minimum.
-- [ ] Check whether `typing_extensions` is already available if backports are needed.
+- [ ] Do not recommend syntax or typing features newer than the supported
+      minimum.
+- [ ] Check whether `typing_extensions` is already available if backports are
+      needed.
 
 Record:
 
@@ -65,7 +68,8 @@ pdm.lock
 - [ ] Read existing Pyright settings.
 - [ ] Read existing pytest configuration.
 - [ ] Respect repository-level line length and formatter settings.
-- [ ] Do not introduce a personal linting policy without identifying it as optional.
+- [ ] Do not introduce a personal linting policy without identifying it as
+      optional.
 
 ## 1.3 Capture the starting state
 
@@ -195,7 +199,8 @@ or another structure where the type system can represent the real domain.
 - [ ] Avoid casts that merely hide an inaccurate model.
 - [ ] Prefer fixing the type architecture over adding `cast()`.
 - [ ] Prefer fixing the type architecture over `# type: ignore`.
-- [ ] Treat serialization compatibility separately from internal modelling quality.
+- [ ] Treat serialization compatibility separately from internal modelling
+      quality.
 
 ---
 
@@ -224,7 +229,8 @@ If a better design would break existing output:
 
 - [ ] Prefer a compatibility-preserving repair for the current change.
 - [ ] Record the cleaner model as a future schema revision.
-- [ ] Do not silently introduce structural breaking changes during lint remediation.
+- [ ] Do not silently introduce structural breaking changes during lint
+      remediation.
 
 ---
 
@@ -297,7 +303,8 @@ For each occurrence ask:
 
 - [ ] Why is the type unknown?
 - [ ] Can it be validated at ingestion?
-- [ ] Can a `TypedDict`, dataclass, protocol, enum, literal, or type alias model it?
+- [ ] Can a `TypedDict`, dataclass, protocol, enum, literal, or type alias model
+      it?
 - [ ] Is the cast proving something true, or merely silencing the checker?
 - [ ] Could the caller supply a value the cast does not actually guarantee?
 
@@ -503,7 +510,8 @@ For every numeric domain field:
 - [ ] establish relationships to other fields;
 - [ ] decide whether invalid data raises, warns, skips, or defaults.
 
-Never silently invent a domain rule—confirm it from specifications where necessary.
+Never silently invent a domain rule—confirm it from specifications where
+necessary.
 
 ---
 
@@ -644,7 +652,8 @@ Ambiguous inputs should:
 
 ## 16. Look for Namespace / Reserved-Key Collisions
 
-If synthetic data is inserted into the same namespace as discovered user/domain keys:
+If synthetic data is inserted into the same namespace as discovered user/domain
+keys:
 
 ```python
 summary["delta"] = ...
@@ -654,7 +663,8 @@ ask:
 
 - [ ] Can a real item also be called `delta`?
 - [ ] Can a configuration shadow metadata?
-- [ ] Are keys such as `summary`, `metadata`, `default`, `all`, or `none` reserved?
+- [ ] Are keys such as `summary`, `metadata`, `default`, `all`, or `none`
+      reserved?
 - [ ] Should these concepts live in separate fields?
 
 Either:
@@ -673,7 +683,8 @@ validate and reject reserved names
 
 ## 17. Validate Cartesian Coverage
 
-When calculating "runs per configuration", "coverage", "completeness", or similar metrics, do not count only combinations that happen to exist.
+When calculating "runs per configuration", "coverage", "completeness", or
+similar metrics, do not count only combinations that happen to exist.
 
 If dimensions are:
 
@@ -733,7 +744,8 @@ tokens   = primary tokens   or fallback tokens
 
 - [ ] Identify each independently recoverable field.
 - [ ] Establish source precedence.
-- [ ] Do not discard valid fallback information just because another primary field exists.
+- [ ] Do not discard valid fallback information just because another primary
+      field exists.
 - [ ] Confirm producer contracts before altering semantics.
 
 ---
@@ -904,7 +916,8 @@ warnings and errors
 
 - [ ] Always use timezone-aware datetimes.
 - [ ] Prefer `datetime.UTC` where the Python baseline supports it.
-- [ ] Never use naive local timestamps for interchange formats unless explicitly required.
+- [ ] Never use naive local timestamps for interchange formats unless explicitly
+      required.
 - [ ] Keep serialized timestamps unambiguous.
 
 Example:
@@ -1035,7 +1048,8 @@ depending on project configuration.
 
 Principle:
 
-> Formatter and linter should cooperate rather than continuously undoing each other.
+> Formatter and linter should cooperate rather than continuously undoing each
+> other.
 
 ---
 
@@ -1099,7 +1113,8 @@ For actual bugs:
 - [ ] Improve names/structure.
 - [ ] Keep tests green.
 
-Do not claim a regression test exists unless the failure was observed before the fix.
+Do not claim a regression test exists unless the failure was observed before the
+fix.
 
 ---
 
@@ -1455,19 +1470,22 @@ The solution was better modelling, not suppression.
 
 ## Lesson 3 — Missing data is not zero
 
-Using an empty zero-valued baseline created a mathematically valid but semantically false comparison.
+Using an empty zero-valued baseline created a mathematically valid but
+semantically false comparison.
 
 Represent absence explicitly.
 
 ## Lesson 4 — Correct types can still produce incorrect business logic
 
-The first-two-configurations approach could be perfectly typed and still compare the wrong entities.
+The first-two-configurations approach could be perfectly typed and still compare
+the wrong entities.
 
 Type safety and semantic correctness are different review dimensions.
 
 ## Lesson 5 — Edge cases hide in aggregation
 
-The missing configuration/evaluation combination was not visible from simple run counts.
+The missing configuration/evaluation combination was not visible from simple run
+counts.
 
 Always test incomplete matrices.
 
@@ -1477,11 +1495,13 @@ Filesystem names require semantic sort keys when embedded numbers matter.
 
 ## Lesson 7 — Presentation units must be audited independently
 
-A stored ratio and displayed percentage can make delta representation misleading even when all calculations are mathematically correct.
+A stored ratio and displayed percentage can make delta representation misleading
+even when all calculations are mathematically correct.
 
 ## Lesson 8 — Input validation belongs at boundaries
 
-The rest of the program becomes simpler when malformed JSON is dealt with once rather than repeatedly guarded downstream.
+The rest of the program becomes simpler when malformed JSON is dealt with once
+rather than repeatedly guarded downstream.
 
 ## Lesson 9 — Avoid replacing `Any` with a different vague type everywhere
 
@@ -1495,11 +1515,13 @@ If Ruff was not run, say so.
 
 If Pyright was not run, say so.
 
-A rigorous report loses credibility when predictions are presented as executed findings.
+A rigorous report loses credibility when predictions are presented as executed
+findings.
 
 ## Lesson 11 — Version awareness comes before modernisation
 
-Features such as `TypeIs`, modern `type` aliases, or newer standard-library APIs are only good recommendations if the supported Python floor permits them.
+Features such as `TypeIs`, modern `type` aliases, or newer standard-library APIs
+are only good recommendations if the supported Python floor permits them.
 
 ## Lesson 12 — Compatibility matters during "cleanup"
 

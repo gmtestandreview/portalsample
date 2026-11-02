@@ -14,14 +14,22 @@ const manualAddress = {
   searchText: '',
 };
 
-describe('addressSchema', () => {
+const arrayContainingStrings = (values: string[]): unknown =>
+  expect.arrayContaining<string>(values);
+
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(addressSchema, () => {
   it('accepts a manually entered address with required fields', async () => {
+    expect.hasAssertions();
+
     await expect(
-      addressSchema('Street address').validate(manualAddress)
+      addressSchema('Street address').validate(manualAddress),
     ).resolves.toMatchObject(manualAddress);
   });
 
   it('requires manual address fields when manually entered', async () => {
+    expect.hasAssertions();
+
     await expect(
       addressSchema('Street address').validate(
         {
@@ -31,10 +39,10 @@ describe('addressSchema', () => {
           state: undefined,
           suburb: '',
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Address line 1 is required',
         'Postcode is required',
         'Suburb is required',
@@ -43,6 +51,8 @@ describe('addressSchema', () => {
   });
 
   it('validates manual address formats and max lengths', async () => {
+    expect.hasAssertions();
+
     await expect(
       addressSchema('Street address').validate(
         {
@@ -53,10 +63,10 @@ describe('addressSchema', () => {
           postcode: 'ABCD',
           suburb: 'd'.repeat(81),
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Address line 1 cannot be greater than 250 characters',
         'Address line 2 cannot be greater than 250 characters',
         'Address line 3 cannot be greater than 250 characters',
@@ -67,15 +77,19 @@ describe('addressSchema', () => {
   });
 
   it('requires search text when address is not manually entered', async () => {
+    expect.hasAssertions();
+
     await expect(
       addressSchema('Postal address').validate({
         isManuallyEntered: false,
         searchText: '',
-      })
+      }),
     ).rejects.toThrow('Postal address is required');
   });
 
   it('does not require manual fields when using searched address text', async () => {
+    expect.hasAssertions();
+
     await expect(
       addressSchema('Postal address').validate({
         isManuallyEntered: false,
@@ -83,7 +97,7 @@ describe('addressSchema', () => {
         postcode: '',
         suburb: '',
         searchText: '1 National Circuit Barton ACT 2600',
-      })
+      }),
     ).resolves.toMatchObject({
       searchText: '1 National Circuit Barton ACT 2600',
     });

@@ -9,7 +9,7 @@ import {
   useAccountDispatch,
 } from '../../../authentication/hooks';
 import PrimaryButton from '../../Buttons/PrimaryButton';
-import ButtonGroup from '../../Buttons/ButtonGroup';
+import ButtonGroup, { type ButtonGroupProps } from '../../Buttons/ButtonGroup';
 import TermsOfUse from '../../Footer/termsOfUse';
 import { UsersClient } from '../../../api/web-api-client';
 import { silentRequestFor } from '../../../authentication/silentRequest';
@@ -20,7 +20,7 @@ interface DefaultTermsAndConditionModalHeaderProps {
 }
 
 const DefaultTermsAndConditionModalHeader = (
-  props: Readonly<DefaultTermsAndConditionModalHeaderProps>
+  props: Readonly<DefaultTermsAndConditionModalHeaderProps>,
 ): ReactElement => {
   const { userName } = props;
 
@@ -48,7 +48,7 @@ interface SavingTermsAndConditionErrorProps {
 }
 
 const SavingTermsAndConditionError = (
-  props: Readonly<SavingTermsAndConditionErrorProps>
+  props: Readonly<SavingTermsAndConditionErrorProps>,
 ): ReactElement | null => {
   const { showError } = props;
   if (showError) {
@@ -104,13 +104,10 @@ const AgreeButton = (props: Readonly<AgreeButtonProps>): JSX.Element => {
   );
 };
 
-interface TermAndConditionButtonsProps {
-  left: any;
-  right: any;
-}
+type TermAndConditionButtonsProps = ButtonGroupProps;
 
 const TermAndConditionButtons = (
-  props: Readonly<TermAndConditionButtonsProps>
+  props: Readonly<TermAndConditionButtonsProps>,
 ) => {
   const { left, right } = props;
   return <ButtonGroup left={left} right={right} />;
@@ -127,7 +124,7 @@ const TermsAndConditionModal = () => {
     if (inProgress === InteractionStatus.None && accounts.length > 0) {
       const client = new UsersClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
 
@@ -147,14 +144,13 @@ const TermsAndConditionModal = () => {
   const anchorLink = () => <AnchorLinkToNmi />;
 
   const agreeButton = () => (
-    <AgreeButton onClick={onContinueTermsAndConditionModal} />
+    <AgreeButton onClick={() => void onContinueTermsAndConditionModal()} />
   );
 
   return (
     <Modal
       size='lg'
       show={!accountState?.details?.userAcceptedTermsOfUse}
-      aria-modal={!accountState?.details?.userAcceptedTermsOfUse}
       enforceFocus={!accountState?.details?.userAcceptedTermsOfUse}
       aria-live='assertive'
       aria-atomic='false'
@@ -162,7 +158,7 @@ const TermsAndConditionModal = () => {
       backdrop='static'
       keyboard={false}
       data-testid='prompt-termsandcondition-modal'
-      // aria-labelledby='modal-prompt-terms'
+      aria-labelledby='modal-prompt-terms'
     >
       <Modal.Header closeButton={false}>
         <SavingTermsAndConditionError

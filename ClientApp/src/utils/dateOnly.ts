@@ -12,7 +12,7 @@ const displayDatePattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
 const toDateOnlyValue = (
   year: number,
   month: number,
-  day: number
+  day: number,
 ): DateOnlyValue | undefined => {
   const date = new Date(Date.UTC(year, month - 1, day));
 
@@ -30,7 +30,7 @@ const toDateOnlyValue = (
 };
 
 export const parseDateOnlyValue = (
-  value: string
+  value: string,
 ): DateOnlyValue | undefined => {
   const match = dateOnlyPattern.exec(value.trim());
 
@@ -42,7 +42,7 @@ export const parseDateOnlyValue = (
 };
 
 export const parseDateOnlyInput = (
-  value: Date | string | null | undefined
+  value: Date | string | null | undefined,
 ): DateOnlyValue | undefined => {
   if (value === null || value === undefined) {
     return undefined;
@@ -56,7 +56,7 @@ export const parseDateOnlyInput = (
     return toDateOnlyValue(
       value.getFullYear(),
       value.getMonth() + 1,
-      value.getDate()
+      value.getDate(),
     );
   }
 
@@ -67,7 +67,7 @@ export const parseDateOnlyInput = (
     return toDateOnlyValue(
       Number(dateTimeMatch[1]),
       Number(dateTimeMatch[2]),
-      Number(dateTimeMatch[3])
+      Number(dateTimeMatch[3]),
     );
   }
 
@@ -83,7 +83,7 @@ export const parseDateOnlyInput = (
     return toDateOnlyValue(
       Number(displayDateMatch[3]),
       Number(displayDateMatch[2]),
-      Number(displayDateMatch[1])
+      Number(displayDateMatch[1]),
     );
   }
 
@@ -91,7 +91,7 @@ export const parseDateOnlyInput = (
 };
 
 export const parseApiDateOnlyInput = (
-  value: Date | string | null | undefined
+  value: Date | string | null | undefined,
 ): DateOnlyValue | undefined => {
   if (value instanceof Date) {
     if (Number.isNaN(value.getTime())) {
@@ -101,7 +101,7 @@ export const parseApiDateOnlyInput = (
     return toDateOnlyValue(
       value.getUTCFullYear(),
       value.getUTCMonth() + 1,
-      value.getUTCDate()
+      value.getUTCDate(),
     );
   }
 
@@ -121,11 +121,11 @@ export const dateOnlyToApiDate = (dateOnlyValue: DateOnlyValue): Date => {
 };
 
 export const dateOnlyToStoredDateTimeString = (
-  dateOnlyValue: DateOnlyValue
+  dateOnlyValue: DateOnlyValue,
 ): string => `${dateOnlyValue}T00:00:00+00:00`;
 
 export const formatDateOnlyForDisplay = (
   dateOnlyValue: DateOnlyValue,
-  formatter = 'dd LLL yyyy'
+  formatter = 'dd LLL yyyy',
 ): string =>
   format(dateOnlyToPickerDate(dateOnlyValue), formatter, { locale: enAU });

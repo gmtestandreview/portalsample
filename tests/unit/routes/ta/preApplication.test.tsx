@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   msalInstance,
@@ -10,22 +10,25 @@ import {
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 
 const mocks = vi.hoisted(() => ({
-  downloadFileFromUrl: vi.fn(),
+  downloadFileFromUrl: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react') as unknown as string, async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../../ClientApp/src/routes/common/helperFunctions') as unknown as string,
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
-    return { ...original, downloadFileFromUrl: mocks.downloadFileFromUrl };
-  }
+    return {
+      ...original,
+      downloadFileFromUrl: mocks.downloadFileFromUrl,
+    } satisfies __ExactMockModule<__TestMockModule9>;
+  },
 );
 
 const renderPage = async () => {
@@ -46,49 +49,61 @@ const renderPage = async () => {
   });
 };
 
-describe('pattern approval pre-application', () => {
-  beforeEach(() => {
-    resetMsalMock();
-    mocks.downloadFileFromUrl.mockReset();
-  });
+const resetPreApplicationMocks = () => {
+  resetMsalMock();
+  mocks.downloadFileFromUrl.mockReset();
+};
 
+describe('pattern approval pre-application', () => {
   it('explains what the applicant needs before starting', async () => {
+    expect.hasAssertions();
+
+    resetPreApplicationMocks();
+
     await renderPage();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Pattern/type approval'
+      'Pattern/type approval',
     );
     expect(
-      screen.getByText('test results, certificates or reports')
+      screen.getByText('test results, certificates or reports'),
     ).toBeInTheDocument();
     expect(screen.getByTestId('info-summary')).toHaveTextContent(
-      'New customers'
+      'New customers',
     );
   });
 
   it('links out to the certification procedures', async () => {
+    expect.hasAssertions();
+
+    resetPreApplicationMocks();
+
     await renderPage();
 
     expect(screen.getByRole('link', { name: /NMI P 106/ })).toHaveAttribute(
       'href',
-      'https://www.industry.gov.au/sites/default/files/2026-03/nmi-p-106.pdf'
+      'https://www.industry.gov.au/sites/default/files/2026-03/nmi-p-106.pdf',
     );
     expect(
-      screen.getByRole('link', { name: /Pattern approval checklist/ })
+      screen.getByRole('link', { name: /Pattern approval checklist/ }),
     ).toHaveAttribute(
       'href',
-      expect.stringContaining('pattern-approval-requirements')
+      expect.stringContaining('pattern-approval-requirements'),
     );
   });
 
   it('downloads the credit check form through the authenticated helper', async () => {
+    expect.hasAssertions();
+
+    resetPreApplicationMocks();
+
     const user = userEvent.setup();
     await renderPage();
 
     await user.click(
       screen.getByRole('link', {
         name: /Download credit check application form/,
-      })
+      }),
     );
 
     // Routed through the helper rather than a plain href: the file sits behind a request that
@@ -97,18 +112,22 @@ describe('pattern approval pre-application', () => {
       'https://www.industry.gov.au/sites/default/files/2025-07/NMI-credit-application-form.pdf',
       msalInstance,
       [testAccount],
-      'NMI-credit-application-form.pdf'
+      'NMI-credit-application-form.pdf',
     );
   });
 
   it('does not follow the placeholder href when downloading', async () => {
+    expect.hasAssertions();
+
+    resetPreApplicationMocks();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 
     await user.click(
       screen.getByRole('link', {
         name: /Download credit check application form/,
-      })
+      }),
     );
 
     // The anchor carries href='#', so without preventDefault the click would navigate.
@@ -116,6 +135,10 @@ describe('pattern approval pre-application', () => {
   });
 
   it('starts the application', async () => {
+    expect.hasAssertions();
+
+    resetPreApplicationMocks();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 
@@ -125,6 +148,10 @@ describe('pattern approval pre-application', () => {
   });
 
   it('offers a way back to the type approval dashboard', async () => {
+    expect.hasAssertions();
+
+    resetPreApplicationMocks();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 

@@ -12,13 +12,13 @@ const hasSelectedValue = (value: unknown) =>
 
 const getSelectedDisplayText = <T extends string | number>(
   value: unknown,
-  options?: SelectInputOption<T>[]
+  options?: SelectInputOption<T>[],
 ) => options?.find((option) => option.value === value)?.displayText ?? '';
 
 const renderInlineHelp = (
   helpId: string | undefined,
   inlineHelp: SelectInputProps['inlineHelp'],
-  inlineHelpTitle: string | undefined
+  inlineHelpTitle: string | undefined,
 ) => {
   if (!inlineHelp) {
     return null;
@@ -42,7 +42,7 @@ const renderInlineHelp = (
 };
 
 const SelectInput = <T extends string | number>(
-  selectInputProps: Readonly<SelectInputProps<T>>
+  selectInputProps: Readonly<SelectInputProps<T>>,
 ) => {
   const {
     displayHorizontally,
@@ -99,7 +99,7 @@ const SelectInput = <T extends string | number>(
   }
 
   const onSelectChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     if (onChange !== undefined) {
       onChange(event);
@@ -117,7 +117,7 @@ const SelectInput = <T extends string | number>(
         {...field}
         onChange={(event) =>
           onSelectChange(
-            event as ChangeEvent<HTMLInputElement | HTMLSelectElement>
+            event as ChangeEvent<HTMLInputElement | HTMLSelectElement>,
           )
         }
         isInvalid={!!(meta.touched && meta.error)}

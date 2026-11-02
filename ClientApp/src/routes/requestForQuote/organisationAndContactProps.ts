@@ -2,7 +2,7 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { RequestForQuoteClient, YesNo } from '../../api/web-api-client';
+import { RequestForQuoteClient, Title, YesNo } from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   OrganisationAndContact,
@@ -27,12 +27,12 @@ const loadOrganisationAndContact =
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const organisationAndContact = await client.getOrganisationAndContact(
         id,
-        abortSignal
+        abortSignal,
       );
       const wizardStepValues: WizardFormStepValues<OrganisationAndContact> = {
         stepValues: { ...organisationAndContact },
@@ -49,17 +49,17 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: OrganisationAndContact,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await client.saveOrganisationAndContact(
@@ -69,7 +69,7 @@ const saveStep =
           formStep: values,
           isCompletingStep: isComplete,
         },
-        abortSignal
+        abortSignal,
       );
     } else {
       throw new Error('error');
@@ -86,7 +86,7 @@ const organisationAndContactProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<OrganisationAndContact> => ({
   initialValues: {},
   stepStatuses: statuses,
@@ -99,7 +99,8 @@ const organisationAndContactProps = (
     principalContactHide: (x: OrganisationAndContact) =>
       x.isPrincipalContact === YesNo.Yes,
     contact: {
-      titleOther: (x: OrganisationAndContact) => x.contact?.title !== 'Other',
+      titleOther: (x: OrganisationAndContact) =>
+        x.contact?.title !== Title.Other,
     },
   },
   validateHard: organisationAndContactSubmitValidation,

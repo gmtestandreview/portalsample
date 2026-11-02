@@ -12,10 +12,18 @@ only within their stated scope, and this file takes precedence when instructions
 conflict unless the task explicitly requires a policy change. Policy-sensitive
 files may be edited only when the task explicitly requests that policy change;
 For application-code tasks, leave them unchanged unless the task explicitly
-requests that policy change. Markdown formatting follows
-Prettier where applicable, while fenced code blocks retain a language identifier
-when the language is known and normal Markdown links use the form
+requests that policy change. Markdown formatting follows Prettier where
+applicable, while fenced code blocks retain a language identifier when the
+language is known and normal Markdown links use the form
 `[descriptive text](target)`.
+
+## Language
+
+Use English exclusively for assistant responses and for all new or modified
+authored text in this repository, including code comments, test names, error
+messages, documentation, fixtures, and commit messages. Ignore localized runtime
+or tool status text when selecting the language. Do not introduce or translate
+authored text into another language unless the user explicitly requests it.
 
 ### Validation scripts
 
@@ -72,7 +80,7 @@ heading.
 - **CSS**: Bootstrap 5 (custom NMI theme) + SCSS partials
 - **API client**: Auto-generated `web-api-client.ts` (NSwag/OpenAPI)
 - **Analytics**: Azure Application Insights + Google Analytics
-- **Bundler**: Webpack (bundled artifacts only; config not present in snapshot)
+- **Bundler**: Vite 8 (`vite.config.mts`)
 - **CSP**: Trusted Types policy via `trustedtypes.ts` + DOMPurify
 
 ## Repository Shape
@@ -84,7 +92,6 @@ ClientApp/src/api/web-api-client.ts  ← generated NSwag/OpenAPI API client
                                       do not edit
 ClientApp/source-map-http-downloads/ ← third-party source mirrors, do not edit
 ClientApp/src/external/              ← vendor copies, do not edit
-ClientApp/webpack/                   ← webpack runtime bootstrap, do not edit
 ClientApp/media/                     ← captured media assets
 ```
 
@@ -121,8 +128,8 @@ that is their explicit runtime contract:
 
 ```ts
 import { env } from '../env';
-env.REACT_APP_B2C_CLIENTID; // correct
-process.env.REACT_APP_B2C_CLIENTID; // wrong — will be undefined at runtime
+env.VITE_B2C_CLIENTID; // correct
+process.env.VITE_B2C_CLIENTID; // wrong — will be undefined at runtime
 ```
 
 ### Global Object Usage
@@ -156,9 +163,9 @@ forms pass `displayHeaderAndFooter={false}` to suppress the main chrome:
 `.maxValue()`, `.noConsecutiveChars()`, `.atLeastOneChar()`,
 `.noConsecutivePuncuation()`, `.numberWithinRange()`.
 
-Import the side-effect module in files that use these methods. A local import
-is unnecessary only when a shared initialization path is guaranteed to import
-it before the schema is evaluated; do not rely on incidental import order.
+Import the side-effect module in files that use these methods. A local import is
+unnecessary only when a shared initialization path is guaranteed to import it
+before the schema is evaluated; do not rely on incidental import order.
 
 ```ts
 import '../../validationSchemas/yupExtensions';
@@ -203,17 +210,17 @@ font-size: math.div($h1-font-size, 1.375);
 **Module migration blocker**: `_variables.scss:68` calls `negativify-map()`, a
 Bootstrap 5 internal available only via the global `@import` cascade. Full
 `@use`-based migration is deferred until Bootstrap 6. Until then,
-`silenceDeprecations: ['import']` in `webpack.config.js` and
-`.storybook/main.ts` suppresses deprecation warnings from our own partials;
-`quietDeps: true` suppresses Bootstrap's internal deprecations.
+`silenceDeprecations: ['import']` in `vite.config.mts` and `.storybook/main.ts`
+suppresses deprecation warnings from our own partials; `quietDeps: true`
+suppresses Bootstrap's internal deprecations.
 
 ## Storybook
 
 For UI component work in a configured Storybook environment, use the
 `my-storybook-mcp-server` MCP tools to access Storybook's component and
 documentation knowledge before answering or taking any action. If the endpoint
-is unavailable, record that limitation and do not infer undocumented
-component properties.
+is unavailable, record that limitation and do not infer undocumented component
+properties.
 
 ### Storybook async/render hygiene
 
@@ -225,8 +232,8 @@ await the user-visible settled state in the story play function with
 behind `useEffect` + `setState`; it creates post-render updates outside the
 Storybook test interaction boundary.
 
-When a UI task uses Storybook MCP, first ensure `npm run storybook` is running and
-`http://localhost:6006/mcp` responds successfully. Confirm `codex mcp list`
+When a UI task uses Storybook MCP, first ensure `npm run storybook` is running
+and `http://localhost:6006/mcp` responds successfully. Confirm `codex mcp list`
 shows `my-storybook-mcp-server` enabled and
 `codex mcp get my-storybook-mcp-server` reports the expected URL. If Codex
 started before Storybook was ready and the tools are absent, restart the Codex
@@ -235,8 +242,8 @@ requirement.
 
 - **CRITICAL: Never hallucinate component properties!** For each property on a
   design-system component, including common-sounding ones like `shadow`, verify
-  it against the available MCP documentation or example stories before using
-  it. If that evidence is unavailable, do not infer the property.
+  it against the available MCP documentation or example stories before using it.
+  If that evidence is unavailable, do not infer the property.
 - Query `list-all-documentation` to get a list of all components
 - Query `get-documentation` for that component to see all available properties
   and examples
@@ -271,7 +278,6 @@ unavailable:
 - `ClientApp/css/main.*.css`
 - `ClientApp/source-map-http-downloads/**`
 - `ClientApp/src/external/**`
-- `ClientApp/webpack/**`
 
 ## Validation Guidance
 
@@ -389,22 +395,8 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 
 ## Instruction Files
 
-- **Markdown rules**:
-  [.github/instructions/markdown.instructions.md](.github/instructions/markdown.instructions.md)
-- **Policy-sensitive files**:
-  [.github/instructions/config-policy.instructions.md](.github/instructions/config-policy.instructions.md)
-- **App code conventions**:
-  [.github/instructions/app-code.instructions.md](.github/instructions/app-code.instructions.md)
-- **JS/TS change discipline**:
-  [.github/instructions/code-change-discipline.instructions.md](.github/instructions/code-change-discipline.instructions.md)
-- **Generated/tracked boundaries**:
-  [.github/instructions/generated-and-tracked-boundaries.instructions.md](.github/instructions/generated-and-tracked-boundaries.instructions.md)
-- **Route security review**:
-  [.github/instructions/Route-security-review.instructions.md](.github/instructions/Route-security-review.instructions.md)
-- **Snapshot edit boundaries**:
-  [.github/instructions/snapshot-boundaries.instructions.md](.github/instructions/snapshot-boundaries.instructions.md)
-- **Yup extension import guard**:
-  [.github/instructions/yup-extension-guard.instructions.md](.github/instructions/yup-extension-guard.instructions.md)
+Instruction files are under [.github/instructions/](.github/instructions/).
+Recall Caveman memory `mem_cea0f1f93d17c278` for the file-to-purpose index.
 
 <!-- sonar:begin:codex-secrets-on-read -->
 

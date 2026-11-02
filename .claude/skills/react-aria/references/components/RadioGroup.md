@@ -222,7 +222,7 @@ export function RadioGroup(props: RadioGroupProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'group flex flex-col gap-2 font-sans'
+        'group flex flex-col gap-2 font-sans',
       )}
     >
       <Label>{props.label}</Label>
@@ -263,7 +263,7 @@ export function Radio(props: RadioProps) {
       <RadioButton
         className={composeTailwindRenderProps(
           props.className,
-          'flex relative gap-2 items-center group text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]'
+          'flex relative gap-2 items-center group text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]',
         )}
       >
         {composeRenderProps(props.children, (children, renderProps) => (

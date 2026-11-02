@@ -1,17 +1,12 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import {
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { it } from 'node:test';
 import ts from 'typescript';
+import { makeDirectory, readTextFile, writeTextFile } from './safe-file-io.mjs';
 import { isEligible, transformProps } from './readonly-props.mjs';
 
 it('wraps named, destructured, generic, memo and default component props only', () => {
@@ -45,12 +40,12 @@ function Factory(props: Props) { return () => <div />; }
 it('does not change helpers merely containing JSX or shadowed Readonly types', () => {
   assert.equal(
     transformProps(
-      'function Helper(props: Props) { const element = <div />; return 1; }'
+      'function Helper(props: Props) { const element = <div />; return 1; }',
     ).changes.length,
-    0
+    0,
   );
   const result = transformProps(
-    'type Readonly<T> = T; const Card = (props: Props) => <div />;'
+    'type Readonly<T> = T; const Card = (props: Props) => <div />;',
   );
   assert.equal(result.changes.length, 0);
   assert.equal(result.skipped.length, 1);
@@ -74,8 +69,8 @@ const script = path.join(import.meta.dirname, 'readonly-props.mjs');
 function fixture(context, component = 'return <div>{props.name}</div>;') {
   const root = mkdtempSync(path.join(tmpdir(), 'readonly-props-'));
   context.after(() => rmSync(root, { recursive: true, force: true }));
-  mkdirSync(path.join(root, 'ClientApp/src'), { recursive: true });
-  writeFileSync(
+  makeDirectory(path.join(root, 'ClientApp/src'), root);
+  writeTextFile(
     path.join(root, 'tsconfig.json'),
     JSON.stringify({
       compilerOptions: {
@@ -85,10 +80,12 @@ function fixture(context, component = 'return <div>{props.name}</div>;') {
         skipLibCheck: true,
       },
       include: ['ClientApp/src/**/*'],
-    })
+    }),
+    undefined,
+    root,
   );
   const filename = path.join(root, 'ClientApp/src/Card.tsx');
-  writeFileSync(
+  writeTextFile(
     filename,
     `declare namespace JSX { interface IntrinsicElements { div: { children?: unknown } } }
 interface Props { name: string; onSave?: (items: string[]) => void; items?: string[] }
@@ -96,7 +93,9 @@ function Card(props: Props) { ${component} }
 const input: Props = { name: 'before', items: [] };
 const rendered = <Card {...input} />;
 input.name = 'after';
-`
+`,
+    undefined,
+    root,
   );
   const git = (...args) =>
     execFileSync('git', ['-C', root, ...args], { stdio: 'pipe' });
@@ -111,7 +110,7 @@ input.name = 'after';
     'commit.gpgsign=false',
     'commit',
     '-qm',
-    'fixture'
+    'fixture',
   );
   return {
     root,
@@ -127,28 +126,30 @@ input.name = 'after';
 
 it('CLI previews without writing, checks, applies after validation and is idempotent', (context) => {
   const { filename, run } = fixture(context);
-  const original = readFileSync(filename, 'utf8');
+  const root = path.dirname(path.dirname(path.dirname(filename)));
+  const original = readTextFile(filename, root);
   const preview = run();
   assert.equal(preview.status, 0, preview.stderr);
   assert.match(preview.stdout, /1 proposed props fixes/u);
-  assert.equal(readFileSync(filename, 'utf8'), original);
+  assert.equal(readTextFile(filename, root), original);
   assert.equal(run('--check').status, 1);
   const write = run('--write');
   assert.equal(write.status, 0, write.stderr);
-  assert.match(readFileSync(filename, 'utf8'), /props: Readonly<Props>/u);
+  assert.match(readTextFile(filename, root), /props: Readonly<Props>/u);
   assert.equal(run('--check').status, 0);
 });
 
 it('CLI rejects mutations revealed by readonly without touching source', (context) => {
   const { filename, run } = fixture(
     context,
-    "props.name = 'changed'; return <div />;"
+    "props.name = 'changed'; return <div />;",
   );
-  const original = readFileSync(filename, 'utf8');
+  const root = path.dirname(path.dirname(path.dirname(filename)));
+  const original = readTextFile(filename, root);
   const result = run('--write');
   assert.equal(result.status, 2);
   assert.match(result.stderr, /read-only property/u);
-  assert.equal(readFileSync(filename, 'utf8'), original);
+  assert.equal(readTextFile(filename, root), original);
 });
 
 it('CLI refuses baseline errors and dirty target files', (context) => {
@@ -156,16 +157,18 @@ it('CLI refuses baseline errors and dirty target files', (context) => {
   const result = broken.run('--write');
   assert.equal(result.status, 2);
   assert.match(result.stderr, /Baseline has/u);
-  assert.doesNotMatch(readFileSync(broken.filename, 'utf8'), /Readonly</u);
+  assert.doesNotMatch(readTextFile(broken.filename, broken.root), /Readonly</u);
   const dirty = fixture(context);
-  writeFileSync(
+  writeTextFile(
     dirty.filename,
-    `${readFileSync(dirty.filename, 'utf8')}// user change\n`
+    `${readTextFile(dirty.filename, dirty.root)}// user change\n`,
+    undefined,
+    dirty.root,
   );
   const changed = dirty.run('--write');
   assert.equal(changed.status, 2);
   assert.match(changed.stderr, /staged or unstaged/u);
-  assert.match(readFileSync(dirty.filename, 'utf8'), /user change/u);
+  assert.match(readTextFile(dirty.filename, dirty.root), /user change/u);
   assert.equal(dirty.run('--unknown').status, 2);
   assert.equal(dirty.run('--write', '--check').status, 2);
   assert.equal(dirty.run('../outside').status, 2);
@@ -174,18 +177,25 @@ it('CLI refuses baseline errors and dirty target files', (context) => {
 it('CLI refuses edits to files outside the compiler project', (context) => {
   const { root, filename, run } = fixture(
     context,
-    "props.name = 'changed'; return <div />;"
+    "props.name = 'changed'; return <div />;",
   );
-  writeFileSync(path.join(root, 'checked.ts'), 'export const checked = true;');
-  writeFileSync(
+  writeTextFile(
+    path.join(root, 'checked.ts'),
+    'export const checked = true;',
+    undefined,
+    root,
+  );
+  writeTextFile(
     path.join(root, 'tsconfig.json'),
-    JSON.stringify({ compilerOptions: { types: [] }, files: ['checked.ts'] })
+    JSON.stringify({ compilerOptions: { types: [] }, files: ['checked.ts'] }),
+    undefined,
+    root,
   );
-  const original = readFileSync(filename, 'utf8');
+  const original = readTextFile(filename, root);
   const result = run('--write');
   assert.equal(result.status, 2, result.stdout);
   assert.match(result.stderr, /not included in the TypeScript project/u);
-  assert.equal(readFileSync(filename, 'utf8'), original);
+  assert.equal(readTextFile(filename, root), original);
 });
 
 it(
@@ -194,21 +204,23 @@ it(
   (context) => {
     const { root, filename, run } = fixture(
       context,
-      "props.name = 'changed'; return <div />;"
+      "props.name = 'changed'; return <div />;",
     );
-    writeFileSync(
+    writeTextFile(
       path.join(root, 'tsconfig.json'),
       JSON.stringify({
         compilerOptions: { strict: true, jsx: 'preserve', types: [] },
         files: ['clientapp/src/card.tsx'],
-      })
+      }),
+      undefined,
+      root,
     );
-    const original = readFileSync(filename, 'utf8');
+    const original = readTextFile(filename, root);
     const result = run('--write');
     assert.equal(result.status, 2, result.stdout);
     assert.match(result.stderr, /read-only property/u);
-    assert.equal(readFileSync(filename, 'utf8'), original);
-  }
+    assert.equal(readTextFile(filename, root), original);
+  },
 );
 
 it('preserves comments, CRLF, defaults, nested types and callbacks', () => {
@@ -217,7 +229,7 @@ it('preserves comments, CRLF, defaults, nested types and callbacks', () => {
   const result = transformProps(source, 'example.tsx');
   assert.equal(
     result.source,
-    'const Card = (props: /* keep */ Readonly<{ items: string[]; onSave: (value: string[]) => void }> = defaults) => <div />;\r\n'
+    'const Card = (props: /* keep */ Readonly<{ items: string[]; onSave: (value: string[]) => void }> = defaults) => <div />;\r\n',
   );
 });
 
@@ -230,7 +242,7 @@ const Rest = (...props: Props[]) => <div />;
 const Already = (props: Readonly<Props>) => <div />;
 const Inline = (props: { readonly name: string }) => <div />;
 `,
-    'example.tsx'
+    'example.tsx',
   );
   assert.equal(result.changes.length, 0);
   assert.equal(result.skipped.length, 3);

@@ -7,17 +7,19 @@ import { FileStatus } from '@/routes/ta/types';
 
 const renderList = (
   files: FileProgress[],
-  onCancelFile?: (fileName: string) => void
+  onCancelFile?: (fileName: string) => void,
 ) =>
   render(
     <ProgressFileList
       files={files}
       {...(onCancelFile === undefined ? {} : { onCancelFile })}
-    />
+    />,
   );
 
-describe('ProgressFileList', () => {
+describe('progress file list', () => {
   it('renders byte, kilobyte, and megabyte upload progress rows', () => {
+    expect.hasAssertions();
+
     renderList([
       {
         fileName: 'bytes.pdf',
@@ -39,19 +41,34 @@ describe('ProgressFileList', () => {
       },
     ]);
 
-    expect(
-      screen.getByRole('progressbar', { name: 'Uploading bytes.pdf' })
-    ).toHaveAttribute('aria-valuenow', '57');
-    expect(screen.getByText('512 B / 900 B')).toBeInTheDocument();
-    expect(screen.getByText('2.00 KB')).toBeInTheDocument();
-    expect(screen.getByText('1.00 KB / 2.00 KB')).toBeInTheDocument();
-    expect(screen.getByText('2.00 MB')).toBeInTheDocument();
-    expect(screen.getByText('1.00 MB / 2.00 MB')).toBeInTheDocument();
+    expect({
+      percent: screen
+        .getByRole('progressbar', { name: 'Uploading bytes.pdf' })
+        .getAttribute('aria-valuenow'),
+      labels: [
+        '512 B / 900 B',
+        '2.00 KB',
+        '1.00 KB / 2.00 KB',
+        '2.00 MB',
+        '1.00 MB / 2.00 MB',
+      ].map((label) => screen.getByText(label).textContent),
+    }).toStrictEqual({
+      percent: '57',
+      labels: [
+        '512 B / 900 B',
+        '2.00 KB',
+        '1.00 KB / 2.00 KB',
+        '2.00 MB',
+        '1.00 MB / 2.00 MB',
+      ],
+    });
   });
 
   it('shows a cancel action for pending uploads and then marks the file as cancelling', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCancelFile = vi.fn();
+    const onCancelFile = vi.fn<(fileName: string) => void>();
     renderList(
       [
         {
@@ -61,7 +78,7 @@ describe('ProgressFileList', () => {
           totalBytes: 200,
         },
       ],
-      onCancelFile
+      onCancelFile,
     );
 
     const cancelButton = screen.getByRole('button', {
@@ -72,11 +89,13 @@ describe('ProgressFileList', () => {
     expect(onCancelFile).toHaveBeenCalledWith('manual.pdf');
     expect(screen.getByText('Cancelling...')).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Cancel uploading manual.pdf' })
+      screen.queryByRole('button', { name: 'Cancel uploading manual.pdf' }),
     ).not.toBeInTheDocument();
   });
 
   it('omits progress and cancellation UI when a row has no byte totals', () => {
+    expect.hasAssertions();
+
     renderList([
       {
         fileName: 'queued.pdf',
@@ -85,6 +104,7 @@ describe('ProgressFileList', () => {
     ]);
 
     const item = screen.getByText('queued.pdf').closest('li');
+
     expect(item).not.toBeNull();
     expect(within(item!).queryByRole('progressbar')).not.toBeInTheDocument();
     expect(within(item!).queryByRole('button')).not.toBeInTheDocument();

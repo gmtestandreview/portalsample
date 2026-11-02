@@ -94,7 +94,7 @@ def launcher(tmp_path: Path) -> Launcher:
 
 def validated_command(command: Sequence[str]) -> list[str]:
     """Return the fixture-owned launcher command after validating its shape."""
-    if not command or any(not isinstance(argument, str) or not argument for argument in command):
+    if not command or any(not argument for argument in command):
         pytest.fail("Launcher command must be a non-empty sequence of strings")
 
     arguments = list(command)

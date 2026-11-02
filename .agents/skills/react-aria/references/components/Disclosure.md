@@ -196,7 +196,7 @@ export function Disclosure({ children, ...props }: DisclosureProps) {
     <AriaDisclosure
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        disclosure({ ...renderProps, className })
+        disclosure({ ...renderProps, className }),
       )}
     >
       {children}
@@ -241,7 +241,7 @@ export function DisclosurePanel({ children, ...props }: DisclosurePanelProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'h-(--disclosure-panel-height) motion-safe:transition-[height] overflow-clip'
+        'h-(--disclosure-panel-height) motion-safe:transition-[height] overflow-clip',
       )}
     >
       <div className='px-4 py-2'>{children}</div>

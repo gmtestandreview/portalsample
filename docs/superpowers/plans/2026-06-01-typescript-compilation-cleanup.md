@@ -388,7 +388,7 @@ boolean:
 ```ts
 const blocker = useBlocker(
   ({ currentLocation, nextLocation }) =>
-    Boolean(when) && currentLocation.pathname !== nextLocation.pathname
+    Boolean(when) && currentLocation.pathname !== nextLocation.pathname,
 );
 ```
 
@@ -645,7 +645,7 @@ import type { Configuration } from 'webpack';
 const require = createRequire(import.meta.url);
 const webpackConfigFactory = require('../../../webpack.config.js') as (
   env: Record<string, unknown>,
-  argv: { mode: 'development' | 'production' }
+  argv: { mode: 'development' | 'production' },
 ) => Configuration;
 ```
 

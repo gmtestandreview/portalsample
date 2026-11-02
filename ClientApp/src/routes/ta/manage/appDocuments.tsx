@@ -43,7 +43,7 @@ const ApplicationDocuments = () => {
   // SupportingDocuments upload state and handlers (from ta/index.tsx)
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<UploadProgress | undefined>(
-    undefined
+    undefined,
   );
   const abortRef = useRef<AbortController | null>(null);
   const uploadIdRef = useRef<string | null>(null);
@@ -62,14 +62,14 @@ const ApplicationDocuments = () => {
         if (accounts.length > 0 && id) {
           const client = new RequestForPatternApprovalClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppDocuments(id);
           setFilesUploaded(response);
           setFilesToCommit(
             response?.form?.documents?.some((doc) => !doc.documentLocked) ??
-              false
+              false,
           );
         }
       } catch (e) {
@@ -92,7 +92,7 @@ const ApplicationDocuments = () => {
         abortRef.current.abort();
       }
     },
-    []
+    [],
   );
 
   const startLongPolling = useCallback(
@@ -101,7 +101,7 @@ const ApplicationDocuments = () => {
       abortRef.current = controller;
       const client = new ProgressClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await pollUploadProgress({
@@ -112,7 +112,7 @@ const ApplicationDocuments = () => {
         onFinished: () => setUploading(false),
       });
     },
-    [accounts, instance]
+    [accounts, instance],
   );
 
   const handleCancelFile = async (fileName: string) => {
@@ -120,7 +120,7 @@ const ApplicationDocuments = () => {
     try {
       const client = new ProgressClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await client.cancelFile(uploadIdRef.current, fileName);
@@ -131,7 +131,7 @@ const ApplicationDocuments = () => {
 
   const onUploadAttachments = async (
     token: string,
-    fileData: FileParameter[]
+    fileData: FileParameter[],
   ): Promise<AttachmentDto[]> => {
     let attachments = [] as AttachmentDto[];
     try {
@@ -150,7 +150,7 @@ const ApplicationDocuments = () => {
         uploadId,
         fileData,
         null,
-        null
+        null,
       );
       const { documents } = result.form || {};
       uploadIdRef.current = result.uploadId!;
@@ -170,7 +170,7 @@ const ApplicationDocuments = () => {
               parentTimeStamp: new Date().toDateString(),
               documentLocked: x.documentLocked,
               documentBytes: x.documentBytes,
-            }) as AttachmentDto
+            }) as AttachmentDto,
         ) ?? [];
       setFilesToCommit(attachments.some((doc) => !doc.documentLocked));
     } catch (error) {
@@ -186,7 +186,7 @@ const ApplicationDocuments = () => {
       setIsDataLoading(true);
       const client = new RequestForPatternApprovalClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       // Clear out bytes to avoid unnecessarily large payloads
@@ -237,7 +237,7 @@ const ApplicationDocuments = () => {
     },
     resolver: createSaveAwareYupResolver<AppDocumentsFormValues>(
       undefined,
-      supportingDocsSubmitValidation
+      supportingDocsSubmitValidation,
     ),
   });
 

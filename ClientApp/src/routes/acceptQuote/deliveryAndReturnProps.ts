@@ -2,7 +2,12 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  ReturnAddressTypeValues,
+  ReturnContactTypeValues,
+  ReturnMethodValues,
+} from '../../api/web-api-client';
 import type {
   DeliveryAndReturnStep,
   FormStepStatusDto,
@@ -30,12 +35,12 @@ const loadDeliveryAndReturn =
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const deliveryAndReturn = await client.getDeliveryAndReturn(
         id,
-        abortSignal
+        abortSignal,
       );
       const wizardStepValues: WizardFormStepValues<DeliveryAndReturnStep> = {
         stepValues: { ...deliveryAndReturn },
@@ -52,17 +57,17 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: DeliveryAndReturnStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await client.saveDeliveryAndReturn(
@@ -72,7 +77,7 @@ const saveStep =
           formStep: values,
           isCompletingStep: isComplete,
         },
-        abortSignal
+        abortSignal,
       );
     } else {
       throw new Error('No authenticated account available to save form.');
@@ -82,14 +87,14 @@ const saveStep =
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) => {
     if (
-      errorCode === HttpStatusCode.PreconditionFailed &&
+      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
       errorType === ErrorType.Load
     ) {
       return `/accept-quote/${id}/view-summary`;
     }
 
     if (
-      errorCode === HttpStatusCode.NotFound &&
+      errorCode === Number(HttpStatusCode.NotFound) &&
       errorType === ErrorType.Update
     ) {
       setDashboardNotification({
@@ -105,13 +110,15 @@ const getRedirectionLocationOnError =
 
 export const deliveryAndReturnHidingFields = {
   contactHide: (x: DeliveryAndReturnStep) =>
-    x.returnContactType === 'SamePerson',
+    x.returnContactType === ReturnContactTypeValues.SamePerson,
   contact: {
-    titleOther: (x: DeliveryAndReturnStep) => x.contact?.title !== 'Other',
+    titleOther: (x: DeliveryAndReturnStep) =>
+      String(x.contact?.title) !== 'Other',
   },
-  returnAddress: (x: DeliveryAndReturnStep) => x.returnAddressType !== 'Other',
+  returnAddress: (x: DeliveryAndReturnStep) =>
+    x.returnAddressType !== ReturnAddressTypeValues.Other,
   carrierHide: (x: DeliveryAndReturnStep) =>
-    x.returnMethod !== 'ClientWillProvide',
+    x.returnMethod !== ReturnMethodValues.ClientWillProvide,
 };
 
 const deliveryAndReturnProps = (
@@ -120,7 +127,7 @@ const deliveryAndReturnProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<DeliveryAndReturnStep> => ({
   initialValues: {
     returnAddress: {},

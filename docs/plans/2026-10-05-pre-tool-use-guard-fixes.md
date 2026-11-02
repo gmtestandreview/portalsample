@@ -2,21 +2,25 @@
 
 ## Execution status — 2026-10-17
 
-Implementation is applied; see the [completion evidence](../skill-reviews/2026-10-17-pre-tool-use-guard-completion.md). The current Node wrapper supersedes Task 5's original shell implementation and retains its newer fail-closed crash/interpreter behavior. All 227 hook tests pass. Task 6's settings are applied and 14 installed-module checks pass; activation in a fresh Claude Code session remains to be confirmed. Sonar server-side verification is unavailable (HTTP 403).
+Implementation is applied; see the
+[completion evidence](../skill-reviews/2026-10-17-pre-tool-use-guard-completion.md).
+The current Node wrapper supersedes Task 5's original shell implementation and
+retains its newer fail-closed crash/interpreter behavior. All 227 hook tests
+pass. Task 6's settings are applied and 14 installed-module checks pass;
+activation in a fresh Claude Code session remains to be confirmed. Sonar
+server-side verification is unavailable (HTTP 403).
 
-**Goal:** Remove the false positives, latency, fail-closed breakage and
- log defects in `scripts/pre_tool_use.py` that block sonar and
-  other tool calls, without weakening protection against real destructive
-   commands and secret-file access.
+**Goal:** Remove the false positives, latency, fail-closed breakage and log
+defects in `scripts/pre_tool_use.py` that block sonar and other tool calls,
+without weakening protection against real destructive commands and secret-file
+access.
 
-**Architecture:** Replace whole-string regex matching with a small
- quote-aware tokenizer.
- Rules then inspect only the command verb and its arguments
-  (recursing into `bash -c`, `pwsh -Command` and `$(...)`).
- Recursive deletes are allowed only on an artefact allowlist;
- `.env` is matched by filename.
- Logging becomes append-only JSONL under the script's own project root.
- The settings wrapper fails open on guard crashes.
+**Architecture:** Replace whole-string regex matching with a small quote-aware
+tokenizer. Rules then inspect only the command verb and its arguments (recursing
+into `bash -c`, `pwsh -Command` and `$(...)`). Recursive deletes are allowed
+only on an artefact allowlist; `.env` is matched by filename. Logging becomes
+append-only JSONL under the script's own project root. The settings wrapper
+fails open on guard crashes.
 
 **Tech Stack:** Python 3 stdlib only (`json`, `os`, `re`, `sys`, `time`),
 subprocess behaviour-matrix test (`tests/hooks/test_pre_tool_use.py`),
@@ -24,67 +28,69 @@ subprocess behaviour-matrix test (`tests/hooks/test_pre_tool_use.py`),
 
 ## Source Inputs
 
-- Audit findings 1-7 from this session (architecture-audit of `scripts/pre_tool_use.py`).
+- Audit findings 1-7 from this session (architecture-audit of
+  `scripts/pre_tool_use.py`).
 - Relevant files inspected:
-  - `scripts/pre_tool_use.py`: current guard (regex over full text,
-   JSON-array log, cwd-relative log path).
+  - `scripts/pre_tool_use.py`: current guard (regex over full text, JSON-array
+    log, cwd-relative log path).
   - `tests/hooks/test_pre_tool_use.py`: existing matrix, already extended this
-   session with RED cases.
-  - `.claude/settings.json:215-233`: PreToolUse wrapper (fail-closed on
-   exit code other than 0/2, relative script path) and tokensave hook.
-  - `.claude/settings.local.json:125-135`:
-   gitignored `env` block (target for GateGuard variables).
+    session with RED cases.
+  - `.claude/settings.json:215-233`: PreToolUse wrapper (fail-closed on exit
+    code other than 0/2, relative script path) and tokensave hook.
+  - `.claude/settings.local.json:125-135`: gitignored `env` block (target for
+    GateGuard variables).
   - `~/.claude/plugins/cache/ecc/ecc/2.2.1/scripts/hooks/gateguard-fact-force.js`:
-  confirms `GATEGUARD_BASH_ROUTINE_DISABLED` (line 164) and
-   `GATEGUARD_EXEMPT_GLOBS` (line 117).
-  - `.gitignore:94,110`: `.claude/settings.local.json` and
-   `.agent-sync/logs/` are ignored.
+    confirms `GATEGUARD_BASH_ROUTINE_DISABLED` (line 164) and
+    `GATEGUARD_EXEMPT_GLOBS` (line 117).
+  - `.gitignore:94,110`: `.claude/settings.local.json` and `.agent-sync/logs/`
+    are ignored.
 
 ## Assumptions and Unknowns
 
 - Assumption: `python -I -S` runs the guard (stdlib only). Verified by Task 4's
- test run.
-- Assumption: settings `env` values reach hook subprocesses;
- effective from the next session start.
-- Assumption: the old `.agent-sync/logs/pre_tool_use.json` (970 KB) is left in place;
- deleting it is the owner's call.
-- Blocking ambiguity: none. GateGuard cannot be scoped to "sonar only"
- (it is per-session), so Task 6 uses its narrowest switches.
+  test run.
+- Assumption: settings `env` values reach hook subprocesses; effective from the
+  next session start.
+- Assumption: the old `.agent-sync/logs/pre_tool_use.json` (970 KB) is left in
+  place; deleting it is the owner's call.
+- Blocking ambiguity: none. GateGuard cannot be scoped to "sonar only" (it is
+  per-session), so Task 6 uses its narrowest switches.
 
 ## Requirement Traceability
 
-| Finding | Requirement | Task(s) |
-| --- | --- | --- |
-| 1 HIGH | Quoted strings, heredocs and search patterns are data, not commands | 1, 2 |
-| 2 HIGH | Scanner/build artefact cleanup allowed; root/home/glob deletes still blocked | 2 |
-| 3 HIGH | `.env` matched by filename, not substring | 3 |
-| 4 MED | Wrapper fails open on guard crash, resolves script by project dir | 5 (automated in `test_wrapper.py`) |
-| 5 MED | Lower per-call latency | 4, 5 |
-| 6 MED | Append-only, bounded, redacted log that records blocks | 4 |
-| 7 LOW | English messages with rule id; nested-shell/subshell bypasses closed | 1, 2, 3 |
-| GateGuard | Disable first-command/first-edit fact forcing for the sonar workflow | 6 |
+| Finding   | Requirement                                                                  | Task(s)                            |
+| --------- | ---------------------------------------------------------------------------- | ---------------------------------- |
+| 1 HIGH    | Quoted strings, heredocs and search patterns are data, not commands          | 1, 2                               |
+| 2 HIGH    | Scanner/build artefact cleanup allowed; root/home/glob deletes still blocked | 2                                  |
+| 3 HIGH    | `.env` matched by filename, not substring                                    | 3                                  |
+| 4 MED     | Wrapper fails open on guard crash, resolves script by project dir            | 5 (automated in `test_wrapper.py`) |
+| 5 MED     | Lower per-call latency                                                       | 4, 5                               |
+| 6 MED     | Append-only, bounded, redacted log that records blocks                       | 4                                  |
+| 7 LOW     | English messages with rule id; nested-shell/subshell bypasses closed         | 1, 2, 3                            |
+| GateGuard | Disable first-command/first-edit fact forcing for the sonar workflow         | 6                                  |
 
 ## Framework Fit
 
 Traceability, test-first, vertical slices: used. Threat modelling: light (guard
- is a security control; bypass cases are tests). DDD, C4, ADR, migration: not needed.
+is a security control; bypass cases are tests). DDD, C4, ADR, migration: not
+needed.
 
 ## Files and Responsibilities
 
-| Path | Action | Responsibility |
-| --- | --- | --- |
-| `tests/hooks/test_pre_tool_use.py` | Modify (RED cases already added) | Behaviour matrix, false positives, log and robustness checks |
-| `scripts/pre_tool_use.py` | Modify | Tokenizer, delete rule, env rule, logging, English messages |
-| `tests/hooks/test_wrapper.py` | Create (RED already added) | Wrapper behaviour: fail-open on crash or missing guard, exit-code pass-through, block |
-| `.claude/settings.json` | Modify | Wrapper: project-dir path, `-I -S`, fail-open on crash |
-| `.claude/settings.local.json` | Modify | GateGuard env variables |
+| Path                               | Action                           | Responsibility                                                                        |
+| ---------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------- |
+| `tests/hooks/test_pre_tool_use.py` | Modify (RED cases already added) | Behaviour matrix, false positives, log and robustness checks                          |
+| `scripts/pre_tool_use.py`          | Modify                           | Tokenizer, delete rule, env rule, logging, English messages                           |
+| `tests/hooks/test_wrapper.py`      | Create (RED already added)       | Wrapper behaviour: fail-open on crash or missing guard, exit-code pass-through, block |
+| `.claude/settings.json`            | Modify                           | Wrapper: project-dir path, `-I -S`, fail-open on crash                                |
+| `.claude/settings.local.json`      | Modify                           | GateGuard env variables                                                               |
 
 ## Baseline RED state
 
 - `python tests\hooks\test_pre_tool_use.py` currently reports 47/60 passing.
-Failing: `grep reads .env` (expect BLOCK);
+  Failing: `grep reads .env` (expect BLOCK);
 - `scanner workdir cleanup` (pwsh and bash) and `node_modules cache cleanup`
-(expect ALLOW);
+  (expect ALLOW);
 - false positives for `Select-String 'import.meta.env'`,
 - a `Select-String` pattern naming `rm -rf|Remove-Item`,
 - `cat ... | grep process.env`,
@@ -95,16 +101,17 @@ Failing: `grep reads .env` (expect BLOCK);
 
 ## Prototype verification (executed 2026-10-05)
 
-Every Python snippet in Tasks 1-4 was extracted from this plan into a
- throwaway prototype outside the repository and run unmodified:
+Every Python snippet in Tasks 1-4 was extracted from this plan into a throwaway
+prototype outside the repository and run unmodified:
 
 - `tests/hooks/test_guard_parser.py` (Task 1 test): `9/9 passed`
-- `tests/hooks/test_pre_tool_use.py` (60-case matrix, including log and robustness checks): `60/60 passed`
+- `tests/hooks/test_pre_tool_use.py` (60-case matrix, including log and
+  robustness checks): `60/60 passed`
 - `tests/hooks/test_wrapper.py` against the Task 5 wrapper and that prototype:
- `5/5 passed`
+  `5/5 passed`
 
-The same suites fail against the current repository code as recorded in
- each task's RED step, so the tests are shown to discriminate.
+The same suites fail against the current repository code as recorded in each
+task's RED step, so the tests are shown to discriminate.
 
 ## Tasks
 
@@ -117,7 +124,8 @@ The same suites fail against the current repository code as recorded in
 
 - [ ] **Step 1: Write the failing parser test**
 
-`tests/hooks/test_guard_parser.py` (run as a script, same style as the matrix; imports the guard by path):
+`tests/hooks/test_guard_parser.py` (run as a script, same style as the matrix;
+imports the guard by path):
 
 ```python
 import sys
@@ -144,16 +152,16 @@ print(f"{len(CASES) - len(bad)}/{len(CASES)} passed")
 sys.exit(1 if bad else 0)
 ```
 
-Result order is fixed: commands found inside `$(...)`/backticks come first,
- then the segment commands in text order, each nested
- `-c`/`-Command` payload directly after its parent.
- The here-string case yields `$s` twice because a newline ends the first segment;
-  the property under test is that the body (`cat x`) never appears.
+Result order is fixed: commands found inside `$(...)`/backticks come first, then
+the segment commands in text order, each nested `-c`/`-Command` payload directly
+after its parent. The here-string case yields `$s` twice because a newline ends
+the first segment; the property under test is that the body (`cat x`) never
+appears.
 
 - [ ] **Step 2: Verify the test fails**
 
-Run: `python tests\hooks\test_guard_parser.py`
-Expected: `AttributeError: module 'pre_tool_use' has no attribute 'commands'`
+Run: `python tests\hooks\test_guard_parser.py` Expected:
+`AttributeError: module 'pre_tool_use' has no attribute 'commands'`
 
 - [ ] **Step 3: Implement**
 
@@ -254,13 +262,12 @@ The result order is the one documented under the test in Step 1.
 
 - [ ] **Step 4: Verify the test passes**
 
-Run: `python tests\hooks\test_guard_parser.py`
-Expected: `9/9 passed`
+Run: `python tests\hooks\test_guard_parser.py` Expected: `9/9 passed`
 
 - [ ] **Step 5: Regression**
 
-Run: `python tests\hooks\test_pre_tool_use.py`
-Expected: pass count not lower than the 47/60 baseline (parser is added, not yet wired in).
+Run: `python tests\hooks\test_pre_tool_use.py` Expected: pass count not lower
+than the 47/60 baseline (parser is added, not yet wired in).
 
 - [ ] **Step 6: Commit**
 
@@ -274,17 +281,17 @@ git commit -m "refactor: add quote-aware command parser to pre-tool-use guard"
 `Files`
 
 - Modify: `scripts/pre_tool_use.py` (replace `_RM_*` tables, `_is_destructive`,
- `_has_recursive_rm`, `_DANGEROUS_PATHS_RE`)
+  `_has_recursive_rm`, `_DANGEROUS_PATHS_RE`)
 - Test: `tests/hooks/test_pre_tool_use.py` (cases already present)
 
-- [ ] **Step 1: Tests exist** (RED cases added this session: scanner/node_modules
- ALLOW, `dist/../src` and `*` BLOCK, nested `bash -c`,
- `pwsh -Command`, `$(...)` BLOCK, quoted-pattern false positives).
+- [ ] **Step 1: Tests exist** (RED cases added this session:
+      scanner/node_modules ALLOW, `dist/../src` and `*` BLOCK, nested `bash -c`,
+      `pwsh -Command`, `$(...)` BLOCK, quoted-pattern false positives).
 
 - [ ] **Step 2: Verify RED**
 
-Run: `python tests\hooks\test_pre_tool_use.py`
-Expected: `47/60 passed` (13 failing, as in Baseline).
+Run: `python tests\hooks\test_pre_tool_use.py` Expected: `47/60 passed` (13
+failing, as in Baseline).
 
 - [ ] **Step 3: Implement**
 
@@ -349,18 +356,21 @@ def _is_destructive(command):
     return None
 ```
 
-`main()` prints `Rule: <id>` using the returned id (see Task 4 for the final messages).
+`main()` prints `Rule: <id>` using the returned id (see Task 4 for the final
+messages).
 
 - [ ] **Step 4: Verify**
 
-Run: `python tests\hooks\test_pre_tool_use.py`
-Expected: 8 failing: `grep reads .env`, `Select-String 'import.meta.env'`,
- `cat ... | grep process.env`, heredoc, here-string, `Read process.env.d.ts`,
-  `Grep .environment-notes.md`, `blocked calls are not logged`
-   (all fixed by Tasks 3-4).
-   No remaining delete-rule failures.
+Run: `python tests\hooks\test_pre_tool_use.py` Expected: 8 failing:
+`grep reads .env`, `Select-String 'import.meta.env'`,
+`cat ... | grep process.env`, heredoc, here-string, `Read process.env.d.ts`,
+`Grep .environment-notes.md`, `blocked calls are not logged` (all fixed by Tasks
+3-4). No remaining delete-rule failures.
 
-- [ ] **Step 5: Regression**: same command; every pre-existing `BLOCK` delete case (`rm -rf /`, `rm -fr ~`, `Remove-Item -Recurse -Force .`, reverse order `C:\`, `ri -r -fo ./build`, `rm -Recurse -Force ~`, `-Confirm:$false`, `Format-Volume`) must still print `[pass]`.
+- [ ] **Step 5: Regression**: same command; every pre-existing `BLOCK` delete
+      case (`rm -rf /`, `rm -fr ~`, `Remove-Item -Recurse -Force .`, reverse
+      order `C:\`, `ri -r -fo ./build`, `rm -Recurse -Force ~`,
+      `-Confirm:$false`, `Format-Volume`) must still print `[pass]`.
 
 - [ ] **Step 6: Commit**
 
@@ -373,12 +383,17 @@ git commit -m "fix: scope pre-tool-use delete guard to targets and allow scanner
 
 `Files`
 
-- Modify: `scripts/pre_tool_use.py` (replace `_is_sensitive_env_value`, `_has_env_command_access`, `_ENV_*_PATTERNS`)
+- Modify: `scripts/pre_tool_use.py` (replace `_is_sensitive_env_value`,
+  `_has_env_command_access`, `_ENV_*_PATTERNS`)
 - Test: `tests/hooks/test_pre_tool_use.py` (cases already present)
 
-- [ ] **Step 1: Tests exist** (`grep reads .env.local`, redirect into the file, `*.env*` glob BLOCK; `ls .env.local`, `Select-String 'import.meta.env'`, `process.env.d.ts`, `.environment-notes.md`, heredoc and here-string text ALLOW).
+- [ ] **Step 1: Tests exist** (`grep reads .env.local`, redirect into the file,
+      `*.env*` glob BLOCK; `ls .env.local`, `Select-String 'import.meta.env'`,
+      `process.env.d.ts`, `.environment-notes.md`, heredoc and here-string text
+      ALLOW).
 
-- [ ] **Step 2: Verify RED**: `python tests\hooks\test_pre_tool_use.py`; Expected: 8 failing (list in Task 2 Step 4).
+- [ ] **Step 2: Verify RED**: `python tests\hooks\test_pre_tool_use.py`;
+      Expected: 8 failing (list in Task 2 Step 4).
 
 - [ ] **Step 3: Implement**
 
@@ -418,7 +433,8 @@ def _has_env_command_access(tool_name, tool_input):
     return False
 ```
 
-Replace the path and combined checks, keeping `_COMMAND_TOOLS`, `_ENV_SAFE_SUFFIXES` and `_ENV_PATH_FIELDS` unchanged:
+Replace the path and combined checks, keeping `_COMMAND_TOOLS`,
+`_ENV_SAFE_SUFFIXES` and `_ENV_PATH_FIELDS` unchanged:
 
 ```python
 def _has_env_path_access(tool_name, tool_input):
@@ -429,11 +445,14 @@ def _is_env_access(tool_name, tool_input):
     return _has_env_path_access(tool_name, tool_input) or _has_env_command_access(tool_name, tool_input)
 ```
 
-Remove the now-unused `_ENV_BASH_PATTERNS`, `_ENV_PS_PATTERNS`, `_ENV_COMMAND_PATTERNS`, `_as_json_object`, `_is_sensitive_env_value`.
+Remove the now-unused `_ENV_BASH_PATTERNS`, `_ENV_PS_PATTERNS`,
+`_ENV_COMMAND_PATTERNS`, `_as_json_object`, `_is_sensitive_env_value`.
 
-- [ ] **Step 4: Verify**: `python tests\hooks\test_pre_tool_use.py`; Expected: 1 failing (`blocked calls are not logged`).
+- [ ] **Step 4: Verify**: `python tests\hooks\test_pre_tool_use.py`; Expected: 1
+      failing (`blocked calls are not logged`).
 
-- [ ] **Step 5: Regression**: `python tests\hooks\test_guard_parser.py`; Expected `9/9 passed`.
+- [ ] **Step 5: Regression**: `python tests\hooks\test_guard_parser.py`;
+      Expected `9/9 passed`.
 
 - [ ] **Step 6: Commit**
 
@@ -447,18 +466,24 @@ git commit -m "fix: match secret env files by filename in pre-tool-use guard"
 `Files`
 
 - Modify: `scripts/pre_tool_use.py` (`_log`, `main`, imports, messages)
-- Test: `tests/hooks/test_pre_tool_use.py` (`check_log`, `check_fail_open_wrapper` already present)
+- Test: `tests/hooks/test_pre_tool_use.py` (`check_log`,
+  `check_fail_open_wrapper` already present)
 
-- [ ] **Step 1: Tests exist** (`check_log`: valid JSONL, block records present, secret and Write body absent; `check_fail_open_wrapper`: malformed stdin exits 0; `invoke` already runs the guard as `python -I -S` with `CLAUDE_PROJECT_DIR` set to a temp dir).
+- [ ] **Step 1: Tests exist** (`check_log`: valid JSONL, block records present,
+      secret and Write body absent; `check_fail_open_wrapper`: malformed stdin
+      exits 0; `invoke` already runs the guard as `python -I -S` with
+      `CLAUDE_PROJECT_DIR` set to a temp dir).
 
 - [ ] **Step 2: Verify RED**
 
-Run: `python tests\hooks\test_pre_tool_use.py`
-Expected: `blocked calls are not logged` failing (59/60 after Task 3).
+Run: `python tests\hooks\test_pre_tool_use.py` Expected:
+`blocked calls are not logged` failing (59/60 after Task 3).
 
 - [ ] **Step 3: Implement**
 
-Imports become `json, os, re, sys, time` only (drop `pathlib`, `typing`, `contextlib`, `collections.abc`, `cast`; use builtin generics). Replace the logging section and `main`:
+Imports become `json, os, re, sys, time` only (drop `pathlib`, `typing`,
+`contextlib`, `collections.abc`, `cast`; use builtin generics). Replace the
+logging section and `main`:
 
 ```python
 _LOG_MAX_BYTES = 512 * 1024
@@ -516,17 +541,22 @@ def main():
     sys.exit(0)
 ```
 
-Also add the redirect simplification in Task 3's loop: `if a == ">" and k + 1 < len(args) and _is_env_file(args[k + 1]): return True`.
+Also add the redirect simplification in Task 3's loop:
+`if a == ">" and k + 1 < len(args) and _is_env_file(args[k + 1]): return True`.
 
 - [ ] **Step 4: Verify**
 
-Run: `python tests\hooks\test_pre_tool_use.py` then `python tests\hooks\test_guard_parser.py`
-Expected: `60/60 passed` + `guard behaviour holds`; `9/9 passed`.
+Run: `python tests\hooks\test_pre_tool_use.py` then
+`python tests\hooks\test_guard_parser.py` Expected: `60/60 passed` +
+`guard behaviour holds`; `9/9 passed`.
 
 - [ ] **Step 5: Measure latency (finding 5)**
 
-Run: `(Measure-Command { 1..20 | % { '{"tool_name":"Read","tool_input":{"file_path":"a.ts"}}' | python -I -S scripts\pre_tool_use.py } }).TotalMilliseconds / 20`
-Expected: below the 248 ms/call baseline measured before the change (record both numbers in the commit body; no fixed threshold because interpreter startup dominates).
+Run:
+`(Measure-Command { 1..20 | % { '{"tool_name":"Read","tool_input":{"file_path":"a.ts"}}' | python -I -S scripts\pre_tool_use.py } }).TotalMilliseconds / 20`
+Expected: below the 248 ms/call baseline measured before the change (record both
+numbers in the commit body; no fixed threshold because interpreter startup
+dominates).
 
 - [ ] **Step 6: Commit**
 
@@ -539,13 +569,17 @@ git commit -m "fix: append-only redacted JSONL log and lighter startup for pre-t
 
 `Files`
 
-- Modify: `.claude/settings.json:221` (the `command` string of the first PreToolUse hook)
-- Test: `tests/hooks/test_wrapper.py` (RED already added; needs `sh`, so run it from Git Bash)
+- Modify: `.claude/settings.json:221` (the `command` string of the first
+  PreToolUse hook)
+- Test: `tests/hooks/test_wrapper.py` (RED already added; needs `sh`, so run it
+  from Git Bash)
 
 - [ ] **Step 1: Verify RED**
 
-Run (Git Bash, repo root): `python tests/hooks/test_wrapper.py`
-Expected: `3/5 passed`, with `[FAIL] exit 2  guard crash fails open` and `[FAIL] exit 2  real guard blocks a secret file` (measured 2026-10-05 against the current wrapper; the second fails because the old guard prints no rule id).
+Run (Git Bash, repo root): `python tests/hooks/test_wrapper.py` Expected:
+`3/5 passed`, with `[FAIL] exit 2  guard crash fails open` and
+`[FAIL] exit 2  real guard blocks a secret file` (measured 2026-10-05 against
+the current wrapper; the second fails because the old guard prints no rule id).
 
 - [ ] **Step 2: Replace the command with**
 
@@ -557,8 +591,11 @@ G="${CLAUDE_PROJECT_DIR:-.}/scripts/pre_tool_use.py"; if ! test -f "$G"; then ec
 
 - [ ] **Step 3: Verify GREEN**
 
-Run (Git Bash, repo root): `python tests/hooks/test_wrapper.py`
-Expected: `5/5 passed` (measured 2026-10-05 against the wrapper below plus the Task 1-4 guard). Then run `node -e "JSON.parse(require('fs').readFileSync('.claude/settings.json','utf8'))"`; Expected: no output (valid JSON).
+Run (Git Bash, repo root): `python tests/hooks/test_wrapper.py` Expected:
+`5/5 passed` (measured 2026-10-05 against the wrapper below plus the Task 1-4
+guard). Then run
+`node -e "JSON.parse(require('fs').readFileSync('.claude/settings.json','utf8'))"`;
+Expected: no output (valid JSON).
 
 - [ ] **Step 4: Commit**
 
@@ -573,7 +610,12 @@ git commit -m "fix: make pre-tool-use wrapper fail open on guard crash and resol
 
 - Modify: `.claude/settings.local.json` (`env` block, gitignored; no commit)
 
-- [ ] **Step 1: Glob semantics (confirmed)**: per `gateguard-fact-force.js` lines 106-135, comma-separated globs match the normalized project-relative path (`*` within a segment, `**` across segments, `?` one char), so the globs below are valid as written. There is no deterministic harness for this gate (running the script directly emitted no verdict), so Step 3 stays a manual check.
+- [ ] **Step 1: Glob semantics (confirmed)**: per `gateguard-fact-force.js`
+      lines 106-135, comma-separated globs match the normalized project-relative
+      path (`*` within a segment, `**` across segments, `?` one char), so the
+      globs below are valid as written. There is no deterministic harness for
+      this gate (running the script directly emitted no verdict), so Step 3
+      stays a manual check.
 
 - [ ] **Step 2: Add to `env`**
 
@@ -582,36 +624,52 @@ git commit -m "fix: make pre-tool-use wrapper fail open on guard crash and resol
 "GATEGUARD_EXEMPT_GLOBS": ".scannerwork/**,.sonar/**,sonar-project.properties"
 ```
 
-`GATEGUARD_BASH_ROUTINE_DISABLED` removes the first-Bash/first-PowerShell fact-forcing prompt while keeping GateGuard's destructive-command checks. GateGuard stays active for first edits to non-sonar files. It cannot be limited to "sonar commands only" because it is a per-session switch.
+`GATEGUARD_BASH_ROUTINE_DISABLED` removes the first-Bash/first-PowerShell
+fact-forcing prompt while keeping GateGuard's destructive-command checks.
+GateGuard stays active for first edits to non-sonar files. It cannot be limited
+to "sonar commands only" because it is a per-session switch.
 
-- [ ] **Step 3: Verify (new session required)**: restart Claude Code, then as the first call run `PowerShell: Get-Date`. Expected: runs without a `[Fact-Forcing Gate]` message. Run `sonar` or `npx sonar-scanner` once; Expected: no gate message.
+- [ ] **Step 3: Verify (new session required)**: restart Claude Code, then as
+      the first call run `PowerShell: Get-Date`. Expected: runs without a
+      `[Fact-Forcing Gate]` message. Run `sonar` or `npx sonar-scanner` once;
+      Expected: no gate message.
 
 - [ ] **Step 4: Rollback**: delete the two keys and restart.
 
 ## Safety, Rollback, and Verification
 
-- Risk: the guard is a security control; a parser bug could let a destructive command through. Mitigation: every previous BLOCK case stays in the matrix, plus nested-shell, subshell and allowlist-escape (`dist/../src`, `*`) cases.
-- Known residual: the guard is still pattern-based. Indirect access (`python -c "open('.en'+'v')"`) is not detected; the plan does not claim otherwise. `settings.json` permission `deny` rules remain the second layer.
-- Verification: matrix (60 cases), parser test (9), latency measurement, crash-wrapper check, GateGuard check in a fresh session.
-- Checkpoint before Task 1: `git switch -c fix/pre-tool-use-guard`; before Tasks 5-6 copy `.claude/settings.json` and `.claude/settings.local.json` to `*.bak` beside them (delete the copies after Step 3 passes).
-- Rollback: one commit per task, so `git revert <sha>` per task; `settings.local.json` keys are removed by hand or restored from the `.bak` copy. The old `.agent-sync/logs/pre_tool_use.json` is untouched.
+- Risk: the guard is a security control; a parser bug could let a destructive
+  command through. Mitigation: every previous BLOCK case stays in the matrix,
+  plus nested-shell, subshell and allowlist-escape (`dist/../src`, `*`) cases.
+- Known residual: the guard is still pattern-based. Indirect access
+  (`python -c "open('.en'+'v')"`) is not detected; the plan does not claim
+  otherwise. `settings.json` permission `deny` rules remain the second layer.
+- Verification: matrix (60 cases), parser test (9), latency measurement,
+  crash-wrapper check, GateGuard check in a fresh session.
+- Checkpoint before Task 1: `git switch -c fix/pre-tool-use-guard`; before Tasks
+  5-6 copy `.claude/settings.json` and `.claude/settings.local.json` to `*.bak`
+  beside them (delete the copies after Step 3 passes).
+- Rollback: one commit per task, so `git revert <sha>` per task;
+  `settings.local.json` keys are removed by hand or restored from the `.bak`
+  copy. The old `.agent-sync/logs/pre_tool_use.json` is untouched.
 
 ## Final Validation
 
-Manual application of the 100-point reviewer rubric (self-review; no independent reviewer was available, so this is not independent evidence).
+Manual application of the 100-point reviewer rubric (self-review; no independent
+reviewer was available, so this is not independent evidence).
 
-| Category | Score | Notes |
-| --- | ---: | --- |
-| Spec Coverage | 14/15 | All 7 findings plus GateGuard mapped; GateGuard cannot be limited to sonar only (stated). |
-| File and Ownership Clarity | 10/10 | Five files, exact paths and responsibilities. |
-| Task Granularity | 7/8 | Task 1 (parser) is the largest slice. |
-| TDD and Test Quality | 14/15 | Tasks 1-5 are automated and shown RED then GREEN; only the GateGuard check (Task 6) is manual. |
-| Implementation Specificity | 10/10 | Concrete code for every code step, executed unmodified (see Prototype verification). |
-| Sequencing and Dependencies | 10/10 | Parser before rules; rules before log; wrapper after guard. |
-| Safety, Rollback, Verification | 10/10 | Branch and backup checkpoints, per-task revert, residual bypass risk stated. |
-| Developer Usability | 10/10 | Exact commands and measured expected outputs throughout. |
-| Framework Fit | 7/7 | Light threat modelling only. |
-| Minimality and YAGNI | 4/5 | Nested-shell recursion is the only extra, justified by finding 7. |
+| Category                       | Score | Notes                                                                                          |
+| ------------------------------ | ----: | ---------------------------------------------------------------------------------------------- |
+| Spec Coverage                  | 14/15 | All 7 findings plus GateGuard mapped; GateGuard cannot be limited to sonar only (stated).      |
+| File and Ownership Clarity     | 10/10 | Five files, exact paths and responsibilities.                                                  |
+| Task Granularity               |   7/8 | Task 1 (parser) is the largest slice.                                                          |
+| TDD and Test Quality           | 14/15 | Tasks 1-5 are automated and shown RED then GREEN; only the GateGuard check (Task 6) is manual. |
+| Implementation Specificity     | 10/10 | Concrete code for every code step, executed unmodified (see Prototype verification).           |
+| Sequencing and Dependencies    | 10/10 | Parser before rules; rules before log; wrapper after guard.                                    |
+| Safety, Rollback, Verification | 10/10 | Branch and backup checkpoints, per-task revert, residual bypass risk stated.                   |
+| Developer Usability            | 10/10 | Exact commands and measured expected outputs throughout.                                       |
+| Framework Fit                  |   7/7 | Light threat modelling only.                                                                   |
+| Minimality and YAGNI           |   4/5 | Nested-shell recursion is the only extra, justified by finding 7.                              |
 
 - Requirement coverage: PASS
 - Exact paths: PASS
@@ -625,5 +683,9 @@ Manual application of the 100-point reviewer rubric (self-review; no independent
 ## Execution Handoff
 
 - Plan path: `docs/plans/2026-10-05-pre-tool-use-guard-fixes.md`
-- Blocking unknowns: none. Needs a fresh session to confirm the GateGuard variables take effect.
-- Supported execution mode: inline with `executing-plans`, one commit per task. The RED test edits are already in `tests/hooks/test_pre_tool_use.py` (uncommitted); `tests/hooks/test_wrapper.py` is also already added (uncommitted); `tests/hooks/test_guard_parser.py` is created in Task 1.
+- Blocking unknowns: none. Needs a fresh session to confirm the GateGuard
+  variables take effect.
+- Supported execution mode: inline with `executing-plans`, one commit per task.
+  The RED test edits are already in `tests/hooks/test_pre_tool_use.py`
+  (uncommitted); `tests/hooks/test_wrapper.py` is also already added
+  (uncommitted); `tests/hooks/test_guard_parser.py` is created in Task 1.

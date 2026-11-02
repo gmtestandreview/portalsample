@@ -1,6 +1,5 @@
 import { useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import { forEach } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
@@ -46,22 +45,25 @@ const measurementReportInlineHelp = (
 const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   const options: SelectInputOption<string>[] = [];
   if (parentId !== undefined && parentId !== '') {
-    forEach(values, (l) => {
+    for (const l of values) {
       if (l.parentId === parentId) {
         options.push({ displayText: l.label ?? '', value: l.id ?? '' });
       }
-    });
+    }
   }
   const [sorted, noInstrumentId] = sortList(
     options,
     'No instrument',
-    'displayText'
+    'displayText',
   );
 
   return { options: sorted, noInstrumentId };
 };
 
-const useInstrumentAndRequestLookups = () => {
+// Exported for unit testing: the measurement-category options builder falls
+// back to an empty list before the lookups resolve, a path unreachable through
+// the rendered component because `isLoading` gates the only call site.
+export const useInstrumentAndRequestLookups = () => {
   const { accounts, instance } = useMsal();
   const context = useFormikContext<InstrumentAndRequestStep>();
   const isLoadingMeasurementCategories = useRef(false);
@@ -83,7 +85,7 @@ const useInstrumentAndRequestLookups = () => {
         if (measurementCategories === undefined && accounts.length > 0) {
           const client = new LookupClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const [result, artefactTypeResult] = await Promise.all([
@@ -100,7 +102,8 @@ const useInstrumentAndRequestLookups = () => {
           ) {
             const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
               artefactTypeResult,
-              context.getFieldMeta('measurementCategory').initialValue as string
+              context.getFieldMeta('measurementCategory')
+                .initialValue as string,
             );
             noInstrumentId.current = lastId;
             setArtefactTypesSelected(options);
@@ -134,14 +137,14 @@ const useInstrumentAndRequestLookups = () => {
 
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];
-    forEach(measurementCategories, (l) => {
+    for (const l of measurementCategories ?? []) {
       options.push({ displayText: l.label!, value: l.id! });
-    });
+    }
     return options;
   };
 
   const onMeasurementCategoryChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setIsInstrumentOrArtefactTypeDisabled(false);
     void context.setFieldValue('instrumentOrArtefactType', '');
@@ -149,14 +152,14 @@ const useInstrumentAndRequestLookups = () => {
     if (event.target.value !== null && artefactTypes !== undefined) {
       const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
         artefactTypes,
-        event.target.value
+        event.target.value,
       );
       noInstrumentId.current = lastId;
       setArtefactTypesSelected(options);
       if (event.target.value === noMeasurementId.current) {
         void context.setFieldValue(
           'instrumentOrArtefactType',
-          noInstrumentId.current
+          noInstrumentId.current,
         );
         setIsInstrumentOrArtefactTypeDisabled(true);
       }
@@ -207,7 +210,7 @@ const ImportantInformation = () => (
 interface InstrumentDetailsSectionProps {
   measurementCategoryOptions: SelectInputOption<string>[];
   onMeasurementCategoryChange: (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   artefactTypesSelected: SelectInputOption<string>[];
   isInstrumentOrArtefactTypeDisabled: boolean;

@@ -8,6 +8,7 @@ import {
   LookupClient,
   PatternApprovalRequiredValues,
   RequestForPatternApprovalClient,
+  Title,
   type RequestForPatternApprovalSummary,
   YesNo,
 } from '../../api/web-api-client';
@@ -27,6 +28,8 @@ import {
 } from './validation';
 import type { RequestForPatternApprovalSummaryDto } from './types';
 
+type SummaryDisplayValues = Partial<RequestForPatternApprovalSummaryDto>;
+
 const loadSummary =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
   async (abortSignal?: AbortSignal) => {
@@ -35,7 +38,7 @@ const loadSummary =
         const client = new RequestForPatternApprovalClient();
         const lookupClient = new LookupClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         lookupClient.setAuthToken(tokenResult.accessToken);
@@ -44,7 +47,7 @@ const loadSummary =
           lookupClient.getLookup(CRMLookupTypes.PAPortalCategory, abortSignal),
           lookupClient.getLookup(
             CRMLookupTypes.PAPortalInstrumentType,
-            abortSignal
+            abortSignal,
           ),
           client.getSummary(id, abortSignal),
         ]);
@@ -79,7 +82,7 @@ const loadSummary =
         Accounts: accounts,
       });
       throw new Error(
-        `There are no accounts available to load PA summary. Id: ${id}`
+        `There are no accounts available to load PA summary. Id: ${id}`,
       );
     }
   };
@@ -93,13 +96,13 @@ const submitForm =
   async (
     values: RequestForPatternApprovalSummaryDto,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
 
@@ -112,7 +115,7 @@ const submitForm =
             formStep: valuesToSave,
             isCompletingStep: true,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (error) {
         AppLogger.error('Failed to submit PA summary', error as Error, {
@@ -125,10 +128,10 @@ const submitForm =
     } else {
       AppLogger.verbose(
         'There are no accounts available to submit PA summary',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to submit PA summary. Id: ${id}`
+        `There are no accounts available to submit PA summary. Id: ${id}`,
       );
     }
   };
@@ -139,7 +142,7 @@ const summaryAndSubmitProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<RequestForPatternApprovalSummaryDto> => ({
   initialValues: {},
   stepStatuses: statuses,
@@ -148,39 +151,39 @@ const summaryAndSubmitProps = (
   title: 'Summary and submit',
   hidingFields: {
     organisationAndContact: {
-      branchOrLocationName: (x: any) =>
+      branchOrLocationName: (x: SummaryDisplayValues) =>
         !x.organisationAndContact?.branchOrLocationName,
-      isManufacturerHide: (x: any) =>
+      isManufacturerHide: (x: SummaryDisplayValues) =>
         x.organisationAndContact?.isManufacturer === YesNo.Yes ||
         x.organisationAndContact?.isManufacturer === undefined,
-      principalInvoiceContactHide: (x: any) =>
+      principalInvoiceContactHide: (x: SummaryDisplayValues) =>
         x.organisationAndContact?.isPrincipalInvoiceContact === YesNo.Yes ||
         x.organisationAndContact?.isPrincipalInvoiceContact === undefined,
-      isCurrentOrganisationHide: (x: any) =>
+      isCurrentOrganisationHide: (x: SummaryDisplayValues) =>
         x.organisationAndContact?.isManufacturer === YesNo.No,
       contact: {
-        titleOther: (x: any) =>
-          x.organisationAndContact?.contact?.title !== 'Other',
+        titleOther: (x: SummaryDisplayValues) =>
+          x.organisationAndContact?.contact?.title !== Title.Other,
       },
       invoiceContact: {
-        titleOther: (x: any) =>
-          x.organisationAndContact?.invoiceContact?.title !== 'Other',
+        titleOther: (x: SummaryDisplayValues) =>
+          x.organisationAndContact?.invoiceContact?.title !== Title.Other,
       },
     },
     applicationAndInstrument: {
-      isApplNewHide: (x: any) =>
+      isApplNewHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.NewCertificate ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplVariationHide: (x: any) =>
+      isApplVariationHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.Variation ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplOtherHide: (x: any) =>
+      isApplOtherHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.OtherApproval ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplOIMLHide: (x: any) => DisplayRules.isOIMLHidden(x),
+      isApplOIMLHide: (x: SummaryDisplayValues) => DisplayRules.isOIMLHidden(x),
     },
   },
   validateHard: summaryAndSubmitValidation,

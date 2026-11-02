@@ -26,7 +26,7 @@ const FormBanner = ({
       onDiscard();
     }
 
-    navigate(locationOnDiscard);
+    void navigate(locationOnDiscard);
   };
 
   return (

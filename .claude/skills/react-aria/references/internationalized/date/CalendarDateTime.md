@@ -92,7 +92,7 @@ let date = new CalendarDateTime(
   4,
   30,
   9,
-  15
+  15,
 );
 ```
 
@@ -395,15 +395,15 @@ import { isSameMonth, IslamicUmalquraCalendar } from '@internationalized/date';
 
 isSameMonth(
   new CalendarDateTime(2021, 4, 16, 9, 45),
-  new CalendarDateTime(2021, 4, 30, 5, 15)
+  new CalendarDateTime(2021, 4, 30, 5, 15),
 ); // true
 isSameMonth(
   new CalendarDateTime(2021, 4, 16, 9, 45),
-  new CalendarDateTime(2021, 8, 2, 5, 15)
+  new CalendarDateTime(2021, 8, 2, 5, 15),
 ); // false
 isSameMonth(
   new CalendarDateTime(2021, 4, 16, 9, 45),
-  new CalendarDateTime(new IslamicUmalquraCalendar(), 1442, 9, 4, 5, 15)
+  new CalendarDateTime(new IslamicUmalquraCalendar(), 1442, 9, 4, 5, 15),
 ); // true
 ```
 
@@ -419,15 +419,15 @@ import { isEqualMonth, IslamicUmalquraCalendar } from '@internationalized/date';
 
 isEqualMonth(
   new CalendarDateTime(2021, 4, 16, 9, 45),
-  new CalendarDateTime(2021, 4, 30, 5, 15)
+  new CalendarDateTime(2021, 4, 30, 5, 15),
 ); // true
 isEqualMonth(
   new CalendarDateTime(2021, 4, 16, 9, 45),
-  new CalendarDateTime(2021, 8, 2, 5, 15)
+  new CalendarDateTime(2021, 8, 2, 5, 15),
 ); // false
 isEqualMonth(
   new CalendarDateTime(2021, 4, 16, 9, 45),
-  new CalendarDateTime(new IslamicUmalquraCalendar(), 1442, 9, 4, 5, 15)
+  new CalendarDateTime(new IslamicUmalquraCalendar(), 1442, 9, 4, 5, 15),
 ); // false
 ```
 

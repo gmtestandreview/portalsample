@@ -148,7 +148,7 @@ export function ColorSwatchPicker({
     <AriaColorSwatchPicker
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        pickerStyles({ ...renderProps, className })
+        pickerStyles({ ...renderProps, className }),
       )}
     >
       {children}

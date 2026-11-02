@@ -21,7 +21,7 @@ const ReportList = (
   props: Readonly<{
     pagedListArtefactData: PagedListOfInstrumentArtefactDto;
     setCurrentPage: (page: number) => void;
-  }>
+  }>,
 ) => {
   const { pagedListArtefactData, setCurrentPage } = props;
 
@@ -132,7 +132,7 @@ const ReportList = (
                       </div>
                     </td>
                   </tr>
-                )
+                ),
               )}
             </tbody>
           </Table>

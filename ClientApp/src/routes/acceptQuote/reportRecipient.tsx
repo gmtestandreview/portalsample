@@ -4,7 +4,10 @@ import { Alert } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import TextInput from '../../components/Inputs/TextInput';
 import type { ReportRecipientProps } from './types';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  ReportAddressTypeValues,
+} from '../../api/web-api-client';
 import type {
   AddressDetailsDto,
   ReportRecipientStep,
@@ -43,7 +46,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
         });
         const acceptQuoteClient = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
@@ -123,7 +126,8 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
             name={getName('organisationName')}
             isSummary={isSummary}
           />
-          {reportRecipientStep?.reportAddressType === 'Other' && (
+          {reportRecipientStep?.reportAddressType ===
+            ReportAddressTypeValues.Other && (
             <AddressLookup
               name={getName('businessStreetAddress')}
               label='Organisation address for report'
@@ -133,7 +137,8 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
               isSummary={isSummary}
             />
           )}
-          {reportRecipientStep?.reportAddressType === 'BusinessAddress' && (
+          {reportRecipientStep?.reportAddressType ===
+            ReportAddressTypeValues.BusinessAddress && (
             <>
               <div className='form-label mb-0'>
                 Organisation address for report
@@ -141,7 +146,8 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
               <p>{getFormattedAddress(streetAddress)}</p>
             </>
           )}
-          {reportRecipientStep?.reportAddressType === 'PostalAddress' && (
+          {reportRecipientStep?.reportAddressType ===
+            ReportAddressTypeValues.PostalAddress && (
             <>
               <div className='form-label mb-0'>
                 Organisation address for report

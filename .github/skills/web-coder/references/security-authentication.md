@@ -1,6 +1,7 @@
 # Security & Authentication Reference
 
-Comprehensive reference for web security, authentication, encryption, and secure coding practices.
+Comprehensive reference for web security, authentication, encryption, and secure
+coding practices.
 
 ## Web Security Fundamentals
 
@@ -120,7 +121,7 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 // Login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-  
+
   // Verify credentials
   if (verifyCredentials(username, password)) {
     req.session.userId = user.id;
@@ -152,13 +153,11 @@ app.post('/logout', (req, res) => {
 // Login
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-  
+
   if (verifyCredentials(username, password)) {
-    const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      SECRET_KEY,
-      { expiresIn: '1h' }
-    );
+    const token = jwt.sign({ userId: user.id, role: user.role }, SECRET_KEY, {
+      expiresIn: '1h',
+    });
     res.json({ token });
   } else {
     res.status(401).json({ error: 'Invalid credentials' });
@@ -168,7 +167,7 @@ app.post('/login', (req, res) => {
 // Protected route
 app.get('/profile', (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
-  
+
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     const user = getUserById(decoded.userId);
@@ -266,7 +265,7 @@ function escapeHTML(str) {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#39;'
+      "'": '&#39;',
     };
     return map[match];
   });
@@ -372,7 +371,8 @@ const sanitizedName = file.name.replace(/[^a-z0-9.-]/gi, '_');
 const uploadPath = '/secure/uploads/' + sanitizedName;
 
 // Use random filenames
-const filename = crypto.randomBytes(16).toString('hex') + path.extname(file.name);
+const filename =
+  crypto.randomBytes(16).toString('hex') + path.extname(file.name);
 ```
 
 ## Cryptography
@@ -436,7 +436,7 @@ Verify authenticity and integrity.
 
 ```javascript
 const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-  modulusLength: 2048
+  modulusLength: 2048,
 });
 
 // Sign
@@ -493,7 +493,7 @@ res.cookie('token', token, {
   httpOnly: true,
   secure: true,
   sameSite: 'strict',
-  maxAge: 3600000
+  maxAge: 3600000,
 });
 
 // ✅ For sensitive client-side data, encrypt first
@@ -509,7 +509,7 @@ const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
-  message: 'Too many requests, please try again later'
+  message: 'Too many requests, please try again later',
 });
 
 app.use('/api/', limiter);
@@ -518,7 +518,7 @@ app.use('/api/', limiter);
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  skipSuccessfulRequests: true
+  skipSuccessfulRequests: true,
 });
 
 app.use('/api/login', authLimiter);

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import RequestItem from '@/components/RequestList/requestItem';
@@ -6,14 +7,18 @@ import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus, ReportStatus } from '@/routes/common/enums';
 import type { DashboardItemDto } from '@/api/web-api-client';
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  import('@/analytics/GoogleAnalytics'),
+  () =>
+    ({
+      trackGAEvent: vi.fn<() => void>(),
+    }) satisfies __ExactMockModule<__TestMockModule22>,
+);
 
 const modalDispatch = {
-  setShowBranchSelector: vi.fn(),
-  setShowRFQDeleteModal: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setShowBranchSelector: vi.fn<() => void>(),
+  setShowRFQDeleteModal: vi.fn<() => void>(),
+  setShowRFQSelectModal: vi.fn<() => void>(),
 };
 
 const renderDashboardItem = (children: React.ReactNode) =>
@@ -22,7 +27,7 @@ const renderDashboardItem = (children: React.ReactNode) =>
       <ModalDispatchCtx.Provider value={modalDispatch}>
         <ul>{children}</ul>
       </ModalDispatchCtx.Provider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 const reportIssuedRequest: DashboardItemDto = {
@@ -85,58 +90,64 @@ const instrumentRequest: DashboardItemDto = {
   },
 };
 
-describe('RequestList accessibility', () => {
+describe('requestList accessibility', () => {
   it('keeps RequestItem recalibration actions as native links and avoids extra card/panel tab stops', () => {
+    expect.hasAssertions();
+
     const { container } = renderDashboardItem(
-      <RequestItem request={reportIssuedRequest} />
+      <RequestItem request={reportIssuedRequest} />,
     );
 
     const recalibrationLink = screen.getByRole('link', {
       name: 'Request recalibration',
     });
+
     expect(recalibrationLink).toHaveAttribute(
       'href',
-      '/request-for-quote-copy/RFQ-2023-009012'
+      '/request-for-quote-copy/RFQ-2023-009012',
     );
     expect(recalibrationLink).not.toHaveAttribute('role', 'button');
 
     expect(
-      container.querySelector('#RefId-RFQ-2023-009012')
+      container.querySelector('#RefId-RFQ-2023-009012'),
     ).not.toHaveAttribute('tabindex');
     expect(container.querySelectorAll('.tab-pane[tabindex="0"]')).toHaveLength(
-      0
+      0,
     );
     expect(
       container.querySelectorAll(
-        '[aria-hidden="true"] a, [aria-hidden="true"] button'
-      )
+        '[aria-hidden="true"] a, [aria-hidden="true"] button',
+      ),
     ).toHaveLength(0);
   });
 
   it('keeps InstrumentItem recalibration actions as native links and avoids extra card/panel tab stops', () => {
+    expect.hasAssertions();
+
     const { container } = renderDashboardItem(
-      <InstrumentItem request={instrumentRequest} />
+      <InstrumentItem request={instrumentRequest} />,
     );
 
     const recalibrationLink = screen.getByRole('link', {
       name: 'Request recalibration',
     });
+
     expect(recalibrationLink).toHaveAttribute(
       'href',
-      '/request-for-quote-copy/RFQ-2023-009012'
+      '/request-for-quote-copy/RFQ-2023-009012',
     );
     expect(recalibrationLink).not.toHaveAttribute('role', 'button');
 
     expect(
-      container.querySelector('#RefId-RFQ-2023-009012')
+      container.querySelector('#RefId-RFQ-2023-009012'),
     ).not.toHaveAttribute('tabindex');
     expect(container.querySelectorAll('.tab-pane[tabindex="0"]')).toHaveLength(
-      0
+      0,
     );
     expect(
       container.querySelectorAll(
-        '[aria-hidden="true"] a, [aria-hidden="true"] button'
-      )
+        '[aria-hidden="true"] a, [aria-hidden="true"] button',
+      ),
     ).toHaveLength(0);
   });
 });

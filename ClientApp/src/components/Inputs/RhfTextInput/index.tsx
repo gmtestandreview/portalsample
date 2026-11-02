@@ -1,5 +1,4 @@
 import Form from 'react-bootstrap/Form';
-import { trim } from 'lodash';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
 import { omitUndefined } from '../../../utils/omitUndefined';
@@ -40,16 +39,18 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
 
+  const fieldValue = typeof field.value === 'string' ? field.value : '';
+
   if (isSummary) {
     return (
-      <SummaryDisplay label={label} value={field.value} as='p' id={controlId} />
+      <SummaryDisplay label={label} value={fieldValue} as='p' id={controlId} />
     );
   }
 
   const handleBlur = () => {
     onBlur?.();
     if (typeof field.value === 'string') {
-      const trimmed = trim(field.value);
+      const trimmed = field.value.trim();
       if (trimmed !== field.value) {
         field.onChange(trimmed);
       }
@@ -89,7 +90,7 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
           autoComplete,
           placeholder,
         })}
-        value={field.value ?? ''}
+        value={fieldValue}
         onBlur={handleBlur}
         onChange={(event) => {
           field.onChange(event.target.value);

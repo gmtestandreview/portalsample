@@ -1,20 +1,28 @@
 # Requirements Clarity
 
-A systematic skill for transforming vague requirements into actionable Product Requirements Documents (PRDs) through focused dialogue and iterative clarification.
+A systematic skill for transforming vague requirements into actionable Product
+Requirements Documents (PRDs) through focused dialogue and iterative
+clarification.
 
 ## Purpose
 
-This skill helps you avoid costly misunderstandings and rework by ensuring requirements are crystal clear before implementation begins. It uses a 100-point scoring system to systematically identify gaps and guide you through targeted questions until your requirements are development-ready.
+This skill helps you avoid costly misunderstandings and rework by ensuring
+requirements are crystal clear before implementation begins. It uses a 100-point
+scoring system to systematically identify gaps and guide you through targeted
+questions until your requirements are development-ready.
 
 ## When to Use This Skill
 
 ### Use When
 
-- Requirements are vague or ambiguous (e.g., "add login feature", "implement payment")
+- Requirements are vague or ambiguous (e.g., "add login feature", "implement
+  payment")
 - Features are complex and estimated to take more than 2 days
 - Cross-team coordination is required
-- Missing technical context (no tech stack, integration points, or constraints mentioned)
-- Incomplete specifications (no acceptance criteria, success metrics, edge cases)
+- Missing technical context (no tech stack, integration points, or constraints
+  mentioned)
+- Incomplete specifications (no acceptance criteria, success metrics, edge
+  cases)
 - Unclear scope boundaries ("what exactly does 'user management' include?")
 
 ### Don't Use When
@@ -38,7 +46,8 @@ This skill helps you avoid costly misunderstandings and rework by ensuring requi
    - Systematically identifies missing information across four dimensions:
      - **Functional Scope**: Core functionality, boundaries, edge cases
      - **User Interaction**: Inputs, outputs, success/failure scenarios
-     - **Technical Constraints**: Performance, compatibility, security, scalability
+     - **Technical Constraints**: Performance, compatibility, security,
+       scalability
      - **Business Value**: Problem statement, target users, success metrics
 
 3. **Interactive Clarification** (Step 3)
@@ -56,10 +65,14 @@ This skill helps you avoid costly misunderstandings and rework by ensuring requi
 
 The 100-point scoring system evaluates:
 
-- **Functional Clarity** (30 points): Clear inputs/outputs, user interaction, success criteria
-- **Technical Specificity** (25 points): Technology stack, integration points, constraints
-- **Implementation Completeness** (25 points): Edge cases, error handling, data validation
-- **Business Context** (20 points): Problem statement, target users, success metrics
+- **Functional Clarity** (30 points): Clear inputs/outputs, user interaction,
+  success criteria
+- **Technical Specificity** (25 points): Technology stack, integration points,
+  constraints
+- **Implementation Completeness** (25 points): Edge cases, error handling, data
+  validation
+- **Business Context** (20 points): Problem statement, target users, success
+  metrics
 
 ## Key Features
 
@@ -87,7 +100,8 @@ The 100-point scoring system evaluates:
 ### Core Principles
 
 - **Why?** (YAGNI check) - Ensures features are truly needed
-- **Simpler?** (KISS check) - Explores simpler alternatives before complex solutions
+- **Simpler?** (KISS check) - Explores simpler alternatives before complex
+  solutions
 
 ## Usage Examples
 
@@ -261,15 +275,19 @@ A successful requirements clarification session results in:
 2. **Think End-to-End**: Consider the full user journey
 3. **Share Constraints Early**: Technical limitations, budget, timeline
 4. **Provide Context**: Explain the "why" behind your requirement
-5. **Reference Examples**: "Like Stripe's payment flow" is clearer than abstract descriptions
+5. **Reference Examples**: "Like Stripe's payment flow" is clearer than abstract
+   descriptions
 
 ## Related Skills
 
 - **feature-planning**: For breaking down features after PRD is complete
 - **implementation-blueprint**: For detailed implementation planning
 - **dev-spec**: For complete design and planning sessions
-- **critical-brainstorm**: For exploring and stress-testing ideas before clarification
+- **critical-brainstorm**: For exploring and stress-testing ideas before
+  clarification
 
 ---
 
-**Need help clarifying requirements?** Invoke this skill and provide your initial requirement description. The skill will guide you through systematic clarification until you have a development-ready PRD.
+**Need help clarifying requirements?** Invoke this skill and provide your
+initial requirement description. The skill will guide you through systematic
+clarification until you have a development-ready PRD.

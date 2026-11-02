@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfSelectInput from '.';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -8,7 +8,7 @@ import { withPortalProviders } from '../../../storybook/storybookHarness';
  * `FormProvider`; the portal harness supplies one through the `portal.rhf`
  * story parameter.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/RhfSelectInput',
   component: RhfSelectInput,
   decorators: [withPortalProviders],
@@ -28,52 +28,45 @@ const meta = {
       { displayText: 'Manuals', value: 'Manuals' },
     ],
   },
-} satisfies Meta<typeof RhfSelectInput>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+export const Default = meta.story({
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const select = canvas.getByRole('combobox', { name: 'Category' });
 
-    await expect(select).toHaveValue('');
+    await expect(
+      canvas.getByRole('combobox', { name: 'Category' }),
+    ).toHaveValue('');
 
     await userEvent.selectOptions(select, 'Manuals');
 
     await expect(select).toHaveValue('Manuals');
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: { disabled: true },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByRole('combobox', { name: 'Category' })
+      canvas.getByRole('combobox', { name: 'Category' }),
     ).toBeDisabled();
   },
-};
+});
 
-export const Summary: Story = {
+export const Summary = meta.story({
   args: { isSummary: true },
   parameters: {
     portal: {
       rhf: { defaultValues: { category: 'Certificate' } },
     },
   },
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Certificate')).toBeVisible();
     await expect(canvas.queryByRole('combobox')).not.toBeInTheDocument();
   },
-};
+});

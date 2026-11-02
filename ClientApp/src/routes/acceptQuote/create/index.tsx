@@ -23,20 +23,20 @@ const CreateAcceptQuote = () => {
         const client = new ApplicationClient();
         const quoteClient = new QuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         quoteClient.setAuthToken(tokenResult.accessToken);
         const quoteData = await quoteClient.getQuoteRequestDetailsByRefId(
           ApplicationType.QuoteRequest,
-          id
+          id,
         );
 
         const application = await client.createApplication({
           applicationType: ApplicationType.QuoteAccept,
           referenceId: quoteData.crmQuoteRequestId,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         AppLogger.error('Failed to create an application', e as Error, {
           Id: id,

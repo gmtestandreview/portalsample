@@ -4,7 +4,9 @@
 
 ### Control Objective
 
-The entity implements logical access security software, infrastructure, and architectures over protected information assets to protect them from security events to meet the entity's objectives.
+The entity implements logical access security software, infrastructure, and
+architectures over protected information assets to protect them from security
+events to meet the entity's objectives.
 
 ---
 
@@ -16,7 +18,10 @@ CC6.1-MFA-01
 
 ### Control Description
 
-Multi-factor authentication (MFA) is required for all user access to production systems, including applications, databases, cloud infrastructure, and administrative consoles. MFA must be configured to require at least two of the following factors:
+Multi-factor authentication (MFA) is required for all user access to production
+systems, including applications, databases, cloud infrastructure, and
+administrative consoles. MFA must be configured to require at least two of the
+following factors:
 
 - Something you know (password)
 - Something you have (hardware token, authenticator app)
@@ -24,8 +29,7 @@ Multi-factor authentication (MFA) is required for all user access to production 
 
 ### Control Owner
 
-**Primary**: IT Security Manager
-**Secondary**: Cloud Infrastructure Lead
+**Primary**: IT Security Manager **Secondary**: Cloud Infrastructure Lead
 
 ### Control Type
 
@@ -69,7 +73,8 @@ Multi-factor authentication (MFA) is required for all user access to production 
 
 1. **Okta** - Primary identity provider for SSO
    - Enforces MFA for all production application access
-   - Supported factors: Okta Verify (push), Google Authenticator (TOTP), YubiKey (hardware token)
+   - Supported factors: Okta Verify (push), Google Authenticator (TOTP), YubiKey
+     (hardware token)
 
 2. **AWS IAM** - Cloud infrastructure access
    - MFA required for console access
@@ -128,7 +133,8 @@ Multi-factor authentication (MFA) is required for all user access to production 
 
 - **Policy Name**: Require MFA for Production Resources
 - **Users**: All users
-- **Cloud apps**: All production Azure resources (tagged: Environment=Production)
+- **Cloud apps**: All production Azure resources (tagged:
+  Environment=Production)
 - **Conditions**: Any location
 - **Access controls**: Require MFA
 - **Session**: Sign-in frequency = 8 hours
@@ -209,12 +215,12 @@ Multi-factor authentication (MFA) is required for all user access to production 
 
 Evidence is collected automatically on the following schedule:
 
-| Evidence Type | Frequency | Location | Retention |
-| -------------- | ----------- | ---------- | ----------- |
-| Okta MFA Enrollment Report | Weekly | GRC Tool / Evidence Repository | 7 years |
-| AWS MFA Usage Report | Weekly | S3 Bucket (compliance-evidence) | 7 years |
-| Azure MFA Sign-in Logs | Daily | Azure Monitor / Log Analytics | 2 years |
-| MFA Authentication Logs | Real-time | SIEM (Splunk) | 1 year |
+| Evidence Type              | Frequency | Location                        | Retention |
+| -------------------------- | --------- | ------------------------------- | --------- |
+| Okta MFA Enrollment Report | Weekly    | GRC Tool / Evidence Repository  | 7 years   |
+| AWS MFA Usage Report       | Weekly    | S3 Bucket (compliance-evidence) | 7 years   |
+| Azure MFA Sign-in Logs     | Daily     | Azure Monitor / Log Analytics   | 2 years   |
+| MFA Authentication Logs    | Real-time | SIEM (Splunk)                   | 1 year    |
 
 ### Evidence Collection Script
 
@@ -292,9 +298,9 @@ if __name__ == "__main__":
 
 ### Current Exceptions
 
-| User | Reason | Approval | Expiration | Compensating Control |
-|------|--------|----------|------------|---------------------|
-| <service-account@company.com> | API-only account, no interactive login | CISO | 2025-12-31 | API key rotation every 90 days, IP allowlist |
+| User                          | Reason                                 | Approval | Expiration | Compensating Control                         |
+| ----------------------------- | -------------------------------------- | -------- | ---------- | -------------------------------------------- |
+| <service-account@company.com> | API-only account, no interactive login | CISO     | 2025-12-31 | API key rotation every 90 days, IP allowlist |
 
 ### Exception Approval Process
 
@@ -308,12 +314,12 @@ if __name__ == "__main__":
 
 ## Related Controls
 
-| Control ID | Control Name | Relationship |
-| ----------- | -------------- | -------------- |
-| CC6.1-PWD-01 | Password Complexity Requirements | Prerequisite (MFA requires strong password) |
-| CC6.2-ACC-01 | Quarterly Access Reviews | Complementary (verify MFA users still need access) |
-| CC7.2-LOG-01 | Authentication Logging | Detective control (logs MFA authentications) |
-| CC8.1-JIT-01 | Just-in-Time Access | Related (JIT access also requires MFA) |
+| Control ID   | Control Name                     | Relationship                                       |
+| ------------ | -------------------------------- | -------------------------------------------------- |
+| CC6.1-PWD-01 | Password Complexity Requirements | Prerequisite (MFA requires strong password)        |
+| CC6.2-ACC-01 | Quarterly Access Reviews         | Complementary (verify MFA users still need access) |
+| CC7.2-LOG-01 | Authentication Logging           | Detective control (logs MFA authentications)       |
+| CC8.1-JIT-01 | Just-in-Time Access              | Related (JIT access also requires MFA)             |
 
 ---
 
@@ -341,12 +347,12 @@ if __name__ == "__main__":
 
 ## Change History
 
-| Date | Version | Change Description | Changed By |
-| ------ | --------- | ------------------- | ------------ |
-| 2024-01-15 | 1.0 | Initial control implementation | IT Security Manager |
-| 2024-06-01 | 1.1 | Added Azure AD MFA for Microsoft services | Cloud Architect |
-| 2024-09-15 | 1.2 | Implemented SSH certificate-based authentication | Security Engineer |
-| 2025-01-10 | 1.3 | Updated to require hardware tokens for privileged users | CISO |
+| Date       | Version | Change Description                                      | Changed By          |
+| ---------- | ------- | ------------------------------------------------------- | ------------------- |
+| 2024-01-15 | 1.0     | Initial control implementation                          | IT Security Manager |
+| 2024-06-01 | 1.1     | Added Azure AD MFA for Microsoft services               | Cloud Architect     |
+| 2024-09-15 | 1.2     | Implemented SSH certificate-based authentication        | Security Engineer   |
+| 2025-01-10 | 1.3     | Updated to require hardware tokens for privileged users | CISO                |
 
 ---
 
@@ -357,15 +363,17 @@ if __name__ == "__main__":
 - **Audit Firm**: Deloitte & Touche LLP
 - **Audit Period**: January 1, 2024 - December 31, 2024
 - **Test Results**: No exceptions noted
-- **Auditor Comments**: "The Company has effectively implemented MFA for all production system access. Control operates effectively throughout the audit period."
+- **Auditor Comments**: "The Company has effectively implemented MFA for all
+  production system access. Control operates effectively throughout the audit
+  period."
 - **Report Date**: February 15, 2025
 
 ### Previous Audits
 
-| Audit Period | Audit Firm | Result | Exceptions |
-| ------------- | ------------ | -------- | ------------ |
-| 2023 (Full Year) | Deloitte | Passed | 0 |
-| 2023 (Initial, 3 months) | Deloitte | Passed | 0 |
+| Audit Period             | Audit Firm | Result | Exceptions |
+| ------------------------ | ---------- | ------ | ---------- |
+| 2023 (Full Year)         | Deloitte   | Passed | 0          |
+| 2023 (Initial, 3 months) | Deloitte   | Passed | 0          |
 
 ---
 
@@ -389,10 +397,8 @@ if __name__ == "__main__":
 
 ## Control Sign-off
 
-**Control Owner**: John Smith, IT Security Manager
-**Date**: January 15, 2025
+**Control Owner**: John Smith, IT Security Manager **Date**: January 15, 2025
 
-**Reviewed by**: Jane Doe, CISO
-**Date**: January 16, 2025
+**Reviewed by**: Jane Doe, CISO **Date**: January 16, 2025
 
 **Next Review Date**: July 15, 2025 (Semi-annual review)

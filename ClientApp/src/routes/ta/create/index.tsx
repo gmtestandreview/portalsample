@@ -21,13 +21,13 @@ const CreateRequestForTypeApproval = () => {
         // and on that run the id has not been set yet, so the guard could not fail.
         const client = new ApplicationClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const application = await client.createApplication({
           applicationType: ApplicationType.PatternApproval,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         AppLogger.error('Failed to create application', e as Error);
       }

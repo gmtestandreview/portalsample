@@ -11,15 +11,15 @@ import type {
 import useUserServices from '@/hooks/useUserServices';
 
 const dispatchContext: AccountDispatchContext = {
-  setAgree: vi.fn(),
-  setCompleted: vi.fn(),
-  setContactCompleted: vi.fn(),
-  setDefaultOrganisationId: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  setOrganisationAndBranch: vi.fn(),
-  setShowBranchSelector: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
-  setUserProfile: vi.fn().mockResolvedValue(true),
+  setAgree: vi.fn<(...args: unknown[]) => void>(),
+  setCompleted: vi.fn<(...args: unknown[]) => void>(),
+  setContactCompleted: vi.fn<(...args: unknown[]) => void>(),
+  setDefaultOrganisationId: vi.fn<(...args: unknown[]) => void>(),
+  setTargetOrganisation: vi.fn<(...args: unknown[]) => void>(),
+  setOrganisationAndBranch: vi.fn<(...args: unknown[]) => void>(),
+  setShowBranchSelector: vi.fn<(...args: unknown[]) => void>(),
+  setShowRFQSelectModal: vi.fn<(...args: unknown[]) => void>(),
+  setUserProfile: vi.fn<(...args: unknown[]) => Promise<boolean>>().mockResolvedValue(true),
 };
 
 const ServicesProbe = () => {
@@ -32,16 +32,21 @@ const ServicesProbe = () => {
   );
 };
 
-describe('useUserServices', () => {
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(useUserServices, () => {
   it('returns an empty service list when no account context is available', () => {
+    expect.hasAssertions();
+
     render(<ServicesProbe />);
 
     expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent(
-      'none'
+      'none',
     );
   });
 
   it('returns services from the authenticated user profile', () => {
+    expect.hasAssertions();
+
     const services = [
       { serviceName: 'Pattern approval' },
       { serviceName: 'Calibration' },
@@ -59,15 +64,17 @@ describe('useUserServices', () => {
         <AccountDispatchCtx.Provider value={dispatchContext}>
           <ServicesProbe />
         </AccountDispatchCtx.Provider>
-      </AccountStateCtx.Provider>
+      </AccountStateCtx.Provider>,
     );
 
     expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent(
-      'Pattern approval,Calibration'
+      'Pattern approval,Calibration',
     );
   });
 
   it('returns an empty service list when the profile has no services', () => {
+    expect.hasAssertions();
+
     const stateContext = {
       details: {
         userProfile: {},
@@ -79,11 +86,11 @@ describe('useUserServices', () => {
         <AccountDispatchCtx.Provider value={dispatchContext}>
           <ServicesProbe />
         </AccountDispatchCtx.Provider>
-      </AccountStateCtx.Provider>
+      </AccountStateCtx.Provider>,
     );
 
     expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent(
-      'none'
+      'none',
     );
   });
 });

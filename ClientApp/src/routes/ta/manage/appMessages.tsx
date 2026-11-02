@@ -1,12 +1,9 @@
 import { useMsal } from '@azure/msal-react';
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Card, Row, Col, Form } from 'react-bootstrap';
 import parse from 'html-react-parser';
-import SlateEditor, {
-  type CustomElement,
-  serializeToHtml,
-} from '../../../components/SlateEditor/SlateEditor';
+import type { CustomElement } from '../../../components/SlateEditor/SlateEditor';
 
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 
@@ -25,6 +22,10 @@ import BlockUISpinner from '../../../components/BlockUISpinner';
 import CustomPaginationHeader from '../../../components/PaginationHeader';
 import { sanitiseHtml } from '../../common/helperFunctions';
 
+const SlateEditor = lazy(
+  () => import('../../../components/SlateEditor/SlateEditor'),
+);
+
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 
 const ApplicationMessages = () => {
@@ -39,7 +40,7 @@ const ApplicationMessages = () => {
   const [editorResetKey, setEditorResetKey] = useState(0);
   const [refreshTick, setRefreshTick] = useState(0);
   const [messageView, setMessageView] = useState<FilterMessages>(
-    FilterMessages.ShowAllMessages
+    FilterMessages.ShowAllMessages,
   );
 
   useHtmlTitle('Application Messages | NMI Services portal');
@@ -62,7 +63,7 @@ const ApplicationMessages = () => {
         if (accounts.length > 0 && id) {
           const client = new RequestForPatternApprovalClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppMessages(
@@ -70,21 +71,21 @@ const ApplicationMessages = () => {
             DEFAULT_DASHBOARD_PAGESIZE,
             currentPage,
             messageView,
-            id
+            id,
           );
           if (response.requestForPatternApprovalMessageDetails!.currentPage) {
             setCurrentPage(
-              response.requestForPatternApprovalMessageDetails!.currentPage
+              response.requestForPatternApprovalMessageDetails!.currentPage,
             );
           }
           if (response.requestForPatternApprovalMessageDetails!.totalPages) {
             setTotalPages(
-              response.requestForPatternApprovalMessageDetails!.totalPages
+              response.requestForPatternApprovalMessageDetails!.totalPages,
             );
           }
           if (response.requestForPatternApprovalMessageDetails!.totalCount) {
             setTotalCount(
-              response.requestForPatternApprovalMessageDetails!.totalCount
+              response.requestForPatternApprovalMessageDetails!.totalCount,
             );
           }
           setMessage(response);
@@ -105,6 +106,8 @@ const ApplicationMessages = () => {
   };
 
   const handleEditorSubmit = async (submittedValue: CustomElement[]) => {
+    const { serializeToHtml } =
+      await import('../../../components/SlateEditor/SlateEditor');
     const htmlContent = serializeToHtml(submittedValue);
     const sanitizedHtmlContent = sanitiseHtml(htmlContent);
 
@@ -114,7 +117,7 @@ const ApplicationMessages = () => {
       if (accounts.length > 0 && id) {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.addAppMessage(id, sanitizedHtmlContent);
@@ -133,15 +136,23 @@ const ApplicationMessages = () => {
   };
 
   const renderEditor = () => (
-    <SlateEditor
-      key={editorResetKey}
-      value={value}
-      onSubmit={() => {
-        void handleEditorSubmit(value);
-      }}
-      setValue={setValue}
-      placeholder='Message NMI'
-    />
+    <Suspense
+      fallback={
+        <BlockUISpinner partial>
+          <p>Loading editor...</p>
+        </BlockUISpinner>
+      }
+    >
+      <SlateEditor
+        key={editorResetKey}
+        value={value}
+        onSubmit={() => {
+          void handleEditorSubmit(value);
+        }}
+        setValue={setValue}
+        placeholder='Message NMI'
+      />
+    </Suspense>
   );
 
   const messageCount =
@@ -239,7 +250,7 @@ const ApplicationMessages = () => {
             {message &&
               messageCount !== undefined &&
               messageCount > 0 &&
-              message!.requestForPatternApprovalMessageDetails!.items!.map(
+              message.requestForPatternApprovalMessageDetails!.items!.map(
                 (msg) => (
                   <li key={msg.id} id={msg.id}>
                     <Card
@@ -283,7 +294,7 @@ const ApplicationMessages = () => {
                       </Card.Body>
                     </Card>
                   </li>
-                )
+                ),
               )}
           </ol>
         )}

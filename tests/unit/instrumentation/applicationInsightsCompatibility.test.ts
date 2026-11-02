@@ -2,8 +2,10 @@ import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { describe, expect, it } from 'vitest';
 
-describe('Application Insights package compatibility', () => {
+describe('application Insights package compatibility', () => {
   it('constructs the React plugin with the web SDK', () => {
+    expect.hasAssertions();
+
     const reactPlugin = new ReactPlugin();
     const appInsights = new ApplicationInsights({
       config: {

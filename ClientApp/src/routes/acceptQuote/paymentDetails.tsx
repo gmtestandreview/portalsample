@@ -37,7 +37,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       AppLogger.verbose('PaymentDetails.getAcceptQuotePreInfo', { Id: id });
       const acceptQuoteClient = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 

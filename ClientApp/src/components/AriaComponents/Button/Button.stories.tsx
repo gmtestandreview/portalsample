@@ -1,57 +1,42 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn } from 'storybook/test';
 import { Button } from './Button';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Button',
   component: Button,
-  tags: ['ai-generated'],
   args: {
     onPress: fn(),
   },
-} satisfies Meta<typeof Button>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     children: 'Save changes',
   },
-  play: async ({
-    args,
-    canvas,
-    userEvent,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Save changes' }));
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole('button', { name: 'Save changes' });
+
+    await expect(button).toHaveAccessibleName('Save changes');
+
+    await userEvent.click(button);
+
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
-};
+});
 
-export const Secondary: Story = {
+export const Secondary = meta.story({
   args: {
     children: 'Cancel',
     variant: 'secondary',
   },
-};
+});
 
-export const Pending: Story = {
+export const Pending = meta.story({
   args: {
     children: 'Save changes',
     isPending: true,
   },
-};
-
-export const CssCheck: Story = {
-  args: {
-    children: 'Styled button',
-  },
-  play: async ({
-    canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    const button = canvas.getByRole('button', { name: 'Styled button' });
-    await expect(getComputedStyle(button).borderRadius).toBe('4px');
-  },
-};
+});

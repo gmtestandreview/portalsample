@@ -11,7 +11,7 @@ const renderEmptyValue = (className: string) => (
 const renderPhoneValue = (
   value: string,
   className: string,
-  as: 'p' | 'span'
+  as: 'p' | 'span',
 ) => {
   const Tag = as === 'p' ? 'p' : 'span';
   return (
@@ -50,7 +50,7 @@ const renderFormattedValue = (
     valueIsNumericString,
     allowemptyformatting,
     renderText,
-  }: FormattedValueOptions
+  }: FormattedValueOptions,
 ) => (
   <>
     {format ? (
@@ -84,7 +84,7 @@ const renderTextValue = (
   value: string,
   className: string,
   as: 'p' | 'span',
-  isPhoneLabel: boolean
+  isPhoneLabel: boolean,
 ) => {
   if (isPhoneLabel) {
     return renderPhoneValue(value, className, as);

@@ -148,7 +148,7 @@ export function ColorSlider({ label, ...props }: ColorSliderProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-56'
+        'font-sans orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-56',
       )}
     >
       <Label>{label}</Label>
@@ -226,7 +226,7 @@ import { useState } from 'react';
 
 function Example() {
   let [currentValue, setCurrentValue] = useState(
-    parseColor('hsl(50, 100%, 50%)')
+    parseColor('hsl(50, 100%, 50%)'),
   );
   let [finalValue, setFinalValue] = useState(currentValue);
 

@@ -9,6 +9,8 @@ import { NumericFormatFixed, PatternFormatFixed } from './types';
 import type { NumberInputProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
+type NumberInputFieldValue = string | number | Date | null | undefined;
+
 const NumberInput = ({
   label,
   inlineHelp,
@@ -43,16 +45,20 @@ const NumberInput = ({
   isSummary,
   defaultValue,
 }: Readonly<NumberInputProps>) => {
-  const [field, meta, helpers] = useField(name);
+  const [field, meta, helpers] = useField<NumberInputFieldValue>(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
   const inputPrependId = prepend ? `input-prepend-${id || name}` : undefined;
   const inputAppendId = append ? `input-append-${id || name}` : undefined;
   const getDate = (date: Date | string) =>
     typeof date === 'string' ? parseISO(date) : date;
   const formattedValue =
-    type === 'date' && meta.value
+    type === 'date' &&
+    meta.value &&
+    (typeof meta.value === 'string' || meta.value instanceof Date)
       ? formatDate(getDate(meta.value), 'yyyy-MM-dd')
       : meta.value;
+  const phoneFormatValue =
+    typeof formattedValue === 'string' ? formattedValue : undefined;
   const { setValue } = helpers;
   const lastAppliedDefaultValue =
     useRef<NumberInputProps['defaultValue']>(undefined);
@@ -91,7 +97,7 @@ const NumberInput = ({
         placeholder,
         format:
           format === 'checkPhoneFormat'
-            ? getPhoneNumberFormat(formattedValue)
+            ? getPhoneNumberFormat(phoneFormatValue)
             : format,
         mask,
         minLength,
@@ -147,12 +153,12 @@ const NumberInput = ({
     return (
       <SummaryDisplay
         label={label}
-        value={field.value}
+        value={field.value == null ? undefined : String(field.value)}
         as={as}
         id={id || name}
         format={
           format === 'checkPhoneFormat'
-            ? getPhoneNumberFormat(formattedValue)
+            ? getPhoneNumberFormat(phoneFormatValue)
             : format
         }
         mask={mask}

@@ -31,11 +31,11 @@ Comprehensive guidelines for conducting effective code reviews.
 
 ### When to Review
 
-| Trigger | Action |
-| --------- | -------- |
-| PR opened | Review within 24 hours, ideally same day |
-| Changes requested | Re-review within 4 hours |
-| Blocking issue found | Communicate immediately |
+| Trigger              | Action                                   |
+| -------------------- | ---------------------------------------- |
+| PR opened            | Review within 24 hours, ideally same day |
+| Changes requested    | Re-review within 4 hours                 |
+| Blocking issue found | Communicate immediately                  |
 
 ### Time Allocation
 

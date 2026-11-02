@@ -1,24 +1,25 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { NumberField } from './NumberField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/NumberField',
   component: NumberField,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof NumberField>;
+});
 
-export default meta;
-type Story = StoryFn<typeof NumberField>;
-
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <NumberField {...args} />
-);
-
-Example.args = {
-  label: 'Cookies',
-  placeholder: '-',
-};
+export const Example = meta.story({
+  args: {
+    label: 'Cookies',
+    placeholder: '-',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('textbox', { name: 'Cookies' }),
+    ).toBeVisible();
+  },
+});

@@ -23,13 +23,15 @@ import { describe, expect, it } from 'vitest';
 const CHILD_TIMEOUT_MS = 120_000;
 const TEST_TIMEOUT_MS = 135_000;
 
-describe('ESLint editor integration', () => {
+describe('eSLint editor integration', () => {
   it(
     'lints the Storybook config when ESLint runs from the file directory',
     () => {
+      expect.hasAssertions();
+
       const storybookDirectory = path.resolve('.storybook');
       const eslintEntryPoint = path.resolve(
-        'node_modules/eslint/bin/eslint.js'
+        'node_modules/eslint/bin/eslint.js',
       );
 
       const result = spawnSync(
@@ -39,18 +41,18 @@ describe('ESLint editor integration', () => {
           cwd: storybookDirectory,
           encoding: 'utf8',
           timeout: CHILD_TIMEOUT_MS,
-        }
+        },
       );
 
       expect(
         result.error,
-        `ESLint could not be spawned: ${result.error?.message}`
+        `ESLint could not be spawned: ${result.error?.message}`,
       ).toBeUndefined();
       expect(
         result.status,
-        `ESLint exited ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`
+        `ESLint exited ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
       ).toBe(0);
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 });

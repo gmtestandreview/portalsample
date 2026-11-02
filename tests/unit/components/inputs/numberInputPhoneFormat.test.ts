@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getPhoneNumberFormat } from '@/components/Inputs/NumberInput/phoneFormat';
 
-describe('getPhoneNumberFormat', () => {
+describe('phone number format', () => {
   it.each([
     ['0412345678', '#### ### ###'],
     ['1800123456', '#### ### ###'],
@@ -13,6 +13,7 @@ describe('getPhoneNumberFormat', () => {
     [undefined, '## #### ####'],
     [null, '## #### ####'],
   ])('returns %s => %s', (value, expected) => {
+    expect.hasAssertions();
     expect(getPhoneNumberFormat(value)).toBe(expected);
   });
 });

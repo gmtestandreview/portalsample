@@ -1,14 +1,17 @@
 ---
 name: prompt-engineering-patterns
-description: "Master advanced prompt engineering techniques to maximize LLM performance, reliability, and controllability."
+description:
+  'Master advanced prompt engineering techniques to maximize LLM performance,
+  reliability, and controllability.'
 risk: unknown
 source: community
-date_added: "2026-02-27"
+date_added: '2026-02-27'
 ---
 
 # Prompt Engineering Patterns
 
-Master advanced prompt engineering techniques to maximize LLM performance, reliability, and controllability.
+Master advanced prompt engineering techniques to maximize LLM performance,
+reliability, and controllability.
 
 ## Do not use this skill when
 
@@ -20,7 +23,8 @@ Master advanced prompt engineering techniques to maximize LLM performance, relia
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed examples are required, open
+  `resources/implementation-playbook.md`.
 
 ## Use this skill when
 
@@ -114,7 +118,8 @@ Start with simple prompts, add complexity only when needed:
    - "Summarize this article in 3 bullet points, focusing on key findings"
 
 3. **Level 3**: Add reasoning
-   - "Read this article, identify the main findings, then summarize in 3 bullet points"
+   - "Read this article, identify the main findings, then summarize in 3 bullet
+     points"
 
 4. **Level 4**: Add examples
    - Include 2-3 example summaries with input-output pairs
@@ -201,7 +206,8 @@ If verification fails, revise your response."""
 
 ## Resources
 
-- **references/few-shot-learning.md**: Deep dive on example selection and construction
+- **references/few-shot-learning.md**: Deep dive on example selection and
+  construction
 - **references/chain-of-thought.md**: Advanced reasoning elicitation techniques
 - **references/prompt-optimization.md**: Systematic refinement workflows
 - **references/prompt-templates.md**: Reusable template patterns

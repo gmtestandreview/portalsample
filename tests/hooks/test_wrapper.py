@@ -6,12 +6,13 @@ The wrapper resolves scripts/pre_tool_use.py from CLAUDE_PROJECT_DIR, passes
 exit codes through (0 allow, 2 block), blocks when the guard crashes or no Python
 is available, and warns/allows only when the guard file itself is absent.
 
-Needs Node.js, `sh`, and a Python interpreter on PATH (Git Bash on Windows).
+Needs Node.js and a Python interpreter on PATH.
 Run:  python tests/hooks/test_wrapper.py
 """
 
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -24,8 +25,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 SETTINGS = ROOT / ".claude" / "settings.json"
 GUARD = ROOT / "scripts" / "pre_tool_use.py"
-WRAPPER = ROOT / "scripts" / "pre_tool_use_wrapper.cjs"
-LAUNCHER = ROOT / "scripts" / "python314.cjs"
+WRAPPER = ROOT / "scripts" / "pre_tool_use_wrapper.mjs"
+LAUNCHER = ROOT / "scripts" / "python314.mjs"
 
 
 class ToolCall(TypedDict):
@@ -49,6 +50,16 @@ def wrapper_command() -> str:
     return command
 
 
+def test_wrapper_command_is_directly_invocable_without_posix_shell() -> None:
+    argv = wrapper_argv()
+    assert argv[:2] == ["node", "-e"]
+    assert "pre_tool_use_wrapper.mjs" in argv[2]
+
+
+def wrapper_argv() -> list[str]:
+    return shlex.split(wrapper_command())
+
+
 def project(folder: Path, guard_source: str | None) -> None:
     (folder / "scripts").mkdir()
     shutil.copyfile(WRAPPER, folder / "scripts" / WRAPPER.name)
@@ -58,11 +69,8 @@ def project(folder: Path, guard_source: str | None) -> None:
 
 
 def run(folder: Path, payload: ToolCall, *, cwd: Path | None = None) -> tuple[int, str]:
-    shell = shutil.which("sh")
-    if shell is None:
-        pytest.skip("wrapper integration requires sh on PATH (for example Git Bash)")
     proc = subprocess.run(
-        [shell, "-c", wrapper_command()],
+        wrapper_argv(),
         input=json.dumps(payload),
         capture_output=True,
         text=True,

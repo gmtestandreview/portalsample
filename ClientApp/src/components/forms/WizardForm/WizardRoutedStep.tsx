@@ -14,7 +14,7 @@ import useBodyClass from '../../Utilities/useBodyClass';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 const WizardRoutedStep = (
-  props: Readonly<WizardRoutedStepProps<FormikValues>>
+  props: Readonly<WizardRoutedStepProps<FormikValues>>,
 ) => {
   const {
     initialValues,
@@ -76,7 +76,7 @@ const WizardRoutedStep = (
         getRedirectionLocationOnError,
       }),
     },
-    initialValues
+    initialValues,
   );
 
   if (view.kind === 'navigate') {
@@ -118,7 +118,7 @@ const WizardRoutedStep = (
                   activeStep={currentStepIndex}
                   steps={allSteps.map((s, i) => ({
                     completed:
-                      stepStatuses[i]?.status === FormStepStatus.Completed,
+                      stepStatuses.at(i)?.status === FormStepStatus.Completed,
                     path: `${url}${s.props.location}`,
                     title: s.props.title,
                   }))}
@@ -162,7 +162,7 @@ const WizardRoutedStep = (
                   onSubmit={formik.handleSubmit}
                   autoComplete='off'
                 >
-                  {allSteps[currentStepIndex]}
+                  {allSteps.at(currentStepIndex)}
                   <div className='mt-5 d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
                     <PreviousStepButton
                       currentStepIndex={currentStepIndex}

@@ -8,7 +8,7 @@ Web browsers, rendering engines, and browser-specific information.
 
 **Engine**: Blink (rendering), V8 (JavaScript)  
 **Released**: 2008  
-**Market Share**: ~65% (desktop)  
+**Market Share**: ~65% (desktop)
 
 **Developer Tools**:
 
@@ -22,7 +22,7 @@ Web browsers, rendering engines, and browser-specific information.
 
 **Engine**: Gecko (rendering), SpiderMonkey (JavaScript)  
 **Released**: 2004  
-**Market Share**: ~3% (desktop)  
+**Market Share**: ~3% (desktop)
 
 **Features**:
 
@@ -35,7 +35,7 @@ Web browsers, rendering engines, and browser-specific information.
 
 **Engine**: WebKit (rendering), JavaScriptCore (JavaScript)  
 **Released**: 2003  
-**Market Share**: ~20% (desktop), dominant on iOS  
+**Market Share**: ~20% (desktop), dominant on iOS
 
 **Features**:
 
@@ -47,7 +47,7 @@ Web browsers, rendering engines, and browser-specific information.
 ### Microsoft Edge
 
 **Engine**: Blink (Chromium-based since 2020)  
-**Released**: 2015 (EdgeHTML), 2020 (Chromium)  
+**Released**: 2015 (EdgeHTML), 2020 (Chromium)
 
 **Features**:
 
@@ -59,7 +59,7 @@ Web browsers, rendering engines, and browser-specific information.
 ### Opera
 
 **Engine**: Blink  
-**Based on**: Chromium  
+**Based on**: Chromium
 
 **Features**:
 
@@ -73,19 +73,19 @@ Web browsers, rendering engines, and browser-specific information.
 
 **Used by**: Chrome, Edge, Opera, Vivaldi  
 **Forked from**: WebKit (2013)  
-**Language**: C++  
+**Language**: C++
 
 ### WebKit
 
 **Used by**: Safari  
 **Origin**: KHTML (KDE)  
-**Language**: C++  
+**Language**: C++
 
 ### Gecko
 
 **Used by**: Firefox  
 **Developed by**: Mozilla  
-**Language**: C++, Rust  
+**Language**: C++, Rust
 
 ### Legacy Engines
 
@@ -95,12 +95,12 @@ Web browsers, rendering engines, and browser-specific information.
 
 ## JavaScript Engines
 
-| Engine | Browser | Language |
-| -------- | --------- | ---------- |
-| V8 | Chrome, Edge | C++ |
-| SpiderMonkey | Firefox | C++, Rust |
-| JavaScriptCore | Safari | C++ |
-| Chakra | IE/Edge (legacy) | C++ |
+| Engine         | Browser          | Language  |
+| -------------- | ---------------- | --------- |
+| V8             | Chrome, Edge     | C++       |
+| SpiderMonkey   | Firefox          | C++, Rust |
+| JavaScriptCore | Safari           | C++       |
+| Chakra         | IE/Edge (legacy) | C++       |
 
 ### V8 Features
 
@@ -138,7 +138,7 @@ monitor(function) // Log function calls
 - Performance: Profiling
 - Memory: Heap snapshots
 - Application: Storage, service workers
-- Security: Certificate  info
+- Security: Certificate info
 - Lighthouse: Audits
 
 ### Firefox DevTools
@@ -238,12 +238,12 @@ Real-time communication
 
 ## Browser Storage
 
-| Storage | Size | Expiration | Scope |
-| --------- | ------ | ------------ | ------- |
-| Cookies | 4KB | Configurable | Domain |
-| LocalStorage | 5-10MB | Never | Origin |
-| SessionStorage | 5-10MB | Tab close | Origin |
-| IndexedDB | 50MB+ | Never | Origin |
+| Storage        | Size   | Expiration   | Scope  |
+| -------------- | ------ | ------------ | ------ |
+| Cookies        | 4KB    | Configurable | Domain |
+| LocalStorage   | 5-10MB | Never        | Origin |
+| SessionStorage | 5-10MB | Tab close    | Origin |
+| IndexedDB      | 50MB+  | Never        | Origin |
 
 ## Mobile Browsers
 
@@ -324,10 +324,12 @@ Real-time communication
   "action": {
     "default_popup": "popup.html"
   },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["content.js"]
-  }]
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
 }
 ```
 

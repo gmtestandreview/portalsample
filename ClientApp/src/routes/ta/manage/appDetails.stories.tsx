@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { Route, Routes } from 'react-router';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -23,25 +23,33 @@ const applicationDetails = {
   assessedAs: 'Class II',
 };
 
-const stubFetch: typeof globalThis.fetch = async (input) => {
-  const url =
-    typeof input === 'string'
-      ? input
-      : ((input as Request).url ?? String(input));
+const stubFetch: typeof globalThis.fetch = (input) => {
+  let url: string;
+  if (typeof input === 'string') {
+    url = input;
+  } else if ('url' in input) {
+    url = input.url;
+  } else {
+    url = input.href;
+  }
   if (url.includes('app-details')) {
-    return new Response(JSON.stringify({ applicationDetails }), {
-      status: 200,
-      headers: { 'content-type': 'application/json' },
-    });
+    return Promise.resolve(
+      new Response(JSON.stringify({ applicationDetails }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
   }
   // Other calls (e.g. message count) — return a benign numeric payload.
-  return new Response('0', {
-    status: 200,
-    headers: { 'content-type': 'application/json' },
-  });
+  return Promise.resolve(
+    new Response('0', {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    }),
+  );
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/Manage/ApplicationDetails',
   component: ApplicationDetails,
   decorators: [
@@ -61,20 +69,16 @@ const meta = {
       fetch: stubFetch,
     },
   },
-} satisfies Meta<typeof ApplicationDetails>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const DetailsTab: Story = {
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+export const DetailsTab = meta.story({
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     // Once the application loads, the status section and reference render.
     await expect(
-      await canvas.findByRole('heading', { name: 'Application status' })
+      await canvas.findByRole('heading', { name: 'Application status' }),
     ).toBeInTheDocument();
     await expect(await canvas.findByText('PA-2024-0001')).toBeVisible();
   },
-};
+});

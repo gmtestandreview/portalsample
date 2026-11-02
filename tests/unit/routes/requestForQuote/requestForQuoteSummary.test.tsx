@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import { Formik } from 'formik';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import { YesNo } from '../../../../ClientApp/src/api/web-api-client';
 import type { RequestForQuoteSummary as RequestForQuoteSummaryValues } from '../../../../ClientApp/src/api/web-api-client';
@@ -26,28 +26,37 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
-});
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
+
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
+
+  clients.lookup = createClientMockFor('getLookup');
+
+  return webApiClientModuleMock(original, {
+    LookupClient: clients.lookup,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
-
-    clients.lookup = createClientMockFor('getLookup');
-
-    return webApiClientModuleMock(original, { LookupClient: clients.lookup });
-  }
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
+    ({
+      default: {
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
-
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-}));
 
 const REQUEST_ID = 'RFQ-1';
 
@@ -74,7 +83,7 @@ const renderPage = async (
     isSubmitted = false,
     status = { hidden: summaryHidden },
     account,
-  }: RenderOptions = {}
+  }: RenderOptions = {},
 ) => {
   const page = (
     <Formik
@@ -107,34 +116,45 @@ const renderPage = async (
           element={<LocationProbe />}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
   await result.findByText('Request details');
   return result;
 };
 
-describe('RequestForQuoteSummary', () => {
-  beforeEach(() => {
-    cleanup();
-    resetMsalMock();
-    clients.lookup.methods.getLookup.mockReset();
-    mockSummaryLookups(clients.lookup.methods.getLookup);
-  });
+const resetRequestForQuoteSummary = () => {
+  cleanup();
+  resetMsalMock();
+  clients.lookup.methods.getLookup.mockReset();
+  mockSummaryLookups(clients.lookup.methods.getLookup);
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(RequestForQuoteSummary, () => {
   it('shows both sections with the values held by Formik', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(
-      fixtureValues('fully populated with the principal contact')
+      fixtureValues('fully populated with the principal contact'),
     );
 
-    expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();
-    expect(screen.getByText(/Acme Trading/)).toBeInTheDocument();
-    expect(screen.getByText('Ada')).toBeInTheDocument();
-    expect(screen.getByText('Mettler')).toBeInTheDocument();
-    expect(screen.getByText('SN-0042')).toBeInTheDocument();
-    expect(screen.getByText('Balance')).toBeInTheDocument();
+    expect([
+      screen.getByText('Acme Pty Ltd'),
+      screen.getByText(/Acme Trading/),
+      screen.getByText('Ada'),
+      screen.getByText('Mettler'),
+      screen.getByText('SN-0042'),
+      screen.getByText('Balance'),
+    ]).toHaveLength(6);
   });
 
   it('honours the wizard hiding rule for an empty branch name', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(fixtureValues('no branch or location name'));
 
     expect(screen.getByText('Acme Trading')).toBeInTheDocument();
@@ -142,6 +162,10 @@ describe('RequestForQuoteSummary', () => {
   });
 
   it('shows the contact details unless principalContactHide says otherwise', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     const values = fixtureValues('fully populated with the principal contact');
     await renderPage(values, {
       status: {
@@ -156,17 +180,25 @@ describe('RequestForQuoteSummary', () => {
   });
 
   it('copes with a Formik status that carries no hiding rules', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {
         status: null,
-      }
+      },
     );
 
     expect(screen.getByText('Lovelace', { exact: false })).toBeInTheDocument();
   });
 
   it('describes the signed-in account holder under "Use my contact details"', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {
@@ -175,24 +207,33 @@ describe('RequestForQuoteSummary', () => {
           familyName: 'Hamilton',
           email: 'margaret@example.com',
         },
-      }
+      },
     );
 
     const descriptor = document.querySelector('#q-currentContact');
+
     expect(descriptor).toHaveTextContent('Margaret Hamilton');
     expect(descriptor).toHaveTextContent('margaret@example.com');
   });
 
   it('leaves the account holder out when the account has no name or email', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
-      { account: { givenName: 'Margaret' } }
+      { account: { givenName: 'Margaret' } },
     );
 
     expect(document.querySelector('#q-currentContact')).toBeNull();
   });
 
   it('hides the serial number row when no serial number is available', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     const values = fixtureValues('no serial number');
     await renderPage({
       ...values,
@@ -206,12 +247,16 @@ describe('RequestForQuoteSummary', () => {
   });
 
   it('offers review guidance and no back button while editable', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(
-      fixtureValues('fully populated with the principal contact')
+      fixtureValues('fully populated with the principal contact'),
     );
 
     expect(
-      screen.getByText(/before you submit your request/i)
+      screen.getByText(/before you submit your request/i),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('back-button')).toBeNull();
   });
@@ -219,33 +264,45 @@ describe('RequestForQuoteSummary', () => {
   it.each([
     [0, 'organisation-and-contact'],
     [1, 'instrument-and-request'],
-  ])('Edit button %i leads to %s while editable', async (index, step) => {
+  ])('edit button %i leads to %s while editable', async (index, step) => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(
-      fixtureValues('fully populated with the principal contact')
+      fixtureValues('fully populated with the principal contact'),
     );
 
     const editButtons = screen.getAllByRole('button', {
       name: 'Edit this section',
     });
+
     expect(editButtons).toHaveLength(2);
-    fireEvent.click(editButtons[index] as HTMLElement);
+
+    fireEvent.click(editButtons.at(index) as HTMLElement);
 
     expect(
-      screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`)
+      screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`),
     ).toBeInTheDocument();
   });
 
   it('swaps guidance and Edit links for a back button once submitted', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {
         isSubmitted: true,
-      }
+      },
     );
 
     expect(screen.queryByText(/before you submit your request/i)).toBeNull();
     expect(screen.queryByRole('button', { name: /edit/i })).toBeNull();
+
     const back = screen.getByTestId('back-button');
+
     expect(back).toHaveAttribute('href', '/dashboard');
     expect(within(back).getByText(/back to dashboard/i)).toBeInTheDocument();
     expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();

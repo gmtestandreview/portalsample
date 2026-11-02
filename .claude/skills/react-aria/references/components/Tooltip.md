@@ -179,7 +179,7 @@ export function Tooltip({ children, ...props }: TooltipProps) {
       {...props}
       offset={10}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        styles({ ...renderProps, className })
+        styles({ ...renderProps, className }),
       )}
     >
       <OverlayArrow>

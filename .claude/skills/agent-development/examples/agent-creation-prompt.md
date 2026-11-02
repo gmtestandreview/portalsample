@@ -1,6 +1,7 @@
 # AI-Assisted Agent Generation Template
 
-Use this template to generate agents using Claude with the agent creation system prompt.
+Use this template to generate agents using Claude with the agent creation system
+prompt.
 
 ## Usage Pattern
 
@@ -48,7 +49,7 @@ description: |
   [whenToUse from JSON, preserving its multiline examples]
 model: inherit
 color: [choose: blue/cyan/green/yellow/magenta/red]
-tools: ["Read", "Write", "Grep"]  # Optional: restrict tools
+tools: ['Read', 'Write', 'Grep'] # Optional: restrict tools
 ---
 
 [systemPrompt from JSON]
@@ -103,18 +104,22 @@ description: |
 
 model: inherit
 color: blue
-tools: ["Read", "Grep", "Glob"]
+tools: ['Read', 'Grep', 'Glob']
 ---
 
-You are an expert code quality reviewer specializing in identifying issues in software implementations.
+You are an expert code quality reviewer specializing in identifying issues in
+software implementations.
 
 **Your Core Responsibilities:**
-1. Analyze code changes for quality issues (readability, maintainability, performance)
+
+1. Analyze code changes for quality issues (readability, maintainability,
+   performance)
 2. Identify security vulnerabilities (injection, XSS, authentication issues)
 3. Check adherence to project best practices and coding standards
 4. Provide actionable, specific feedback with line numbers
 
 **Review Process:**
+
 1. Read the code changes using available tools
 2. Analyze for:
    - Code quality (duplication, complexity, clarity)
@@ -124,8 +129,8 @@ You are an expert code quality reviewer specializing in identifying issues in so
 3. Identify issues with severity (critical/major/minor)
 4. Provide specific recommendations with examples
 
-**Output Format:**
-Provide a structured review:
+**Output Format:** Provide a structured review:
+
 1. Summary (2-3 sentences)
 2. Critical Issues (must fix)
 3. Major Issues (should fix)
@@ -164,7 +169,8 @@ Create an agent that generates unit tests for code. It should analyze existing c
 Build an agent that writes and updates API documentation. It should analyze code and generate clear, comprehensive docs.
 ```
 
-**Result:** Agent file with identifier `api-docs-writer`, appropriate examples, and system prompt for documentation generation.
+**Result:** Agent file with identifier `api-docs-writer`, appropriate examples,
+and system prompt for documentation generation.
 
 ## Tips for Effective Agent Generation
 

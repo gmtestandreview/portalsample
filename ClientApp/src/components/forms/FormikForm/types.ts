@@ -9,7 +9,7 @@ export interface FormikFormProps<T extends FormikValues> {
   validateHard?: Validation<T>;
   onSubmit: (
     values: T,
-    formikHelpers: FormikHelpers<T>
+    formikHelpers: FormikHelpers<T>,
   ) => void | Promise<unknown>;
   promptPath?: string;
   children?: ReactNode | ((bag: FormikProps<T>) => ReactNode);
@@ -18,7 +18,7 @@ export interface FormikFormProps<T extends FormikValues> {
   hidingFields?: Hideable<Partial<T>, Partial<T>> | undefined;
   onSaveAndExit?: (
     values: T,
-    formikHelpers: FormikHelpers<T>
+    formikHelpers: FormikHelpers<T>,
   ) => void | Promise<unknown>;
   bannerTitle?: string;
   bannerRefTitle?: string;

@@ -31,7 +31,7 @@ export function ListBoxItem(props: Readonly<ListBoxItemProps>) {
           <Text slot='label'>{children}</Text>
         ) : (
           children
-        )
+        ),
       )}
     </AriaListBoxItem>
   );

@@ -1,47 +1,66 @@
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+import { VITE_ENV_FIXTURES } from '../../../runtime-env-fixtures';
+import { pathExists, readTextFileSync } from '../../helpers/safeTestFilesystem';
+
 const repositoryRoot = path.resolve(import.meta.dirname, '../../..');
 const readRepositoryFile = (relativePath: string): string =>
-  readFileSync(path.join(repositoryRoot, relativePath), 'utf8');
+  readTextFileSync(path.join(repositoryRoot, relativePath), repositoryRoot);
 
 const previewSetup = readRepositoryFile('.storybook/preview-setup.ts');
 const browserSetup = readRepositoryFile('vitest.storybook.setup.ts');
-const preview = readRepositoryFile('.storybook/preview.ts');
+const preview = readRepositoryFile('.storybook/preview.tsx');
+const storybookMain = readRepositoryFile('.storybook/main.ts');
 const pullRequestWorkflow = readRepositoryFile('.github/workflows/pr.yml');
 
-const runtimeFixtureValue = (source: string, key: string): string | undefined =>
-  new RegExp(`${key}\\s*:\\s*['"]([^'"]*)['"]`).exec(source)?.[1];
+type StorybookMswPolicy = {
+  isStorybookMswDebugEnabled?: (query: string) => boolean;
+};
 
-const requiredTelemetryFixtures = {
-  REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY:
-    'storybook-test-instrumentation-key',
-  REACT_APP_APPINSIGHTS_CONN_STRING: 'dummy-key',
-  REACT_APP_GA_TRACKINGID: 'storybook-test-ga-id',
-} as const;
+describe('storybook runtime fixtures', () => {
+  it('uses the shared Storybook fixture in both browser entry paths', () => {
+    expect.hasAssertions();
 
-describe('Storybook runtime fixtures', () => {
-  it.each(Object.entries(requiredTelemetryFixtures))(
-    'supplies the non-empty %s fixture in both browser entry paths',
-    (key, expectedValue) => {
-      expect(runtimeFixtureValue(previewSetup, key)).toBe(expectedValue);
-      expect(runtimeFixtureValue(browserSetup, key)).toBe(expectedValue);
-    }
-  );
+    expect(previewSetup).toContain('VITE_ENV_FIXTURES.storybook');
+    expect(browserSetup).toContain('VITE_ENV_FIXTURES.storybook');
+    expect(VITE_ENV_FIXTURES.storybook).toMatchObject({
+      VITE_APPINSIGHTS_INSTRUMENTATIONKEY: 'storybook-test-instrumentation-key',
+      VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
+      VITE_GA_TRACKINGID: 'storybook-test-ga-id',
+    });
+  });
+
+  it('does not retain the legacy browser environment fixture names', () => {
+    expect.hasAssertions();
+
+    expect(previewSetup).not.toMatch(
+      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/,
+    );
+    expect(browserSetup).not.toMatch(
+      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/,
+    );
+  });
 
   it('disables Storybook telemetry in automated pull-request execution', () => {
+    expect.hasAssertions();
+
     expect(pullRequestWorkflow).toContain("STORYBOOK_DISABLE_TELEMETRY: '1'");
   });
 });
 
-describe('Storybook MSW diagnostic policy', () => {
+describe('storybook MSW diagnostic policy', () => {
   it('enables detailed MSW output only for the explicit debug query', async () => {
+    expect.hasAssertions();
+
     const policySpecifier = path
       .join(repositoryRoot, '.storybook/msw-policy.ts')
       .replaceAll('\\', '/');
-    const policy = await import(/* @vite-ignore */ policySpecifier).catch(
-      () => ({ isStorybookMswDebugEnabled: undefined })
+    const policy: StorybookMswPolicy = await import(
+      /* @vite-ignore */ policySpecifier
+    ).then(
+      (module: unknown) => module as StorybookMswPolicy,
+      (): StorybookMswPolicy => ({}),
     );
 
     expect(policy.isStorybookMswDebugEnabled).toBeTypeOf('function');
@@ -51,7 +70,25 @@ describe('Storybook MSW diagnostic policy', () => {
   });
 
   it('passes query-gated quiet mode to the installed addon-v3 loader', () => {
+    expect.hasAssertions();
+
     expect(preview).toContain('quiet: !isStorybookMswDebugEnabled');
     expect(previewSetup).not.toContain('quiet: false');
+  });
+
+  it('registers the CSF Next MSW addon independently of browser globals', () => {
+    expect.hasAssertions();
+
+    expect(preview).toMatch(/addonMsw\(getStorybookWorker\)/);
+    expect(preview).not.toContain('navigator?.serviceWorker');
+  });
+
+  it('serves the generated MSW worker from Storybook static assets', () => {
+    expect.hasAssertions();
+
+    expect(storybookMain).toContain("staticDirs: ['../ClientApp/public']");
+    expect(
+      pathExists('ClientApp/public/mockServiceWorker.js', repositoryRoot),
+    ).toBe(true);
   });
 });

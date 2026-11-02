@@ -1,6 +1,7 @@
 # React Best Practices
 
-A structured repository for creating and maintaining React Best Practices optimized for agents and LLMs.
+A structured repository for creating and maintaining React Best Practices
+optimized for agents and LLMs.
 
 ## Structure
 
@@ -10,8 +11,8 @@ A structured repository for creating and maintaining React Best Practices optimi
   - `area-description.md` - Individual rule files
 - `src/` - Build scripts and utilities
 - `metadata.json` - Document metadata (version, organization, abstract)
-- __`AGENTS.md`__ - Compiled output (generated)
-- __`test-cases.json`__ - Test cases for LLM evaluation (generated)
+- **`AGENTS.md`** - Compiled output (generated)
+- **`test-cases.json`** - Test cases for LLM evaluation (generated)
 
 ## Getting Started
 
@@ -59,7 +60,7 @@ A structured repository for creating and maintaining React Best Practices optimi
 
 Each rule file should follow this structure:
 
-```markdown
+````markdown
 ---
 title: Rule Title Here
 impact: MEDIUM
@@ -76,8 +77,9 @@ Brief explanation of the rule and why it matters.
 ```typescript
 // Bad code example
 ```
+````
 
-__Correct (description of what's right):__
+**Correct (description of what's right):**
 
 ```typescript
 // Good code example
@@ -124,4 +126,5 @@ When adding or modifying rules:
 
 ## Acknowledgments
 
-Originally created by [@shuding](https://x.com/shuding) at [Vercel](https://vercel.com).
+Originally created by [@shuding](https://x.com/shuding) at
+[Vercel](https://vercel.com).

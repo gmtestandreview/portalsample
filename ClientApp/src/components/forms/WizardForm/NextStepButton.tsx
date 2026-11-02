@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { MouseEventHandler } from 'react';
 import { useFormikContext } from 'formik';
 import type { FormikValues } from 'formik';
 import PrimaryButton from '../../Buttons/PrimaryButton';
@@ -29,7 +30,7 @@ const NextStepButton = ({
     if (showModalOnFinalStep && !showModal && countOfErrors(formErrors) === 0) {
       setShowModal(true);
     } else {
-      submitForm();
+      void submitForm();
     }
   };
 
@@ -38,7 +39,7 @@ const NextStepButton = ({
 
   return (
     <SubmitFormButton>
-      {(onClick: any) => (
+      {(onClick: MouseEventHandler<HTMLButtonElement>) => (
         <>
           {modalConfirmation ? (
             <ConfirmationModal

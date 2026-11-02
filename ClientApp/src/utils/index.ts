@@ -1,13 +1,5 @@
 import { format, isValid, parse } from 'date-fns';
 import { enAU } from 'date-fns/locale';
-import {
-  entriesIn,
-  fromPairs,
-  isArray,
-  isNil,
-  isString,
-  replace,
-} from 'lodash';
 import type { FilterKeys } from '../types';
 
 const DATE_TIME_LOCALE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxx";
@@ -19,28 +11,28 @@ export const sleep = (milliseconds: number) =>
   });
 
 const trimIfString = (value: unknown) =>
-  isString(value) ? value.trim() : value;
+  typeof value === 'string' ? value.trim() : value;
 
 export const removeAllWhitespaces = (value: string) => {
-  const noSpaceString = replace(value, /\s+/g, '');
-  return replace(noSpaceString, /\t+/g, '');
+  const noSpaceString = value.replace(/\s+/g, '');
+  return noSpaceString.replace(/\t+/g, '');
 };
 
 export const containsWhitespace = (value: string) => /\s/.test(value);
 
 export const removeEmptyKeys = <T extends Record<string, unknown>>(
   obj: T,
-  filter?: FilterKeys
+  filter?: FilterKeys,
 ): T =>
-  fromPairs(
-    entriesIn(obj)
+  Object.fromEntries(
+    Object.entries(obj)
       .filter(
         ([_, v]) =>
-          v !== null && v !== '' && v !== undefined && trimIfString(v) !== ''
+          v !== null && v !== '' && v !== undefined && trimIfString(v) !== '',
       )
       .filter((keyValue) => (filter ? filter(keyValue) : true))
       .map(([k, v]) => {
-        if (isArray(v)) {
+        if (Array.isArray(v)) {
           const newValues: any[] = [];
           v.forEach((x) => {
             if (x === Object(x)) {
@@ -55,7 +47,7 @@ export const removeEmptyKeys = <T extends Record<string, unknown>>(
           k,
           v === Object(v) ? removeEmptyKeys(v as Record<string, unknown>) : v,
         ];
-      })
+      }),
   ) as T;
 
 export const tail = <T>([_, ...rest]: T[]) => rest;
@@ -68,14 +60,14 @@ export function prefixedPropertyOf<T>(prefix: string) {
 }
 
 export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
-  obj: T
+  obj: T,
 ): T =>
-  fromPairs(
-    entriesIn(obj).map(([k, v]) => {
-      if (isArray(v)) {
+  Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => {
+      if (Array.isArray(v)) {
         const newValues: any[] = [];
         v.forEach((x) => {
-          if (x === Object(x)) {
+          if (x !== null && x !== undefined && x === Object(x)) {
             newValues.push(nullOrUndefinedToEmpty(x));
           } else {
             newValues.push(x);
@@ -94,13 +86,13 @@ export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
           ? nullOrUndefinedToEmpty(v as Record<string, unknown>)
           : v,
       ];
-    })
+    }),
   ) as T;
 
 export const parseDate = (value: Date | string): Date | undefined => {
   let parsedDate: Date | undefined;
 
-  if (isString(value)) {
+  if (typeof value === 'string') {
     let dateFormat;
     if (value.length === 10) {
       dateFormat = DATE_DDMMYYY_FORMAT;
@@ -128,7 +120,7 @@ export const parseDate = (value: Date | string): Date | undefined => {
 export const parseDateWithTime = (value: Date | string): Date | undefined => {
   let parsedDate: Date | undefined;
 
-  if (isString(value)) {
+  if (typeof value === 'string') {
     const dateFormat =
       value.length === 10 ? DATE_DDMMYYY_FORMAT : DATE_TIME_LOCALE_FORMAT;
     parsedDate = parse(value, dateFormat, new Date(), { locale: enAU });
@@ -144,7 +136,7 @@ export const parseDateWithTime = (value: Date | string): Date | undefined => {
 export const parseDateUTC = (value: Date | string): Date | undefined => {
   let parsedDate: Date | undefined;
 
-  if (isString(value)) {
+  if (typeof value === 'string') {
     parsedDate = parse(value, DATE_TIME_LOCALE_FORMAT, new Date(), {
       locale: enAU,
     });
@@ -165,13 +157,13 @@ export const parseDateUTC = (value: Date | string): Date | undefined => {
 };
 
 export const isDateValid = (
-  value: Date | string | null | undefined
+  value: Date | string | null | undefined,
 ): boolean => {
-  if (isNil(value) || value.toString().trim() === '') {
+  if (value === null || value === undefined || value.toString().trim() === '') {
     return false;
   }
 
-  return isString(value) ? isValid(parseDate(value)) : isValid(value);
+  return typeof value === 'string' ? isValid(parseDate(value)) : isValid(value);
 };
 
 export const formatDateToUTC = (value: Date | string | null): string | null => {
@@ -199,16 +191,16 @@ export const formatBytes = (bytes: number, decimalPoints = 2) => {
     return '0 Bytes';
   }
   const k = 1024;
-  const decimals = decimalPoints < 0 ? 0 : decimalPoints;
+  const decimals = Math.max(decimalPoints, 0);
   const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'];
   const index = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return `${parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes[index]}`;
+  return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes.at(index)}`;
 };
 
 export const formatDate = (
   date: Date | null | undefined,
-  formatStr = 'dd MMM yyyy'
+  formatStr = 'dd MMM yyyy',
 ) => {
   if (date === null || date === undefined) {
     return '';
@@ -218,7 +210,7 @@ export const formatDate = (
 
 export const formatDateToString = (
   value: Date | string | null | undefined,
-  formatter = 'd MMM yyyy'
+  formatter = 'd MMM yyyy',
 ): string | null => {
   if (value === null || !isDateValid(value) || value === undefined) {
     return null;
@@ -235,7 +227,7 @@ export const formatDateToString = (
 
 export const formatDateTimeToString = (
   value: Date | string | null | undefined,
-  formatter = 'd MMM yyyy h:mm a'
+  formatter = 'd MMM yyyy h:mm a',
 ): string | null => {
   if (value === null || value === undefined || !isDateValid(value)) {
     return null;
@@ -289,16 +281,15 @@ export const splitPascalCase = (word: string, casing: SplitCase) => {
 export const base64toBlob = (
   base64Data: string,
   contentType: string,
-  sliceSizeIn?: number
+  sliceSize = 512,
 ) => {
-  const sliceSize = sliceSizeIn || 512;
   const byteCharacters = atob(base64Data);
   const byteArrays = [];
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice = byteCharacters.slice(offset, offset + sliceSize);
-    const byteNumbers = new Array(slice.length);
+    const byteNumbers: number[] = [];
     for (let i = 0; i < slice.length; i += 1) {
-      byteNumbers[i] = slice.charCodeAt(i);
+      byteNumbers.push(slice.codePointAt(i) ?? 0);
     }
     const byteArray = new Uint8Array(byteNumbers);
     byteArrays.push(byteArray);
@@ -308,7 +299,7 @@ export const base64toBlob = (
 };
 
 export const formatCurrencyAmount = (
-  amount: number | undefined
+  amount: number | undefined,
 ): string | null => {
   if (amount === null || amount === undefined) {
     return null;

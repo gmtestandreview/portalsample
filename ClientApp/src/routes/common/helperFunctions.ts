@@ -31,7 +31,7 @@ export const getFileDetails = (
   accessToken: string,
   result: RequestForQuoteDetails,
   getFile: boolean,
-  isQuotationTab?: boolean | undefined
+  isQuotationTab?: boolean,
 ): Promise<DownloadedFileResponse | undefined> => {
   const dashboardClient = new DashboardClient();
   dashboardClient.setAuthToken(accessToken);
@@ -41,33 +41,33 @@ export const getFileDetails = (
     case QuoteStatus.ArtifactReceived:
       return dashboardClient.getQuoteRequestAcceptedPDFByID(
         result.crmQuoteRequestId,
-        getFile
+        getFile,
       );
     case QuoteStatus.QuoteDeclined:
       return dashboardClient.getQuoteRequestRejectedPDFByID(
         result.crmQuoteRequestId,
-        getFile
+        getFile,
       );
     case QuoteStatus.QuoteAvailable:
     case QuoteStatus.QuoteClosed:
       return dashboardClient.getQuoteOfferPDFByQuoteID(
         result.crmQuoteId,
-        getFile
+        getFile,
       );
     case QuoteStatus.ReportIssued:
       return isQuotationTab
         ? dashboardClient.getQuoteRequestAcceptedPDFByID(
             result.crmQuoteRequestId,
-            getFile
+            getFile,
           )
         : dashboardClient.getQuoteReportPDFByID(
             result.crmQuoteRequestId,
-            getFile
+            getFile,
           );
     case QuoteStatus.ReportInProgress:
       return dashboardClient.getQuoteRequestAcceptedPDFByID(
         result.crmQuoteRequestId,
-        getFile
+        getFile,
       );
     default:
       return Promise.resolve(undefined);
@@ -81,7 +81,7 @@ export const getFileDetails = (
 export const getQuotationFileDetails = (
   accessToken: string,
   result: RequestForQuoteDetails,
-  getFile: boolean
+  getFile: boolean,
 ): Promise<DownloadedFileResponse | undefined> => {
   const dashboardClient = new DashboardClient();
   dashboardClient.setAuthToken(accessToken);
@@ -94,18 +94,18 @@ export const getQuotationFileDetails = (
     case QuoteStatus.ReportWithdrawn:
       return dashboardClient.getQuoteRequestAcceptedPDFByID(
         result.crmQuoteRequestId,
-        getFile
+        getFile,
       );
     case QuoteStatus.QuoteDeclined:
       return dashboardClient.getQuoteRequestRejectedPDFByID(
         result.crmQuoteRequestId,
-        getFile
+        getFile,
       );
     case QuoteStatus.QuoteAvailable:
     case QuoteStatus.QuoteClosed:
       return dashboardClient.getQuoteOfferPDFByQuoteID(
         result.crmQuoteId,
-        getFile
+        getFile,
       );
     default:
       return Promise.resolve(undefined);
@@ -202,7 +202,7 @@ export const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
     const el: HTMLElement = document.querySelector(
-      '[id^="#notif-"]'
+      '[id^="#notif-"]',
     ) as HTMLElement;
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
@@ -223,8 +223,8 @@ export const handleUnexpectedError = (details: ProblemDetails) => {
   setDashboardNotification(
     DashBoardNotifications.getDashboardErrorNotification(
       details.status! ?? 0,
-      ''
-    )
+      '',
+    ),
   );
 };
 
@@ -281,7 +281,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
 export const formatOrganisationTitle = (
   organisationName: string | undefined,
   tradingName: string | undefined,
-  branchName: string | undefined
+  branchName: string | undefined,
 ): string => {
   if (
     organisationName !== null &&
@@ -340,7 +340,7 @@ export const formatTradingBranch = (accountDetails: AccountDetails): string => {
 
 export const formatTradingBranchFromStrings = (
   tradingNameInput: string | null | undefined,
-  branchNameInput: string | null | undefined
+  branchNameInput: string | null | undefined,
 ): string => {
   // A missing (undefined) name is the same as an empty one; null still yields ''.
   const tradingName = tradingNameInput === undefined ? '' : tradingNameInput;
@@ -389,7 +389,12 @@ export const contentLoaded = (sendPageView: boolean) => {
 
   piiFields.forEach((field) => {
     const key = field.dataset['pii'] as string;
-    redactedData[key] = '[REDACTED]';
+    Object.defineProperty(redactedData, key, {
+      configurable: true,
+      enumerable: true,
+      value: '[REDACTED]',
+      writable: true,
+    });
 
     // Send redacted data to GA
     ReactGA.send({
@@ -405,7 +410,7 @@ export const contentLoaded = (sendPageView: boolean) => {
 export function sortList<T>(
   list: T[],
   lastItem: string,
-  displayFieldName: keyof T
+  displayFieldName: keyof T,
 ): [T[], string] {
   let removedItems;
   let lastId = '';
@@ -415,17 +420,23 @@ export function sortList<T>(
     return [list, lastId];
   }
 
-  const indexOfItemToRemove = list.findIndex((value, _index, _c) =>
-    (value[displayFieldName] as string)
+  const getDisplayField = (value: T): string =>
+    Reflect.get(value as object, displayFieldName);
+
+  const indexOfItemToRemove = list.findIndex((value) =>
+    getDisplayField(value)
       .toLocaleLowerCase()
-      .startsWith(lastItem.toLocaleLowerCase())
+      .startsWith(lastItem.toLocaleLowerCase()),
   );
 
   if (displayFieldName === 'displayText') {
-    removeId =
-      (list[indexOfItemToRemove] as SelectInputOption<string>)?.value ?? '';
+    const item =
+      indexOfItemToRemove >= 0 ? list.at(indexOfItemToRemove) : undefined;
+    removeId = (item as SelectInputOption<string> | undefined)?.value ?? '';
   } else {
-    removeId = (list[indexOfItemToRemove] as LookupResponse)?.id ?? '';
+    const item =
+      indexOfItemToRemove >= 0 ? list.at(indexOfItemToRemove) : undefined;
+    removeId = (item as LookupResponse | undefined)?.id ?? '';
   }
 
   lastId = removeId!;
@@ -435,7 +446,7 @@ export function sortList<T>(
   }
 
   const sortedList = [...list].sort((a, b) =>
-    (a[displayFieldName] as string).localeCompare(b[displayFieldName] as string)
+    getDisplayField(a).localeCompare(getDisplayField(b)),
   );
   const [removedItem] = removedItems ?? [];
   if (removedItem !== undefined) {
@@ -491,7 +502,7 @@ export const downloadFileFromUrl = (
   url: string,
   _instance: unknown,
   _accounts: unknown[],
-  _filename: string
+  _filename: string,
 ): void => {
   openUrlInSecureNewTab(url);
 };

@@ -55,7 +55,7 @@ const RhfAttachmentItem = ({
   // What the server holds, and which save is newest, so a failed save only
   // undoes itself and only while it is still the latest one.
   const lastSavedCategory = useRef<string | undefined>(
-    typeof initialCategory === 'string' ? initialCategory : undefined
+    typeof initialCategory === 'string' ? initialCategory : undefined,
   );
   const latestSaveToken = useRef(0);
   const lastSavedToken = useRef(0);
@@ -72,13 +72,13 @@ const RhfAttachmentItem = ({
   // One object URL per document, not per render, released when it changes or the row goes.
   const fileUrl = useMemo(
     () => (documentBytes ? getFileUrlFromBase64(documentBytes) : undefined),
-    [documentBytes]
+    [documentBytes],
   );
   useEffect(
     () => () => {
       if (fileUrl) URL.revokeObjectURL(fileUrl);
     },
-    [fileUrl]
+    [fileUrl],
   );
   // A submit attempt does not touch fields in RHF, so it counts as touched here.
   const showCategoryError =
@@ -91,20 +91,20 @@ const RhfAttachmentItem = ({
     const list: unknown = getValues(name);
     if (!Array.isArray(list)) return;
     const currentIndex = (list as AttachmentDto[]).findIndex(
-      (item) => item.id === attachment.id
+      (item) => item.id === attachment.id,
     );
     if (currentIndex < 0) return;
     setValue(
       `${name}.${currentIndex}.attachmentCategory`,
       lastSavedCategory.current,
-      { shouldDirty: true }
+      { shouldDirty: true },
     );
   };
 
   const saveCategory = async (
     update: NonNullable<typeof onCategoryUpdate>,
     docId: string,
-    category: string
+    category: string,
   ) => {
     latestSaveToken.current += 1;
     const token = latestSaveToken.current;
@@ -118,7 +118,7 @@ const RhfAttachmentItem = ({
       // The error is left out of the message: it can carry tokens or PII.
       revertCategory(token);
       onCategoryError?.(
-        `Could not save the category for ${attachment.attachmentName}.`
+        `Could not save the category for ${attachment.attachmentName}.`,
       );
     }
   };
@@ -196,7 +196,9 @@ const RhfAttachmentItem = ({
             titleText='Confirm deletion'
             bodyText='Are you sure you want to remove this file?'
             onModalNo={closeModal}
-            onModalYes={() => onRemoveItem?.(attachment)}
+            onModalYes={() => {
+              void onRemoveItem?.(attachment);
+            }}
             noButtonTitle='Cancel'
             yesButtonTitle='Yes, delete'
           />

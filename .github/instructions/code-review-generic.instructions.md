@@ -1,18 +1,21 @@
 ---
-description: 'Generic code review instructions that can be customized for any project using GitHub Copilot'
+description:
+  'Generic code review instructions that can be customized for any project using
+  GitHub Copilot'
 applyTo: '**'
-excludeAgent: ["coding-agent"]
+excludeAgent: ['coding-agent']
 ---
 
 # Generic Code Review Instructions
 
-Comprehensive code review guidelines for GitHub Copilot that can be adapted to any project. These instructions follow best practices from prompt engineering and provide a structured approach to code quality, security, testing, and architecture review.
+Comprehensive code review guidelines for GitHub Copilot that can be adapted to
+any project. These instructions follow best practices from prompt engineering
+and provide a structured approach to code quality, security, testing, and
+architecture review.
 
 ## Review Language
 
-When performing a code review, respond in **English** (or specify your preferred language).
-
-> **Customization Tip**: Change to your preferred language by replacing "English" with "Portuguese (Brazilian)", "Spanish", "French", etc.
+When performing a code review, respond in **English**.
 
 ## Review Priorities
 
@@ -20,7 +23,8 @@ When performing a code review, prioritize issues in the following order:
 
 ### 🔴 CRITICAL (Block merge)
 
-- **Security**: Vulnerabilities, exposed secrets, authentication/authorization issues
+- **Security**: Vulnerabilities, exposed secrets, authentication/authorization
+  issues
 - **Correctness**: Logic errors, data corruption risks, race conditions
 - **Breaking Changes**: API contract changes without versioning
 - **Data Loss**: Risk of data loss or corruption
@@ -44,10 +48,13 @@ When performing a code review, prioritize issues in the following order:
 When performing a code review, follow these principles:
 
 1. **Be specific**: Reference exact lines, files, and provide concrete examples
-2. **Provide context**: Explain WHY something is an issue and the potential impact
-3. **Suggest solutions**: Show corrected code when applicable, not just what's wrong
+2. **Provide context**: Explain WHY something is an issue and the potential
+   impact
+3. **Suggest solutions**: Show corrected code when applicable, not just what's
+   wrong
 4. **Be constructive**: Focus on improving the code, not criticizing the author
-5. **Recognize good practices**: Acknowledge well-written code and smart solutions
+5. **Recognize good practices**: Acknowledge well-written code and smart
+   solutions
 6. **Be pragmatic**: Not every suggestion needs immediate implementation
 7. **Group related comments**: Avoid multiple comments about the same topic
 
@@ -70,19 +77,21 @@ When performing a code review, check for:
 ```javascript
 // ❌ BAD: Poor naming and magic numbers
 function calc(x, y) {
-    if (x > 100) return y * 0.15;
-    return y * 0.10;
+  if (x > 100) return y * 0.15;
+  return y * 0.1;
 }
 
 // ✅ GOOD: Clear naming and constants
 const PREMIUM_THRESHOLD = 100;
 const PREMIUM_DISCOUNT_RATE = 0.15;
-const STANDARD_DISCOUNT_RATE = 0.10;
+const STANDARD_DISCOUNT_RATE = 0.1;
 
 function calculateDiscount(orderTotal, itemPrice) {
-    const isPremiumOrder = orderTotal > PREMIUM_THRESHOLD;
-    const discountRate = isPremiumOrder ? PREMIUM_DISCOUNT_RATE : STANDARD_DISCOUNT_RATE;
-    return itemPrice * discountRate;
+  const isPremiumOrder = orderTotal > PREMIUM_THRESHOLD;
+  const discountRate = isPremiumOrder
+    ? PREMIUM_DISCOUNT_RATE
+    : STANDARD_DISCOUNT_RATE;
+  return itemPrice * discountRate;
 }
 ```
 
@@ -147,7 +156,7 @@ stmt.setString(1, email);
 
 ```javascript
 // ❌ BAD: Exposed secret in code
-const API_KEY = "sk_live_abc123xyz789";
+const API_KEY = 'sk_live_abc123xyz789';
 
 // ✅ GOOD: Use environment variables
 const API_KEY = process.env.API_KEY;
@@ -170,18 +179,18 @@ When performing a code review, verify test quality:
 ```typescript
 // ❌ BAD: Vague name and assertion
 test('test1', () => {
-    const result = calc(5, 10);
-    expect(result).toBeTruthy();
+  const result = calc(5, 10);
+  expect(result).toBeTruthy();
 });
 
 // ✅ GOOD: Descriptive name and specific assertion
 test('should calculate 10% discount for orders under $100', () => {
-    const orderTotal = 50;
-    const itemPrice = 20;
+  const orderTotal = 50;
+  const itemPrice = 20;
 
-    const discount = calculateDiscount(orderTotal, itemPrice);
+  const discount = calculateDiscount(orderTotal, itemPrice);
 
-    expect(discount).toBe(2.00);
+  expect(discount).toBe(2.0);
 });
 ```
 
@@ -225,7 +234,8 @@ When performing a code review, verify architectural principles:
 
 When performing a code review, check documentation:
 
-- **API Documentation**: Public APIs must be documented (purpose, parameters, returns)
+- **API Documentation**: Public APIs must be documented (purpose, parameters,
+  returns)
 - **Complex Logic**: Non-obvious logic should have explanatory comments
 - **README Updates**: Update README when adding features or changing setup
 - **Breaking Changes**: Document any breaking changes clearly
@@ -240,11 +250,9 @@ When performing a code review, use this format for comments:
 
 Detailed description of the issue or suggestion.
 
-**Why this matters:**
-Explanation of the impact or reason for the suggestion.
+**Why this matters:** Explanation of the impact or reason for the suggestion.
 
-**Suggested fix:**
-[code example if applicable]
+**Suggested fix:** [code example if applicable]
 
 **Reference:** [link to relevant documentation or standard]
 ```
@@ -259,11 +267,12 @@ Explanation of the impact or reason for the suggestion.
 The query on line 45 concatenates user input directly into the SQL string,
 creating a SQL injection vulnerability.
 
-**Why this matters:**
-An attacker could manipulate the email parameter to execute arbitrary SQL commands,
-potentially exposing or deleting all database data.
+**Why this matters:** An attacker could manipulate the email parameter to
+execute arbitrary SQL commands, potentially exposing or deleting all database
+data.
 
 **Suggested fix:**
+
 ```sql
 -- Instead of:
 query = "SELECT * FROM users WHERE email = '" + email + "'"
@@ -286,20 +295,19 @@ stmt.setString(1, email);
 The `processPayment()` function handles financial transactions but has no tests
 for the refund scenario.
 
-**Why this matters:**
-Refunds involve money movement and should be thoroughly tested to prevent
-financial errors or data inconsistencies.
+**Why this matters:** Refunds involve money movement and should be thoroughly
+tested to prevent financial errors or data inconsistencies.
 
-**Suggested fix:**
-Add test case:
+**Suggested fix:** Add test case:
+
 ```javascript
 test('should process full refund when order is cancelled', () => {
-    const order = createOrder({ total: 100, status: 'cancelled' });
+  const order = createOrder({ total: 100, status: 'cancelled' });
 
-    const result = processPayment(order, { type: 'refund' });
+  const result = processPayment(order, { type: 'refund' });
 
-    expect(result.refundAmount).toBe(100);
-    expect(result.status).toBe('refunded');
+  expect(result.refundAmount).toBe(100);
+  expect(result.status).toBe('refunded');
 });
 ```
 ````
@@ -311,23 +319,23 @@ test('should process full refund when order is cancelled', () => {
 
 The nested if statements on lines 30-40 make the logic hard to follow.
 
-**Why this matters:**
-Simpler code is easier to maintain, debug, and test.
+**Why this matters:** Simpler code is easier to maintain, debug, and test.
 
 **Suggested fix:**
+
 ```javascript
 // Instead of nested ifs:
 if (user) {
-    if (user.isActive) {
-        if (user.hasPermission('write')) {
-            // do something
-        }
+  if (user.isActive) {
+    if (user.hasPermission('write')) {
+      // do something
     }
+  }
 }
 
 // Consider guard clauses:
 if (!user || !user.isActive || !user.hasPermission('write')) {
-    return;
+  return;
 }
 // do something
 ```
@@ -389,20 +397,28 @@ When performing a code review, systematically verify:
 To customize this template for your project, add sections for:
 
 1. **Language/Framework specific checks**
-   - Example: "When performing a code review, verify React hooks follow rules of hooks"
-   - Example: "When performing a code review, check Spring Boot controllers use proper annotations"
+   - Example: "When performing a code review, verify React hooks follow rules of
+     hooks"
+   - Example: "When performing a code review, check Spring Boot controllers use
+     proper annotations"
 
 2. **Build and deployment**
-   - Example: "When performing a code review, verify CI/CD pipeline configuration is correct"
-   - Example: "When performing a code review, check database migrations are reversible"
+   - Example: "When performing a code review, verify CI/CD pipeline
+     configuration is correct"
+   - Example: "When performing a code review, check database migrations are
+     reversible"
 
 3. **Business logic rules**
-   - Example: "When performing a code review, verify pricing calculations include all applicable taxes"
-   - Example: "When performing a code review, check user consent is obtained before data processing"
+   - Example: "When performing a code review, verify pricing calculations
+     include all applicable taxes"
+   - Example: "When performing a code review, check user consent is obtained
+     before data processing"
 
 4. **Team conventions**
-   - Example: "When performing a code review, verify commit messages follow conventional commits format"
-   - Example: "When performing a code review, check branch names follow pattern: type/ticket-description"
+   - Example: "When performing a code review, verify commit messages follow
+     conventional commits format"
+   - Example: "When performing a code review, check branch names follow pattern:
+     type/ticket-description"
 
 ## Additional Resources
 
@@ -417,18 +433,27 @@ For more information on effective code reviews and GitHub Copilot customization:
 
 ## Prompt Engineering Tips
 
-When performing a code review, apply these prompt engineering principles from the [GitHub Copilot documentation](https://docs.github.com/en/copilot/concepts/prompting/prompt-engineering):
+When performing a code review, apply these prompt engineering principles from
+the
+[GitHub Copilot documentation](https://docs.github.com/en/copilot/concepts/prompting/prompt-engineering):
 
-1. **Start General, Then Get Specific**: Begin with high-level architecture review, then drill into implementation details
-2. **Give Examples**: Reference similar patterns in the codebase when suggesting changes
-3. **Break Complex Tasks**: Review large PRs in logical chunks (security → tests → logic → style)
-4. **Avoid Ambiguity**: Be specific about which file, line, and issue you're addressing
-5. **Indicate Relevant Code**: Reference related code that might be affected by changes
-6. **Experiment and Iterate**: If initial review misses something, review again with focused questions
+1. **Start General, Then Get Specific**: Begin with high-level architecture
+   review, then drill into implementation details
+2. **Give Examples**: Reference similar patterns in the codebase when suggesting
+   changes
+3. **Break Complex Tasks**: Review large PRs in logical chunks (security → tests
+   → logic → style)
+4. **Avoid Ambiguity**: Be specific about which file, line, and issue you're
+   addressing
+5. **Indicate Relevant Code**: Reference related code that might be affected by
+   changes
+6. **Experiment and Iterate**: If initial review misses something, review again
+   with focused questions
 
 ## Project Context
 
-This is a generic template. Customize this section with your project-specific information:
+This is a generic template. Customize this section with your project-specific
+information:
 
 - **Tech Stack**: [e.g., Java 17, Spring Boot 3.x, PostgreSQL]
 - **Architecture**: [e.g., Hexagonal/Clean Architecture, Microservices]

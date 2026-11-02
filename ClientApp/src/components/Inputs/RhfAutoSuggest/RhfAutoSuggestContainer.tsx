@@ -43,7 +43,7 @@ const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
  * once it is touched or the form has been submitted.
  */
 const RhfAutoSuggestContainer = <T,>(
-  props: Readonly<AutoSuggestContainerProps<T>>
+  props: Readonly<AutoSuggestContainerProps<T>>,
 ) => {
   const {
     id,

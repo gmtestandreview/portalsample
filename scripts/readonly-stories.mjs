@@ -1,10 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 import { projectDiagnostics } from './readonly-props.mjs';
+import { readTextFile, realPath, writeTextFile } from './safe-file-io.mjs';
 
 const slash = (value) => value.replaceAll('\\', '/');
 const isFunctionLike = (node) =>
@@ -39,7 +40,7 @@ const isStoryTypeRef = (typeNode, file) =>
   Boolean(
     typeNode &&
     ts.isTypeReferenceNode(typeNode) &&
-    typeNode.typeName.getText(file) === 'Story'
+    typeNode.typeName.getText(file) === 'Story',
   );
 
 /** Null when the parameter is already typed, rest, or otherwise out of scope. */
@@ -93,7 +94,7 @@ function functionStoryChanges(name, initializer) {
     changes: parameterChanges(
       initializer.parameters,
       name,
-      (index) => `Parameters<Story>[${index}]`
+      (index) => `Parameters<Story>[${index}]`,
     ),
     skipped: [],
   };
@@ -125,8 +126,8 @@ function objectStoryChanges(name, initializer) {
       ...parameterChanges(
         property.initializer.parameters,
         `${name}.${propName}`,
-        (index) => `Parameters<NonNullable<Story['${propName}']>>[${index}]`
-      )
+        (index) => `Parameters<NonNullable<Story['${propName}']>>[${index}]`,
+      ),
     );
   }
   return { changes, skipped };
@@ -145,7 +146,7 @@ export function transformStory(source, filename = 'component.stories.tsx') {
     source,
     ts.ScriptTarget.Latest,
     true,
-    ts.ScriptKind.TSX
+    ts.ScriptKind.TSX,
   );
   if (file.parseDiagnostics.length) throw new Error(`Cannot parse ${filename}`);
 
@@ -190,6 +191,9 @@ const gitExecutablePaths = {
 
 function resolveExistingPath(candidate) {
   try {
+    // The candidate is one of the fixed executable paths or an explicit
+    // operator-provided absolute path; it is not repository input.
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- executable path is constrained by the fixed allowlist or explicit configuration.
     return realpathSync(candidate);
   } catch {
     return null;
@@ -210,7 +214,7 @@ function gitExecutable() {
   cachedGitExecutable = configured ?? trustedDefault;
   if (!cachedGitExecutable) {
     throw new Error(
-      'git executable not found in a standard location; set GIT_EXECUTABLE to its absolute path'
+      'git executable not found in a standard location; set GIT_EXECUTABLE to its absolute path',
     );
   }
   return cachedGitExecutable;
@@ -239,12 +243,12 @@ function resolveCandidateFiles(root, args) {
   const selections = args
     .filter((arg) => !arg.startsWith('--'))
     .map((arg) =>
-      slash(path.relative(root, path.resolve(root, arg))).replace(/\/$/u, '')
+      slash(path.relative(root, path.resolve(root, arg))).replace(/\/$/u, ''),
     );
   for (const selection of selections) {
     if (
       !tracked.some(
-        (file) => file === selection || file.startsWith(`${selection}/`)
+        (file) => file === selection || file.startsWith(`${selection}/`),
       )
     ) {
       throw new Error(`No eligible tracked story files at: ${selection}`);
@@ -254,8 +258,8 @@ function resolveCandidateFiles(root, args) {
     (file) =>
       !selections.length ||
       selections.some(
-        (selection) => file === selection || file.startsWith(`${selection}/`)
-      )
+        (selection) => file === selection || file.startsWith(`${selection}/`),
+      ),
   );
 }
 
@@ -266,9 +270,9 @@ function previewTransforms(root, files) {
   let skipped = 0;
   for (const file of files) {
     const absolute = path.join(root, file);
-    if (path.resolve(realpathSync(absolute)) !== path.resolve(absolute))
+    if (path.resolve(realPath(absolute, root)) !== path.resolve(absolute))
       throw new Error(`Refusing symlinked source: ${file}`);
-    const original = readFileSync(absolute, 'utf8');
+    const original = readTextFile(absolute, root);
     const result = transformStory(original, file);
     for (const change of result.changes)
       process.stdout.write(`${file} ${change.name}: added ${change.text}\n`);
@@ -282,7 +286,7 @@ function previewTransforms(root, files) {
     }
   }
   process.stdout.write(
-    `${total} proposed parameter annotations in ${replacements.size} files; ${skipped} manual reviews.\n`
+    `${total} proposed parameter annotations in ${replacements.size} files; ${skipped} manual reviews.\n`,
   );
   return { total, skipped, originals, replacements };
 }
@@ -291,29 +295,29 @@ function applyReplacements(root, replacements, originals) {
   for (const file of replacements.keys()) {
     if (git(root, ['status', '--porcelain', '--', file]).trim())
       throw new Error(
-        `Refusing to overwrite staged or unstaged changes: ${path.relative(root, file)}`
+        `Refusing to overwrite staged or unstaged changes: ${path.relative(root, file)}`,
       );
   }
   process.stdout.write(
-    'Checking baseline and proposed types across the project before writing...\n'
+    'Checking baseline and proposed types across the project before writing...\n',
   );
   const baseline = projectDiagnostics(root);
   if (baseline.length)
     throw new Error(
-      `Baseline has ${baseline.length} TypeScript errors; no files written.\n${diagnosticText(baseline)}`
+      `Baseline has ${baseline.length} TypeScript errors; no files written.\n${diagnosticText(baseline)}`,
     );
   const proposed = projectDiagnostics(root, replacements);
   if (proposed.length)
     throw new Error(
-      `Proposed changes have ${proposed.length} TypeScript errors; no files written.\n${diagnosticText(proposed)}`
+      `Proposed changes have ${proposed.length} TypeScript errors; no files written.\n${diagnosticText(proposed)}`,
     );
   for (const [file, original] of originals) {
     if (
-      readFileSync(file, 'utf8') !== original ||
+      readTextFile(file, root) !== original ||
       git(root, ['status', '--porcelain', '--', file]).trim()
     ) {
       throw new Error(
-        `File changed during validation: ${file}; no files written`
+        `File changed during validation: ${file}; no files written`,
       );
     }
   }
@@ -321,10 +325,11 @@ function applyReplacements(root, replacements, originals) {
   try {
     for (const [file, source] of replacements) {
       written.push(file);
-      writeFileSync(file, source);
+      writeTextFile(file, source, undefined, root);
     }
   } catch (error) {
-    for (const file of written) writeFileSync(file, originals.get(file));
+    for (const file of written)
+      writeTextFile(file, originals.get(file), undefined, root);
     throw error;
   }
 }
@@ -337,7 +342,7 @@ export async function main(args = process.argv.slice(2), root = process.cwd()) {
   }
   if (flags.has('--help')) {
     process.stdout.write(
-      'Usage: node scripts/readonly-stories.mjs [--check | --write] [ClientApp/src/path ...]\nDefault: preview eligible *.stories.tsx render/play parameter annotations; --check exits 1 when changes or manual review remain.\n--write requires clean target files and a clean baseline/candidate TypeScript check.\n'
+      'Usage: node scripts/readonly-stories.mjs [--check | --write] [ClientApp/src/path ...]\nDefault: preview eligible *.stories.tsx render/play parameter annotations; --check exits 1 when changes or manual review remain.\n--write requires clean target files and a clean baseline/candidate TypeScript check.\n',
     );
     return 0;
   }
@@ -353,7 +358,7 @@ export async function main(args = process.argv.slice(2), root = process.cwd()) {
   const files = resolveCandidateFiles(root, args);
   const { total, skipped, originals, replacements } = previewTransforms(
     root,
-    files
+    files,
   );
   if (!flags.has('--write'))
     return flags.has('--check') && (total || skipped) ? 1 : 0;
@@ -361,7 +366,7 @@ export async function main(args = process.argv.slice(2), root = process.cwd()) {
 
   applyReplacements(root, replacements, originals);
   process.stdout.write(
-    `Applied ${total} parameter annotations. Review the diff, format touched files, run lint/tests.\n`
+    `Applied ${total} parameter annotations. Review the diff, format touched files, run lint/tests.\n`,
   );
   return skipped ? 1 : 0;
 }

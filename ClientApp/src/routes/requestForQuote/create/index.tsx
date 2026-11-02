@@ -20,13 +20,13 @@ const CreateRequestForQuote = () => {
       try {
         const client = new ApplicationClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const application = await client.createApplication({
           applicationType: ApplicationType.QuoteRequest,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         isSaving.current = false;
         AppLogger.error('Failed to create application', e as Error);

@@ -1,28 +1,32 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { RadioGroup, Radio } from './RadioGroup';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/RadioGroup',
   component: RadioGroup,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof RadioGroup>;
+});
 
-export default meta;
-
-type Story = StoryFn<typeof RadioGroup>;
-
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <RadioGroup {...args}>
-    <Radio value='soccer'>Soccer</Radio>
-    <Radio value='baseball'>Baseball</Radio>
-    <Radio value='basketball'>Basketball</Radio>
-  </RadioGroup>
-);
-
-Example.args = {
-  label: 'Favorite sport',
-};
+export const Example = meta.story({
+  render: (args) => (
+    <RadioGroup {...args}>
+      <Radio value='soccer'>Soccer</Radio>
+      <Radio value='baseball'>Baseball</Radio>
+      <Radio value='basketball'>Basketball</Radio>
+    </RadioGroup>
+  ),
+  args: {
+    label: 'Favorite sport',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('radiogroup', { name: 'Favorite sport' }),
+    ).toBeVisible();
+    await expect(canvas.getByRole('radio', { name: 'Soccer' })).toBeVisible();
+  },
+});

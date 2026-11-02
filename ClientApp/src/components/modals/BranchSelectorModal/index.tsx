@@ -11,7 +11,6 @@ import {
 import { useModalState, useModalDispatch } from '../ModalContext';
 import BlockUISpinner from '../../BlockUISpinner';
 import PrimaryButton from '../../Buttons/PrimaryButton';
-import ButtonGroup from '../../Buttons/ButtonGroup';
 import { OrganisationsClient, UsersClient } from '../../../api/web-api-client';
 import type { OrganisationDto } from '../../../api/web-api-client';
 import { silentRequestFor } from '../../../authentication/silentRequest';
@@ -51,7 +50,7 @@ const setNotification = () => {
 };
 
 const SavingBranchSelectorError = (
-  props: Readonly<SavingBranchSelectorErrorProps>
+  props: Readonly<SavingBranchSelectorErrorProps>,
 ): ReactElement | null => {
   const { showError } = props;
   if (showError) {
@@ -100,8 +99,9 @@ const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
 };
 
 interface BranchSelectorButtonsProps {
-  left: any;
-  right: any;
+  showCloseButton: boolean;
+  onClose: () => void;
+  onSave: () => void;
 }
 
 type SortableBranchKey =
@@ -112,9 +112,27 @@ type SortableBranchKey =
   | 'crmGuid'
   | 'name';
 
-const BranchSelectorButtons = (props: Readonly<BranchSelectorButtonsProps>) => {
-  const { left, right } = props;
-  return <ButtonGroup left={left} right={right} />;
+const BranchSelectorButtons = (
+  props: Readonly<BranchSelectorButtonsProps>,
+): JSX.Element => {
+  const { showCloseButton, onClose, onSave } = props;
+  return (
+    <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
+      {showCloseButton && (
+        <Button
+          data-testid='exit-portal-button'
+          onClick={onClose}
+          variant='tertiary'
+          className='me-md-auto order-2 order-md-0'
+        >
+          {/* Fix 10 — S6772: JSX spacing fix for icon followed by text */}
+          <i className='icon-close me-1' aria-hidden='true' />
+          {' Cancel'}
+        </Button>
+      )}
+      <SaveButton onClick={onSave} />
+    </div>
+  );
 };
 
 const hasDefaultOrganisationId = (defaultOrganisationId?: number | null) =>
@@ -130,7 +148,7 @@ const applyAccountDispatchUpdates = (
   selectedCRMGuid: string | undefined,
   selectedOrganisation: string | undefined,
   selectedTradingName: string | undefined,
-  selectedBranchName: string | undefined
+  selectedBranchName: string | undefined,
 ) => {
   if (!accountDispatch) return;
   accountDispatch.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
@@ -138,7 +156,7 @@ const applyAccountDispatchUpdates = (
     accountDispatch.setOrganisationAndBranch(
       selectedOrganisation,
       selectedTradingName ?? '',
-      selectedBranchName ?? ''
+      selectedBranchName ?? '',
     );
   }
 };
@@ -150,7 +168,7 @@ const finaliseAccountCreation = (
   selectedBranch: number | undefined,
   selectedCRMGuid: string | undefined,
   selectedOrganisation: string | undefined,
-  selectedABN: string | undefined
+  selectedABN: string | undefined,
 ) => {
   const accountCreationIncomplete =
     !accountState?.details?.accountCreationCompleted;
@@ -191,7 +209,7 @@ const BranchSelectorModal = () => {
   }>({ key: 'branchOrLocationName', direction: 'asc' });
 
   const defaultOrganisationIdSet = hasDefaultOrganisationId(
-    accountState?.details?.defaultOrganisationId
+    accountState?.details?.defaultOrganisationId,
   );
   const branchSelectionModalMode = modalState?.branchSelectionModalMode;
 
@@ -203,7 +221,7 @@ const BranchSelectorModal = () => {
       let reloadAfterSave = false;
       const client = new UsersClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       try {
@@ -214,13 +232,13 @@ const BranchSelectorModal = () => {
             omitUndefined({
               defaultOrganisationId: selectedBranch,
               rfqId: modalState?.rfqId,
-            })
+            }),
           );
         } else if (
           branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg
         ) {
           await client.setDefaultOrganisation(
-            omitUndefined({ defaultOrganisationId: selectedBranch })
+            omitUndefined({ defaultOrganisationId: selectedBranch }),
           );
         }
         // Fix 11 — S3776: replaced inline accountDispatch guard with helper (Fix 4 absorbed)
@@ -230,7 +248,7 @@ const BranchSelectorModal = () => {
           selectedCRMGuid,
           selectedOrganisation,
           selectedTradingName,
-          selectedBranchName
+          selectedBranchName,
         );
         // Fix 11 — S3776: replaced inline accountCreationCompleted block with helper (Fix 6 absorbed)
         finaliseAccountCreation(
@@ -239,7 +257,7 @@ const BranchSelectorModal = () => {
           selectedBranch,
           selectedCRMGuid,
           selectedOrganisation,
-          selectedABN
+          selectedABN,
         );
         reloadAfterSave =
           branchSelectionModalMode === BranchSelectionModalMode.RFQSelectOrg;
@@ -266,7 +284,7 @@ const BranchSelectorModal = () => {
     tradingName: string | undefined,
     branchName: string | undefined,
     abn: string | undefined,
-    crmGuid: string | undefined
+    crmGuid: string | undefined,
   ) => {
     setSelectedBranch(branchId);
     setSelectedOrganisation(organisationName);
@@ -284,7 +302,7 @@ const BranchSelectorModal = () => {
       if (accountState?.details?.abn) {
         const client = new OrganisationsClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
 
@@ -292,7 +310,7 @@ const BranchSelectorModal = () => {
           setIsModalDataLoading(true); // Modal data
           const result = await client.getOrganisationsByABN(
             accountState.details?.abn,
-            true
+            true,
           );
           if (!isActive) return;
 
@@ -303,7 +321,7 @@ const BranchSelectorModal = () => {
           }
           if (
             hasDefaultOrganisationId(
-              accountState.details?.defaultOrganisationId
+              accountState.details?.defaultOrganisationId,
             )
           ) {
             setSelectedBranch(accountState.details?.defaultOrganisationId);
@@ -348,23 +366,6 @@ const BranchSelectorModal = () => {
     clearBranchModalNotification();
   };
 
-  const saveButton = () => (
-    <SaveButton onClick={onContinueBranchSelectorModal} />
-  );
-
-  const closeButton = () => (
-    <Button
-      data-testid='exit-portal-button'
-      onClick={handleClose}
-      variant='tertiary'
-      className='me-md-auto order-2 order-md-0'
-    >
-      {/* Fix 10 — S6772: JSX spacing fix for icon followed by text */}
-      <i className='icon-close me-1' aria-hidden='true' />
-      {' Cancel'}
-    </Button>
-  );
-
   const sortData = (key: SortableBranchKey) => {
     let direction: 'asc' | 'desc' = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -372,8 +373,8 @@ const BranchSelectorModal = () => {
     }
 
     const sorted = branches?.sort((a, b) => {
-      const aValue = toSortableText(a[key]);
-      const bValue = toSortableText(b[key]);
+      const aValue = toSortableText(Reflect.get(a, key));
+      const bValue = toSortableText(Reflect.get(b, key));
 
       const comparison = aValue.localeCompare(bValue);
       return direction === 'asc' ? comparison : -comparison;
@@ -577,7 +578,7 @@ const BranchSelectorModal = () => {
                                           branch.businessOrTradingName,
                                           branch.branchOrLocationName,
                                           branch.abn,
-                                          branch.crmGuid
+                                          branch.crmGuid,
                                         )
                                       }
                                     />
@@ -660,8 +661,9 @@ const BranchSelectorModal = () => {
       </Modal.Body>
       <Modal.Footer className='d-inline'>
         <BranchSelectorButtons
-          left={() => defaultOrganisationIdSet && closeButton()}
-          right={() => saveButton()}
+          showCloseButton={defaultOrganisationIdSet}
+          onClose={handleClose}
+          onSave={() => void onContinueBranchSelectorModal()}
         />
       </Modal.Footer>
     </Modal>

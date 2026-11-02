@@ -11,11 +11,11 @@ import './Sheet.css';
 export function Sheet(props: Readonly<ModalOverlayProps>) {
   return (
     <ModalOverlay className='sheet-overlay'>
-      {composeRenderProps(props.children, (children) => (
-        <Modal className='sheet'>
+      <Modal className='sheet'>
+        {composeRenderProps(props.children, (children) => (
           <Dialog>{children}</Dialog>
-        </Modal>
-      ))}
+        ))}
+      </Modal>
     </ModalOverlay>
   );
 }

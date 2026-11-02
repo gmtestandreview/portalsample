@@ -20,7 +20,7 @@ function Example(props) {
               description:
                 props.description || '3 files uploaded successfully.',
             },
-            props.timeout ? { timeout: props.timeout } : undefined
+            props.timeout ? { timeout: props.timeout } : undefined,
           )
         }
       >
@@ -228,7 +228,7 @@ function Example(props) {
               description:
                 props.description || '3 files uploaded successfully.',
             },
-            props.timeout ? { timeout: props.timeout } : undefined
+            props.timeout ? { timeout: props.timeout } : undefined,
           )
         }
       >
@@ -318,7 +318,7 @@ export function MyToast(props: ToastProps<MyToastContent>) {
       style={{ viewTransitionName: props.toast.key } as CSSProperties}
       className={composeTailwindRenderProps(
         props.className,
-        'flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast] font-sans w-[230px]'
+        'flex items-center gap-4 bg-blue-600 px-4 py-3 rounded-lg outline-none forced-colors:outline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 [view-transition-class:toast] font-sans w-[230px]',
       )}
     />
   );
@@ -459,8 +459,8 @@ function Example() {
           setToastKey(
             queue.add(
               { title: 'Processing...' },
-              { onClose: () => setToastKey(null) }
-            )
+              { onClose: () => setToastKey(null) },
+            ),
           );
         } else {
           queue.close(toastKey);
@@ -490,8 +490,8 @@ function Example() {
           setToastKey(
             queue.add(
               { title: 'Processing...' },
-              { onClose: () => setToastKey(null) }
-            )
+              { onClose: () => setToastKey(null) },
+            ),
           );
         } else {
           queue.close(toastKey);

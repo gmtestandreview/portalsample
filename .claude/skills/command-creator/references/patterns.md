@@ -1,6 +1,7 @@
 # Command Patterns
 
-This document describes the common patterns for slash commands, helping you choose the right structure for your workflow.
+This document describes the common patterns for slash commands, helping you
+choose the right structure for your workflow.
 
 ## Pattern Categories
 
@@ -191,7 +192,8 @@ This document describes the common patterns for slash commands, helping you choo
 
 ### Multi-Agent Orchestration
 
-**When to use:** Complex workflows requiring multiple specialized agents in sequence
+**When to use:** Complex workflows requiring multiple specialized agents in
+sequence
 
 **Pattern:**
 
@@ -214,7 +216,8 @@ This document describes the common patterns for slash commands, helping you choo
 
 ### Context File Priority Checks
 
-**When to use:** Commands that can operate in different modes based on available context
+**When to use:** Commands that can operate in different modes based on available
+context
 
 **Pattern:**
 
@@ -226,7 +229,8 @@ Check these files in order for context:
 3. AGENTS.md - coding standards
 4. README.md - project overview
 
-Use the first file found to inform the workflow. Different files trigger different behaviors.
+Use the first file found to inform the workflow. Different files trigger
+different behaviors.
 ```
 
 ### Conditional Tool Selection
@@ -258,7 +262,8 @@ Otherwise:
 **Pattern:**
 
 ```markdown
-**IMPORTANT:** Always use Bash tool for pytest/pyright/ruff/prettier/make/gt commands
+**IMPORTANT:** Always use Bash tool for pytest/pyright/ruff/prettier/make/gt
+commands
 
 1. Use Bash tool directly
    - Run commands like: "make all-ci", "pytest tests/", "pyright", etc.
@@ -272,7 +277,8 @@ Otherwise:
 
 ### Progressive Disclosure Pattern
 
-**When to use:** Commands that start simple but can get more complex based on results
+**When to use:** Commands that start simple but can get more complex based on
+results
 
 **Pattern:**
 

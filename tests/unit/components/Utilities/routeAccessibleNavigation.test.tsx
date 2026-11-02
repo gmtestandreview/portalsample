@@ -1,67 +1,94 @@
 import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import RouteAccessibleNavigation from '@/components/Utilities/routeAccessibleNavigation';
 
-describe('RouteAccessibleNavigation', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-    document.title = 'Dashboard';
-  });
+const resetRouteAccessibleNavigation = () => {
+  vi.restoreAllMocks();
+  vi.useRealTimers();
+  vi.useFakeTimers();
+  document.title = 'Dashboard';
+};
 
-  afterEach(() => {
-    vi.useRealTimers();
-    vi.restoreAllMocks();
-  });
-
+describe('route accessible navigation', () => {
   it('announces a non-root route after the navigation delay and clears the pending timer on unmount', () => {
+    expect.hasAssertions();
+
+    resetRouteAccessibleNavigation();
+
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
 
-    const { unmount } = render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <RouteAccessibleNavigation />
-      </MemoryRouter>
-    );
+    try {
+      const { unmount } = render(
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <RouteAccessibleNavigation />
+        </MemoryRouter>,
+      );
 
-    expect(screen.getByRole('status')).toHaveTextContent('Dashboard');
+      expect(screen.getByRole('status')).toHaveTextContent('Dashboard');
 
-    act(() => {
-      vi.advanceTimersByTime(100);
-    });
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Navigated to Dashboard page.'
-    );
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Navigated to Dashboard page.',
+      );
 
-    unmount();
-    expect(clearTimeoutSpy).toHaveBeenCalled();
+      unmount();
+
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(expect.any(Object));
+    } finally {
+      clearTimeoutSpy.mockRestore();
+      vi.useRealTimers();
+    }
   });
 
   it('announces the root route immediately with the current document title', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <RouteAccessibleNavigation />
-      </MemoryRouter>
-    );
+    expect.hasAssertions();
 
-    expect(screen.getByRole('status')).toHaveTextContent(
-      'Navigated to Dashboard page.'
-    );
+    resetRouteAccessibleNavigation();
+
+    try {
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <RouteAccessibleNavigation />
+        </MemoryRouter>,
+      );
+
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'Navigated to Dashboard page.',
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('announces the root route when document title is empty without scheduling a timer', () => {
+    expect.hasAssertions();
+
+    resetRouteAccessibleNavigation();
+
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
     document.title = '';
 
-    const { unmount } = render(
-      <MemoryRouter initialEntries={['/']}>
-        <RouteAccessibleNavigation />
-      </MemoryRouter>
-    );
+    try {
+      const { unmount } = render(
+        <MemoryRouter initialEntries={['/']}>
+          <RouteAccessibleNavigation />
+        </MemoryRouter>,
+      );
 
-    expect(screen.getByRole('status').textContent).toBe('Navigated to  page.');
+      expect(screen.getByRole('status').textContent).toBe(
+        'Navigated to  page.',
+      );
 
-    unmount();
-    expect(clearTimeoutSpy).not.toHaveBeenCalled();
+      unmount();
+
+      expect(clearTimeoutSpy).not.toHaveBeenCalled();
+    } finally {
+      clearTimeoutSpy.mockRestore();
+      vi.useRealTimers();
+    }
   });
 });

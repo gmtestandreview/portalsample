@@ -23,9 +23,9 @@ Apply `content-visibility: auto` to defer off-screen rendering.
 ```tsx
 function MessageList({ messages }: { messages: Message[] }) {
   return (
-    <div className="overflow-y-auto h-screen">
+    <div className='overflow-y-auto h-screen'>
       {messages.map((msg) => (
-        <div key={msg.id} className="message-item">
+        <div key={msg.id} className='message-item'>
           <Avatar user={msg.author} />
           <div>{msg.content}</div>
         </div>
@@ -35,4 +35,5 @@ function MessageList({ messages }: { messages: Message[] }) {
 }
 ```
 
-For 1000 messages, browser skips layout/paint for ~990 off-screen items (10× faster initial render).
+For 1000 messages, browser skips layout/paint for ~990 off-screen items (10×
+faster initial render).

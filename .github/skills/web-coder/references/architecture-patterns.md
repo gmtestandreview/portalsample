@@ -37,9 +37,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/products/:id" element={<Product />} />
+        <Route path='/' element={<Home />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/products/:id' element={<Product />} />
       </Routes>
     </BrowserRouter>
   );
@@ -81,9 +81,10 @@ Web app with native app capabilities.
 ```javascript
 // Service Worker registration
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(reg => console.log('SW registered', reg))
-    .catch(err => console.error('SW error', err));
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then((reg) => console.log('SW registered', reg))
+    .catch((err) => console.error('SW error', err));
 }
 ```
 
@@ -173,7 +174,7 @@ export async function getStaticProps() {
   const data = await fetchData();
   return {
     props: { data },
-    revalidate: 60 // Revalidate every 60 seconds
+    revalidate: 60, // Revalidate every 60 seconds
   };
 }
 ```
@@ -261,14 +262,14 @@ Build UI from reusable components.
 // React component
 function Button({ onClick, children }) {
   return (
-    <button onClick={onClick} className="btn">
+    <button onClick={onClick} className='btn'>
       {children}
     </button>
   );
 }
 
 // Usage
-<Button onClick={handleClick}>Click me</Button>
+<Button onClick={handleClick}>Click me</Button>;
 ```
 
 ### Micro Frontends
@@ -314,12 +315,14 @@ const counterSlice = createSlice({
   name: 'counter',
   initialState: { value: 0 },
   reducers: {
-    increment: state => { state.value += 1; }
-  }
+    increment: (state) => {
+      state.value += 1;
+    },
+  },
 });
 
 const store = configureStore({
-  reducer: { counter: counterSlice.reducer }
+  reducer: { counter: counterSlice.reducer },
 });
 ```
 
@@ -333,7 +336,7 @@ const ThemeContext = React.createContext('light');
 
 function App() {
   return (
-    <ThemeContext.Provider value="dark">
+    <ThemeContext.Provider value='dark'>
       <Toolbar />
     </ThemeContext.Provider>
   );
@@ -353,11 +356,11 @@ Resource-based API design.
 
 ```javascript
 // RESTful API
-GET    /api/users      // List users
-GET    /api/users/1    // Get user
-POST   /api/users      // Create user
-PUT    /api/users/1    // Update user
-DELETE /api/users/1    // Delete user
+GET / api / users; // List users
+GET / api / users / 1; // Get user
+POST / api / users; // Create user
+PUT / api / users / 1; // Update user
+DELETE / api / users / 1; // Delete user
 ```
 
 ### GraphQL
@@ -400,9 +403,9 @@ const GET_USER = gql`
 
 function User({ id }) {
   const { loading, error, data } = useQuery(GET_USER, {
-    variables: { id }
+    variables: { id },
   });
-  
+
   if (loading) return <p>Loading...</p>;
   return <p>{data.user.name}</p>;
 }
@@ -415,11 +418,9 @@ End-to-end typesafe APIs.
 ```typescript
 // Server
 const appRouter = router({
-  getUser: publicProcedure
-    .input(z.string())
-    .query(async ({ input }) => {
-      return await db.user.findUnique({ where: { id: input } });
-    })
+  getUser: publicProcedure.input(z.string()).query(async ({ input }) => {
+    return await db.user.findUnique({ where: { id: input } });
+  }),
 });
 
 // Client (fully typed!)
@@ -469,7 +470,8 @@ Single, unified application.
 
 Run code without managing servers.
 
-**Platforms**: AWS Lambda, Vercel Functions, Netlify Functions, Cloudflare Workers
+**Platforms**: AWS Lambda, Vercel Functions, Netlify Functions, Cloudflare
+Workers
 
 ```javascript
 // Vercel serverless function
@@ -554,7 +556,7 @@ Node.js module system.
 ```javascript
 // export
 module.exports = { name: 'John' };
-exports.greet = function() {};
+exports.greet = function () {};
 
 // import
 const { name } = require('./utils');

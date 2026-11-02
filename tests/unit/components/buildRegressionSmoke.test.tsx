@@ -1,7 +1,10 @@
+import { describe, it, expect } from 'vitest';
 import * as yup from 'yup';
 
 describe('build regression smoke coverage', () => {
   it('imports App with the root stylesheet path resolved', async () => {
+    expect.hasAssertions();
+
     const module = await import('@/App');
 
     expect(module.default).toBeDefined();
@@ -15,10 +18,12 @@ describe('build regression smoke coverage', () => {
   ])(
     'imports utility module %s with the print stylesheet path resolved',
     async (modulePath) => {
-      const module = await import(modulePath);
+      expect.hasAssertions();
 
-      expect(module.default).toBeDefined();
-    }
+      const module = (await import(modulePath)) as Record<string, unknown>;
+
+      expect(module['default']).toBeDefined();
+    },
   );
 
   it.each([
@@ -29,15 +34,23 @@ describe('build regression smoke coverage', () => {
   ])(
     'imports validation module %s through the yup extension barrel',
     async (modulePath) => {
+      expect.hasAssertions();
+
       vi.resetModules();
 
-      const module = await import(modulePath);
+      const module = (await import(modulePath)) as Record<string, unknown>;
 
       expect(module).toBeDefined();
-      expect(typeof yup.string().allowedFormat).toBe('function');
-      expect(typeof yup.string().fixedDigits).toBe('function');
-      expect(typeof yup.string().maxLength).toBe('function');
-      expect(typeof yup.string().minEntered).toBe('function');
-    }
+
+      const schema = yup.string();
+
+      expect(schema.allowedFormat.bind(schema)).toBeTypeOf('function');
+
+      expect(schema.fixedDigits.bind(schema)).toBeTypeOf('function');
+
+      expect(schema.maxLength.bind(schema)).toBeTypeOf('function');
+
+      expect(schema.minEntered.bind(schema)).toBeTypeOf('function');
+    },
   );
 });

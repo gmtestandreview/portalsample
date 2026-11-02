@@ -1,11 +1,15 @@
 ---
 name: devops-rollout-plan
-description: 'Generate comprehensive rollout plans with preflight checks, step-by-step deployment, verification signals, rollback procedures, and communication plans for infrastructure and application changes'
+description:
+  'Generate comprehensive rollout plans with preflight checks, step-by-step
+  deployment, verification signals, rollback procedures, and communication plans
+  for infrastructure and application changes'
 ---
 
 # DevOps Rollout Plan Generator
 
-Your goal is to create a comprehensive, production-ready rollout plan for infrastructure or application changes.
+Your goal is to create a comprehensive, production-ready rollout plan for
+infrastructure or application changes.
 
 ## Input Requirements
 
@@ -73,17 +77,17 @@ Generate a structured rollout plan with these sections:
 
 ### 5. Verification Signals
 
-**Immediate** (0-2 min): Deployment success, pods/containers started, health checks passing
-**Short-term** (2-5 min): Application responding, error rates acceptable, latency normal
-**Medium-term** (5-15 min): Sustained metrics, stable connections, integrations working
-**Long-term** (15+ min): No degradation, capacity healthy, business metrics normal
+**Immediate** (0-2 min): Deployment success, pods/containers started, health
+checks passing **Short-term** (2-5 min): Application responding, error rates
+acceptable, latency normal **Medium-term** (5-15 min): Sustained metrics, stable
+connections, integrations working **Long-term** (15+ min): No degradation,
+capacity healthy, business metrics normal
 
 ### 6. Rollback Procedure
 
-**Decision Criteria**: When to initiate rollback
-**Rollback Steps**: Automated, infrastructure revert, or full restore
-**Post-Rollback Verification**: Confirm system health restored
-**Communication**: Stakeholder notification
+**Decision Criteria**: When to initiate rollback **Rollback Steps**: Automated,
+infrastructure revert, or full restore **Post-Rollback Verification**: Confirm
+system health restored **Communication**: Stakeholder notification
 
 ### 7. Communication Plan
 
@@ -103,8 +107,8 @@ Generate a structured rollout plan with these sections:
 
 ### 9. Contingency Plans
 
-Scenarios: Partial failure, performance degradation, data inconsistency, dependency failure
-For each: Symptoms, response, timeline
+Scenarios: Partial failure, performance degradation, data inconsistency,
+dependency failure For each: Symptoms, response, timeline
 
 ### 10. Contact Information
 
@@ -118,8 +122,10 @@ Adapt based on:
 
 - **Infrastructure Type**: Kubernetes, VMs, serverless, databases
 - **Risk Level**: Low (simplified), medium (standard), high (additional gates)
-- **Change Type**: Code deployment, infrastructure, configuration, data migration
-- **Environment**: Production (full plan), staging (simplified), development (minimal)
+- **Change Type**: Code deployment, infrastructure, configuration, data
+  migration
+- **Environment**: Production (full plan), staging (simplified), development
+  (minimal)
 
 ## Remember
 

@@ -6,12 +6,11 @@ relevant pressure or edge cases, retrieves reference material accurately, and
 preserves prior behavior after revision.
 
 Before planning or running output-quality evals, read and apply
-[evaluating skill output](../references/evaluating-skill-output.md). This
-suite provides the seeded case library and outcome conventions for the
-writing-skills package; `evaluating-skill-output.md` governs the broader
-workflow for designing prompts, running with-skill/without-skill comparisons,
-writing assertions, grading outputs, aggregating results, reviewing with a
-human, and iterating.
+[evaluating skill output](../references/evaluating-skill-output.md). This suite
+provides the seeded case library and outcome conventions for the writing-skills
+package; `evaluating-skill-output.md` governs the broader workflow for designing
+prompts, running with-skill/without-skill comparisons, writing assertions,
+grading outputs, aggregating results, reviewing with a human, and iterating.
 
 This suite is deliberately separate from deterministic parser, validator,
 prompt, and CLI tests. Those tests prove implementation contracts. These evals

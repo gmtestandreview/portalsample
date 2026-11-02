@@ -1,0 +1,161 @@
+import addonLinks from '@storybook/addon-links';
+import addonDocs from '@storybook/addon-docs';
+import {
+  ArgTypes,
+  Controls,
+  Description,
+  IconGallery,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
+import addonA11y from '@storybook/addon-a11y';
+import addonTest from '@storybook/addon-vitest';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
+import { definePreview } from '@storybook/react-vite';
+import MockDate from 'mockdate';
+import { createElement } from 'react';
+import { setupWorker } from 'msw/browser';
+import addonMsw from 'msw-storybook-addon';
+import '../ClientApp/src/styles/index.scss';
+import './docs-table-styles.css';
+import { mswHandlers } from './msw-handlers';
+import {
+  createStorybookMswWorkerLoader,
+  isStorybookMswDebugEnabled,
+  onUnhandledStorybookRequest,
+} from './msw-policy';
+import {
+  PortalStoryRouter,
+  type PortalStoryParameters,
+} from '../ClientApp/src/storybook/storybookHarness';
+import { spyOn } from 'storybook/test';
+import './preview-setup';
+
+const getStorybookWorker = createStorybookMswWorkerLoader(
+  () => setupWorker(...mswHandlers),
+  () => ({
+    quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
+    onUnhandledFrame: onUnhandledStorybookRequest,
+  }),
+);
+
+const preview = definePreview({
+  addons: [
+    addonDocs(),
+    addonA11y(),
+    addonTest(),
+    addonMsw(getStorybookWorker),
+    addonLinks(),
+  ],
+  tags: ['autodocs'],
+  decorators: [
+    (Story, { parameters }) => {
+      const portal = (parameters?.['portal'] ?? {}) as PortalStoryParameters;
+      const initialEntries = portal.initialEntries ?? ['/'];
+      // A story that renders a route reading useParams needs a pattern to match
+      // against; under the catch-all every param is undefined, which is why
+      // InstrMeasurementReport rendered an empty <h1>{id}</h1> and axe reported
+      // empty-heading. Stories opt in via `portal.routePath`, and anything that does
+      // not care keeps the catch-all it has always had.
+      const routePath = portal.routePath ?? '*';
+      return createElement(PortalStoryRouter, {
+        Story,
+        initialEntries,
+        routePath,
+        destinationRoutes: portal.destinationRoutes,
+        observeLocation: portal.observeLocation,
+      });
+    },
+  ],
+
+  beforeEach() {
+    globalThis.sessionStorage.setItem(
+      'targetOrganisation',
+      JSON.stringify({
+        targetOrganisationAbn: '00000000000',
+        targetOrganisationName: 'Storybook Organisation',
+      }),
+    );
+    MockDate.set('2024-04-01T12:00:00Z');
+    spyOn(console, 'log').mockName('console.log');
+  },
+
+  parameters: {
+    actions: { argTypesRegex: '^on.*' },
+    viewport: {
+      options: INITIAL_VIEWPORTS,
+    },
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /date$/i,
+      },
+    },
+    layout: 'centered',
+    a11y: {
+      config: {
+        rules: [{ id: 'color-contrast', enabled: true }],
+      },
+      options: {
+        runOnly: [
+          'wcag2a',
+          'wcag2aa',
+          'wcag21a',
+          'wcag21aa',
+          'wcag22aa',
+          'best-practice',
+        ],
+      },
+      test: 'todo',
+      // 'todo' - show a11y violations in the test UI only
+      // 'error' - fail CI on a11y violations
+      // 'off' - skip a11y checks entirely
+      //
+      // Raised from 'todo' to 'error' once the suite reached zero violations across
+      // the generated catalogue. Under 'todo' the checks ran but could never fail a build, so
+      // four real defects sat unreported: unnamed progress bars, an aria-hidden
+      // stepper containing focusable links, an empty h1, and muted text at 4.28:1 on
+      // the grey band. Enforcing it is what stops the next one going unnoticed.
+    },
+    docs: {
+      toc: {
+        contentsSelector: '.sbdocs-content',
+        headingSelector: 'h1, h2, h3',
+        ignoreSelector: '#primary',
+        title: 'Table of Contents',
+        disable: false,
+        unsafeTocbotOptions: {
+          orderedList: false,
+        },
+      },
+      codePanel: true,
+      controls: {
+        exclude: ['as', 'bsPrefix', 'ref', 'key'],
+        sort: 'requiredFirst',
+      },
+      source: {
+        excludeDecorators: true,
+        type: 'code',
+      },
+      page: () => (
+        <>
+          <Title />
+          <Subtitle />
+          <Description />
+          <Primary />
+          <Controls />
+          <ArgTypes />
+          <Stories />
+          <IconGallery />
+        </>
+      ),
+    },
+  },
+  initialGlobals: {
+    viewport: { value: 'ipad', isRotated: false },
+  },
+});
+
+export default preview;

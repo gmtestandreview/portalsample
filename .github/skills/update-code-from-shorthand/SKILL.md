@@ -1,9 +1,17 @@
 ---
 name: update-code-from-shorthand
-description: Use this prompt to convert user-provided shorthand, pseudocode, or natural-language instructions into valid code or data within explicitly marked regions of a target file. Follow repository policy and the detailed rules in this instruction to ensure safe, accurate, and maintainable updates that preserve user intent and existing behavior.
+description:
+  Use this prompt to convert user-provided shorthand, pseudocode, or
+  natural-language instructions into valid code or data within explicitly marked
+  regions of a target file. Follow repository policy and the detailed rules in
+  this instruction to ensure safe, accurate, and maintainable updates that
+  preserve user intent and existing behavior.
 disable-model-invocation: true
-argument-hint: 'Target file and shorthand edit markers, or a request beginning with UPDATE CODE FROM SHORTHAND'
+argument-hint:
+  'Target file and shorthand edit markers, or a request beginning with UPDATE
+  CODE FROM SHORTHAND'
 ---
+
 # Update Code from Shorthand
 
 Use this prompt only when the user explicitly asks to update code from
@@ -21,9 +29,9 @@ Convert shorthand, pseudocode, natural-language notes, or sketch-like
 instructions inside explicit edit markers into valid code or valid data for the
 target file.
 
-Preserve user intent, repository conventions, file style, and existing
-behavior. Keep edits limited to the marked region unless the user explicitly
-asks for broader changes.
+Preserve user intent, repository conventions, file style, and existing behavior.
+Keep edits limited to the marked region unless the user explicitly asks for
+broader changes.
 
 ## Required inputs
 
@@ -80,8 +88,8 @@ stop and report the issue before editing.
 - Follow `AGENTS.md` and repository policy first.
 - Keep edits minimal and task-focused.
 - Do not edit unrelated files unless the shorthand explicitly requires it.
-- Do not add new dependencies, new files, new architecture, new commands, or
-  new workflows unless explicitly requested.
+- Do not add new dependencies, new files, new architecture, new commands, or new
+  workflows unless explicitly requested.
 - Do not invent features beyond what the shorthand reasonably implies.
 - Preserve existing imports, exports, naming, formatting, and nearby style where
   possible.

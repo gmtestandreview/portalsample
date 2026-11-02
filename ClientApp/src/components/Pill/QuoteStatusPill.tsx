@@ -1,7 +1,8 @@
 import Badge from 'react-bootstrap/Badge';
-import { useEffect, useState } from 'react';
-import type { DashboardItemStatus } from '../../routes/common/enums';
-import { QuoteStatus } from '../../routes/common/enums';
+import type {
+  DashboardItemStatus,
+  QuoteStatus,
+} from '../../routes/common/enums';
 
 export interface StatusPillProps {
   status: DashboardItemStatus | QuoteStatus;
@@ -13,58 +14,46 @@ export interface StatusPillProps {
  * @returns jsx
  */
 const QuoteStatusPill = ({ status }: Readonly<StatusPillProps>) => {
-  const [pillProps, setPillProps] = useState({
-    bgColour: 'info',
-    textColour: 'light',
-    text: '',
-  });
-
-  const getPillProps = (itemStatus: string) => {
-    switch (itemStatus) {
-      case QuoteStatus.ReportInProgress:
-      case QuoteStatus.ReportIssued:
-      case QuoteStatus.ReportWithdrawn:
-      case QuoteStatus.ArtifactReceived:
-      case QuoteStatus.QuoteAccepted:
-        setPillProps({
+  const getPillProps = (itemStatus: DashboardItemStatus | QuoteStatus) => {
+    switch (String(itemStatus)) {
+      case 'Report - In progress':
+      case 'Report - Issued':
+      case 'Report - Withdrawn':
+      case 'Artefact - Received':
+      case 'Quote - Accepted':
+        return {
           bgColour: 'success-dark',
           textColour: 'light',
           text: 'Quotation accepted',
-        });
-        break;
-      case QuoteStatus.QuoteDeclined:
-        setPillProps({
+        };
+      case 'Quote - Declined':
+        return {
           bgColour: 'danger',
           textColour: 'light',
           text: 'Quotation declined',
-        });
-        break;
-      case QuoteStatus.QuoteExpired:
-        setPillProps({
+        };
+      case 'Quote - Expired':
+        return {
           bgColour: 'danger-light',
           textColour: 'dark',
           text: 'Quotation expired',
-        });
-        break;
-      case QuoteStatus.QuoteClosed:
-        setPillProps({
+        };
+      case 'Quote - Closed':
+        return {
           bgColour: 'dark-gray',
           textColour: 'light',
           text: 'Quotation closed',
-        });
-        break;
+        };
       default:
-        setPillProps({
+        return {
           bgColour: 'info',
           textColour: 'light',
-          text: itemStatus,
-        });
+          text: String(itemStatus),
+        };
     }
   };
 
-  useEffect(() => {
-    getPillProps(status);
-  }, [status]);
+  const pillProps = getPillProps(status);
 
   return (
     <Badge pill bg={pillProps.bgColour} text={pillProps.textColour}>

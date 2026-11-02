@@ -12,7 +12,6 @@ import {
   type AttachmentDto,
   type FileParameter,
   PatternApprovalRequiredValues,
-  type ProblemDetails,
   RequestForPatternApprovalClient,
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
@@ -28,6 +27,12 @@ import InstrumentInfoPanel from './instrumentInfoPanel';
 
 const isString = (e: unknown): e is string => typeof e === 'string';
 
+type UploadProblemDetails = {
+  status?: number;
+  title?: string;
+  errors?: Record<string, unknown[]>;
+};
+
 /** Normalises Formik's string | string[] | nested-object error for one field to string[]. */
 const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
   if (!fieldError) return [];
@@ -35,9 +40,11 @@ const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
   if (Array.isArray(fieldError))
     return (fieldError as unknown[]).filter(isString);
   if (typeof fieldError !== 'object') return [];
-  return [(fieldError as Record<string, unknown>)[errorName] || ''].filter(
-    isString
-  );
+  const fieldErrorRecord = fieldError as Record<string, unknown>;
+  const nestedError = Object.hasOwn(fieldErrorRecord, errorName)
+    ? Reflect.get(fieldErrorRecord, errorName)
+    : undefined;
+  return [nestedError || ''].filter(isString);
 };
 
 const SupportingDocuments = (
@@ -45,7 +52,7 @@ const SupportingDocuments = (
     TASupportingDocumentsProps & {
       onDeleteSuccess?: (success: boolean) => void;
     }
-  >
+  >,
 ) => {
   const { accounts, instance } = useMsal();
   const [noThirdPartyAccess, setNoThirdPartyAccess] = useState(false);
@@ -78,8 +85,8 @@ const SupportingDocuments = (
   // Filter out upload errors that are handled by Formik
   const filteredUploadErrors = uploadErrors.filter(
     (err) =>
-      err !== ValidationMessages.RequiredDoc &&
-      err !== ValidationMessages.RequiredTag
+      err !== String(ValidationMessages.RequiredDoc) &&
+      err !== String(ValidationMessages.RequiredTag),
   );
 
   // e.g. 'supportingDocuments.form.documents' => 'documents'
@@ -87,10 +94,13 @@ const SupportingDocuments = (
   // e.g. 'supportingDocuments.form.documents' => 'supportingDocuments'
   const rootErrorName = name.replace(/\..*$/s, '');
   // Get Formik field errors for this field
-  const formikFieldErrors = getFormikFieldErrors(
-    formikErrors?.[rootErrorName],
-    errorName
-  );
+  const rootError =
+    formikErrors !== undefined &&
+    formikErrors !== null &&
+    Object.hasOwn(formikErrors, rootErrorName)
+      ? Reflect.get(formikErrors, rootErrorName)
+      : undefined;
+  const formikFieldErrors = getFormikFieldErrors(rootError, errorName);
   const fileErrors = getFailedFileErrors(progress);
   // Combine errors, deduplicated
   const errors = Array.from(
@@ -99,7 +109,7 @@ const SupportingDocuments = (
       ...formikFieldErrors,
       ...fileErrors,
       ...externalErrors,
-    ])
+    ]),
   );
 
   // Only allow handleAlertScroll to run once
@@ -120,15 +130,15 @@ const SupportingDocuments = (
         setProgress?.(undefined);
       }
     },
-    [setProgress, uploading]
+    [setProgress, uploading],
   );
 
   const uploadAttachment = async (
     files: File[],
     uploadFunc: (
       token: string,
-      fileData: FileParameter[]
-    ) => Promise<AttachmentDto[]>
+      fileData: FileParameter[],
+    ) => Promise<AttachmentDto[]>,
   ) => {
     if (files.length === 0) {
       throw new Error('No file to upload');
@@ -139,7 +149,7 @@ const SupportingDocuments = (
     setExternalErrors?.([]);
 
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
 
     // Build the FileParameter array
@@ -153,18 +163,18 @@ const SupportingDocuments = (
       // Call uploadFunc ONCE with all files
       result = await uploadFunc(tokenResult.accessToken, fileDataArray);
       return result;
-    } catch (error: any) {
-      const uploadServerError = error as ProblemDetails;
+    } catch (error: unknown) {
+      const uploadServerError = error as UploadProblemDetails;
       if (
         uploadServerError.status === HttpStatusCode.Forbidden &&
         uploadServerError.title?.includes('No third-party access')
       ) {
         setNoThirdPartyAccess(true);
-      } else if (uploadServerError['errors']) {
+      } else if (uploadServerError.errors) {
         // If server returns error messages, set as upload errors (strings only)
-        const flatErrors = Object.values(uploadServerError['errors']).flat();
+        const flatErrors = Object.values(uploadServerError.errors).flat();
         setUploadErrors(
-          flatErrors.filter((e): e is string => typeof e === 'string')
+          flatErrors.filter((e): e is string => typeof e === 'string'),
         );
       } else if (uploadServerError.title) {
         setUploadErrors([uploadServerError.title]);
@@ -186,14 +196,14 @@ const SupportingDocuments = (
     });
     accountDispatch?.setTargetOrganisation(
       accountContext?.details?.abn ?? '',
-      accountContext?.details?.organisation ?? ''
+      accountContext?.details?.organisation ?? '',
     );
   }
 
   const onDeleteAttachment = async (docId: string) => {
     const client = new RequestForPatternApprovalClient();
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
 
     client.setAuthToken(tokenResult.accessToken);
@@ -205,20 +215,17 @@ const SupportingDocuments = (
     if (!id || !category) return;
     const client = new RequestForPatternApprovalClient();
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
     client.setAuthToken(tokenResult.accessToken);
     await client.updateCategory(id, docId, category);
   };
 
   const renderInstrumentInfoPanel = () => {
-    const formData = context.values as SupportingDocumentsStep;
-    const instrumentCategoryId = formData.form?.instrumentCategory as
-      string | undefined;
-    const instrumentTypeId = formData.form?.instrumentType as
-      string | undefined;
-    const patternApprovalType = formData.form?.patternApprovalType as
-      PatternApprovalRequiredValues | undefined;
+    const formData = context.values;
+    const instrumentCategoryId = formData.form?.instrumentCategory;
+    const instrumentTypeId = formData.form?.instrumentType;
+    const patternApprovalType = formData.form?.patternApprovalType;
     const isVisibilityApplicationType =
       patternApprovalType === PatternApprovalRequiredValues.NewCertificate;
     return (
@@ -238,7 +245,7 @@ const SupportingDocuments = (
   const onlyHasCategoryError =
     errors.length === 1 &&
     typeof errors[0] === 'string' &&
-    errors[0] === ValidationMessages.RequiredTag &&
+    errors[0] === String(ValidationMessages.RequiredTag) &&
     context.submitCount === 0;
 
   return (
@@ -263,7 +270,7 @@ const SupportingDocuments = (
                   // Only show the 'documents' error if submitCount is 0
                   if (
                     typeof err === 'string' &&
-                    err === ValidationMessages.RequiredTag &&
+                    err === String(ValidationMessages.RequiredTag) &&
                     context.submitCount === 0
                   ) {
                     return null;

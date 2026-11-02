@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import ErrorDisplay from '../../components/ErrorBoundary/ErrorDisplay';
 import { HttpStatusCode } from '../../types';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/ErrorStates',
   component: ErrorDisplay,
   decorators: [withPortalProviders],
@@ -13,39 +13,36 @@ const meta = {
       initialEntries: ['/not-found'],
     },
   },
-} satisfies Meta<typeof ErrorDisplay>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const NotFound: Story = {
+export const NotFound = meta.story({
   args: { status: HttpStatusCode.NotFound },
-};
+});
 
-export const Forbidden: Story = {
+export const Forbidden = meta.story({
   args: { status: HttpStatusCode.Forbidden },
-};
+});
 
-export const Conflict: Story = {
+export const Conflict = meta.story({
   args: { status: HttpStatusCode.Conflict },
-};
+});
 
-export const NoLongerAvailable: Story = {
+export const NoLongerAvailable = meta.story({
   args: { status: HttpStatusCode.Gone },
-};
+});
 
-export const Unprocessable: Story = {
+export const Unprocessable = meta.story({
   args: { status: HttpStatusCode.UnprocessableEntity },
-};
+});
 
-export const PreconditionFailed: Story = {
+export const PreconditionFailed = meta.story({
   args: { status: HttpStatusCode.PreconditionFailed },
-};
+});
 
-export const ServiceUnavailable: Story = {
+export const ServiceUnavailable = meta.story({
   args: { status: HttpStatusCode.ServiceUnavailable },
-};
+});
 
-export const ServerError: Story = {
+export const ServerError = meta.story({
   args: { status: HttpStatusCode.InternalServerError },
-};
+});

@@ -1,6 +1,7 @@
 # Common Patterns
 
-Frequently used patterns for forms, authentication, DataGrid, dialogs, and other common UI elements.
+Frequently used patterns for forms, authentication, DataGrid, dialogs, and other
+common UI elements.
 
 ---
 
@@ -228,32 +229,32 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useMuiSnackbar } from '@/hooks/useMuiSnackbar';
 
 export const useUpdateEntity = () => {
-    const queryClient = useQueryClient();
-    const { showSuccess, showError } = useMuiSnackbar();
+  const queryClient = useQueryClient();
+  const { showSuccess, showError } = useMuiSnackbar();
 
-    return useMutation({
-        mutationFn: ({ id, data }: { id: number; data: any }) =>
-            api.updateEntity(id, data),
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      api.updateEntity(id, data),
 
-        onSuccess: (result, variables) => {
-            // Invalidate affected queries
-            queryClient.invalidateQueries({ queryKey: ['entity', variables.id] });
-            queryClient.invalidateQueries({ queryKey: ['entities'] });
+    onSuccess: (result, variables) => {
+      // Invalidate affected queries
+      queryClient.invalidateQueries({ queryKey: ['entity', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['entities'] });
 
-            showSuccess('Entity updated');
-        },
+      showSuccess('Entity updated');
+    },
 
-        onError: () => {
-            showError('Failed to update entity');
-        },
-    });
+    onError: () => {
+      showError('Failed to update entity');
+    },
+  });
 };
 
 // Usage
 const updateEntity = useUpdateEntity();
 
 const handleSave = () => {
-    updateEntity.mutate({ id: 123, data: { name: 'New Name' } });
+  updateEntity.mutate({ id: 123, data: { name: 'New Name' } });
 };
 ```
 
@@ -273,8 +274,8 @@ Use TanStack Query for **all server data**:
 ```typescript
 // ✅ CORRECT - TanStack Query for server data
 const { data: users } = useSuspenseQuery({
-    queryKey: ['users'],
-    queryFn: () => userApi.getUsers(),
+  queryKey: ['users'],
+  queryFn: () => userApi.getUsers(),
 });
 ```
 
@@ -305,13 +306,13 @@ Use Zustand only for **global client state**:
 import { create } from 'zustand';
 
 interface AppState {
-    sidebarOpen: boolean;
-    toggleSidebar: () => void;
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
 }
 
 export const useAppState = create<AppState>((set) => ({
-    sidebarOpen: true,
-    toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+  sidebarOpen: true,
+  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
 }));
 ```
 

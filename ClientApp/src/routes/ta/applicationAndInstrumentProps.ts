@@ -5,6 +5,7 @@ import type {
 import {
   type FormStepStatusDto,
   RequestForPatternApprovalClient,
+  type ApplicationAndInstrumentStep,
   type ApplicationAndInstrumentStepDto,
   CRMLookupTypes,
   LookupClient,
@@ -32,7 +33,7 @@ const loadApplicationAndInstrument =
         const client = new RequestForPatternApprovalClient();
         const lookupClient = new LookupClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         lookupClient.setAuthToken(tokenResult.accessToken);
@@ -47,7 +48,7 @@ const loadApplicationAndInstrument =
           lookupClient.getLookup(CRMLookupTypes.PAPortalCategory, abortSignal),
           lookupClient.getLookup(
             CRMLookupTypes.PAPortalInstrumentType,
-            abortSignal
+            abortSignal,
           ),
           lookupClient.getAllInfoPanelContent(abortSignal),
           lookupClient.getNmiApplication(abortSignal),
@@ -70,20 +71,20 @@ const loadApplicationAndInstrument =
         AppLogger.error(
           'Failed to load PA application and instrument details',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(
           `Failed to load PA application and instrument details. Id: ${id}`,
-          { cause: error }
+          { cause: error },
         );
       }
     } else {
       AppLogger.verbose(
         'There are no accounts available to load PA application and instrument details',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to load PA application and instrument details. Id: ${id}`
+        `There are no accounts available to load PA application and instrument details. Id: ${id}`,
       );
     }
   };
@@ -93,18 +94,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: ApplicationAndInstrumentStepDto,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
 
@@ -122,26 +123,26 @@ const saveStep =
             formStep: valuesToSave,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (error) {
         AppLogger.error(
           'Failed to save PA application and instrument details',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(
           `Failed to save PA application and instrument details. Id: ${id}`,
-          { cause: error }
+          { cause: error },
         );
       }
     } else {
       AppLogger.verbose(
         'There are no accounts available to save PA application and instrument details',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to save PA application and instrument details. Id: ${id}`
+        `There are no accounts available to save PA application and instrument details. Id: ${id}`,
       );
     }
   };
@@ -152,7 +153,7 @@ const applicationAndInstrumentProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<ApplicationAndInstrumentStepDto> => ({
   initialValues: {},
   stepStatuses: statuses,
@@ -160,12 +161,16 @@ const applicationAndInstrumentProps = (
   location: '/application-details',
   title: 'Application details',
   hidingFields: {
-    isApplNewHide: (x: any) => DisplayRules.isNewCertificateHiddenP(x),
-    isApplNewInstrumentHide: (x: any) =>
+    isApplNewHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isNewCertificateHiddenP(x),
+    isApplNewInstrumentHide: (x: Partial<ApplicationAndInstrumentStep>) =>
       DisplayRules.isApplNewInstrumentHiddenP(x),
-    isApplVariationHide: (x: any) => DisplayRules.isVariationHiddenP(x),
-    isApplOtherHide: (x: any) => DisplayRules.isApplOtherHiddenP(x),
-    isApplOIMLHide: (x: any) => DisplayRules.isOIMLHiddenP(x),
+    isApplVariationHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isVariationHiddenP(x),
+    isApplOtherHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isApplOtherHiddenP(x),
+    isApplOIMLHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isOIMLHiddenP(x),
   },
   validateHard: applicationAndInstrumentSubmitValidation,
   validateSoft: applicationAndInstrumentSaveValidation,

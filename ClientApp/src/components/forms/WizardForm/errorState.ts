@@ -11,7 +11,7 @@ import type { WizardStepError } from './types';
 function resolveForbiddenState(
   error: unknown,
   serverError: ProblemDetails,
-  errorType: ErrorType
+  errorType: ErrorType,
 ): WizardStepError {
   if (serverError.title?.includes('No third-party access'))
     return { kind: 'noThirdPartyAccess' };
@@ -32,7 +32,7 @@ export function resolveErrorState(
   getRedirectionLocationOnError:
     | ((errorCode: number, errorType: ErrorType) => string | undefined)
     | undefined,
-  errorType: ErrorType
+  errorType: ErrorType,
 ): WizardStepError {
   const serverError = error as ProblemDetails;
 
@@ -41,7 +41,7 @@ export function resolveErrorState(
   if (getRedirectionLocationOnError && serverError?.status) {
     const location = getRedirectionLocationOnError(
       serverError.status,
-      errorType
+      errorType,
     );
     if (location) return { kind: 'redirect', location };
   }

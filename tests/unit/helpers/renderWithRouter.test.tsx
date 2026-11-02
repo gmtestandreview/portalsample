@@ -16,7 +16,7 @@ const ParamProbe = () => {
 };
 
 const LoaderProbe = () => {
-  const data = useLoaderData() as { label: string };
+  const data = useLoaderData<{ label: string }>();
 
   return <span data-testid='loader-label'>{data.label}</span>;
 };
@@ -25,7 +25,7 @@ const NavigateProbe = () => {
   const navigate = useNavigate();
 
   return (
-    <button type='button' onClick={() => navigate('/not-found')}>
+    <button type='button' onClick={() => void navigate('/not-found')}>
       leave
     </button>
   );
@@ -33,17 +33,21 @@ const NavigateProbe = () => {
 
 describe('renderWithRouter harness', () => {
   it('resolves route params, which a bare MemoryRouter does not', async () => {
+    expect.hasAssertions();
+
     renderWithRouter(<ParamProbe />, {
       path: '/type-approval/:id',
       initialPath: '/type-approval/APP-1',
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('param-id')).toHaveTextContent('APP-1')
+      expect(screen.getByTestId('param-id')).toHaveTextContent('APP-1'),
     );
   });
 
   it('runs a route loader', async () => {
+    expect.hasAssertions();
+
     renderWithRouter(<LoaderProbe />, {
       path: '/type-approval/:id',
       initialPath: '/type-approval/APP-2',
@@ -51,11 +55,13 @@ describe('renderWithRouter harness', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('loader-label')).toHaveTextContent('loaded')
+      expect(screen.getByTestId('loader-label')).toHaveTextContent('loaded'),
     );
   });
 
   it('exposes the real navigation rather than a mocked navigate', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { currentPath } = renderWithRouter(<NavigateProbe />, {
       path: '/type-approval/:id',
@@ -67,23 +73,29 @@ describe('renderWithRouter harness', () => {
     await user.click(screen.getByRole('button', { name: 'leave' }));
 
     await waitFor(() => expect(currentPath()).toBe('/not-found'));
+
     expect(screen.getByTestId(NOT_FOUND_TEST_ID)).toBeInTheDocument();
   });
 
   it('distinguishes a redirect to /not-found from matching nothing', async () => {
+    expect.hasAssertions();
+
     const { currentPath } = renderWithRouter(<ParamProbe />, {
       path: '/type-approval/:id',
       initialPath: '/somewhere-else',
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument()
+      expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument(),
     );
+
     expect(screen.queryByTestId(NOT_FOUND_TEST_ID)).not.toBeInTheDocument();
     expect(currentPath()).toBe('/somewhere-else');
   });
 
   it('mounts extra destination routes so a redirect target is assertable', async () => {
+    expect.hasAssertions();
+
     renderWithRouter(<ParamProbe />, {
       path: '/type-approval/:id',
       initialPath: '/dashboard',
@@ -93,7 +105,7 @@ describe('renderWithRouter harness', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('dashboard')).toBeInTheDocument()
+      expect(screen.getByTestId('dashboard')).toBeInTheDocument(),
     );
   });
 });

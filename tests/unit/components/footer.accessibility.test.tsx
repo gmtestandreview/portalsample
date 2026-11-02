@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { readFileSync } from 'node:fs';
@@ -6,12 +7,18 @@ import Footer from '@/components/Footer';
 import Privacy from '@/components/Footer/privacy';
 import TermsOfUse from '@/components/Footer/termsOfUse';
 
-vi.mock('@/assets/GovCrest.svg', () => ({
-  default: 'gov-crest.svg',
-}));
+vi.mock(
+  import('@/assets/GovCrest.svg'),
+  () =>
+    ({
+      default: 'gov-crest.svg',
+    }) satisfies __ExactMockModule<__TestMockModule19>,
+);
 
-describe('Footer accessibility', () => {
+describe('footer accessibility', () => {
   it('uses real buttons for footer modal triggers', async () => {
+    expect.hasAssertions();
+
     render(<Footer />);
 
     const termsTrigger = screen.getByRole('button', { name: 'Terms of use' });
@@ -27,7 +34,7 @@ describe('Footer accessibility', () => {
     await userEvent.click(termsTrigger);
 
     expect(
-      screen.getByRole('dialog', { name: 'Portal Terms of Use' })
+      screen.getByRole('dialog', { name: 'Portal Terms of Use' }),
     ).toBeInTheDocument();
   });
 
@@ -37,43 +44,51 @@ describe('Footer accessibility', () => {
   ])(
     'uses labelled sections without adding contentinfo landmarks in the %s',
     (_name, Content) => {
+      expect.hasAssertions();
+
       const { container } = render(<Content />);
 
       expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
 
       const labelledSections = Array.from(
-        container.querySelectorAll('section[aria-labelledby]')
+        container.querySelectorAll('section[aria-labelledby]'),
       );
+
       expect(labelledSections.length).toBeGreaterThan(0);
 
       for (const section of labelledSections) {
         const labelId = section.getAttribute('aria-labelledby');
-        expect(labelId).toBeTruthy();
+
+        expect(labelId).not.toBeNull();
         expect(container.querySelectorAll(`#${labelId}`)).toHaveLength(1);
       }
-    }
+    },
   );
 
   it('preserves spacing around inline formatting in the privacy statement', () => {
+    expect.hasAssertions();
+
     const { container } = render(<Privacy />);
     const paragraphs = Array.from(container.querySelectorAll('p')).map(
-      ({ textContent }) => textContent
+      ({ textContent }) => textContent,
     );
 
     expect(paragraphs).toContain(
       'Your personal information is protected by law, including the Privacy Act 1988 ' +
-        '(Privacy Act) and the Australian Privacy Principles (APPs).'
+        '(Privacy Act) and the Australian Privacy Principles (APPs).',
     );
     expect(paragraphs).toContain(
       'To find out more about how we manage personal information and for any assistance ' +
-        'with completing the template, please email our Privacy Team at privacy@industry.gov.au.'
+        'with completing the template, please email our Privacy Team at privacy@industry.gov.au.',
     );
   });
 
   it('uses explicit JSX text boundaries around inline strong elements', () => {
+    expect.hasAssertions();
+
     const source = readFileSync(
       path.join(process.cwd(), 'ClientApp/src/components/Footer/privacy.tsx'),
-      'utf8'
+      'utf8',
     );
 
     expect(source).toContain("The National Measurement Institute{' ('}");

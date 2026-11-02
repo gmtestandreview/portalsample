@@ -3,7 +3,7 @@ type WithoutUndefined<T extends object> = {
 };
 
 const isPlainObject = (value: object): boolean => {
-  const prototype = Object.getPrototypeOf(value);
+  const prototype = Reflect.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
 };
 
@@ -24,7 +24,7 @@ const isPlainObject = (value: object): boolean => {
  * @throws {TypeError} For arrays, class instances and ordinary objects from other realms.
  */
 export const omitUndefined = <T extends object>(
-  value: T
+  value: T,
 ): WithoutUndefined<T> => {
   if (!isPlainObject(value)) {
     throw new TypeError('omitUndefined accepts plain objects only');

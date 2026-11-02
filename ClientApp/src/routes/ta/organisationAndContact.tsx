@@ -19,7 +19,7 @@ const GetFieldValue = ({ fieldName }: Readonly<{ fieldName: string }>) => {
 }; */
 
 const OrganisationAndContact = (
-  props: Readonly<TAOrganisationAndContactProps>
+  props: Readonly<TAOrganisationAndContactProps>,
 ) => {
   const { isSummary, name } = props;
 

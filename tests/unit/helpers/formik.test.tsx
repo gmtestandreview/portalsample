@@ -11,20 +11,24 @@ const schema = yup.object({
   name: yup.string().label('Name').isRequired(),
 });
 
-describe('Formik harness', () => {
+describe('formik harness', () => {
   it('still renders children against initialValues', () => {
+    expect.hasAssertions();
+
     // Backward compatibility. buttonControls.test.tsx uses the original three-prop signature and
     // the additions below must not disturb it.
     render(
       <FormikWrapper initialValues={{ name: 'Existing' }}>
         <Field name='name' data-testid='name' />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     expect(screen.getByTestId('name')).toHaveValue('Existing');
   });
 
   it('surfaces schema validation messages when fields start touched', async () => {
+    expect.hasAssertions();
+
     render(
       <FormikWrapper
         initialValues={{ name: '' }}
@@ -33,17 +37,19 @@ describe('Formik harness', () => {
       >
         <Field name='name' data-testid='name' />
         <ErrorMessage name='name' component='span' data-testid='name-error' />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     // Without a schema Formik reports no errors at all, and an "invalid input is rejected"
     // assertion would pass without testing anything.
     await waitFor(() =>
-      expect(screen.getByTestId('name-error')).toBeInTheDocument()
+      expect(screen.getByTestId('name-error')).toBeInTheDocument(),
     );
   });
 
   it('captures submitted values through the submit spy', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const submit = createSubmitSpy<{ name: string }>();
 
@@ -54,7 +60,7 @@ describe('Formik harness', () => {
       >
         <Field name='name' data-testid='name' />
         <button type='submit'>Save</button>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await user.clear(screen.getByTestId('name'));
@@ -62,10 +68,13 @@ describe('Formik harness', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(submit.submitCount()).toBe(1));
-    expect(submit.lastValues()).toEqual({ name: 'Updated' });
+
+    expect(submit.lastValues()).toStrictEqual({ name: 'Updated' });
   });
 
   it('settles submission state so a second submit is not silently blocked', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const submit = createSubmitSpy<{ name: string }>();
 
@@ -76,7 +85,7 @@ describe('Formik harness', () => {
       >
         <Field name='name' data-testid='name' />
         <button type='submit'>Save</button>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     const save = screen.getByRole('button', { name: 'Save' });
@@ -92,6 +101,8 @@ describe('Formik harness', () => {
   });
 
   it('does not submit when the schema rejects the values', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const submit = createSubmitSpy<{ name: string }>();
 
@@ -104,14 +115,15 @@ describe('Formik harness', () => {
         <Field name='name' data-testid='name' />
         <ErrorMessage name='name' component='span' data-testid='name-error' />
         <button type='submit'>Save</button>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() =>
-      expect(screen.getByTestId('name-error')).toBeInTheDocument()
+      expect(screen.getByTestId('name-error')).toBeInTheDocument(),
     );
+
     expect(submit.submitCount()).toBe(0);
   });
 });

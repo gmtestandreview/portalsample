@@ -1,79 +1,160 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type {
+  AccountInfo,
+  AuthenticationResult,
+  IPublicClientApplication,
+} from '@azure/msal-browser';
+import type * as MsalBrowserModule from '@azure/msal-browser';
+import type * as MsalReactModule from '@azure/msal-react';
+import { describe, expect, it, vi } from 'vitest';
 import AccountProvider from '../../../ClientApp/src/authentication/AccountProvider';
+import type { UsersClient } from '../../../ClientApp/src/api/web-api-client';
+import type * as WebApiModule from '../../../ClientApp/src/api/web-api-client';
+import type * as AppLoggerModule from '../../../ClientApp/src/instrumentation/AppLogger';
 import {
   useAccountDispatch,
   useAccountState,
 } from '../../../ClientApp/src/authentication/hooks';
+import type * as TargetOrganisationModule from '../../../ClientApp/src/storage/targetOrganisation';
+import type * as AuthConfigModule from '../../../ClientApp/src/authentication/authConfig';
 
-const providerMocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  appLoggerError: vi.fn(),
-  accounts: [
+type InteractionStatusValue =
+  (typeof MsalBrowserModule)['InteractionStatus'][keyof (typeof MsalBrowserModule)['InteractionStatus']];
+
+const providerMocks = vi.hoisted(() => {
+  const statusState: { inProgress: InteractionStatusValue } = {
+    inProgress: 'none',
+  };
+  const accounts: AccountInfo[] = [
     {
       homeAccountId: 'test-id',
+      environment: 'login.microsoftonline.com',
+      tenantId: 'tenant-id',
+      username: 'test@example.test',
+      localAccountId: 'local-account-id',
       idTokenClaims: {
         email: 'test@example.test',
         family_name: 'User',
         given_name: 'Test',
       },
     },
-  ],
-  getActiveAccount: vi.fn(),
-  getStoredTargetOrganisation: vi.fn(),
-  handleRedirectPromise: vi.fn(),
-  inProgress: 'none',
-  logoutRedirect: vi.fn(),
-  setStoredTargetOrganisation: vi.fn(),
-  setUserProfileApi: vi.fn(),
-  signIn: vi.fn(),
-}));
+  ];
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    inProgress: providerMocks.inProgress,
-    accounts: providerMocks.accounts,
-    instance: {
-      acquireTokenSilent: providerMocks.acquireTokenSilent,
-      getActiveAccount: providerMocks.getActiveAccount,
-      handleRedirectPromise: providerMocks.handleRedirectPromise,
-      logoutRedirect: providerMocks.logoutRedirect,
-    },
-  }),
-}));
+  return {
+    acquireTokenSilent: vi.fn<IPublicClientApplication['acquireTokenSilent']>(),
+    appLoggerError: vi.fn<(typeof AppLoggerModule)['default']['error']>(),
+    accounts,
+    getActiveAccount: vi.fn<IPublicClientApplication['getActiveAccount']>(),
+    getStoredTargetOrganisation:
+      vi.fn<typeof TargetOrganisationModule.getTargetOrganisation>(),
+    handleRedirectPromise:
+      vi.fn<IPublicClientApplication['handleRedirectPromise']>(),
+    inProgress: statusState.inProgress,
+    logoutRedirect: vi.fn<IPublicClientApplication['logoutRedirect']>(),
+    setStoredTargetOrganisation:
+      vi.fn<typeof TargetOrganisationModule.default>(),
+    setUserProfileApi: vi.fn<UsersClient['setUserProfile']>(),
+    signIn: vi.fn<UsersClient['signIn']>(),
+  };
+});
 
-vi.mock('@azure/msal-browser', () => ({
-  InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
-}));
+vi.mock(import('@azure/msal-react'), async (importOriginal) => {
+  const original = await importOriginal();
+  const msalBrowser = await import('@azure/msal-browser');
+  const instance = new msalBrowser.PublicClientApplication({
+    auth: { clientId: 'test-client-id' },
+  });
+  instance.acquireTokenSilent = providerMocks.acquireTokenSilent;
+  instance.getActiveAccount = providerMocks.getActiveAccount;
+  instance.handleRedirectPromise = providerMocks.handleRedirectPromise;
+  instance.logoutRedirect = providerMocks.logoutRedirect;
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
-  UsersClient: class {
-    setAuthToken = vi.fn();
-    setUserProfile = providerMocks.setUserProfileApi;
-    signIn = providerMocks.signIn;
+  const logger = new msalBrowser.Logger({ loggerCallback: () => undefined });
+
+  return {
+    ...original,
+    useMsal: vi.fn<(typeof MsalReactModule)['useMsal']>(() => ({
+      inProgress: providerMocks.inProgress,
+      accounts: providerMocks.accounts,
+      instance,
+      logger,
+    })),
+  } satisfies Partial<typeof MsalReactModule>;
+});
+
+vi.mock(import('@azure/msal-browser'), async (importOriginal) => {
+  const original = await importOriginal();
+  return {
+    ...original,
+    InteractionStatus: { ...original.InteractionStatus },
+  } satisfies Partial<typeof MsalBrowserModule>;
+});
+
+vi.mock(
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    class MockUsersClient extends original.UsersClient {
+      override setAuthToken = vi.fn<UsersClient['setAuthToken']>();
+      override setUserProfile = providerMocks.setUserProfileApi;
+      override signIn = providerMocks.signIn;
+    }
+
+    return {
+      ...original,
+      UsersClient: MockUsersClient,
+    } satisfies Partial<typeof WebApiModule>;
   },
-}));
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: providerMocks.appLoggerError,
-    verbose: vi.fn(),
+vi.mock(
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    class MockAppLogger extends original.default {
+      static override error = providerMocks.appLoggerError;
+      static override verbose =
+        vi.fn<(typeof AppLoggerModule)['default']['verbose']>();
+    }
+
+    return {
+      ...original,
+      default: MockAppLogger,
+    } satisfies Partial<typeof AppLoggerModule>;
   },
-}));
+);
 
-vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
-  default: providerMocks.setStoredTargetOrganisation,
-  getTargetOrganisation: providerMocks.getStoredTargetOrganisation,
-}));
+vi.mock(
+  import('../../../ClientApp/src/storage/targetOrganisation'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    return {
+      ...original,
+      default: providerMocks.setStoredTargetOrganisation,
+      getTargetOrganisation: providerMocks.getStoredTargetOrganisation,
+    } satisfies Partial<typeof TargetOrganisationModule>;
+  },
+);
 
-vi.mock('../../../ClientApp/src/terms-config.json', () => ({
-  default: { TermsVersion: '1' },
-}));
+vi.mock(
+  import('../../../ClientApp/src/terms-config.json'),
+  () =>
+    ({
+      default: { TermsVersion: '1' },
+    }) satisfies __ExactMockModule<__TestMockModule7>,
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['read'] },
-}));
+vi.mock(
+  import('../../../ClientApp/src/authentication/authConfig'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    return {
+      ...original,
+      tokenRequest: { ...original.tokenRequest, scopes: ['read'] },
+    } satisfies Partial<typeof AuthConfigModule>;
+  },
+);
 
 const AccountConsumer = () => {
   const accountState = useAccountState();
@@ -127,7 +208,7 @@ const AccountConsumer = () => {
           accountDispatch?.setOrganisationAndBranch(
             'New Org',
             'Trading Name',
-            'Branch Name'
+            'Branch Name',
           )
         }
         type='button'
@@ -136,19 +217,31 @@ const AccountConsumer = () => {
       </button>
       <button
         onClick={() =>
-          accountDispatch?.setOrganisationAndBranch(
-            'Fallback Org',
-            undefined as unknown as string,
-            undefined as unknown as string
-          )
+          accountDispatch?.setOrganisationAndBranch('Fallback Org', '', '')
         }
         type='button'
       >
         set fallback org branch
       </button>
       <button
-        onClick={() =>
-          accountDispatch?.setUserProfile({
+        onClick={() => {
+          const setOrganisationAndBranch =
+            accountDispatch?.setOrganisationAndBranch;
+          if (setOrganisationAndBranch) {
+            Reflect.apply(setOrganisationAndBranch, null, [
+              'Nullish Org',
+              undefined,
+              undefined,
+            ]);
+          }
+        }}
+        type='button'
+      >
+        set nullish org branch
+      </button>
+      <button
+        onClick={() => {
+          void accountDispatch?.setUserProfile({
             testingCalibrationDashboard: {
               filterActiveTab: '2',
               filterCurrentPage: 3,
@@ -158,20 +251,16 @@ const AccountConsumer = () => {
               filterYearType: '2026',
               filtersChanged: true,
             },
-          })
-        }
+          });
+        }}
         type='button'
       >
         set profile
       </button>
       <button
-        onClick={() =>
-          accountDispatch?.setUserProfile(
-            undefined as unknown as Parameters<
-              NonNullable<typeof accountDispatch>['setUserProfile']
-            >[0]
-          )
-        }
+        onClick={() => {
+          void accountDispatch?.setUserProfile(undefined);
+        }}
         type='button'
       >
         set undefined profile
@@ -180,12 +269,25 @@ const AccountConsumer = () => {
   );
 };
 
-describe('AccountProvider dispatch callbacks', () => {
-  beforeEach(() => {
+const expectDetailsToContain = (
+  details: string,
+  expected: readonly string[],
+) => {
+  for (const value of expected) {
+    expect(details).toContain(value);
+  }
+};
+
+describe('accountProvider dispatch callbacks', () => {
+  const resetProviderMocks = () => {
     vi.clearAllMocks();
     providerMocks.accounts = [
       {
         homeAccountId: 'test-id',
+        environment: 'login.microsoftonline.com',
+        tenantId: 'tenant-id',
+        username: 'test@example.test',
+        localAccountId: 'local-account-id',
         idTokenClaims: {
           email: 'test@example.test',
           family_name: 'User',
@@ -194,11 +296,32 @@ describe('AccountProvider dispatch callbacks', () => {
       },
     ];
     providerMocks.acquireTokenSilent.mockResolvedValue({
+      authority: 'https://login.microsoftonline.com/tenant-id',
+      uniqueId: 'unique-id',
+      tenantId: 'tenant-id',
+      scopes: ['scope'],
+      account: {
+        homeAccountId: 'test-id',
+        environment: 'login.microsoftonline.com',
+        tenantId: 'tenant-id',
+        username: 'test@example.test',
+        localAccountId: 'local-account-id',
+      } satisfies AccountInfo,
+      idToken: 'id-token',
+      idTokenClaims: {},
       accessToken: 'test-token',
-    });
-    providerMocks.getStoredTargetOrganisation.mockReturnValue(null);
+      fromCache: false,
+      expiresOn: null,
+      tokenType: 'Bearer',
+      correlationId: 'correlation-id',
+    } satisfies AuthenticationResult & { account: AccountInfo });
+    providerMocks.getStoredTargetOrganisation.mockReturnValue(undefined);
     providerMocks.getActiveAccount.mockReturnValue({
       homeAccountId: 'active-id',
+      environment: 'login.microsoftonline.com',
+      tenantId: 'tenant-id',
+      username: 'active@example.test',
+      localAccountId: 'active-local-account-id',
     });
     providerMocks.handleRedirectPromise.mockResolvedValue(null);
     providerMocks.inProgress = 'none';
@@ -208,7 +331,7 @@ describe('AccountProvider dispatch callbacks', () => {
       acceptedTerms: false,
       contact: { isCompleted: false },
       contactId: 7,
-      defaultOrganisationId: null,
+      defaultOrganisationId: undefined,
       employerAbn: '12345678901',
       organisation: {
         abn: '12345678901',
@@ -218,21 +341,25 @@ describe('AccountProvider dispatch callbacks', () => {
         isCompleted: false,
         name: 'Test Org',
       },
-      termsVersion: '1',
+      termsVersion: 1,
     });
-  });
+  };
 
   it('updates account state through dispatch callbacks exposed by hooks', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     const user = userEvent.setup();
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org')
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
     );
 
     await user.click(screen.getByRole('button', { name: 'agree' }));
@@ -240,7 +367,7 @@ describe('AccountProvider dispatch callbacks', () => {
     await user.click(screen.getByRole('button', { name: 'complete contact' }));
     await user.click(screen.getByRole('button', { name: 'set default org' }));
     await user.click(
-      screen.getByRole('button', { name: 'show branch selector' })
+      screen.getByRole('button', { name: 'show branch selector' }),
     );
     await user.click(screen.getByRole('button', { name: 'show rfq selector' }));
     await user.click(screen.getByRole('button', { name: 'set target org' }));
@@ -248,26 +375,29 @@ describe('AccountProvider dispatch callbacks', () => {
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
     const details = screen.getByTestId('details').textContent ?? '';
-    expect(details).toContain('"userAcceptedTermsOfUse":true');
-    expect(details).toContain('"accountCreationCompleted":true');
-    expect(details).toContain('"accountContactCompleted":true');
-    expect(details).toContain('"defaultOrganisationId":42');
-    expect(details).toContain('"organisationCRMGuid":"crm-42"');
-    expect(details).toContain('"showBranchSelector":true');
-    expect(details).toContain('"rfqId":"rfq-123"');
-    expect(details).toContain('"callingPath":"/requests"');
-    expect(details).toContain('"targetOrganisationAbn":"99999999999"');
-    expect(details).toContain('"targetOrganisationName":"Target Org"');
-    expect(details).toContain('"organisation":"New Org"');
-    expect(details).toContain('"trading":"Trading Name"');
-    expect(details).toContain('"branch":"Branch Name"');
-    expect(details).toContain(
-      '"userProfile":{"testingCalibrationDashboard":{"filterActiveTab":"2","filterCurrentPage":3,"filterSearchText":"needle","filterSortOrder":"1","filterStatusType":"4","filterYearType":"2026","filtersChanged":true}}'
-    );
+
+    expectDetailsToContain(details, [
+      '"userAcceptedTermsOfUse":true',
+      '"accountCreationCompleted":true',
+      '"accountContactCompleted":true',
+      '"defaultOrganisationId":42',
+      '"organisationCRMGuid":"crm-42"',
+      '"showBranchSelector":true',
+      '"rfqId":"rfq-123"',
+      '"callingPath":"/requests"',
+      '"targetOrganisationAbn":"99999999999"',
+      '"targetOrganisationName":"Target Org"',
+      '"organisation":"New Org"',
+      '"trading":"Trading Name"',
+      '"branch":"Branch Name"',
+      '"userProfile":{"testingCalibrationDashboard":{"filterActiveTab":"2","filterCurrentPage":3,"filterSearchText":"needle","filterSortOrder":"1","filterStatusType":"4","filterYearType":"2026","filtersChanged":true}}',
+    ]);
+
     expect(providerMocks.setStoredTargetOrganisation).toHaveBeenCalledWith({
       targetOrganisationAbn: '99999999999',
       targetOrganisationName: 'Target Org',
     });
+
     await waitFor(() =>
       expect(providerMocks.setUserProfileApi).toHaveBeenCalledWith(
         undefined,
@@ -287,42 +417,51 @@ describe('AccountProvider dispatch callbacks', () => {
         undefined,
         undefined,
         undefined,
-        undefined
-      )
+        undefined,
+      ),
     );
   });
 
   it('logs profile save failures without removing provider children', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     const user = userEvent.setup();
     providerMocks.setUserProfileApi.mockRejectedValue(new Error('save failed'));
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org')
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
     );
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
     await waitFor(() =>
       expect(providerMocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to save userprofile',
-        expect.any(Error)
-      )
+        expect.any(Error),
+      ),
     );
+
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });
 
-  it('clears account details while MSAL logout is in progress', async () => {
+  it('clears account details while MSAL logout is in progress', () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     providerMocks.inProgress = 'logout';
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     expect(screen.getByTestId('details')).toHaveTextContent('null');
@@ -330,73 +469,99 @@ describe('AccountProvider dispatch callbacks', () => {
   });
 
   it('uses the active account without request-level navigation callbacks', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     providerMocks.signIn.mockRejectedValue(new Error('load failed'));
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
+    const activeAccountMatcher = expect.objectContaining({
+      homeAccountId: 'active-id',
+    }) as unknown as AccountInfo;
+
     await waitFor(() =>
-      expect(providerMocks.logoutRedirect).toHaveBeenCalled()
+      expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
+        account: activeAccountMatcher,
+      }),
     );
+
     expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
-      account: { homeAccountId: 'active-id' },
+      account: activeAccountMatcher,
     });
   });
 
   it('shows error UI and logs out when account-load token acquisition fails', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     providerMocks.acquireTokenSilent.mockRejectedValue(
-      new Error('token failed')
+      new Error('token failed'),
     );
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
+    const activeAccountMatcher = expect.objectContaining({
+      homeAccountId: 'active-id',
+    }) as unknown as AccountInfo;
+
     await waitFor(() =>
-      expect(providerMocks.logoutRedirect).toHaveBeenCalled()
+      expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
+        account: activeAccountMatcher,
+      }),
     );
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledTimes(1);
 
     expect(
-      screen.getByText(/Unable to load account details/i)
+      screen.getByText(/Unable to load account details/i),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('details')).not.toBeInTheDocument();
     expect(providerMocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load loadAccountDetails',
-      expect.any(Error)
+      expect.any(Error),
     );
   });
 
   it('leaves dispatch callbacks as no-ops before account details exist', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     const user = userEvent.setup();
     providerMocks.accounts = [];
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     expect(screen.getByTestId('details')).toHaveTextContent('null');
+
     await user.click(screen.getByRole('button', { name: 'agree' }));
     await user.click(screen.getByRole('button', { name: 'complete account' }));
     await user.click(screen.getByRole('button', { name: 'complete contact' }));
     await user.click(screen.getByRole('button', { name: 'set default org' }));
     await user.click(
-      screen.getByRole('button', { name: 'show branch selector' })
+      screen.getByRole('button', { name: 'show branch selector' }),
     );
     await user.click(screen.getByRole('button', { name: 'show rfq selector' }));
     await user.click(screen.getByRole('button', { name: 'set target org' }));
     await user.click(screen.getByRole('button', { name: 'set org branch' }));
     await user.click(screen.getByRole('button', { name: 'set profile' }));
     await user.click(
-      screen.getByRole('button', { name: 'set undefined profile' })
+      screen.getByRole('button', { name: 'set undefined profile' }),
     );
 
     expect(screen.getByTestId('details')).toHaveTextContent('null');
@@ -405,14 +570,18 @@ describe('AccountProvider dispatch callbacks', () => {
   });
 
   it('uses existing business context and defaults missing user fields', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     providerMocks.accounts = [
       {
         homeAccountId: 'minimal-id',
-        idTokenClaims: {} as {
-          email: string;
-          family_name: string;
-          given_name: string;
-        },
+        environment: 'login.microsoftonline.com',
+        tenantId: 'tenant-id',
+        username: 'minimal@example.test',
+        localAccountId: 'minimal-local-account-id',
+        idTokenClaims: {},
       },
     ];
     providerMocks.getStoredTargetOrganisation.mockReturnValue({
@@ -434,46 +603,55 @@ describe('AccountProvider dispatch callbacks', () => {
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('minimal-id')
+      expect(screen.getByTestId('details')).toHaveTextContent('minimal-id'),
     );
 
     const details = screen.getByTestId('details').textContent ?? '';
-    expect(details).toContain('"organisation":""');
-    expect(details).toContain('"trading":""');
-    expect(details).toContain('"branch":""');
-    expect(details).toContain('"abn":""');
-    expect(details).toContain('"userAcceptedTermsOfUse":false');
-    expect(details).toContain('"accountCreationCompleted":false');
-    expect(details).toContain('"accountContactCompleted":false');
-    expect(details).toContain('"targetOrganisationAbn":"stored-abn"');
-    expect(details).toContain('"targetOrganisationName":"Stored Org"');
-    expect(details).toContain('"organisationIsCompleted":false');
+
+    expectDetailsToContain(details, [
+      '"organisation":""',
+      '"trading":""',
+      '"branch":""',
+      '"abn":""',
+      '"userAcceptedTermsOfUse":false',
+      '"accountCreationCompleted":false',
+      '"accountContactCompleted":false',
+      '"targetOrganisationAbn":"stored-abn"',
+      '"targetOrganisationName":"Stored Org"',
+      '"organisationIsCompleted":false',
+    ]);
+
     expect(providerMocks.setStoredTargetOrganisation).not.toHaveBeenCalled();
-    expect(details).toContain(
-      '"userProfile":{"testingCalibrationDashboard":{"filterSearchText":"saved"}}'
-    );
+
+    expectDetailsToContain(details, [
+      '"userProfile":{"testingCalibrationDashboard":{"filterSearchText":"saved"}}',
+    ]);
   });
 
   it('stores empty target organisation values when no business context or organisation exists', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     providerMocks.signIn.mockResolvedValue({
       acceptedTerms: false,
-      defaultOrganisationId: null,
+      defaultOrganisationId: undefined,
       organisation: undefined,
-      termsVersion: '1',
+      termsVersion: 1,
     });
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('test-id')
+      expect(screen.getByTestId('details')).toHaveTextContent('test-id'),
     );
 
     expect(providerMocks.setStoredTargetOrganisation).toHaveBeenCalledWith({
@@ -482,51 +660,89 @@ describe('AccountProvider dispatch callbacks', () => {
     });
   });
 
-  it('falls back to empty trading and branch names when organisation branch dispatch receives nullish values', async () => {
+  it('falls back to empty trading and branch names for explicit empty values', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     const user = userEvent.setup();
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org')
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
     );
     await user.click(
-      screen.getByRole('button', { name: 'set fallback org branch' })
+      screen.getByRole('button', { name: 'set fallback org branch' }),
     );
 
     const details = screen.getByTestId('details').textContent ?? '';
+
     expect(details).toContain('"organisation":"Fallback Org"');
     expect(details).toContain('"trading":""');
     expect(details).toContain('"branch":""');
   });
 
-  it('logs profile-save token failures without removing provider children', async () => {
+  it('falls back to empty trading and branch names for nullish values', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
     const user = userEvent.setup();
 
     render(
       <AccountProvider>
         <AccountConsumer />
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org')
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: 'set nullish org branch' }),
+    );
+
+    const nullishDetails = screen.getByTestId('details').textContent ?? '';
+
+    expect(nullishDetails).toContain('"organisation":"Nullish Org"');
+    expect(nullishDetails).toContain('"trading":""');
+    expect(nullishDetails).toContain('"branch":""');
+  });
+
+  it('logs profile-save token failures without removing provider children', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
+    const user = userEvent.setup();
+
+    render(
+      <AccountProvider>
+        <AccountConsumer />
+      </AccountProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
     );
     providerMocks.acquireTokenSilent.mockRejectedValueOnce(
-      new Error('profile token failed')
+      new Error('profile token failed'),
     );
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
     await waitFor(() =>
       expect(providerMocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to save userprofile',
-        expect.any(Error)
-      )
+        expect.any(Error),
+      ),
     );
+
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });
 });

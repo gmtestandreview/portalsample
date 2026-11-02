@@ -1,7 +1,7 @@
 // Guard for the Formik to React Hook Form migration: new RHF code must not use
 // APIs that React 19 removes. Run: node scripts/check-react19-readiness.mjs
-import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { listDirectory, readTextFile, statPath } from './safe-file-io.mjs';
 
 const ROOT = process.cwd();
 const SCAN_ROOTS = [
@@ -23,10 +23,10 @@ const FORBIDDEN = [
 ];
 
 const walk = (dir) =>
-  readdirSync(dir).flatMap((entry) => {
+  listDirectory(dir).flatMap((entry) => {
     const full = join(dir, entry);
     if (entry === 'node_modules') return [];
-    return statSync(full).isDirectory() ? walk(full) : [full];
+    return statPath(full).isDirectory() ? walk(full) : [full];
   });
 
 const violations = SCAN_ROOTS.flatMap((scanRoot) =>
@@ -34,14 +34,14 @@ const violations = SCAN_ROOTS.flatMap((scanRoot) =>
     .filter((file) => EXTENSIONS.has(file.slice(file.lastIndexOf('.'))))
     .filter(IN_SCOPE)
     .flatMap((file) =>
-      readFileSync(file, 'utf8')
+      readTextFile(file)
         .split(/\r?\n/)
         .flatMap((line, index) =>
           FORBIDDEN.filter(({ pattern }) => pattern.test(line)).map(
-            ({ name }) => `${relative(ROOT, file)}:${index + 1}  ${name}`
-          )
-        )
-    )
+            ({ name }) => `${relative(ROOT, file)}:${index + 1}  ${name}`,
+          ),
+        ),
+    ),
 );
 
 if (violations.length > 0) {

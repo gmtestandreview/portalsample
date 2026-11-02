@@ -1,10 +1,14 @@
 # Frontend to Backend Requirements
 
-A Claude Code skill for frontend developers to document data needs and API requirements for backend developers in a collaborative, non-prescriptive way.
+A Claude Code skill for frontend developers to document data needs and API
+requirements for backend developers in a collaborative, non-prescriptive way.
 
 ## Purpose
 
-This skill helps frontend developers communicate **what data they need** without dictating **how backend should implement it**. It creates a structured requirements document that describes UI needs, user actions, states to handle, and business rules—leaving implementation details to the backend team.
+This skill helps frontend developers communicate **what data they need** without
+dictating **how backend should implement it**. It creates a structured
+requirements document that describes UI needs, user actions, states to handle,
+and business rules—leaving implementation details to the backend team.
 
 ## When to Use This Skill
 
@@ -23,16 +27,21 @@ Use this skill when:
 
 ## How It Works
 
-The skill guides you through documenting your requirements in a structured format that:
+The skill guides you through documenting your requirements in a structured
+format that:
 
-1. **Describes the feature** - What screen/component you're building and its purpose
-2. **Lists data needs** - What information needs to be displayed (without specifying field names)
+1. **Describes the feature** - What screen/component you're building and its
+   purpose
+2. **Lists data needs** - What information needs to be displayed (without
+   specifying field names)
 3. **Identifies actions** - What users can do and expected outcomes
 4. **Defines states** - Loading, empty, error, and edge cases to handle
-5. **Surfaces uncertainties** - Questions and assumptions that need clarification
+5. **Surfaces uncertainties** - Questions and assumptions that need
+   clarification
 6. **Invites collaboration** - Opens discussion for backend input and pushback
 
-All output goes to `.claude/docs/ai/<feature-name>/backend-requirements.md` - no chat output.
+All output goes to `.claude/docs/ai/<feature-name>/backend-requirements.md` - no
+chat output.
 
 ## Key Features
 
@@ -68,61 +77,76 @@ The skill creates a markdown document with this structure:
 # Backend Requirements: <Feature Name>
 
 ## Context
+
 [What we're building, who it's for, what problem it solves]
 
 ## Screens/Components
 
 ### <Screen/Component Name>
+
 **Purpose**: What this screen does
 
 **Data I need to display**:
+
 - [Description of data piece, not field name]
 - [Relationships between pieces]
 
 **Actions**:
+
 - [Action description] → [Expected outcome]
 
 **States to handle**:
+
 - **Empty**: [When/why this happens]
 - **Loading**: [What's being fetched]
 - **Error**: [What can go wrong, what user sees]
 
 **Business rules affecting UI**:
+
 - [Rule that changes what's visible/enabled]
 
 ## Uncertainties
+
 - [ ] Not sure if [X] should show when [Y]
 
 ## Questions for Backend
+
 - Would it make sense to combine [X] and [Y]?
 
 ## Discussion Log
+
 [Backend responses, decisions made, changes to requirements]
 ```
 
 ## Usage Examples
 
 ### Good Request (Describing Needs)
->
-> "I need to show a list of contracts. Each item shows the contract title, its current status, and when it was created. User should be able to filter by status."
+
+> "I need to show a list of contracts. Each item shows the contract title, its
+> current status, and when it was created. User should be able to filter by
+> status."
 
 ### Bad Request (Dictating Implementation)
->
-> "I need a GET /api/contracts endpoint that returns an array with fields: id, title, status, created_at"
+
+> "I need a GET /api/contracts endpoint that returns an array with fields: id,
+> title, status, created_at"
 
 ### Good Request (Describing Relationship)
->
-> "For each contract, I need to show who the provider is (their name and maybe logo)"
+
+> "For each contract, I need to show who the provider is (their name and maybe
+> logo)"
 
 ### Bad Request (Assuming Structure)
->
+
 > "The provider object should be nested inside the contract response"
 
 ## Workflow
 
 1. **Describe the feature** - What is it, who uses it, what's the goal
-2. **List data needs** - Information to display, actions to perform, states to handle
-3. **Surface uncertainties** - Business rules you don't understand, edge cases, guesses
+2. **List data needs** - Information to display, actions to perform, states to
+   handle
+3. **Surface uncertainties** - Business rules you don't understand, edge cases,
+   guesses
 4. **Leave room for discussion** - Open questions for backend team
 5. **Update after feedback** - Add backend responses to Discussion Log
 
@@ -145,7 +169,8 @@ Include phrases like:
 - "Not sure if this is the right way to think about it"
 - "Push back if this complicates things unnecessarily"
 
-Good collaboration = frontend describes the problem, backend proposes the solution.
+Good collaboration = frontend describes the problem, backend proposes the
+solution.
 
 ## After Backend Responds
 

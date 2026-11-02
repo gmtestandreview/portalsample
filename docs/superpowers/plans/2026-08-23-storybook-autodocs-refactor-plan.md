@@ -79,7 +79,7 @@ overlapping story globs, addon-level Autodocs-like options,
 `typescript.check: true`, a manually injected CSF Vite plugin, and
 `@storybook/addon-styling-webpack`.
 
-The current `preview.ts` correctly enables global Autodocs with:
+The current `preview.tsx` correctly enables global Autodocs with:
 
 ```ts
 tags: ['autodocs'],
@@ -166,7 +166,7 @@ There must be:
 - Read: `package.json`
 - Read: repository lockfile
 - Read: `.storybook/main.ts`
-- Read: `.storybook/preview.ts`
+- Read: `.storybook/preview.tsx`
 - Read: `.storybook/preview-docs.ts`
 - Read: `.storybook/component-docs-guide.mdx`
 - Read: `.storybook/introduction.mdx`
@@ -439,7 +439,7 @@ const repoRoot = resolve(fileURLToPath(new URL('../../../', import.meta.url)));
 const read = (path: string) => readFileSync(resolve(repoRoot, path), 'utf8');
 
 const main = read('.storybook/main.ts');
-const preview = read('.storybook/preview.ts');
+const preview = read('.storybook/preview.tsx');
 const componentDocsGuide = read('.storybook/component-docs-guide.mdx');
 const packageJson = JSON.parse(read('package.json')) as {
   dependencies?: Record<string, string>;
@@ -456,7 +456,7 @@ describe('Storybook documentation architecture', () => {
     expect(main).toContain("framework: '@storybook/react-vite'");
     expect(main).not.toContain('@storybook/addon-styling-webpack');
     expect(allDependencies).not.toHaveProperty(
-      '@storybook/addon-styling-webpack'
+      '@storybook/addon-styling-webpack',
     );
   });
 
@@ -464,7 +464,7 @@ describe('Storybook documentation architecture', () => {
     expect(main).toContain("'../.storybook/*.mdx'");
     expect(main).toContain("'../ClientApp/src/**/*.mdx'");
     expect(main).toContain(
-      "'../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'"
+      "'../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'",
     );
 
     expect(main).not.toContain("'../ClientApp/src/**/*.stories.@(ts|tsx)'");
@@ -473,7 +473,7 @@ describe('Storybook documentation architecture', () => {
 
   it('owns generated docs naming and docs mode in main.ts', () => {
     expect(main).toMatch(
-      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/
+      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/,
     );
     expect(main).toMatch(/docs:\s*\{[\s\S]*docsMode:\s*false/);
   });
@@ -503,21 +503,21 @@ describe('Storybook documentation architecture', () => {
 
   it('does not replace inferred component descriptions globally', () => {
     expect(preview).not.toContain(
-      'Component documentation generated from JSDoc comments and Storybook autodocs.'
+      'Component documentation generated from JSDoc comments and Storybook autodocs.',
     );
   });
 
   it('does not clone Storybook default Autodocs template', () => {
     expect(preview).not.toContain('autoDocsTemplate');
     expect(existsSync(resolve(repoRoot, '.storybook/preview-docs.ts'))).toBe(
-      false
+      false,
     );
   });
 
   it('teaches the correct Autodocs tag and opt-out mechanism', () => {
     expect(componentDocsGuide).not.toMatch(/Adding the ['"]docs['"] Tag/i);
     expect(componentDocsGuide).not.toMatch(
-      /add(?:ing)? the ['"]docs['"] tag.*autodocs/i
+      /add(?:ing)? the ['"]docs['"] tag.*autodocs/i,
     );
 
     expect(componentDocsGuide).toContain('autodocs');
@@ -697,7 +697,7 @@ with:
 },
 ```
 
-Autodocs activation remains in `preview.ts`, not here.
+Autodocs activation remains in `preview.tsx`, not here.
 
 - [ ] **Step 6: Remove the Webpack styling addon registration**
 
@@ -753,7 +753,7 @@ Storybook changes.
 & $pm exec vitest run tests/unit/storybook/storybookDocsConfig.test.ts
 ```
 
-Expected: some tests remain RED because `preview.ts`, `preview-docs.ts`, and
+Expected: some tests remain RED because `preview.tsx`, `preview-docs.ts`, and
 developer guidance have not yet been changed.
 
 The `main.ts`-specific assertions must now pass.
@@ -796,11 +796,11 @@ Only stage the actual repository lockfile.
 
 ---
 
-## Task 4: Refactor `preview.ts`, Enable Code Panel and Remove Shadow Autodocs Configuration
+## Task 4: Refactor `preview.tsx`, Enable Code Panel and Remove Shadow Autodocs Configuration
 
 **Files:**
 
-- Modify: `.storybook/preview.ts`
+- Modify: `.storybook/preview.tsx`
 - Delete: `.storybook/preview-docs.ts`
 
 **Interfaces:**
@@ -913,7 +913,7 @@ Remove-Item -Recurse -Force storybook-static-task4
 - [ ] **Step 10: Commit**
 
 ```bash
-git add .storybook/preview.ts .storybook/preview-docs.ts
+git add .storybook/preview.tsx .storybook/preview-docs.ts
 git commit -m "refactor: simplify Storybook autodocs preview policy"
 ```
 
@@ -963,7 +963,7 @@ Replace it with:
 ````mdx
 ### Autodocs policy
 
-Autodocs is enabled globally by `.storybook/preview.ts`:
+Autodocs is enabled globally by `.storybook/preview.tsx`:
 
 ```ts
 tags: ['autodocs'];
@@ -1007,7 +1007,7 @@ export const InternalState: Story = {
 
 Do not use `'docs'` as an Autodocs activation tag.
 
-````mdx
+`````mdx
 - [ ] **Step 2: Add Args versus ArgTypes guidance**
 
 Add:
@@ -1028,8 +1028,9 @@ export const Primary: Story = {
 };
 ```
 ````
+`````
 
-````text
+`````text
 
 #### ArgTypes
 
@@ -1069,19 +1070,19 @@ Storybook parameters are static metadata used by stories and addons.
 Configuration is inherited from least specific to most specific:
 
 ```text
-project (`preview.ts`)
+project (`preview.tsx`)
         ↓
 component (`meta`)
         ↓
 story
 ```
-````
+`````
 
-````text
+`````text
 
 More specific configuration overrides inherited configuration.
 
-Put project-wide policy in `preview.ts`. Use component or story parameters only
+Put project-wide policy in `preview.tsx`. Use component or story parameters only
 for deliberate exceptions.
 
 Example:
@@ -1126,7 +1127,7 @@ Controls, Code Panel output, and regression coverage.
 A JSDoc `@example` may still be useful to IDE consumers, but it is not the
 project's canonical Storybook example mechanism.
 ```
-````
+`````
 
 - [ ] **Step 5: Correct `@internal` guidance**
 
@@ -1156,7 +1157,7 @@ argTypes: {
 ```
 ````
 
-````mdx
+`````mdx
 - [ ] **Step 6: Add Code Panel and Source guidance**
 
 Add:
@@ -1174,8 +1175,9 @@ parameters: {
 },
 ```
 ````
+`````
 
-````text
+`````text
 
 Storybook's Code Panel and Source Doc Block use the same source configuration:
 
@@ -1236,9 +1238,9 @@ Use buttons to trigger actions.
 
 <Controls />
 ```
-````
+`````
 
-````text
+`````text
 
 Always pass the full story-module exports to `<Meta of={...} />`, not the
 component itself.
@@ -1266,7 +1268,7 @@ Document:
 
 `Title`, `Subtitle`, `TableOfContents`, `Markdown`, `Unstyled`
 ```
-````
+`````
 
 State explicitly:
 
@@ -1588,7 +1590,7 @@ for (const file of requiredFiles) {
 }
 
 const index = JSON.parse(
-  await readFile(resolve(staticDir, 'index.json'), 'utf8')
+  await readFile(resolve(staticDir, 'index.json'), 'utf8'),
 );
 
 const entries = Object.values(index.entries ?? {});
@@ -1609,12 +1611,12 @@ if (storyEntries.length === 0) {
 }
 
 const hasDocumentationSection = docsEntries.some((entry) =>
-  String(entry.title ?? '').startsWith('Documentation/')
+  String(entry.title ?? '').startsWith('Documentation/'),
 );
 
 if (!hasDocumentationSection) {
   throw new Error(
-    'Expected at least one standalone Documentation/* MDX entry.'
+    'Expected at least one standalone Documentation/* MDX entry.',
   );
 }
 
@@ -1627,8 +1629,8 @@ console.log(
       documentationSection: hasDocumentationSection,
     },
     null,
-    2
-  )
+    2,
+  ),
 );
 ```
 
@@ -2375,7 +2377,7 @@ A `typescript` block should remain absent unless Task 10 proves
 
 ---
 
-## Final Expected `preview.ts` Documentation Shape
+## Final Expected `preview.tsx` Documentation Shape
 
 The final relevant structure should resemble:
 
@@ -2464,7 +2466,7 @@ of the following are true:
 - [ ] Developer guidance no longer teaches `'docs'` as the Autodocs trigger.
 - [ ] `!autodocs` is documented correctly.
 - [ ] `defaultName` and `docsMode` are owned by `main.ts → docs`.
-- [ ] Duplicate Autodocs state has been removed from `preview.ts`.
+- [ ] Duplicate Autodocs state has been removed from `preview.tsx`.
 - [ ] Global generic component description has been removed.
 - [ ] Default Autodocs template duplication has been removed.
 - [ ] Code Panel is globally enabled.

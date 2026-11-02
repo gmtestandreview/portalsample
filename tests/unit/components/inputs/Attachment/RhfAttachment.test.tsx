@@ -8,11 +8,18 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect, useState } from 'react';
+import type { ComponentProps } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import type { Resolver, UseFormReturn } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import type { AttachmentDto } from '@/api/web-api-client';
 import AttachmentNew from '@/components/Inputs/RhfAttachment';
+
+type AttachmentProps = ComponentProps<typeof AttachmentNew>;
+type UploadFiles = NonNullable<AttachmentProps['onUploadFiles']>;
+type DeleteFile = NonNullable<AttachmentProps['onDeleteFile']>;
+type CancelFile = NonNullable<AttachmentProps['handleCancelFile']>;
+type CategoryUpdate = NonNullable<AttachmentProps['onCategoryUpdate']>;
 import { FileStatus } from '@/routes/ta/types';
 
 interface AttachmentHarnessProps {
@@ -92,8 +99,8 @@ function AttachmentHarness({
         maxFiles={3}
         maxSizeInMB={1}
         allowedTypes='.pdf, .jpg'
-        onUploadFiles={async () => [uploadedAttachment]}
-        onDeleteFile={async () => {}}
+        onUploadFiles={() => Promise.resolve([uploadedAttachment])}
+        onDeleteFile={() => Promise.resolve()}
         setErrors={setErrors}
         {...props}
       />
@@ -117,18 +124,20 @@ const changeFileInput = (files: File[]) => {
 const renderAttachment = (
   initialAttachmentValue: AttachmentHarnessProps['initialAttachmentValue'],
   props?: AttachmentHarnessProps['props'],
-  useComponentDefaults = false
+  useComponentDefaults = false,
 ) =>
   render(
     <AttachmentHarness
       initialAttachmentValue={initialAttachmentValue}
       {...(props === undefined ? {} : { props })}
       useComponentDefaults={useComponentDefaults}
-    />
+    />,
   );
 
-describe('RhfAttachment', () => {
-  it('renders upload controls with help text, disabled state, and file constraints', () => {
+describe('rhfAttachment', () => {
+  it('renders upload controls with help text and disabled state', () => {
+    expect.hasAssertions();
+
     renderAttachment([], {
       className: 'drop-target',
       containerClassName: 'attachment-container',
@@ -136,42 +145,61 @@ describe('RhfAttachment', () => {
     });
 
     expect(
-      screen.getByLabelText('Upload supporting documents')
+      screen.getByLabelText('Upload supporting documents'),
     ).toBeInTheDocument();
     expect(screen.getByText('Upload files for assessment')).toHaveAttribute(
       'id',
-      'help-supporting-documents'
+      'help-supporting-documents',
     );
     expect(
-      screen.getByTestId('drag-upload-supporting-documents')
+      screen.getByTestId('drag-upload-supporting-documents'),
     ).toBeDisabled();
     expect(screen.getByTestId('supporting-documents')).toBeDisabled();
-    expect(screen.getByText('.pdf, .jpg')).toBeInTheDocument();
-    expect(
-      screen.getByText(
+  });
+
+  it('renders upload file constraints', () => {
+    expect.hasAssertions();
+
+    renderAttachment([], {
+      className: 'drop-target',
+      containerClassName: 'attachment-container',
+      disableUpload: true,
+    });
+
+    expect({
+      fileTypes: screen.getByText('.pdf, .jpg').textContent,
+      maximumSize: screen.getByText(
         (_, element) =>
-          element?.textContent === 'Maximum size for each file: 1MB each'
-      )
-    ).toBeInTheDocument();
+          element?.textContent === 'Maximum size for each file: 1MB each',
+      ).textContent,
+    }).toStrictEqual({
+      fileTypes: '.pdf, .jpg',
+      maximumSize: 'Maximum size for each file: 1MB each',
+    });
   });
 
   it('uses default upload button labels and forwards browse clicks to the file input', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const inputClick = vi.spyOn(HTMLInputElement.prototype, 'click');
     renderAttachment([], undefined, true);
 
     expect(screen.getByTestId('drag-upload-attachments')).toHaveAttribute(
       'title',
-      'Drag files here'
+      'Drag files here',
     );
 
     await user.click(screen.getByTestId('attachments'));
 
-    expect(inputClick).toHaveBeenCalled();
+    expect(inputClick).toHaveBeenCalledWith();
+
     inputClick.mockRestore();
   });
 
   it('prevents default browser handling when the file label is clicked', () => {
+    expect.hasAssertions();
+
     renderAttachment([]);
     const clickEvent = new MouseEvent('click', {
       bubbles: true,
@@ -183,11 +211,13 @@ describe('RhfAttachment', () => {
       .getByLabelText('Upload supporting documents')
       .dispatchEvent(clickEvent);
 
-    expect(preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalledWith();
   });
 
   it('ignores a change event that carries no file list', () => {
-    const onUploadFiles = vi.fn();
+    expect.hasAssertions();
+
+    const onUploadFiles = vi.fn<UploadFiles>();
     renderAttachment([], { onUploadFiles });
     const input = screen.getByTestId('drag-upload-supporting-documents');
 
@@ -202,6 +232,8 @@ describe('RhfAttachment', () => {
   });
 
   it('renders summary attachments or a no-details fallback', () => {
+    expect.hasAssertions();
+
     const { rerender } = renderAttachment([], { isSummary: true });
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
@@ -210,17 +242,21 @@ describe('RhfAttachment', () => {
       <AttachmentHarness
         initialAttachmentValue={[uploadedAttachment]}
         props={{ isSummary: true }}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('link', { name: 'manual.pdf' })
+      screen.getByRole('link', { name: 'manual.pdf' }),
     ).toBeInTheDocument();
     expect(screen.queryByText('No details added')).not.toBeInTheDocument();
   });
 
-  it('reports invalid extensions and too many selected files without uploading', async () => {
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+  it('reports invalid extensions and too many selected files without uploading', () => {
+    expect.hasAssertions();
+
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], {
       maxFiles: 1,
       onUploadFiles,
@@ -233,17 +269,21 @@ describe('RhfAttachment', () => {
 
     expect(onUploadFiles).not.toHaveBeenCalled();
     expect(
-      screen.getByText('Files must be one of the following types: .pdf, .jpg')
+      screen.getByText('Files must be one of the following types: .pdf, .jpg'),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'The files selected have not been uploaded as you have selected more files than the maximum number allowed - (1).'
-      )
+        'The files selected have not been uploaded as you have selected more files than the maximum number allowed - (1).',
+      ),
     ).toBeInTheDocument();
   });
 
   it('reports a missing extension with singular file and allowed-type wording', () => {
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    expect.hasAssertions();
+
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], {
       allowedTypes: '.pdf',
       onUploadFiles,
@@ -253,13 +293,17 @@ describe('RhfAttachment', () => {
 
     expect(onUploadFiles).not.toHaveBeenCalled();
     expect(
-      screen.getByText('File must be of the following type: .pdf')
+      screen.getByText('File must be of the following type: .pdf'),
     ).toBeInTheDocument();
   });
 
   it('reports a single oversized file without uploading it', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue(uploadedAttachment);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue(uploadedAttachment);
     renderAttachment(null, {
       allowMultiple: false,
       allowedTypes: '.pdf',
@@ -269,38 +313,65 @@ describe('RhfAttachment', () => {
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('large.pdf', 1024 * 1024 + 1)
+      file('large.pdf', 1024 * 1024 + 1),
     );
 
     expect(onUploadFiles).not.toHaveBeenCalled();
     expect(
-      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.')
+      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
     ).toBeInTheDocument();
   });
 
   it('uploads one valid file into the attachment list', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], { onUploadFiles });
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('manual.pdf', 10)
+      file('manual.pdf', 10),
     );
 
     await waitFor(() =>
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
-      ])
+      ]),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachments":[{"id":"doc-1"'
-      )
+        '"attachments":[{"id":"doc-1"',
+      ),
+    );
+  });
+
+  it('normalizes a single uploaded attachment object into a list', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue(uploadedAttachment);
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachments":[{"id":"doc-1"',
+      ),
     );
   });
 
   it('uploads multiple valid files and replaces the attachment list with the server result', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const result = [
       {
@@ -309,7 +380,7 @@ describe('RhfAttachment', () => {
         attachmentName: 'diagram.jpg',
       },
     ] satisfies AttachmentDto[];
-    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    const onUploadFiles = vi.fn<UploadFiles>().mockResolvedValue(result);
     renderAttachment([uploadedAttachment], {
       onUploadFiles,
     });
@@ -323,19 +394,22 @@ describe('RhfAttachment', () => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
         expect.objectContaining({ name: 'diagram.jpg' }),
-      ])
+      ]),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentName":"diagram.jpg"'
-      )
+        '"attachmentName":"diagram.jpg"',
+      ),
     );
+
     expect(screen.getByTestId('values')).not.toHaveTextContent(
-      '"attachmentName":"manual.pdf"'
+      '"attachmentName":"manual.pdf"',
     );
   });
 
   it('reports oversized files in a batch and uploads the files within the size limit', async () => {
+    expect.hasAssertions();
+
     const result = [
       {
         ...uploadedAttachment,
@@ -343,7 +417,7 @@ describe('RhfAttachment', () => {
         attachmentName: 'small.pdf',
       },
     ] satisfies AttachmentDto[];
-    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    const onUploadFiles = vi.fn<UploadFiles>().mockResolvedValue(result);
     renderAttachment([], { onUploadFiles });
 
     changeFileInput([
@@ -354,23 +428,29 @@ describe('RhfAttachment', () => {
     await waitFor(() =>
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'small.pdf' }),
-      ])
+      ]),
     );
+
     expect(
-      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.')
+      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
     ).toBeInTheDocument();
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentName":"small.pdf"'
-      )
+        '"attachmentName":"small.pdf"',
+      ),
     );
   });
 
   it('stores a single-file upload as a one-item list while progress is still running', async () => {
     // Single-file mode used to store a lone object here, which AttachmentItemNew could not read
     // because it addresses its field as `name[index]`. The field is always a list now.
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment(null, {
       allowMultiple: false,
       onUploadFiles,
@@ -385,26 +465,29 @@ describe('RhfAttachment', () => {
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('manual.pdf', 10)
+      file('manual.pdf', 10),
     );
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachments":[{"id":"doc-1"'
-      )
+        '"attachments":[{"id":"doc-1"',
+      ),
     );
+
     expect(
-      screen.getByRole('progressbar', { name: 'Uploading' })
+      screen.getByRole('progressbar', { name: 'Uploading' }),
     ).toBeInTheDocument();
   });
 
   it('points the control at its validation message once the form is submitted', async () => {
     // Until the form is submitted the control is described by its help text; afterwards the
     // error takes over, so assistive tech announces the problem rather than the hint.
+    expect.hasAssertions();
+
     render(
       <AttachmentHarness
         initialAttachmentValue={[]}
-        resolver={async () => ({
+        resolver={() => ({
           values: {},
           errors: {
             attachments: {
@@ -413,12 +496,13 @@ describe('RhfAttachment', () => {
             },
           },
         })}
-      />
+      />,
     );
     const button = screen.getByTestId('supporting-documents');
+
     expect(button).toHaveAttribute(
       'aria-describedby',
-      'help-supporting-documents'
+      'help-supporting-documents',
     );
 
     await act(async () => {
@@ -427,14 +511,19 @@ describe('RhfAttachment', () => {
 
     expect(button).toHaveAttribute(
       'aria-describedby',
-      'supporting-documents-validation-msg'
+      'supporting-documents-validation-msg',
     );
   });
 
   it('shows the missing-category message on every row after a submit attempt', async () => {
+    expect.hasAssertions();
+
     renderAttachment([{ ...uploadedAttachment, attachmentCategory: '' }]);
+
     expect(
-      screen.queryByText('Select a category that best describes this document.')
+      screen.queryByText(
+        'Select a category that best describes this document.',
+      ),
     ).not.toBeInTheDocument();
 
     await act(async () => {
@@ -442,11 +531,13 @@ describe('RhfAttachment', () => {
     });
 
     expect(
-      screen.getByText('Select a category that best describes this document.')
+      screen.getByText('Select a category that best describes this document.'),
     ).toBeInTheDocument();
   });
 
   it('keeps describing the control with its help text when the form is valid', async () => {
+    expect.hasAssertions();
+
     renderAttachment([]);
 
     await act(async () => {
@@ -455,13 +546,15 @@ describe('RhfAttachment', () => {
 
     expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
       'aria-describedby',
-      'help-supporting-documents'
+      'help-supporting-documents',
     );
   });
 
   it('reports server validation errors from a failed upload', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockRejectedValue({
+    const onUploadFiles = vi.fn<UploadFiles>().mockRejectedValue({
       errors: {
         first: 'Virus scan failed',
         second: 'Document could not be stored',
@@ -471,18 +564,49 @@ describe('RhfAttachment', () => {
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('manual.pdf', 10)
+      file('manual.pdf', 10),
     );
 
-    expect(await screen.findByText('Virus scan failed')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Virus scan failed'),
+    ).resolves.toBeInTheDocument();
     expect(
-      screen.getByText('Document could not be stored')
+      screen.getByText('Document could not be stored'),
     ).toBeInTheDocument();
   });
 
-  it('renders active upload progress with cancellable file rows', async () => {
+  it('recovers without listing errors when a failed upload has no errors collection', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const handleCancelFile = vi.fn().mockResolvedValue(undefined);
+    // A rejection whose problem details carry no `errors` map exercises the
+    // `?? {}` fallback: Object.values({}).flat() yields nothing to display.
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockRejectedValue({ title: 'Server exploded' });
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await waitFor(() =>
+      expect(onUploadFiles).toHaveBeenCalledWith([expect.any(File)]),
+    );
+
+    expect(
+      within(screen.getByRole('list', { name: 'upload errors' })).queryByRole(
+        'listitem',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders active upload progress with cancellable file rows', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const handleCancelFile = vi.fn<CancelFile>().mockResolvedValue(undefined);
     renderAttachment([], {
       handleCancelFile,
       progress: {
@@ -502,12 +626,12 @@ describe('RhfAttachment', () => {
     });
 
     expect(
-      screen.getByRole('progressbar', { name: 'Uploading' })
+      screen.getByRole('progressbar', { name: 'Uploading' }),
     ).toHaveAttribute('aria-valuenow', '25');
     expect(screen.getByText('1 / 4 files processed')).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole('button', { name: 'Cancel uploading manual.pdf' })
+      screen.getByRole('button', { name: 'Cancel uploading manual.pdf' }),
     );
 
     expect(handleCancelFile).toHaveBeenCalledWith('manual.pdf');
@@ -515,6 +639,8 @@ describe('RhfAttachment', () => {
   });
 
   it('shows uploaded attachments once progress is complete', () => {
+    expect.hasAssertions();
+
     renderAttachment([uploadedAttachment], {
       progress: {
         status: 'Completed',
@@ -526,35 +652,42 @@ describe('RhfAttachment', () => {
     });
 
     expect(
-      screen.queryByRole('progressbar', { name: 'Completed' })
+      screen.queryByRole('progressbar', { name: 'Completed' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: '1 files uploaded' })
+      screen.getByRole('heading', { name: '1 files uploaded' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Select a category to classify each document')
+      screen.getByText('Select a category to classify each document'),
     ).toBeInTheDocument();
   });
 
   it('deletes an existing attachment and removes it from the field value', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+    const onDeleteFile = vi.fn<DeleteFile>().mockResolvedValue(undefined);
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
+
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"attachments":[]')
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachments":[]',
+      ),
     );
   });
 
   it('does not call delete when the selected attachment has no id', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi.spyOn(console, 'error');
     try {
       const user = userEvent.setup();
-      const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+      const onDeleteFile = vi.fn<DeleteFile>().mockResolvedValue(undefined);
       renderAttachment(
         [
           {
@@ -562,7 +695,7 @@ describe('RhfAttachment', () => {
             id: undefined,
           },
         ],
-        { onDeleteFile }
+        { onDeleteFile },
       );
 
       await user.click(screen.getByRole('button', { name: /^Delete / }));
@@ -570,7 +703,7 @@ describe('RhfAttachment', () => {
 
       expect(onDeleteFile).not.toHaveBeenCalled();
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentName":"manual.pdf"'
+        '"attachmentName":"manual.pdf"',
       );
       expect(consoleError).not.toHaveBeenCalled();
     } finally {
@@ -579,20 +712,26 @@ describe('RhfAttachment', () => {
   });
 
   it('reports delete failures without removing the attachment', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onDeleteFile = vi.fn().mockRejectedValue('Delete failed');
+    const onDeleteFile = vi.fn<DeleteFile>().mockRejectedValue('Delete failed');
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
-    expect(await screen.findByText('Delete failed')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Delete failed'),
+    ).resolves.toBeInTheDocument();
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"attachmentName":"manual.pdf"'
+      '"attachmentName":"manual.pdf"',
     );
   });
 
   it('keeps a locked attachment in summary mode without delete controls', () => {
+    expect.hasAssertions();
+
     renderAttachment([
       {
         ...uploadedAttachment,
@@ -603,15 +742,18 @@ describe('RhfAttachment', () => {
     const attachmentRegion = screen
       .getByText('manual.pdf')
       .closest('.attachment');
+
     expect(attachmentRegion).not.toBeNull();
     expect(
       within(attachmentRegion as HTMLElement).queryByRole('button', {
         name: /^Delete /,
-      })
+      }),
     ).not.toBeInTheDocument();
   });
 
   it('shows uploaded attachments when progress completed with errors', () => {
+    expect.hasAssertions();
+
     renderAttachment([uploadedAttachment], {
       progress: {
         status: 'CompletedWithErrors',
@@ -623,16 +765,18 @@ describe('RhfAttachment', () => {
     });
 
     expect(
-      screen.queryByRole('progressbar', { name: 'CompletedWithErrors' })
+      screen.queryByRole('progressbar', { name: 'CompletedWithErrors' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: '1 files uploaded' })
+      screen.getByRole('heading', { name: '1 files uploaded' }),
     ).toBeInTheDocument();
   });
 
   it('treats a field holding a single object as empty rather than throwing', () => {
     // A form is free to hand over a bare object; the item addresses its field as
     // `name.index.attachmentCategory`, so the control normalises to a list first.
+    expect.hasAssertions();
+
     renderAttachment(uploadedAttachment);
 
     expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument();
@@ -640,24 +784,26 @@ describe('RhfAttachment', () => {
   });
 
   it('survives an upload that finishes after the control has gone', async () => {
+    expect.hasAssertions();
+
     let finishUpload: (value: AttachmentDto[]) => void = () => {};
-    const onUploadFiles = vi.fn(
+    const onUploadFiles = vi.fn<UploadFiles>(
       () =>
         new Promise<AttachmentDto[]>((resolve) => {
           finishUpload = resolve;
-        })
+        }),
     );
     const { unmount } = renderAttachment([], { onUploadFiles });
 
     await userEvent.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('manual.pdf', 10)
+      file('manual.pdf', 10),
     );
     await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
 
     // The post-upload reset of the file input has nothing to write to once the ref detaches.
     unmount();
-    await act(async () => {
+    act(() => {
       finishUpload([uploadedAttachment]);
     });
 
@@ -665,12 +811,14 @@ describe('RhfAttachment', () => {
   });
 
   it('survives a delete that finishes after the control has gone', async () => {
+    expect.hasAssertions();
+
     let finishDelete: () => void = () => {};
-    const onDeleteFile = vi.fn(
+    const onDeleteFile = vi.fn<DeleteFile>(
       () =>
         new Promise<void>((resolve) => {
           finishDelete = resolve;
-        })
+        }),
     );
     const { unmount } = renderAttachment([uploadedAttachment], {
       onDeleteFile,
@@ -681,7 +829,7 @@ describe('RhfAttachment', () => {
     await waitFor(() => expect(onDeleteFile).toHaveBeenCalledWith('doc-1'));
 
     unmount();
-    await act(async () => {
+    act(() => {
       finishDelete();
     });
 
@@ -689,26 +837,32 @@ describe('RhfAttachment', () => {
   });
 
   it('shows an error and keeps the saved category when a category update fails', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('offline'));
     renderAttachment([uploadedAttachment], { onCategoryUpdate });
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
 
-    expect(
-      await within(
-        screen.getByRole('list', { name: 'upload errors' })
-      ).findByText('Could not save the category for manual.pdf.')
-    ).toBeInTheDocument();
+    await expect(
+      within(screen.getByRole('list', { name: 'upload errors' })).findByText(
+        'Could not save the category for manual.pdf.',
+      ),
+    ).resolves.toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-      'Manuals'
+      'Manuals',
     );
   });
 
   it('keeps the remaining category when an earlier attachment is deleted', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const second = {
       ...uploadedAttachment,
@@ -722,10 +876,11 @@ describe('RhfAttachment', () => {
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     await waitFor(() =>
-      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument()
+      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument(),
     );
+
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-      'Certificate'
+      'Certificate',
     );
   });
 
@@ -743,26 +898,28 @@ describe('RhfAttachment', () => {
       screen.getByText(fileName).closest('.attachment') as HTMLElement;
     const touchCategory = async (
       user: ReturnType<typeof userEvent.setup>,
-      fileName: string
+      fileName: string,
     ) => {
       await user.click(
-        within(rowOf(fileName)).getByRole('combobox', { name: 'Category' })
+        within(rowOf(fileName)).getByRole('combobox', { name: 'Category' }),
       );
       await user.tab();
     };
     const deleteDocument = async (
       user: ReturnType<typeof userEvent.setup>,
       id: string,
-      fileName: string
+      fileName: string,
     ) => {
       await user.click(screen.getByTestId(`cancel-button-${id}`));
       await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
       await waitFor(() =>
-        expect(screen.queryByText(fileName)).not.toBeInTheDocument()
+        expect(screen.queryByText(fileName)).not.toBeInTheDocument(),
       );
     };
 
     it('shows no error on an untouched row that moves up after a touched row is deleted', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       renderAttachment([
         uncategorised('doc-1', 'first.pdf'),
@@ -770,11 +927,12 @@ describe('RhfAttachment', () => {
       ]);
 
       await touchCategory(user, 'first.pdf');
+
       expect(
-        within(rowOf('first.pdf')).getByText(CATEGORY_ERROR)
+        within(rowOf('first.pdf')).getByText(CATEGORY_ERROR),
       ).toBeInTheDocument();
       expect(
-        within(rowOf('second.pdf')).queryByText(CATEGORY_ERROR)
+        within(rowOf('second.pdf')).queryByText(CATEGORY_ERROR),
       ).not.toBeInTheDocument();
 
       await deleteDocument(user, 'doc-1', 'first.pdf');
@@ -783,30 +941,36 @@ describe('RhfAttachment', () => {
     });
 
     it('shows no stale error on a different document that replaces a touched one on re-upload', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const onUploadFiles = vi
-        .fn()
+        .fn<UploadFiles>()
         .mockResolvedValue([uncategorised('doc-2', 'second.pdf')]);
       renderAttachment([uncategorised('doc-1', 'first.pdf')], {
         onUploadFiles,
       });
 
       await touchCategory(user, 'first.pdf');
+
       expect(screen.getByText(CATEGORY_ERROR)).toBeInTheDocument();
 
       await user.upload(
         screen.getByTestId('drag-upload-supporting-documents'),
-        file('second.pdf', 10)
+        file('second.pdf', 10),
       );
 
       await waitFor(() =>
-        expect(screen.getByText('second.pdf')).toBeInTheDocument()
+        expect(screen.getByText('second.pdf')).toBeInTheDocument(),
       );
+
       expect(screen.queryByText('first.pdf')).not.toBeInTheDocument();
       expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
     });
 
     it('keeps the error on a touched row that moves up, and not on the row behind it', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       renderAttachment([
         uncategorised('doc-1', 'first.pdf'),
@@ -818,14 +982,16 @@ describe('RhfAttachment', () => {
       await deleteDocument(user, 'doc-1', 'first.pdf');
 
       expect(
-        within(rowOf('second.pdf')).getByText(CATEGORY_ERROR)
+        within(rowOf('second.pdf')).getByText(CATEGORY_ERROR),
       ).toBeInTheDocument();
       expect(
-        within(rowOf('third.pdf')).queryByText(CATEGORY_ERROR)
+        within(rowOf('third.pdf')).queryByText(CATEGORY_ERROR),
       ).not.toBeInTheDocument();
     });
 
     it('still shows the error on every category-less row after a submit attempt', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       renderAttachment([
         uncategorised('doc-1', 'first.pdf'),
@@ -843,6 +1009,8 @@ describe('RhfAttachment', () => {
   });
 
   it('reverts the right document when an earlier row is deleted mid-save', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const second = {
       ...uploadedAttachment,
@@ -854,7 +1022,9 @@ describe('RhfAttachment', () => {
     const savePromise = new Promise<void>((_, reject) => {
       rejectSave = () => reject(new Error('offline'));
     });
-    const onCategoryUpdate = vi.fn().mockReturnValue(savePromise);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockReturnValue(savePromise);
     renderAttachment([uploadedAttachment, second], { onCategoryUpdate });
 
     const secondRow = screen.getByText('second.pdf').closest('.attachment')!;
@@ -862,12 +1032,12 @@ describe('RhfAttachment', () => {
       within(secondRow as HTMLElement).getByRole('combobox', {
         name: 'Category',
       }),
-      'Other'
+      'Other',
     );
     await user.click(screen.getByTestId('cancel-button-doc-1'));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
     await waitFor(() =>
-      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument()
+      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument(),
     );
     await act(async () => {
       rejectSave();
@@ -876,12 +1046,13 @@ describe('RhfAttachment', () => {
 
     await waitFor(() =>
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
-        'Certificate'
-      )
+        'Certificate',
+      ),
     );
     const values = JSON.parse(
-      screen.getByTestId('values').textContent ?? '{}'
+      screen.getByTestId('values').textContent ?? '{}',
     ) as { attachments: AttachmentDto[] };
+
     expect(values.attachments).toHaveLength(1);
     expect(values.attachments[0]).toMatchObject({
       id: 'doc-2',
@@ -890,8 +1061,12 @@ describe('RhfAttachment', () => {
   });
 
   it('lists the same category-save failure once when it repeats', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('offline'));
     renderAttachment([uploadedAttachment], { onCategoryUpdate });
     const select = screen.getByRole('combobox', { name: 'Category' });
 
@@ -902,9 +1077,9 @@ describe('RhfAttachment', () => {
     await waitFor(() =>
       expect(
         within(
-          screen.getByRole('list', { name: 'upload errors' })
-        ).getAllByText('Could not save the category for manual.pdf.')
-      ).toHaveLength(1)
+          screen.getByRole('list', { name: 'upload errors' }),
+        ).getAllByText('Could not save the category for manual.pdf.'),
+      ).toHaveLength(1),
     );
   });
 });

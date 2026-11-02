@@ -1,4 +1,3 @@
-import { isFunction, isString } from 'lodash';
 import type { MouseEventHandler, ReactNode } from 'react';
 import PrimaryButton from '../../Buttons/PrimaryButton';
 
@@ -26,7 +25,11 @@ const IntentButton = ({
   className,
   mode,
 }: Readonly<IntentButtonProps>) => {
-  if (children === undefined || isString(children) || !isFunction(children)) {
+  if (
+    children === undefined ||
+    typeof children === 'string' ||
+    typeof children !== 'function'
+  ) {
     return (
       <PrimaryButton
         data-testid={testId}

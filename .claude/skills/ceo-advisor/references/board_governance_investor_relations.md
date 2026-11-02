@@ -13,40 +13,40 @@
 
 #### Board Roles
 
-| Role | Responsibilities | Typical Background |
-| ------ | ----------------- | ------------------- |
-| Chairman | Board leadership, CEO liaison | Former CEO, Industry veteran |
-| Lead Independent Director | Independent voice, executive sessions | Senior executive experience |
-| Audit Committee Chair | Financial oversight, auditor relationship | CFO/CPA background |
-| Compensation Committee Chair | Executive compensation, succession | HR/Executive experience |
-| Nominating Committee Chair | Board composition, governance | Governance expertise |
+| Role                         | Responsibilities                          | Typical Background           |
+| ---------------------------- | ----------------------------------------- | ---------------------------- |
+| Chairman                     | Board leadership, CEO liaison             | Former CEO, Industry veteran |
+| Lead Independent Director    | Independent voice, executive sessions     | Senior executive experience  |
+| Audit Committee Chair        | Financial oversight, auditor relationship | CFO/CPA background           |
+| Compensation Committee Chair | Executive compensation, succession        | HR/Executive experience      |
+| Nominating Committee Chair   | Board composition, governance             | Governance expertise         |
 
 ### Board Meeting Management
 
 #### Annual Board Calendar
 
-**Q1 Meeting**
+##### Q1 Meeting
 
 - Annual strategy review
 - Previous year performance
 - Current year priorities
 - Risk assessment update
 
-**Q2 Meeting**
+##### Q2 Meeting
 
 - Q1 results review
 - Strategic initiative progress
 - Competitive landscape
 - Talent review
 
-**Q3 Meeting**
+##### Q3 Meeting
 
 - Mid-year performance
 - Budget preview
 - Strategic planning session
 - Succession planning
 
-**Q4 Meeting**
+##### Q4 Meeting
 
 - Annual budget approval
 - Executive compensation
@@ -55,25 +55,25 @@
 
 #### Meeting Preparation Timeline
 
-**T-4 Weeks**
+##### T-4 Weeks
 
 - Agenda draft to Chairman
 - Pre-read preparation begins
 - Committee meetings scheduled
 
-**T-2 Weeks**
+##### T-2 Weeks
 
 - Materials to review committee
 - Final agenda confirmation
 - Logistics coordination
 
-**T-1 Week**
+##### T-1 Week
 
 - Board package distribution
 - Pre-meeting calls as needed
 - Final preparations
 
-**T-0 Meeting Day**
+##### T-0 Meeting Day
 
 - Executive session (start)
 - Board meeting
@@ -123,9 +123,9 @@
 
 #### Between Meetings
 
-**Monthly Update Email**
+##### Monthly Update Email
 
-```
+```text
 Subject: [Company] CEO Update - [Month Year]
 
 Board Members,
@@ -158,7 +158,7 @@ Best,
 
 #### Managing Difficult Conversations
 
-**Delivering Bad News**
+##### Delivering Bad News
 
 1. Don't delay - inform promptly
 2. Lead with facts
@@ -166,7 +166,7 @@ Best,
 4. Present action plan
 5. Set realistic timeline
 
-**Handling Dissent**
+##### Handling Dissent
 
 1. Listen fully
 2. Acknowledge concerns
@@ -210,14 +210,14 @@ Best,
 
 #### Earnings Release Template
 
-```
+```text
 [COMPANY] REPORTS [QUARTER] [YEAR] RESULTS
 
 [City, Date] - [Company] (TICKER) today reported results for [quarter]:
 
 Financial Highlights:
 • Revenue: $X (±Y% YoY)
-• Net Income: $X (±Y% YoY)  
+• Net Income: $X (±Y% YoY)
 • EPS: $X (±Y% YoY)
 • [Other key metric]
 
@@ -243,10 +243,10 @@ Contact:
 
 #### Earnings Call Script Structure
 
-**CEO Opening (5 minutes)**
+##### CEO Opening (5 minutes)
 
-```
-Good [morning/afternoon], and welcome to [Company's] 
+```text
+Good [morning/afternoon], and welcome to [Company's]
 [Quarter] earnings call.
 
 Today I'll cover:
@@ -260,9 +260,9 @@ Today I'll cover:
 I'll now turn it over to our CFO...
 ```
 
-**CFO Section (10 minutes)**
+##### CFO Section (10 minutes)
 
-```
+```text
 Thank you [CEO name].
 
 Financial Performance:
@@ -279,7 +279,7 @@ Guidance:
 Now back to [CEO] for closing remarks...
 ```
 
-**Q&A Management**
+##### Q&A Management
 
 - Anticipate top 10 questions
 - Prepare fact sheets
@@ -326,35 +326,35 @@ Now back to [CEO] for closing remarks...
 
 #### 6-Month Planning Timeline
 
-**T-6 Months**
+##### T-6 Months
 
 - Set date and venue
 - Define objectives
 - Identify speakers
 - Begin content development
 
-**T-4 Months**
+##### T-4 Months
 
 - Develop presentations
 - Coordinate logistics
 - Begin rehearsals
 - Create save-the-date
 
-**T-2 Months**
+##### T-2 Months
 
 - Finalize content
 - Complete rehearsals
 - Send invitations
 - Prepare materials
 
-**T-1 Month**
+##### T-1 Month
 
 - Final preparations
 - Media training
 - Q&A preparation
 - Technology testing
 
-**T-0 Event Day**
+##### T-0 Event Day
 
 - Execute program
 - Manage Q&A
@@ -363,7 +363,7 @@ Now back to [CEO] for closing remarks...
 
 #### Agenda Template
 
-```
+```text
 8:00 AM - Registration & Breakfast
 8:30 AM - CEO Welcome & Vision
 9:00 AM - Market Opportunity
@@ -388,14 +388,14 @@ Now back to [CEO] for closing remarks...
 
 #### Response Playbook
 
-**1. Preparation Phase**
+##### 1. Preparation Phase
 
 - Vulnerability assessment
 - Response team formation
 - Advisor engagement
 - Board alignment
 
-**2. Engagement Phase**
+##### 2. Engagement Phase
 
 - Direct dialogue
 - Understanding demands
@@ -409,7 +409,7 @@ Now back to [CEO] for closing remarks...
 - Shareholder outreach
 - Media strategy
 
-**4. Resolution Phase**
+##### 4. Resolution Phase
 
 - Settlement negotiations
 - Implementation planning
@@ -420,13 +420,13 @@ Now back to [CEO] for closing remarks...
 
 #### Key Filings
 
-| Form | Purpose | Timing |
-| ------ | --------- | -------- |
-| 10-K | Annual report | 60-90 days after FY end |
-| 10-Q | Quarterly report | 40-45 days after Q end |
-| 8-K | Material events | 4 business days |
-| DEF 14A | Proxy statement | Before annual meeting |
-| S-1/S-3 | Securities registration | As needed |
+| Form    | Purpose                 | Timing                  |
+| ------- | ----------------------- | ----------------------- |
+| 10-K    | Annual report           | 60-90 days after FY end |
+| 10-Q    | Quarterly report        | 40-45 days after Q end  |
+| 8-K     | Material events         | 4 business days         |
+| DEF 14A | Proxy statement         | Before annual meeting   |
+| S-1/S-3 | Securities registration | As needed               |
 
 #### Disclosure Requirements
 
@@ -450,28 +450,28 @@ Now back to [CEO] for closing remarks...
 
 #### IR Crisis Response
 
-**Hour 1: Assessment**
+##### Hour 1: Assessment
 
 - Gather facts
 - Assess materiality
 - Consult legal
 - Prepare holding statement
 
-**Hours 2-4: Response**
+##### Hours 2-4: Response
 
 - Draft 8-K if required
 - Prepare FAQ
 - Update website
 - Notify exchanges
 
-**Hours 4-8: Communication**
+##### Hours 4-8: Communication
 
 - Issue press release
 - Update analysts
 - Employee communication
 - Monitor reactions
 
-**Day 2+: Follow-up**
+##### Day 2+: Follow-up
 
 - Investor calls
 - Media interviews
@@ -543,9 +543,8 @@ Now back to [CEO] for closing remarks...
 
 ### Executive Session Management
 
-**Frequency**: Every board meeting
-**Duration**: 30-60 minutes
-**Participants**: Independent directors only
+**Frequency**: Every board meeting **Duration**: 30-60 minutes **Participants**:
+Independent directors only
 
 **Typical Topics**:
 
@@ -605,7 +604,7 @@ Now back to [CEO] for closing remarks...
 
 ### Board Resolution Template
 
-```
+```text
 BOARD RESOLUTION
 
 WHEREAS, [background/context];

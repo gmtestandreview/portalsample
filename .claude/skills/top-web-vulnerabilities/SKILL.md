@@ -1,20 +1,35 @@
 ---
 name: Top 100 Web Vulnerabilities Reference
-description: This skill should be used when the user asks to "identify web application vulnerabilities", "explain common security flaws", "understand vulnerability categories", "learn about injection attacks", "review access control weaknesses", "analyze API security issues", "assess security misconfigurations", "understand client-side vulnerabilities", "examine mobile and IoT security flaws", or "reference the OWASP-aligned vulnerability taxonomy". Use this skill to provide comprehensive vulnerability definitions, root causes, impacts, and mitigation strategies across all major web security categories.
+description:
+  This skill should be used when the user asks to "identify web application
+  vulnerabilities", "explain common security flaws", "understand vulnerability
+  categories", "learn about injection attacks", "review access control
+  weaknesses", "analyze API security issues", "assess security
+  misconfigurations", "understand client-side vulnerabilities", "examine mobile
+  and IoT security flaws", or "reference the OWASP-aligned vulnerability
+  taxonomy". Use this skill to provide comprehensive vulnerability definitions,
+  root causes, impacts, and mitigation strategies across all major web security
+  categories.
 metadata:
   author: zebbern
-  version: "1.1"
+  version: '1.1'
 ---
 
 # Top 100 Web Vulnerabilities Reference
 
 ## Purpose
 
-Provide a comprehensive, structured reference for the 100 most critical web application vulnerabilities organized by category. This skill enables systematic vulnerability identification, impact assessment, and remediation guidance across the full spectrum of web security threats. Content organized into 15 major vulnerability categories aligned with industry standards and real-world attack patterns.
+Provide a comprehensive, structured reference for the 100 most critical web
+application vulnerabilities organized by category. This skill enables systematic
+vulnerability identification, impact assessment, and remediation guidance across
+the full spectrum of web security threats. Content organized into 15 major
+vulnerability categories aligned with industry standards and real-world attack
+patterns.
 
 ## Prerequisites
 
-- Basic understanding of web application architecture (client-server model, HTTP protocol)
+- Basic understanding of web application architecture (client-server model, HTTP
+  protocol)
 - Familiarity with common web technologies (HTML, JavaScript, SQL, XML, APIs)
 - Understanding of authentication and authorization concepts
 - Access to web application security testing tools (Burp Suite, OWASP ZAP)
@@ -22,7 +37,8 @@ Provide a comprehensive, structured reference for the 100 most critical web appl
 
 ## Outputs and Deliverables
 
-- Complete vulnerability catalog with definitions, root causes, impacts, and mitigations
+- Complete vulnerability catalog with definitions, root causes, impacts, and
+  mitigations
 - Category-based vulnerability groupings for systematic assessment
 - Quick reference for security testing and remediation
 - Foundation for vulnerability assessment checklists and security policies
@@ -37,24 +53,29 @@ Evaluate injection attack vectors targeting data processing components:
 
 **SQL Injection (1)**
 
-- Definition: Malicious SQL code inserted into input fields to manipulate database queries
+- Definition: Malicious SQL code inserted into input fields to manipulate
+  database queries
 - Root Cause: Lack of input validation, improper use of parameterized queries
 - Impact: Unauthorized data access, data manipulation, database compromise
-- Mitigation: Use parameterized queries/prepared statements, input validation, least privilege database accounts
+- Mitigation: Use parameterized queries/prepared statements, input validation,
+  least privilege database accounts
 
 **Cross-Site Scripting - XSS (2)**
 
-- Definition: Injection of malicious scripts into web pages viewed by other users
+- Definition: Injection of malicious scripts into web pages viewed by other
+  users
 - Root Cause: Insufficient output encoding, lack of input sanitization
 - Impact: Session hijacking, credential theft, website defacement
 - Mitigation: Output encoding, Content Security Policy (CSP), input sanitization
 
 **Command Injection (5, 11)**
 
-- Definition: Execution of arbitrary system commands through vulnerable applications
+- Definition: Execution of arbitrary system commands through vulnerable
+  applications
 - Root Cause: Unsanitized user input passed to system shells
 - Impact: Full system compromise, data exfiltration, lateral movement
-- Mitigation: Avoid shell execution, whitelist valid commands, strict input validation
+- Mitigation: Avoid shell execution, whitelist valid commands, strict input
+  validation
 
 **XML Injection (6), LDAP Injection (7), XPath Injection (8)**
 
@@ -68,7 +89,8 @@ Evaluate injection attack vectors targeting data processing components:
 - Definition: Injection of malicious code into template engines
 - Root Cause: User input embedded directly in template expressions
 - Impact: Remote code execution, server compromise
-- Mitigation: Sandbox template engines, avoid user input in templates, strict input validation
+- Mitigation: Sandbox template engines, avoid user input in templates, strict
+  input validation
 
 ### Phase 2: Authentication and Session Security
 
@@ -79,7 +101,8 @@ Assess authentication mechanism weaknesses:
 - Definition: Attacker sets victim's session ID before authentication
 - Root Cause: Session ID not regenerated after login
 - Impact: Session hijacking, unauthorized account access
-- Mitigation: Regenerate session ID on authentication, use secure session management
+- Mitigation: Regenerate session ID on authentication, use secure session
+  management
 
 **Brute Force Attack (15)**
 
@@ -93,7 +116,8 @@ Assess authentication mechanism weaknesses:
 - Definition: Attacker steals or predicts valid session tokens
 - Root Cause: Weak session token generation, insecure transmission
 - Impact: Account takeover, unauthorized access
-- Mitigation: Secure random token generation, HTTPS, HttpOnly/Secure cookie flags
+- Mitigation: Secure random token generation, HTTPS, HttpOnly/Secure cookie
+  flags
 
 **Credential Stuffing and Reuse (22)**
 
@@ -125,7 +149,8 @@ Identify data protection failures:
 - Definition: Direct access to internal objects via user-supplied references
 - Root Cause: Missing authorization checks on object access
 - Impact: Unauthorized data access, privacy breaches
-- Mitigation: Access control validation, indirect reference maps, authorization checks
+- Mitigation: Access control validation, indirect reference maps, authorization
+  checks
 
 **Data Leakage (24)**
 
@@ -199,7 +224,8 @@ Assess configuration weaknesses:
 - Definition: Systems running outdated vulnerable software
 - Root Cause: Neglected patch management
 - Impact: Exploitation of known vulnerabilities
-- Mitigation: Patch management program, vulnerability scanning, automated updates
+- Mitigation: Patch management program, vulnerability scanning, automated
+  updates
 
 ### Phase 5: XML-Related Vulnerabilities
 
@@ -274,7 +300,8 @@ Evaluate object serialization security:
 - Definition: Arbitrary code execution through malicious serialized objects
 - Root Cause: Untrusted data deserialized without validation
 - Impact: Complete system compromise, code execution
-- Mitigation: Avoid deserializing untrusted data, integrity checks, type validation
+- Mitigation: Avoid deserializing untrusted data, integrity checks, type
+  validation
 
 **Data Tampering (46)**
 
@@ -459,42 +486,42 @@ Assess SSRF vulnerabilities:
 
 ### Phase 13: Additional Web Vulnerabilities
 
-| # | Vulnerability | Root Cause | Impact | Mitigation |
-| --- | -------------- | ----------- | -------- | ------------ |
-| 67 | HTTP Parameter Pollution | Inconsistent parsing | Injection, ACL bypass | Strict parsing, validation |
-| 68 | Insecure Redirects | Unvalidated targets | Phishing, malware | Whitelist destinations |
-| 69 | File Inclusion (LFI/RFI) | Unvalidated paths | Code exec, disclosure | Whitelist files, disable RFI |
-| 70 | Security Header Bypass | Misconfigured headers | XSS, clickjacking | Proper headers, audits |
-| 72 | Inadequate Session Timeout | Excessive timeouts | Session hijacking | Idle termination, timeouts |
-| 73 | Insufficient Logging | Missing infrastructure | Detection gaps | SIEM, alerting |
-| 74 | Business Logic Flaws | Insecure design | Fraud, unauthorized ops | Threat modeling, testing |
+| #   | Vulnerability              | Root Cause             | Impact                  | Mitigation                   |
+| --- | -------------------------- | ---------------------- | ----------------------- | ---------------------------- |
+| 67  | HTTP Parameter Pollution   | Inconsistent parsing   | Injection, ACL bypass   | Strict parsing, validation   |
+| 68  | Insecure Redirects         | Unvalidated targets    | Phishing, malware       | Whitelist destinations       |
+| 69  | File Inclusion (LFI/RFI)   | Unvalidated paths      | Code exec, disclosure   | Whitelist files, disable RFI |
+| 70  | Security Header Bypass     | Misconfigured headers  | XSS, clickjacking       | Proper headers, audits       |
+| 72  | Inadequate Session Timeout | Excessive timeouts     | Session hijacking       | Idle termination, timeouts   |
+| 73  | Insufficient Logging       | Missing infrastructure | Detection gaps          | SIEM, alerting               |
+| 74  | Business Logic Flaws       | Insecure design        | Fraud, unauthorized ops | Threat modeling, testing     |
 
 ### Phase 14: Mobile and IoT Security
 
-| # | Vulnerability | Root Cause | Impact | Mitigation |
-| --- | -------------- | ----------- | -------- | ------------ |
-| 76 | Insecure Mobile Storage | Plain text, weak crypto | Data theft | Keychain/Keystore, encrypt |
-| 77 | Insecure Mobile Transmission | HTTP, cert failures | Traffic interception | TLS, cert pinning |
-| 78 | Insecure Mobile APIs | Missing auth/validation | Data exposure | OAuth/JWT, validation |
-| 79 | App Reverse Engineering | Hardcoded creds | Credential theft | Obfuscation, RASP |
-| 80 | IoT Management Issues | Weak auth, no TLS | Device takeover | Strong auth, TLS |
-| 81 | Weak IoT Authentication | Default passwords | Unauthorized access | Unique creds, MFA |
-| 82 | IoT Vulnerabilities | Design flaws, old firmware | Botnet recruitment | Updates, segmentation |
-| 83 | Smart Home Access | Insecure defaults | Privacy invasion | MFA, segmentation |
-| 84 | IoT Privacy Issues | Excessive collection | Surveillance | Data minimization |
+| #   | Vulnerability                | Root Cause                 | Impact               | Mitigation                 |
+| --- | ---------------------------- | -------------------------- | -------------------- | -------------------------- |
+| 76  | Insecure Mobile Storage      | Plain text, weak crypto    | Data theft           | Keychain/Keystore, encrypt |
+| 77  | Insecure Mobile Transmission | HTTP, cert failures        | Traffic interception | TLS, cert pinning          |
+| 78  | Insecure Mobile APIs         | Missing auth/validation    | Data exposure        | OAuth/JWT, validation      |
+| 79  | App Reverse Engineering      | Hardcoded creds            | Credential theft     | Obfuscation, RASP          |
+| 80  | IoT Management Issues        | Weak auth, no TLS          | Device takeover      | Strong auth, TLS           |
+| 81  | Weak IoT Authentication      | Default passwords          | Unauthorized access  | Unique creds, MFA          |
+| 82  | IoT Vulnerabilities          | Design flaws, old firmware | Botnet recruitment   | Updates, segmentation      |
+| 83  | Smart Home Access            | Insecure defaults          | Privacy invasion     | MFA, segmentation          |
+| 84  | IoT Privacy Issues           | Excessive collection       | Surveillance         | Data minimization          |
 
 ### Phase 15: Advanced and Zero-Day Threats
 
-| # | Vulnerability | Root Cause | Impact | Mitigation |
-| --- | -------------- | ----------- | -------- | ------------ |
-| 89 | MIME Sniffing | Missing headers | XSS, spoofing | X-Content-Type-Options |
-| 91 | CSP Bypass | Weak config | XSS despite CSP | Strict CSP, nonces |
-| 92 | Inconsistent Validation | Decentralized logic | Control bypass | Centralized validation |
-| 93 | Race Conditions | Missing sync | Privilege escalation | Proper locking |
-| 94-95 | Business Logic Flaws | Missing validation | Financial fraud | Server-side validation |
-| 96 | Account Enumeration | Different responses | Targeted attacks | Uniform responses |
-| 98-99 | Unpatched Vulnerabilities | Patch delays | Zero-day exploitation | Patch management |
-| 100 | Zero-Day Exploits | Unknown vulns | Unmitigated attacks | Defense in depth |
+| #     | Vulnerability             | Root Cause          | Impact                | Mitigation             |
+| ----- | ------------------------- | ------------------- | --------------------- | ---------------------- |
+| 89    | MIME Sniffing             | Missing headers     | XSS, spoofing         | X-Content-Type-Options |
+| 91    | CSP Bypass                | Weak config         | XSS despite CSP       | Strict CSP, nonces     |
+| 92    | Inconsistent Validation   | Decentralized logic | Control bypass        | Centralized validation |
+| 93    | Race Conditions           | Missing sync        | Privilege escalation  | Proper locking         |
+| 94-95 | Business Logic Flaws      | Missing validation  | Financial fraud       | Server-side validation |
+| 96    | Account Enumeration       | Different responses | Targeted attacks      | Uniform responses      |
+| 98-99 | Unpatched Vulnerabilities | Patch delays        | Zero-day exploitation | Patch management       |
+| 100   | Zero-Day Exploits         | Unknown vulns       | Unmitigated attacks   | Defense in depth       |
 
 ---
 
@@ -502,23 +529,23 @@ Assess SSRF vulnerabilities:
 
 ### Vulnerability Categories Summary
 
-| Category | Vulnerability Numbers | Key Controls |
-| ---------- | ---------------------- | -------------- |
-| Injection | 1-13 | Parameterized queries, input validation, output encoding |
-| Authentication | 14-23, 85-86 | MFA, session management, account lockout |
-| Data Exposure | 24-27 | Encryption at rest/transit, access controls, DLP |
-| Misconfiguration | 28-36 | Secure defaults, hardening, patching |
-| XML | 37-39, 65 | Disable external entities, limit expansion |
-| Access Control | 40-44 | RBAC, least privilege, authorization checks |
-| Deserialization | 45-47 | Avoid untrusted data, integrity validation |
-| API Security | 48-51, 75 | OAuth, rate limiting, input validation |
-| Communication | 52-55 | TLS 1.2+, certificate validation, HTTPS |
-| Client-Side | 56-60 | CSP, X-Frame-Options, safe DOM |
-| DoS | 61-65 | Rate limiting, DDoS protection, resource limits |
-| SSRF | 66, 87-88 | URL whitelisting, egress filtering |
-| Mobile/IoT | 76-84 | Encryption, authentication, secure storage |
-| Business Logic | 74, 92-97 | Threat modeling, logic testing |
-| Zero-Day | 98-100 | Defense in depth, threat intelligence |
+| Category         | Vulnerability Numbers | Key Controls                                             |
+| ---------------- | --------------------- | -------------------------------------------------------- |
+| Injection        | 1-13                  | Parameterized queries, input validation, output encoding |
+| Authentication   | 14-23, 85-86          | MFA, session management, account lockout                 |
+| Data Exposure    | 24-27                 | Encryption at rest/transit, access controls, DLP         |
+| Misconfiguration | 28-36                 | Secure defaults, hardening, patching                     |
+| XML              | 37-39, 65             | Disable external entities, limit expansion               |
+| Access Control   | 40-44                 | RBAC, least privilege, authorization checks              |
+| Deserialization  | 45-47                 | Avoid untrusted data, integrity validation               |
+| API Security     | 48-51, 75             | OAuth, rate limiting, input validation                   |
+| Communication    | 52-55                 | TLS 1.2+, certificate validation, HTTPS                  |
+| Client-Side      | 56-60                 | CSP, X-Frame-Options, safe DOM                           |
+| DoS              | 61-65                 | Rate limiting, DDoS protection, resource limits          |
+| SSRF             | 66, 87-88             | URL whitelisting, egress filtering                       |
+| Mobile/IoT       | 76-84                 | Encryption, authentication, secure storage               |
+| Business Logic   | 74, 92-97             | Threat modeling, logic testing                           |
+| Zero-Day         | 98-100                | Defense in depth, threat intelligence                    |
 
 ### Critical Security Headers
 
@@ -534,29 +561,32 @@ Permissions-Policy: geolocation=(), microphone=()
 
 ### OWASP Top 10 Mapping
 
-| OWASP 2021 | Related Vulnerabilities |
-| ------------ | ------------------------ |
-| A01: Broken Access Control | 40-44, 23, 74 |
-| A02: Cryptographic Failures | 24-25, 53-55 |
-| A03: Injection | 1-13, 37-39 |
-| A04: Insecure Design | 74, 92-97 |
-| A05: Security Misconfiguration | 26-36 |
-| A06: Vulnerable Components | 34, 98-100 |
-| A07: Auth Failures | 14-23, 85-86 |
-| A08: Data Integrity | 45-47 |
-| A09: Logging Failures | 73 |
-| A10: SSRF | 66, 87-88 |
+| OWASP 2021                     | Related Vulnerabilities |
+| ------------------------------ | ----------------------- |
+| A01: Broken Access Control     | 40-44, 23, 74           |
+| A02: Cryptographic Failures    | 24-25, 53-55            |
+| A03: Injection                 | 1-13, 37-39             |
+| A04: Insecure Design           | 74, 92-97               |
+| A05: Security Misconfiguration | 26-36                   |
+| A06: Vulnerable Components     | 34, 98-100              |
+| A07: Auth Failures             | 14-23, 85-86            |
+| A08: Data Integrity            | 45-47                   |
+| A09: Logging Failures          | 73                      |
+| A10: SSRF                      | 66, 87-88               |
 
 ---
 
 ## Constraints and Limitations
 
-- Vulnerability definitions represent common patterns; specific implementations vary
+- Vulnerability definitions represent common patterns; specific implementations
+  vary
 - Mitigations must be adapted to technology stack and architecture
 - New vulnerabilities emerge continuously; reference should be updated
-- Some vulnerabilities overlap across categories (e.g., IDOR appears in multiple contexts)
+- Some vulnerabilities overlap across categories (e.g., IDOR appears in multiple
+  contexts)
 - Effectiveness of mitigations depends on proper implementation
-- Automated scanners cannot detect all vulnerability types (especially business logic)
+- Automated scanners cannot detect all vulnerability types (especially business
+  logic)
 
 ---
 
@@ -564,26 +594,26 @@ Permissions-Policy: geolocation=(), microphone=()
 
 ### Common Assessment Challenges
 
-| Challenge | Solution |
-| ----------- | ---------- |
-| False positives in scanning | Manual verification, contextual analysis |
+| Challenge                   | Solution                                             |
+| --------------------------- | ---------------------------------------------------- |
+| False positives in scanning | Manual verification, contextual analysis             |
 | Business logic flaws missed | Manual testing, threat modeling, abuse case analysis |
-| Encrypted traffic analysis | Proxy configuration, certificate installation |
-| WAF blocking tests | Rate adjustment, IP rotation, payload encoding |
-| Session handling issues | Cookie management, authentication state tracking |
-| API discovery | Swagger/OpenAPI enumeration, traffic analysis |
+| Encrypted traffic analysis  | Proxy configuration, certificate installation        |
+| WAF blocking tests          | Rate adjustment, IP rotation, payload encoding       |
+| Session handling issues     | Cookie management, authentication state tracking     |
+| API discovery               | Swagger/OpenAPI enumeration, traffic analysis        |
 
 ### Vulnerability Verification Techniques
 
-| Vulnerability Type | Verification Approach |
-| ------------------- | ---------------------- |
-| Injection | Payload testing with encoded variants |
-| XSS | Alert boxes, cookie access, DOM inspection |
-| CSRF | Cross-origin form submission testing |
-| SSRF | Out-of-band DNS/HTTP callbacks |
-| XXE | External entity with controlled server |
-| Access Control | Horizontal/vertical privilege testing |
-| Authentication | Credential rotation, session analysis |
+| Vulnerability Type | Verification Approach                      |
+| ------------------ | ------------------------------------------ |
+| Injection          | Payload testing with encoded variants      |
+| XSS                | Alert boxes, cookie access, DOM inspection |
+| CSRF               | Cross-origin form submission testing       |
+| SSRF               | Out-of-band DNS/HTTP callbacks             |
+| XXE                | External entity with controlled server     |
+| Access Control     | Horizontal/vertical privilege testing      |
+| Authentication     | Credential rotation, session analysis      |
 
 ---
 

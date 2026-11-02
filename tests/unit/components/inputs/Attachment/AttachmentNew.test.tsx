@@ -1,10 +1,16 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
+import type { ComponentProps } from 'react';
 import type { FormikConfig, FormikValues } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import type { AttachmentDto } from '@/api/web-api-client';
 import AttachmentNew from '@/components/Inputs/Attachment/index-new';
+
+type AttachmentProps = ComponentProps<typeof AttachmentNew>;
+type UploadFiles = NonNullable<AttachmentProps['onUploadFiles']>;
+type DeleteFile = NonNullable<AttachmentProps['onDeleteFile']>;
+type SetErrors = AttachmentProps['setErrors'];
 
 /**
  * Direct tests for the attachment control.
@@ -63,19 +69,21 @@ const uploaded: AttachmentDto = {
   attachmentSize: '2048',
   attachmentCategory: '',
   documentBytes: 'JVBERi0xLjQ=',
-} as AttachmentDto;
+};
 
 const baseProps = {
   name: 'files',
   maxFiles: 3,
   allowedTypes: '.pdf',
   maxSizeInMB: 5,
-  setErrors: vi.fn(),
-  onDeleteFile: vi.fn(async () => {}),
+  setErrors: vi.fn<SetErrors>(),
+  onDeleteFile: vi.fn<DeleteFile>(async () => {}),
 };
 
-describe('AttachmentNew', () => {
+describe('attachment new behavior', () => {
   it('treats a field holding a single object as empty rather than throwing', () => {
+    expect.hasAssertions();
+
     // The field is typed `AttachmentDto[] | AttachmentDto | null`, so a form is free to hand
     // over a bare object. AttachmentItemNew addresses its field as `name[index]`, which reads
     // undefined against an object - so the control normalises to a list before rendering.
@@ -83,9 +91,9 @@ describe('AttachmentNew', () => {
       <Harness initialValues={{ files: uploaded }}>
         <AttachmentNew
           {...baseProps}
-          onUploadFiles={vi.fn(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument();
@@ -93,6 +101,8 @@ describe('AttachmentNew', () => {
   });
 
   it('points the browse button at the validation message once the field is touched and invalid', () => {
+    expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ files: [] as AttachmentDto[] }}
@@ -101,9 +111,9 @@ describe('AttachmentNew', () => {
       >
         <AttachmentNew
           {...baseProps}
-          onUploadFiles={vi.fn(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
-      </Harness>
+      </Harness>,
     );
 
     // Untouched the button describes itself with the inline help; once touched and invalid it
@@ -111,52 +121,56 @@ describe('AttachmentNew', () => {
     // a blocking message.
     expect(screen.getByTestId('files')).toHaveAttribute(
       'aria-describedby',
-      'files-validation-msg'
+      'files-validation-msg',
     );
   });
 
   it('describes the browse button with the inline help while the field is untouched', () => {
+    expect.hasAssertions();
+
     render(
       <Harness initialValues={{ files: [] as AttachmentDto[] }}>
         <AttachmentNew
           {...baseProps}
           inlineHelp='PDF only, 5MB each'
-          onUploadFiles={vi.fn(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByTestId('files')).toHaveAttribute(
       'aria-describedby',
-      'help-files'
+      'help-files',
     );
   });
 
   it('survives an upload that finishes after the control has gone', async () => {
+    expect.hasAssertions();
+
     let finishUpload: (value: AttachmentDto[]) => void = () => {};
-    const onUploadFiles = vi.fn(
+    const onUploadFiles = vi.fn<UploadFiles>(
       () =>
         new Promise<AttachmentDto[]>((resolve) => {
           finishUpload = resolve;
-        })
+        }),
     );
 
     const { unmount } = render(
       <Harness initialValues={{ files: [] as AttachmentDto[] }}>
         <AttachmentNew {...baseProps} onUploadFiles={onUploadFiles} />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.upload(
       screen.getByTestId('drag-upload-files'),
-      new File(['pdf'], 'manual.pdf', { type: 'application/pdf' })
+      new File(['pdf'], 'manual.pdf', { type: 'application/pdf' }),
     );
     await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
 
     // Navigating away mid-upload detaches the ref, so the post-upload reset of the file input
     // has nothing to write to. It must not throw on the way out.
     unmount();
-    await act(async () => {
+    act(() => {
       finishUpload([uploaded]);
     });
 
@@ -164,12 +178,14 @@ describe('AttachmentNew', () => {
   });
 
   it('survives a delete that finishes after the control has gone', async () => {
+    expect.hasAssertions();
+
     let finishDelete: () => void = () => {};
-    const onDeleteFile = vi.fn(
+    const onDeleteFile = vi.fn<DeleteFile>(
       () =>
         new Promise<void>((resolve) => {
           finishDelete = resolve;
-        })
+        }),
     );
 
     const { unmount } = render(
@@ -177,9 +193,9 @@ describe('AttachmentNew', () => {
         <AttachmentNew
           {...baseProps}
           onDeleteFile={onDeleteFile}
-          onUploadFiles={vi.fn(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByTestId('cancel-button-doc-1'));
@@ -189,7 +205,7 @@ describe('AttachmentNew', () => {
     // Same detached-ref path as the upload case: the delete handler clears the file input once
     // the server confirms, and by then the control may be gone.
     unmount();
-    await act(async () => {
+    act(() => {
       finishDelete();
     });
 

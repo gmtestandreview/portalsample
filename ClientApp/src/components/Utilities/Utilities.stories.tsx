@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { fn } from 'storybook/test';
 import ContactLink from './ContactLink';
 import SkipLinks from './skipLinks';
@@ -6,23 +6,20 @@ import BackToTopButton from './backToTopButton';
 import ViewPdfButton from './ViewPdfButton';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Utilities',
   component: ContactLink,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'padded',
   },
-} satisfies Meta<typeof ContactLink>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const ContactActions: Story = {
+export const ContactActions = meta.story({
   render: () => <ContactLink />,
-};
+});
 
-export const SkipAndTopNavigation: Story = {
+export const SkipAndTopNavigation = meta.story({
   render: () => (
     <div style={{ minHeight: 320 }}>
       <SkipLinks />
@@ -33,9 +30,9 @@ export const SkipAndTopNavigation: Story = {
       <BackToTopButton />
     </div>
   ),
-};
+});
 
-export const PdfActionLoaded: Story = {
+export const PdfActionLoaded = meta.story({
   render: () => (
     <div style={{ minWidth: 360 }}>
       <ViewPdfButton
@@ -47,9 +44,9 @@ export const PdfActionLoaded: Story = {
       />
     </div>
   ),
-};
+});
 
-export const PdfActionLoading: Story = {
+export const PdfActionLoading = meta.story({
   render: () => (
     <div style={{ minWidth: 360 }}>
       <ViewPdfButton
@@ -61,4 +58,4 @@ export const PdfActionLoading: Story = {
       />
     </div>
   ),
-};
+});

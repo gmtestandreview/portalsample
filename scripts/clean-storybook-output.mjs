@@ -12,7 +12,7 @@ if (
   !outputDir.startsWith(`${cwd}${path.sep}`)
 ) {
   throw new Error(
-    `Refusing to clean unexpected Storybook output path: ${outputDir}`
+    `Refusing to clean unexpected Storybook output path: ${outputDir}`,
   );
 }
 

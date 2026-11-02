@@ -45,22 +45,25 @@ const router = Router();
 const controller = new UserController();
 
 // ✅ CLEAN: Route definition only
-router.get('/:id',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.getUser(req, res)
+router.get(
+  '/:id',
+  SSOMiddlewareClient.verifyLoginStatus,
+  auditMiddleware,
+  async (req, res) => controller.getUser(req, res),
 );
 
-router.post('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.createUser(req, res)
+router.post(
+  '/',
+  SSOMiddlewareClient.verifyLoginStatus,
+  auditMiddleware,
+  async (req, res) => controller.createUser(req, res),
 );
 
-router.put('/:id',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.updateUser(req, res)
+router.put(
+  '/:id',
+  SSOMiddlewareClient.verifyLoginStatus,
+  auditMiddleware,
+  async (req, res) => controller.updateUser(req, res),
 );
 
 export default router;
@@ -97,135 +100,132 @@ import * as Sentry from '@sentry/node';
 import { Response } from 'express';
 
 export abstract class BaseController {
-    /**
-     * Handle errors with Sentry integration
-     */
-    protected handleError(
-        error: unknown,
-        res: Response,
-        context: string,
-        statusCode = 500
-    ): void {
-        Sentry.withScope((scope) => {
-            scope.setTag('controller', this.constructor.name);
-            scope.setTag('operation', context);
-            scope.setUser({ id: res.locals?.claims?.userId });
+  /**
+   * Handle errors with Sentry integration
+   */
+  protected handleError(
+    error: unknown,
+    res: Response,
+    context: string,
+    statusCode = 500,
+  ): void {
+    Sentry.withScope((scope) => {
+      scope.setTag('controller', this.constructor.name);
+      scope.setTag('operation', context);
+      scope.setUser({ id: res.locals?.claims?.userId });
 
-            if (error instanceof Error) {
-                scope.setContext('error_details', {
-                    message: error.message,
-                    stack: error.stack,
-                });
-            }
-
-            Sentry.captureException(error);
+      if (error instanceof Error) {
+        scope.setContext('error_details', {
+          message: error.message,
+          stack: error.stack,
         });
+      }
 
-        res.status(statusCode).json({
-            success: false,
-            error: {
-                message: error instanceof Error ? error.message : 'An error occurred',
-                code: statusCode,
-            },
-        });
+      Sentry.captureException(error);
+    });
+
+    res.status(statusCode).json({
+      success: false,
+      error: {
+        message: error instanceof Error ? error.message : 'An error occurred',
+        code: statusCode,
+      },
+    });
+  }
+
+  /**
+   * Handle success responses
+   */
+  protected handleSuccess<T>(
+    res: Response,
+    data: T,
+    message?: string,
+    statusCode = 200,
+  ): void {
+    res.status(statusCode).json({
+      success: true,
+      message,
+      data,
+    });
+  }
+
+  /**
+   * Performance tracking wrapper
+   */
+  protected async withTransaction<T>(
+    name: string,
+    operation: string,
+    callback: () => Promise<T>,
+  ): Promise<T> {
+    return await Sentry.startSpan({ name, op: operation }, callback);
+  }
+
+  /**
+   * Validate required fields
+   */
+  protected validateRequest(
+    required: string[],
+    actual: Record<string, any>,
+    res: Response,
+  ): boolean {
+    const missing = required.filter((field) => !actual[field]);
+
+    if (missing.length > 0) {
+      Sentry.captureMessage(
+        `Missing required fields: ${missing.join(', ')}`,
+        'warning',
+      );
+
+      res.status(400).json({
+        success: false,
+        error: {
+          message: 'Missing required fields',
+          code: 'VALIDATION_ERROR',
+          details: { missing },
+        },
+      });
+      return false;
     }
+    return true;
+  }
 
-    /**
-     * Handle success responses
-     */
-    protected handleSuccess<T>(
-        res: Response,
-        data: T,
-        message?: string,
-        statusCode = 200
-    ): void {
-        res.status(statusCode).json({
-            success: true,
-            message,
-            data,
-        });
-    }
+  /**
+   * Logging helpers
+   */
+  protected logInfo(message: string, context?: Record<string, any>): void {
+    Sentry.addBreadcrumb({
+      category: this.constructor.name,
+      message,
+      level: 'info',
+      data: context,
+    });
+  }
 
-    /**
-     * Performance tracking wrapper
-     */
-    protected async withTransaction<T>(
-        name: string,
-        operation: string,
-        callback: () => Promise<T>
-    ): Promise<T> {
-        return await Sentry.startSpan(
-            { name, op: operation },
-            callback
-        );
-    }
+  protected logWarning(message: string, context?: Record<string, any>): void {
+    Sentry.captureMessage(message, {
+      level: 'warning',
+      tags: { controller: this.constructor.name },
+      extra: context,
+    });
+  }
 
-    /**
-     * Validate required fields
-     */
-    protected validateRequest(
-        required: string[],
-        actual: Record<string, any>,
-        res: Response
-    ): boolean {
-        const missing = required.filter((field) => !actual[field]);
+  /**
+   * Add Sentry breadcrumb
+   */
+  protected addBreadcrumb(
+    message: string,
+    category: string,
+    data?: Record<string, any>,
+  ): void {
+    Sentry.addBreadcrumb({ message, category, level: 'info', data });
+  }
 
-        if (missing.length > 0) {
-            Sentry.captureMessage(
-                `Missing required fields: ${missing.join(', ')}`,
-                'warning'
-            );
-
-            res.status(400).json({
-                success: false,
-                error: {
-                    message: 'Missing required fields',
-                    code: 'VALIDATION_ERROR',
-                    details: { missing },
-                },
-            });
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Logging helpers
-     */
-    protected logInfo(message: string, context?: Record<string, any>): void {
-        Sentry.addBreadcrumb({
-            category: this.constructor.name,
-            message,
-            level: 'info',
-            data: context,
-        });
-    }
-
-    protected logWarning(message: string, context?: Record<string, any>): void {
-        Sentry.captureMessage(message, {
-            level: 'warning',
-            tags: { controller: this.constructor.name },
-            extra: context,
-        });
-    }
-
-    /**
-     * Add Sentry breadcrumb
-     */
-    protected addBreadcrumb(
-        message: string,
-        category: string,
-        data?: Record<string, any>
-    ): void {
-        Sentry.addBreadcrumb({ message, category, level: 'info', data });
-    }
-
-    /**
-     * Capture custom metric
-     */
-    protected captureMetric(name: string, value: number, unit: string): void {
-        Sentry.metrics.gauge(name, value, { unit });
-    }
+  /**
+   * Capture custom metric
+   */
+  protected captureMetric(name: string, value: number, unit: string): void {
+    Sentry.metrics.gauge(name, value, { unit });
+  }
 }
 ```
 
@@ -239,61 +239,61 @@ import { UserService } from '../services/userService';
 import { createUserSchema } from '../validators/userSchemas';
 
 export class UserController extends BaseController {
-    private userService: UserService;
+  private userService: UserService;
 
-    constructor() {
-        super();
-        this.userService = new UserService();
+  constructor() {
+    super();
+    this.userService = new UserService();
+  }
+
+  async getUser(req: Request, res: Response): Promise<void> {
+    try {
+      this.addBreadcrumb('Fetching user', 'user_controller', {
+        userId: req.params.id,
+      });
+
+      const user = await this.userService.findById(req.params.id);
+
+      if (!user) {
+        return this.handleError(
+          new Error('User not found'),
+          res,
+          'getUser',
+          404,
+        );
+      }
+
+      this.handleSuccess(res, user);
+    } catch (error) {
+      this.handleError(error, res, 'getUser');
     }
+  }
 
-    async getUser(req: Request, res: Response): Promise<void> {
-        try {
-            this.addBreadcrumb('Fetching user', 'user_controller', { userId: req.params.id });
+  async createUser(req: Request, res: Response): Promise<void> {
+    try {
+      // Validate input
+      const validated = createUserSchema.parse(req.body);
 
-            const user = await this.userService.findById(req.params.id);
+      // Track performance
+      const user = await this.withTransaction('user.create', 'db.query', () =>
+        this.userService.create(validated),
+      );
 
-            if (!user) {
-                return this.handleError(
-                    new Error('User not found'),
-                    res,
-                    'getUser',
-                    404
-                );
-            }
-
-            this.handleSuccess(res, user);
-        } catch (error) {
-            this.handleError(error, res, 'getUser');
-        }
+      this.handleSuccess(res, user, 'User created successfully', 201);
+    } catch (error) {
+      this.handleError(error, res, 'createUser');
     }
+  }
 
-    async createUser(req: Request, res: Response): Promise<void> {
-        try {
-            // Validate input
-            const validated = createUserSchema.parse(req.body);
-
-            // Track performance
-            const user = await this.withTransaction(
-                'user.create',
-                'db.query',
-                () => this.userService.create(validated)
-            );
-
-            this.handleSuccess(res, user, 'User created successfully', 201);
-        } catch (error) {
-            this.handleError(error, res, 'createUser');
-        }
+  async updateUser(req: Request, res: Response): Promise<void> {
+    try {
+      const validated = updateUserSchema.parse(req.body);
+      const user = await this.userService.update(req.params.id, validated);
+      this.handleSuccess(res, user, 'User updated');
+    } catch (error) {
+      this.handleError(error, res, 'updateUser');
     }
-
-    async updateUser(req: Request, res: Response): Promise<void> {
-        try {
-            const validated = updateUserSchema.parse(req.body);
-            const user = await this.userService.update(req.params.id, validated);
-            this.handleSuccess(res, user, 'User updated');
-        } catch (error) {
-            this.handleError(error, res, 'updateUser');
-        }
-    }
+  }
 }
 ```
 
@@ -322,19 +322,18 @@ const router = Router();
 const controller = new NotificationController();
 
 // ✅ EXCELLENT: Clean delegation
-router.get('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    async (req, res) => controller.getNotifications(req, res)
+router.get('/', SSOMiddlewareClient.verifyLoginStatus, async (req, res) =>
+  controller.getNotifications(req, res),
 );
 
-router.post('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    async (req, res) => controller.createNotification(req, res)
+router.post('/', SSOMiddlewareClient.verifyLoginStatus, async (req, res) =>
+  controller.createNotification(req, res),
 );
 
-router.put('/:id/read',
-    SSOMiddlewareClient.verifyLoginStatus,
-    async (req, res) => controller.markAsRead(req, res)
+router.put(
+  '/:id/read',
+  SSOMiddlewareClient.verifyLoginStatus,
+  async (req, res) => controller.markAsRead(req, res),
 );
 
 export default router;
@@ -355,24 +354,21 @@ export default router;
 import { z } from 'zod';
 
 const createProxySchema = z.object({
-    originalUserID: z.string().min(1),
-    proxyUserID: z.string().min(1),
-    startsAt: z.string().datetime(),
-    expiresAt: z.string().datetime(),
+  originalUserID: z.string().min(1),
+  proxyUserID: z.string().min(1),
+  startsAt: z.string().datetime(),
+  expiresAt: z.string().datetime(),
 });
 
-router.post('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    async (req, res) => {
-        try {
-            const validated = createProxySchema.parse(req.body);
-            const proxy = await proxyService.createProxyRelationship(validated);
-            res.status(201).json({ success: true, data: proxy });
-        } catch (error) {
-            handler.handleException(res, error);
-        }
-    }
-);
+router.post('/', SSOMiddlewareClient.verifyLoginStatus, async (req, res) => {
+  try {
+    const validated = createProxySchema.parse(req.body);
+    const proxy = await proxyService.createProxyRelationship(validated);
+    res.status(201).json({ success: true, data: proxy });
+  } catch (error) {
+    handler.handleException(res, error);
+  }
+});
 ```
 
 **What Makes This Good:**
@@ -398,52 +394,60 @@ router.post('/',
 ```typescript
 // ❌ ANTI-PATTERN: 200+ lines of business logic in route
 router.post('/:formID/submit', async (req: Request, res: Response) => {
-    try {
-        const username = res.locals.claims.preferred_username;
-        const responses = req.body.responses;
-        const stepInstanceId = req.body.stepInstanceId;
+  try {
+    const username = res.locals.claims.preferred_username;
+    const responses = req.body.responses;
+    const stepInstanceId = req.body.stepInstanceId;
 
-        // ❌ Permission checking in route
-        const userId = await userProfileService.getProfileByEmail(username).then(p => p.id);
-        const canComplete = await permissionService.canCompleteStep(userId, stepInstanceId);
-        if (!canComplete) {
-            return res.status(403).json({ error: 'No permission' });
-        }
-
-        // ❌ Workflow logic in route
-        const { createWorkflowEngine, CompleteStepCommand } = require('../workflow/core/WorkflowEngineV3');
-        const engine = await createWorkflowEngine();
-        const command = new CompleteStepCommand(
-            stepInstanceId,
-            userId,
-            responses,
-            additionalContext
-        );
-        const events = await engine.executeCommand(command);
-
-        // ❌ Impersonation handling in route
-        if (res.locals.isImpersonating) {
-            impersonationContextStore.storeContext(stepInstanceId, {
-                originalUserId: res.locals.originalUserId,
-                effectiveUserId: userId,
-            });
-        }
-
-        // ❌ Response processing in route
-        const post = await PrismaService.main.post.findUnique({
-            where: { id: postData.id },
-            include: { comments: true },
-        });
-
-        // ❌ Permission check in route
-        await checkPostPermissions(post, userId);
-
-        // ... 100+ more lines of business logic
-
-        res.json({ success: true, data: result });
-    } catch (e) {
-        handler.handleException(res, e);
+    // ❌ Permission checking in route
+    const userId = await userProfileService
+      .getProfileByEmail(username)
+      .then((p) => p.id);
+    const canComplete = await permissionService.canCompleteStep(
+      userId,
+      stepInstanceId,
+    );
+    if (!canComplete) {
+      return res.status(403).json({ error: 'No permission' });
     }
+
+    // ❌ Workflow logic in route
+    const {
+      createWorkflowEngine,
+      CompleteStepCommand,
+    } = require('../workflow/core/WorkflowEngineV3');
+    const engine = await createWorkflowEngine();
+    const command = new CompleteStepCommand(
+      stepInstanceId,
+      userId,
+      responses,
+      additionalContext,
+    );
+    const events = await engine.executeCommand(command);
+
+    // ❌ Impersonation handling in route
+    if (res.locals.isImpersonating) {
+      impersonationContextStore.storeContext(stepInstanceId, {
+        originalUserId: res.locals.originalUserId,
+        effectiveUserId: userId,
+      });
+    }
+
+    // ❌ Response processing in route
+    const post = await PrismaService.main.post.findUnique({
+      where: { id: postData.id },
+      include: { comments: true },
+    });
+
+    // ❌ Permission check in route
+    await checkPostPermissions(post, userId);
+
+    // ... 100+ more lines of business logic
+
+    res.json({ success: true, data: result });
+  } catch (e) {
+    handler.handleException(res, e);
+  }
 });
 ```
 
@@ -463,29 +467,29 @@ router.post('/:formID/submit', async (req: Request, res: Response) => {
 ```typescript
 // controllers/PostController.ts
 export class PostController extends BaseController {
-    private postService: PostService;
+  private postService: PostService;
 
-    constructor() {
-        super();
-        this.postService = new PostService();
+  constructor() {
+    super();
+    this.postService = new PostService();
+  }
+
+  async createPost(req: Request, res: Response): Promise<void> {
+    try {
+      const validated = createPostSchema.parse({
+        ...req.body,
+      });
+
+      const result = await this.postService.createPost(
+        validated,
+        res.locals.userId,
+      );
+
+      this.handleSuccess(res, result, 'Post created successfully');
+    } catch (error) {
+      this.handleError(error, res, 'createPost');
     }
-
-    async createPost(req: Request, res: Response): Promise<void> {
-        try {
-            const validated = createPostSchema.parse({
-                ...req.body,
-            });
-
-            const result = await this.postService.createPost(
-                validated,
-                res.locals.userId
-            );
-
-            this.handleSuccess(res, result, 'Post created successfully');
-        } catch (error) {
-            this.handleError(error, res, 'createPost');
-        }
-    }
+  }
 }
 ```
 
@@ -494,42 +498,39 @@ export class PostController extends BaseController {
 ```typescript
 // services/postService.ts
 export class PostService {
-    async createPost(
-        data: CreatePostDTO,
-        userId: string
-    ): Promise<PostResult> {
-        // Permission check
-        const canCreate = await permissionService.canCreatePost(userId);
-        if (!canCreate) {
-            throw new ForbiddenError('No permission to create post');
-        }
-
-        // Execute workflow
-        const engine = await createWorkflowEngine();
-        const command = new CompleteStepCommand(/* ... */);
-        const events = await engine.executeCommand(command);
-
-        // Handle impersonation if needed
-        if (context.isImpersonating) {
-            await this.handleImpersonation(data.stepInstanceId, context);
-        }
-
-        // Synchronize roles
-        await this.synchronizeRoles(events, userId);
-
-        return { events, success: true };
+  async createPost(data: CreatePostDTO, userId: string): Promise<PostResult> {
+    // Permission check
+    const canCreate = await permissionService.canCreatePost(userId);
+    if (!canCreate) {
+      throw new ForbiddenError('No permission to create post');
     }
 
-    private async handleImpersonation(stepInstanceId: number, context: any) {
-        impersonationContextStore.storeContext(stepInstanceId, {
-            originalUserId: context.originalUserId,
-            effectiveUserId: context.effectiveUserId,
-        });
+    // Execute workflow
+    const engine = await createWorkflowEngine();
+    const command = new CompleteStepCommand(/* ... */);
+    const events = await engine.executeCommand(command);
+
+    // Handle impersonation if needed
+    if (context.isImpersonating) {
+      await this.handleImpersonation(data.stepInstanceId, context);
     }
 
-    private async synchronizeRoles(events: WorkflowEvent[], userId: string) {
-        // Role synchronization logic
-    }
+    // Synchronize roles
+    await this.synchronizeRoles(events, userId);
+
+    return { events, success: true };
+  }
+
+  private async handleImpersonation(stepInstanceId: number, context: any) {
+    impersonationContextStore.storeContext(stepInstanceId, {
+      originalUserId: context.originalUserId,
+      effectiveUserId: context.effectiveUserId,
+    });
+  }
+
+  private async synchronizeRoles(events: WorkflowEvent[], userId: string) {
+    // Role synchronization logic
+  }
 }
 ```
 
@@ -543,10 +544,11 @@ const router = Router();
 const controller = new PostController();
 
 // ✅ CLEAN: Just routing
-router.post('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.createPost(req, res)
+router.post(
+  '/',
+  SSOMiddlewareClient.verifyLoginStatus,
+  auditMiddleware,
+  async (req, res) => controller.createPost(req, res),
 );
 ```
 
@@ -626,18 +628,18 @@ async createUser(req: Request, res: Response): Promise<void> {
 
 ### Standard Codes
 
-| Code | Use Case | Example |
-| ------ | ---------- | --------- |
-| 200 | Success (GET, PUT) | User retrieved, Updated |
-| 201 | Created (POST) | User created |
-| 204 | No Content (DELETE) | User deleted |
-| 400 | Bad Request | Invalid input data |
-| 401 | Unauthorized | Not authenticated |
-| 403 | Forbidden | No permission |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Duplicate resource |
-| 422 | Unprocessable Entity | Validation failed |
-| 500 | Internal Server Error | Unexpected error |
+| Code | Use Case              | Example                 |
+| ---- | --------------------- | ----------------------- |
+| 200  | Success (GET, PUT)    | User retrieved, Updated |
+| 201  | Created (POST)        | User created            |
+| 204  | No Content (DELETE)   | User deleted            |
+| 400  | Bad Request           | Invalid input data      |
+| 401  | Unauthorized          | Not authenticated       |
+| 403  | Forbidden             | No permission           |
+| 404  | Not Found             | Resource doesn't exist  |
+| 409  | Conflict              | Duplicate resource      |
+| 422  | Unprocessable Entity  | Validation failed       |
+| 500  | Internal Server Error | Unexpected error        |
 
 ### Usage Examples
 
@@ -741,25 +743,25 @@ export class ActionService {
 ```typescript
 // Service calls repository
 export class ActionService {
-    constructor(private actionRepository: ActionRepository) {}
+  constructor(private actionRepository: ActionRepository) {}
 
-    async execute(data: ActionDTO): Promise<Result> {
-        // Business logic
-        const entity = await this.actionRepository.findById(data.id);
-        // More logic
-        return await this.actionRepository.update(data.id, changes);
-    }
+  async execute(data: ActionDTO): Promise<Result> {
+    // Business logic
+    const entity = await this.actionRepository.findById(data.id);
+    // More logic
+    return await this.actionRepository.update(data.id, changes);
+  }
 }
 
 // Repository handles data access
 export class ActionRepository {
-    async findById(id: number): Promise<Entity | null> {
-        return PrismaService.main.entity.findUnique({ where: { id } });
-    }
+  async findById(id: number): Promise<Entity | null> {
+    return PrismaService.main.entity.findUnique({ where: { id } });
+  }
 
-    async update(id: number, data: Partial<Entity>): Promise<Entity> {
-        return PrismaService.main.entity.update({ where: { id }, data });
-    }
+  async update(id: number, data: Partial<Entity>): Promise<Entity> {
+    return PrismaService.main.entity.update({ where: { id }, data });
+  }
 }
 ```
 
@@ -768,5 +770,6 @@ export class ActionRepository {
 **Related Files:**
 
 - [SKILL.md](SKILL.md) - Main guide
-- [services-and-repositories.md](services-and-repositories.md) - Service layer details
+- [services-and-repositories.md](services-and-repositories.md) - Service layer
+  details
 - [complete-examples.md](complete-examples.md) - Full refactoring examples

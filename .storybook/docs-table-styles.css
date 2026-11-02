@@ -30,6 +30,10 @@
   font-weight: 600;
 }
 
-:where(#storybook-docs, .sbdocs) table:not([class]) tbody tr:nth-child(even) td {
+:where(#storybook-docs, .sbdocs)
+  table:not([class])
+  tbody
+  tr:nth-child(even)
+  td {
   background-color: #f8f9fa;
 }

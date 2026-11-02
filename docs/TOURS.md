@@ -1,26 +1,32 @@
 # Codebase Tours
 
-Interactive, step-by-step walkthroughs of the NMI Portal codebase. Open these in VS Code with the [CodeTour extension](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.codetour).
+Interactive, step-by-step walkthroughs of the NMI Portal codebase. Open these in
+VS Code with the
+[CodeTour extension](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.codetour).
 
 ## How to use
 
-1. Install the [CodeTour VS Code extension](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.codetour)
+1. Install the
+   [CodeTour VS Code extension](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.codetour)
 2. Open this workspace in VS Code
-3. Click the CodeTour icon in the Activity Bar (or use `Ctrl+Shift+P → CodeTour: Start Tour`)
+3. Click the CodeTour icon in the Activity Bar (or use
+   `Ctrl+Shift+P → CodeTour: Start Tour`)
 4. Choose a tour from the list
 
 ---
 
 ## Available Tours
 
-### 1. New Joiner Onboarding *(start here)*
+### 1. New Joiner Onboarding _(start here)_
 
 **File**: `.tours/new-joiner-onboarding.tour.json`  
 **Persona**: Developer joining the team for the first time  
 **Depth**: Standard (14 steps)  
-**Covers**: Directory layout → app bootstrap → router → env config → auth → AccountContext hook → component structure → API client → Yup extensions
+**Covers**: Directory layout → app bootstrap → router → env config → auth →
+AccountContext hook → component structure → API client → Yup extensions
 
-> This is the **primary tour** — VS Code will prompt to start it automatically when you open the workspace.
+> This is the **primary tour** — VS Code will prompt to start it automatically
+> when you open the workspace.
 
 ---
 
@@ -29,16 +35,20 @@ Interactive, step-by-step walkthroughs of the NMI Portal codebase. Open these in
 **File**: `.tours/vibecoder-quickstart.tour.json`  
 **Persona**: Experienced developer who wants the lay of the land fast  
 **Depth**: Quick (7 steps)  
-**Covers**: Bootstrap → routes → auth guard → dashboard → wizard forms → env config
+**Covers**: Bootstrap → routes → auth guard → dashboard → wizard forms → env
+config
 
 ---
 
 ### 3. Architect Overview
 
 **File**: `.tours/architect-overview.tour.json`  
-**Persona**: Tech lead or architect designing the migration to React 19 / .NET 10  
+**Persona**: Tech lead or architect designing the migration to React 19 / .NET
+10  
 **Depth**: Deep (11 steps)  
-**Covers**: Provider hierarchy → route tree → auth composition → AccountContext state machine → WizardForm compound component → Yup module augmentation → App Insights singleton → TrustedTypes CSP → ErrorBoundary (migration blocker)
+**Covers**: Provider hierarchy → route tree → auth composition → AccountContext
+state machine → WizardForm compound component → Yup module augmentation → App
+Insights singleton → TrustedTypes CSP → ErrorBoundary (migration blocker)
 
 ---
 
@@ -47,7 +57,9 @@ Interactive, step-by-step walkthroughs of the NMI Portal codebase. Open these in
 **File**: `.tours/security-auth-boundaries.tour.json`  
 **Persona**: Security reviewer auditing the portal before migration  
 **Depth**: Standard (10 steps)  
-**Covers**: MSAL config → piiLoggingEnabled → redirect error handling → MsalAuthenticationTemplate gate → TrustedTypes policy → DOMPurify → env injection point → ErrorBoundary App Insights → phone validation regex
+**Covers**: MSAL config → piiLoggingEnabled → redirect error handling →
+MsalAuthenticationTemplate gate → TrustedTypes policy → DOMPurify → env
+injection point → ErrorBoundary App Insights → phone validation regex
 
 ---
 
@@ -56,7 +68,9 @@ Interactive, step-by-step walkthroughs of the NMI Portal codebase. Open these in
 **File**: `.tours/wizard-form-deep-dive.tour.json`  
 **Persona**: Developer building or modifying a multi-step form flow  
 **Depth**: Standard (9 steps)  
-**Covers**: WizardForm orchestrator → children validation → route-per-step mapping → wildcard redirect → WizardStep wrapper → WizardFormProps types → UnsavedFormPrompt guard → React 19 migration notes
+**Covers**: WizardForm orchestrator → children validation → route-per-step
+mapping → wildcard redirect → WizardStep wrapper → WizardFormProps types →
+UnsavedFormPrompt guard → React 19 migration notes
 
 ---
 
@@ -65,7 +79,9 @@ Interactive, step-by-step walkthroughs of the NMI Portal codebase. Open these in
 **File**: `.tours/react19-migration-prep.tour.json`  
 **Persona**: Lead engineer scoping the React 18 → 19 upgrade  
 **Depth**: Standard (9 steps)  
-**Covers**: Migration scope → ErrorBoundary blocker → React.Children.toArray blocker → top-level await → StrictMode double-invoke → MSAL compatibility → any casts → Dashboard useEffect dep array → migration checklist
+**Covers**: Migration scope → ErrorBoundary blocker → React.Children.toArray
+blocker → top-level await → StrictMode double-invoke → MSAL compatibility → any
+casts → Dashboard useEffect dep array → migration checklist
 
 ---
 
@@ -91,7 +107,8 @@ Tours should be updated when:
 
 - A file path changes (rename, move)
 - A significant new feature or pattern is introduced
-- A migration blocker is resolved (remove the relevant step or update its description)
+- A migration blocker is resolved (remove the relevant step or update its
+  description)
 - Line numbers shift significantly (verify with the validate script below)
 
 ### Validation

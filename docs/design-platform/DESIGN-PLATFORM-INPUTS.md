@@ -881,7 +881,7 @@ Deciding this early avoids rework.
 **Owner:** [Architect — answer here]
 
 **Answer:** Vite. Target monorepo uses `@storybook/react-vite`. Migrate
-`.storybook/` directory (storybookHarness.tsx, preview.ts, MSW handlers) as-is.
+`.storybook/` directory (storybookHarness.tsx, preview.tsx, MSW handlers) as-is.
 No webpack config or custom loader migration needed. BDD story tests remain
 framework-agnostic at the test layer. _(Architect, 2026-06-04)_
 

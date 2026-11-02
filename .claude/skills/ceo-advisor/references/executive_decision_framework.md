@@ -9,7 +9,7 @@
 **C** - Consider alternatives  
 **I** - Identify best alternatives  
 **D** - Develop and implement action plan  
-**E** - Evaluate and monitor solution  
+**E** - Evaluate and monitor solution
 
 ## Strategic Decision Categories
 
@@ -28,14 +28,14 @@
 
 **Decision Matrix**:
 
-| Factor | Weight | Score (1-10) | Weighted Score |
-| -------- | -------- | -------------- | ---------------- |
-| Market Size | 25% | | |
-| Competition | 20% | | |
-| Fit with Core | 20% | | |
-| Investment Required | 15% | | |
-| Risk Level | 10% | | |
-| Timeline to Profit | 10% | | |
+| Factor              | Weight | Score (1-10) | Weighted Score |
+| ------------------- | ------ | ------------ | -------------- |
+| Market Size         | 25%    |              |                |
+| Competition         | 20%    |              |                |
+| Fit with Core       | 20%    |              |                |
+| Investment Required | 15%    |              |                |
+| Risk Level          | 10%    |              |                |
+| Timeline to Profit  | 10%    |              |                |
 
 #### Product Development
 
@@ -130,12 +130,12 @@ Is it required for operations?
 
 **Performance Evaluation Matrix**:
 
-| Dimension | Weight | Indicators |
-| ----------- | -------- | ------------ |
-| Results Delivery | 40% | KPIs, OKRs achievement |
-| Team Leadership | 25% | Engagement, retention, development |
-| Strategic Thinking | 20% | Innovation, vision, planning |
-| Culture Fit | 15% | Values alignment, collaboration |
+| Dimension          | Weight | Indicators                         |
+| ------------------ | ------ | ---------------------------------- |
+| Results Delivery   | 40%    | KPIs, OKRs achievement             |
+| Team Leadership    | 25%    | Engagement, retention, development |
+| Strategic Thinking | 20%    | Innovation, vision, planning       |
+| Culture Fit        | 15%    | Values alignment, collaboration    |
 
 **Succession Planning**:
 
@@ -171,12 +171,12 @@ Is it required for operations?
 
 #### Crisis Decision Authority
 
-| Crisis Level | Decision Authority | Response Team |
-| -------------- | ------------------- | --------------- |
-| Level 1 (Minor) | Department Head | Local team |
-| Level 2 (Moderate) | C-Suite Member | Cross-functional |
-| Level 3 (Major) | CEO | Executive team |
-| Level 4 (Critical) | CEO + Board | All hands |
+| Crisis Level       | Decision Authority | Response Team    |
+| ------------------ | ------------------ | ---------------- |
+| Level 1 (Minor)    | Department Head    | Local team       |
+| Level 2 (Moderate) | C-Suite Member     | Cross-functional |
+| Level 3 (Major)    | CEO                | Executive team   |
+| Level 4 (Critical) | CEO + Board        | All hands        |
 
 ## Decision Support Tools
 
@@ -186,7 +186,7 @@ Is it required for operations?
          Internal →
     ↓    Strengths (S)    Weaknesses (W)
 External
-         
+
 O        SO Strategies    WO Strategies
 p        (Leverage)       (Improve)
 p
@@ -277,7 +277,8 @@ Low  │ Delegate│ Eliminate│
 - **Eliminate**: Which factors can be eliminated?
 - **Reduce**: Which factors should be reduced below industry standard?
 - **Raise**: Which factors should be raised above industry standard?
-- **Create**: Which factors should be created that the industry has never offered?
+- **Create**: Which factors should be created that the industry has never
+  offered?
 
 ## Stakeholder Management
 
@@ -298,13 +299,13 @@ Low  │ Monitor  │  Keep    │
 
 ### Communication Strategy
 
-| Stakeholder | Frequency | Format | Key Messages |
-| ------------ | ----------- | -------- | -------------- |
-| Board | Monthly | Report + Meeting | Strategy, Risk, Performance |
-| Investors | Quarterly | Earnings Call | Financial, Growth, Outlook |
-| Employees | Weekly | All-hands | Vision, Updates, Recognition |
-| Customers | Continuous | Multi-channel | Value, Innovation, Support |
-| Media | As needed | Press Release | Milestones, Position, Vision |
+| Stakeholder | Frequency  | Format           | Key Messages                 |
+| ----------- | ---------- | ---------------- | ---------------------------- |
+| Board       | Monthly    | Report + Meeting | Strategy, Risk, Performance  |
+| Investors   | Quarterly  | Earnings Call    | Financial, Growth, Outlook   |
+| Employees   | Weekly     | All-hands        | Vision, Updates, Recognition |
+| Customers   | Continuous | Multi-channel    | Value, Innovation, Support   |
+| Media       | As needed  | Press Release    | Milestones, Position, Vision |
 
 ## Performance Metrics
 

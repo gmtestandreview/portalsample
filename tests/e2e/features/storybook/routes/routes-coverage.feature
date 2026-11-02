@@ -162,3 +162,35 @@ Feature: Route storybook coverage
   Scenario: Server error story renders the server error heading
     When I load the Storybook story "routes-errorstates--server-error"
     Then the story iframe should contain "Oops - An unexpected error has occurred"
+
+  Scenario: Route shell ownership - accept quote shell selects its first step
+    When I load the Storybook story "routes-acceptquote-shell--loads-statuses-then-first-step"
+    Then the story iframe should contain "Testing and calibration service - Quotation"
+
+  Scenario: Route shell ownership - accept quote shell rejects an unknown application
+    When I load the Storybook story "routes-acceptquote-shell--unknown-application-is-not-found"
+    Then the story iframe should contain "Not found destination"
+
+  Scenario: Route shell ownership - request for quote shell selects its first step
+    When I load the Storybook story "routes-requestforquote-shell--loads-statuses-then-first-step"
+    Then the story iframe should contain "Testing and calibration service - Request for quote"
+
+  Scenario: Route shell ownership - request for quote shell rejects an invalid identifier
+    When I load the Storybook story "routes-requestforquote-shell--invalid-application-id-is-not-found"
+    Then the story iframe should contain "Not found destination"
+
+  Scenario: Route shell ownership - type approval shell selects its first step
+    When I load the Storybook story "routes-typeapproval-shell--loads-statuses-then-first-step"
+    Then the story iframe should contain "Pattern/type approval - Application"
+
+  Scenario: Route shell ownership - type approval shell rejects an unknown application
+    When I load the Storybook story "routes-typeapproval-shell--unknown-application-is-not-found"
+    Then the story iframe should contain "Not found destination"
+
+  Scenario: Route shell ownership - quotation shell applies the newly accepted override
+    When I load the Storybook story "routes-quotation-shell--newly-accepted-quote-shows-accepted"
+    Then the story iframe should contain "Quotation accepted"
+
+  Scenario: Route shell ownership - measurement report shell rejects a failed lookup
+    When I load the Storybook story "routes-measurementreport-shell--lookup-failure-is-not-found"
+    Then the story iframe should contain "Not found destination"

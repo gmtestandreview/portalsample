@@ -34,7 +34,7 @@ const StandardPathwayBody = (props: Readonly<StandardBasePathwayProps>) => {
 };
 
 const ExternalStandardPathway = (
-  props: Readonly<StandardExternalPathwayProps>
+  props: Readonly<StandardExternalPathwayProps>,
 ) => {
   const { target, linkHref, ...rest } = props;
 
@@ -57,7 +57,7 @@ const ExternalStandardPathway = (
 };
 
 const InternalStandardPathway = (
-  props: Readonly<StandardInternalPathwayProps>
+  props: Readonly<StandardInternalPathwayProps>,
 ) => {
   const { to, ...rest } = props;
   return (

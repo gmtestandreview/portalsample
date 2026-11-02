@@ -14,7 +14,7 @@ export interface ModalDispatch {
   setShowRFQSelectModal: (
     show: boolean,
     rfqId: string,
-    callingPath: string
+    callingPath: string,
   ) => void;
 }
 

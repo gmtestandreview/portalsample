@@ -1,11 +1,20 @@
 ---
 name: readme-blueprint-generator
-description: 'Intelligent README.md generation prompt that analyzes project documentation structure and creates comprehensive repository documentation. Scans .github/copilot directory files and copilot-instructions.md to extract project information, technology stack, architecture, development workflow, coding standards, and testing approaches while generating well-structured markdown documentation with proper formatting, cross-references, and developer-focused content.'
+description:
+  'Intelligent README.md generation prompt that analyzes project documentation
+  structure and creates comprehensive repository documentation. Scans
+  .github/copilot directory files and copilot-instructions.md to extract project
+  information, technology stack, architecture, development workflow, coding
+  standards, and testing approaches while generating well-structured markdown
+  documentation with proper formatting, cross-references, and developer-focused
+  content.'
 ---
 
 # README Generator Prompt
 
-Generate a comprehensive README.md for this repository by analyzing the documentation files in the .github/copilot directory and the copilot-instructions.md file. Follow these steps:
+Generate a comprehensive README.md for this repository by analyzing the
+documentation files in the .github/copilot directory and the
+copilot-instructions.md file. Follow these steps:
 
 1. Scan all the files in the .github/copilot folder, like:
    - Architecture
@@ -87,4 +96,5 @@ Format the README with proper Markdown, including:
 - Links to other documentation files
 - Badges for build status, version, etc. if information is available
 
-Keep the README concise yet informative, focusing on what new developers or users would need to know about the project.
+Keep the README concise yet informative, focusing on what new developers or
+users would need to know about the project.

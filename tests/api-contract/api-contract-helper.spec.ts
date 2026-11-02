@@ -107,7 +107,7 @@ test.describe('API contract helper', () => {
     const response = await request.get(`${baseUrl}/dashboard`);
 
     await expect(
-      expectJsonResponseToMatchSchema(response, dashboardResponseSchema)
+      expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
     ).resolves.toEqual(validDashboardResponse);
   });
 
@@ -117,7 +117,7 @@ test.describe('API contract helper', () => {
     const response = await request.get(`${baseUrl}/dashboard-invalid`);
 
     await expect(
-      expectJsonResponseToMatchSchema(response, dashboardResponseSchema)
+      expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
     ).rejects.toThrow('/items/0');
   });
 });

@@ -6,6 +6,7 @@ import type {
   ContactFormStep,
   FormStepStatusDto,
 } from '../../../api/web-api-client';
+import { Title } from '../../../api/web-api-client';
 import type { DiscardProps } from '../../../components/forms/types';
 import type {
   ErrorType,
@@ -27,7 +28,7 @@ const discardChanges: DiscardProps = {
 
 const getRedirectionLocationOnError = (
   errorCode: number,
-  _errorType: ErrorType
+  _errorType: ErrorType,
 ) => {
   if (errorCode === 412) {
     return '/';
@@ -41,7 +42,7 @@ const createContactProps = (
   instance: IPublicClientApplication,
   statuses: FormStepStatusDto[],
   accountContext: AccountContextState | null,
-  _contactId: number
+  _contactId: number,
 ): WizardStepProps<ContactFormStep> => ({
   initialValues: {},
   stepStatuses: statuses,
@@ -50,7 +51,7 @@ const createContactProps = (
   title: 'My contact details',
   hidingFields: {
     contact: {
-      titleOther: (x: ContactFormStep) => x.contact?.title !== 'Other',
+      titleOther: (x: ContactFormStep) => x.contact?.title !== Title.Other,
     },
   },
   validateHard: contactSubmitValidation,

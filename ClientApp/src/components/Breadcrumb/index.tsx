@@ -47,7 +47,7 @@ const CustomBreadcrumb = ({
 
           if (!isLastItem && !breadcrumbItem.to) {
             throw new Error(
-              `Breadcrumb item "${breadcrumbItem.text}" must include "to" because it is not the current page.`
+              `Breadcrumb item "${breadcrumbItem.text}" must include "to" because it is not the current page.`,
             );
           }
 

@@ -1,97 +1,121 @@
 import { render, screen } from '@testing-library/react';
 import type React from 'react';
 import { MemoryRouter } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import CustomBreadcrumb from '@/components/Breadcrumb';
 
 const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock('react-aria-components/Breadcrumbs', () => ({
-  Breadcrumbs: ({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) => <ol className={className}>{children}</ol>,
-  Breadcrumb: ({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) => <li className={className}>{children}</li>,
-}));
+vi.mock(
+  import('react-aria-components/Breadcrumbs'),
+  (() =>
+    ({
+      Breadcrumbs: ({
+        children,
+        className,
+      }: {
+        children: React.ReactNode;
+        className?: string;
+      }) => <ol className={className}>{children}</ol>,
+      Breadcrumb: ({
+        children,
+        className,
+      }: {
+        children: React.ReactNode;
+        className?: string;
+      }) => <li className={className}>{children}</li>,
+    }) satisfies __ExactMockModule<__TestMockModule17>) as unknown as __DynamicPartialMockFactory<__TestMockModule17>,
+);
 
-vi.mock('react-aria-components/Link', () => ({
-  Link: ({
-    children,
-    href,
-    render: renderLink,
-  }: {
-    children: React.ReactNode;
-    href?: string;
-    render?: (props: {
-      children: React.ReactNode;
-      href?: string;
-    }) => React.ReactNode;
-  }) =>
-    renderLink ? (
-      renderLink(
-        ariaLinkMockState.includeHref && href !== undefined
-          ? { children, href }
-          : { children }
-      )
-    ) : (
-      <a>{children}</a>
-    ),
-}));
+vi.mock(
+  import('react-aria-components/Link'),
+  (() =>
+    ({
+      Link: ({
+        children,
+        href,
+        render: renderLink,
+      }: {
+        children: React.ReactNode;
+        href?: string;
+        render?: (props: {
+          children: React.ReactNode;
+          href?: string;
+        }) => React.ReactNode;
+      }) =>
+        renderLink ? (
+          renderLink(
+            ariaLinkMockState.includeHref && href !== undefined
+              ? { children, href }
+              : { children },
+          )
+        ) : (
+          <a href={href ?? '#'}>{children}</a>
+        ),
+    }) satisfies __ExactMockModule<__TestMockModule18>) as unknown as __DynamicPartialMockFactory<__TestMockModule18>,
+);
 
-describe('CustomBreadcrumb React Aria render fallback', () => {
-  afterEach(() => {
+describe('customBreadcrumb React Aria render fallback', () => {
+  const resetMockState = () => {
     ariaLinkMockState.includeHref = false;
-  });
+  };
 
   it('renders nothing when no breadcrumbs are provided', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     const { container } = render(<CustomBreadcrumb breadcrumbs={[]} />);
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it('throws when a non-current breadcrumb has no destination', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     expect(() =>
       CustomBreadcrumb({
         breadcrumbs: [{ text: 'Missing link' }, { text: 'Current page' }],
-      })
+      }),
     ).toThrow(
-      'Breadcrumb item "Missing link" must include "to" because it is not the current page.'
+      'Breadcrumb item "Missing link" must include "to" because it is not the current page.',
     );
   });
 
   it('renders previous breadcrumb content as a span when React Aria props do not include an href', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     render(
       <MemoryRouter>
         <CustomBreadcrumb
           breadcrumbs={[{ to: '/', text: 'Home' }, { text: 'Request details' }]}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const fallback = screen.getByText('Home');
 
     expect(fallback.tagName).toBe('SPAN');
     expect(
-      screen.queryByRole('link', { name: 'Home' })
+      screen.queryByRole('link', { name: 'Home' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('Request details')).toHaveAttribute(
       'aria-current',
-      'page'
+      'page',
     );
   });
 
   it('renders previous breadcrumb content as a router link when React Aria props include an href', () => {
+    expect.hasAssertions();
+
+    resetMockState();
+
     ariaLinkMockState.includeHref = true;
 
     render(
@@ -104,15 +128,15 @@ describe('CustomBreadcrumb React Aria render fallback', () => {
             { text: 'Request details' },
           ]}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByRole('navigation', { name: 'Request breadcrumbs' })
+      screen.getByRole('navigation', { name: 'Request breadcrumbs' }),
     ).toHaveClass('request-breadcrumbs');
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
   });
 });

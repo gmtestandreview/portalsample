@@ -221,7 +221,7 @@ export function Select<T, M extends 'single' | 'multiple' = 'single'>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'group flex flex-col gap-1 relative font-sans'
+        'group flex flex-col gap-1 relative font-sans',
       )}
     >
       {label && <Label>{label}</Label>}

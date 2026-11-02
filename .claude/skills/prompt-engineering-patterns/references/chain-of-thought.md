@@ -2,7 +2,8 @@
 
 ## Overview
 
-Chain-of-Thought (CoT) prompting elicits step-by-step reasoning from LLMs, dramatically improving performance on complex reasoning, math, and logic tasks.
+Chain-of-Thought (CoT) prompting elicits step-by-step reasoning from LLMs,
+dramatically improving performance on complex reasoning, math, and logic tasks.
 
 ## Core Techniques
 

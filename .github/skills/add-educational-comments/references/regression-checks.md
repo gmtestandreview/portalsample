@@ -11,14 +11,18 @@ Use this reference after editing and before the final report.
 - Confirm line endings match the original.
 - Confirm apparent encoding matches the original.
 - Confirm indentation style was not normalized.
-- Confirm shebangs, encoding declarations, imports, namespaces, package declarations, pragmas, and license headers remain valid.
+- Confirm shebangs, encoding declarations, imports, namespaces, package
+  declarations, pragmas, and license headers remain valid.
 - Confirm the diff contains no unrelated formatting churn.
 - Confirm parser/compiler/typecheck results are recorded when available.
 
 ## Behavior Regression
 
-Use the smallest relevant safe command. Prefer single-file syntax checks over broad project tests. Run focused tests only if safe, local, non-mutating, and useful.
+Use the smallest relevant safe command. Prefer single-file syntax checks over
+broad project tests. Run focused tests only if safe, local, non-mutating, and
+useful.
 
 ## Report Requirements
 
-Record original path, annotated path or in-place status, backup path, commands run, pass/fail/not-run results, and any human-review items.
+Record original path, annotated path or in-place status, backup path, commands
+run, pass/fail/not-run results, and any human-review items.

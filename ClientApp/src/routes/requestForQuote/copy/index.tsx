@@ -21,13 +21,13 @@ const CopyRequestForQuote = () => {
       try {
         const client = new ApplicationClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const application = await client.copyApplication(id!, {
           applicationType: ApplicationType.QuoteRequest,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         isSaving.current = false;
         AppLogger.error('Failed to copy application', e as Error);

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import { Button, Alert } from 'react-bootstrap';
 import { Component, useState } from 'react';
@@ -15,7 +15,7 @@ const WorkingComponent = () => (
 const ThrowingComponent = ({ shouldThrow }: { shouldThrow: boolean }) => {
   if (shouldThrow) {
     throw new Error(
-      'This component threw a render error to demonstrate the ErrorBoundary.'
+      'This component threw a render error to demonstrate the ErrorBoundary.',
     );
   }
   return (
@@ -47,7 +47,7 @@ class ResetableErrorBoundaryWrapper extends Component<
         >
           Reset ErrorBoundary
         </Button>
-        <ErrorBoundary key={key} appInsights={ai.reactPlugin as ReactPlugin}>
+        <ErrorBoundary key={key} appInsights={ai.reactPlugin}>
           {children}
         </ErrorBoundary>
       </div>
@@ -55,42 +55,38 @@ class ResetableErrorBoundaryWrapper extends Component<
   }
 }
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/ErrorBoundary',
   parameters: { layout: 'padded' },
-} satisfies Meta;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const NoError: Story = {
+export const NoError = meta.story({
   render: () => (
     <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
       <WorkingComponent />
     </ErrorBoundary>
   ),
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText(/All good/)).toBeVisible();
-  },
-};
 
-export const CaughtError: Story = {
+    await expect(canvas.getByRole('alert')).toHaveTextContent('All good!');
+  },
+});
+
+export const CaughtError = meta.story({
   render: () => {
     const BrokenApp = () => {
       throw new Error('Simulated render error from a broken child component.');
     };
     return (
-      <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+      <ErrorBoundary appInsights={ai.reactPlugin}>
         <BrokenApp />
       </ErrorBoundary>
     );
   },
-};
+});
 
-export const RecoveredAfterReset: Story = {
+export const RecoveredAfterReset = meta.story({
   render: () => {
     const ThrowController = () => {
       const [shouldThrow, setShouldThrow] = useState(false);
@@ -111,23 +107,23 @@ export const RecoveredAfterReset: Story = {
     };
     return <ThrowController />;
   },
-};
+});
 
-export const NestedBoundaries: Story = {
+export const NestedBoundaries = meta.story({
   render: () => {
     const BrokenChild = () => {
       throw new Error('Inner component error');
     };
     return (
-      <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+      <ErrorBoundary appInsights={ai.reactPlugin}>
         <Alert variant='success' className='mb-3'>
           <strong>Outer content</strong> — this renders fine because the inner
           boundary catches the error below.
         </Alert>
-        <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+        <ErrorBoundary appInsights={ai.reactPlugin}>
           <BrokenChild />
         </ErrorBoundary>
       </ErrorBoundary>
     );
   },
-};
+});

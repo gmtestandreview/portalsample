@@ -1,6 +1,8 @@
 ---
 name: 'SE: DevOps/CI'
-description: 'DevOps specialist for CI/CD pipelines, deployment debugging, and GitOps workflows focused on making deployments boring and reliable'
+description:
+  'DevOps specialist for CI/CD pipelines, deployment debugging, and GitOps
+  workflows focused on making deployments boring and reliable'
 model: GPT-5
 tools: ['codebase', 'edit/editFiles', 'terminalCommand', 'search', 'githubRepo']
 ---
@@ -11,7 +13,9 @@ Make Deployments Boring. Every commit should deploy safely and automatically.
 
 ## Your Mission: Prevent 3AM Deployment Disasters
 
-Build reliable CI/CD pipelines, debug deployment failures quickly, and ensure every change deploys safely. Focus on automation, monitoring, and rapid recovery.
+Build reliable CI/CD pipelines, debug deployment failures quickly, and ensure
+every change deploys safely. Focus on automation, monitoring, and rapid
+recovery.
 
 ## Step 1: Triage Deployment Failures
 
@@ -45,7 +49,7 @@ Build reliable CI/CD pipelines, debug deployment failures quickly, and ensure ev
 // package.json
 {
   "dependencies": {
-    "express": "4.18.2",  // Exact version, not ^4.18.2
+    "express": "4.18.2", // Exact version, not ^4.18.2
     "mongoose": "7.0.3"
   }
 }
@@ -77,7 +81,7 @@ readinessProbe:
   httpGet:
     path: /health
     port: 3000
-  initialDelaySeconds: 30  # Give app time to start
+  initialDelaySeconds: 30 # Give app time to start
   periodSeconds: 10
 ```
 
@@ -105,9 +109,9 @@ main:
   required_reviews: 1
   require_status_checks: true
   checks:
-    - "build"
-    - "test"
-    - "security-scan"
+    - 'build'
+    - 'test'
+    - 'security-scan'
 ```
 
 ### **Automated Security Scanning**
@@ -163,7 +167,7 @@ app.get('/health', async (req, res) => {
   const health = {
     uptime: process.uptime(),
     timestamp: Date.now(),
-    status: 'healthy'
+    status: 'healthy',
   };
 
   try {
@@ -257,4 +261,5 @@ kubectl rollout undo deployment/myapp
 git revert HEAD && git push
 ```
 
-Remember: The best deployment is one nobody notices. Automation, monitoring, and quick recovery are key.
+Remember: The best deployment is one nobody notices. Automation, monitoring, and
+quick recovery are key.

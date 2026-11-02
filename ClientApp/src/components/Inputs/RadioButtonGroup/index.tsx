@@ -10,7 +10,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 const RadioButtonGroup = <T,>(
-  props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>
+  props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>,
 ) => {
   const {
     displayHorizontally,
@@ -35,7 +35,7 @@ const RadioButtonGroup = <T,>(
   if (isSummary) {
     if (field?.value) {
       const selectedOption = options.find(
-        (option) => option.value === field.value
+        (option) => option.value === field.value,
       );
       return (
         <SummaryDisplay
@@ -82,7 +82,7 @@ const RadioButtonGroup = <T,>(
         {displayHorizontally ? (
           <Row>
             {options.map((option) => (
-              <Col key={`${option.value}`}>
+              <Col key={String(option.value)}>
                 <RadioButton
                   name={name}
                   {...omitUndefined({ onChange, subFormField })}
@@ -95,7 +95,7 @@ const RadioButtonGroup = <T,>(
         ) : (
           options.map((option) => (
             <RadioButton
-              key={`${option.value}`}
+              key={String(option.value)}
               name={name}
               {...omitUndefined({ onChange, subFormField })}
               {...option}

@@ -12,9 +12,9 @@ export const storybookCoverageConfig: CoverageOptions = {
   exclude: [
     '**/*.d.ts',
     'ClientApp/src/api/web-api-client.ts',
+    'ClientApp/src/storybook/**',
     'ClientApp/src/external/**',
     'ClientApp/src/parent/**',
-    'ClientApp/src/storybook/**',
     'ClientApp/src/components/App/**',
     'ClientApp/src/components/AriaComponents/main.tsx',
     'ClientApp/src/components/reactaria_components/**',

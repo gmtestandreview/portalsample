@@ -10,10 +10,15 @@ import { summaryFixtures, summaryHidden } from './summaryFixtures';
 
 type Values = RfqSummarySectionProps['values'];
 type Hidden = RfqSummarySectionProps['hidden'];
+const typedSummaryHidden = summaryHidden;
+const hiddenObject = (value: unknown): Record<string, unknown> =>
+  value !== null && typeof value === 'object'
+    ? Object.fromEntries(Object.entries(value))
+    : {};
 
 const populated = (() => {
   const found = summaryFixtures.find(
-    (f) => f.name === 'fully populated with the principal contact'
+    (f) => f.name === 'fully populated with the principal contact',
   );
   if (!found) throw new Error('Missing populated fixture');
   return found.values;
@@ -21,15 +26,15 @@ const populated = (() => {
 
 const renderOrganisation = (
   values: Values,
-  hidden: Hidden = summaryHidden,
-  currentContact?: RfqCurrentContact
+  hidden: Hidden = typedSummaryHidden,
+  currentContact?: RfqCurrentContact,
 ) =>
   render(
     <RfqOrganisationSummary
       values={values}
       hidden={hidden}
       {...(currentContact && { currentContact })}
-    />
+    />,
   ).container;
 
 const accountHolder: RfqCurrentContact = {
@@ -37,19 +42,24 @@ const accountHolder: RfqCurrentContact = {
   email: 'grace@example.com',
 };
 
-describe('RfqOrganisationSummary', () => {
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(RfqOrganisationSummary, () => {
   it('shows the trading name, branch, organisation name and spaced ABN', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation(populated);
 
     expect(container).toHaveTextContent('Acme Trading - Sydney Branch');
     expect(container).toHaveTextContent('Acme Pty Ltd');
     expect(container).toHaveTextContent('ABN: 12 345 678 901');
     expect(container.querySelector('.visually-hidden')).toHaveTextContent(
-      '1 2 3 4 5 6 7 8 9 0 1'
+      '1 2 3 4 5 6 7 8 9 0 1',
     );
   });
 
   it('leaves the branch out of the heading when the branch name is hidden', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation({
       ...populated,
       organisationAndContact: {
@@ -64,10 +74,12 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('applies the branch hiding rule even when a branch value is present', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation(populated, {
-      ...summaryHidden,
+      ...typedSummaryHidden,
       organisationAndContact: {
-        ...summaryHidden.organisationAndContact,
+        ...hiddenObject(typedSummaryHidden.organisationAndContact),
         branchOrLocationName: () => true,
       },
     });
@@ -77,6 +89,8 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('shows the principal contact answer label but no account holder when none is passed', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation(populated);
 
     expect(container).toHaveTextContent('Use my contact details');
@@ -84,19 +98,24 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('describes the account holder under "Use my contact details"', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation(
       populated,
-      summaryHidden,
-      accountHolder
+      typedSummaryHidden,
+      accountHolder,
     );
 
     const descriptor = container.querySelector('#q-currentContact');
+
     expect(descriptor).toHaveTextContent('Grace Hopper');
     expect(descriptor).toHaveTextContent('grace@example.com');
     expect(container).toHaveTextContent('Use my contact details');
   });
 
   it('leaves the account holder out when a different contact person is chosen', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation(
       {
         ...populated,
@@ -105,8 +124,8 @@ describe('RfqOrganisationSummary', () => {
           isPrincipalContact: YesNo.No,
         },
       },
-      summaryHidden,
-      accountHolder
+      typedSummaryHidden,
+      accountHolder,
     );
 
     expect(container).toHaveTextContent('A different contact person');
@@ -115,6 +134,8 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('shows the different-contact label and the free-text title for Other', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation({
       ...populated,
       organisationAndContact: {
@@ -134,6 +155,8 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('applies the contact title hiding rule for an Other title', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation(
       {
         ...populated,
@@ -148,15 +171,19 @@ describe('RfqOrganisationSummary', () => {
         },
       },
       {
-        ...summaryHidden,
+        ...typedSummaryHidden,
         organisationAndContact: {
-          ...summaryHidden.organisationAndContact,
+          ...hiddenObject(typedSummaryHidden.organisationAndContact),
           contact: {
-            ...summaryHidden.organisationAndContact?.contact,
+            ...hiddenObject(
+              hiddenObject(typedSummaryHidden.organisationAndContact)[
+                'contact'
+              ],
+            ),
             titleOther: () => true,
           },
         },
-      }
+      },
     );
 
     expect(container).not.toHaveTextContent('Title, if "Other"');
@@ -165,6 +192,8 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('falls back to a placeholder for an unrecognised principal contact answer', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation({
       organisationAndContact: {
         isPrincipalContact: 'Maybe' as unknown as YesNo,
@@ -175,6 +204,8 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('omits the contact details when principalContactHide is true', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation(populated, {
       organisationAndContact: { principalContactHide: () => true },
     });
@@ -185,14 +216,18 @@ describe('RfqOrganisationSummary', () => {
   });
 
   it('shows an empty trading and branch heading when both names are missing', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation({ organisationAndContact: {} }, {});
 
     expect(container.querySelector('h2.h3.mb-0')).not.toHaveTextContent(
-      'undefined'
+      'undefined',
     );
   });
 
   it('renders the headings without crashing when there are no values', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation({}, {});
 
     expect(container).toHaveTextContent('Organisation');

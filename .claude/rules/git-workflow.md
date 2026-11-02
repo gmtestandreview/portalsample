@@ -31,9 +31,11 @@ test: add integration tests for checkout webhook handler
 
 ```markdown
 ## Summary
+
 - What changed and why
 
 ## Test plan
+
 - [ ] Verify happy path works
 - [ ] Verify error handling works
 - [ ] Run E2E tests on staging

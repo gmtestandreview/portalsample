@@ -1,13 +1,15 @@
 import { spawnSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { cp, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it, onTestFinished } from 'vitest';
+
+import { readTextFile } from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = join(
   dirname(fileURLToPath(import.meta.url)),
-  '../../..'
+  '../../..',
 );
 const temporaryRoots: string[] = [];
 
@@ -19,7 +21,7 @@ function runPatchApplicator(root: string) {
       cwd: repositoryRoot,
       encoding: 'utf8',
       env: { ...process.env, NMI_PATCH_ROOT: root },
-    }
+    },
   );
 }
 
@@ -36,6 +38,10 @@ async function createPatchFixture() {
       'node_modules/html-react-parser/package.json',
       'node_modules/html-react-parser/package.json',
     ],
+    [
+      'node_modules/@storybook/addon-mcp/dist/preset.js',
+      'node_modules/@storybook/addon-mcp/dist/preset.js',
+    ],
   ];
 
   for (const [source, destination] of packageFiles) {
@@ -47,40 +53,54 @@ async function createPatchFixture() {
     cwd: root,
     encoding: 'utf8',
   });
+
   expect(gitInit.status).toBe(0);
+
   const gitAdd = spawnSync('git', ['add', 'node_modules'], {
     cwd: root,
     encoding: 'utf8',
   });
+
   expect(gitAdd.status).toBe(0);
 
   return root;
 }
 
-afterEach(async () => {
+const cleanupTemporaryRoots = async (): Promise<void> => {
   await Promise.all(
     temporaryRoots
       .splice(0)
-      .map((root) => rm(root, { force: true, recursive: true }))
+      .map((root) => rm(root, { force: true, recursive: true })),
   );
-});
+};
 
 describe('repository-owned local patches', () => {
   it('applies all patches and is safe to run again', async () => {
+    expect.hasAssertions();
+
+    onTestFinished(cleanupTemporaryRoots);
+
     const root = await createPatchFixture();
 
     expect(runPatchApplicator(root).status).toBe(0);
 
-    expect(
-      await readFile(
+    await expect(
+      readTextFile(
         join(root, 'node_modules/html-react-parser/package.json'),
-        'utf8'
-      )
-    ).toContain('"default": "./esm/index.mjs"');
+        root,
+      ),
+    ).resolves.toContain('"default": "./esm/index.mjs"');
+    await expect(
+      readTextFile(
+        join(root, 'node_modules/@storybook/addon-mcp/dist/preset.js'),
+        root,
+      ),
+    ).resolves.toContain('function normalizeTestRunData(data)');
+
     const firstRun = await Promise.all([
-      readFile(
+      readTextFile(
         join(root, 'node_modules/html-react-parser/package.json'),
-        'utf8'
+        root,
       ),
     ]);
 
@@ -88,11 +108,11 @@ describe('repository-owned local patches', () => {
 
     await expect(
       Promise.all([
-        readFile(
+        readTextFile(
           join(root, 'node_modules/html-react-parser/package.json'),
-          'utf8'
+          root,
         ),
-      ])
-    ).resolves.toEqual(firstRun);
+      ]),
+    ).resolves.toStrictEqual(firstRun);
   });
 });

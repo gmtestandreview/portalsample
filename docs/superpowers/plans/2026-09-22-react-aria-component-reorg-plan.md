@@ -458,7 +458,7 @@ not add these three to the full `evaluationDirectories` array. Replace:
 it('keeps the retained reactaria_components scaffold import-resolvable', () => {
   const scaffoldRoot = path.join(componentsRoot, 'reactaria_components');
   const scaffoldSources = collectFiles(scaffoldRoot).filter((file) =>
-    /\.tsx?$/u.test(file)
+    /\.tsx?$/u.test(file),
   );
 
   expect(scaffoldSources.length).toBeGreaterThan(0);
@@ -467,8 +467,8 @@ it('keeps the retained reactaria_components scaffold import-resolvable', () => {
     findRelativeImports(file)
       .filter((specifier) => !importResolves(file, specifier))
       .map(
-        (specifier) => `${path.relative(repositoryRoot, file)} -> ${specifier}`
-      )
+        (specifier) => `${path.relative(repositoryRoot, file)} -> ${specifier}`,
+      ),
   );
 
   expect(unresolved).toEqual([]);
@@ -495,8 +495,8 @@ it('keeps the retained scaffold prototypes import-resolvable', () => {
     findRelativeImports(file)
       .filter((specifier) => !importResolves(file, specifier))
       .map(
-        (specifier) => `${path.relative(repositoryRoot, file)} -> ${specifier}`
-      )
+        (specifier) => `${path.relative(repositoryRoot, file)} -> ${specifier}`,
+      ),
   );
 
   expect(unresolved).toEqual([]);
@@ -709,4 +709,3 @@ indefinitely.
   recommended here despite Task 3's internal parallelism, because every task
   shares one file (`reactAriaEvaluationContract.test.ts`) as an edit target —
   concurrent agents would collide on it.
-  

@@ -16,7 +16,7 @@ const formatBytes = (bytes: number): string => {
 
 const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
   const [cancelling, setCancelling] = useState<{ [fileName: string]: boolean }>(
-    {}
+    {},
   );
 
   // The cancel control only renders when onCancelFile is supplied, so the handler takes it as an

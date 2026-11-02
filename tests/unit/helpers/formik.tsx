@@ -30,10 +30,10 @@ interface FormikWrapperProps<TValues> {
 }
 
 const touchEveryField = <TValues extends Record<string, unknown>>(
-  values: TValues
+  values: TValues,
 ) =>
   Object.fromEntries(
-    Object.keys(values).map((key) => [key, true])
+    Object.keys(values).map((key) => [key, true]),
   ) as FormikTouched<TValues>;
 
 export function FormikWrapper<TValues extends Record<string, unknown>>({
@@ -81,12 +81,12 @@ export const createSubmitSpy = <
 >(): SubmitSpy<TValues> => {
   const calls: TValues[] = [];
 
-  const onSubmit = vi.fn(
-    (values: TValues, helpers?: FormikHelpers<TValues>) => {
-      calls.push(values);
-      helpers?.setSubmitting(false);
-    }
-  );
+  const onSubmit = vi.fn<
+    (values: TValues, helpers?: FormikHelpers<TValues>) => void
+  >((values: TValues, helpers?: FormikHelpers<TValues>) => {
+    calls.push(values);
+    helpers?.setSubmitting(false);
+  });
 
   return {
     onSubmit,

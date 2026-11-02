@@ -53,7 +53,7 @@ import { ListBox, ListBoxItem } from 'vanilla-starter/ListBox';
 
 let lorem =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.'.split(
-    ' '
+    ' ',
   );
 let items: { id: number; name: string }[] = [];
 for (let i = 0; i < 5000; i++) {

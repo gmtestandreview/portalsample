@@ -1,9 +1,12 @@
 ---
 name: pr-validation-summary-comment
-description: Convert pre-pr-validation results into a standardized PR checklist comment aligned to this repository template.
+description:
+  Convert pre-pr-validation results into a standardized PR checklist comment
+  aligned to this repository template.
 disable-model-invocation: true
 argument-hint: 'Paste pre-pr-validation output and optional PR context'
 ---
+
 Create a PR comment from the provided pre-pr-validation output.
 
 Use this repository checklist as the canonical structure:
@@ -31,8 +34,11 @@ Use this repository checklist as the canonical structure:
 - `npm run typecheck` -> Typecheck passed
 - `npm run lint` -> Lint passed
 - `npm test` -> Unit/component tests passed
-- `dotnet test src/Nmi.Portal.sln` -> Backend/API validation evidence (add in Summary and Validation notes)
+- `dotnet test src/Nmi.Portal.sln` -> Backend/API validation evidence (add in
+  Summary and Validation notes)
 - `npm run test:e2e` -> Playwright tests updated where relevant
-- `npm run test:coverage` -> Add coverage note in Summary (do not invent thresholds)
+- `npm run test:coverage` -> Add coverage note in Summary (do not invent
+  thresholds)
 
-If input is incomplete or ambiguous, keep uncertain items unchecked and add a short `Needs confirmation` note.
+If input is incomplete or ambiguous, keep uncertain items unchecked and add a
+short `Needs confirmation` note.

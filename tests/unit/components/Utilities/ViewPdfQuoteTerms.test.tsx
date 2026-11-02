@@ -1,35 +1,147 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { InteractionStatus, Logger } from '@azure/msal-browser';
+import type {
+  AccountInfo,
+  AuthenticationResult,
+  IPublicClientApplication,
+} from '@azure/msal-browser';
+import type { IMsalContext } from '@azure/msal-react';
 import type { RequestForQuoteDetails } from '@/api/web-api-client';
+import type {
+  getFileUrlFromBase64,
+  getQuotationFileDetails,
+  getQuoteOfferPageNumber,
+  openPdfPageInNewTab,
+} from '@/routes/common/helperFunctions';
+import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
+import type AppLogger from '@/instrumentation/AppLogger';
 import ViewPdfQuoteTerms from '@/components/Utilities/ViewPdfQuoteTerms';
+import type { ViewPdfQuoteTermsProps } from '@/components/Utilities/ViewPdfQuoteTerms';
 
 const helperMocks = vi.hoisted(() => ({
-  getQuotationFileDetails: vi.fn(),
-  getFileUrlFromBase64: vi.fn(() => 'blob:test-url'),
-  getQuoteOfferPageNumber: vi.fn(() => 2),
-  openPdfPageInNewTab: vi.fn(),
+  getQuotationFileDetails: vi.fn<typeof getQuotationFileDetails>(),
+  getFileUrlFromBase64: vi.fn<typeof getFileUrlFromBase64>(
+    () => 'blob:test-url',
+  ),
+  getQuoteOfferPageNumber: vi.fn<typeof getQuoteOfferPageNumber>(() => '2'),
+  openPdfPageInNewTab: vi.fn<typeof openPdfPageInNewTab>(),
 }));
 
-const trackGAEventMock = vi.hoisted(() => vi.fn());
-const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
+const trackGAEventMock = vi.hoisted(() => vi.fn<typeof trackGAEvent>());
+const mockMsalState = vi.hoisted(() => {
+  const acquireTokenSilentMock =
+    vi.fn<IPublicClientApplication['acquireTokenSilent']>();
+  let msalContext: IMsalContext | undefined;
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'test-account' }],
-    instance: { acquireTokenSilent: acquireTokenSilentMock },
-  }),
-}));
+  return {
+    acquireTokenSilentMock,
+    setMsalContext(context: IMsalContext) {
+      msalContext = context;
+    },
+    getMsalContext() {
+      if (!msalContext) {
+        throw new Error(
+          'MSAL context was not initialized by the mock factory.',
+        );
+      }
+      return msalContext;
+    },
+  };
+});
 
-vi.mock('@/routes/common/helperFunctions', () => helperMocks);
+const { acquireTokenSilentMock } = mockMsalState;
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: trackGAEventMock,
-}));
+const mockAppLogger = vi.hoisted(() => {
+  class MockAppLogger {
+    static info = vi.fn<typeof AppLogger.info>();
+    static warning = vi.fn<typeof AppLogger.warning>();
+    static verbose = vi.fn<typeof AppLogger.verbose>();
+    static critical = vi.fn<typeof AppLogger.critical>();
+    static trace = vi.fn<typeof AppLogger.trace>();
+    static error = vi.fn<typeof AppLogger.error>();
+    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
+    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
+    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
+    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
+    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
+  }
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+  return MockAppLogger;
+});
+
+vi.mock(import('@azure/msal-react'), () => {
+  const mockAccount = {
+    homeAccountId: 'test-account',
+    environment: 'login.microsoftonline.com',
+    tenantId: 'test-tenant',
+    username: 'test@example.com',
+    localAccountId: 'test-local-account',
+  } satisfies AccountInfo;
+  const msalInstance = {
+    initialize: vi.fn<IPublicClientApplication['initialize']>(),
+    acquireTokenPopup: vi.fn<IPublicClientApplication['acquireTokenPopup']>(),
+    acquireTokenRedirect:
+      vi.fn<IPublicClientApplication['acquireTokenRedirect']>(),
+    acquireTokenSilent: mockMsalState.acquireTokenSilentMock,
+    acquireTokenByCode: vi.fn<IPublicClientApplication['acquireTokenByCode']>(),
+    addEventCallback: vi.fn<IPublicClientApplication['addEventCallback']>(),
+    removeEventCallback:
+      vi.fn<IPublicClientApplication['removeEventCallback']>(),
+    addPerformanceCallback:
+      vi.fn<IPublicClientApplication['addPerformanceCallback']>(),
+    removePerformanceCallback:
+      vi.fn<IPublicClientApplication['removePerformanceCallback']>(),
+    getAccount: vi.fn<IPublicClientApplication['getAccount']>(),
+    getAllAccounts: vi.fn<IPublicClientApplication['getAllAccounts']>(),
+    handleRedirectPromise:
+      vi.fn<IPublicClientApplication['handleRedirectPromise']>(),
+    loginPopup: vi.fn<IPublicClientApplication['loginPopup']>(),
+    loginRedirect: vi.fn<IPublicClientApplication['loginRedirect']>(),
+    logoutRedirect: vi.fn<IPublicClientApplication['logoutRedirect']>(),
+    logoutPopup: vi.fn<IPublicClientApplication['logoutPopup']>(),
+    ssoSilent: vi.fn<IPublicClientApplication['ssoSilent']>(),
+    getLogger: vi.fn<IPublicClientApplication['getLogger']>(),
+    setLogger: vi.fn<IPublicClientApplication['setLogger']>(),
+    setActiveAccount: vi.fn<IPublicClientApplication['setActiveAccount']>(),
+    getActiveAccount: vi.fn<IPublicClientApplication['getActiveAccount']>(),
+    initializeWrapperLibrary:
+      vi.fn<IPublicClientApplication['initializeWrapperLibrary']>(),
+    setNavigationClient:
+      vi.fn<IPublicClientApplication['setNavigationClient']>(),
+    getConfiguration: vi.fn<IPublicClientApplication['getConfiguration']>(),
+    hydrateCache: vi.fn<IPublicClientApplication['hydrateCache']>(),
+    clearCache: vi.fn<IPublicClientApplication['clearCache']>(),
+  } satisfies IPublicClientApplication;
+
+  mockMsalState.setMsalContext({
+    accounts: [mockAccount],
+    instance: msalInstance,
+    inProgress: InteractionStatus.None,
+    logger: new Logger({ loggerCallback: () => undefined }),
+  });
+
+  return {
+    useMsal: () => mockMsalState.getMsalContext(),
+  } satisfies Partial<__TestMockModule2>;
+});
+
+vi.mock(
+  import('@/routes/common/helperFunctions'),
+  () => helperMocks satisfies Partial<__TestMockModule9>,
+);
+
+vi.mock(
+  import('@/analytics/GoogleAnalytics'),
+  () =>
+    ({ trackGAEvent: trackGAEventMock }) satisfies Partial<__TestMockModule22>,
+);
+
+vi.mock(
+  import('@/instrumentation/AppLogger'),
+  () => ({ default: mockAppLogger }) satisfies Partial<__TestMockModule5>,
+);
 
 const mockQuotationData = {
   crmQuoteRequestId: 'Q-001',
@@ -40,8 +152,31 @@ const defaultProps = {
   prefixText: 'Please review the ',
   suffixText: ' before accepting.',
   quotationData: mockQuotationData,
-  setFileError: vi.fn(),
-  setIsLoading: vi.fn(),
+  setFileError: vi.fn<ViewPdfQuoteTermsProps['setFileError']>(),
+  setIsLoading: vi.fn<ViewPdfQuoteTermsProps['setIsLoading']>(),
+};
+
+const mockTokenResult = {
+  authority: 'https://login.microsoftonline.com/test-tenant',
+  uniqueId: 'test-unique-id',
+  tenantId: 'test-tenant',
+  scopes: ['openid'],
+  account: {
+    homeAccountId: 'test-account',
+    environment: 'login.microsoftonline.com',
+    tenantId: 'test-tenant',
+    username: 'test@example.com',
+    localAccountId: 'test-local-account',
+  },
+  idToken: 'test-id-token',
+  idTokenClaims: {},
+  accessToken: 'test-access-token',
+  fromCache: false,
+  expiresOn: new Date('2026-01-01T00:00:00.000Z'),
+  tokenType: 'Bearer',
+  correlationId: 'test-correlation-id',
+} satisfies AuthenticationResult & {
+  account: NonNullable<AuthenticationResult['account']>;
 };
 
 // InTextLink renders <a> without href when only onClick is supplied.
@@ -49,20 +184,22 @@ const defaultProps = {
 const getTermsAnchor = (container: HTMLElement) =>
   container.querySelector('a.nmi-in-text-link') as HTMLElement;
 
-describe('ViewPdfQuoteTerms', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    acquireTokenSilentMock.mockResolvedValue({
-      accessToken: 'test-access-token',
-    });
-    helperMocks.getQuotationFileDetails.mockResolvedValue({
-      fileData: 'base64data',
-      mimeType: 'application/pdf',
-      filename: 'quote-terms.pdf',
-    });
+const resetViewPdfQuoteTermsMocks = () => {
+  vi.clearAllMocks();
+  acquireTokenSilentMock.mockResolvedValue(mockTokenResult);
+  helperMocks.getQuotationFileDetails.mockResolvedValue({
+    fileData: 'base64data',
+    mimeType: 'application/pdf',
+    filename: 'quote-terms.pdf',
   });
+};
 
+describe('view pdf quote terms', () => {
   it('renders the Note label, prefix text, Terms link, and suffix text', () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteTermsMocks();
+
     const { container } = render(<ViewPdfQuoteTerms {...defaultProps} />);
 
     expect(screen.getByText('Note:')).toBeInTheDocument();
@@ -72,45 +209,64 @@ describe('ViewPdfQuoteTerms', () => {
   });
 
   it('opens the PDF at the correct page and tracks a GA event on click', async () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteTermsMocks();
+
     const user = userEvent.setup();
-    const setIsLoading = vi.fn();
+    const setIsLoading = vi.fn<ViewPdfQuoteTermsProps['setIsLoading']>();
     const { container } = render(
-      <ViewPdfQuoteTerms {...defaultProps} setIsLoading={setIsLoading} />
+      <ViewPdfQuoteTerms {...defaultProps} setIsLoading={setIsLoading} />,
     );
 
     await user.click(getTermsAnchor(container));
 
     await waitFor(() => {
-      expect(acquireTokenSilentMock).toHaveBeenCalled();
-      expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
-        'test-access-token',
-        mockQuotationData,
-        true
-      );
-      expect(helperMocks.getFileUrlFromBase64).toHaveBeenCalledWith(
-        'base64data'
-      );
-      expect(helperMocks.openPdfPageInNewTab).toHaveBeenCalledWith(
-        'blob:test-url',
-        2
-      );
-      expect(trackGAEventMock).toHaveBeenCalledWith('Terms', 'download');
-      expect(setIsLoading).toHaveBeenCalledWith(true);
-      expect(setIsLoading).toHaveBeenCalledWith(false);
+      const [tokenRequest] = acquireTokenSilentMock.mock.calls.at(-1) ?? [];
+      const fileDetailsRequest =
+        helperMocks.getQuotationFileDetails.mock.calls.at(-1);
+      const fileUrlRequest = helperMocks.getFileUrlFromBase64.mock.calls.at(-1);
+      const openPdfPageRequest =
+        helperMocks.openPdfPageInNewTab.mock.calls.at(-1);
+      const gaEvent = trackGAEventMock.mock.calls.at(-1);
+      const loadingStates = setIsLoading.mock.calls.map(([state]) => state);
+
+      expect({
+        tokenRequest,
+        fileDetailsRequest,
+        fileUrlRequest,
+        openPdfPageRequest,
+        gaEvent,
+        loadingStates,
+      }).toMatchObject({
+        tokenRequest: {
+          account: { homeAccountId: 'test-account' },
+          scopes: ['openid', 'openid'],
+        },
+        fileDetailsRequest: ['test-access-token', mockQuotationData, true],
+        fileUrlRequest: ['base64data'],
+        openPdfPageRequest: ['blob:test-url', '2'],
+        gaEvent: ['Terms', 'download'],
+        loadingStates: [true, false],
+      });
     });
   });
 
   it('sets a file error and clears loading when the token request fails', async () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteTermsMocks();
+
     const user = userEvent.setup();
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<ViewPdfQuoteTermsProps['setFileError']>();
+    const setIsLoading = vi.fn<ViewPdfQuoteTermsProps['setIsLoading']>();
     acquireTokenSilentMock.mockRejectedValue(new Error('Token expired'));
     const { container } = render(
       <ViewPdfQuoteTerms
         {...defaultProps}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await user.click(getTermsAnchor(container));
@@ -123,8 +279,12 @@ describe('ViewPdfQuoteTerms', () => {
   });
 
   it('skips opening the PDF when the file response is incomplete', async () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteTermsMocks();
+
     const user = userEvent.setup();
-    helperMocks.getQuotationFileDetails.mockResolvedValue(null);
+    helperMocks.getQuotationFileDetails.mockResolvedValue(undefined);
     const { container } = render(<ViewPdfQuoteTerms {...defaultProps} />);
 
     await user.click(getTermsAnchor(container));

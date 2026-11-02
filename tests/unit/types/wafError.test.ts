@@ -4,17 +4,20 @@ import {
   isWafError,
 } from '../../../ClientApp/src/types/wafError';
 
-describe('isWafError', () => {
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(isWafError, () => {
   it('returns true for Azure WAF server headers', () => {
+    expect.hasAssertions();
+
     expect(
       isWafError({
         headers: { server: 'Microsoft-Azure-Application-Gateway/2.5' },
-      })
+      }),
     ).toBe(true);
     expect(
       isWafError({
         headers: { server: AZURE_WAF_SERVER_PREFIX },
-      })
+      }),
     ).toBe(true);
   });
 
@@ -31,6 +34,8 @@ describe('isWafError', () => {
     42,
     undefined,
   ])('returns false for non-WAF errors %#', (error) => {
+    expect.hasAssertions();
+
     expect(isWafError(error)).toBe(false);
   });
 });

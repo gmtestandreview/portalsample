@@ -57,6 +57,7 @@
     "scripts/**/*",
     "scripts/**/*.tsx",
     "scripts/**/*.ts",
+    "quality/**/*",
     "ClientApp/src/**/*",
     ".storybook/**/*",
     "tests/**/*"

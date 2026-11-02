@@ -1,18 +1,22 @@
 ---
 name: secrets-management
-description: "Secure secrets management practices for CI/CD pipelines using Vault, AWS Secrets Manager, and other tools."
+description:
+  'Secure secrets management practices for CI/CD pipelines using Vault, AWS
+  Secrets Manager, and other tools.'
 risk: unknown
 source: community
-date_added: "2026-02-27"
+date_added: '2026-02-27'
 ---
 
 # Secrets Management
 
-Secure secrets management practices for CI/CD pipelines using Vault, AWS Secrets Manager, and other tools.
+Secure secrets management practices for CI/CD pipelines using Vault, AWS Secrets
+Manager, and other tools.
 
 ## Purpose
 
-Implement secure secrets management in CI/CD pipelines without hardcoding sensitive information.
+Implement secure secrets management in CI/CD pipelines without hardcoding
+sensitive information.
 
 ## Use this skill when
 
@@ -100,22 +104,22 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Import Secrets from Vault
-      uses: hashicorp/vault-action@v2
-      with:
-        url: https://vault.example.com:8200
-        token: ${{ secrets.VAULT_TOKEN }}
-        secrets: |
-          secret/data/database username | DB_USERNAME ;
-          secret/data/database password | DB_PASSWORD ;
-          secret/data/api key | API_KEY
+      - name: Import Secrets from Vault
+        uses: hashicorp/vault-action@v2
+        with:
+          url: https://vault.example.com:8200
+          token: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+            secret/data/database username | DB_USERNAME ;
+            secret/data/database password | DB_PASSWORD ;
+            secret/data/api key | API_KEY
 
-    - name: Use secrets
-      run: |
-        echo "Connecting to database as $DB_USERNAME"
-        # Use $DB_PASSWORD, $API_KEY
+      - name: Use secrets
+        run: |
+          echo "Connecting to database as $DB_USERNAME"
+          # Use $DB_PASSWORD, $API_KEY
 ```
 
 ### GitLab CI with Vault
@@ -206,9 +210,9 @@ deploy:
   runs-on: ubuntu-latest
   environment: production
   steps:
-  - name: Deploy
-    run: |
-      echo "Deploying with ${{ secrets.PROD_API_KEY }}"
+    - name: Deploy
+      run: |
+        echo "Deploying with ${{ secrets.PROD_API_KEY }}"
 ```
 
 **Reference:** See `references/github-secrets.md`
@@ -297,13 +301,13 @@ metadata:
 spec:
   provider:
     vault:
-      server: "https://vault.example.com:8200"
-      path: "secret"
-      version: "v2"
+      server: 'https://vault.example.com:8200'
+      path: 'secret'
+      version: 'v2'
       auth:
         kubernetes:
-          mountPath: "kubernetes"
-          role: "production"
+          mountPath: 'kubernetes'
+          role: 'production'
 
 ---
 apiVersion: external-secrets.io/v1beta1
@@ -320,14 +324,14 @@ spec:
     name: database-credentials
     creationPolicy: Owner
   data:
-  - secretKey: username
-    remoteRef:
-      key: database/config
-      property: username
-  - secretKey: password
-    remoteRef:
-      key: database/config
-      property: password
+    - secretKey: username
+      remoteRef:
+        key: database/config
+        property: username
+    - secretKey: password
+      remoteRef:
+        key: database/config
+        property: password
 ```
 
 ## Secret Scanning

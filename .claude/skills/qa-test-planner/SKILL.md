@@ -1,14 +1,21 @@
 ---
 name: qa-test-planner
-description: Generate comprehensive test plans, manual test cases, regression test suites, and bug reports for QA engineers. Includes Figma MCP integration for design validation.
+description:
+  Generate comprehensive test plans, manual test cases, regression test suites,
+  and bug reports for QA engineers. Includes Figma MCP integration for design
+  validation.
 trigger: explicit
 ---
 
 # QA Test Planner
 
-A comprehensive skill for QA engineers to create test plans, generate manual test cases, build regression test suites, validate designs against Figma, and document bugs effectively.
+A comprehensive skill for QA engineers to create test plans, generate manual
+test cases, build regression test suites, validate designs against Figma, and
+document bugs effectively.
 
-> **Activation:** This skill is triggered only when explicitly called by name (e.g., `/qa-test-planner`, `qa-test-planner`, or `use the skill qa-test-planner`).
+> **Activation:** This skill is triggered only when explicitly called by name
+> (e.g., `/qa-test-planner`, `qa-test-planner`, or
+> `use the skill qa-test-planner`).
 
 ---
 
@@ -48,13 +55,13 @@ A comprehensive skill for QA engineers to create test plans, generate manual tes
 
 ## Quick Reference
 
-| Task | What You Get | Time |
-| ------ | -------------- | ------ |
-| Test Plan | Strategy, scope, schedule, risks | 10-15 min |
-| Test Cases | Step-by-step instructions, expected results | 5-10 min each |
-| Regression Suite | Smoke tests, critical paths, execution order | 15-20 min |
-| Figma Validation | Design-implementation comparison, discrepancy list | 10-15 min |
-| Bug Report | Reproducible steps, environment, evidence | 5 min |
+| Task             | What You Get                                       | Time          |
+| ---------------- | -------------------------------------------------- | ------------- |
+| Test Plan        | Strategy, scope, schedule, risks                   | 10-15 min     |
+| Test Cases       | Step-by-step instructions, expected results        | 5-10 min each |
+| Regression Suite | Smoke tests, critical paths, execution order       | 15-20 min     |
+| Figma Validation | Design-implementation comparison, discrepancy list | 10-15 min     |
+| Bug Report       | Reproducible steps, environment, evidence          | 5 min         |
 
 ---
 
@@ -91,20 +98,20 @@ QA Deliverable Ready
 
 ### Interactive Scripts
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `./scripts/generate_test_cases.sh` | Create test cases interactively | Step-by-step prompts |
-| `./scripts/create_bug_report.sh` | Generate bug reports | Guided input collection |
+| Script                             | Purpose                         | Usage                   |
+| ---------------------------------- | ------------------------------- | ----------------------- |
+| `./scripts/generate_test_cases.sh` | Create test cases interactively | Step-by-step prompts    |
+| `./scripts/create_bug_report.sh`   | Generate bug reports            | Guided input collection |
 
 ### Natural Language
 
-| Request | Output |
-| --------- | -------- |
-| "Create test plan for {feature}" | Complete test plan document |
+| Request                                 | Output                         |
+| --------------------------------------- | ------------------------------ |
+| "Create test plan for {feature}"        | Complete test plan document    |
 | "Generate {N} test cases for {feature}" | Numbered test cases with steps |
-| "Build smoke test suite" | Critical path tests |
-| "Compare with Figma at {URL}" | Visual validation checklist |
-| "Document bug: {description}" | Structured bug report |
+| "Build smoke test suite"                | Critical path tests            |
+| "Compare with Figma at {URL}"           | Visual validation checklist    |
+| "Document bug: {description}"           | Structured bug report          |
 
 ---
 
@@ -152,13 +159,13 @@ QA Deliverable Ready
 
 ## Anti-Patterns
 
-| Avoid | Why | Instead |
-| ------- | ----- | --------- |
-| Vague test steps | Can't reproduce | Specific actions + expected results |
-| Missing preconditions | Tests fail unexpectedly | Document all setup requirements |
-| No test data | Tester blocked | Provide sample data or generation |
-| Generic bug titles | Hard to track | Specific: "[Feature] issue when [action]" |
-| Skip edge cases | Miss critical bugs | Include boundary values, nulls |
+| Avoid                 | Why                     | Instead                                   |
+| --------------------- | ----------------------- | ----------------------------------------- |
+| Vague test steps      | Can't reproduce         | Specific actions + expected results       |
+| Missing preconditions | Tests fail unexpectedly | Document all setup requirements           |
+| No test data          | Tester blocked          | Provide sample data or generation         |
+| Generic bug titles    | Hard to track           | Specific: "[Feature] issue when [action]" |
+| Skip edge cases       | Miss critical bugs      | Include boundary values, nulls            |
 
 ---
 
@@ -189,10 +196,14 @@ QA Deliverable Ready
 
 ## References
 
-- [Test Case Templates](references/test_case_templates.md) - Standard formats for all test types
-- [Bug Report Templates](references/bug_report_templates.md) - Documentation templates
-- [Regression Testing Guide](references/regression_testing.md) - Suite building and execution
-- [Figma Validation Guide](references/figma_validation.md) - Design-implementation validation
+- [Test Case Templates](references/test_case_templates.md) - Standard formats
+  for all test types
+- [Bug Report Templates](references/bug_report_templates.md) - Documentation
+  templates
+- [Regression Testing Guide](references/regression_testing.md) - Suite building
+  and execution
+- [Figma Validation Guide](references/figma_validation.md) -
+  Design-implementation validation
 
 ---
 
@@ -204,38 +215,40 @@ QA Deliverable Ready
 ```markdown
 ## TC-001: [Test Case Title]
 
-**Priority:** High | Medium | Low
-**Type:** Functional | UI | Integration | Regression
-**Status:** Not Run | Pass | Fail | Blocked
+**Priority:** High | Medium | Low **Type:** Functional | UI | Integration |
+Regression **Status:** Not Run | Pass | Fail | Blocked
 
 ### Objective
+
 [What are we testing and why]
 
 ### Preconditions
+
 - [Setup requirement 1]
 - [Setup requirement 2]
 - [Test data needed]
 
 ### Test Steps
-1. [Action to perform]
-   **Expected:** [What should happen]
 
-2. [Action to perform]
-   **Expected:** [What should happen]
+1. [Action to perform] **Expected:** [What should happen]
 
-3. [Action to perform]
-   **Expected:** [What should happen]
+2. [Action to perform] **Expected:** [What should happen]
+
+3. [Action to perform] **Expected:** [What should happen]
 
 ### Test Data
+
 - Input: [Test data values]
 - User: [Test account details]
 - Configuration: [Environment settings]
 
 ### Post-conditions
+
 - [System state after test]
 - [Cleanup required]
 
 ### Notes
+
 - [Edge cases to consider]
 - [Related test cases]
 - [Known issues]
@@ -243,14 +256,14 @@ QA Deliverable Ready
 
 ### Test Types
 
-| Type | Focus | Example |
-| ------ | ------- | --------- |
-| Functional | Business logic | Login with valid credentials |
-| UI/Visual | Appearance, layout | Button matches Figma design |
-| Integration | Component interaction | API returns data to frontend |
-| Regression | Existing functionality | Previous features still work |
-| Performance | Speed, load handling | Page loads under 3 seconds |
-| Security | Vulnerabilities | SQL injection prevented |
+| Type        | Focus                  | Example                      |
+| ----------- | ---------------------- | ---------------------------- |
+| Functional  | Business logic         | Login with valid credentials |
+| UI/Visual   | Appearance, layout     | Button matches Figma design  |
+| Integration | Component interaction  | API returns data to frontend |
+| Regression  | Existing functionality | Previous features still work |
+| Performance | Speed, load handling   | Page loads under 3 seconds   |
+| Security    | Vulnerabilities        | SQL injection prevented      |
 
 </details>
 
@@ -263,6 +276,7 @@ QA Deliverable Ready
 # Test Plan: [Feature/Release Name]
 
 ## Executive Summary
+
 - Feature/product being tested
 - Testing objectives
 - Key risks
@@ -271,12 +285,14 @@ QA Deliverable Ready
 ## Test Scope
 
 **In Scope:**
+
 - Features to be tested
 - Test types (functional, UI, performance)
 - Platforms and environments
 - User flows and scenarios
 
 **Out of Scope:**
+
 - Features not being tested
 - Known limitations
 - Third-party integrations (if applicable)
@@ -284,6 +300,7 @@ QA Deliverable Ready
 ## Test Strategy
 
 **Test Types:**
+
 - Manual testing
 - Exploratory testing
 - Regression testing
@@ -291,12 +308,14 @@ QA Deliverable Ready
 - User acceptance testing
 
 **Test Approach:**
+
 - Black box testing
 - Positive and negative testing
 - Boundary value analysis
 - Equivalence partitioning
 
 ## Test Environment
+
 - Operating systems
 - Browsers and versions
 - Devices (mobile, tablet, desktop)
@@ -304,6 +323,7 @@ QA Deliverable Ready
 - Backend/API environments
 
 ## Entry Criteria
+
 - [ ] Requirements documented
 - [ ] Designs finalized
 - [ ] Test environment ready
@@ -311,6 +331,7 @@ QA Deliverable Ready
 - [ ] Build deployed
 
 ## Exit Criteria
+
 - [ ] All high-priority test cases executed
 - [ ] 90%+ test case pass rate
 - [ ] All critical bugs fixed
@@ -319,11 +340,12 @@ QA Deliverable Ready
 
 ## Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| [Risk 1] | H/M/L | H/M/L | [Mitigation] |
+| Risk     | Probability | Impact | Mitigation   |
+| -------- | ----------- | ------ | ------------ |
+| [Risk 1] | H/M/L       | H/M/L  | [Mitigation] |
 
 ## Test Deliverables
+
 - Test plan document
 - Test cases
 - Test execution reports
@@ -341,12 +363,12 @@ QA Deliverable Ready
 ```markdown
 # BUG-[ID]: [Clear, specific title]
 
-**Severity:** Critical | High | Medium | Low
-**Priority:** P0 | P1 | P2 | P3
-**Type:** Functional | UI | Performance | Security
-**Status:** Open | In Progress | Fixed | Closed
+**Severity:** Critical | High | Medium | Low **Priority:** P0 | P1 | P2 | P3
+**Type:** Functional | UI | Performance | Security **Status:** Open | In
+Progress | Fixed | Closed
 
 ## Environment
+
 - **OS:** [Windows 11, macOS 14, etc.]
 - **Browser:** [Chrome 120, Firefox 121, etc.]
 - **Device:** [Desktop, iPhone 15, etc.]
@@ -354,30 +376,37 @@ QA Deliverable Ready
 - **URL:** [Page where bug occurs]
 
 ## Description
+
 [Clear, concise description of the issue]
 
 ## Steps to Reproduce
+
 1. [Specific step]
 2. [Specific step]
 3. [Specific step]
 
 ## Expected Behavior
+
 [What should happen]
 
 ## Actual Behavior
+
 [What actually happens]
 
 ## Visual Evidence
+
 - Screenshot: [attached]
 - Video: [link if applicable]
 - Console errors: [paste errors]
 
 ## Impact
+
 - **User Impact:** [How many users affected]
 - **Frequency:** [Always, Sometimes, Rarely]
 - **Workaround:** [If one exists]
 
 ## Additional Context
+
 - Related to: [Feature/ticket]
 - Regression: [Yes/No]
 - Figma design: [Link if UI bug]
@@ -385,12 +414,12 @@ QA Deliverable Ready
 
 ### Severity Definitions
 
-| Level | Criteria | Examples |
-| ------- | ---------- | ---------- |
-| **Critical (P0)** | System crash, data loss, security | Payment fails, login broken |
-| **High (P1)** | Major feature broken, no workaround | Search not working |
-| **Medium (P2)** | Feature partial, workaround exists | Filter missing one option |
-| **Low (P3)** | Cosmetic, rare edge cases | Typo, minor alignment |
+| Level             | Criteria                            | Examples                    |
+| ----------------- | ----------------------------------- | --------------------------- |
+| **Critical (P0)** | System crash, data loss, security   | Payment fails, login broken |
+| **High (P1)**     | Major feature broken, no workaround | Search not working          |
+| **Medium (P2)**   | Feature partial, workaround exists  | Filter missing one option   |
+| **Low (P3)**      | Cosmetic, rare edge cases           | Typo, minor alignment       |
 
 </details>
 
@@ -447,14 +476,14 @@ Figma link: [specific component]
 
 ### What to Validate
 
-| Element | What to Check | Tool |
-| --------- | --------------- | ------ |
-| Colors | Hex values exact | Browser color picker |
-| Spacing | Padding/margin px | DevTools computed styles |
-| Typography | Font, size, weight | DevTools font panel |
-| Layout | Width, height, position | DevTools box model |
-| States | Hover, active, focus | Manual interaction |
-| Responsive | Breakpoint behavior | DevTools device mode |
+| Element    | What to Check           | Tool                     |
+| ---------- | ----------------------- | ------------------------ |
+| Colors     | Hex values exact        | Browser color picker     |
+| Spacing    | Padding/margin px       | DevTools computed styles |
+| Typography | Font, size, weight      | DevTools font panel      |
+| Layout     | Width, height, position | DevTools box model       |
+| States     | Hover, active, focus    | Manual interaction       |
+| Responsive | Breakpoint behavior     | DevTools device mode     |
 
 ### Example Queries
 
@@ -472,12 +501,12 @@ Figma link: [specific component]
 
 ### Suite Structure
 
-| Suite Type | Duration | Frequency | Coverage |
-| ------------ | ---------- | ----------- | ---------- |
-| Smoke | 15-30 min | Daily | Critical paths only |
-| Targeted | 30-60 min | Per change | Affected areas |
-| Full | 2-4 hours | Weekly/Release | Comprehensive |
-| Sanity | 10-15 min | After hotfix | Quick validation |
+| Suite Type | Duration  | Frequency      | Coverage            |
+| ---------- | --------- | -------------- | ------------------- |
+| Smoke      | 15-30 min | Daily          | Critical paths only |
+| Targeted   | 30-60 min | Per change     | Affected areas      |
+| Full       | 2-4 hours | Weekly/Release | Comprehensive       |
+| Sanity     | 10-15 min | After hotfix   | Quick validation    |
 
 ### Building a Regression Suite
 
@@ -490,11 +519,11 @@ Figma link: [specific component]
 
 **Step 2: Prioritize Test Cases**
 
-| Priority | Description | Must Run |
-| ---------- | ------------- | ---------- |
-| P0 | Business-critical, security | Always |
-| P1 | Major features, common flows | Weekly+ |
-| P2 | Minor features, edge cases | Releases |
+| Priority | Description                  | Must Run |
+| -------- | ---------------------------- | -------- |
+| P0       | Business-critical, security  | Always   |
+| P1       | Major features, common flows | Weekly+  |
+| P2       | Minor features, edge cases   | Releases |
 
 **Step 3: Execution Order**
 
@@ -534,12 +563,11 @@ Figma link: [specific component]
 ```markdown
 # Test Run: [Release Version]
 
-**Date:** 2024-01-15
-**Build:** v2.5.0-rc1
-**Tester:** [Name]
-**Environment:** Staging
+**Date:** 2024-01-15 **Build:** v2.5.0-rc1 **Tester:** [Name] **Environment:**
+Staging
 
 ## Summary
+
 - Total Test Cases: 150
 - Executed: 145
 - Passed: 130
@@ -550,26 +578,30 @@ Figma link: [specific component]
 
 ## Test Cases by Priority
 
-| Priority | Total | Pass | Fail | Blocked |
-|----------|-------|------|------|---------|
-| P0 (Critical) | 25 | 23 | 2 | 0 |
-| P1 (High) | 50 | 45 | 3 | 2 |
-| P2 (Medium) | 50 | 45 | 3 | 2 |
-| P3 (Low) | 25 | 17 | 2 | 1 |
+| Priority      | Total | Pass | Fail | Blocked |
+| ------------- | ----- | ---- | ---- | ------- |
+| P0 (Critical) | 25    | 23   | 2    | 0       |
+| P1 (High)     | 50    | 45   | 3    | 2       |
+| P2 (Medium)   | 50    | 45   | 3    | 2       |
+| P3 (Low)      | 25    | 17   | 2    | 1       |
 
 ## Critical Failures
+
 - TC-045: Payment processing fails
   - Bug: BUG-234
   - Status: Open
 
 ## Blocked Tests
+
 - TC-112: Dashboard widget (API endpoint down)
 
 ## Risks
+
 - 2 critical bugs blocking release
 - Payment integration needs attention
 
 ## Next Steps
+
 - Retest after BUG-234 fix
 - Complete remaining 5 test cases
 - Run full regression before sign-off
@@ -580,11 +612,11 @@ Figma link: [specific component]
 ```markdown
 ## Coverage Matrix
 
-| Feature | Requirements | Test Cases | Status | Gaps |
-|---------|--------------|------------|--------|------|
-| Login | 8 | 12 | Complete | None |
-| Checkout | 15 | 10 | Partial | Payment errors |
-| Dashboard | 12 | 15 | Complete | None |
+| Feature   | Requirements | Test Cases | Status   | Gaps           |
+| --------- | ------------ | ---------- | -------- | -------------- |
+| Login     | 8            | 12         | Complete | None           |
+| Checkout  | 15           | 10         | Partial  | Payment errors |
+| Dashboard | 12           | 15         | Complete | None           |
 ```
 
 </details>
@@ -694,41 +726,41 @@ Figma link: [specific component]
 ```markdown
 ## TC-LOGIN-001: Valid User Login
 
-**Priority:** P0 (Critical)
-**Type:** Functional
-**Estimated Time:** 2 minutes
+**Priority:** P0 (Critical) **Type:** Functional **Estimated Time:** 2 minutes
 
 ### Objective
+
 Verify users can successfully login with valid credentials
 
 ### Preconditions
+
 - User account exists (test@example.com / Test123!)
 - User is not already logged in
 - Browser cookies cleared
 
 ### Test Steps
-1. Navigate to https://app.example.com/login
-   **Expected:** Login page displays with email and password fields
 
-2. Enter email: test@example.com
-   **Expected:** Email field accepts input
+1. Navigate to https://app.example.com/login **Expected:** Login page displays
+   with email and password fields
 
-3. Enter password: Test123!
-   **Expected:** Password field shows masked characters
+2. Enter email: test@example.com **Expected:** Email field accepts input
 
-4. Click "Login" button
-   **Expected:**
+3. Enter password: Test123! **Expected:** Password field shows masked characters
+
+4. Click "Login" button **Expected:**
    - Loading indicator appears
    - User redirected to /dashboard
    - Welcome message shown: "Welcome back, Test User"
    - Avatar/profile image displayed in header
 
 ### Post-conditions
+
 - User session created
 - Auth token stored
 - Analytics event logged
 
 ### Edge Cases to Consider
+
 - TC-LOGIN-002: Invalid password
 - TC-LOGIN-003: Non-existent email
 - TC-LOGIN-004: SQL injection attempt
@@ -743,38 +775,38 @@ Verify users can successfully login with valid credentials
 ```markdown
 ## TC-UI-045: Mobile Navigation Menu
 
-**Priority:** P1 (High)
-**Type:** UI/Responsive
-**Devices:** Mobile (iPhone, Android)
+**Priority:** P1 (High) **Type:** UI/Responsive **Devices:** Mobile (iPhone,
+Android)
 
 ### Objective
+
 Verify navigation menu works correctly on mobile devices
 
 ### Preconditions
+
 - Access from mobile device or responsive mode
 - Viewport width: 375px (iPhone SE) to 428px (iPhone Pro Max)
 
 ### Test Steps
-1. Open homepage on mobile device
-   **Expected:** Hamburger menu icon visible (top-right)
 
-2. Tap hamburger icon
-   **Expected:**
+1. Open homepage on mobile device **Expected:** Hamburger menu icon visible
+   (top-right)
+
+2. Tap hamburger icon **Expected:**
    - Menu slides in from right
    - Overlay appears over content
    - Close (X) button visible
 
-3. Tap menu item
-   **Expected:** Navigate to section, menu closes
+3. Tap menu item **Expected:** Navigate to section, menu closes
 
-4. Compare against Figma mobile design [link]
-   **Expected:**
+4. Compare against Figma mobile design [link] **Expected:**
    - Menu width: 280px
    - Slide animation: 300ms ease-out
    - Overlay opacity: 0.5, color #000000
    - Font size: 16px, line-height 24px
 
 ### Breakpoints to Test
+
 - 375px (iPhone SE)
 - 390px (iPhone 14)
 - 428px (iPhone 14 Pro Max)

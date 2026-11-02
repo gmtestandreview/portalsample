@@ -17,20 +17,11 @@
     },
     "configuration": {
       "type": "string",
-      "enum": [
-        "with_skill",
-        "without_skill",
-        "new_skill",
-        "old_skill"
-      ]
+      "enum": ["with_skill", "without_skill", "new_skill", "old_skill"]
     },
     "expectationResult": {
       "type": "object",
-      "required": [
-        "text",
-        "passed",
-        "evidence"
-      ],
+      "required": ["text", "passed", "evidence"],
       "properties": {
         "text": {
           "type": "string",
@@ -48,12 +39,7 @@
     },
     "stats": {
       "type": "object",
-      "required": [
-        "mean",
-        "stddev",
-        "min",
-        "max"
-      ],
+      "required": ["mean", "stddev", "min", "max"],
       "properties": {
         "count": {
           "type": "integer",
@@ -79,10 +65,7 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "candidate",
-            "baseline"
-          ],
+          "required": ["candidate", "baseline"],
           "properties": {
             "candidate": {
               "const": "with_skill"
@@ -95,10 +78,7 @@
         },
         {
           "type": "object",
-          "required": [
-            "candidate",
-            "baseline"
-          ],
+          "required": ["candidate", "baseline"],
           "properties": {
             "candidate": {
               "const": "new_skill"

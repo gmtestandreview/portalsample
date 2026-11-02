@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { useEffect } from 'react';
 import type { ComponentType } from 'react';
 import GetStarted from './get-started';
@@ -22,7 +22,7 @@ const NotificationDecorator = (Story: ComponentType) => {
   return <Story />;
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Home/GetStarted',
   component: GetStarted,
   decorators: [withPortalProviders],
@@ -33,13 +33,10 @@ const meta = {
       initialEntries: ['/'],
     },
   },
-} satisfies Meta<typeof GetStarted>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export const PublicLanding = meta.story();
 
-export const PublicLanding: Story = {};
-
-export const WithInformationBanner: Story = {
+export const WithInformationBanner = meta.story({
   decorators: [NotificationDecorator],
-};
+});

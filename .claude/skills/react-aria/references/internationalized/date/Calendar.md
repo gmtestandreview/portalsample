@@ -74,7 +74,7 @@ createCalendar(calendarIdentifier); // new BuddhistCalendar()
 
 // Calendar system set explicitly.
 let calendarIdentifier = new Intl.DateTimeFormat(
-  'hi-IN-u-ca-indian'
+  'hi-IN-u-ca-indian',
 ).resolvedOptions().calendar; // 'indian'
 createCalendar(calendarIdentifier); // new IndianCalendar()
 ```

@@ -12,14 +12,14 @@ import React from 'react';
 
 function Example() {
   let [content, setContent] = useState<string | React.ReactElement | null>(
-    null
+    null,
   );
   return (
     <DropZone
       // Determine whether dragged content should be accepted.
       getDropOperation={(types) =>
         ['text/plain', 'image/jpeg', 'image/png', 'image.gif'].some((t) =>
-          types.has(t)
+          types.has(t),
         )
           ? 'copy'
           : 'cancel'
@@ -29,7 +29,7 @@ function Example() {
         let item = event.items.find(
           (item) =>
             (item.kind === 'text' && item.types.has('text/plain')) ||
-            (item.kind === 'file' && item.type.startsWith('image/'))
+            (item.kind === 'file' && item.type.startsWith('image/')),
         );
 
         if (item?.kind === 'text') {
@@ -43,7 +43,7 @@ function Example() {
               src={url}
               alt={item.name}
               style={{ maxHeight: 100, maxWidth: '100%' }}
-            />
+            />,
           );
         }
       }}
@@ -119,14 +119,14 @@ import React from 'react';
 
 function Example() {
   let [content, setContent] = useState<string | React.ReactElement | null>(
-    null
+    null,
   );
   return (
     <DropZone
       // Determine whether dragged content should be accepted.
       getDropOperation={(types) =>
         ['text/plain', 'image/jpeg', 'image/png', 'image/gif'].some((t) =>
-          types.has(t)
+          types.has(t),
         )
           ? 'copy'
           : 'cancel'
@@ -136,7 +136,7 @@ function Example() {
         let item = event.items.find(
           (item) =>
             (item.kind === 'text' && item.types.has('text/plain')) ||
-            (item.kind === 'file' && item.type.startsWith('image/'))
+            (item.kind === 'file' && item.type.startsWith('image/')),
         );
 
         if (item?.kind === 'text') {
@@ -150,7 +150,7 @@ function Example() {
               src={url}
               alt={item.name}
               style={{ maxHeight: 100, maxWidth: '100%' }}
-            />
+            />,
           );
         }
       }}
@@ -191,7 +191,7 @@ export function DropZone(props: DropZoneProps) {
     <RACDropZone
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        dropZone({ ...renderProps, className })
+        dropZone({ ...renderProps, className }),
       )}
     />
   );

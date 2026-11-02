@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { AttachmentDto } from '../../../api/web-api-client';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -20,7 +20,7 @@ const uploadResult: AttachmentDto[] = [
   },
 ];
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/Attachment/AttachmentNew',
   component: AttachmentNew,
   decorators: [withPortalProviders],
@@ -44,30 +44,26 @@ const meta = {
     maxSizeInMB: 10,
     inlineHelp: 'Accepted formats: PDF, JPG, PNG.',
     setErrors: fn(),
-    onUploadFiles: fn(async () => uploadResult),
-    onDeleteFile: fn(async () => {}),
+    onUploadFiles: fn(() => Promise.resolve(uploadResult)),
+    onDeleteFile: fn(() => Promise.resolve()),
   },
-} satisfies Meta<typeof AttachmentNew>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const EmptyUploader: Story = {
-  play: async ({
-    canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+export const EmptyUploader = meta.story({
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Drag and drop files here')).toBeVisible();
     // The browse control and the file input are both present.
     await expect(canvas.getByTestId('documents')).toBeVisible();
     await expect(
-      canvas.getByTestId('drag-upload-documents')
+      canvas.getByTestId('drag-upload-documents'),
     ).toBeInTheDocument();
     await expect(canvas.getByText(/maximum size for each file/i)).toBeVisible();
   },
-};
+});
 
-export const DocumentsWithoutIds: Story = {
+export const DocumentsWithoutIds = meta.story({
   args: { isSummary: true },
   parameters: {
     portal: {
@@ -89,10 +85,8 @@ export const DocumentsWithoutIds: Story = {
       },
     },
   },
-  play: async ({
-    canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  play: async ({ canvas }) => {
     await expect(canvas.getByText('manual.pdf')).toBeVisible();
     await expect(canvas.getByText('certificate.pdf')).toBeVisible();
   },
-};
+});

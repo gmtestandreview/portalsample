@@ -60,7 +60,7 @@ export const pollUploadProgress = async ({
         AppLogger.error(
           'Failed to delete progress statistics',
           error as Error,
-          { uploadId }
+          { uploadId },
         );
       });
       return;

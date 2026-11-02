@@ -94,10 +94,10 @@ export const formatConsoleArguments = (args: readonly unknown[]): string => {
 
   let consumedArgs = 0;
   const formatted = first.replace(/%[sdifjoO%]/gu, (token) => {
-    if (token === '%%') return '%';
+    if (token.startsWith('%%')) return '%';
     if (consumedArgs >= rest.length) return token;
 
-    const value = rest[consumedArgs];
+    const value = rest.at(consumedArgs);
     consumedArgs += 1;
 
     switch (token) {
@@ -117,7 +117,7 @@ export const formatConsoleArguments = (args: readonly unknown[]): string => {
 const requireState = (caller: string): GuardState => {
   if (state === null) {
     throw new Error(
-      `${caller} requires an active guard. Call installUnexpectedConsoleGuard() at the top of the test file.`
+      `${caller} requires an active guard. Call installUnexpectedConsoleGuard() at the top of the test file.`,
     );
   }
 
@@ -127,7 +127,7 @@ const requireState = (caller: string): GuardState => {
 const describeUnconsumed = (messages: readonly CapturedMessage[]): string =>
   messages
     .map(
-      ({ level, text }, index) => `  ${index + 1}. console.${level}: ${text}`
+      ({ level, text }, index) => `  ${index + 1}. console.${level}: ${text}`,
     )
     .join('\n');
 
@@ -138,7 +138,7 @@ const describeUnconsumed = (messages: readonly CapturedMessage[]): string =>
  */
 const setConsoleMethod = (
   level: GuardedConsoleLevel,
-  fn: (...args: unknown[]) => void
+  fn: (...args: unknown[]) => void,
 ): void => {
   if (level === 'warn') {
     console.warn = fn;
@@ -174,7 +174,11 @@ const start = (): void => {
       active.captured.push({ level, text, consumed: claimed });
 
       // Re-emit so the original output still reaches the reporter.
-      original[level].apply(console, args);
+      if (level === 'warn') {
+        original.warn.apply(console, args);
+      } else {
+        original.error.apply(console, args);
+      }
     });
   });
 
@@ -189,7 +193,10 @@ const stop = (): {
 
   try {
     GUARDED_LEVELS.forEach((level) => {
-      setConsoleMethod(level, active.original[level]);
+      setConsoleMethod(
+        level,
+        level === 'warn' ? active.original.warn : active.original.error,
+      );
     });
 
     return {
@@ -209,7 +216,7 @@ const stop = (): {
  * contract tests can drive that lifecycle without failing themselves.
  */
 export function installUnexpectedConsoleGuard(
-  hooks: ConsoleGuardHooks = VITEST_HOOKS
+  hooks: ConsoleGuardHooks = VITEST_HOOKS,
 ): void {
   hooks.beforeEach(start);
 
@@ -220,14 +227,14 @@ export function installUnexpectedConsoleGuard(
       throw new Error(
         'Unexpected console guard: an open expectation leaked past the test. ' +
           `Awaiting expectConsoleMessage('${openExpectation.level}', ${String(openExpectation.pattern)}) ` +
-          'is required before the test ends.'
+          'is required before the test ends.',
       );
     }
 
     if (unconsumed.length > 0) {
       throw new Error(
         `Unexpected console output (${unconsumed.length}). Fix the owner, or claim it with ` +
-          `expectConsoleMessage(...):\n${describeUnconsumed(unconsumed)}`
+          `expectConsoleMessage(...):\n${describeUnconsumed(unconsumed)}`,
       );
     }
   });
@@ -242,13 +249,13 @@ export async function expectConsoleMessage(
   level: GuardedConsoleLevel,
   pattern: RegExp,
   count: number,
-  action: () => void | Promise<void>
+  action: () => void | Promise<void>,
 ): Promise<void> {
   const active = requireState('expectConsoleMessage');
 
   if (active.expectation !== null) {
     throw new Error(
-      'expectConsoleMessage cannot be nested. Await the outer expectation before opening another.'
+      'expectConsoleMessage cannot be nested. Await the outer expectation before opening another.',
     );
   }
 
@@ -265,7 +272,7 @@ export async function expectConsoleMessage(
   if (expectation.matched !== count) {
     throw new Error(
       `expectConsoleMessage(${String(pattern)}) on console.${level}: ` +
-        `expected ${count}, got ${expectation.matched}.`
+        `expected ${count}, got ${expectation.matched}.`,
     );
   }
 }

@@ -25,7 +25,7 @@ export const organisationAndContactSubmitValidation = yup.object<
   Validation<OrganisationAndContact>
 >({
   businessWebsiteAddress: websiteUrlSchema(
-    'Business website address is not a valid website address'
+    'Business website address is not a valid website address',
   )
     .label('Business website address')
     .maxLength(100)
@@ -42,7 +42,7 @@ export const organisationAndContactSubmitValidation = yup.object<
         .required('Please confirm this is the correct branch/location.')
         .notOneOf(
           ['No'],
-          'Please select a branch/location name before proceeding.'
+          'Please select a branch/location name before proceeding.',
         ),
     otherwise: (schema) => schema.notRequired(),
   }),
@@ -52,7 +52,7 @@ export const organisationAndContactSaveValidation = yup.object<
   Validation<OrganisationAndContact>
 >({
   businessWebsiteAddress: websiteUrlSchema(
-    'Business website address is not a valid website address'
+    'Business website address is not a valid website address',
   )
     .label('Business website address')
     .nullable()
@@ -73,7 +73,7 @@ export const instrumentAndRequestSubmitValidation = yup.object<
     .required()
     .oneOf(
       Object.values(YesNo),
-      'Does this instrument/artefact have a serial number available? is required'
+      'Does this instrument/artefact have a serial number available? is required',
     ),
   serialNumber: yup.string().when('hasSerialNumber', {
     is: (x: YesNo | undefined) => x === YesNo.Yes,
@@ -87,7 +87,7 @@ export const instrumentAndRequestSubmitValidation = yup.object<
         // To do - Explore create new Schema or stringExtensions Methods to support this
         .matches(
           serialNumMatchRegEx,
-          'Serial number has invalid characters. Please use only letters, periods, numbers, and keyboard characters.'
+          'Serial number has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         ),
   }),
   manufacturer: yup
@@ -112,7 +112,7 @@ export const instrumentAndRequestSubmitValidation = yup.object<
           return true; // Skip validation if the field is blank or null
         }
         return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      }
+      },
     ),
   // RULE-042: BA sign-off required — do not change during migration.
   // OPEN-ITEMS-BACKLOG P2 item 18 / analysis/BUSINESS_RULES.md RULE-042. The 1-100 bounds are
@@ -150,14 +150,14 @@ export const instrumentAndRequestSubmitValidation = yup.object<
           return true; // Skip validation if the field is blank or null
         }
         return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      }
+      },
     ),
   measurementReportAndCertificateRequired: yup
     .string()
     .label('Measurement report and certificate required')
     .required(),
   preferredInstrumentOrArtefactAvailabilityDate: nullableDate(
-    'Preferred date must be a valid date format (dd/mm/yyyy)'
+    'Preferred date must be a valid date format (dd/mm/yyyy)',
   ).test(
     'is-future-date',
     'Cannot select a date earlier than today', // Custom error for past dates
@@ -169,7 +169,7 @@ export const instrumentAndRequestSubmitValidation = yup.object<
       const today = parseDateOnlyInput(new Date());
       const valToTest = parseApiDateOnlyInput(value as Date | string);
       return Boolean(valToTest && today && valToTest >= today);
-    }
+    },
   ),
 });
 
@@ -192,7 +192,7 @@ export const instrumentAndRequestSaveValidation = yup.object<
         // To do - Explore create new Schema or stringExtensions Methods to support this
         .matches(
           serialNumMatchRegEx,
-          'Serial number has invalid characters. Please use only letters, periods, numbers, and keyboard characters.'
+          'Serial number has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         ),
   }),
   manufacturer: yup
@@ -217,7 +217,7 @@ export const instrumentAndRequestSaveValidation = yup.object<
           return true; // Skip validation if the field is blank or null
         }
         return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      }
+      },
     ),
   // RULE-042 (draft-save variant): BA sign-off required — do not change during migration.
   // Second of two sites. The submit schema above requires numberOfItems; this save/draft schema
@@ -226,7 +226,17 @@ export const instrumentAndRequestSaveValidation = yup.object<
   numberOfItems: yup
     .number()
     .label('Number of items')
-    .transform((value) => (Number.isNaN(value) ? undefined : value))
+    .transform((value: unknown): number | null | undefined => {
+      if (value === null) {
+        return null;
+      }
+
+      if (typeof value === 'number' && !Number.isNaN(value)) {
+        return value;
+      }
+
+      return undefined;
+    })
     .nullable()
     .min(1, 'Number of items cannot be less than 1')
     .max(100, 'Number of items cannot be greater than 100'),
@@ -256,7 +266,7 @@ export const instrumentAndRequestSaveValidation = yup.object<
           return true; // Skip validation if the field is blank or null
         }
         return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      }
+      },
     ),
   measurementReportAndCertificateRequired: yup
     .string()

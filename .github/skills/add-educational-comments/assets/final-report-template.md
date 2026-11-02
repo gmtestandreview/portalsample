@@ -4,7 +4,8 @@
 
 **Files changed:**
 
-- `<path>` — added `<n>` comments, revised `<n>` existing comments, detected language: `<language>`
+- `<path>` — added `<n>` comments, revised `<n>` existing comments, detected
+  language: `<language>`
 
 **Files skipped:**
 

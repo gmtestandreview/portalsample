@@ -29,12 +29,12 @@ const loadSummary =
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const summaryStep = await client.getSupportingDocuments(
           id,
-          abortSignal
+          abortSignal,
         );
         const wizardStepValues: WizardFormStepValues<SupportingDocumentsStep> =
           {
@@ -46,7 +46,7 @@ const loadSummary =
         AppLogger.error(
           'Failed to load PA supporting documents',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(`Failed to load PA supporting documents. Id: ${id}`, {
           cause: error,
@@ -55,10 +55,10 @@ const loadSummary =
     } else {
       AppLogger.verbose(
         'There are no accounts available to load PA supporting documents',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to load PA supporting documents. Id: ${id}`
+        `There are no accounts available to load PA supporting documents. Id: ${id}`,
       );
     }
   };
@@ -68,18 +68,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: SupportingDocumentsStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
 
@@ -101,13 +101,13 @@ const saveStep =
             formStep: formStepValues,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (error) {
         AppLogger.error(
           'Failed to save PA supporting documents',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(`Failed to save PA supporting documents. Id: ${id}`, {
           cause: error,
@@ -116,10 +116,10 @@ const saveStep =
     } else {
       AppLogger.verbose(
         'There are no accounts available to save PA supporting documents',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to save PA supporting documents. Id: ${id}`
+        `There are no accounts available to save PA supporting documents. Id: ${id}`,
       );
     }
   };
@@ -140,7 +140,7 @@ const supportingDocumentsProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<SupportingDocumentsStep> => ({
   initialValues: {},
   stepStatuses: statuses,

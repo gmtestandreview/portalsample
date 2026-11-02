@@ -1,13 +1,18 @@
 ---
 name: worktree-guide
-description: Interactive guide for parallel development with Ghostty, git worktrees, and Lazygit. Use when setting up multi-task workflows or learning the worktree system.
+description:
+  Interactive guide for parallel development with Ghostty, git worktrees, and
+  Lazygit. Use when setting up multi-task workflows or learning the worktree
+  system.
 license: MIT
 metadata:
   author: claude-code-templates
-  version: "1.0"
+  version: '1.0'
 ---
 
-Guide the user through parallel development workflows using Ghostty terminal panels, git worktrees, and Lazygit. This is both a teaching experience and a practical reference.
+Guide the user through parallel development workflows using Ghostty terminal
+panels, git worktrees, and Lazygit. This is both a teaching experience and a
+practical reference.
 
 ---
 
@@ -20,7 +25,9 @@ git rev-parse --is-inside-work-tree 2>&1 && echo "GIT_OK" || echo "NOT_GIT"
 ```
 
 **If not a git repo:**
-> This isn't a git repository. Navigate to a git project first, then come back to `/worktree-guide`.
+
+> This isn't a git repository. Navigate to a git project first, then come back
+> to `/worktree-guide`.
 
 Check if we're in a worktree or main repo:
 
@@ -421,10 +428,12 @@ $ git worktree prune
 
 ## Guardrails
 
-- **Never execute destructive commands** without confirmation (worktree remove, branch delete)
+- **Never execute destructive commands** without confirmation (worktree remove,
+  branch delete)
 - **Always verify location** before suggesting worktree operations
 - **If user seems lost**, offer `/worktree-check` first
 - **Never force-delete** branches that aren't merged
-- **Don't assume tools are installed** — check for lazygit availability if suggesting it
+- **Don't assume tools are installed** — check for lazygit availability if
+  suggesting it
 - **Respect user's pace** — don't rush through sections if they want to practice
 - **Keep the reference card available** — offer to show it whenever relevant

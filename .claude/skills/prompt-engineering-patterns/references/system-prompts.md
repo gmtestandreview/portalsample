@@ -2,7 +2,8 @@
 
 ## Core Principles
 
-System prompts set the foundation for LLM behavior. They define role, expertise, constraints, and output expectations.
+System prompts set the foundation for LLM behavior. They define role, expertise,
+constraints, and output expectations.
 
 ## Effective System Prompt Structure
 

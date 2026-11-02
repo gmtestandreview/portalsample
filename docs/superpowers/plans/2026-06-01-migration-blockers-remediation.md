@@ -103,7 +103,7 @@ describe('openWindow helpers', () => {
     expect(open).toHaveBeenCalledWith(
       '/request-for-quote/123/view-summary',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
     expect(openedWindow.opener).toBeNull();
   });
@@ -125,13 +125,13 @@ describe('openWindow helpers', () => {
 
     openPdfPageInSecureNewTab(
       'blob:https://portal.measurement.gov.au/pdf-id',
-      '2&evil=1'
+      '2&evil=1',
     );
 
     expect(open).toHaveBeenCalledWith(
       'blob:https://portal.measurement.gov.au/pdf-id#page=2%26evil%3D1',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
   });
 
@@ -144,7 +144,7 @@ describe('openWindow helpers', () => {
     expect(open).toHaveBeenCalledWith(
       'blob:https://portal.measurement.gov.au/pdf-id',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
   });
 });
@@ -190,7 +190,7 @@ export const openInternalRouteInNewTab = (route: string): void => {
 
 export const openPdfPageInSecureNewTab = (
   fileUrl: string,
-  pageNumber: string
+  pageNumber: string,
 ): void => {
   openUrlInSecureNewTab(`${fileUrl}#page=${encodeURIComponent(pageNumber)}`);
 };
@@ -210,7 +210,7 @@ Replace `showQuoteRequest` with:
 const showQuoteRequest = () => {
   if (quotationData?.quoteRequestIdNum) {
     openInternalRouteInNewTab(
-      `/request-for-quote/${encodeURIComponent(quotationData.quoteRequestIdNum)}/view-summary`
+      `/request-for-quote/${encodeURIComponent(quotationData.quoteRequestIdNum)}/view-summary`,
     );
   }
 };
@@ -228,7 +228,7 @@ Replace `showQuoteRequest` with:
 const showQuoteRequest = () => {
   if (reportData?.quoteRequestIdNum) {
     openInternalRouteInNewTab(
-      `/request-for-quote/${encodeURIComponent(reportData.quoteRequestIdNum)}/view-summary`
+      `/request-for-quote/${encodeURIComponent(reportData.quoteRequestIdNum)}/view-summary`,
     );
   }
 };
@@ -316,7 +316,7 @@ describe('StandardPathway external links', () => {
         bodyText='Feedback survey'
         linkHref='https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu'
         target='_blank'
-      />
+      />,
     );
 
     const link = screen.getByRole('link');
@@ -433,7 +433,7 @@ it('warns about disabled telemetry only in runtime development environment', asy
   await import('@/instrumentation/AppInsightsService');
 
   expect(warn).toHaveBeenCalledWith(
-    '[AppInsights] Telemetry is DISABLED: missing or dummy connection string.'
+    '[AppInsights] Telemetry is DISABLED: missing or dummy connection string.',
   );
 });
 ```
@@ -521,13 +521,13 @@ describe('AuthorizedApiBase', () => {
 
     sessionStorage.setItem(
       'targetOrganisation',
-      JSON.stringify({ targetOrganisationAbn: '11111111111' })
+      JSON.stringify({ targetOrganisationAbn: '11111111111' }),
     );
     const first = await client.apply({ headers: {} });
 
     sessionStorage.setItem(
       'targetOrganisation',
-      JSON.stringify({ targetOrganisationAbn: '22222222222' })
+      JSON.stringify({ targetOrganisationAbn: '22222222222' }),
     );
     const second = await client.apply({ headers: {} });
 
@@ -750,7 +750,7 @@ describe('route param validation', () => {
     'rejects invalid positive integer id %s',
     (id) => {
       expect(getValidPositiveIntegerId(id)).toBeNull();
-    }
+    },
   );
 });
 ```
@@ -774,7 +774,7 @@ const APPLICATION_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9-]{0,79}$/;
 const POSITIVE_INTEGER_PATTERN = /^[1-9]\d*$/;
 
 export const getValidApplicationId = (
-  id: string | undefined
+  id: string | undefined,
 ): string | null => {
   if (!id || !APPLICATION_ID_PATTERN.test(id)) {
     return null;
@@ -783,7 +783,7 @@ export const getValidApplicationId = (
 };
 
 export const getValidPositiveIntegerId = (
-  id: string | undefined
+  id: string | undefined,
 ): number | null => {
   if (!id || !POSITIVE_INTEGER_PATTERN.test(id)) {
     return null;

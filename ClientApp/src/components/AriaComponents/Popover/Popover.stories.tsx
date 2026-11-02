@@ -1,32 +1,50 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Popover } from '../Popover/Popover';
 import { Button } from '../Button/Button';
 import { DialogTrigger } from '../Dialog/Dialog';
 import { Heading } from '../Content/Content';
 import { HelpCircle } from '../NmiIcon';
+import { expect, screen, waitFor, within } from 'storybook/test';
 import '../styles.css';
-import type { Meta, StoryFn } from '@storybook/react-vite';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Popover',
   component: Popover,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Popover>;
+});
 
-export default meta;
-type Story = StoryFn<typeof Popover>;
+export const Example = meta.story({
+  render: (args) => (
+    <DialogTrigger>
+      <Button aria-label='Help'>
+        <HelpCircle size={18} />
+      </Button>
+      <Popover {...args} className='react-aria-Popover popover-padding'>
+        <Heading>Help</Heading>
+        <p>For help accessing your account, please contact support.</p>
+      </Popover>
+    </DialogTrigger>
+  ),
+  args: {
+    children: null,
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Help' }));
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <DialogTrigger>
-    <Button aria-label='Help'>
-      <HelpCircle size={18} />
-    </Button>
-    <Popover {...args} className='react-aria-Popover popover-padding'>
-      <Heading slot='title'>Help</Heading>
-      <p>For help accessing your account, please contact support.</p>
-    </Popover>
-  </DialogTrigger>
-);
+    const popover = await screen.findByRole('dialog', { name: 'Help' });
+
+    await waitFor(() =>
+      expect(
+        within(popover).getByRole('heading', { name: 'Help', level: 3 }),
+      ).toBeVisible(),
+    );
+
+    await expect(popover).toHaveTextContent(
+      'For help accessing your account, please contact support.',
+    );
+  },
+});

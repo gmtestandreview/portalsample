@@ -4,14 +4,16 @@ Review staged and recent code changes for quality, security, and correctness.
 
 **Invokes:** `code-reviewer` agent
 
-**Reception protocol:** when acting on the findings, follow the `receiving-code-review` skill — verify before implementing, technical pushback over performative agreement.
+**Reception protocol:** when acting on the findings, follow the
+`receiving-code-review` skill — verify before implementing, technical pushback
+over performative agreement.
 
 **Usage:**
 
-```
-/code-review
-/code-review --staged-only
-/code-review --commit HEAD~3..HEAD
+```text
+/code-reviewer
+/code-reviewer --staged-only
+/code-reviewer --commit HEAD~3..HEAD
 ```
 
 **What it checks:**

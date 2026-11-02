@@ -27,12 +27,12 @@ const loadInstrumentAndRequest =
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const instrumentAndRequest = await client.getInstrumentAndRequest(
         id,
-        abortSignal
+        abortSignal,
       );
       const wizardStepValues: WizardFormStepValues<InstrumentAndRequestStep> = {
         stepValues: { ...instrumentAndRequest },
@@ -48,24 +48,24 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: InstrumentAndRequestStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
 
       let formStepValues: InstrumentAndRequestStep | undefined;
       if (values.preferredInstrumentOrArtefactAvailabilityDate) {
         const preferredAvailabilityDate = parseApiDateOnlyInput(
-          values.preferredInstrumentOrArtefactAvailabilityDate
+          values.preferredInstrumentOrArtefactAvailabilityDate,
         );
         const updatedValues = {
           ...values,
@@ -86,7 +86,7 @@ const saveStep =
           formStep: formStepValues,
           isCompletingStep: isComplete,
         },
-        abortSignal
+        abortSignal,
       );
     } else {
       throw new Error('error');
@@ -103,7 +103,7 @@ const instrumentAndRequestProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<InstrumentAndRequestStep> => ({
   initialValues: {},
   stepStatuses: statuses,

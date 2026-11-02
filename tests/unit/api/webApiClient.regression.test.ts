@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   AddressClient,
   ApplicationClient,
@@ -16,24 +16,28 @@ function transport(response: Response) {
   };
 }
 
-beforeEach(() => {
+const resetSessionStorage = () => {
   globalThis.sessionStorage.clear();
-});
+};
 
 describe('web-api-client GREEN: successful requests', () => {
   it('encodes the search and forwards auth, organisation and cancellation without losing Accept', async () => {
+    expect.hasAssertions();
+
+    resetSessionStorage();
+
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
-      '{"targetOrganisationAbn":"11111111111"}'
+      '{"targetOrganisationAbn":"11111111111"}',
     );
     const http = transport(
-      Response.json({ matches: [{ displayText: '1 Main St' }] })
+      Response.json({ matches: [{ displayText: '1 Main St' }] }),
     );
     const client = new AddressClient('https://portal.test', http);
     client.setAuthToken('test-token');
     const { signal } = new AbortController();
 
-    await expect(client.search('Main & First', signal)).resolves.toEqual({
+    await expect(client.search('Main & First', signal)).resolves.toStrictEqual({
       matches: [{ displayText: '1 Main St' }],
     });
     expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
@@ -46,19 +50,24 @@ describe('web-api-client GREEN: successful requests', () => {
           Authorization: 'Bearer test-token',
           TargetOrganisationAbn: '11111111111',
         },
-      }
+      },
     );
   });
 
   it('serializes application commands without changing the wire contract', async () => {
+    expect.hasAssertions();
+
+    resetSessionStorage();
+
     const http = transport(Response.json({ id: 42, referenceId: 'RFQ-42' }));
     const client = new ApplicationClient('', http);
+
     await expect(
       client.createApplication({
         applicationType: ApplicationType.QuoteRequest,
         referenceId: 'RFQ-42',
-      })
-    ).resolves.toEqual({ id: 42, referenceId: 'RFQ-42' });
+      }),
+    ).resolves.toStrictEqual({ id: 42, referenceId: 'RFQ-42' });
     expect(http.fetch).toHaveBeenCalledExactlyOnceWith('/api/application', {
       method: 'POST',
       signal: undefined,
@@ -71,9 +80,14 @@ describe('web-api-client GREEN: successful requests', () => {
   });
 
   it('accepts a successful void response', async () => {
+    expect.hasAssertions();
+
+    resetSessionStorage();
+
     const http = transport(new Response(null, { status: 200 }));
+
     await expect(
-      new ContactClient('', http).saveContactDetails({})
+      new ContactClient('', http).saveContactDetails({}),
     ).resolves.toBeUndefined();
     expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
       '/api/contact/save-contact',
@@ -82,7 +96,7 @@ describe('web-api-client GREEN: successful requests', () => {
         signal: undefined,
         body: '{}',
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
   });
 });
@@ -91,26 +105,36 @@ describe('web-api-client RED: rejected requests', () => {
   it.each([400, 409, 412])(
     'preserves the raw problem payload for form error handling (%i)',
     async (status) => {
+      expect.hasAssertions();
+
+      resetSessionStorage();
+
       const problem = {
         status,
         title: 'Cannot save',
         errors: { email: ['Invalid email'] },
       };
       const http = transport(Response.json(problem, { status }));
+
       await expect(
-        new ContactClient('', http).saveContactDetails({})
-      ).rejects.toEqual(problem);
-    }
+        new ContactClient('', http).saveContactDetails({}),
+      ).rejects.toStrictEqual(problem);
+    },
   );
 
   it('preserves unexpected error status, body and response headers', async () => {
+    expect.hasAssertions();
+
+    resetSessionStorage();
+
     const http = transport(
       new Response('Service unavailable', {
         status: 503,
         headers: { 'Retry-After': '60' },
-      })
+      }),
     );
     const result = new AddressClient('', http).search('Main');
+
     await expect(result).rejects.toBeInstanceOf(SwaggerException);
     await expect(result).rejects.toMatchObject({
       status: 503,
@@ -123,18 +147,28 @@ describe('web-api-client RED: rejected requests', () => {
     new TypeError('Network unavailable'),
     new DOMException('Cancelled', 'AbortError'),
   ])('propagates transport failure: $name', async (error) => {
+    expect.hasAssertions();
+
+    resetSessionStorage();
+
     const http = transport(new Response());
     http.fetch.mockRejectedValue(error);
+
     await expect(new AddressClient('', http).search('Main')).rejects.toBe(
-      error
+      error,
     );
     expect(http.fetch).toHaveBeenCalledTimes(1);
   });
 
   it('rejects malformed JSON rather than returning a successful empty result', async () => {
+    expect.hasAssertions();
+
+    resetSessionStorage();
+
     const http = transport(new Response('not-json', { status: 200 }));
+
     await expect(
-      new AddressClient('', http).search('Main')
+      new AddressClient('', http).search('Main'),
     ).rejects.toBeInstanceOf(SyntaxError);
   });
 });
@@ -143,29 +177,39 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
   it.each([null, undefined])(
     'omits an absent search parameter (%s) and auth headers',
     async (keyword) => {
+      expect.hasAssertions();
+
+      resetSessionStorage();
+
       const http = transport(Response.json({ matches: [] }));
+
       await expect(
-        new AddressClient('', http).search(keyword)
-      ).resolves.toEqual({ matches: [] });
+        new AddressClient('', http).search(keyword),
+      ).resolves.toStrictEqual({ matches: [] });
       expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
         '/api/address/search',
         {
           method: 'GET',
           signal: undefined,
           headers: { Accept: 'application/json' },
-        }
+        },
       );
-    }
+    },
   );
 
   it.each([200, 204])(
     'preserves a null result for an empty %i response despite the generated non-null signature',
     async (status) => {
+      expect.hasAssertions();
+
+      resetSessionStorage();
+
       const http = transport(new Response(null, { status }));
+
       await expect(
-        new AddressClient('', http).search(undefined)
+        new AddressClient('', http).search(undefined),
       ).resolves.toBeNull();
-    }
+    },
   );
 
   it.each([
@@ -182,6 +226,10 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
   ])(
     'returns binary content and filename for status $status',
     async ({ status, disposition, name }) => {
+      expect.hasAssertions();
+
+      resetSessionStorage();
+
       const http = transport(
         new Response('pdf-content', {
           status,
@@ -189,23 +237,24 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
             'Content-Disposition': disposition,
             'Content-Type': 'application/pdf',
           },
-        })
+        }),
       );
       const result = await new FileClient('', http).fetchBytesFromUrl(
-        'https://files.test/form.pdf?a=1&b=2'
+        'https://files.test/form.pdf?a=1&b=2',
       );
+
       expect(result).toMatchObject({
         status,
         fileName: name,
         headers: { 'content-disposition': disposition },
       });
-      expect(await result.data.text()).toBe('pdf-content');
+      await expect(result.data.text()).resolves.toBe('pdf-content');
       expect(http.fetch).toHaveBeenCalledWith(
         '/api/file/fetch-accessible-form?url=https%3A%2F%2Ffiles.test%2Fform.pdf%3Fa%3D1%26b%3D2',
         expect.objectContaining({
           headers: { Accept: 'application/octet-stream' },
-        })
+        }),
       );
-    }
+    },
   );
 });

@@ -78,7 +78,8 @@ and create distinctive designs that actually work for users.
 - Left-aligned content receives more attention and engagement
 - Navigation on the left outperforms centered or right-aligned
 - **Anti-pattern**: Don't center-align body text or navigation
-- **Source**: <https://www.nngroup.com/articles/horizontal-attention-leans-left/>
+- **Source**:
+  <https://www.nngroup.com/articles/horizontal-attention-leans-left/>
 
 **Banner Blindness** (Benway & Lane, 1998; ongoing NN Group studies)
 
@@ -533,8 +534,8 @@ backing] **Impact**: [Why this matters - user behavior, conversion, engagement]
 > "Navigation is centered horizontally, which reduces engagement. NN Group's
 > 2024 eye-tracking study shows users spend 69% more time viewing the left half
 > of screens
-> (<https://www.nngroup.com/articles/horizontal-attention-leans-left/>). Move nav
-> to left side with `justify-content: flex-start`. This will increase nav
+> (<https://www.nngroup.com/articles/horizontal-attention-leans-left/>). Move
+> nav to left side with `justify-content: flex-start`. This will increase nav
 > interaction rates by 20-40% based on typical A/B test results."
 
 **Bad feedback:**

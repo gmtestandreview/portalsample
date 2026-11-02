@@ -194,7 +194,7 @@ task can be committed, linted, and type-checked in isolation.
   // before (approximate — exact text may vary):
   import('./SomeModule').SomeType(
     // or inline:
-    module as import('./SomeModule').SomeType
+    module as import('./SomeModule').SomeType,
   );
   ```
 

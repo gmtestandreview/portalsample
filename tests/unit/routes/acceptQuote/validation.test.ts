@@ -18,20 +18,27 @@ import {
   summaryAndAcceptSubmitValidation,
 } from '../../../../ClientApp/src/routes/acceptQuote/validation';
 
+const arrayContainingStrings = (values: string[]): unknown => {
+  const matcher: unknown = expect.arrayContaining<string>(values);
+  return matcher;
+};
+
 describe('report recipient validation', () => {
   it('accepts valid submit and empty save objects', async () => {
+    expect.hasAssertions();
     await expect(
       reportRecipientSubmitValidation.validate({
         organisationName: 'NMI',
         reportAddressType: ReturnAddressTypeValues.BusinessAddress,
-      })
+      }),
     ).resolves.toBeDefined();
-    await expect(reportRecipientSaveValidation.validate({})).resolves.toEqual(
-      {}
-    );
+    await expect(
+      reportRecipientSaveValidation.validate({}),
+    ).resolves.toStrictEqual({});
   });
 
   it('requires other report address when selected', async () => {
+    expect.hasAssertions();
     await expect(
       reportRecipientSubmitValidation.validate({
         reportAddressType: ReturnAddressTypeValues.Other,
@@ -39,22 +46,23 @@ describe('report recipient validation', () => {
           isManuallyEntered: false,
           searchText: '',
         },
-      })
+      }),
     ).rejects.toThrow('Organisation address for report is required');
   });
 
   it('enforces organisation name max length', async () => {
+    expect.hasAssertions();
     await expect(
       reportRecipientSubmitValidation.validate({
         organisationName: 'a'.repeat(400),
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       reportRecipientSubmitValidation.validate({
         organisationName: 'a'.repeat(401),
-      })
+      }),
     ).rejects.toThrow(
-      'Organisation name cannot be greater than 400 characters'
+      'Organisation name cannot be greater than 400 characters',
     );
   });
 });
@@ -75,18 +83,20 @@ describe('delivery and return validation', () => {
   };
 
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
-      deliveryAndReturnSubmitValidation.validate(validDelivery)
+      deliveryAndReturnSubmitValidation.validate(validDelivery),
     ).resolves.toMatchObject(validDelivery);
     await expect(
       deliveryAndReturnSaveValidation.validate({
         returnMethod: ReturnMethodValues.ClientWillProvide,
         packagingNotes: '',
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('requires conditional contact, return address, and carrier fields', async () => {
+    expect.hasAssertions();
     await expect(
       deliveryAndReturnSubmitValidation.validate(
         {
@@ -101,10 +111,10 @@ describe('delivery and return validation', () => {
           carrierName: '',
           carrierAccountNumber: '',
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'First name is required',
         'Return address is required',
         'Carrier name is required',
@@ -114,6 +124,7 @@ describe('delivery and return validation', () => {
   });
 
   it('validates invalid formats and min lengths', async () => {
+    expect.hasAssertions();
     await expect(
       deliveryAndReturnSubmitValidation.validate(
         {
@@ -123,10 +134,10 @@ describe('delivery and return validation', () => {
           carrierContactPerson: 'C',
           carrierContactPhone: 'bad',
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Carrier name cannot be less than 2 characters',
         'Carrier account number or Pre-paid shipment reference cannot be less than 2 characters',
         'Carrier contact person cannot be less than 2 characters',
@@ -136,6 +147,7 @@ describe('delivery and return validation', () => {
   });
 
   it('accepts max length boundaries and rejects over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       deliveryAndReturnSubmitValidation.validate({
         ...validDelivery,
@@ -146,7 +158,7 @@ describe('delivery and return validation', () => {
         insuranceNotes: 'i'.repeat(300),
         specialInstructions: 's'.repeat(300),
         returnOrganisationName: 'r'.repeat(400),
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       deliveryAndReturnSubmitValidation.validate(
@@ -160,10 +172,10 @@ describe('delivery and return validation', () => {
           specialInstructions: 's'.repeat(301),
           returnOrganisationName: 'r'.repeat(401),
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Packaging notes cannot be greater than 300 characters',
         'Carrier name cannot be greater than 100 characters',
         'Carrier account number or Pre-paid shipment reference cannot be greater than 100 characters',
@@ -178,27 +190,29 @@ describe('delivery and return validation', () => {
 
 describe('payment details validation', () => {
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'PO-123',
         invoiceSentTo: InvoiceSentToValues.SamePerson,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       paymentDetailsSaveValidation.validate({
         purchaseOrderNo: '',
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('requires email-only contact when invoice goes to a different person', async () => {
+    expect.hasAssertions();
     await expect(
       paymentDetailsSubmitValidation.validate({
         invoiceSentTo: InvoiceSentToValues.DifferentPerson,
         contact: {
           email: '',
         },
-      })
+      }),
     ).rejects.toThrow('Email address is required');
     await expect(
       paymentDetailsSubmitValidation.validate({
@@ -206,40 +220,43 @@ describe('payment details validation', () => {
         contact: {
           email: 'billing@example.com',
         },
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('enforces purchase order number max length', async () => {
+    expect.hasAssertions();
     await expect(
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'p'.repeat(20),
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'p'.repeat(21),
-      })
+      }),
     ).rejects.toThrow('Purchase Order No cannot be greater than 20 characters');
   });
 });
 
 describe('summary and accept validation', () => {
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
       summaryAndAcceptSubmitValidation.validate({
         associatedDisputes: YesNo.No,
         acceptanceOfQuote: true,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       summaryAndAcceptSaveValidation.validate({
         associatedDisputes: YesNo.No,
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('requires associated dispute text and quote acceptance on submit', async () => {
+    expect.hasAssertions();
     await expect(
       summaryAndAcceptSubmitValidation.validate(
         {
@@ -247,10 +264,10 @@ describe('summary and accept validation', () => {
           associatedDispute: '',
           acceptanceOfQuote: false,
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Associated dispute is a required field',
         'You must accept our terms before accepting this quotation',
       ]),
@@ -258,20 +275,21 @@ describe('summary and accept validation', () => {
   });
 
   it('enforces associated dispute max length on submit and save', async () => {
+    expect.hasAssertions();
     await expect(
       summaryAndAcceptSubmitValidation.validate({
         associatedDisputes: YesNo.Yes,
         associatedDispute: 'a'.repeat(300),
         acceptanceOfQuote: true,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       summaryAndAcceptSaveValidation.validate({
         associatedDisputes: YesNo.Yes,
         associatedDispute: 'a'.repeat(301),
-      })
+      }),
     ).rejects.toThrow(
-      'Associated dispute cannot be greater than 300 characters'
+      'Associated dispute cannot be greater than 300 characters',
     );
   });
 });

@@ -43,7 +43,7 @@ const InstrMeasurementReport = () => {
         AppLogger.verbose('MeasurementReport.getReportList', { Id: id });
         const client = new DashboardClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
 
@@ -52,7 +52,7 @@ const InstrMeasurementReport = () => {
             portalId,
             id,
             pageSize,
-            currentPage
+            currentPage,
           );
         setMeasurementReportData(details);
       } catch (e) {
@@ -87,7 +87,7 @@ const InstrMeasurementReport = () => {
   ]);
 
   useHtmlTitle(
-    'Instrument/artefact reports - Testing and calibration service | NMI Services portal'
+    'Instrument/artefact reports - Testing and calibration service | NMI Services portal',
   );
   useBodyClass('reports');
 

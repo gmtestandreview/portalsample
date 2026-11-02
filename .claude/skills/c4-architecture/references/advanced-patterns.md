@@ -1,12 +1,15 @@
 # Advanced C4 Architecture Patterns
 
-This guide covers advanced patterns for documenting complex architectures including microservices, event-driven systems, deployments, and API documentation.
+This guide covers advanced patterns for documenting complex architectures
+including microservices, event-driven systems, deployments, and API
+documentation.
 
 ## Microservices Architecture
 
 ### Single Team Ownership
 
-When one team owns all microservices, model them as **containers** within a single system:
+When one team owns all microservices, model them as **containers** within a
+single system:
 
 ```mermaid
 C4Container
@@ -543,10 +546,14 @@ C4Context
 
 ## Best Practices Summary
 
-1. **Choose abstraction based on ownership**: Single team = containers, Multi-team = systems
+1. **Choose abstraction based on ownership**: Single team = containers,
+   Multi-team = systems
 2. **Show individual message topics**: Not a single "Kafka" or "RabbitMQ" box
-3. **Use deployment diagrams for infrastructure**: Keep container diagrams logical
-4. **Create dynamic diagrams for complex flows**: Authentication, payment, error handling
+3. **Use deployment diagrams for infrastructure**: Keep container diagrams
+   logical
+4. **Create dynamic diagrams for complex flows**: Authentication, payment, error
+   handling
 5. **Link to ADRs**: Document why decisions were made
-6. **Use system landscape for enterprise views**: Show all systems and their relationships
+6. **Use system landscape for enterprise views**: Show all systems and their
+   relationships
 7. **Keep diagrams focused**: One concern per diagram, split when complex

@@ -123,7 +123,7 @@ export function DatePicker<T extends DateValue>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'group flex flex-col gap-1 font-sans'
+        'group flex flex-col gap-1 font-sans',
       )}
     >
       {label && <Label>{label}</Label>}
@@ -209,7 +209,7 @@ import { DatePicker } from 'vanilla-starter/DatePicker';
 <I18nProvider>
   <DatePicker
     defaultValue={parseZonedDateTime(
-      '2025-02-03T08:45:00[America/Los_Angeles]'
+      '2025-02-03T08:45:00[America/Los_Angeles]',
     )}
   />
 </I18nProvider>;
@@ -251,7 +251,7 @@ function Example() {
           isWeekend(date, locale) ||
           disabledRanges.some(
             (interval) =>
-              date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+              date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0,
           )
         }
       />

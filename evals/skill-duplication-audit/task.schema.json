@@ -44,7 +44,10 @@
             "additionalProperties": true,
             "properties": {
               "contains": { "type": "array", "items": { "type": "string" } },
-              "not_contains": { "type": "array", "items": { "type": "string" } },
+              "not_contains": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
               "max_tokens": { "type": "integer", "minimum": 1 }
             }
           }

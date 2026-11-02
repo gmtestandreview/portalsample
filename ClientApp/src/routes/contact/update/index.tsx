@@ -50,7 +50,7 @@ const UpdateContact = () => {
           instance,
           statuses,
           account,
-          contactId
+          contactId,
         )}
       >
         <ContactDetails />

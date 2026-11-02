@@ -93,12 +93,12 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
       setIsLoading(true);
       const client = new DashboardClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const fileResponse = await client.getQuoteOfferPDFByQuoteID(
         acceptQuotePreInfo?.crmQuoteId,
-        true
+        true,
       );
       if (
         fileResponse?.fileData &&
@@ -126,7 +126,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
         AppLogger.verbose('SummaryAndAccept.getAcceptQuotePreInfo', { Id: id });
         const acceptQuoteClient = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
@@ -139,7 +139,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
         AppLogger.error(
           'Failed to retrieve getAcceptQuotePreInfo',
           e as Error,
-          { Id: id }
+          { Id: id },
         );
       }
     };
@@ -245,7 +245,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                 <AssociatedDisputeFields />
                 <p>
                   <strong>By accepting this Quotation and the</strong>{' '}
-                  <InTextLink onClick={(_e) => downloadQuoteTermsPagePdf()}>
+                  <InTextLink onClick={() => void downloadQuoteTermsPagePdf()}>
                     Terms
                     <ExternalLinkIcon className='ms-2' />
                     <span className='visually-hidden'> Opens in a new tab</span>
@@ -410,7 +410,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                 </p>
                 <AcceptanceField />
                 <InTextLink
-                  onClick={(_e) => downloadQuoteTermsPagePdf()}
+                  onClick={() => void downloadQuoteTermsPagePdf()}
                   className='ms-5 ms-lg-0 mt-0 mt-lg-1 p-0 w-auto'
                 >
                   terms and conditions

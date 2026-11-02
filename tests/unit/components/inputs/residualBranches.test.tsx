@@ -1,9 +1,10 @@
+import { describe, it, expect } from 'vitest';
 import {
   act,
-  cleanup,
   fireEvent,
   render,
   screen,
+  waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
@@ -35,7 +36,7 @@ function Harness({
       initialValues={initialValues}
       {...(initialErrors === undefined ? {} : { initialErrors })}
       {...(initialTouched === undefined ? {} : { initialTouched })}
-      onSubmit={vi.fn()}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>{children}</Form>
     </Formik>
@@ -43,18 +44,12 @@ function Harness({
 }
 
 describe('residual input branches', () => {
-  installUnexpectedConsoleGuard();
-
-  // Registered after the guard so it runs first: Vitest runs `afterEach` in
-  // reverse order, and a guard failure would otherwise skip the global
-  // cleanup and leak the previous test's DOM into the next one.
-  afterEach(cleanup);
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  const consoleGuardRegistration = installUnexpectedConsoleGuard();
+  void consoleGuardRegistration;
 
   it('renders SelectInput horizontal plain help without validation', () => {
+    expect.hasAssertions();
+
     render(
       <Harness initialValues={{ state: '' }}>
         <SelectInput
@@ -64,25 +59,27 @@ describe('residual input branches', () => {
           inlineHelp='Choose the service state'
           options={[]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(
-      screen.getByRole('combobox', { name: 'State' })
+      screen.getByRole('combobox', { name: 'State' }),
     ).toHaveAccessibleDescription('Choose the service state');
     expect(screen.queryByText(/validation/i)).not.toBeInTheDocument();
   });
 
   it('covers SelectInput partial validation states in both layouts', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <Harness initialValues={{ state: '' }} initialTouched={{ state: true }}>
         <SelectInput name='state' label='State' options={[]} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox', { name: 'State' })).not.toHaveAttribute(
       'aria-invalid',
-      'true'
+      'true',
     );
 
     rerender(
@@ -96,13 +93,15 @@ describe('residual input branches', () => {
           displayHorizontally
           options={[]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('Choose a state')).not.toBeInTheDocument();
   });
 
   it('uses field-name validation ids for SelectInput and RadioButtonGroup', () => {
+    expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ state: '', delivery: '' }}
@@ -115,20 +114,22 @@ describe('residual input branches', () => {
           legend='Delivery'
           options={[{ id: 'post', label: 'Post', value: 'post' }]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox', { name: 'State' })).toHaveAttribute(
       'aria-describedby',
-      'state-validation-msg'
+      'state-validation-msg',
     );
     expect(screen.getByRole('group', { name: 'Delivery' })).toHaveAttribute(
       'aria-describedby',
-      'delivery-validation-msg'
+      'delivery-validation-msg',
     );
   });
 
   it('prefers an explicit id for RadioButtonGroup validation ids', () => {
+    expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ delivery: '' }}
@@ -141,16 +142,18 @@ describe('residual input branches', () => {
           legend='Delivery'
           options={[{ id: 'post', label: 'Post', value: 'post' }]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('group', { name: 'Delivery' })).toHaveAttribute(
       'aria-describedby',
-      'q-delivery-validation-msg'
+      'q-delivery-validation-msg',
     );
   });
 
   it('leaves the radio group description unset without help or validation', () => {
+    expect.hasAssertions();
+
     render(
       <Harness initialValues={{ delivery: '' }}>
         <RadioButtonGroup
@@ -158,15 +161,17 @@ describe('residual input branches', () => {
           legend='Delivery'
           options={[{ id: 'post', label: 'Post', value: 'post' }]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('group', { name: 'Delivery' })).not.toHaveAttribute(
-      'aria-describedby'
+      'aria-describedby',
     );
   });
 
   it('uses the NumberInput field name for pattern validation feedback', () => {
+    expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ phone: '' }}
@@ -174,26 +179,30 @@ describe('residual input branches', () => {
         initialTouched={{ phone: true }}
       >
         <NumberInput name='phone' label='Phone' format='checkPhoneFormat' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'Phone' })).toHaveAttribute(
       'aria-describedby',
-      'phone-validation-msg'
+      'phone-validation-msg',
     );
   });
 
   it('renders the false Checkbox summary value', () => {
+    expect.hasAssertions();
+
     render(
       <Harness initialValues={{ accepted: false }}>
         <Checkbox name='accepted' label='Accepted' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('No')).toBeInTheDocument();
   });
 
   it('renders SelectInput summary values when the selected option value is zero', () => {
+    expect.hasAssertions();
+
     render(
       <Harness initialValues={{ priority: 0 }}>
         <SelectInput
@@ -205,13 +214,15 @@ describe('residual input branches', () => {
             { displayText: 'High priority', value: 1 },
           ]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Zero priority')).toBeInTheDocument();
   });
 
   it('handles non-string TextAreaInput and Date-valued TextInput fields', () => {
+    expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{
@@ -221,16 +232,33 @@ describe('residual input branches', () => {
       >
         <TextAreaInput name='notes' label='Notes' />
         <TextInput name='date' label='Date' type='date' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveValue('42');
     expect(screen.getByLabelText('Date')).toHaveValue('2026-06-13');
   });
 
+  it('normalizes a nullish TextInput value to an empty string on blur', async () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness initialValues={{ nickname: null }}>
+        <TextInput name='nickname' label='Nickname' />
+      </Harness>,
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Nickname' });
+    fireEvent.blur(input);
+
+    await waitFor(() => expect(input).toHaveValue(''));
+  });
+
   it('keeps AutoSuggest keyboard movement inert while closed and uses fallback ids', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCancel = vi.fn();
+    const onCancel = vi.fn<() => void>();
     render(
       <Harness
         initialValues={{ suburb: '' }}
@@ -242,11 +270,11 @@ describe('residual input branches', () => {
           label='Suburb'
           options={[]}
           searchTerm={null}
-          onSearchTermChange={vi.fn()}
-          onSelectedOption={vi.fn()}
+          onSearchTermChange={vi.fn<() => void>()}
+          onSelectedOption={vi.fn<() => void>()}
           onCancel={onCancel}
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Suburb' });
@@ -259,6 +287,8 @@ describe('residual input branches', () => {
   });
 
   it('focuses the first AutoSuggest option when ArrowUp opens the popup', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness initialValues={{ suburb: '' }}>
@@ -267,23 +297,26 @@ describe('residual input branches', () => {
           label='Suburb'
           options={[{ id: 'one', displayText: 'One', value: 'one' }]}
           searchTerm=''
-          onSearchTermChange={vi.fn()}
-          onSelectedOption={vi.fn()}
-          onCancel={vi.fn()}
+          onSearchTermChange={vi.fn<() => void>()}
+          onSelectedOption={vi.fn<() => void>()}
+          onCancel={vi.fn<() => void>()}
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Suburb' });
     await user.click(input);
     await user.keyboard('{ArrowUp}');
+
     expect(input).toHaveAttribute(
       'aria-activedescendant',
-      'suburb-options-option-one'
+      'suburb-options-option-one',
     );
   });
 
   it('uses OrganisationNameLookup fallback options, explicit help id, Escape, and validation', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const firstRender = render(
       <Harness
@@ -297,14 +330,14 @@ describe('residual input branches', () => {
           inlineHelp='Start typing'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(
-      screen.getByRole('combobox', { name: 'Organisation name' })
+      screen.getByRole('combobox', { name: 'Organisation name' }),
     ).toHaveAttribute(
       'aria-describedby',
-      'organisation-control-validation-msg'
+      'organisation-control-validation-msg',
     );
 
     firstRender.unmount();
@@ -321,7 +354,7 @@ describe('residual input branches', () => {
           inlineHelp='Start typing'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Organisation name' });
@@ -329,18 +362,23 @@ describe('residual input branches', () => {
       fireEvent.change(input, { target: { value: 'Na' } });
       await vi.advanceTimersByTimeAsync(300);
     });
+
     expect(
-      screen.getByRole('listbox', { name: 'Suggested options' })
+      screen.getByRole('listbox', { name: 'Suggested options' }),
     ).toBeInTheDocument();
+
     act(() => {
       fireEvent.keyDown(input, { key: 'Escape' });
     });
+
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
   });
 
   it('uses OrganisationNameLookup name-based help and validation ids and ignores other keys', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const { unmount } = render(
       <Harness
@@ -353,19 +391,23 @@ describe('residual input branches', () => {
           inlineHelp='Start typing'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Organisation name' });
+
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'organisationName-validation-msg'
+      'organisationName-validation-msg',
     );
+
     act(() => {
       fireEvent.change(input, { target: { value: 'Na' } });
       vi.advanceTimersByTime(300);
     });
+
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
     unmount();
 
     render(
@@ -379,7 +421,7 @@ describe('residual input branches', () => {
           name='organisationName'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
     const populatedInput = screen.getByRole('combobox', {
       name: 'Organisation name',
@@ -388,10 +430,13 @@ describe('residual input branches', () => {
       fireEvent.change(populatedInput, { target: { value: 'Na' } });
       await vi.advanceTimersByTimeAsync(300);
     });
+
     expect(screen.getByRole('listbox')).toBeInTheDocument();
+
     act(() => {
       fireEvent.keyDown(populatedInput, { key: 'PageDown' });
     });
+
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
 });

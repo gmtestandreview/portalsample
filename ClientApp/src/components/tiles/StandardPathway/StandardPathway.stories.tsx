@@ -1,20 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import StandardPathway from './index';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Tiles/StandardPathway',
   component: StandardPathway,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof StandardPathway>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const InternalNavigation: Story = {
+export const InternalNavigation = meta.story({
   args: {
     type: 'internal',
     title: 'Services we offer',
@@ -23,9 +20,9 @@ export const InternalNavigation: Story = {
     linkDescription: 'Open service catalogue',
     to: '/services-we-offer',
   },
-};
+});
 
-export const ExternalNavigation: Story = {
+export const ExternalNavigation = meta.story({
   args: {
     type: 'external',
     title: 'Give us your feedback',
@@ -35,4 +32,4 @@ export const ExternalNavigation: Story = {
     linkHref: 'https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu',
     target: '_blank',
   },
-};
+});

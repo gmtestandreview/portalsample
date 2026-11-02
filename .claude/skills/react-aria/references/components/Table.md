@@ -126,7 +126,7 @@ interface ColumnProps extends AriaColumnProps {
 }
 
 export function Column(
-  props: Omit<ColumnProps, 'children'> & { children?: React.ReactNode }
+  props: Omit<ColumnProps, 'children'> & { children?: React.ReactNode },
 ) {
   return (
     <AriaColumn {...props} className='react-aria-Column button-base'>
@@ -228,7 +228,7 @@ export function Cell(props: CellProps) {
             )}
             {children}
           </>
-        )
+        ),
       )}
     </AriaCell>
   );
@@ -747,7 +747,7 @@ export function Table(props: TableProps) {
       onScroll={props.onScroll}
       className={twMerge(
         'w-full max-h-[320px] overflow-auto scroll-pt-[2.281rem] relative bg-white dark:bg-neutral-900 box-border border border-neutral-300 dark:border-neutral-700 rounded-lg font-sans',
-        props.className
+        props.className,
       )}
     >
       <AriaTable
@@ -774,7 +774,7 @@ export function Column(props: ColumnProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'box-border h-1 [&:hover]:z-20 focus-within:z-20 text-start text-sm font-semibold text-neutral-700 dark:text-neutral-300 cursor-default'
+        'box-border h-1 [&:hover]:z-20 focus-within:z-20 text-start text-sm font-semibold text-neutral-700 dark:text-neutral-300 cursor-default',
       )}
     >
       {composeRenderProps(
@@ -800,7 +800,7 @@ export function Column(props: ColumnProps) {
             </Group>
             {!props.width && <ColumnResizer className={resizerStyles} />}
           </div>
-        )
+        ),
       )}
     </AriaColumn>
   );
@@ -814,7 +814,7 @@ export function TableHeader<T>(props: TableHeaderProps<T>) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'sticky top-0 z-10 bg-neutral-100/60 dark:bg-neutral-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-neutral-100 dark:supports-[-moz-appearance:none]:bg-neutral-700 forced-colors:bg-[Canvas] rounded-t-lg border-b border-b-neutral-200 dark:border-b-neutral-700'
+        'sticky top-0 z-10 bg-neutral-100/60 dark:bg-neutral-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-neutral-100 dark:supports-[-moz-appearance:none]:bg-neutral-700 forced-colors:bg-[Canvas] rounded-t-lg border-b border-b-neutral-200 dark:border-b-neutral-700',
       )}
     >
       {/* Add extra columns for drag and drop and selection. */}
@@ -928,7 +928,7 @@ export function Cell(props: CellProps) {
             )}
             {children}
           </>
-        )
+        ),
       )}
     </AriaCell>
   );
@@ -1010,7 +1010,7 @@ function FileTable() {
     'price',
   ]);
   let visibleColumns = columns.filter((column) =>
-    showColumns.includes(column.id)
+    showColumns.includes(column.id),
   );
 
   let [rows, setRows] = useState(initialRows);
@@ -1250,7 +1250,7 @@ function AsyncSortTable() {
 
       let res = await fetch(
         cursor || 'https://swapi.py4e.com/api/people/?search=',
-        { signal }
+        { signal },
       );
       let json = await res.json();
 
@@ -1663,7 +1663,7 @@ export default function ResizableTable() {
   let columnWidths = useSyncExternalStore(
     subscribe,
     getColumnWidths,
-    getInitialWidths
+    getInitialWidths,
   );
 
   return (

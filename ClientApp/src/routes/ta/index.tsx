@@ -38,7 +38,7 @@ const ApplicationForTypeApproval = () => {
   // Upload
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<UploadProgress | undefined>(
-    undefined
+    undefined,
   );
   const abortRef = useRef<AbortController | null>(null);
   const uploadIdRef = useRef<string | null>(null);
@@ -69,7 +69,7 @@ const ApplicationForTypeApproval = () => {
       if (!statuses && accounts.length > 0) {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         try {
@@ -97,7 +97,7 @@ const ApplicationForTypeApproval = () => {
         abortRef.current.abort();
       }
     },
-    []
+    [],
   );
 
   const startLongPolling = useCallback(
@@ -106,7 +106,7 @@ const ApplicationForTypeApproval = () => {
       abortRef.current = controller;
       const client = new ProgressClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await pollUploadProgress({
@@ -117,7 +117,7 @@ const ApplicationForTypeApproval = () => {
         onFinished: () => setUploading(false),
       });
     },
-    [accounts, instance]
+    [accounts, instance],
   );
 
   const handleCancelFile = async (fileName: string) => {
@@ -125,7 +125,7 @@ const ApplicationForTypeApproval = () => {
     try {
       const client = new ProgressClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await client.cancelFile(uploadIdRef.current, fileName);
@@ -136,7 +136,7 @@ const ApplicationForTypeApproval = () => {
 
   const onUploadAttachments = async (
     token: string,
-    fileData: FileParameter[]
+    fileData: FileParameter[],
   ): Promise<AttachmentDto[]> => {
     let attachments = [] as AttachmentDto[];
     try {
@@ -155,7 +155,7 @@ const ApplicationForTypeApproval = () => {
         uploadId,
         fileData,
         null,
-        null
+        null,
       );
       const { documents } = result.form || {};
       uploadIdRef.current = result.uploadId!;
@@ -173,11 +173,17 @@ const ApplicationForTypeApproval = () => {
               attachmentUrl: x.attachmentUrl,
               attachmentCategory: x.attachmentCategory,
               parentTimeStamp: new Date().toDateString(),
-            }) as AttachmentDto
+            }) as AttachmentDto,
         ) ?? [];
     } catch (e) {
       // handle errors as needed
-      const status = (e as any)?.status as number | undefined;
+      const status =
+        typeof e === 'object' &&
+        e !== null &&
+        'status' in e &&
+        typeof e.status === 'number'
+          ? e.status
+          : undefined;
 
       if (status === 403) {
         setSubmitErrors([
@@ -211,7 +217,7 @@ const ApplicationForTypeApproval = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <OrganisationAndContact name='' />
@@ -223,7 +229,7 @@ const ApplicationForTypeApproval = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <ApplicationAndInstrument name='' />
@@ -235,7 +241,7 @@ const ApplicationForTypeApproval = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <SupportingDocuments
@@ -260,7 +266,7 @@ const ApplicationForTypeApproval = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <SummaryAndSubmit name='' />

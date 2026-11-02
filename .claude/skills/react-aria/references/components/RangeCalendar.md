@@ -79,7 +79,7 @@ export function CalendarCell(props: CalendarCellProps) {
             isSelectionStart,
             isSelectionEnd,
             isDisabled,
-          }
+          },
         ) => (
           <span
             className='button-base'
@@ -91,7 +91,7 @@ export function CalendarCell(props: CalendarCellProps) {
           >
             {children || defaultChildren}
           </span>
-        )
+        ),
       )}
     </AriaCalendarCell>
   );
@@ -290,7 +290,7 @@ export function RangeCalendar<T extends DateValue>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex font-sans w-full max-w-fit overflow-auto gap-3'
+        'flex font-sans w-full max-w-fit overflow-auto gap-3',
       )}
     >
       {Array.from({ length: months }, (_, i) => (
@@ -399,7 +399,7 @@ function Example() {
         Selected range:{' '}
         {formatter.formatRange(
           range.start.toDate(getLocalTimeZone()),
-          range.end.toDate(getLocalTimeZone())
+          range.end.toDate(getLocalTimeZone()),
         )}
       </p>
     </>
@@ -568,7 +568,7 @@ function Example(props) {
         (anchorDate && Math.abs(date.compare(anchorDate)) > 7) ||
         disabledRanges.some(
           (interval) =>
-            date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+            date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0,
         )
       }
       isInvalid={isInvalid}

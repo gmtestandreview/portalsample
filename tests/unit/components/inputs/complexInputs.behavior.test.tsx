@@ -1,3 +1,4 @@
+import { describe, afterEach, beforeEach, it, expect } from 'vitest';
 import {
   act,
   cleanup,
@@ -20,15 +21,20 @@ import AddressLookup from '@/components/Inputs/AddressLookup';
 import AutoSuggest from '@/components/Inputs/AutoSuggest';
 import AutoSuggestContainer from '@/components/Inputs/AutoSuggest/AutoSuggestContainer';
 import AutoSuggestOptions from '@/components/Inputs/AutoSuggest/AutoSuggestOptions';
+import type { AutoSuggestOption } from '@/components/Inputs/AutoSuggest/types';
 import ManualAddressInput from '@/components/Inputs/AddressLookup/ManualAddressInput';
 import NumberInput from '@/components/Inputs/NumberInput';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
+import { State } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
 import { defined } from '../../helpers/defined';
 
 type MockAccount = { homeAccountId: string } | null;
+type AddressSearch = InstanceType<
+  typeof WebApiClientModule.AddressClient
+>['search'];
 
 function AddressClient() {
   return {
@@ -41,34 +47,44 @@ const mocks: {
   acquireTokenSilent: ReturnType<typeof vi.fn>;
   account: MockAccount;
   accounts: Array<{ homeAccountId: string }>;
-  addressSearch: ReturnType<typeof vi.fn>;
+  addressSearch: ReturnType<typeof vi.fn<AddressSearch>>;
   inProgress: string;
   setAuthToken: ReturnType<typeof vi.fn>;
 } = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn().mockResolvedValue({ accessToken: 'unit-token' }),
+  acquireTokenSilent: vi
+    .fn<() => Promise<{ accessToken: string }>>()
+    .mockResolvedValue({ accessToken: 'unit-token' }),
   account: { homeAccountId: 'account-1' },
   accounts: [{ homeAccountId: 'account-1' }],
-  addressSearch: vi.fn(),
+  addressSearch: vi.fn<AddressSearch>(),
   inProgress: 'none',
-  setAuthToken: vi.fn(),
+  setAuthToken: vi.fn<() => void>(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useAccount: () => mocks.account,
-  useMsal: () => ({
-    accounts: mocks.accounts,
-    inProgress: mocks.inProgress,
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-  }),
-}));
+vi.mock(
+  import('@azure/msal-react'),
+  (() =>
+    ({
+      useAccount: () => mocks.account,
+      useMsal: () => ({
+        accounts: mocks.accounts,
+        inProgress: mocks.inProgress,
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
+);
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), (async (
+  importOriginal: <
+    TOriginal = typeof WebApiClientModule,
+  >() => Promise<TOriginal>,
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AddressClient,
-  };
-});
+  } satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 interface FormikHarnessProps {
   readonly initialValues: Record<string, unknown>;
@@ -90,7 +106,7 @@ function FormikHarness({
         initialValues={initialValues}
         {...(initialTouched === undefined ? {} : { initialTouched })}
         {...(initialErrors === undefined ? {} : { initialErrors })}
-        onSubmit={vi.fn()}
+        onSubmit={vi.fn<() => void>()}
       >
         <Form>{children}</Form>
       </Formik>
@@ -108,14 +124,54 @@ function ValuesProbe() {
   );
 }
 
+const expectManualEntryState = () => {
+  expect(screen.getByTestId('values')).toHaveTextContent(
+    '"isManuallyEntered":true',
+  );
+  expect(screen.getByTestId('touched')).not.toHaveTextContent(
+    '"searchText":true',
+  );
+};
+
+const expectAddressLookupRequest = () => {
+  expect(mocks.acquireTokenSilent).toHaveBeenCalledWith({
+    account: { homeAccountId: 'account-1' },
+    scopes: ['openid', 'openid'],
+  });
+  expect(mocks.setAuthToken).toHaveBeenCalledWith('unit-token');
+  expect(mocks.addressSearch).toHaveBeenCalledWith(
+    'barton',
+    expect.any(AbortSignal),
+  );
+};
+
+const expectAddressLookupValues = () => {
+  expect(screen.getByTestId('values')).toHaveTextContent(
+    '"line1":"1 National Circuit"',
+  );
+  expect(screen.getByTestId('values')).toHaveTextContent('"postcode":"2600"');
+  expect(screen.getByTestId('values')).toHaveTextContent(
+    '"searchText":"1 National Circuit, Barton ACT 2600"',
+  );
+};
+
 describe('complex input behavior slice', () => {
+  // This helper intentionally registers Vitest lifecycle hooks for the console guard.
+  // The helper owns that hook contract; moving the call into a test would be too late.
+  // eslint-disable-next-line vitest/require-hook
   installUnexpectedConsoleGuard();
 
   // Registered after the guard so it runs first: Vitest runs `afterEach` in
   // reverse order, and a guard failure would otherwise skip the global
   // cleanup and leak the previous test's DOM into the next one.
+  // Register cleanup after the guard so Vitest's reverse afterEach order runs
+  // cleanup first, even when the guard reports unexpected console output.
+  // eslint-disable-next-line vitest/no-hooks
   afterEach(cleanup);
 
+  // This suite shares a large fixture graph; reset it before each test to keep
+  // mock implementations and account state isolated.
+  // eslint-disable-next-line vitest/no-hooks, vitest/prefer-hooks-in-order
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.account = { homeAccountId: 'account-1' };
@@ -131,51 +187,56 @@ describe('complex input behavior slice', () => {
           addressLine3: '',
           suburb: 'Barton',
           postCode: '2600',
-          state: 'ACT',
+          state: State.ACT,
         },
       ],
     });
   });
 
+  // eslint-disable-next-line vitest/no-hooks, vitest/no-duplicate-hooks
   afterEach(() => {
     vi.useRealTimers();
   });
 
   it('renders ManualAddressInput fields with labels and updates nested values', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
       <FormikHarness initialValues={{ address: { line1: '', state: '' } }}>
         <ManualAddressInput name='address' />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await user.type(
       screen.getByRole('textbox', { name: 'Address line 1' }),
-      '15 Lab Street'
+      '15 Lab Street',
     );
     await user.type(
       screen.getByRole('textbox', { name: 'Suburb' }),
-      'Lindfield'
+      'Lindfield',
     );
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'State' }),
-      'NSW'
+      'NSW',
     );
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"line1":"15 Lab Street"'
+        '"line1":"15 Lab Street"',
       );
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"suburb":"Lindfield"'
+        '"suburb":"Lindfield"',
       );
       expect(screen.getByTestId('values')).toHaveTextContent('"state":"NSW"');
     });
   });
 
   it('forwards supported props to manual address fields without widening the component contract', () => {
+    expect.hasAssertions();
+
     render(
       <FormikHarness initialValues={{ address: { line1: '', state: '' } }}>
         <ManualAddressInput
@@ -183,20 +244,22 @@ describe('complex input behavior slice', () => {
           disabled
           inlineHelp='Enter the full street address'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(
-      screen.getByRole('textbox', { name: 'Address line 1' })
+      screen.getByRole('textbox', { name: 'Address line 1' }),
     ).toBeDisabled();
     expect(screen.getByRole('textbox', { name: 'Suburb' })).toBeDisabled();
     expect(screen.getByRole('combobox', { name: 'State' })).toBeDisabled();
     expect(screen.getAllByText('Enter the full street address')).toHaveLength(
-      6
+      6,
     );
   });
 
   it('switches AddressLookup between search and manual entry and clears touched state', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -208,43 +271,64 @@ describe('complex input behavior slice', () => {
       >
         <AddressLookup name='address' label='Service address' />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(
-      screen.getByRole('combobox', { name: 'Service address' })
+      screen.getByRole('combobox', { name: 'Service address' }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('touched')).toHaveTextContent(
-      '"searchText":true'
+      '"searchText":true',
     );
 
     await user.click(
-      screen.getByRole('button', { name: /Enter it manually/i })
+      screen.getByRole('button', { name: /Enter it manually/i }),
     );
 
     expect(
-      screen.getByRole('group', { name: /Service address/i })
+      screen.getByRole('group', { name: /Service address/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('textbox', { name: 'Address line 1' })
+      screen.getByRole('textbox', { name: 'Address line 1' }),
     ).toBeInTheDocument();
-    await waitFor(() => {
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"isManuallyEntered":true'
-      );
-      expect(screen.getByTestId('touched')).not.toHaveTextContent(
-        '"searchText":true'
-      );
-    });
+
+    await waitFor(expectManualEntryState);
 
     await user.click(screen.getByRole('button', { name: /Find an address/i }));
 
     expect(
-      screen.getByRole('combobox', { name: 'Service address' })
+      screen.getByRole('combobox', { name: 'Service address' }),
     ).toBeInTheDocument();
   });
 
+  it('switches to manual entry from an undefined field value without throwing', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+
+    render(
+      // No address object yet: the manual-sync effect reads an undefined field
+      // value and falls back to {} before writing the manual flag.
+      <FormikHarness initialValues={{ address: undefined }}>
+        <AddressLookup name='address' label='Service address' />
+        <ValuesProbe />
+      </FormikHarness>,
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: /Enter it manually/i }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"isManuallyEntered":true',
+      );
+    });
+  });
+
   it('searches AddressLookup and writes selected address details into Formik', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -261,12 +345,12 @@ describe('complex input behavior slice', () => {
       >
         <AddressLookup name='address' label='Postal address' maxResults={1} />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await user.type(
       screen.getByRole('combobox', { name: 'Postal address' }),
-      'barton'
+      'barton',
     );
     const option = await screen.findByRole('option', {
       name: /1 National Circuit/i,
@@ -274,25 +358,14 @@ describe('complex input behavior slice', () => {
     await user.click(option);
 
     await waitFor(() => {
-      expect(mocks.acquireTokenSilent).toHaveBeenCalled();
-      expect(mocks.setAuthToken).toHaveBeenCalledWith('unit-token');
-      expect(mocks.addressSearch).toHaveBeenCalledWith(
-        'barton',
-        expect.any(AbortSignal)
-      );
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"line1":"1 National Circuit"'
-      );
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"postcode":"2600"'
-      );
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"searchText":"1 National Circuit, Barton ACT 2600"'
-      );
+      expectAddressLookupRequest();
+      expectAddressLookupValues();
     });
   });
 
   it('uses AddressLookup fallbacks for missing labels and address fields', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     mocks.addressSearch.mockResolvedValue({
       matches: [
@@ -304,7 +377,7 @@ describe('complex input behavior slice', () => {
           addressLine3: 'Building A',
           suburb: undefined,
           postCode: undefined,
-          state: 'NSW',
+          state: State.NSW,
         },
       ],
     });
@@ -320,7 +393,7 @@ describe('complex input behavior slice', () => {
       >
         <AddressLookup name='address' />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const search = screen.getByRole('combobox', { name: 'Address' });
@@ -336,6 +409,8 @@ describe('complex input behavior slice', () => {
   });
 
   it('returns no service results when the signed-in account cannot be resolved', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     mocks.account = null;
 
@@ -349,18 +424,20 @@ describe('complex input behavior slice', () => {
         }}
       >
         <AddressLookup name='address' label='Address' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await user.type(screen.getByRole('combobox', { name: 'Address' }), 'query');
 
-    expect(
-      await screen.findByRole('option', { name: /No matches found/i })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByRole('option', { name: /No matches found/i }),
+    ).resolves.toBeInTheDocument();
     expect(mocks.addressSearch).not.toHaveBeenCalled();
   });
 
   it('uses the empty account fallback and skips searches while authentication is busy', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     mocks.accounts = [];
     mocks.inProgress = 'login';
@@ -375,18 +452,20 @@ describe('complex input behavior slice', () => {
         }}
       >
         <AddressLookup name='address' label='Address' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await user.type(screen.getByRole('combobox', { name: 'Address' }), 'query');
 
-    expect(
-      await screen.findByRole('option', { name: /No matches found/i })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByRole('option', { name: /No matches found/i }),
+    ).resolves.toBeInTheDocument();
     expect(mocks.addressSearch).not.toHaveBeenCalled();
   });
 
   it('handles missing match collections and non-service lookup errors', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     mocks.addressSearch
@@ -403,28 +482,32 @@ describe('complex input behavior slice', () => {
         }}
       >
         <AddressLookup name='address' label='Address' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Address' });
     await user.click(input);
     fireEvent.change(input, { target: { value: 'first' } });
-    expect(
-      await screen.findByRole('option', { name: /No matches found/i })
-    ).toBeInTheDocument();
+
+    await expect(
+      screen.findByRole('option', { name: /No matches found/i }),
+    ).resolves.toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: 'second' } });
-    expect(
-      await screen.findByRole('option', { name: /No matches found/i })
-    ).toBeInTheDocument();
+
+    await expect(
+      screen.findByRole('option', { name: /No matches found/i }),
+    ).resolves.toBeInTheDocument();
     expect(
       screen.queryByRole('option', {
         name: /service is currently unavailable/i,
-      })
+      }),
     ).not.toBeInTheDocument();
   });
 
   it('switches AddressLookup to manual entry from a no-match result and clears a selected address', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     mocks.addressSearch.mockResolvedValue({ matches: [] });
 
@@ -442,22 +525,22 @@ describe('complex input behavior slice', () => {
       >
         <AddressLookup name='address' label='Postal address' />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const search = screen.getByRole('combobox', { name: 'Postal address' });
     await user.type(search, 'missing');
     await user.click(
-      await screen.findByRole('option', { name: /No matches found/ })
+      await screen.findByRole('option', { name: /No matches found/ }),
     );
 
     expect(
       screen.getByRole('group', {
         name: /Postal address.*Enter the address manually/,
-      })
+      }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"isManuallyEntered":true'
+      '"isManuallyEntered":true',
     );
     expect(screen.getByTestId('values')).toHaveTextContent('"line1":""');
 
@@ -476,7 +559,7 @@ describe('complex input behavior slice', () => {
       >
         <AddressLookup name='address' label='Street address' />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const selectedSearch = screen.getByRole('combobox', {
@@ -484,14 +567,17 @@ describe('complex input behavior slice', () => {
     });
     await user.clear(selectedSearch);
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"line1":""')
+      expect(screen.getByTestId('values')).toHaveTextContent('"line1":""'),
     );
+
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"isManuallyEntered":false'
+      '"isManuallyEntered":false',
     );
   });
 
   it('offers manual entry after the address service reports unavailable', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     mocks.addressSearch.mockRejectedValue({
       status: 503,
@@ -508,26 +594,31 @@ describe('complex input behavior slice', () => {
         }}
       >
         <AddressLookup name='address' label='Service address' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const search = screen.getByRole('combobox', { name: 'Service address' });
     await user.type(search, 'first');
-    expect(
-      await screen.findByRole('option', {
+
+    await expect(
+      screen.findByRole('option', {
         name: /address lookup service is currently unavailable/i,
-      })
-    ).toBeInTheDocument();
+      }),
+    ).resolves.toBeInTheDocument();
   });
 
   it('aborts an in-flight AddressLookup request when a new search starts', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     let firstSignal: AbortSignal | undefined;
     mocks.addressSearch
-      .mockImplementationOnce((_term: string, signal: AbortSignal) => {
-        firstSignal = signal;
-        return new Promise(() => {});
-      })
+      .mockImplementationOnce(
+        (_term: string | null | undefined, signal?: AbortSignal) => {
+          firstSignal = signal;
+          return new Promise<Awaited<ReturnType<AddressSearch>>>(() => {});
+        },
+      )
       .mockResolvedValueOnce({ matches: [] });
 
     render(
@@ -540,7 +631,7 @@ describe('complex input behavior slice', () => {
         }}
       >
         <AddressLookup name='address' label='Service address' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const search = screen.getByRole('combobox', { name: 'Service address' });
@@ -552,6 +643,8 @@ describe('complex input behavior slice', () => {
   });
 
   it('renders AddressLookup summaries with formatted address or fallback', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <FormikHarness
         initialValues={{
@@ -564,7 +657,7 @@ describe('complex input behavior slice', () => {
         }}
       >
         <AddressLookup name='address' label='Address summary' isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Address summary')).toBeInTheDocument();
@@ -574,20 +667,36 @@ describe('complex input behavior slice', () => {
     rerender(
       <FormikHarness initialValues={{ address: undefined }}>
         <AddressLookup name='address' label='Address summary' isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('-')).toBeInTheDocument();
   });
 
   it('drives AutoSuggest search and selection through the public input', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const getOptions = vi
-      .fn()
+      .fn<
+        () => Promise<
+          Array<{
+            id: string;
+            displayText: string;
+            value: { id: number };
+          }>
+        >
+      >()
       .mockResolvedValue([
-        { id: 'cal-1', displayText: 'Calibration services', value: { id: 1 } },
+        {
+          id: 'cal-1',
+          displayText: 'Calibration services',
+          value: { id: 1 },
+        },
       ]);
-    const onSelectedOption = vi.fn().mockResolvedValue(undefined);
+    const onSelectedOption = vi
+      .fn<() => Promise<void>>()
+      .mockResolvedValue(undefined);
 
     render(
       <FormikHarness initialValues={{ service: '' }}>
@@ -599,15 +708,16 @@ describe('complex input behavior slice', () => {
           onSelectedOption={onSelectedOption}
           selectedOption=''
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', { name: 'Service' });
+
     expect(combobox).toHaveAccessibleDescription('Start typing a service');
 
     await user.type(combobox, 'cal');
     await user.click(
-      await screen.findByRole('option', { name: /Calibration services/ })
+      await screen.findByRole('option', { name: /Calibration services/ }),
     );
 
     expect(getOptions).toHaveBeenCalledWith('cal');
@@ -618,15 +728,19 @@ describe('complex input behavior slice', () => {
     });
 
     expect(
-      screen.queryByRole('option', { name: /Calibration services/ })
+      screen.queryByRole('option', { name: /Calibration services/ }),
     ).not.toBeInTheDocument();
   });
 
   it('handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSelectedOption = vi.fn().mockResolvedValue(undefined);
-    const onCancel = vi.fn();
-    const onSearchTermChange = vi.fn();
+    const onSelectedOption = vi
+      .fn<() => Promise<void>>()
+      .mockResolvedValue(undefined);
+    const onCancel = vi.fn<() => void>();
+    const onSearchTermChange = vi.fn<() => void>();
 
     render(
       <FormikHarness
@@ -654,14 +768,15 @@ describe('complex input behavior slice', () => {
           onCancel={onCancel}
           onSelectedOption={onSelectedOption}
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });
+
     expect(combobox).toHaveAccessibleDescription('Choose a suburb');
     expect(screen.getByText('Loading options')).toBeInTheDocument();
     expect(
-      screen.getByText('Results could not be fetched')
+      screen.getByText('Results could not be fetched'),
     ).toBeInTheDocument();
 
     await user.click(combobox);
@@ -672,17 +787,22 @@ describe('complex input behavior slice', () => {
         id: 'park',
         displayText: 'Sydney Olympic Park NSW',
         value: 'park',
-      })
+      }),
     );
 
     await user.keyboard('{Escape}');
-    expect(onCancel).toHaveBeenCalled();
+
+    expect(onCancel).toHaveBeenCalledWith();
   });
 
   it('wraps AutoSuggestContainer keyboard navigation and selects with Tab', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSelectedOption = vi.fn().mockResolvedValue(undefined);
-    const onCancel = vi.fn();
+    const onSelectedOption = vi
+      .fn<() => Promise<void>>()
+      .mockResolvedValue(undefined);
+    const onCancel = vi.fn<() => void>();
 
     render(
       <FormikHarness initialValues={{ suburb: 'Syd' }}>
@@ -694,32 +814,35 @@ describe('complex input behavior slice', () => {
             { id: 'last', displayText: 'Last suburb', value: 'last' },
           ]}
           searchTerm='Syd'
-          onSearchTermChange={vi.fn()}
+          onSearchTermChange={vi.fn<() => void>()}
           onCancel={onCancel}
           onSelectedOption={onSelectedOption}
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });
     await user.click(combobox);
 
     await user.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}');
+
     expect(combobox).toHaveAttribute(
       'aria-activedescendant',
-      'suburb-options-option-last'
+      'suburb-options-option-last',
     );
 
     await user.keyboard('{ArrowUp}');
+
     expect(combobox).toHaveAttribute(
       'aria-activedescendant',
-      'suburb-options-option-first'
+      'suburb-options-option-first',
     );
 
     await user.keyboard('{ArrowUp}');
+
     expect(combobox).toHaveAttribute(
       'aria-activedescendant',
-      'suburb-options-option-first'
+      'suburb-options-option-first',
     );
 
     await user.keyboard('{Tab}');
@@ -728,14 +851,17 @@ describe('complex input behavior slice', () => {
         id: 'first',
         displayText: 'First suburb',
         value: 'first',
-      })
+      }),
     );
+
     expect(onCancel).not.toHaveBeenCalled();
   });
 
   it('dismisses AutoSuggestContainer without invoking Escape cancellation', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCancel = vi.fn();
+    const onCancel = vi.fn<() => void>();
     render(
       <FormikHarness initialValues={{ suburb: 'Syd' }}>
         <AutoSuggestContainer
@@ -743,27 +869,31 @@ describe('complex input behavior slice', () => {
           label='Suburb'
           options={[{ id: 'syd', displayText: 'Sydney', value: 'sydney' }]}
           searchTerm='Syd'
-          onSearchTermChange={vi.fn()}
+          onSearchTermChange={vi.fn<() => void>()}
           onCancel={onCancel}
-          onSelectedOption={vi.fn()}
+          onSelectedOption={vi.fn<() => void>()}
         />
         <button type='button'>Outside target</button>
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });
     await user.click(combobox);
     await user.keyboard('{Enter}');
+
     expect(onCancel).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('button', { name: 'Outside target' }));
+
     expect(onCancel).not.toHaveBeenCalled();
     expect(combobox).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('renders custom AutoSuggestContainer status messages and marks the field touched on change', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSearchTermChange = vi.fn();
+    const onSearchTermChange = vi.fn<() => void>();
     render(
       <FormikHarness initialValues={{ suburb: '' }}>
         <AutoSuggestContainer
@@ -778,11 +908,11 @@ describe('complex input behavior slice', () => {
           error
           errorMessage='Suburb search failed'
           onSearchTermChange={onSearchTermChange}
-          onCancel={vi.fn()}
-          onSelectedOption={vi.fn()}
+          onCancel={vi.fn<() => void>()}
+          onSelectedOption={vi.fn<() => void>()}
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Searching suburbs')).toBeInTheDocument();
@@ -790,14 +920,58 @@ describe('complex input behavior slice', () => {
     expect(screen.getByText('Suburb search failed')).toBeInTheDocument();
 
     await user.type(screen.getByRole('combobox', { name: 'Suburb' }), 'x');
+
     expect(onSearchTermChange).toHaveBeenCalledWith('x');
     expect(screen.getByTestId('touched')).toHaveTextContent('"suburb":true');
   });
 
-  it('handles short, empty, and no-result AutoSuggest searches and selected-option updates', async () => {
+  it('handles short and empty AutoSuggest searches', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const getOptions = vi.fn().mockResolvedValueOnce([]);
-    const onSelectedOption = vi.fn().mockResolvedValue(undefined);
+    const getOptions = vi
+      .fn<(term: string) => Promise<AutoSuggestOption[]>>()
+      .mockResolvedValueOnce([]);
+    const onSelectedOption = vi
+      .fn<(option?: AutoSuggestOption) => Promise<void>>()
+      .mockResolvedValue(undefined);
+    render(
+      <FormikHarness initialValues={{ service: '' }}>
+        <AutoSuggest
+          name='service'
+          label='Service'
+          getOptions={getOptions}
+          onSelectedOption={onSelectedOption}
+          selectedOption='Existing service'
+        />
+      </FormikHarness>,
+    );
+
+    const combobox = screen.getByRole('combobox', { name: 'Service' });
+
+    expect(combobox).toHaveValue('Existing service');
+
+    await user.clear(combobox);
+
+    expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
+    expect(onSelectedOption.mock.calls[0]).toStrictEqual([]);
+    expect(getOptions).not.toHaveBeenCalled();
+
+    await user.type(combobox, 'ab');
+
+    expect(getOptions).not.toHaveBeenCalled();
+  });
+
+  it('handles no-result AutoSuggest searches and selected-option updates', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const getOptions = vi
+      .fn<(term: string) => Promise<AutoSuggestOption[]>>()
+      .mockResolvedValueOnce([]);
+    const onSelectedOption = vi
+      .fn<(option?: AutoSuggestOption) => Promise<void>>()
+      .mockResolvedValue(undefined);
     const { rerender } = render(
       <FormikHarness initialValues={{ service: '' }}>
         <AutoSuggest
@@ -807,22 +981,17 @@ describe('complex input behavior slice', () => {
           onSelectedOption={onSelectedOption}
           selectedOption='Existing service'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', { name: 'Service' });
-    expect(combobox).toHaveValue('Existing service');
-
     await user.clear(combobox);
-    expect(onSelectedOption).toHaveBeenCalledWith();
-    expect(getOptions).not.toHaveBeenCalled();
+    await user.type(combobox, 'abc');
 
-    await user.type(combobox, 'ab');
-    expect(getOptions).not.toHaveBeenCalled();
-
-    await user.type(combobox, 'c');
     expect(getOptions).toHaveBeenCalledWith('abc');
-    expect(await screen.findByText('No matches found')).toBeInTheDocument();
+    await expect(
+      screen.findByText('No matches found'),
+    ).resolves.toBeInTheDocument();
 
     rerender(
       <FormikHarness initialValues={{ service: '' }}>
@@ -833,16 +1002,21 @@ describe('complex input behavior slice', () => {
           onSelectedOption={onSelectedOption}
           selectedOption='Updated service'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
-    expect(screen.getByRole('combobox', { name: 'Service' })).toHaveValue(
-      'Updated service'
+
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Service' })).toHaveValue(
+        'Updated service',
+      ),
     );
   });
 
   it('renders AutoSuggestOption within its collection and exposes selected state', () => {
     // Rendered outside a `ComboBox`, so it carries its own `aria-label`.
     // Nested, the popup inherits the ComboBox's visible label instead.
+    expect.hasAssertions();
+
     render(
       <AutoSuggestOptions
         aria-label='Options'
@@ -854,15 +1028,18 @@ describe('complex input behavior slice', () => {
           },
         ]}
         selectedOptionId='option-1'
-      />
+      />,
     );
 
     const option = screen.getByRole('option', { name: /Approved option/ });
+
     expect(option).toHaveClass('highlighted');
     expect(screen.getByText('Approved option')).toBeInTheDocument();
   });
 
   it('filters OrganisationNameLookup options by parent and supports keyboard and click selection', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -887,7 +1064,7 @@ describe('complex input behavior slice', () => {
           maxResults={2}
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', {
@@ -898,36 +1075,39 @@ describe('complex input behavior slice', () => {
     const listbox = await screen.findByRole('listbox', {
       name: 'Suggested options',
     });
+
     expect(
-      within(listbox).getByRole('option', { name: /Alpha Labs/ })
+      within(listbox).getByRole('option', { name: /Alpha Labs/ }),
     ).toBeInTheDocument();
     expect(
-      within(listbox).queryByRole('option', { name: /Beta Testing/ })
+      within(listbox).queryByRole('option', { name: /Beta Testing/ }),
     ).not.toBeInTheDocument();
 
     await user.keyboard('{ArrowDown}{Enter}');
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"organisationName":"Alpha Labs"'
-      )
+        '"organisationName":"Alpha Labs"',
+      ),
     );
 
     await user.clear(combobox);
     await user.type(combobox, 'Alp');
     await user.click(
-      await screen.findByRole('option', { name: /Alpine Metrology/ })
+      await screen.findByRole('option', { name: /Alpine Metrology/ }),
     );
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"organisationName":"Alpine Metrology"'
-      )
+        '"organisationName":"Alpine Metrology"',
+      ),
     );
   });
 
-  it('handles OrganisationNameLookup short, free-text, escape, outside-click, and ArrowUp branches', async () => {
+  it('handles OrganisationNameLookup short input, ArrowUp navigation, and escape', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const scrollIntoView = vi.fn();
+    const scrollIntoView = vi.fn<() => void>();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
       configurable: true,
       value: scrollIntoView,
@@ -948,15 +1128,16 @@ describe('complex input behavior slice', () => {
         />
         <ValuesProbe />
         <button type='button'>Outside organisation lookup</button>
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', {
       name: 'Organisation name',
     });
     await user.type(combobox, 'x');
+
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
 
     await user.clear(combobox);
@@ -967,32 +1148,70 @@ describe('complex input behavior slice', () => {
     await waitFor(() =>
       expect(combobox).toHaveAttribute(
         'aria-activedescendant',
-        'organisationName-option-1'
-      )
+        'organisationName-option-1',
+      ),
     );
-    expect(scrollIntoView).toHaveBeenCalled();
+
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'nearest',
+    });
 
     await user.keyboard('{Escape}');
-    expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
-    ).not.toBeInTheDocument();
 
+    expect(
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('handles OrganisationNameLookup free-text selection and outside-click dismissal', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    render(
+      <FormikHarness
+        initialValues={{
+          organisationName: '',
+          orgNameOptions: [{ name: 'Alpha Labs' }, { name: 'Beta Labs' }],
+        }}
+      >
+        <OrganisationNameLookup
+          name='organisationName'
+          label='Organisation name'
+          optionsFieldName='name'
+          matchType='endsWith'
+        />
+        <ValuesProbe />
+        <button type='button'>Outside organisation lookup</button>
+      </FormikHarness>,
+    );
+
+    const combobox = screen.getByRole('combobox', {
+      name: 'Organisation name',
+    });
+    await user.type(combobox, 'x');
+    await user.clear(combobox);
+    await user.type(combobox, 'Labs');
+    await screen.findByRole('listbox', { name: 'Suggested options' });
+    await user.keyboard('{ArrowUp}{Escape}');
     await user.clear(combobox);
     await user.type(combobox, 'Labs');
     await screen.findByRole('listbox', { name: 'Suggested options' });
     await user.keyboard('{Enter}');
+
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"organisationName":"Beta Labs"'
+      '"organisationName":"Beta Labs"',
     );
 
     await user.clear(combobox);
     await user.type(combobox, 'Labs');
     await screen.findByRole('listbox', { name: 'Suggested options' });
     await user.click(
-      screen.getByRole('button', { name: 'Outside organisation lookup' })
+      screen.getByRole('button', { name: 'Outside organisation lookup' }),
     );
+
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
   });
 
@@ -1000,6 +1219,8 @@ describe('complex input behavior slice', () => {
     // Emptying the box has to discard the list that was already showing. The component keeps
     // the previous array when it is already empty so React can bail out of the render, so this
     // exercises the other side of that: a populated list being replaced with an empty one.
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -1016,7 +1237,7 @@ describe('complex input behavior slice', () => {
           matchType='endsWith'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', {
@@ -1029,12 +1250,14 @@ describe('complex input behavior slice', () => {
 
     await waitFor(() =>
       expect(
-        screen.queryByRole('listbox', { name: 'Suggested options' })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('listbox', { name: 'Suggested options' }),
+      ).not.toBeInTheDocument(),
     );
   });
 
   it('accepts OrganisationNameLookup free text when Enter is pressed without an active option', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <FormikHarness
@@ -1049,7 +1272,7 @@ describe('complex input behavior slice', () => {
           optionsFieldName='name'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', {
@@ -1060,15 +1283,17 @@ describe('complex input behavior slice', () => {
     await user.keyboard('{Enter}');
 
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"organisationName":"Labs"'
+      '"organisationName":"Labs"',
     );
   });
 
   it('recomputes CertificateNumberLookup suggestions when Formik options change', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
 
     const renderLookup = (
-      certNameOptions: Array<{ id: string; lookupName: string }>
+      certNameOptions: Array<{ id: string; lookupName: string }>,
     ) => (
       <FormikHarness
         initialValues={{
@@ -1087,36 +1312,41 @@ describe('complex input behavior slice', () => {
     );
 
     const { rerender } = render(
-      renderLookup([{ id: 'cert-1', lookupName: '5/6A/91B' }])
+      renderLookup([{ id: 'cert-1', lookupName: '5/6A/91B' }]),
     );
 
     fireEvent.change(
       screen.getByRole('textbox', { name: 'Certificate number' }),
       {
         target: { value: '5/6A' },
-      }
+      },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(
-      screen.getByRole('option', { name: /5\/6A\/91B/ })
+      screen.getByRole('option', { name: /5\/6A\/91B/ }),
     ).toBeInTheDocument();
 
     rerender(renderLookup([{ id: 'cert-2', lookupName: '5/6A/92C' }]));
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     expect(
-      screen.queryByRole('option', { name: /5\/6A\/91B/ })
+      screen.queryByRole('option', { name: /5\/6A\/91B/ }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('option', { name: /5\/6A\/92C/ })
+      screen.getByRole('option', { name: /5\/6A\/92C/ }),
     ).toBeInTheDocument();
   });
 
   it('filters CertificateNumberLookup suggestions by parent field and closes on outside clicks', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(
       <FormikHarness
@@ -1140,33 +1370,36 @@ describe('complex input behavior slice', () => {
           parentOptionsName='family'
           matchType='startsWith'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     fireEvent.change(
       screen.getByRole('textbox', { name: 'Certificate number' }),
       {
         target: { value: 'NMI' },
-      }
+      },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     expect(screen.getByRole('option', { name: /NMI-123/ })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: /NMI-122/ })).toBeInTheDocument();
     expect(
-      screen.queryByRole('option', { name: /Industry-123/ })
+      screen.queryByRole('option', { name: /Industry-123/ }),
     ).not.toBeInTheDocument();
 
     fireEvent.mouseDown(document.body);
 
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
   });
 
   it('selects CertificateNumberLookup suggestions with keyboard navigation and falls back to typed input', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(
       <FormikHarness
@@ -1187,46 +1420,53 @@ describe('complex input behavior slice', () => {
           matchType='includes'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Enter' });
     });
 
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"certificateNumber":"5/6A"'
+      '"certificateNumber":"5/6A"',
     );
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"certificateNumberId":"5/6A"'
+      '"certificateNumberId":"5/6A"',
     );
 
     fireEvent.change(input, { target: { value: '92C' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowUp' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Enter' });
     });
 
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"certificateNumber":"5/6A/92C"'
+      '"certificateNumber":"5/6A/92C"',
     );
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"certificateNumberId":"cert-b"'
+      '"certificateNumberId":"cert-b"',
     );
   });
 
   it('walks CertificateNumberLookup suggestions back down and ignores unrelated keys', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(
       <FormikHarness
@@ -1247,41 +1487,49 @@ describe('complex input behavior slice', () => {
           matchType='includes'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     // Down twice then up steps back through the list rather than wrapping to the end, which is
     // the other half of the ArrowUp handler.
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowDown' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowDown' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowUp' });
     });
 
     // A key the handler does not act on leaves the highlight where it was.
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'a' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Enter' });
     });
 
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"certificateNumberId":"cert-a"'
+      '"certificateNumberId":"cert-a"',
     );
   });
 
   it('clears CertificateNumberLookup suggestions when the field is emptied', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(
       <FormikHarness
@@ -1298,18 +1546,21 @@ describe('complex input behavior slice', () => {
           optionsFieldName='lookupName'
           matchType='includes'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(screen.getByText('5/6A/91B')).toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: '' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1317,6 +1568,8 @@ describe('complex input behavior slice', () => {
   });
 
   it('describes CertificateNumberLookup by name when it has no id or inline help', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(
       <FormikHarness
@@ -1332,16 +1585,18 @@ describe('complex input behavior slice', () => {
           optionsFieldName='lookupName'
           matchType='includes'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     // No inline help means no help element to point at, and with no id the field falls back to
     // its name for element ids. The options field is absent too, so the lookup list is empty.
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
+
     expect(input).toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1349,6 +1604,8 @@ describe('complex input behavior slice', () => {
   });
 
   it('falls back to the field name for ids when CertificateNumberLookup has none', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const { container } = render(
       <FormikHarness
@@ -1357,7 +1614,9 @@ describe('complex input behavior slice', () => {
           certificateNumberId: '',
           certNameOptions: [{ id: 'cert-a', lookupName: '5/6A/91B' }],
         }}
-        initialErrors={{ certificateNumber: 'Certificate number is required' }}
+        initialErrors={{
+          certificateNumber: 'Certificate number is required',
+        }}
         initialTouched={{ certificateNumber: true }}
       >
         <CertificateNumberLookup
@@ -1368,39 +1627,48 @@ describe('complex input behavior slice', () => {
           optionsFieldName='lookupName'
           matchType='includes'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     // With no id prop, both the help text and the validation message are addressed by the
     // field name instead.
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
+
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'certificateNumber-validation-msg'
+      'certificateNumber-validation-msg',
     );
 
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(screen.getByText('5/6A/91B')).toBeInTheDocument();
 
     // A press inside the control must not dismiss the list the way an outside one does.
     await act(async () => {
+      await Promise.resolve();
       fireEvent.mouseDown(
-        container.querySelector('.form-field-container') ?? input
+        container.querySelector('.form-field-container') ?? input,
       );
     });
+
     expect(screen.getByText('5/6A/91B')).toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: '' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(screen.queryByText('5/6A/91B')).not.toBeInTheDocument();
   });
 
   it('renders CertificateNumberLookup summary values and defaults', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <FormikHarness
         initialValues={{
@@ -1415,7 +1683,7 @@ describe('complex input behavior slice', () => {
           label='Certificate number'
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Certificate number')).toBeInTheDocument();
@@ -1434,13 +1702,15 @@ describe('complex input behavior slice', () => {
           idName='certificateNumberId'
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('-')).toBeInTheDocument();
   });
 
-  it('handles CertificateNumberLookup defaults, validation, keyboard dismissal, and click selection', async () => {
+  it('handles CertificateNumberLookup defaults and short-query validation states', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(
       <FormikHarness
@@ -1466,74 +1736,149 @@ describe('complex input behavior slice', () => {
           inlineHelp='Start typing a certificate number'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
+
     expect(
-      screen.getAllByText('Choose a certificate number')[0]
+      screen.getAllByText('Choose a certificate number')[0],
     ).toBeInTheDocument();
 
     fireEvent.keyDown(input, { key: 'ArrowDown' });
+
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: '5' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
-    expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
-    ).not.toBeInTheDocument();
 
+    expect(
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('handles CertificateNumberLookup keyboard selection and dismissal', async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    render(
+      <FormikHarness
+        initialValues={{
+          certificateNumber: '',
+          certificateNumberId: '',
+          family: undefined,
+          certNameOptions: [
+            { id: 'cert-a', lookupName: '5/6A/91B', family: 'NMI' },
+            { id: 'cert-b', lookupName: '5/6A/92C', family: 'NMI' },
+          ],
+        }}
+      >
+        <CertificateNumberLookup
+          id='certificate-number-field'
+          name='certificateNumber'
+          idName='certificateNumberId'
+          optionsFieldName='lookupName'
+          parentName='family'
+          parentOptionsName='family'
+        />
+        <ValuesProbe />
+      </FormikHarness>,
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '91B' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(
-      screen.getByRole('option', { name: /5\/6A\/91B/ })
+      screen.getByRole('option', { name: /5\/6A\/91B/ }),
     ).toBeInTheDocument();
     expect(screen.getByText(/1 suggestions displayed/)).toBeInTheDocument();
 
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowDown' });
     });
+
     expect(screen.getByRole('option', { name: /5\/6A\/91B/ })).toHaveAttribute(
       'aria-selected',
-      'true'
+      'true',
     );
 
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Escape' });
     });
-    expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
-    ).not.toBeInTheDocument();
 
+    expect(
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('handles CertificateNumberLookup click selection and clearing', async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    render(
+      <FormikHarness
+        initialValues={{
+          certificateNumber: '',
+          certificateNumberId: '',
+          family: undefined,
+          certNameOptions: [
+            { id: 'cert-a', lookupName: '5/6A/91B', family: 'NMI' },
+            { id: 'cert-b', lookupName: '5/6A/92C', family: 'NMI' },
+          ],
+        }}
+      >
+        <CertificateNumberLookup
+          id='certificate-number-field'
+          name='certificateNumber'
+          idName='certificateNumberId'
+          optionsFieldName='lookupName'
+          parentName='family'
+          parentOptionsName='family'
+        />
+        <ValuesProbe />
+      </FormikHarness>,
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '92C' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
     fireEvent.click(screen.getByRole('option', { name: /5\/6A\/92C/ }));
 
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"certificateNumber":"5/6A/92C"'
+      '"certificateNumber":"5/6A/92C"',
     );
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"certificateNumberId":"cert-b"'
+      '"certificateNumberId":"cert-b"',
     );
 
     fireEvent.change(input, { target: { value: '' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
   });
 
   it('clears OrganisationNameLookup suggestions for blank and short input', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(
       <FormikHarness
@@ -1547,31 +1892,37 @@ describe('complex input behavior slice', () => {
           label='Organisation name'
           optionsFieldName='name'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
 
     fireEvent.change(
       screen.getByRole('combobox', { name: 'Organisation name' }),
       {
         target: { value: 'A' },
-      }
+      },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
+
     expect(
-      screen.getByRole('combobox', { name: 'Organisation name' })
+      screen.getByRole('combobox', { name: 'Organisation name' }),
     ).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('uses OrganisationNameLookup defaults and moves ArrowUp from a later option', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <FormikHarness
@@ -1590,12 +1941,13 @@ describe('complex input behavior slice', () => {
           inlineHelp='Choose an organisation'
           optionsFieldName='name'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', {
       name: 'Organisation name',
     });
+
     expect(combobox).toHaveAttribute('aria-describedby', 'help-organisation');
 
     await user.type(combobox, 'Labs');
@@ -1605,12 +1957,14 @@ describe('complex input behavior slice', () => {
     await waitFor(() =>
       expect(combobox).toHaveAttribute(
         'aria-activedescendant',
-        'organisationName-option-0'
-      )
+        'organisationName-option-0',
+      ),
     );
   });
 
   it('handles OrganisationNameLookup validation and missing option data', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <FormikHarness
@@ -1623,7 +1977,7 @@ describe('complex input behavior slice', () => {
           name='organisationName'
           optionsFieldName='name'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const combobox = screen.getByRole('combobox', {
@@ -1632,11 +1986,13 @@ describe('complex input behavior slice', () => {
     await user.type(combobox, 'Unknown');
 
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
   });
 
   it('recomputes OrganisationNameLookup suggestions when the parent filter changes', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
 
     const { rerender } = render(
@@ -1658,24 +2014,25 @@ describe('complex input behavior slice', () => {
           parentOptionsName='type'
           matchType='includes'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     fireEvent.change(
       screen.getByRole('combobox', { name: 'Organisation name' }),
       {
         target: { value: 'Labs' },
-      }
+      },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     expect(
-      screen.getByRole('option', { name: /Alpha Labs/ })
+      screen.getByRole('option', { name: /Alpha Labs/ }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('option', { name: /Beta Labs/ })
+      screen.queryByRole('option', { name: /Beta Labs/ }),
     ).not.toBeInTheDocument();
 
     rerender(
@@ -1697,25 +2054,28 @@ describe('complex input behavior slice', () => {
           parentOptionsName='type'
           matchType='includes'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     expect(
-      screen.getByRole('option', { name: /Beta Labs/ })
+      screen.getByRole('option', { name: /Beta Labs/ }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('option', { name: /Alpha Labs/ })
+      screen.queryByRole('option', { name: /Alpha Labs/ }),
     ).not.toBeInTheDocument();
   });
 
-  it('renders NumberInput numeric and pattern branches with validation, defaults, addons, and summary formatting', async () => {
+  it('renders NumberInput numeric and pattern branches with validation, defaults, and addons', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
-    const { rerender } = render(
+    render(
       <FormikHarness
         initialValues={{ amount: '' }}
         initialTouched={{ amount: true }}
@@ -1731,33 +2091,39 @@ describe('complex input behavior slice', () => {
           defaultValue={1200}
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const amount = screen.getByRole('textbox', { name: 'Amount' });
+
     expect(amount).toHaveAccessibleDescription('Enter an amount');
     expect(screen.getByText('$')).toBeInTheDocument();
     expect(screen.getByText('AUD')).toBeInTheDocument();
+
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"amount":1200')
+      expect(screen.getByTestId('values')).toHaveTextContent('"amount":1200'),
     );
 
     await user.clear(amount);
     await user.type(amount, '2500');
     await waitFor(() => expect(amount).toHaveValue('2,500'));
+  });
 
-    rerender(
+  it('formats NumberInput phone values and summary values', () => {
+    expect.hasAssertions();
+
+    const { rerender } = render(
       <FormikHarness initialValues={{ phone: '0412345678' }}>
         <NumberInput
           name='phone'
           label='Mobile phone'
           format='checkPhoneFormat'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'Mobile phone' })).toHaveValue(
-      '0412 345 678'
+      '0412 345 678',
     );
 
     rerender(
@@ -1768,7 +2134,7 @@ describe('complex input behavior slice', () => {
           format='checkPhoneFormat'
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Phone summary')).toBeInTheDocument();
@@ -1776,12 +2142,14 @@ describe('complex input behavior slice', () => {
   });
 
   it('applies a new NumberInput default value while untouched and does not reapply it after manual edits', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <FormikHarness initialValues={{ amount: '' }}>
         <NumberInput name='amount' label='Amount' />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByTestId('values')).toHaveTextContent('"amount":""');
@@ -1790,11 +2158,11 @@ describe('complex input behavior slice', () => {
       <FormikHarness initialValues={{ amount: '' }}>
         <NumberInput name='amount' label='Amount' defaultValue={2400} />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"amount":2400')
+      expect(screen.getByTestId('values')).toHaveTextContent('"amount":2400'),
     );
 
     const amount = screen.getByRole('textbox', { name: 'Amount' });
@@ -1802,7 +2170,7 @@ describe('complex input behavior slice', () => {
     await user.type(amount, '25');
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"amount":"25"')
+      expect(screen.getByTestId('values')).toHaveTextContent('"amount":"25"'),
     );
   });
 
@@ -1813,18 +2181,22 @@ describe('complex input behavior slice', () => {
     ['0212345678', '02 1234 5678'],
     ['', ''],
   ])('formats phone value %s using the matching pattern', (value, expected) => {
+    expect.hasAssertions();
+
     render(
       <FormikHarness initialValues={{ phone: value }}>
         <NumberInput name='phone' label='Phone' format='checkPhoneFormat' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'Phone' })).toHaveValue(
-      expected
+      expected,
     );
   });
 
   it('renders a formatted NumberInput inside an addon group with an explicit error id', () => {
+    expect.hasAssertions();
+
     render(
       <FormikHarness
         initialValues={{ phone: '0412345678' }}
@@ -1838,28 +2210,32 @@ describe('complex input behavior slice', () => {
           prepend='+61'
           format='checkPhoneFormat'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Phone' });
+
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'contact-phone-validation-msg'
+      'contact-phone-validation-msg',
     );
     expect(screen.getByText('Enter a phone number')).toHaveAttribute(
       'id',
-      'contact-phone-validation-msg'
+      'contact-phone-validation-msg',
     );
   });
 
   it('formats ISO and Date values for date inputs', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <FormikHarness initialValues={{ date: '2026-05-18T00:00:00.000Z' }}>
         <NumberInput name='date' label='ISO date' type='date' />
-      </FormikHarness>
+      </FormikHarness>,
     );
+
     expect(screen.getByRole('textbox', { name: 'ISO date' })).toHaveValue(
-      '20260518'
+      '20260518',
     );
 
     rerender(
@@ -1867,10 +2243,11 @@ describe('complex input behavior slice', () => {
         initialValues={{ date: new Date('2026-05-19T00:00:00.000Z') }}
       >
         <NumberInput name='date' label='Date object' type='date' />
-      </FormikHarness>
+      </FormikHarness>,
     );
+
     expect(screen.getByRole('textbox', { name: 'Date object' })).toHaveValue(
-      '20260519'
+      '20260519',
     );
   });
 });

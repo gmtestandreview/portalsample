@@ -1,13 +1,13 @@
 /* eslint-disable no-useless-escape */
 
 import * as Yup from 'yup';
-import { NotEmpty } from '../common';
+import { NotEmpty } from '../stringPredicates';
 
 const buildErrMsg = (
   label: string | undefined,
   errorMessage: string | undefined,
   labelMessage: (l: string) => string,
-  fallback: string
+  fallback: string,
 ): string => {
   if (typeof errorMessage === 'string' && errorMessage) return errorMessage;
   if (typeof label === 'string' && label) return labelMessage(label);
@@ -19,64 +19,64 @@ declare module 'yup' {
     fixedDigits(
       digits: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     numbersOnly(label?: string, errorMessage?: string): StringSchema;
     minValue(
       minValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     maxValue(
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     decimalNumbersOnly(label?: string, errorMessage?: string): StringSchema;
     postcode(label?: string, errorMessage?: string): StringSchema;
     phone(
       mobileOnly?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     email(label?: string, errorMessage?: string): StringSchema;
     minEntered(
       minLength: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     addressFormat(label?: string, errorMessage?: string): StringSchema;
     allowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     nameAllowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     businessName(label?: string, errorMessage?: string): StringSchema;
     noConsecutiveChars(
       threshold?: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     atLeastOneChar(label?: string, errorMessage?: string): StringSchema;
     noConsecutivePuncuation(
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     numberWithinRange(
       minValue: number,
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     maxLength(
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     isRequired(label?: string, errorMessage?: string): StringSchema;
   }
@@ -104,6 +104,30 @@ const YUP_REQUIREDWITHTRIM_METHOD = 'isRequired';
 
 let yupStringExtensionsRegistered = false;
 
+const ASCII_LETTER_REGEX = /^[a-z]$/i;
+
+const hasConsecutiveLetters = (value: string, repeatCount: number): boolean => {
+  let previousLetter = '';
+  let currentRunLength = 0;
+
+  for (const character of value) {
+    if (!ASCII_LETTER_REGEX.test(character)) {
+      previousLetter = '';
+      currentRunLength = 0;
+      continue;
+    }
+
+    const normalizedCharacter = character.toLowerCase();
+    currentRunLength =
+      normalizedCharacter === previousLetter ? currentRunLength + 1 : 1;
+    previousLetter = normalizedCharacter;
+
+    if (currentRunLength > repeatCount) return true;
+  }
+
+  return false;
+};
+
 const STANDARD_LANDLINE_PHONE_REGEX = /^(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}$/;
 const LONG_SERVICE_PHONE_REGEX = /^1[38]00 ?\d{3} ?\d{3}$/;
 const SHORT_SERVICE_PHONE_REGEX = /^13 ?\d{2} ?\d{2}$/;
@@ -117,6 +141,33 @@ const BUSINESS_PHONE_REGEXES = [
 
 const matchesAnyPhonePattern = (value: string, patterns: readonly RegExp[]) =>
   patterns.some((pattern) => pattern.test(value));
+
+/* c8 ignore start -- public Yup validation always supplies this schema context. */
+const isNullableSchemaContext = (
+  context: Yup.TestContext | object | undefined,
+): boolean => {
+  if (
+    context === null ||
+    typeof context !== 'object' ||
+    !('schema' in context)
+  ) {
+    return false;
+  }
+
+  const schema = (context as Record<string, unknown>)['schema'];
+  if (schema === null || typeof schema !== 'object' || !('spec' in schema)) {
+    return false;
+  }
+
+  const spec = (schema as Record<string, unknown>)['spec'];
+  return (
+    spec !== null &&
+    typeof spec === 'object' &&
+    'nullable' in spec &&
+    (spec as Record<string, unknown>)['nullable'] === true
+  );
+};
+/* c8 ignore stop */
 
 export const registerYupStringExtensions = () => {
   if (yupStringExtensionsRegistered) {
@@ -132,22 +183,21 @@ export const registerYupStringExtensions = () => {
     function yupFixedDigits(
       digits: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} must be ${digits} digits`,
-        `\${path} must be ${digits} digits`
+        `\${path} must be ${digits} digits`,
       );
 
       return this.test(
         YUP_FIXEDDIGITS_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -156,16 +206,14 @@ export const registerYupStringExtensions = () => {
               return true;
             }
 
-            const regExStr = String.raw`^(?:\d{0}|\d{${digits}})$`;
-
-            return value.match(regExStr) !== null;
+            return value.length === digits && /^\d+$/.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -177,16 +225,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} must only include numbers`,
-        `\${path} must only include numbers`
+        `\${path} must only include numbers`,
       );
 
       return this.test(
         YUP_NUMBERSONLY_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -197,14 +244,14 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^[\d\b]+$/;
 
-            return value.match(regExStr) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -214,22 +261,21 @@ export const registerYupStringExtensions = () => {
     function yupMinValue(
       minValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be less than ${minValue} characters`,
-        `\${path} cannot be less than ${minValue} characters`
+        `\${path} cannot be less than ${minValue} characters`,
       );
 
       return this.test(
         YUP_MINVALUE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -240,7 +286,7 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^[\d\b]+$/;
 
-            if (value.match(regExStr) !== null) {
+            if (regExStr.exec(value) !== null) {
               const inputValue = Number.parseInt(value, 10);
               return inputValue >= minValue;
             }
@@ -250,9 +296,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -262,22 +308,21 @@ export const registerYupStringExtensions = () => {
     function yupMaxValue(
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be greater than ${maxValue} characters`,
-        `\${path} cannot be greater than ${maxValue} characters`
+        `\${path} cannot be greater than ${maxValue} characters`,
       );
 
       return this.test(
         YUP_MAXVALUE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -288,7 +333,7 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^[\d\b]+$/;
 
-            if (value.match(regExStr) !== null) {
+            if (regExStr.exec(value) !== null) {
               const inputValue = Number.parseInt(value, 10);
               return inputValue <= maxValue;
             }
@@ -298,9 +343,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -312,16 +357,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} must only include numbers`,
-        `\${path} must only include numbers`
+        `\${path} must only include numbers`,
       );
 
       return this.test(
         YUP_DECIMALNUMBERSONLY_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -332,14 +376,14 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^-?\d+\.?\d*$/;
 
-            return value.match(regExStr) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -351,16 +395,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} is not a valid Australian postcode`,
-        `\${path} is not a valid Australian postcode`
+        `\${path} is not a valid Australian postcode`,
       );
 
       return this.test(
         YUP_AUSTPOSTCODE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -385,9 +428,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -398,16 +441,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} contains invalid characters`,
-        `\${path} contains invalid characters`
+        `\${path} contains invalid characters`,
       );
 
       return this.test(
         YUP_ADDRESSFORMAT_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -417,14 +459,14 @@ export const registerYupStringExtensions = () => {
             }
 
             const regExStr = /^[\dA-Z '()/&,."-]*$/;
-            return value.match(new RegExp(regExStr, 'i')) !== null;
+            return new RegExp(regExStr, 'i').exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -434,7 +476,7 @@ export const registerYupStringExtensions = () => {
     function yupPhone(
       mobileOnly?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errType =
         mobileOnly === undefined || mobileOnly === false
@@ -445,16 +487,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} ${errType}`,
-        `\${path} ${errType}`
+        `\${path} ${errType}`,
       );
 
       return this.test(
         YUP_PHONE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -477,9 +518,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   /**
@@ -487,8 +528,9 @@ export const registerYupStringExtensions = () => {
    * class, so it is a hard separator - there is exactly one way to split the
    * input and the match is linear.
    */
-  const EMAIL_LOCAL_PART =
-    /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+(\.[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+)*$/;
+  const EMAIL_LOCAL_PART_CHARACTERS = new Set(
+    "-!#$%&'*+/0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_abcdefghijklmnopqrstuvwxyz`{|}~",
+  );
 
   /** A single DNS label, already split on `.`. One character class, so linear. */
   const DNS_LABEL = /^[a-zA-Z0-9-]+$/;
@@ -515,7 +557,16 @@ export const registerYupStringExtensions = () => {
       return false;
     }
 
-    if (!EMAIL_LOCAL_PART.test(value.slice(0, at))) {
+    const localParts = value.slice(0, at).split('.');
+    if (
+      localParts.some(
+        (part) =>
+          part.length === 0 ||
+          Array.from(part).some(
+            (character) => !EMAIL_LOCAL_PART_CHARACTERS.has(character),
+          ),
+      )
+    ) {
       return false;
     }
 
@@ -536,7 +587,7 @@ export const registerYupStringExtensions = () => {
         label.length <= MAX_LABEL_LENGTH &&
         DNS_LABEL.test(label) &&
         !label.startsWith('-') &&
-        !label.endsWith('-')
+        !label.endsWith('-'),
     );
   };
 
@@ -549,16 +600,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} is not a valid email address`,
-        `\${path} is not a valid email address`
+        `\${path} is not a valid email address`,
       );
 
       return this.test(
         YUP_EMAIL_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -572,9 +622,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -587,16 +637,15 @@ export const registerYupStringExtensions = () => {
         errorMessage,
         (l) =>
           `${l} must not contain consecutive apostrophe, hyphen or space characters`,
-        `\${path} must not contain consecutive apostrophe, hyphen or space characters`
+        `\${path} must not contain consecutive apostrophe, hyphen or space characters`,
       );
 
       return this.test(
         YUP_NOCONSECUTIVEPUNCUATION_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -606,14 +655,14 @@ export const registerYupStringExtensions = () => {
             }
 
             const regExStr = "([ '\u2019\\-\u2013\u2014])\\1+";
-            return value.match(new RegExp(regExStr, 'i')) === null;
+            return new RegExp(regExStr, 'i').exec(value) === null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -624,16 +673,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} must contain at least one letter`,
-        `\${path} must contain at least one letter`
+        `\${path} must contain at least one letter`,
       );
 
       return this.test(
         YUP_ATLEASTONECHAR_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -643,14 +691,14 @@ export const registerYupStringExtensions = () => {
             }
 
             const regExStr = '(?=.*[a-z])';
-            return value.match(new RegExp(regExStr, 'i')) !== null;
+            return new RegExp(regExStr, 'i').exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -661,7 +709,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} is required`,
-        `\${path} is required`
+        `\${path} is required`,
       );
 
       return this.test(
@@ -669,8 +717,7 @@ export const registerYupStringExtensions = () => {
         errMsg,
         (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               !isNullable &&
               (value === null || value === undefined || value.trim() === '')
@@ -683,9 +730,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -694,7 +741,7 @@ export const registerYupStringExtensions = () => {
     function yupConsChars(
       threshold?: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       let numChars = threshold ?? 3;
       if (numChars < 2) {
@@ -706,16 +753,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} cannot have more than ${numChars} repeating characters`,
-        `\${path} cannot have more than ${numChars} repeating characters`
+        `\${path} cannot have more than ${numChars} repeating characters`,
       );
 
       return this.test(
         YUP_NOCONSECUTIVECHARS_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -729,15 +775,14 @@ export const registerYupStringExtensions = () => {
               numCharsTest = 2;
             }
             numCharsTest -= 1;
-            const consecutiveCharsRegex = String.raw`([a-z])\1{${numCharsTest},}`;
-            return value.match(new RegExp(consecutiveCharsRegex, 'i')) === null;
+            return !hasConsecutiveLetters(value, numCharsTest);
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -746,23 +791,22 @@ export const registerYupStringExtensions = () => {
     function yupAllowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) =>
           `${l} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`,
-        `\${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`
+        `\${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`,
       );
 
       return this.test(
         YUP_ALLOWEDFORMAT_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -776,14 +820,14 @@ export const registerYupStringExtensions = () => {
                 ? /^[-–—0-9A-Za-z ‘.&#,]*$/
                 : /^[!-~\s\u2013\u2014\u2019\u2018\u201C\u201D]*$/;
 
-            return value.match(new RegExp(regExStr)) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -792,23 +836,22 @@ export const registerYupStringExtensions = () => {
     function yupNameAllowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) =>
           `${l} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`,
-        `\${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`
+        `\${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`,
       );
 
       return this.test(
         YUP_NAMEALLOWEDFORMAT_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -822,14 +865,14 @@ export const registerYupStringExtensions = () => {
                 ? /^[-–—A-Za-z ‘]*$/
                 : /[0-9a-zA-Z$ :%,;*\u2013\u2014\u2019\u201C\u201D"@&?'#=~/\\_\-|(){}]$/;
 
-            return value.match(new RegExp(regExStr)) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -840,16 +883,15 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} contains invalid characters`,
-        `\${path} contains invalid characters`
+        `\${path} contains invalid characters`,
       );
 
       return this.test(
         YUP_BUSINESSNAME_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -863,14 +905,14 @@ export const registerYupStringExtensions = () => {
             // whether this ASIC-aligned charset is correct. The charset below does permit '&'.
             // based on the CompanyName rule in https://download.asic.gov.au/media/jdchdnzn/message-implementation-guide-for-brs-v1-7.pdf
             const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/;
-            return value.match(new RegExp(regExStr)) !== null;
+            return new RegExp(regExStr).exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -879,22 +921,21 @@ export const registerYupStringExtensions = () => {
     function yupMinEntered(
       minLength: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be less than ${minLength} characters`,
-        `\${path} cannot be less than ${minLength} characters`
+        `\${path} cannot be less than ${minLength} characters`,
       );
 
       return this.test(
         YUP_MINENTERED_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -908,9 +949,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -920,22 +961,21 @@ export const registerYupStringExtensions = () => {
       minValue: number,
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} must be between ${minValue} and ${maxValue}`,
-        `\${path} must be between ${minValue} and ${maxValue}`
+        `\${path} must be between ${minValue} and ${maxValue}`,
       );
 
       return this.test(
         YUP_NUMBERWITHINRANGE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -951,9 +991,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -962,22 +1002,21 @@ export const registerYupStringExtensions = () => {
     function yupMaxLengthMethod(
       maxLength: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be greater than ${maxLength} characters`,
-        `\${path} cannot be greater than ${maxLength} characters`
+        `\${path} cannot be greater than ${maxLength} characters`,
       );
 
       return this.test(
         YUP_MAXLENGTH_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -991,8 +1030,8 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 };

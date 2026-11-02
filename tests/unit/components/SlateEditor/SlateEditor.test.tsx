@@ -1,10 +1,17 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Editor, Transforms } from 'slate';
 import type * as SlateModule from 'slate';
 import SlateEditor from '@/components/SlateEditor/SlateEditor';
-import { serializeToHtml } from '@/components/SlateEditor/SlateEditor';
+import {
+  isBreakTag,
+  isEmptyParagraphContent,
+  serializeToHtml,
+} from '@/components/SlateEditor/SlateEditor';
 import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
+
+type SetValue = (value: CustomElement[]) => void;
+type Submit = () => void;
 
 /**
  * Slate builds its document as a plain JavaScript model and only mirrors it into the DOM. Driving
@@ -19,7 +26,11 @@ import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
  */
 const captured = vi.hoisted(() => ({ editors: [] as Editor[] }));
 
-vi.mock('slate', async (importOriginal) => {
+vi.mock(import('slate'), (async (
+  importOriginal: Parameters<
+    __DynamicPartialMockFactory<__TestMockModule55>
+  >[0],
+) => {
   const actual = await importOriginal<typeof SlateModule>();
 
   return {
@@ -29,8 +40,8 @@ vi.mock('slate', async (importOriginal) => {
       captured.editors.push(editor);
       return editor;
     },
-  };
-});
+  } satisfies __ExactMockModule<__TestMockModule55>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule55>);
 
 /** The editor belonging to the most recently rendered SlateEditor. */
 const currentEditor = () => {
@@ -50,6 +61,7 @@ const placeCaret = async (editor: Editor, offset = 0) => {
       anchor: { path: [0, 0], offset },
       focus: { path: [0, 0], offset },
     });
+    await Promise.resolve();
   });
 };
 
@@ -63,6 +75,7 @@ const placeCaret = async (editor: Editor, offset = 0) => {
 const applyEdit = async (change: () => void) => {
   await act(async () => {
     change();
+    await Promise.resolve();
   });
 };
 
@@ -73,8 +86,10 @@ const paragraph = (text: string): CustomElement[] => [
   },
 ];
 
-describe('SlateEditor helpers', () => {
+describe('slateEditor helpers', () => {
   it('serializes paragraph text with inline mark formatting', () => {
+    expect.hasAssertions();
+
     const html = serializeToHtml([
       {
         type: 'paragraph',
@@ -88,11 +103,13 @@ describe('SlateEditor helpers', () => {
     ]);
 
     expect(html).toBe(
-      '<p><strong>Bold</strong><em>Italic</em><u>Underline</u>Plain</p>'
+      '<p><strong>Bold</strong><em>Italic</em><u>Underline</u>Plain</p>',
     );
   });
 
   it('serializes unknown block types as their child content', () => {
+    expect.hasAssertions();
+
     const html = serializeToHtml([
       {
         type: 'heading',
@@ -102,66 +119,95 @@ describe('SlateEditor helpers', () => {
 
     expect(html).toBe('Heading text');
   });
+
+  it.each([
+    ['<br>', true],
+    ['<br/>', true],
+    ['<br />', true],
+    ['<br class="unexpected">', false],
+    ['plain text', false],
+    ['<br', false],
+  ])('classifies break tag %s as %s', (value, expected) => {
+    expect.hasAssertions();
+    expect(isBreakTag(value)).toBe(expected);
+  });
+
+  it.each([
+    ['', true],
+    ['&nbsp;&#xfeff; \n<br><br />', true],
+    ['<br class="unexpected">', false],
+    ['<br', false],
+    ['visible text', false],
+  ])('classifies paragraph content %j as empty=%s', (content, expected) => {
+    expect.hasAssertions();
+    expect(isEmptyParagraphContent(content)).toBe(expected);
+  });
 });
 
-describe('SlateEditor', () => {
+describe('slate editor', () => {
   it('renders toolbar controls, placeholder label, and the configured character limit', () => {
+    expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('Hello')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         placeholder='Reply to NMI'
         maxCharacters={25}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('textbox', { name: 'Reply to NMI' })
+      screen.getByRole('textbox', { name: 'Reply to NMI' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Bold' })).toHaveAttribute(
       'title',
-      'Bold'
+      'Bold',
     );
     expect(screen.getByRole('button', { name: 'Italic' })).toHaveAttribute(
       'title',
-      'Italic'
+      'Italic',
     );
     expect(screen.getByRole('button', { name: 'Underline' })).toHaveAttribute(
       'title',
-      'Underline'
+      'Underline',
     );
     expect(document.querySelector('.text-muted')).toHaveTextContent('0 /25');
   });
 
   it('prevents submitting empty or whitespace-only messages', () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+
+    const onSubmit = vi.fn<Submit>();
 
     render(
       <SlateEditor
         value={paragraph('   ')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
 
     expect(onSubmit).not.toHaveBeenCalled();
     expect(
-      screen.getByText('Message cannot be empty or spaces only')
+      screen.getByText('Message cannot be empty or spaces only'),
     ).toBeInTheDocument();
   });
 
   it('prevents submitting messages that exceed the configured character limit', () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+
+    const onSubmit = vi.fn<Submit>();
 
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         onSubmit={onSubmit}
         maxCharacters={5}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
@@ -169,20 +215,22 @@ describe('SlateEditor', () => {
     expect(onSubmit).not.toHaveBeenCalled();
     expect(
       screen.getByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toBeInTheDocument();
   });
 
   it('submits valid messages and supports toolbar mouse interactions', () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+
+    const onSubmit = vi.fn<Submit>();
 
     render(
       <SlateEditor
         value={paragraph('ready')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     fireEvent.mouseDown(screen.getByRole('button', { name: 'Bold' }));
@@ -194,6 +242,8 @@ describe('SlateEditor', () => {
   });
 
   it('renders bold, italic and underline marks in the editor body', () => {
+    expect.hasAssertions();
+
     render(
       <SlateEditor
         value={[
@@ -207,9 +257,9 @@ describe('SlateEditor', () => {
             ],
           },
         ]}
-        setValue={vi.fn()}
-        onSubmit={vi.fn()}
-      />
+        setValue={vi.fn<SetValue>()}
+        onSubmit={vi.fn<Submit>()}
+      />,
     );
 
     expect(screen.getByText('Bold bit').closest('strong')).not.toBeNull();
@@ -219,12 +269,14 @@ describe('SlateEditor', () => {
   });
 
   it('does not stack the same error when send is pressed repeatedly', () => {
+    expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('   ')}
-        setValue={vi.fn()}
-        onSubmit={vi.fn()}
-      />
+        setValue={vi.fn<SetValue>()}
+        onSubmit={vi.fn<Submit>()}
+      />,
     );
 
     const send = screen.getByRole('button', { name: 'Send' });
@@ -233,18 +285,20 @@ describe('SlateEditor', () => {
     fireEvent.click(send);
 
     expect(
-      screen.getAllByText('Message cannot be empty or spaces only')
+      screen.getAllByText('Message cannot be empty or spaces only'),
     ).toHaveLength(1);
   });
 
   it('does not stack the length error when send is pressed repeatedly', () => {
+    expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
-        onSubmit={vi.fn()}
+        setValue={vi.fn<SetValue>()}
+        onSubmit={vi.fn<Submit>()}
         maxCharacters={5}
-      />
+      />,
     );
 
     const send = screen.getByRole('button', { name: 'Send' });
@@ -253,26 +307,29 @@ describe('SlateEditor', () => {
 
     expect(
       screen.getAllByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toHaveLength(1);
   });
 });
 
-describe('SlateEditor document changes', () => {
-  beforeEach(() => {
+describe('slateEditor document changes', () => {
+  const resetCapturedEditors = () => {
     captured.editors.length = 0;
-  });
+  };
 
   it('pushes edits back to the caller and updates the live character count', async () => {
-    const setValue = vi.fn();
+    expect.hasAssertions();
+
+    resetCapturedEditors();
+    const setValue = vi.fn<SetValue>();
 
     render(
       <SlateEditor
         value={paragraph('Hello')}
         setValue={setValue}
         maxCharacters={1000}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -282,19 +339,23 @@ describe('SlateEditor document changes', () => {
     });
 
     const [lastValue] = setValue.mock.calls.at(-1) ?? [];
-    expect(serializeToHtml(lastValue)).toBe('<p>Hello there</p>');
+
+    expect(serializeToHtml(lastValue ?? [])).toBe('<p>Hello there</p>');
     // Counted over the serialized HTML, not the visible text: the limit exists to bound what
     // gets sent, and the markup travels with it.
     expect(document.querySelector('.text-muted')).toHaveTextContent('18 /1000');
   });
 
   it('reports a message that grows past the limit while it is being typed', async () => {
+    expect.hasAssertions();
+
+    resetCapturedEditors();
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         maxCharacters={5}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -305,18 +366,21 @@ describe('SlateEditor document changes', () => {
 
     expect(
       screen.getByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toBeInTheDocument();
   });
 
   it('does not stack the length error as typing continues past the limit', async () => {
+    expect.hasAssertions();
+
+    resetCapturedEditors();
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         maxCharacters={5}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -330,18 +394,21 @@ describe('SlateEditor document changes', () => {
 
     expect(
       screen.getAllByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toHaveLength(1);
   });
 
   it('clears the length error once the message fits again', async () => {
+    expect.hasAssertions();
+
+    resetCapturedEditors();
     render(
       <SlateEditor
         value={paragraph('abcdefghijkl')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         maxCharacters={20}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -352,8 +419,8 @@ describe('SlateEditor document changes', () => {
 
     expect(
       screen.getByText(
-        'Message cannot exceed 20 characters (including formatting)'
-      )
+        'Message cannot exceed 20 characters (including formatting)',
+      ),
     ).toBeInTheDocument();
 
     await applyEdit(() => {
@@ -367,13 +434,18 @@ describe('SlateEditor document changes', () => {
     // a message that is now perfectly valid.
     expect(
       screen.queryByText(
-        'Message cannot exceed 20 characters (including formatting)'
-      )
+        'Message cannot exceed 20 characters (including formatting)',
+      ),
     ).not.toBeInTheDocument();
   });
 
   it('turns a mark off again when the toolbar button is pressed twice', async () => {
-    render(<SlateEditor value={paragraph('ready')} setValue={vi.fn()} />);
+    expect.hasAssertions();
+
+    resetCapturedEditors();
+    render(
+      <SlateEditor value={paragraph('ready')} setValue={vi.fn<SetValue>()} />,
+    );
 
     const editor = currentEditor();
     // Slate drops marks when there is no selection, so the toolbar is inert until the caret is
@@ -385,11 +457,13 @@ describe('SlateEditor document changes', () => {
     await applyEdit(() => {
       fireEvent.mouseDown(bold);
     });
+
     expect(Editor.marks(editor)).toMatchObject({ bold: true });
 
     await applyEdit(() => {
       fireEvent.mouseDown(bold);
     });
+
     expect(Editor.marks(editor)?.bold).toBeUndefined();
   });
 });

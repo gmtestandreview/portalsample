@@ -50,16 +50,19 @@ const RhfNumberInput = (props: Readonly<RhfNumberInputProps>) => {
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
 
+  const fieldValue =
+    typeof field.value === 'string' || typeof field.value === 'number'
+      ? String(field.value)
+      : '';
+
   const resolvedFormat =
-    format === PHONE_FORMAT_KEYWORD
-      ? getPhoneNumberFormat(field.value)
-      : format;
+    format === PHONE_FORMAT_KEYWORD ? getPhoneNumberFormat(fieldValue) : format;
 
   if (isSummary) {
     return (
       <SummaryDisplay
         label={label}
-        value={field.value}
+        value={fieldValue}
         id={controlId}
         format={resolvedFormat}
         prefix={prepend}
@@ -82,7 +85,7 @@ const RhfNumberInput = (props: Readonly<RhfNumberInputProps>) => {
     onChange: (event: { target: { value: string } }) => {
       field.onChange(event.target.value);
     },
-    value: field.value || '',
+    value: fieldValue,
     displayType: 'input' as const,
     ...omitUndefined({
       disabled,

@@ -19,7 +19,7 @@ const NOT_SELECTED = 'Not selected';
 
 const subOptionLabels = (
   value: string[] | string | undefined,
-  options: { label: string; value: string }[]
+  options: { label: string; value: string }[],
 ) => {
   const selected = Array.isArray(value) ? value : value ? [value] : [];
   return (
@@ -33,11 +33,11 @@ const subOptionLabels = (
 const lookupLabel = (
   lookups: LookupResponse[] | undefined,
   id: string | undefined,
-  parentId?: string
+  parentId?: string,
 ) => {
   if (!id) return undefined;
   return (lookups ?? []).find(
-    (l) => l.id === id && (!parentId || l.parentId === parentId)
+    (l) => l.id === id && (!parentId || l.parentId === parentId),
   )?.label;
 };
 
@@ -75,12 +75,12 @@ const ApplicationSummary = (props: Readonly<TaSummarySectionProps>) => {
   const type = app?.patternApprovalType;
   const categoryLabel = lookupLabel(
     app?.instrumentCategoryLookup,
-    app?.instrumentCategory
+    app?.instrumentCategory,
   );
   const typeLabel = lookupLabel(
     app?.instrumentTypeLookup,
     app?.instrumentType,
-    app?.instrumentCategory
+    app?.instrumentCategory,
   );
   const summaryOfApplication = (
     <TextSummary
@@ -113,7 +113,7 @@ const ApplicationSummary = (props: Readonly<TaSummarySectionProps>) => {
                 className='mb-0'
                 value={subOptionLabels(
                   app?.newSubOptions,
-                  newCertificateSubOptions
+                  newCertificateSubOptions,
                 )}
               />
             )}
@@ -134,7 +134,7 @@ const ApplicationSummary = (props: Readonly<TaSummarySectionProps>) => {
                 className='mb-0'
                 value={subOptionLabels(
                   app?.othSubOptions,
-                  otherApprovalSubOptions
+                  otherApprovalSubOptions,
                 )}
               />
             )}

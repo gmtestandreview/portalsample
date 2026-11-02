@@ -9,7 +9,7 @@ portal.measurement.gov.au/           ← workspace root
 ├── .gitignore
 ├── package.json                      ← npm scripts, dependencies, Node engine
 ├── package-lock.json                 ← npm lockfile
-├── webpack.config.js                 ← Webpack 5 config for build/dev server
+├── vite.config.mts                   ← Vite config for build/dev server
 ├── tsconfig.json                     ← TypeScript config
 ├── vitest.config.ts                  ← Vitest workspace root (composes unit + storybook projects)
 ├── vitest.unit.config.ts             ← unit project: jsdom, 100% thresholds, coverage reporters
@@ -17,7 +17,7 @@ portal.measurement.gov.au/           ← workspace root
 ├── playwright.storybook.config.ts    ← storybook-bdd project
 ├── vitest.setup.ts                   ← Shared test setup (`jest-dom`, globals, mocks)
 ├── playwright.config.ts              ← Playwright E2E + BDD config
-├── index.html                        ← HTML template (webpack HtmlWebpackPlugin)
+├── index.html                        ← Vite HTML entrypoint
 │
 ├── tests/                            ← All test source
 │   ├── unit/                         ← Vitest unit suites and helpers
@@ -196,57 +196,55 @@ portal.measurement.gov.au/           ← workspace root
     │   │   └── index.ts               ← Pure utilities: date, string, bytes, currency
     │   │
     │   ├── parent/node_modules/       ← VENDOR: do not edit (formik, dompurify sources)
-    │   ├── external/                  ← VENDOR: do not edit (ts-async, ts-utils)
     │   └── main.*.js                  ← GENERATED: do not edit
     │
     ├── css/
     │   └── main.*.css                 ← GENERATED: do not edit
     │
     ├── source-map-http-downloads/     ← VENDOR mirrors: do not edit
-    └── webpack/                       ← GENERATED: webpack runtime bootstrap
 ```
 
 ### Test and tooling folders
 
-| Path | Purpose |
-| ------ | --------- |
-| `tests/unit/` | Vitest unit suites for components, helpers, and instrumentation |
-| `tests/unit/helpers/` | Shared test wrappers and form helpers |
-| `tests/e2e/features/` | BDD feature files grouped by domain (25 files) |
-| `tests/e2e/features/storybook/` | Storybook BDD feature specifications |
-| `tests/e2e/steps/` | Shared Playwright-BDD step definitions |
-| `.features-gen/` | Generated Playwright specs from `npx bddgen` |
-| `reports/coverage/unit/` | Unit coverage reports (`text`, `html`, `json-summary`) |
-| `reports/vitest/` | CI-oriented JUnit output from `npm run test:ci` |
-| `reports/playwright/` | Playwright HTML report |
-| `reports/test-results/` | Per-test Playwright artifacts (traces, screenshots) |
-| `.storybook/` | Storybook config for component development |
+| Path                            | Purpose                                                         |
+| ------------------------------- | --------------------------------------------------------------- |
+| `tests/unit/`                   | Vitest unit suites for components, helpers, and instrumentation |
+| `tests/unit/helpers/`           | Shared test wrappers and form helpers                           |
+| `tests/e2e/features/`           | BDD feature files grouped by domain (25 files)                  |
+| `tests/e2e/features/storybook/` | Storybook BDD feature specifications                            |
+| `tests/e2e/steps/`              | Shared Playwright-BDD step definitions                          |
+| `.features-gen/`                | Generated Playwright specs from `npx bddgen`                    |
+| `reports/coverage/unit/`        | Unit coverage reports (`text`, `html`, `json-summary`)          |
+| `reports/vitest/`               | CI-oriented JUnit output from `npm run test:ci`                 |
+| `reports/playwright/`           | Playwright HTML report                                          |
+| `reports/test-results/`         | Per-test Playwright artifacts (traces, screenshots)             |
+| `.storybook/`                   | Storybook config for component development                      |
 
 ## 2) Entry Points
 
-| Entry point | Purpose |
-| ------------- | --------- |
-| `ClientApp/src/index.tsx` | App bootstrap — top-level `await` MSAL init (line 16), TrustedTypes policy, then `createRoot` render. Provider order is `StrictMode` → `ErrorBoundary` → `MsalProvider` → `AccountProvider` → `RouterProvider`; `StrictMode` is outermost. |
-| `ClientApp/src/App.tsx` | Router — `createBrowserRouter` + `createRoutesFromElements` |
-| `ClientApp/src/styles/index.scss` | SCSS entry point for the NMI Bootstrap theme |
+| Entry point                       | Purpose                                                                                                                                                                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ClientApp/src/index.tsx`         | App bootstrap — top-level `await` MSAL init (line 16), TrustedTypes policy, then `createRoot` render. Provider order is `StrictMode` → `ErrorBoundary` → `MsalProvider` → `AccountProvider` → `RouterProvider`; `StrictMode` is outermost. |
+| `ClientApp/src/App.tsx`           | Router — `createBrowserRouter` + `createRoutesFromElements`                                                                                                                                                                                |
+| `ClientApp/src/styles/index.scss` | SCSS entry point for the NMI Bootstrap theme                                                                                                                                                                                               |
 
 ## 3) Key Files (read these early)
 
-| File | Why critical |
-| ------ | ------------- |
-| `ClientApp/src/env.ts` | All runtime config lives here; `process.env` is undefined at runtime |
-| `ClientApp/src/authentication/hooks.tsx` | ONLY way to access AccountContext — exports `useAccountState()` and `useAccountDispatch()`; do not import the contexts directly |
-| `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` | Side-effect import required in every Yup schema that uses custom methods |
-| `ClientApp/src/api/web-api-client.ts` | Auto-generated; never hand-edit; regenerate via NSwag on backend schema change |
-| `ClientApp/src/routes/common/errorRoutes.ts` | Maps HTTP status codes to error page routes — use this, don't hardcode paths |
+| File                                                                | Why critical                                                                                                                    |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `ClientApp/src/env.ts`                                              | All runtime config lives here; `process.env` is undefined at runtime                                                            |
+| `ClientApp/src/authentication/hooks.tsx`                            | ONLY way to access AccountContext — exports `useAccountState()` and `useAccountDispatch()`; do not import the contexts directly |
+| `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` | Side-effect import required in every Yup schema that uses custom methods                                                        |
+| `ClientApp/src/api/web-api-client.ts`                               | Auto-generated; never hand-edit; regenerate via NSwag on backend schema change                                                  |
+| `ClientApp/src/routes/common/errorRoutes.ts`                        | Maps HTTP status codes to error page routes — use this, don't hardcode paths                                                    |
 
 ## 4) Edit Boundaries
 
-| Status | Paths |
-| -------- | ------- |
-| **Edit freely** | `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx`, `ClientApp/src/styles/**/*.scss` |
-| **Edit with care** | `docs/**/*.md`, `tests/**/*.ts`, `tests/**/*.tsx`, `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.storybook.config.ts`, `quality/vitest.regression.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `playwright.storybook.config.ts`, `webpack.config.js`, `package.json`, `sonar-project.properties`, `.github/workflows/**` |
-| **Never edit** | `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/webpack/**`, `ClientApp/src/parent/node_modules/**`, `reports/**`, `node_modules/**` |
+| Status             | Paths                                                                                                                                                                                                                                                                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Edit freely**    | `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx`, `ClientApp/src/styles/**/*.scss`                                                                                                                                                                                                                                                     |
+| **Edit with care** | `docs/**/*.md`, `tests/**/*.ts`, `tests/**/*.tsx`, `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.storybook.config.ts`, `quality/vitest.regression.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `playwright.storybook.config.ts`, `vite.config.mts`, `package.json`, `sonar-project.properties`, `.github/workflows/**` |
+| **Never edit**     | `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/src/parent/node_modules/**`, `reports/**`, `node_modules/**`                                                                                                                                   |
 
 ## 5) Evidence
 

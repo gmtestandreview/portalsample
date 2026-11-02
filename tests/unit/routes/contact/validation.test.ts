@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 import '../../../../ClientApp/src/validationSchemas/yupExtensions';
 import contactSubmitValidation from '../../../../ClientApp/src/routes/contact/validation';
 
+const arrayContainingStrings = (values: string[]): unknown => {
+  const matcher: unknown = expect.arrayContaining<string>(values);
+  return matcher;
+};
+
 const validContact = {
   title: '',
   titleOther: 'Mx',
@@ -13,18 +18,20 @@ const validContact = {
   email: 'alex@example.com',
 };
 
-describe('contactSubmitValidation', () => {
+describe('contact submit validation', () => {
   it('accepts a valid contact object', async () => {
+    expect.hasAssertions();
     await expect(
-      contactSubmitValidation.validate({ contact: validContact })
+      contactSubmitValidation.validate({ contact: validContact }),
     ).resolves.toMatchObject({ contact: validContact });
   });
 
   it('requires missing hard contact fields', async () => {
+    expect.hasAssertions();
     await expect(
-      contactSubmitValidation.validate({ contact: {} }, { abortEarly: false })
+      contactSubmitValidation.validate({ contact: {} }, { abortEarly: false }),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Title other is required',
         'First name is required',
         'Last name is required',
@@ -36,6 +43,7 @@ describe('contactSubmitValidation', () => {
   });
 
   it('validates invalid formats', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate(
         {
@@ -47,10 +55,10 @@ describe('contactSubmitValidation', () => {
             email: 'bad',
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'First name cannot be less than 2 characters',
         'Last name cannot be less than 2 characters',
         'Please enter a valid Business phone',
@@ -60,6 +68,7 @@ describe('contactSubmitValidation', () => {
   });
 
   it('accepts max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate({
         contact: {
@@ -69,11 +78,12 @@ describe('contactSubmitValidation', () => {
           lastName: 'c'.repeat(99),
           role: 'd'.repeat(99),
         },
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('rejects values over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate(
         {
@@ -86,10 +96,10 @@ describe('contactSubmitValidation', () => {
             email: `${'e'.repeat(95)}@example.com`,
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Title other cannot be greater than 100 characters',
         'First name cannot be greater than 50 characters',
         'Last name cannot be greater than 99 characters',

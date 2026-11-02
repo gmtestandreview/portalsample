@@ -1,19 +1,24 @@
+import { describe, it, expect } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
 import RouteLeavingGuard from '@/components/RouteLeavingGuard';
 
-const resetBlocker = vi.fn();
-const proceedBlocker = vi.fn();
+const resetBlocker = vi.fn<() => void>();
+const proceedBlocker = vi.fn<() => void>();
 
-vi.mock('react-router', () => ({
-  useBlocker: () => ({
-    state: 'unblocked',
-    reset: resetBlocker,
-    proceed: proceedBlocker,
-  }),
-}));
+vi.mock(
+  import('react-router'),
+  (() =>
+    ({
+      useBlocker: () => ({
+        state: 'unblocked',
+        reset: resetBlocker,
+        proceed: proceedBlocker,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule11>) as unknown as __DynamicPartialMockFactory<__TestMockModule11>,
+);
 
-vi.mock('react-bootstrap/Modal', () => {
+vi.mock(import('react-bootstrap/Modal'), (() => {
   const Modal = ({
     children,
     onHide,
@@ -52,15 +57,17 @@ vi.mock('react-bootstrap/Modal', () => {
   }) {
     return <div>{children}</div>;
   };
-  return { default: Modal };
-});
+  return { default: Modal } satisfies __ExactMockModule<__TestMockModule51>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule51>);
 
-describe('RouteLeavingGuard unblocked actions', () => {
+describe('routeLeavingGuard unblocked actions', () => {
   it('ignores close and confirm actions when navigation is not blocked', () => {
+    expect.hasAssertions();
+
     render(
-      <Formik initialValues={{}} onSubmit={vi.fn()}>
+      <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
         <RouteLeavingGuard />
-      </Formik>
+      </Formik>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Hide modal' }));

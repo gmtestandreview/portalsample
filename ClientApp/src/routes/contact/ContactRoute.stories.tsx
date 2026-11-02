@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import ContactDetails from './contactDetails';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Contact/ContactDetailsStep',
   component: ContactDetails,
   decorators: [withPortalProviders],
@@ -24,14 +24,11 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof ContactDetails>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export const Default = meta.story();
 
-export const Default: Story = {};
-
-export const ValidationState: Story = {
+export const ValidationState = meta.story({
   parameters: {
     portal: {
       formik: {
@@ -63,4 +60,4 @@ export const ValidationState: Story = {
       },
     },
   },
-};
+});

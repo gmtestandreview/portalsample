@@ -318,10 +318,10 @@ function combineSvgs(svgs) {
     const graphWidth = Number(/\bwidth="([\d.]+)pt"/.exec(opening)?.[1]);
     const graphHeight = Number(/\bheight="([\d.]+)pt"/.exec(opening)?.[1]);
     if (!(
-      graphWidth > 0
-      && graphHeight > 0
-      && Number.isFinite(graphWidth)
-      && Number.isFinite(graphHeight)
+      graphWidth > 0 &&
+      graphHeight > 0 &&
+      Number.isFinite(graphWidth) &&
+      Number.isFinite(graphHeight)
     )) {
       throw new Error(
         'Graphviz returned SVG without supported finite dimensions.',
@@ -346,9 +346,9 @@ function main() {
   }
   const positional = args.filter((argument) => !argument.startsWith('--'));
   if (
-    positional.length !== 1
-    || args.filter((argument) => argument === '--combine').length > 1
-    || args.some(
+    positional.length !== 1 ||
+    args.filter((argument) => argument === '--combine').length > 1 ||
+    args.some(
       (argument) => argument.startsWith('--') && argument !== '--combine',
     )
   ) {

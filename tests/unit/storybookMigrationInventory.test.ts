@@ -1,15 +1,31 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+  readDirectorySync,
+  readTextFileSync,
+} from '../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..');
 
 const read = (...segments: string[]) =>
-  fs.readFileSync(path.join(repoRoot, ...segments), 'utf8');
+  readTextFileSync(path.join(repoRoot, ...segments), repoRoot);
 const readSource = (...segments: string[]) =>
   read('ClientApp', 'src', ...segments);
 
-describe('Storybook migration inventory', () => {
+const normalizeRoutePaths = (rawPaths: Array<string | undefined>): string[] => {
+  const uniquePaths = [
+    ...new Set(
+      rawPaths.filter(
+        (routePath): routePath is string =>
+          routePath !== undefined && routePath !== '*',
+      ),
+    ),
+  ];
+  if (rawPaths.includes('*')) uniquePaths.push('*');
+  return uniquePaths;
+};
+
+describe('storybook migration inventory', () => {
   const overviewDoc = readSource('storybook', 'MigrationReadiness.docs.mdx');
   const coverageDoc = readSource('storybook', 'CoverageMatrix.docs.mdx');
   const routeDoc = readSource('routes', 'RouteInventory.docs.mdx');
@@ -17,84 +33,108 @@ describe('Storybook migration inventory', () => {
   const authDoc = readSource('authentication', 'Authentication.docs.mdx');
   const validationDoc = readSource(
     'validationSchemas',
-    'ValidationSchemas.docs.mdx'
+    'ValidationSchemas.docs.mdx',
   );
   const assetDoc = readSource('assets', 'AssetsAndMedia.docs.mdx');
 
   it('documents all migration artifact classes in the overview page', () => {
-    expect(overviewDoc).toContain('Routes and route wrappers');
-    expect(overviewDoc).toContain('Reusable components and component families');
-    expect(overviewDoc).toContain(
-      'Authentication providers, guards, and account context contracts'
-    );
-    expect(overviewDoc).toContain(
-      'Validation schemas and custom Yup extensions'
-    );
-    expect(overviewDoc).toContain(
-      'Assets and media, including SVGs, fonts, and the MSW worker'
-    );
-    expect(overviewDoc).toContain('Migration/Coverage Matrix');
+    expect.hasAssertions();
+
+    expect([
+      overviewDoc.includes('Routes and route wrappers'),
+      overviewDoc.includes('Reusable components and component families'),
+      overviewDoc.includes(
+        'Authentication providers, guards, and account context contracts',
+      ),
+      overviewDoc.includes('Validation schemas and custom Yup extensions'),
+      overviewDoc.includes(
+        'Assets and media, including SVGs, fonts, and the MSW worker',
+      ),
+      overviewDoc.includes('Migration/Coverage Matrix'),
+    ]).toStrictEqual([true, true, true, true, true, true]);
   });
 
   it('documents the current Storybook coverage baseline and closure plan', () => {
-    expect(coverageDoc).toContain('Route-level interactive stories');
-    expect(coverageDoc).toContain('Component Coverage Matrix');
-    expect(coverageDoc).toContain('Platform Coverage Matrix');
-    expect(coverageDoc).toContain('Plan to Reach Full Coverage');
-    expect(coverageDoc).toContain('Inputs');
-    expect(coverageDoc).toContain('Dashboard');
+    expect.hasAssertions();
+
+    expect([
+      coverageDoc.includes('Route-level interactive stories'),
+      coverageDoc.includes('Component Coverage Matrix'),
+      coverageDoc.includes('Platform Coverage Matrix'),
+      coverageDoc.includes('Plan to Reach Full Coverage'),
+      coverageDoc.includes('Inputs'),
+      coverageDoc.includes('Dashboard'),
+    ]).toStrictEqual([true, true, true, true, true, true]);
   });
 
   it('documents every App route path in the route inventory page', () => {
+    expect.hasAssertions();
+
     const appSource = readSource('App.tsx');
     const rawPaths = [...appSource.matchAll(/path='([^']+)'/g)].map(
-      (match) => match[1]
+      (match) => match[1],
     );
     // Child wildcard routes ('*') are documented as 'parent/*' in the inventory,
     // not as standalone rows. Strip all bare '*' entries then restore the
     // top-level catch-all once.
-    const uniquePaths = [...new Set(rawPaths.filter((p) => p !== '*'))];
-    if (rawPaths.includes('*')) uniquePaths.push('*');
+    const uniquePaths = normalizeRoutePaths(rawPaths);
 
     expect(uniquePaths.length).toBeGreaterThan(20);
+
     uniquePaths.forEach((routePath) => {
       // The doc may record a parent + wildcard-child route as 'path/*'.
       const inDoc =
         routeDoc.includes(`['\`${routePath}\`',`) ||
         routeDoc.includes(`['\`${routePath}/*\`',`);
+
       expect(
         inDoc,
-        `"${routePath}" not documented in RouteInventory.docs.mdx`
+        `"${routePath}" not documented in RouteInventory.docs.mdx`,
       ).toBe(true);
     });
   });
 
   it('documents every top-level component family directory', () => {
-    const componentDirectories = fs
-      .readdirSync(path.join(repoRoot, 'ClientApp', 'src', 'components'), {
-        withFileTypes: true,
-      })
+    expect.hasAssertions();
+
+    const componentDirectories = readDirectorySync(
+      path.join(repoRoot, 'ClientApp', 'src', 'components'),
+      repoRoot,
+    )
       .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
       .map((entry) => entry.name);
+    const componentTableRows = componentDoc
+      .split(/\r?\n/)
+      .map((line) => line.split('|').map((cell) => cell.trim()));
 
     componentDirectories.forEach((directory) => {
-      expect(componentDoc).toContain(`| \`${directory}\` |`);
+      expect(
+        componentTableRows.some((cells) => cells.includes(`\`${directory}\``)),
+        `"${directory}" not documented in ComponentInventory.docs.mdx`,
+      ).toBe(true);
     });
   });
 
   it('documents every authentication source file', () => {
-    const authFiles = fs
-      .readdirSync(path.join(repoRoot, 'ClientApp', 'src', 'authentication'))
-      .filter(
-        (fileName) => fileName.endsWith('.ts') || fileName.endsWith('.tsx')
-      );
+    expect.hasAssertions();
 
-    authFiles.forEach((fileName) => {
-      expect(authDoc).toContain(`\`${fileName}\``);
+    const authFiles = readDirectorySync(
+      path.join(repoRoot, 'ClientApp', 'src', 'authentication'),
+      repoRoot,
+    ).filter(
+      (entry) =>
+        entry.isFile() &&
+        (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx')),
+    );
+
+    authFiles.forEach((entry) => {
+      expect(authDoc).toContain(`\`${entry.name}\``);
     });
   });
 
   it('documents the validation schema files and custom Yup methods', () => {
+    expect.hasAssertions();
+
     [
       'common.ts',
       'addressValidation.ts',
@@ -113,6 +153,8 @@ describe('Storybook migration inventory', () => {
   });
 
   it('documents the asset, font, and worker files required for migration', () => {
+    expect.hasAssertions();
+
     [
       'GovCrest.svg',
       'DI_CoatOfArms.svg',

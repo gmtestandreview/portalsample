@@ -2,7 +2,11 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  InvoiceSentToValues,
+  Title,
+} from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   PaymentDetailsStep,
@@ -32,7 +36,7 @@ const loadPaymentDetails =
       if (accounts.length > 0) {
         const client = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const paymentDetails = await client.getPaymentDetails(id, abortSignal);
@@ -54,18 +58,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: PaymentDetailsStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.savePaymentDetails(
@@ -75,7 +79,7 @@ const saveStep =
             formStep: values,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (e) {
         AppLogger.error('Failed to save payment details:', e as Error, {
@@ -93,14 +97,14 @@ const saveStep =
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) => {
     if (
-      errorCode === HttpStatusCode.PreconditionFailed &&
+      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
       errorType === ErrorType.Load
     ) {
       return `/accept-quote/${id}/view-summary`;
     }
 
     if (
-      errorCode === HttpStatusCode.NotFound &&
+      errorCode === Number(HttpStatusCode.NotFound) &&
       errorType === ErrorType.Update
     ) {
       setDashboardNotification({
@@ -120,7 +124,7 @@ const paymentDetailsProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<PaymentDetailsStep> => ({
   initialValues: {},
   stepStatuses: statuses,
@@ -128,9 +132,10 @@ const paymentDetailsProps = (
   location: '/payment-details',
   title: 'Payment details',
   hidingFields: {
-    contactHide: (x: PaymentDetailsStep) => x.invoiceSentTo === 'SamePerson',
+    contactHide: (x: PaymentDetailsStep) =>
+      x.invoiceSentTo === InvoiceSentToValues.SamePerson,
     contact: {
-      titleOther: (x: PaymentDetailsStep) => x.contact?.title !== 'Other',
+      titleOther: (x: PaymentDetailsStep) => x.contact?.title !== Title.Other,
     },
   },
   validateHard: paymentDetailsSubmitValidation,

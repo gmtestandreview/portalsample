@@ -69,7 +69,7 @@ export function CalendarCell(props: Readonly<CalendarCellProps>) {
             isSelectionStart,
             isSelectionEnd,
             isDisabled,
-          }
+          },
         ) => (
           <span
             className='button-base'
@@ -81,7 +81,7 @@ export function CalendarCell(props: Readonly<CalendarCellProps>) {
           >
             {children || defaultChildren}
           </span>
-        )
+        ),
       )}
     </AriaCalendarCell>
   );

@@ -1,8 +1,14 @@
-import { createContext, useCallback, useContext, useMemo, useRef } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { DefaultValues, FieldValues } from 'react-hook-form';
-import { useEffect } from 'react';
 import { RhfHiddenRulesProvider } from '../RhfHidableField/hiddenRulesContext';
 import { normalizeSubmitValues } from '../utils';
 import type { FormValues, Hideable, ValidationSchema } from '../types';
@@ -82,7 +88,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         getMode: () => modeRef.current,
         getHidden: () => hiddenRef.current,
       }),
-    [validateSoft, validateHard]
+    [validateSoft, validateHard],
   );
 
   const methods = useForm<T>({
@@ -99,7 +105,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
   const { reset, handleSubmit } = methods;
 
   useEffect(() => {
-    reset(initialValues as DefaultValues<T>);
+    reset(initialValues);
   }, [initialValues, reset]);
 
   const submit = useCallback(
@@ -109,9 +115,9 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         await handleSubmit(async (values) => {
           const payload = normalizeSubmitValues(values, hiddenRef.current);
           if (mode === 'saveAndExit' && onSaveAndExit) {
-            await onSaveAndExit(payload as T);
+            await onSaveAndExit(payload);
           } else {
-            await onSubmit(payload as T);
+            await onSubmit(payload);
           }
         })();
       } catch (error) {
@@ -120,7 +126,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         modeRef.current = 'next';
       }
     },
-    [handleSubmit, onSaveAndExit, onSubmit]
+    [handleSubmit, onSaveAndExit, onSubmit],
   );
 
   const api = useMemo<RhfFormApi>(
@@ -131,7 +137,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         void submit('next');
       },
     }),
-    [submit]
+    [submit],
   );
 
   return (

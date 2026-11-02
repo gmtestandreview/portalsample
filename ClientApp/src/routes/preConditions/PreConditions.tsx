@@ -1,6 +1,12 @@
 import { useIsAuthenticated } from '@azure/msal-react';
 import { Navigate, useLocation } from 'react-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import {
   useAccountState,
   useAccountDispatch,
@@ -24,7 +30,7 @@ import type { ModalState } from '../../components/modals/ModalContext';
 import { BranchSelectionModalMode } from '../../components/modals/BranchSelectorModal/enums';
 
 export interface PreConditionsProps {
-  children: any;
+  children: ReactNode;
   displayHeaderAndFooter?: boolean;
 }
 
@@ -70,7 +76,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
         callingPath,
       }));
     },
-    []
+    [],
   );
 
   const modalDispatch = useMemo(
@@ -79,7 +85,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
       setShowRFQDeleteModal,
       setShowRFQSelectModal,
     }),
-    [setShowBranchSelector, setShowRFQDeleteModal, setShowRFQSelectModal]
+    [setShowBranchSelector, setShowRFQDeleteModal, setShowRFQSelectModal],
   );
 
   // Loose `!= null` is deliberate: it means "an organisation exists", covering both
@@ -141,7 +147,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
 
   useEffect(() => {
     setIsModalOpen(
-      !!(showBranchSelector || showRFQDelete || showTermsAndConditions)
+      !!(showBranchSelector || showRFQDelete || showTermsAndConditions),
     );
   }, [showBranchSelector, showRFQDelete, showTermsAndConditions, isModalOpen]);
 

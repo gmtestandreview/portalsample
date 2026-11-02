@@ -14,7 +14,7 @@ const FormikSubmitFormButton = ({
 }: Readonly<SubmitFormButtonProps>) => {
   const { submitForm } = useFormikContext();
   const [_field, _meta, saveAndExitHelper] = useField<boolean | undefined>(
-    'saveAndExit'
+    'saveAndExit',
   );
   const [submitClickField, _m, submitClickHelper] = useField<
     boolean | undefined
@@ -22,15 +22,15 @@ const FormikSubmitFormButton = ({
 
   useEffect(() => {
     if (submitClickField.value === true) {
-      submitForm();
-      submitClickHelper.setValue(false);
+      void submitForm();
+      void submitClickHelper.setValue(false);
     }
   }, [submitClickField, submitForm, submitClickHelper]);
 
   const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    submitClickHelper.setValue(true);
-    saveAndExitHelper.setValue(false);
+    void submitClickHelper.setValue(true);
+    void saveAndExitHelper.setValue(false);
   };
 
   return (

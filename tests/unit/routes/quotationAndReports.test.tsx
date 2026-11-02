@@ -6,70 +6,110 @@ import {
   waitFor,
 } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
 import type * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
 import type * as MsalBrowserModule from '@azure/msal-browser';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
+import type {
+  clearDashboardInfoNotification as ClearDashboardInfoNotification,
+  clearDashboardNotification as ClearDashboardNotification,
+  getDashboardInfoNotification as GetDashboardInfoNotification,
+  getDashboardNotification as GetDashboardNotification,
+  setDashboardInfoNotification as SetDashboardInfoNotification,
+  setDashboardNotification as SetDashboardNotification,
+} from '../../../ClientApp/src/storage/notification';
+import { ApplicationType } from '../../../ClientApp/src/api/web-api-client';
 import { QuoteStatus } from '../../../ClientApp/src/routes/common/enums';
+import { NotificationSeverity } from '../../../ClientApp/src/storage/types';
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  setAuthToken: vi.fn(),
-  getQuoteRequestDetailsByRefId: vi.fn(),
-  declineQuote: vi.fn(),
-  getDashboardInstrumentReports: vi.fn(),
-  appLoggerError: vi.fn(),
-  appLoggerVerbose: vi.fn(),
-  useAccountState: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  getDashboardNotification: vi.fn(),
-  getDashboardInfoNotification: vi.fn(),
-  clearDashboardNotification: vi.fn(),
-  clearDashboardInfoNotification: vi.fn(),
-  setDashboardNotification: vi.fn(),
-  setDashboardInfoNotification: vi.fn(),
-  openInternalRouteInNewTab: vi.fn(),
-  handleReportFileError: vi.fn(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteRequestDetailsByRefId: vi.fn<(...args: unknown[]) => unknown>(),
+  declineQuote: vi.fn<(...args: unknown[]) => unknown>(),
+  getDashboardInstrumentReports: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerVerbose: vi.fn<(...args: unknown[]) => unknown>(),
+  useAccountState: vi.fn<(...args: unknown[]) => unknown>(),
+  setTargetOrganisation: vi.fn<(...args: unknown[]) => unknown>(),
+  getDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  getDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  clearDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  clearDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  setDashboardNotification:
+    vi.fn<
+      (
+        ...args: Parameters<typeof SetDashboardNotification>
+      ) => ReturnType<typeof SetDashboardNotification>
+    >(),
+  setDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  openInternalRouteInNewTab: vi.fn<(...args: unknown[]) => unknown>(),
+  handleReportFileError: vi.fn<(...args: unknown[]) => unknown>(),
   sessionGetItem: vi.fn<() => string | null>(() => null),
-  sessionRemoveItem: vi.fn(),
+  sessionRemoveItem: vi.fn<(...args: unknown[]) => unknown>(),
   msalState: {
     inProgress: 'none',
     accounts: [{ homeAccountId: 'account-1' }],
-    instance: { acquireTokenSilent: vi.fn() },
+    instance: { acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>() },
   },
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    inProgress: mocks.msalState.inProgress,
-    accounts: mocks.msalState.accounts,
-    instance: mocks.msalState.instance,
-  }),
-}));
+function requireNotification<Value>(value: Value | undefined): Value {
+  if (value === undefined) {
+    throw new Error(
+      'Expected a dashboard notification after the failed decline',
+    );
+  }
+  return value;
+}
 
-vi.mock('@azure/msal-browser', async (importOriginal) => {
+vi.mock(
+  import('@azure/msal-react'),
+  (() =>
+    ({
+      useMsal: () => ({
+        inProgress: mocks.msalState.inProgress,
+        accounts: mocks.msalState.accounts,
+        instance: mocks.msalState.instance,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
+);
+
+vi.mock(import('@azure/msal-browser'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule3>>[0],
+) => {
   const actual = await importOriginal<typeof MsalBrowserModule>();
 
   return {
     ...actual,
     InteractionStatus: { None: 'none' },
-  };
-});
+  } satisfies __ExactMockModule<__TestMockModule3>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule3>);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-  useAccountDispatch: () => ({
-    setTargetOrganisation: mocks.setTargetOrganisation,
-  }),
-}));
+vi.mock(
+  import('../../../ClientApp/src/authentication/hooks'),
+  (() =>
+    ({
+      useAccountState: mocks.useAccountState,
+      useAccountDispatch: () => ({
+        setTargetOrganisation: mocks.setTargetOrganisation,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
+vi.mock(
+  import('../../../ClientApp/src/authentication/authConfig'),
+  (() =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
+);
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
+vi.mock(import('../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -78,228 +118,330 @@ vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
       QuoteAccept: 'QuoteAccept',
       QuoteRequest: 'QuoteRequest',
     },
-    QuoteClient: vi.fn(function QuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-        declineQuote: mocks.declineQuote,
-      };
-    }),
-    DashboardClient: vi.fn(function DashboardClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
-          mocks.getDashboardInstrumentReports,
-      };
-    }),
-  };
-});
+    QuoteClient: vi.fn<(...args: unknown[]) => unknown>(
+      function QuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+          declineQuote: mocks.declineQuote,
+        };
+      },
+    ),
+    DashboardClient: vi.fn<(...args: unknown[]) => unknown>(
+      function DashboardClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
+            mocks.getDashboardInstrumentReports,
+        };
+      },
+    ),
+  } satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  getDashboardNotification: mocks.getDashboardNotification,
-  getDashboardInfoNotification: mocks.getDashboardInfoNotification,
-  clearDashboardNotification: mocks.clearDashboardNotification,
-  clearDashboardInfoNotification: mocks.clearDashboardInfoNotification,
-  setDashboardNotification: mocks.setDashboardNotification,
-  setDashboardInfoNotification: mocks.setDashboardInfoNotification,
-}));
+vi.mock(
+  import('../../../ClientApp/src/storage/notification'),
+  (() =>
+    ({
+      getDashboardNotification:
+        mocks.getDashboardNotification as unknown as typeof GetDashboardNotification,
+      getDashboardInfoNotification:
+        mocks.getDashboardInfoNotification as unknown as typeof GetDashboardInfoNotification,
+      clearDashboardNotification:
+        mocks.clearDashboardNotification as unknown as typeof ClearDashboardNotification,
+      clearDashboardInfoNotification:
+        mocks.clearDashboardInfoNotification as unknown as typeof ClearDashboardInfoNotification,
+      setDashboardNotification:
+        mocks.setDashboardNotification as unknown as typeof SetDashboardNotification,
+      setDashboardInfoNotification:
+        mocks.setDashboardInfoNotification as unknown as typeof SetDashboardInfoNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>) as unknown as __DynamicPartialMockFactory<__TestMockModule46>,
+);
 
-vi.mock('../../../ClientApp/src/storage/types', () => ({
-  NotificationSeverity: {
-    Error: 'error',
-    Information: 'information',
-  },
-}));
+vi.mock(
+  import('../../../ClientApp/src/storage/types'),
+  (() =>
+    ({
+      NotificationSeverity: {
+        Error: 'error',
+        Information: 'information',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule47>) as unknown as __DynamicPartialMockFactory<__TestMockModule47>,
+);
 
-vi.mock('../../../ClientApp/src/storage/sessionStorageCache', () => ({
-  default: () => ({
-    getItem: mocks.sessionGetItem,
-    removeItem: mocks.sessionRemoveItem,
-  }),
-}));
+vi.mock(
+  import('../../../ClientApp/src/storage/sessionStorageCache'),
+  (() =>
+    ({
+      default: () => ({
+        getItem: mocks.sessionGetItem,
+        removeItem: mocks.sessionRemoveItem,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule72>) as unknown as __DynamicPartialMockFactory<__TestMockModule72>,
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  (() =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>) as unknown as __DynamicPartialMockFactory<__TestMockModule89>,
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  (() =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>) as unknown as __DynamicPartialMockFactory<__TestMockModule59>,
+);
 
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='block-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/BlockUISpinner'),
+  (() =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='block-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>) as unknown as __DynamicPartialMockFactory<__TestMockModule14>,
+);
 
-vi.mock('../../../ClientApp/src/components/Breadcrumb', () => ({
-  default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
-    <nav data-testid='breadcrumb'>
-      {breadcrumbs.map((item) => item.text).join(' > ')}
-    </nav>
-  ),
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Breadcrumb'),
+  (() =>
+    ({
+      default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
+        <nav data-testid='breadcrumb'>
+          {breadcrumbs.map((item) => item.text).join(' > ')}
+        </nav>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule115>) as unknown as __DynamicPartialMockFactory<__TestMockModule115>,
+);
 
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <p data-testid='header-intro'>{children}</p>
-  ),
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/HeaderIntroText'),
+  (() =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <p data-testid='header-intro'>{children}</p>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule76>) as unknown as __DynamicPartialMockFactory<__TestMockModule76>,
+);
 
-vi.mock('../../../ClientApp/src/components/Alert/NotificationMessage', () => ({
-  default: ({ message, onClose }: { message: string; onClose: () => void }) => (
-    <button type='button' data-testid='notification-message' onClick={onClose}>
-      {message}
-    </button>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/modals/ConfirmationModal', () => ({
-  default: ({
-    isOpen,
-    titleText,
-    onModalNo,
-    onModalYes,
-  }: {
-    isOpen: boolean;
-    titleText: string;
-    onModalNo: () => void;
-    onModalYes: () => void;
-  }) =>
-    isOpen ? (
-      <div data-testid='confirmation-modal'>
-        <h2>{titleText}</h2>
-        <button type='button' onClick={onModalNo}>
-          Cancel
+vi.mock(
+  import('../../../ClientApp/src/components/Alert/NotificationMessage'),
+  (() =>
+    ({
+      default: ({
+        message,
+        onClose,
+      }: {
+        message: string;
+        onClose: () => void;
+      }) => (
+        <button
+          type='button'
+          data-testid='notification-message'
+          onClick={onClose}
+        >
+          {message}
         </button>
-        <button type='button' onClick={onModalYes}>
-          Decline quote
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule48>) as unknown as __DynamicPartialMockFactory<__TestMockModule48>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/modals/ConfirmationModal'),
+  (() =>
+    ({
+      default: ({
+        isOpen,
+        titleText,
+        onModalNo,
+        onModalYes,
+      }: {
+        isOpen: boolean;
+        titleText: string;
+        onModalNo: () => void;
+        onModalYes: () => void;
+      }) =>
+        isOpen ? (
+          <div data-testid='confirmation-modal'>
+            <h2>{titleText}</h2>
+            <button type='button' onClick={onModalNo}>
+              Cancel
+            </button>
+            <button type='button' onClick={onModalYes}>
+              Decline quote
+            </button>
+          </div>
+        ) : null,
+    }) satisfies __ExactMockModule<__TestMockModule23>) as unknown as __DynamicPartialMockFactory<__TestMockModule23>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms'),
+  (() =>
+    ({
+      default: ({
+        prefixText,
+        suffixText,
+      }: {
+        prefixText?: string;
+        suffixText?: string;
+      }) => (
+        <div data-testid='view-quote-terms'>
+          {prefixText}
+          {suffixText}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule116>) as unknown as __DynamicPartialMockFactory<__TestMockModule116>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/ViewPdfQuote'),
+  (() =>
+    ({
+      default: ({ text }: { text: string }) => (
+        <button type='button'>{text}</button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule117>) as unknown as __DynamicPartialMockFactory<__TestMockModule117>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/ViewMeasurementReport'),
+  (() =>
+    ({
+      default: ({ text }: { text: string }) => (
+        <button type='button'>{text}</button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule118>) as unknown as __DynamicPartialMockFactory<__TestMockModule118>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/mailingLabel'),
+  (() =>
+    ({
+      default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
+        <div data-testid='mailing-label'>{quotationIdNum}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule119>) as unknown as __DynamicPartialMockFactory<__TestMockModule119>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/deliveryInstructions'),
+  (() =>
+    ({
+      default: ({
+        deliveryInstructions,
+      }: {
+        deliveryInstructions?: string;
+      }) => (
+        <div data-testid='delivery-instructions'>{deliveryInstructions}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule120>) as unknown as __DynamicPartialMockFactory<__TestMockModule120>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Pill/QuoteStatusPill'),
+  (() =>
+    ({
+      default: ({ status }: { status: string }) => (
+        <span data-testid='quote-status-pill'>{status}</span>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule121>) as unknown as __DynamicPartialMockFactory<__TestMockModule121>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Pill/StatusPill'),
+  (() =>
+    ({
+      default: ({ status }: { status: string }) => (
+        <span data-testid='status-pill'>{status}</span>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule122>) as unknown as __DynamicPartialMockFactory<__TestMockModule122>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/Pagination'),
+  (() =>
+    ({
+      default: ({
+        currentPage,
+        totalPages,
+        onPageChange,
+      }: {
+        currentPage: number;
+        totalPages: number;
+        onPageChange: (page: number) => void;
+      }) => (
+        <button
+          type='button'
+          data-testid='pagination'
+          data-total={totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+        >
+          Page {currentPage}
         </button>
-      </div>
-    ) : null,
-}));
-
-vi.mock(
-  '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
-  () => ({
-    default: ({
-      prefixText,
-      suffixText,
-    }: {
-      prefixText?: string;
-      suffixText?: string;
-    }) => (
-      <div data-testid='view-quote-terms'>
-        {prefixText}
-        {suffixText}
-      </div>
-    ),
-  })
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule98>) as unknown as __DynamicPartialMockFactory<__TestMockModule98>,
 );
 
-vi.mock('../../../ClientApp/src/components/Utilities/ViewPdfQuote', () => ({
-  default: ({ text }: { text: string }) => (
-    <button type='button'>{text}</button>
-  ),
-}));
-
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/ViewMeasurementReport',
-  () => ({
-    default: ({ text }: { text: string }) => (
-      <button type='button'>{text}</button>
-    ),
-  })
+  import('../../../ClientApp/src/components/InTextLink'),
+  (() =>
+    ({
+      default: ({
+        children,
+        onClick,
+      }: {
+        children: React.ReactNode;
+        onClick: React.MouseEventHandler<HTMLButtonElement>;
+      }) => (
+        <button type='button' onClick={onClick}>
+          {children}
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule77>) as unknown as __DynamicPartialMockFactory<__TestMockModule77>,
 );
 
-vi.mock('../../../ClientApp/src/components/Utilities/mailingLabel', () => ({
-  default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
-    <div data-testid='mailing-label'>{quotationIdNum}</div>
-  ),
-}));
-
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/deliveryInstructions',
-  () => ({
-    default: ({ deliveryInstructions }: { deliveryInstructions?: string }) => (
-      <div data-testid='delivery-instructions'>{deliveryInstructions}</div>
-    ),
-  })
+  import('../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
+  (() =>
+    ({
+      default: () => <span data-testid='external-link-icon' />,
+    }) satisfies __ExactMockModule<__TestMockModule78>) as unknown as __DynamicPartialMockFactory<__TestMockModule78>,
 );
 
-vi.mock('../../../ClientApp/src/components/Pill/QuoteStatusPill', () => ({
-  default: ({ status }: { status: string }) => (
-    <span data-testid='quote-status-pill'>{status}</span>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Pill/StatusPill', () => ({
-  default: ({ status }: { status: string }) => (
-    <span data-testid='status-pill'>{status}</span>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Pagination', () => ({
-  default: ({
-    currentPage,
-    totalPages,
-    onPageChange,
-  }: {
-    currentPage: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
-  }) => (
-    <button
-      type='button'
-      data-testid='pagination'
-      data-total={totalPages}
-      onClick={() => onPageChange(currentPage + 1)}
-    >
-      Page {currentPage}
-    </button>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/InTextLink', () => ({
-  default: ({
-    children,
-    onClick,
-  }: {
-    children: React.ReactNode;
-    onClick: React.MouseEventHandler<HTMLButtonElement>;
-  }) => (
-    <button type='button' onClick={onClick}>
-      {children}
-    </button>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Icons/ExternalLinkIcon', () => ({
-  default: () => <span data-testid='external-link-icon' />,
-}));
-
-vi.mock('../../../ClientApp/src/routes/common/openWindow', () => ({
-  openInternalRouteInNewTab: mocks.openInternalRouteInNewTab,
-}));
-
 vi.mock(
-  '../../../ClientApp/src/routes/common/helperFunctions',
-  async (importOriginal) => {
-    const actual = await importOriginal<typeof HelperFunctionsModule>();
-
-    return {
-      ...actual,
-      handleReportFileError: mocks.handleReportFileError,
-    };
-  }
+  import('../../../ClientApp/src/routes/common/openWindow'),
+  (() =>
+    ({
+      openInternalRouteInNewTab: mocks.openInternalRouteInNewTab,
+    }) satisfies __ExactMockModule<__TestMockModule91>) as unknown as __DynamicPartialMockFactory<__TestMockModule91>,
 );
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-    verbose: mocks.appLoggerVerbose,
-  },
-}));
+vi.mock(import('../../../ClientApp/src/routes/common/helperFunctions'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule9>>[0],
+) => {
+  const actual = await importOriginal<typeof HelperFunctionsModule>();
+
+  return {
+    ...actual,
+    handleReportFileError: mocks.handleReportFileError,
+  } satisfies __ExactMockModule<__TestMockModule9>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule9>);
+
+vi.mock(
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+        verbose: mocks.appLoggerVerbose,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
+);
 
 const accountDetails = {
   givenName: 'Alex',
@@ -363,7 +505,7 @@ const quoteDetails: WebApiClientModule.RequestForQuoteDetails = {
 const renderRoute = (
   initialPath: string,
   element: React.ReactNode,
-  routePath: string
+  routePath: string,
 ) =>
   render(
     <MemoryRouter initialEntries={[initialPath]}>
@@ -372,62 +514,69 @@ const renderRoute = (
         <Route path='/not-found' element={<div data-testid='not-found' />} />
         <Route path='/' element={<div data-testid='dashboard-route' />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 const settleQuotationEffects = async () => {
   await waitFor(() =>
-    expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalled()
+    expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalledWith(
+      ApplicationType.QuoteRequest,
+      'RFQ-100',
+    ),
   );
   await act(async () => {
     await Promise.resolve();
   });
 };
 
-describe('quotation and measurement report routes', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
-    mocks.msalState.instance.acquireTokenSilent = mocks.acquireTokenSilent;
-    mocks.msalState.inProgress = 'none';
-    mocks.msalState.accounts.splice(0, mocks.msalState.accounts.length, {
-      homeAccountId: 'account-1',
-    });
-    mocks.useAccountState.mockReturnValue({ details: accountDetails });
-    mocks.getDashboardNotification.mockReturnValue({
-      message: 'Dashboard notification',
-      severity: 'info',
-    });
-    mocks.getDashboardInfoNotification.mockReturnValue({
-      message: 'Info notification',
-      severity: 'info',
-    });
-    mocks.getQuoteRequestDetailsByRefId.mockResolvedValue({ ...quoteDetails });
-    mocks.declineQuote.mockResolvedValue(undefined);
-    mocks.sessionGetItem.mockReturnValue(null);
-    mocks.getDashboardInstrumentReports.mockResolvedValue({
-      currentPage: 1,
-      totalPages: 2,
-      items: [
-        {
-          tmasTcReportName: 'RPT-100',
-          tmasTcReportDate: '2026-07-25',
-          tmasMeasurementReportCertificateRequired: 'Measurement report only',
-          tmasMeasurementCategoryName: 'Mass',
-          tmasStatus: 'Report available',
-          tmasTcQuoteName: 'AQ-100',
-          tmasPortalRequestId: 'RFQ-100',
-        },
-        {
-          tmasTcReportName: 'RPT-101',
-          tmasStatus: 'Withdrawn',
-          tmasPortalRequestId: 'RFQ-101',
-        },
-      ],
-    });
+const resetQuotationAndReportsMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+  mocks.msalState.instance.acquireTokenSilent = mocks.acquireTokenSilent;
+  mocks.msalState.inProgress = 'none';
+  mocks.msalState.accounts.splice(0, mocks.msalState.accounts.length, {
+    homeAccountId: 'account-1',
   });
+  mocks.useAccountState.mockReturnValue({ details: accountDetails });
+  mocks.getDashboardNotification.mockReturnValue({
+    message: 'Dashboard notification',
+    severity: 'info',
+  });
+  mocks.getDashboardInfoNotification.mockReturnValue({
+    message: 'Info notification',
+    severity: 'info',
+  });
+  mocks.getQuoteRequestDetailsByRefId.mockResolvedValue({ ...quoteDetails });
+  mocks.declineQuote.mockResolvedValue(undefined);
+  mocks.sessionGetItem.mockReturnValue(null);
+  mocks.getDashboardInstrumentReports.mockResolvedValue({
+    currentPage: 1,
+    totalPages: 2,
+    items: [
+      {
+        tmasTcReportName: 'RPT-100',
+        tmasTcReportDate: '2026-07-25',
+        tmasMeasurementReportCertificateRequired: 'Measurement report only',
+        tmasMeasurementCategoryName: 'Mass',
+        tmasStatus: 'Report available',
+        tmasTcQuoteName: 'AQ-100',
+        tmasPortalRequestId: 'RFQ-100',
+      },
+      {
+        tmasTcReportName: 'RPT-101',
+        tmasStatus: 'Withdrawn',
+        tmasPortalRequestId: 'RFQ-101',
+      },
+    ],
+  });
+};
 
+describe('quotation and measurement report routes', () => {
   it('loads quotation details and declines a quote through the confirmation modal', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
 
@@ -435,30 +584,36 @@ describe('quotation and measurement report routes', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByRole('heading', { name: 'Quotation' })
-      ).toBeInTheDocument()
+        screen.getByRole('heading', { name: 'Quotation' }),
+      ).toBeInTheDocument(),
     );
+
     expect(screen.getAllByText('Q-100').length).toBeGreaterThan(0);
     expect(screen.getByTestId('view-quote-terms')).toHaveTextContent(
-      'clause 11'
+      'clause 11',
     );
 
     fireEvent.click(screen.getByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!
+      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
     );
 
     await waitFor(() =>
       expect(mocks.declineQuote).toHaveBeenCalledWith(
         'CRM-QUOTE-1',
         'Alex',
-        'Tester'
-      )
+        'Tester',
+      ),
     );
+
     expect(screen.getByTestId('dashboard-route')).toBeInTheDocument();
   });
 
   it('shows a file error notification when declining a quote fails', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.declineQuote.mockRejectedValueOnce(new Error('decline failed'));
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
@@ -466,35 +621,52 @@ describe('quotation and measurement report routes', () => {
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
     await waitFor(() =>
-      expect(screen.getByTestId('decline-button')).toBeInTheDocument()
+      expect(screen.getByTestId('decline-button')).toBeInTheDocument(),
     );
     fireEvent.click(screen.getByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!
+      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
     );
 
     await waitFor(() =>
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to decline quote',
         expect.any(Error),
-        { Id: 'RFQ-100' }
-      )
+        { Id: 'RFQ-100' },
+      ),
     );
-    expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('downloading the PDF quote'),
-      })
+
+    const notification = requireNotification(
+      mocks.setDashboardNotification.mock.calls.at(-1)?.[0],
     );
+
+    expect({
+      callCount: mocks.setDashboardNotification.mock.calls.length,
+      severity: notification.severity,
+      messageContains: notification.message.includes(
+        'downloading the PDF quote',
+      ),
+    }).toStrictEqual({
+      callCount: 1,
+      severity: NotificationSeverity.Error,
+      messageContains: true,
+    });
   });
 
   it('closes the decline confirmation without submitting', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
     fireEvent.click(await screen.findByTestId('decline-button'));
     await settleQuotationEffects();
+
     expect(screen.getByTestId('confirmation-modal')).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(screen.queryByTestId('confirmation-modal')).not.toBeInTheDocument();
@@ -502,6 +674,10 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('normalises a newly accepted quotation from session storage', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.sessionGetItem.mockReturnValue('RFQ-100');
     const quotation = {
       ...quoteDetails,
@@ -514,13 +690,18 @@ describe('quotation and measurement report routes', () => {
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
     await waitFor(() =>
-      expect(quotation.quoteRequestStatus).toBe('Quote - Accepted')
+      expect(quotation.quoteRequestStatus).toBe('Quote - Accepted'),
     );
+
     expect(quotation.outcomeDate).toBeInstanceOf(Date);
     expect(mocks.sessionRemoveItem).toHaveBeenCalledWith('view-quote-id');
   });
 
   it('removes the session storage ID but leaves the status unchanged when IDs do not match', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.sessionGetItem.mockReturnValue('RFQ-OTHER');
     const quotation = {
       ...quoteDetails,
@@ -533,25 +714,30 @@ describe('quotation and measurement report routes', () => {
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
     await waitFor(() =>
-      expect(mocks.sessionRemoveItem).toHaveBeenCalledWith('view-quote-id')
+      expect(mocks.sessionRemoveItem).toHaveBeenCalledWith('view-quote-id'),
     );
+
     // Status is NOT mutated because the IDs don't match
     expect(quotation.quoteRequestStatus).toBe('Quote - Available');
   });
 
   it('ignores a resolved load response after the quotation component unmounts', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     let resolveLoad!: (value: any) => void;
     mocks.getQuoteRequestDetailsByRefId.mockReturnValueOnce(
       new Promise((resolve) => {
         resolveLoad = resolve;
-      })
+      }),
     );
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
     const { unmount } = renderRoute(
       '/quotation/RFQ-100',
       <Quotation />,
-      '/quotation/:id'
+      '/quotation/:id',
     );
 
     unmount();
@@ -563,18 +749,22 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('ignores a rejected load response after the quotation component unmounts', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     let rejectLoad!: (reason: any) => void;
     mocks.getQuoteRequestDetailsByRefId.mockReturnValueOnce(
       new Promise((_, reject) => {
         rejectLoad = reject;
-      })
+      }),
     );
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
     const { unmount } = renderRoute(
       '/quotation/RFQ-100',
       <Quotation />,
-      '/quotation/:id'
+      '/quotation/:id',
     );
 
     unmount();
@@ -586,8 +776,12 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('navigates quotation to not found when detail loading fails', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.getQuoteRequestDetailsByRefId.mockRejectedValueOnce(
-      new Error('load failed')
+      new Error('load failed'),
     );
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
@@ -595,14 +789,19 @@ describe('quotation and measurement report routes', () => {
     renderRoute('/quotation/RFQ-404', <Quotation />, '/quotation/:id');
 
     await waitFor(() =>
-      expect(screen.getByTestId('not-found')).toBeInTheDocument()
+      expect(screen.getByTestId('not-found')).toBeInTheDocument(),
     );
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' })
+      expect.objectContaining({ severity: 'error' }),
     );
   });
 
   it('renders quote details notification, view-request action, and no-delivery branch', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     const QuoteDetails = (
       await import('../../../ClientApp/src/routes/quotation/quoteDetails')
     ).default;
@@ -616,22 +815,28 @@ describe('quotation and measurement report routes', () => {
           lastName='Tester'
           fileError
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getAllByTestId('notification-message')[0]).toHaveTextContent(
-      'Dashboard notification'
+      'Dashboard notification',
     );
     expect(
-      screen.getByText(/does not require the delivery or return/)
+      screen.getByText(/does not require the delivery or return/),
     ).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: /View request/i }));
+
     expect(mocks.openInternalRouteInNewTab).toHaveBeenCalledWith(
-      '/request-for-quote/RFQ-100/view-summary'
+      '/request-for-quote/RFQ-100/view-summary',
     );
   });
 
   it('loads a measurement report route and renders report PDF action', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     const MeasurementReport = (
       await import('../../../ClientApp/src/routes/measurementReport')
     ).default;
@@ -640,22 +845,27 @@ describe('quotation and measurement report routes', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByRole('heading', { name: 'Report' })
-      ).toBeInTheDocument()
+        screen.getByRole('heading', { name: 'Report' }),
+      ).toBeInTheDocument(),
     );
+
     expect(screen.getByText('RPT-100')).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'View report PDF' })
+      screen.getByRole('button', { name: 'View report PDF' }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('go-to-dashboard-button')).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
   });
 
   it('navigates measurement report to not found when loading fails', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.getQuoteRequestDetailsByRefId.mockRejectedValueOnce(
-      new Error('load failed')
+      new Error('load failed'),
     );
     const MeasurementReport = (
       await import('../../../ClientApp/src/routes/measurementReport')
@@ -664,12 +874,17 @@ describe('quotation and measurement report routes', () => {
     renderRoute('/report/AQ-404', <MeasurementReport />, '/report/:id');
 
     await waitFor(() =>
-      expect(screen.getByTestId('not-found')).toBeInTheDocument()
+      expect(screen.getByTestId('not-found')).toBeInTheDocument(),
     );
-    expect(mocks.handleReportFileError).toHaveBeenCalled();
+
+    expect(mocks.handleReportFileError).toHaveBeenCalledWith();
   });
 
   it('waits to load measurement reports until account and MSAL prerequisites are available', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     mocks.getDashboardInfoNotification.mockReturnValue(null);
     mocks.useAccountState.mockReturnValue(undefined);
@@ -679,13 +894,14 @@ describe('quotation and measurement report routes', () => {
     const { unmount } = renderRoute(
       '/report/AQ-100',
       <MeasurementReport />,
-      '/report/:id'
+      '/report/:id',
     );
 
     expect(
-      screen.queryByTestId('notification-message')
+      screen.queryByTestId('notification-message'),
     ).not.toBeInTheDocument();
     expect(mocks.getQuoteRequestDetailsByRefId).not.toHaveBeenCalled();
+
     unmount();
 
     mocks.useAccountState.mockReturnValue({ details: accountDetails });
@@ -696,6 +912,10 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('loads measurement report history and updates pagination', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     const InstrMeasurementReport = (
       await import('../../../ClientApp/src/routes/measurementReport/indexList')
     ).default;
@@ -703,16 +923,17 @@ describe('quotation and measurement report routes', () => {
     renderRoute('/reports/Balance', <InstrMeasurementReport />, '/reports/:id');
 
     await waitFor(() =>
-      expect(screen.getByText('RPT-100')).toBeInTheDocument()
+      expect(screen.getByText('RPT-100')).toBeInTheDocument(),
     );
+
     expect(screen.getByRole('link', { name: 'View report' })).toHaveAttribute(
       'href',
-      '/report/AQ-100'
+      '/report/AQ-100',
     );
     expect(
       screen.getAllByRole('link', {
         name: 'Request recalibration for this instrument/artefact',
-      })[0]
+      })[0],
     ).toHaveAttribute('href', '/request-for-quote-copy/RFQ-100');
 
     fireEvent.click(screen.getByTestId('pagination'));
@@ -722,14 +943,18 @@ describe('quotation and measurement report routes', () => {
         'ORG-CRM-1',
         'Balance',
         10,
-        2
-      )
+        2,
+      ),
     );
   });
 
   it('handles measurement report history load failures', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.getDashboardInstrumentReports.mockRejectedValueOnce(
-      new Error('history failed')
+      new Error('history failed'),
     );
     const InstrMeasurementReport = (
       await import('../../../ClientApp/src/routes/measurementReport/indexList')
@@ -737,15 +962,22 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/reports/Balance', <InstrMeasurementReport />, '/reports/:id');
 
-    await waitFor(() => expect(mocks.handleReportFileError).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mocks.handleReportFileError).toHaveBeenCalledWith(),
+    );
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to get Measurement report data',
       expect.any(Error),
-      { Id: 'Balance' }
+      { Id: 'Balance' },
     );
   });
 
   it('waits to load report history until organisation and MSAL prerequisites are available', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.useAccountState.mockReturnValue({
       details: { ...accountDetails, organisationCRMGuid: undefined },
     });
@@ -755,10 +987,11 @@ describe('quotation and measurement report routes', () => {
     const { unmount } = renderRoute(
       '/reports/Balance',
       <InstrMeasurementReport />,
-      '/reports/:id'
+      '/reports/:id',
     );
 
     expect(mocks.getDashboardInstrumentReports).not.toHaveBeenCalled();
+
     unmount();
 
     mocks.useAccountState.mockReturnValue({ details: accountDetails });
@@ -769,6 +1002,10 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders report details notification and view-request action', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     const ReportDetails = (
       await import('../../../ClientApp/src/routes/measurementReport/reportDetails')
     ).default;
@@ -776,23 +1013,29 @@ describe('quotation and measurement report routes', () => {
     render(
       <MemoryRouter>
         <ReportDetails reportData={quoteDetails} fileError />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByTestId('notification-message')).toHaveTextContent(
-      'Dashboard notification'
+      'Dashboard notification',
     );
     expect(screen.getByText('RPT-100')).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'return@example.test' })
+      screen.getByRole('link', { name: 'return@example.test' }),
     ).toHaveAttribute('href', 'mailto:return@example.test');
+
     fireEvent.click(screen.getByRole('button', { name: /View request/i }));
+
     expect(mocks.openInternalRouteInNewTab).toHaveBeenCalledWith(
-      '/request-for-quote/RFQ-100/view-summary'
+      '/request-for-quote/RFQ-100/view-summary',
     );
   });
 
   it('renders sparse quote details in summary mode without optional notifications or request links', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     const QuoteDetails = (
       await import('../../../ClientApp/src/routes/quotation/quoteDetails')
@@ -810,18 +1053,24 @@ describe('quotation and measurement report routes', () => {
           firstName={undefined}
           lastName={undefined}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.queryByTestId('notification-message')
+      screen.queryByTestId('notification-message'),
     ).not.toBeInTheDocument();
     expect(screen.queryByTestId('quote-status-pill')).not.toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: /View request/i }));
+
     expect(mocks.openInternalRouteInNewTab).not.toHaveBeenCalled();
   });
 
   it('renders summary no-delivery details and valid quote status outcomes', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     const QuoteDetails = (
       await import('../../../ClientApp/src/routes/quotation/quoteDetails')
     ).default;
@@ -839,16 +1088,17 @@ describe('quotation and measurement report routes', () => {
           lastName='Tester'
           fileError={false}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByText(/does not require the delivery or return/)
+      screen.getByText(/does not require the delivery or return/),
     ).toBeInTheDocument();
     expect(screen.getByTestId('quote-status-pill')).toHaveTextContent(
-      QuoteStatus.QuoteAccepted
+      QuoteStatus.QuoteAccepted,
     );
     expect(screen.getByText('10 Jun 2026')).toBeInTheDocument();
+
     unmount();
 
     render(
@@ -863,7 +1113,7 @@ describe('quotation and measurement report routes', () => {
           lastName='Tester'
           fileError={false}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByTestId('info-summary')).toBeInTheDocument();
@@ -871,6 +1121,10 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders sparse report details without a notification or request id', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     const ReportDetails = (
       await import('../../../ClientApp/src/routes/measurementReport/reportDetails')
@@ -879,17 +1133,23 @@ describe('quotation and measurement report routes', () => {
     render(
       <MemoryRouter>
         <ReportDetails reportData={undefined} fileError />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.queryByTestId('notification-message')
+      screen.queryByTestId('notification-message'),
     ).not.toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: /View request/i }));
+
     expect(mocks.openInternalRouteInNewTab).not.toHaveBeenCalled();
   });
 
   it('renders quotation without dashboard notifications and skips decline when CRM id is absent', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     mocks.getDashboardInfoNotification.mockReturnValue(null);
     mocks.getQuoteRequestDetailsByRefId.mockResolvedValue({
@@ -904,16 +1164,21 @@ describe('quotation and measurement report routes', () => {
 
     fireEvent.click(await screen.findByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!
+      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
     );
 
     await waitFor(() =>
-      expect(screen.queryByTestId('confirmation-modal')).toBeInTheDocument()
+      expect(screen.queryByTestId('confirmation-modal')).toBeInTheDocument(),
     );
+
     expect(mocks.declineQuote).not.toHaveBeenCalled();
   });
 
   it('handles quotation prerequisite alternatives and shows the accepted-status back action', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
     mocks.useAccountState.mockReturnValue({
       details: { ...accountDetails, targetOrganisation: undefined },
     });
@@ -926,13 +1191,14 @@ describe('quotation and measurement report routes', () => {
     const { unmount } = renderRoute(
       '/quotation/RFQ-100',
       <Quotation />,
-      '/quotation/:id'
+      '/quotation/:id',
     );
 
-    expect(await screen.findByTestId('back-button')).toHaveAttribute(
+    await expect(screen.findByTestId('back-button')).resolves.toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
+
     await settleQuotationEffects();
     unmount();
 
@@ -941,8 +1207,9 @@ describe('quotation and measurement report routes', () => {
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
     await settleQuotationEffects();
+
     expect(
-      screen.getByRole('heading', { name: 'Quotation' })
+      screen.getByRole('heading', { name: 'Quotation' }),
     ).toBeInTheDocument();
   });
 });

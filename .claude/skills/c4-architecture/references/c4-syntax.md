@@ -1,6 +1,7 @@
 # C4 Mermaid Diagram Syntax Reference
 
-Complete syntax reference for Mermaid C4 diagrams. Compatible with PlantUML C4 syntax.
+Complete syntax reference for Mermaid C4 diagrams. Compatible with PlantUML C4
+syntax.
 
 ## Table of Contents
 
@@ -21,13 +22,13 @@ Complete syntax reference for Mermaid C4 diagrams. Compatible with PlantUML C4 s
 
 Start each diagram with the appropriate type declaration:
 
-| Type | Declaration | Purpose |
-| ------ | ------------- | --------- |
-| System Context | `C4Context` | Shows system in context with users and external systems |
-| Container | `C4Container` | Shows high-level technical building blocks |
-| Component | `C4Component` | Shows internal components within a container |
-| Dynamic | `C4Dynamic` | Shows request flows with numbered sequence |
-| Deployment | `C4Deployment` | Shows infrastructure and deployment nodes |
+| Type           | Declaration    | Purpose                                                 |
+| -------------- | -------------- | ------------------------------------------------------- |
+| System Context | `C4Context`    | Shows system in context with users and external systems |
+| Container      | `C4Container`  | Shows high-level technical building blocks              |
+| Component      | `C4Component`  | Shows internal components within a container            |
+| Dynamic        | `C4Dynamic`    | Shows request flows with numbered sequence              |
+| Deployment     | `C4Deployment` | Shows infrastructure and deployment nodes               |
 
 ## System Context Elements
 
@@ -504,17 +505,17 @@ The following PlantUML C4 features are not yet supported in Mermaid:
 
 ### Workarounds
 
-**Layout Control:**
-Use `UpdateLayoutConfig` to control shape positioning instead of layout directives.
+**Layout Control:** Use `UpdateLayoutConfig` to control shape positioning
+instead of layout directives.
 
-**Overlapping Labels:**
-Use `UpdateRelStyle` with `$offsetX` and `$offsetY` to move relationship labels.
+**Overlapping Labels:** Use `UpdateRelStyle` with `$offsetX` and `$offsetY` to
+move relationship labels.
 
-**Complex Diagrams:**
-Keep diagrams under 15 elements. Split complex architectures into multiple focused diagrams.
+**Complex Diagrams:** Keep diagrams under 15 elements. Split complex
+architectures into multiple focused diagrams.
 
-**Element Ordering:**
-Elements appear in the order they are defined. Reorder statements to adjust layout.
+**Element Ordering:** Elements appear in the order they are defined. Reorder
+statements to adjust layout.
 
 ### Alternative Tools
 

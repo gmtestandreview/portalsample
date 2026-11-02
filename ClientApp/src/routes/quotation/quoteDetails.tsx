@@ -25,7 +25,7 @@ const QuoteDetails = (
     firstName: string | undefined;
     lastName: string | undefined;
     fileError: boolean | undefined;
-  }>
+  }>,
 ) => {
   const { quotationData, isSummary, fileError } = props;
 
@@ -43,7 +43,7 @@ const QuoteDetails = (
   const showQuoteRequest = () => {
     if (quotationData?.quoteRequestIdNum) {
       openInternalRouteInNewTab(
-        `/request-for-quote/${encodeURIComponent(quotationData.quoteRequestIdNum)}/view-summary`
+        `/request-for-quote/${encodeURIComponent(quotationData.quoteRequestIdNum)}/view-summary`,
       );
     }
   };
@@ -52,9 +52,9 @@ const QuoteDetails = (
     () =>
       quotationData?.quoteRequestStatus &&
       validPillStatuses.includes(
-        quotationData.quoteRequestStatus as QuoteStatus
+        quotationData.quoteRequestStatus as QuoteStatus,
       ),
-    [quotationData?.quoteRequestStatus]
+    [quotationData?.quoteRequestStatus],
   );
 
   const dashboardMessage = setNotification();
@@ -371,7 +371,8 @@ const QuoteDetails = (
         </>
       )}
       {!!quotationData?.quoteRequestStatus &&
-        quotationData.quoteRequestStatus !== QuoteStatus.QuoteExpired && (
+        quotationData.quoteRequestStatus !==
+          String(QuoteStatus.QuoteExpired) && (
           <Row className='mb-3'>
             <Col md={12}>
               {/* Render field label + values

@@ -1,59 +1,73 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import ViewPdfButton from '@/components/Utilities/ViewPdfButton';
+import type { ViewPdfButtonProps } from '@/components/Utilities/ViewPdfButton';
 
-const trackGAEventMock = vi.hoisted(() => vi.fn());
+const trackGAEventMock = vi.hoisted(() => vi.fn<typeof trackGAEvent>());
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: trackGAEventMock,
-}));
+vi.mock(
+  import('@/analytics/GoogleAnalytics'),
+  () =>
+    ({
+      trackGAEvent: trackGAEventMock,
+    }) satisfies __ExactMockModule<__TestMockModule22>,
+);
 
-describe('ViewPdfButton', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
+describe('view pdf button', () => {
   it('shows the download button and file size note when loaded', () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     render(
       <ViewPdfButton
         text='Download PDF'
         fileSize='1.2 MB'
         isLoaded
-        getPdf={vi.fn()}
+        getPdf={vi.fn<ViewPdfButtonProps['getPdf']>()}
         gaLabel='Quote'
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('button', { name: /Download PDF/i })
+      screen.getByRole('button', { name: /Download PDF/i }),
     ).toBeInTheDocument();
     // fileSize and its label text share a single <span>, so check the full content together
     expect(
-      screen.getByText(/Requires Acrobat PDF reader - PDF file size/)
+      screen.getByText(/Requires Acrobat PDF reader - PDF file size/),
     ).toHaveTextContent('1.2 MB');
   });
 
   it('shows the loading spinner and hides the button while not loaded', () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     render(
       <ViewPdfButton
         fileSize='1.2 MB'
         isLoaded={false}
-        getPdf={vi.fn()}
+        getPdf={vi.fn<ViewPdfButtonProps['getPdf']>()}
         gaLabel='Quote'
-      />
+      />,
     );
 
     expect(screen.getByRole('alert')).toHaveTextContent('Loading data...');
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/Requires Acrobat PDF reader/)
+      screen.queryByText(/Requires Acrobat PDF reader/),
     ).not.toBeInTheDocument();
   });
 
   it('calls getPdf and tracks a GA event when the button is clicked', async () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
-    const getPdf = vi.fn();
+    const getPdf = vi.fn<ViewPdfButtonProps['getPdf']>();
 
     render(
       <ViewPdfButton
@@ -62,7 +76,7 @@ describe('ViewPdfButton', () => {
         isLoaded
         getPdf={getPdf}
         gaLabel='QuoteLabel'
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Download/i }));
@@ -72,13 +86,17 @@ describe('ViewPdfButton', () => {
   });
 
   it('renders the button without label text when text prop is omitted', () => {
+    expect.hasAssertions();
+
+    vi.clearAllMocks();
+
     render(
       <ViewPdfButton
         fileSize='500 KB'
         isLoaded
-        getPdf={vi.fn()}
+        getPdf={vi.fn<ViewPdfButtonProps['getPdf']>()}
         gaLabel='TestLabel'
-      />
+      />,
     );
 
     expect(screen.getByRole('button')).toBeInTheDocument();

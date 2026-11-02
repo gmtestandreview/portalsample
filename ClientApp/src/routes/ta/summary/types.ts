@@ -20,5 +20,5 @@ export interface TaSummarySectionProps {
 /** Resolves a hide rule path such as `organisationAndContact.isManufacturerHide`. */
 export const isSummaryFieldHidden = (
   { hidden, values }: Readonly<TaSummarySectionProps>,
-  path: string
+  path: string,
 ) => isHidden(path, hidden, values);

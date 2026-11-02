@@ -31,7 +31,7 @@ enum RequestAction {
 
 const resolveDefaultTabKey = (
   report: ReportDto | undefined,
-  quote: DashboardQuoteDto | undefined
+  quote: DashboardQuoteDto | undefined,
 ) => {
   if (report) return 'report';
   if (quote) return 'quotation';
@@ -54,7 +54,7 @@ const DateColumn = (props: Readonly<{ date: Date | string | undefined }>) => {
 
 const renderMultiLinkTooltip = (
   refIds: string[],
-  isClonedFromRef: string
+  isClonedFromRef: string,
 ): React.ReactNode => (
   <>
     {/* Note: Keep tooltips content formatting basic, consider the parent DOM node for tooltip - avoid UL, LI */}
@@ -76,7 +76,7 @@ const renderMultiLinkTooltip = (
 
 const renderRequestContent = (
   requestForQuote: RequestForQuoteDto,
-  sourceReferenceId: string | undefined
+  sourceReferenceId: string | undefined,
 ) => {
   const {
     serialNumber,
@@ -183,12 +183,12 @@ const renderQuotationContent = (
   dashboardQuoteDto: DashboardQuoteDto,
   quoteStatus: string | undefined,
   referenceId: string | undefined,
-  navigate: NavigateFunction
+  navigate: NavigateFunction,
 ) => {
   // Quotation tab content placeholder (3 col pairs)
   const nmiOfficer = dashboardQuoteDto.nmiContactDetails;
   const useQuoteId = validQuoteIdStatus.includes(
-    quoteStatus as DashboardItemStatus
+    quoteStatus as DashboardItemStatus,
   );
   return (
     <>
@@ -258,10 +258,10 @@ const renderQuotationContent = (
             onClick={() => {
               trackGAEvent('Request item/quotation tab');
 
-              navigate(
+              void navigate(
                 useQuoteId
                   ? `/quotation/${dashboardQuoteDto.quotationId}`
-                  : `/quotation/${referenceId}`
+                  : `/quotation/${referenceId}`,
               );
             }}
           >
@@ -278,7 +278,7 @@ const renderReportDtoContent = (
   requestForQuoteId: string | undefined,
   navigate: NavigateFunction,
   status: string | undefined,
-  referenceId: string | undefined
+  referenceId: string | undefined,
 ) => (
   // ReportDto tab content placeholder (3 col pairs)
   <>
@@ -365,7 +365,7 @@ const renderReportDtoContent = (
             className='ms-md-auto mb-3'
             onClick={() => {
               trackGAEvent('Request item/report tab');
-              navigate(`/report/${requestForQuoteId}`);
+              void navigate(`/report/${requestForQuoteId}`);
             }}
           >
             View report
@@ -416,7 +416,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
 
   const showArtefactHeading = useMemo(
     () => viewArtefactHeadingStatus.includes(status as DashboardItemStatus),
-    [status]
+    [status],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
     ? `${requestForQuote?.manufacturer} ${requestForQuote?.model || ''}` // If Model null display empty string
@@ -455,7 +455,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
               onShowRFQDeleteModalClick();
               trackGAEvent('Deleterequest');
             },
-          }
+          },
         );
         break;
       case DashboardItemStatus.ReportIssued:
@@ -519,7 +519,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           text: 'View quotation',
           route: `/quotation/${requestForQuoteId}`,
           onClick: () => trackGAEvent('Viewquotation'),
-        }
+        },
       );
     }
 
@@ -558,7 +558,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                         >
                           {renderMultiLinkTooltip(
                             requestForQuote.clonedReferenceIds,
-                            requestForQuote.isClonedFromRef!
+                            requestForQuote.isClonedFromRef!,
                           )}
                         </span>
                       </>
@@ -669,7 +669,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                       <Tab.Pane eventKey='request'>
                         {renderRequestContent(
                           requestForQuote,
-                          sourceReferenceId
+                          sourceReferenceId,
                         )}
                       </Tab.Pane>
                     )}
@@ -679,7 +679,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                           quote,
                           status,
                           referenceId,
-                          navigate
+                          navigate,
                         )}
                       </Tab.Pane>
                     )}
@@ -690,7 +690,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                           requestForQuoteId,
                           navigate,
                           status,
-                          referenceId
+                          referenceId,
                         )}
                       </Tab.Pane>
                     )}

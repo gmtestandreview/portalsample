@@ -1,7 +1,14 @@
 import Form from 'react-bootstrap/Form';
-import type { AriaAttributes, AriaRole, ReactNode } from 'react';
+import type {
+  AriaAttributes,
+  AriaRole,
+  ChangeEvent,
+  FocusEvent,
+  KeyboardEvent,
+  MouseEvent,
+  ReactNode,
+} from 'react';
 import { useField } from 'formik';
-import { trim } from 'lodash';
 import { format, parseISO } from 'date-fns';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
@@ -21,11 +28,11 @@ export interface TextInputProps {
   containerClassName?: string;
   className?: string;
   isSummary?: boolean | undefined;
-  onChange?: (e: unknown) => void;
-  onBlur?: (e: unknown) => void;
-  onKeyDown?: (e: React.KeyboardEvent) => void;
-  onClick?: (e: unknown) => void;
-  onFocus?: (e: unknown) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onClick?: (e: MouseEvent<HTMLInputElement>) => void;
+  onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
   role?: AriaRole;
   'aria-activedescendant'?: string;
   'aria-autocomplete'?: AriaAttributes['aria-autocomplete'];
@@ -55,7 +62,7 @@ const TextInput = ({
   onFocus,
   ...rest
 }: Readonly<TextInputProps>) => {
-  const [_field, _meta, _fieldHelper] = useField(name);
+  const [_field, _meta, _fieldHelper] = useField<string | undefined>(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
 
   const getDate = (date: Date | string) =>
@@ -82,7 +89,7 @@ const TextInput = ({
     );
   }
 
-  const handleOnBlur = (e: any) => {
+  const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
     if (onBlur !== undefined) {
       onBlur(e);
     }
@@ -90,31 +97,31 @@ const TextInput = ({
       type === 'date' && _meta.value
         ? format(getDate(_meta.value), 'yyyy-MM-dd')
         : _meta.value;
-    newValue = trim(newValue as string);
+    newValue = (newValue as string | null | undefined)?.trim() ?? '';
     void _fieldHelper.setValue(newValue);
     void _fieldHelper.setTouched(true);
   };
 
-  const handleOnChange = (e: any) => {
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (onChange !== undefined) {
       onChange(e);
     }
     _field.onChange(e);
   };
 
-  const handleOnKeyDown = (e: React.KeyboardEvent) => {
+  const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (onKeyDown !== undefined) {
       onKeyDown(e);
     }
   };
 
-  const handleOnClick = (e: any) => {
+  const handleOnClick = (e: MouseEvent<HTMLInputElement>) => {
     if (onClick !== undefined) {
       onClick(e);
     }
   };
 
-  const handleFocus = (e: any) => {
+  const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
     if (onFocus !== undefined) {
       onFocus(e);
     }

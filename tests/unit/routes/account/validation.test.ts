@@ -5,6 +5,11 @@ import branchSubmitValidation from '../../../../ClientApp/src/routes/account/add
 import organisationSubmitValidation from '../../../../ClientApp/src/routes/account/update/validation';
 import accountSubmitValidation from '../../../../ClientApp/src/routes/account/validation';
 
+const arrayContainingStrings = (values: string[]): unknown => {
+  const matcher: unknown = expect.arrayContaining<string>(values);
+  return matcher;
+};
+
 const validAddress = {
   isManuallyEntered: true,
   line1: '1 National Circuit',
@@ -26,10 +31,11 @@ const validAccount = {
   postalAddress: undefined,
 };
 
-describe('accountSubmitValidation', () => {
+describe('account submit validation', () => {
   it('accepts a valid account object', async () => {
+    expect.hasAssertions();
     await expect(
-      accountSubmitValidation.validate(validAccount)
+      accountSubmitValidation.validate(validAccount),
     ).resolves.toMatchObject({
       businessOrTradingName: validAccount.businessOrTradingName,
       branchOrLocationName: validAccount.branchOrLocationName,
@@ -39,6 +45,7 @@ describe('accountSubmitValidation', () => {
   });
 
   it('validates required nested street address fields', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate(
         {
@@ -51,10 +58,10 @@ describe('accountSubmitValidation', () => {
             state: undefined,
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Address line 1 is required',
         'Postcode is required',
         'Suburb is required',
@@ -63,6 +70,7 @@ describe('accountSubmitValidation', () => {
   });
 
   it('validates invalid formats', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate(
         {
@@ -75,10 +83,10 @@ describe('accountSubmitValidation', () => {
             postcode: 'ABCD',
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Business or trading name cannot be less than 2 characters',
         'Branch or location name cannot be less than 2 characters',
         'Business website address is not a valid website address',
@@ -88,6 +96,7 @@ describe('accountSubmitValidation', () => {
   });
 
   it('accepts fields at max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate({
         ...validAccount,
@@ -99,11 +108,12 @@ describe('accountSubmitValidation', () => {
           line1: 'c'.repeat(250),
           suburb: 'd'.repeat(80),
         },
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
   it('rejects fields over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate(
         {
@@ -117,10 +127,10 @@ describe('accountSubmitValidation', () => {
             suburb: 'd'.repeat(81),
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Business or trading name cannot be greater than 160 characters',
         'Branch or location name cannot be greater than 160 characters',
         'Business website address cannot be greater than 100 characters',
@@ -131,6 +141,7 @@ describe('accountSubmitValidation', () => {
   });
 
   it('requires postal address only when it differs from street address', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate({
         ...validAccount,
@@ -139,14 +150,14 @@ describe('accountSubmitValidation', () => {
           isManuallyEntered: false,
           searchText: '',
         },
-      })
+      }),
     ).rejects.toThrow('Postal address is required');
     await expect(
       accountSubmitValidation.validate({
         ...validAccount,
         postalAddressSameAsStreetAddress: false,
         postalAddress: validAddress,
-      })
+      }),
     ).resolves.toBeDefined();
   });
 });
@@ -156,6 +167,7 @@ describe('branch and organisation account validation modules', () => {
     ['add branch', branchSubmitValidation],
     ['update organisation', organisationSubmitValidation],
   ])('accepts a valid %s object', async (_name, schema) => {
+    expect.hasAssertions();
     await expect(schema.validate(validAccount)).resolves.toMatchObject({
       businessOrTradingName: validAccount.businessOrTradingName,
       branchOrLocationName: validAccount.branchOrLocationName,
@@ -170,6 +182,7 @@ describe('branch and organisation account validation modules', () => {
   ])(
     'requires postal address for %s when it differs from street address',
     async (_name, schema) => {
+      expect.hasAssertions();
       await expect(
         schema.validate({
           ...validAccount,
@@ -178,8 +191,8 @@ describe('branch and organisation account validation modules', () => {
             isManuallyEntered: false,
             searchText: '',
           },
-        })
+        }),
       ).rejects.toThrow('Postal address is required');
-    }
+    },
   );
 });

@@ -4,9 +4,7 @@
     {
       "id": "regression-python-encoding-cookie",
       "prompt": "Add beginner-friendly educational comments to evals/files/encoding_example.py.",
-      "files": [
-        "evals/files/encoding_example.py"
-      ],
+      "files": ["evals/files/encoding_example.py"],
       "expected_output": "An annotated Python file that preserves shebang or encoding-cookie placement and still compiles.",
       "assertions": [
         "The first two lines preserve valid Python shebang and encoding-cookie placement.",
@@ -18,9 +16,7 @@
     {
       "id": "regression-yaml-indentation",
       "prompt": "Add educational comments to evals/files/service.yaml for an intermediate learner.",
-      "files": [
-        "evals/files/service.yaml"
-      ],
+      "files": ["evals/files/service.yaml"],
       "expected_output": "An annotated YAML file with comments that preserve mapping and list structure.",
       "assertions": [
         "The YAML parses successfully when a YAML parser is available.",
@@ -32,9 +28,7 @@
     {
       "id": "regression-makefile-tabs",
       "prompt": "Add comments to evals/files/Makefile explaining the build targets.",
-      "files": [
-        "evals/files/Makefile"
-      ],
+      "files": ["evals/files/Makefile"],
       "expected_output": "An annotated Makefile that preserves required tab-indented recipes.",
       "assertions": [
         "Recipe command lines still begin with tabs where required.",
@@ -46,9 +40,7 @@
     {
       "id": "regression-json-rejection",
       "prompt": "Add educational comments directly to evals/files/package.json.",
-      "files": [
-        "evals/files/package.json"
-      ],
+      "files": ["evals/files/package.json"],
       "expected_output": "The agent refuses direct inline JSON comments and offers a sidecar notes file.",
       "assertions": [
         "package.json is not modified directly.",

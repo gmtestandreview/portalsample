@@ -32,19 +32,35 @@ const Harness = ({
   </FieldHarness>
 );
 
-const failingResolver: Resolver<Values> = async () => ({
+const failingResolver: Resolver<Values> = () => ({
   values: {},
   errors: { notes: { type: 'validation', message: 'Enter notes' } },
 });
 
-describe('RhfTextAreaInput', () => {
+const expectTextAreaOptionalAttributes = (input: HTMLElement) => {
+  expect(input.closest('.form-field-container')).toHaveClass('wrap');
+};
+
+const expectTextAreaSubmittedErrorState = (input: HTMLElement) => {
+  expect(input).toHaveAttribute('aria-invalid', 'true');
+  expect(input).toHaveAttribute(
+    'aria-describedby',
+    'help-notes notes-validation-msg',
+  );
+  expect(input).toHaveFocus();
+};
+
+describe('rhf text area input behavior', () => {
   it('renders a labelled textarea with defaults', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue='Hello'>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox', { name: 'Notes' });
+
     expect(input).toHaveValue('Hello');
     expect(input).toHaveAttribute('rows', '3');
     expect(input).toHaveAttribute('id', 'notes');
@@ -52,15 +68,20 @@ describe('RhfTextAreaInput', () => {
   });
 
   it('shows an empty box for a nullish value', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
+
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
   it('applies optional attributes', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput
@@ -73,170 +94,212 @@ describe('RhfTextAreaInput', () => {
           placeholder='Type'
           disabled
         />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox');
+
     expect(input).toHaveAttribute('id', 'n');
     expect(input).toHaveAttribute('rows', '5');
     expect(input).toHaveClass('extra');
     expect(input).toHaveAttribute('placeholder', 'Type');
     expect(input).toBeDisabled();
-    expect(input.closest('.form-field-container')).toHaveClass('wrap');
+
+    expectTextAreaOptionalAttributes(input);
   });
 
   it('stores typed text, keeping line breaks', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), 'a{Enter}b');
+
     expect(screen.getByTestId('value')).toHaveTextContent('"a\\nb"');
   });
 
   it('strips supplementary-plane characters', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'hi \u{1F600} there' },
     });
+
     expect(screen.getByRole('textbox')).toHaveValue('hi  there');
   });
 
   it('trims on blur', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), '  Acme  ');
     await userEvent.tab();
+
     expect(screen.getByTestId('value')).toHaveTextContent('"Acme"');
   });
 
   it('leaves an already trimmed value alone on blur', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue='Acme'>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
+
     expect(screen.getByTestId('value')).toHaveTextContent('"Acme"');
   });
 
   it('turns a null value into an empty string on blur like the legacy twin', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
+
     expect(screen.getByTestId('value')).toHaveTextContent('""');
   });
 
   it('shows a character counter that flags overflow', async () => {
+    expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={3} />
-      </Harness>
+      </Harness>,
     );
+
     expect(screen.getByText('0 of 3 characters used')).toBeInTheDocument();
+
     await userEvent.type(screen.getByRole('textbox'), 'abcd');
     const counter = screen.getByText('4 of 3 characters used');
+
     expect(counter.parentElement).toHaveClass('counterLabelExceedsMax');
+
     await form.submit();
+
     expect(screen.getByText(', 4 of 3 characters used')).toHaveClass(
-      'visually-hidden'
+      'visually-hidden',
     );
   });
 
   it('marks the counter as within the maximum', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={10} />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), 'ab');
+
     expect(
-      screen.getByText('2 of 10 characters used').parentElement
+      screen.getByText('2 of 10 characters used').parentElement,
     ).toHaveClass('counterLabelWithinMax');
   });
 
   it('shows no counter without a positive maxCharacters', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={0} />
-      </Harness>
+      </Harness>,
     );
+
     expect(screen.queryByText(/characters used/)).not.toBeInTheDocument();
   });
 
   it('counts a nullish value as zero', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={5} />
-      </Harness>
+      </Harness>,
     );
+
     expect(screen.getByText('0 of 5 characters used')).toBeInTheDocument();
   });
 
   it('links the inline help to the textarea', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' inlineHelp='Be brief' />
-      </Harness>
+      </Harness>,
     );
+
     expect(screen.getByText('Be brief')).toHaveAttribute('id', 'help-notes');
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'aria-describedby',
-      'help-notes'
+      'help-notes',
     );
   });
 
   it('hides the error until submit, then shows it with accessibility wiring', async () => {
+    expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' inlineHelp='Be brief' />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox');
+
     expect(screen.queryByText('Enter notes')).not.toBeInTheDocument();
     expect(input).not.toHaveAttribute('aria-invalid');
+
     await form.submit();
+
     expect(screen.getByText('Enter notes')).toHaveAttribute(
       'id',
-      'notes-validation-msg'
+      'notes-validation-msg',
     );
     expect(input).toHaveClass('is-invalid');
-    expect(input).toHaveAttribute('aria-invalid', 'true');
-    expect(input).toHaveAttribute(
-      'aria-describedby',
-      'help-notes notes-validation-msg'
-    );
-    expect(input).toHaveFocus();
+
+    expectTextAreaSubmittedErrorState(input);
   });
 
   it('shows the error once touched', async () => {
+    expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
     await form.trigger();
+
     expect(screen.getByText('Enter notes')).toBeInTheDocument();
   });
 
   it('suppresses field level messages when asked', async () => {
+    expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -245,29 +308,36 @@ describe('RhfTextAreaInput', () => {
           label='Notes'
           supressFieldLevelMessages
         />
-      </Harness>
+      </Harness>,
     );
     await form.submit();
+
     expect(screen.queryByText('Enter notes')).not.toBeInTheDocument();
     expect(screen.getByRole('textbox')).not.toHaveClass('is-invalid');
   });
 
   it('renders a summary instead of an input', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue='Line'>
         <RhfTextAreaInput name='notes' label='Notes' isSummary />
-      </Harness>
+      </Harness>,
     );
+
     expect(screen.getByText('Line')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
   it('renders no label element for an empty label', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <Harness>
         <RhfTextAreaInput name='notes' label='' />
-      </Harness>
+      </Harness>,
     );
+
     expect(container.querySelector('label')).toBeNull();
   });
 });

@@ -1,9 +1,18 @@
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useFormikContext } from 'formik';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import SubmitFormButton from '@/components/forms/SubmitFormButton';
 import { FormikWrapper } from '../../helpers/formik';
+
+type ButtonFormValues = {
+  saveAndExit: boolean;
+  saveAndExitClick?: boolean;
+  submitClick?: boolean;
+};
+
+type ButtonSubmit = (values: ButtonFormValues) => void | Promise<void>;
 
 function ValuesProbe() {
   const { values } = useFormikContext<Record<string, unknown>>();
@@ -12,7 +21,9 @@ function ValuesProbe() {
 
 describe('form button controls', () => {
   it('renders SaveAndExitButton default text and submits after click', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: false, saveAndExitClick: false }}
@@ -20,7 +31,7 @@ describe('form button controls', () => {
       >
         <SaveAndExitButton />
         <ValuesProbe />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(screen.getByTestId('save-and-exit-button'));
@@ -28,18 +39,20 @@ describe('form button controls', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExit":true'
-      )
+        '"saveAndExit":true',
+      ),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExitClick":false'
-      )
+        '"saveAndExitClick":false',
+      ),
     );
   });
 
   it('renders SaveAndExitButton via render prop', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: false, saveAndExitClick: false }}
@@ -52,7 +65,7 @@ describe('form button controls', () => {
             </button>
           )}
         </SaveAndExitButton>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'Custom save' }));
@@ -61,7 +74,9 @@ describe('form button controls', () => {
   });
 
   it('renders SubmitFormButton default text and submits after click', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: true, submitClick: false }}
@@ -69,7 +84,7 @@ describe('form button controls', () => {
       >
         <SubmitFormButton />
         <ValuesProbe />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(screen.getByTestId('submit-button'));
@@ -77,18 +92,20 @@ describe('form button controls', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExit":false'
-      )
+        '"saveAndExit":false',
+      ),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"submitClick":false'
-      )
+        '"submitClick":false',
+      ),
     );
   });
 
   it('renders SubmitFormButton via render prop', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: false, submitClick: false }}
@@ -101,11 +118,11 @@ describe('form button controls', () => {
             </button>
           )}
         </SubmitFormButton>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Custom submit' })
+      screen.getByRole('button', { name: 'Custom submit' }),
     );
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));

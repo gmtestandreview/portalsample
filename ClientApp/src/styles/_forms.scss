@@ -55,7 +55,6 @@ legend {
     color: $body-color;
   }
   &:focus {
-
     // Use outline instead of borders to prevent screen shifting on focus
     outline: solid 3px $input-focus-border-color; // $input-border-color;
     outline-offset: -3px;
@@ -139,8 +138,11 @@ legend {
   &.form-select {
     // temp fix for BS5.3+ (wasn't required in CA - BS 5.1)
     background: $form-select-indicator, $form-feedback-icon-invalid;
-    background-position: right 1.25rem center, center right 3.75rem;
-    background-size: 0.5rem 1rem,
+    background-position:
+      right 1.25rem center,
+      center right 3.75rem;
+    background-size:
+      0.5rem 1rem,
       calc(0.875em + 0.75rem) calc(0.875em + 0.75rem);
     background-repeat: no-repeat;
     padding-right: 6.875rem;
@@ -182,7 +184,7 @@ legend {
         justify-content: flex-start;
         color: $body-color;
         &:before {
-          content: "";
+          content: '';
           min-width: 28px;
           width: 28px;
           height: 28px;
@@ -333,9 +335,9 @@ legend {
         color: $body-color;
         min-width: 3.1rem;
         &:before {
-          font-family: "nmi-iconfont";
+          font-family: 'nmi-iconfont';
           font-size: rfs-value(24px);
-          content: "";
+          content: '';
           position: absolute;
           top: 7px;
           left: 10px;
@@ -405,7 +407,7 @@ legend {
 .form-select {
   color: $body-color;
   &-sm {
-     padding: $input-btn-padding-y-sm $input-btn-padding-x-sm;
+    padding: $input-btn-padding-y-sm $input-btn-padding-x-sm;
   }
   option {
     color: $body-color;
@@ -445,7 +447,10 @@ legend {
   }
   li:not([aria-readonly], [readonly]):hover,
   li:not([aria-readonly], [readonly]):focus-visible {
-    background: color.adjust($link-hover-background, $lightness: -12%) !important;
+    background: color.adjust(
+      $link-hover-background,
+      $lightness: -12%
+    ) !important;
     color: $body-color !important;
   }
 }
@@ -483,9 +488,10 @@ legend {
 
 .details {
   text-decoration: none;
-  &:focus, &:focus-within {
+  &:focus,
+  &:focus-within {
     .details-summary > .details-summary-title {
-    > span {
+      > span {
         outline: 2px dotted $interactive;
         text-decoration: underline;
       }
@@ -520,8 +526,8 @@ legend {
   text-decoration: none;
   cursor: pointer;
   padding-bottom: 1rem;
-  [class^="icon-"],
-  [class*=" icon-"] {
+  [class^='icon-'],
+  [class*=' icon-'] {
     text-decoration: none;
     font-size: $font-size-xs;
   }
@@ -541,8 +547,8 @@ legend {
 }
 
 .details[open] .details-summary {
-  [class^="icon-"],
-  [class*=" icon-"] {
+  [class^='icon-'],
+  [class*=' icon-'] {
     -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
     -o-transform: rotate(90deg);
@@ -606,8 +612,8 @@ a.contextual-help-link {
     text-decoration: none;
     cursor: pointer;
     padding-bottom: 1rem;
-    [class^="icon-"],
-    [class*=" icon-"] {
+    [class^='icon-'],
+    [class*=' icon-'] {
       text-decoration: none;
       font-size: $font-size-xs;
     }
@@ -639,8 +645,8 @@ a.contextual-help-link {
   }
   &.active {
     .contextual-help-dropdown-title {
-      [class^="icon-"],
-      [class*=" icon-"] {
+      [class^='icon-'],
+      [class*=' icon-'] {
         -webkit-transform: rotate(90deg);
         -moz-transform: rotate(90deg);
         -o-transform: rotate(90deg);
@@ -676,42 +682,42 @@ See Services We Offer page */
     .form-field-container {
       .radio-button {
         input:checked,
-        input:not(:checked){
+        input:not(:checked) {
           + label {
-              border-color: $white; // remove default radio-button border for this pattern
-              &.form-field {
+            border-color: $white; // remove default radio-button border for this pattern
+            &.form-field {
+              text-decoration: dotted underline $white;
+              text-underline-offset: 4px;
+            }
+            span {
+              .h3,
+              .h5 {
+                color: $body-color;
                 text-decoration: dotted underline $white;
                 text-underline-offset: 4px;
               }
-              span {
-                .h3,
-                .h5 {
-                  color: $body-color;
-                  text-decoration: dotted underline $white;
-                  text-underline-offset: 4px;
-                }
-              }   
+            }
           }
           &:focus,
           &:focus-within,
           &:focus-visible {
             + label {
-                &.form-field {
+              &.form-field {
+                text-decoration: dotted underline $nmi-primary;
+              }
+              span {
+                .h3,
+                .h5 {
+                  color: $nmi-primary;
                   text-decoration: dotted underline $nmi-primary;
                 }
-                span {
-                  .h3,
-                  .h5 {
-                    color: $nmi-primary;
-                    text-decoration: dotted underline $nmi-primary;
-                  }
-                }   
+              }
             }
           }
         }
       }
       .checkbox {
-        input:not(:checked) { 
+        input:not(:checked) {
           + label {
             font-weight: 600;
             color: $body-color;
@@ -722,7 +728,7 @@ See Services We Offer page */
             color: $text-muted;
           }
         }
-        input:checked { 
+        input:checked {
           span {
             font-size: $font-size-sm;
             font-weight: normal;

@@ -2,8 +2,12 @@
 // National Measurement Institute (NMI) Utilities/Global
 //////////////////////////////////////////////
 
-.pre-wrap {white-space: pre-wrap !important;}
-.no-scrollbars {scrollbar-width: none}
+.pre-wrap {
+  white-space: pre-wrap !important;
+}
+.no-scrollbars {
+  scrollbar-width: none;
+}
 
 // Circle backgrounds
 .bgCircle {
@@ -32,14 +36,30 @@
 }
 
 // Additional background colours not part of the standard BS 5 theme map
-.bg-success-dark {background-color: $success-dark}
-.bg-danger-light {background-color: $danger-light}
-.bg-info-dark {background-color: $info-dark}
-.bg-dark-gray {background-color: $text-muted}
-.bg-dark-red {background-color: $nmi-header-primary}
-.bg-light-blue {background-color: $disr-light-blue} // $nmi-blue-20 $nmi-coastline-bay-tint-3
-.bg-light-blue-tint {background-color: $disr-light-blue-tint}
-.bg-light {background-color: $light} // BS 5 override
+.bg-success-dark {
+  background-color: $success-dark;
+}
+.bg-danger-light {
+  background-color: $danger-light;
+}
+.bg-info-dark {
+  background-color: $info-dark;
+}
+.bg-dark-gray {
+  background-color: $text-muted;
+}
+.bg-dark-red {
+  background-color: $nmi-header-primary;
+}
+.bg-light-blue {
+  background-color: $disr-light-blue;
+} // $nmi-blue-20 $nmi-coastline-bay-tint-3
+.bg-light-blue-tint {
+  background-color: $disr-light-blue-tint;
+}
+.bg-light {
+  background-color: $light;
+} // BS 5 override
 
 // Responsive widths
 .w-md-50 {
@@ -62,4 +82,3 @@
   -o-user-select: none;
   user-select: none;
 }
-

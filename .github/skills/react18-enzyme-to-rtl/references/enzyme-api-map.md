@@ -19,11 +19,11 @@ Enzyme.configure({ adapter: new Adapter() });
 ```jsx
 // Enzyme - shallow (no children rendered):
 import { shallow } from 'enzyme';
-const wrapper = shallow(<MyComponent prop="value" />);
+const wrapper = shallow(<MyComponent prop='value' />);
 
 // RTL - render (full render, children included):
 import { render } from '@testing-library/react';
-render(<MyComponent prop="value" />);
+render(<MyComponent prop='value' />);
 // No wrapper variable needed - query via screen
 ```
 
@@ -56,11 +56,11 @@ const items = screen.getAllByRole('listitem');
 
 ```jsx
 // Enzyme - find by text:
-wrapper.find('.message').text() === 'Hello'
+wrapper.find('.message').text() === 'Hello';
 
 // RTL:
-screen.getByText('Hello')
-screen.getByText(/hello/i)  // case-insensitive regex
+screen.getByText('Hello');
+screen.getByText(/hello/i); // case-insensitive regex
 ```
 
 ---
@@ -87,7 +87,9 @@ await user.type(screen.getByRole('textbox'), 'hello');
 await user.selectOptions(screen.getByRole('combobox'), 'option1');
 ```
 
-**Use `userEvent` for most interactions** - it fires the full event sequence (pointerdown, mousedown, focus, click, etc.) like a real user. Use `fireEvent` only when testing specific event properties.
+**Use `userEvent` for most interactions** - it fires the full event sequence
+(pointerdown, mousedown, focus, click, etc.) like a real user. Use `fireEvent`
+only when testing specific event properties.
 
 ---
 
@@ -114,7 +116,9 @@ expect(screen.getByText('Count: 3')).toBeInTheDocument();
 expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
 ```
 
-**Key principle:** Don't test state values - test what the state produces in the UI. If the component renders `<span>Count: {this.state.count}</span>`, test that span.
+**Key principle:** Don't test state values - test what the state produces in the
+UI. If the component renders `<span>Count: {this.state.count}</span>`, test that
+span.
 
 ---
 
@@ -182,17 +186,17 @@ describe('LoginForm', () => {
     const wrapper = shallow(<LoginForm onSubmit={mockSubmit} />);
 
     wrapper.find('input[name="email"]').simulate('change', {
-      target: { value: 'user@example.com' }
+      target: { value: 'user@example.com' },
     });
     wrapper.find('input[name="password"]').simulate('change', {
-      target: { value: 'password123' }
+      target: { value: 'password123' },
     });
     wrapper.find('button[type="submit"]').simulate('click');
 
     expect(wrapper.state('loading')).toBe(true);
     expect(mockSubmit).toHaveBeenCalledWith({
       email: 'user@example.com',
-      password: 'password123'
+      password: 'password123',
     });
   });
 });
@@ -217,7 +221,7 @@ describe('LoginForm', () => {
     expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled(); // loading state
     expect(mockSubmit).toHaveBeenCalledWith({
       email: 'user@example.com',
-      password: 'password123'
+      password: 'password123',
     });
   });
 });

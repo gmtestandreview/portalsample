@@ -1,38 +1,73 @@
 {
-	"inputs": [],
-	"servers": {
-		"react-aria": {
-			"command": "node",
-			"args": [
-				"${workspaceFolder}/node_modules/@react-aria/mcp/dist/react-aria/src/index.js"
-			],
-			"type": "stdio",
-			"tools": [
-				"*"
-			]
-		},
-		"sonarqube": {
-			"type": "stdio",
-			"command": "C:\\Users\\gregm\\AppData\\Local\\sonarqube-cli\\bin\\sonar.exe",
-			"args": [
-				"run",
-				"mcp",
-				"--project",
-				"gmtestandreview_portalsample"
-			],
-			"tools": [
-				"*"
-			]
-		},
-		"tokensave": {
-			"type": "stdio",
-			"command": "C:/Users/gregm/.local/bin/tokensave.exe",
-			"args": [
-				"serve"
-			],
-			"tools": [
-				"*"
-			]
-		}
-	}
+  "inputs": [],
+  "servers": {
+    "react-aria": {
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/node_modules/@react-aria/mcp/dist/react-aria/src/index.js"
+      ],
+      "type": "stdio"
+    },
+    "sonarqube": {
+      "type": "stdio",
+      "command": "C:\\Users\\gregm\\AppData\\Local\\sonarqube-cli\\bin\\sonar.exe",
+      "args": ["run", "mcp", "--project", "gmtestandreview_portalsample"]
+    },
+    "tokensave": {
+      "type": "stdio",
+      "command": "C:/Users/gregm/.local/bin/tokensave.exe",
+      "args": ["serve"]
+    },
+    "my-storybook-mcp-server": {
+      "type": "http",
+      "url": "http://localhost:6006/mcp"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "typescript-mcp": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "${workspaceFolder}\\scripts\\lsmcp-typescript-mcp.cmd"]
+    },
+    "github": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "scripts\\github-mcp-server.cmd"]
+    },
+    "DeepGraph React MCP": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-code-graph@latest",
+        "facebook/react",
+        "--include-deps",
+        "--include-tests",
+        "--include-storybook",
+        "--include-docs",
+        "--include-examples",
+        "--include-benchmarks",
+        "--output"
+      ],
+      "env": {
+        "MCP_OUTPUT_FILE": "${workspaceFolder}/react-mcp.json"
+      }
+    },
+    "DeepGraph TypeScript MCP": {
+      "command": "npx",
+      "args": ["-y", "mcp-code-graph@latest", "microsoft/TypeScript"],
+      "type": "stdio",
+      "env": {
+        "MCP_OUTPUT_FILE": "${workspaceFolder}/typescript-mcp.json"
+      }
+    },
+    "memex": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "stifler-memex-mcp", "serve", "--repo", "."]
+    }
+  }
 }

@@ -1,15 +1,27 @@
-import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
+import {
+  Meta,
+  Title,
+  Subtitle,
+  Primary,
+  Controls,
+  ArgTypes,
+  Stories,
+} from '@storybook/addon-docs/blocks';
 import * as AccordionStories from './Accordion.stories';
 
 <Meta of={AccordionStories} />
 
 <Title />
 
-<Subtitle>Collapsible content sections for organizing information hierarchically</Subtitle>
+<Subtitle>
+  Collapsible content sections for organizing information hierarchically
+</Subtitle>
 
 ## Accordion Components
 
-The Accordion system provides expandable/collapsible sections for organizing complex information. It consists of two key components: `CustomAccordion` (the container) and `CustomAccordionBody` (individual items).
+The Accordion system provides expandable/collapsible sections for organizing
+complex information. It consists of two key components: `CustomAccordion` (the
+container) and `CustomAccordionBody` (individual items).
 
 ### Use Cases
 
@@ -22,7 +34,8 @@ The Accordion system provides expandable/collapsible sections for organizing com
 ### Key Features
 
 - **Keyboard Navigation** — Native Bootstrap accordion button interaction
-- **ARIA Semantics** — Button expansion state and panel relationships from React Bootstrap
+- **ARIA Semantics** — Button expansion state and panel relationships from React
+  Bootstrap
 - **Multi-line Headers** — Support for complex header layouts
 - **Bootstrap Integration** — NMI design system styling
 - **Default first section** — The wrapper opens the first item by default
@@ -51,16 +64,10 @@ import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
 export function BasicAccordion() {
   return (
     <CustomAccordion>
-      <CustomAccordionBody 
-        eventKey="0"
-        name="Section One"
-      >
+      <CustomAccordionBody eventKey='0' name='Section One'>
         Content for section one
       </CustomAccordionBody>
-      <CustomAccordionBody 
-        eventKey="1"
-        name="Section Two"
-      >
+      <CustomAccordionBody eventKey='1' name='Section Two'>
         Content for section two
       </CustomAccordionBody>
     </CustomAccordion>
@@ -76,11 +83,11 @@ import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
 export function MultiLineAccordion() {
   return (
     <CustomAccordion>
-      <CustomAccordionBody 
-        eventKey="0"
-        name="Organization Name"
-        namePartTwo="ABN: 12 345 678 901"
-        namePartThree="Type: Educational Institution"
+      <CustomAccordionBody
+        eventKey='0'
+        name='Organization Name'
+        namePartTwo='ABN: 12 345 678 901'
+        namePartThree='Type: Educational Institution'
       >
         Detailed organization information goes here...
       </CustomAccordionBody>
@@ -100,16 +107,17 @@ The header supports three levels of information:
 
 ```tsx
 <CustomAccordionBody
-  eventKey="0"
-  name="Main Title"
-  namePartTwo="Secondary Information"
-  namePartThree="Tertiary Information"
+  eventKey='0'
+  name='Main Title'
+  namePartTwo='Secondary Information'
+  namePartThree='Tertiary Information'
 >
   Content here
 </CustomAccordionBody>
 ```
 
 CSS classes for styling:
+
 - `accordion-body-name` — Primary header (bold/large)
 - `accordion-body-name-part-two` — Secondary info (smaller text)
 - `accordion-body-name-part-three` — Tertiary info (smallest)
@@ -137,30 +145,32 @@ CSS classes for styling:
 ## Common Patterns
 
 ### FAQ Section
+
 ```tsx
 <CustomAccordion>
-  <CustomAccordionBody eventKey="0" name="What is this service?">
+  <CustomAccordionBody eventKey='0' name='What is this service?'>
     Service description...
   </CustomAccordionBody>
-  <CustomAccordionBody eventKey="1" name="How do I sign up?">
+  <CustomAccordionBody eventKey='1' name='How do I sign up?'>
     Sign-up instructions...
   </CustomAccordionBody>
-  <CustomAccordionBody eventKey="2" name="What are the fees?">
+  <CustomAccordionBody eventKey='2' name='What are the fees?'>
     Pricing information...
   </CustomAccordionBody>
 </CustomAccordion>
 ```
 
 ### Multi-Step Wizard
+
 ```tsx
-<CustomAccordion id="request-steps">
-  <CustomAccordionBody eventKey="0" name="Step 1: Personal Details">
+<CustomAccordion id='request-steps'>
+  <CustomAccordionBody eventKey='0' name='Step 1: Personal Details'>
     {/* Step 1 form fields */}
   </CustomAccordionBody>
-  <CustomAccordionBody eventKey="1" name="Step 2: Organization">
+  <CustomAccordionBody eventKey='1' name='Step 2: Organization'>
     {/* Step 2 form fields */}
   </CustomAccordionBody>
-  <CustomAccordionBody eventKey="2" name="Step 3: Review & Submit">
+  <CustomAccordionBody eventKey='2' name='Step 3: Review & Submit'>
     {/* Step 3 summary and submit */}
   </CustomAccordionBody>
 </CustomAccordion>
@@ -169,6 +179,7 @@ CSS classes for styling:
 ## Styling with NMI Design System
 
 The accordion uses Bootstrap classes with NMI customizations:
+
 - `wizard-accordion` — NMI-specific accordion styling
 - SCSS variables for colors and spacing
 - Responsive design for mobile and desktop
@@ -190,10 +201,15 @@ The accordion uses Bootstrap classes with NMI customizations:
 
 ## Bootstrap Reference
 
-Built on [React Bootstrap Accordion](https://react-bootstrap.github.io/components/accordion/) with NMI-specific customizations applied via CSS classes and SCSS variables.
+Built on
+[React Bootstrap Accordion](https://react-bootstrap.github.io/components/accordion/)
+with NMI-specific customizations applied via CSS classes and SCSS variables.
 
 ## Related Documentation
 
-- [Forms & Validation](/docs/migration-validation--documentation) — Validation schema and form contracts
-- [Accessibility Guidelines](/docs/documentation-style-guide--documentation) — Accessibility and interaction standards
-- [Design Tokens](/docs/documentation-style-guide--documentation) — Colors and spacing
+- [Forms & Validation](/docs/migration-validation--documentation) — Validation
+  schema and form contracts
+- [Accessibility Guidelines](/docs/documentation-style-guide--documentation) —
+  Accessibility and interaction standards
+- [Design Tokens](/docs/documentation-style-guide--documentation) — Colors and
+  spacing

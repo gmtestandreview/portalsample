@@ -1,5 +1,6 @@
 import { Time, parseDate } from '@internationalized/date';
 import { act } from 'react';
+import type { Key } from 'react';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -86,7 +87,11 @@ import {
 } from '@/components/AriaComponents/Tree/Tree';
 
 if (!Element.prototype.getAnimations) {
-  Element.prototype.getAnimations = vi.fn(() => []);
+  Object.defineProperty(Element.prototype, 'getAnimations', {
+    configurable: true,
+    value: vi.fn<() => Animation[]>(() => []),
+    writable: true,
+  });
 }
 
 class TestIntersectionObserver implements IntersectionObserver {
@@ -108,8 +113,14 @@ class TestIntersectionObserver implements IntersectionObserver {
 
 globalThis.IntersectionObserver ??= TestIntersectionObserver;
 
-describe('React Aria evaluation wrappers', () => {
+const expectAnything = (): unknown => expect.anything();
+const expectStringContaining = (value: string): unknown =>
+  expect.stringContaining(value);
+
+describe('react Aria evaluation wrappers', () => {
   it('renders content, links, separators, and icons through their public wrappers', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <>
         <Heading level={2}>Calibration services</Heading>
@@ -122,68 +133,78 @@ describe('React Aria evaluation wrappers', () => {
           className='status-icon'
         />
         <ChevronDown aria-label='Expand services' />
-      </>
-    );
-
-    expect(
-      screen.getByRole('heading', { level: 2, name: 'Calibration services' })
-    ).toBeInTheDocument();
-    expect(screen.getByText('Choose a service type')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'NMI' })).toHaveAttribute(
-      'href',
-      'https://measurement.gov.au'
-    );
-    expect(screen.getByRole('separator')).toHaveAttribute(
-      'aria-orientation',
-      'vertical'
+      </>,
     );
 
     const decorativeIcon = screen.getByTestId('decorative-icon');
+    const labelledIcon = container.querySelector(
+      '[data-nmi-icon="chevron-down"]',
+    );
+
+    expect({
+      heading: screen.getByRole('heading', {
+        level: 2,
+        name: 'Calibration services',
+      }),
+      description: screen.getByText('Choose a service type'),
+      linkHref: screen.getByRole('link', { name: 'NMI' }).getAttribute('href'),
+      separatorOrientation: screen
+        .getByRole('separator')
+        .getAttribute('aria-orientation'),
+      decorativeHidden: decorativeIcon.getAttribute('aria-hidden'),
+      labelledAriaLabel: labelledIcon?.getAttribute('aria-label'),
+      labelledHidden: labelledIcon?.getAttribute('aria-hidden'),
+    }).toMatchObject({
+      heading: expectAnything(),
+      description: expectAnything(),
+      linkHref: 'https://measurement.gov.au',
+      separatorOrientation: 'vertical',
+      decorativeHidden: 'true',
+      labelledAriaLabel: 'Expand services',
+      labelledHidden: null,
+    });
     expect(decorativeIcon).toHaveClass(
       'nmi-react-aria-icon',
       'icon-tick',
-      'status-icon'
+      'status-icon',
     );
-    expect(decorativeIcon).toHaveAttribute('aria-hidden', 'true');
     expect(decorativeIcon).toHaveStyle({ fontSize: '20px' });
-
-    const labelledIcon = container.querySelector(
-      '[data-nmi-icon="chevron-down"]'
-    );
-    expect(labelledIcon).toHaveAttribute('aria-label', 'Expand services');
-    expect(labelledIcon).not.toHaveAttribute('aria-hidden');
   });
 
   it('renders listbox item text as an accessible option label', () => {
+    expect.hasAssertions();
+
     render(
       <ListBox aria-label='Ice cream flavor' selectionMode='single'>
         <ListBoxItem id='chocolate'>Chocolate</ListBoxItem>
         <ListBoxItem id='mint'>Mint</ListBoxItem>
-      </ListBox>
+      </ListBox>,
     );
 
     expect(
-      screen.getByRole('listbox', { name: 'Ice cream flavor' })
+      screen.getByRole('listbox', { name: 'Ice cream flavor' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('option', { name: 'Chocolate' })
+      screen.getByRole('option', { name: 'Chocolate' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Mint' })).toBeInTheDocument();
   });
 
   it('renders listbox sections and loading rows with accessible labels', () => {
+    expect.hasAssertions();
+
     render(
       <ListBox aria-label='Available services'>
         <ListBoxSection>
           <ListBoxHeader>Dimensional services</ListBoxHeader>
           <ListBoxItem id='length'>Length</ListBoxItem>
         </ListBoxSection>
-        <ListBoxLoadMoreItem onLoadMore={vi.fn()} />
-      </ListBox>
+        <ListBoxLoadMoreItem onLoadMore={vi.fn<() => void>()} />
+      </ListBox>,
     );
 
     expect(
-      screen.getByRole('listbox', { name: 'Available services' })
+      screen.getByRole('listbox', { name: 'Available services' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Dimensional services')).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Length' })).toBeInTheDocument();
@@ -191,6 +212,8 @@ describe('React Aria evaluation wrappers', () => {
   });
 
   it('opens menus, shows selected indicators, and renders submenu affordances', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -205,22 +228,24 @@ describe('React Aria evaluation wrappers', () => {
             </Menu>
           </SubmenuTrigger>
         </Menu>
-      </MenuTrigger>
+      </MenuTrigger>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
 
     expect(screen.getByRole('menu')).toBeInTheDocument();
     expect(
-      screen.getByRole('menuitemcheckbox', { name: 'Copy' })
+      screen.getByRole('menuitemcheckbox', { name: 'Copy' }),
     ).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByRole('menuitem', { name: 'Share' })).toBeInTheDocument();
     expect(
-      document.querySelector('[data-nmi-icon="chevron-right"]')
+      document.querySelector('[data-nmi-icon="chevron-right"]'),
     ).toBeInTheDocument();
   });
 
   it('renders selects with labels, validation text, and selectable options', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -232,7 +257,7 @@ describe('React Aria evaluation wrappers', () => {
       >
         <SelectItem id='chocolate'>Chocolate</SelectItem>
         <SelectItem id='mint'>Mint</SelectItem>
-      </Select>
+      </Select>,
     );
 
     expect(screen.getByText('Choose one flavor')).toBeInTheDocument();
@@ -242,12 +267,14 @@ describe('React Aria evaluation wrappers', () => {
 
     expect(screen.getByRole('listbox')).toHaveClass('dropdown-listbox');
     expect(screen.getByRole('option', { name: 'Chocolate' })).toHaveClass(
-      'dropdown-item'
+      'dropdown-item',
     );
     expect(screen.getByRole('option', { name: 'Mint' })).toBeInTheDocument();
   });
 
   it('renders radio groups with per-option descriptions and invalid feedback', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -261,15 +288,15 @@ describe('React Aria evaluation wrappers', () => {
           New certificate
         </Radio>
         <Radio value='variation'>Variation</Radio>
-      </RadioGroup>
+      </RadioGroup>,
     );
 
     expect(
-      screen.getByRole('radiogroup', { name: 'Certificate type' })
+      screen.getByRole('radiogroup', { name: 'Certificate type' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Select one certificate')).toBeInTheDocument();
     expect(
-      screen.getByText('Certificate type is required')
+      screen.getByText('Certificate type is required'),
     ).toBeInTheDocument();
     expect(screen.getByText('Create a new certificate')).toBeInTheDocument();
 
@@ -285,47 +312,61 @@ describe('React Aria evaluation wrappers', () => {
   ])(
     'maps %s meter values to the expected fill state',
     (_state, value, fillColor) => {
+      expect.hasAssertions();
+
       const { container } = render(
-        <Meter label='Storage used' value={value} minValue={0} maxValue={100} />
+        <Meter
+          label='Storage used'
+          value={value}
+          minValue={0}
+          maxValue={100}
+        />,
       );
 
       expect(
-        screen.getByRole('meter', { name: 'Storage used' })
+        screen.getByRole('meter', { name: 'Storage used' }),
       ).toHaveTextContent(`${value}%`);
+
       const fill = container.querySelector('.fill') as HTMLElement;
+
       expect(fill.style.width).toBe(`${value}%`);
       expect(fill.style.getPropertyValue('--fill-color')).toBe(fillColor);
-    }
+    },
   );
 
   it('renders determinate and indeterminate progress affordances', () => {
+    expect.hasAssertions();
+
     const { container, rerender } = render(
       <ProgressBar
         label='Upload progress'
         value={30}
         minValue={0}
         maxValue={100}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('progressbar', { name: 'Upload progress' })
+      screen.getByRole('progressbar', { name: 'Upload progress' }),
     ).toHaveTextContent('30%');
     expect(
       (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent'
-      )
+        '--percent',
+      ),
     ).toBe('30%');
 
     rerender(<ProgressBar label='Upload progress' isIndeterminate />);
+
     expect(
       (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent'
-      )
+        '--percent',
+      ),
     ).toBe('100%');
   });
 
   it('renders progress circles with explicit, default, determinate, and indeterminate values', () => {
+    expect.hasAssertions();
+
     const { container, rerender } = render(
       <ProgressCircle
         aria-label='Saving'
@@ -333,7 +374,7 @@ describe('React Aria evaluation wrappers', () => {
         minValue={0}
         maxValue={100}
         size={24}
-      />
+      />,
     );
 
     expect(screen.getByRole('progressbar', { name: 'Saving' })).toHaveStyle({
@@ -342,22 +383,25 @@ describe('React Aria evaluation wrappers', () => {
     });
     expect(container.querySelectorAll('circle')[1]).toHaveAttribute(
       'stroke-dashoffset',
-      '40'
+      '40',
     );
 
     rerender(<ProgressCircle aria-label='Loading' isIndeterminate />);
+
     expect(screen.getByRole('progressbar', { name: 'Loading' })).toHaveStyle({
       width: '16px',
       height: '16px',
     });
     expect(container.querySelectorAll('circle')[1]).toHaveAttribute(
       'stroke-dashoffset',
-      '75'
+      '75',
     );
     expect(container.querySelector('animateTransform')).toBeInTheDocument();
   });
 
   it('renders range calendars with visible month controls and validation feedback', () => {
+    expect.hasAssertions();
+
     render(
       <RangeCalendar
         aria-label='Booking window'
@@ -367,27 +411,29 @@ describe('React Aria evaluation wrappers', () => {
           end: parseDate('2026-01-12'),
         }}
         errorMessage='Select an available date range'
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('application', { name: /Booking window/ })
+      screen.getByRole('application', { name: /Booking window/ }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /previous/i })).toHaveAttribute(
       'data-variant',
-      'quiet'
+      'quiet',
     );
     expect(screen.getAllByRole('button', { name: /next/i })[0]).toHaveAttribute(
       'data-variant',
-      'quiet'
+      'quiet',
     );
     expect(
-      screen.getByText('Select an available date range')
+      screen.getByText('Select an available date range'),
     ).toBeInTheDocument();
     expect(document.querySelectorAll('.month')).toHaveLength(2);
   });
 
   it('renders sliders with explicit thumb labels, fill offsets, and disabled track state', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <Slider
         label='Target range'
@@ -397,25 +443,27 @@ describe('React Aria evaluation wrappers', () => {
         thumbLabels={['Minimum target', 'Maximum target']}
         fillOffset={10}
         isDisabled
-      />
+      />,
     );
 
     expect(screen.getByRole('slider', { name: /Minimum target/ })).toHaveValue(
-      '25'
+      '25',
     );
     expect(screen.getByRole('slider', { name: /Maximum target/ })).toHaveValue(
-      '75'
+      '75',
     );
     expect(container.querySelector('.track')).toHaveAttribute(
       'data-disabled',
-      'true'
+      'true',
     );
     expect(container.querySelector('.react-aria-SliderThumb')).toHaveClass(
-      'indicator'
+      'indicator',
     );
   });
 
   it('renders text, textarea, number, search, time, and switch field content', () => {
+    expect.hasAssertions();
+
     render(
       <>
         <TextField
@@ -461,37 +509,50 @@ describe('React Aria evaluation wrappers', () => {
         >
           Expedited handling
         </Switch>
-      </>
+      </>,
     );
 
-    expect(
-      screen.getByRole('textbox', { name: 'Certificate holder' })
-    ).toHaveAttribute('placeholder', 'Legal name');
-    expect(
-      screen.getByRole('textbox', { name: 'Instructions' })
-    ).toHaveAttribute('rows', '4');
-    expect(screen.getByRole('textbox', { name: 'Quantity' })).toHaveValue('2');
-    expect(
-      screen.getByRole('button', { name: 'Decrease Quantity' })
-    ).toHaveAttribute('data-variant', 'secondary');
-    expect(
-      screen.getByRole('button', { name: 'Increase Quantity' })
-    ).toHaveAttribute('data-variant', 'secondary');
-    expect(
-      screen.getByRole('searchbox', { name: 'Find service' })
-    ).toHaveAttribute('placeholder', 'Mass');
-    expect(screen.getByText('Collection time')).toBeInTheDocument();
-    expect(
-      screen.getByRole('group', { name: 'Collection time' })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('switch', { name: 'Expedited handling' })
-    ).toBeInTheDocument();
-    expect(screen.getByText('Choose an option')).toBeInTheDocument();
+    expect({
+      certificatePlaceholder: screen
+        .getByRole('textbox', { name: 'Certificate holder' })
+        .getAttribute('placeholder'),
+      instructionsRows: screen
+        .getByRole('textbox', { name: 'Instructions' })
+        .getAttribute('rows'),
+      quantityValue: screen.getByRole<HTMLInputElement>('textbox', {
+        name: 'Quantity',
+      }).value,
+      decreaseVariant: screen
+        .getByRole('button', { name: 'Decrease Quantity' })
+        .getAttribute('data-variant'),
+      increaseVariant: screen
+        .getByRole('button', { name: 'Increase Quantity' })
+        .getAttribute('data-variant'),
+      searchPlaceholder: screen
+        .getByRole('searchbox', { name: 'Find service' })
+        .getAttribute('placeholder'),
+      timeText: screen.getByText('Collection time'),
+      group: screen.getByRole('group', { name: 'Collection time' }),
+      switch: screen.getByRole('switch', { name: 'Expedited handling' }),
+      errorMessage: screen.getByText('Choose an option'),
+    }).toMatchObject({
+      certificatePlaceholder: 'Legal name',
+      instructionsRows: '4',
+      quantityValue: '2',
+      decreaseVariant: 'secondary',
+      increaseVariant: 'secondary',
+      searchPlaceholder: 'Mass',
+      timeText: expectAnything(),
+      group: expectAnything(),
+      switch: expectAnything(),
+      errorMessage: expectAnything(),
+    });
   });
 
-  it('renders toggle and segmented controls with their configured variants', async () => {
-    await act(async () => {
+  it('renders toggle and segmented controls with their configured variants', () => {
+    expect.hasAssertions();
+
+    act(() => {
       render(
         <>
           <ToggleButton variant='secondary'>Pin</ToggleButton>
@@ -509,43 +570,48 @@ describe('React Aria evaluation wrappers', () => {
             <SegmentedControlItem id='list'>List</SegmentedControlItem>
             <SegmentedControlItem id='grid'>Grid</SegmentedControlItem>
           </SegmentedControl>
-        </>
+        </>,
       );
     });
 
-    expect(screen.getByRole('radio', { name: 'List' })).toHaveAttribute(
-      'aria-checked',
-      'true'
-    );
-    expect(screen.getByRole('radio', { name: 'Grid' })).toHaveAttribute(
-      'aria-checked',
-      'false'
-    );
-    expect(screen.getByRole('button', { name: 'Pin' })).toHaveAttribute(
-      'data-variant',
-      'secondary'
-    );
-    expect(screen.getByRole('button', { name: 'Bold' })).toHaveAttribute(
-      'data-variant',
-      'quiet'
-    );
-    expect(screen.getByRole('button', { name: 'Italic' })).toHaveAttribute(
-      'data-variant',
-      'primary'
-    );
-    expect(screen.getByRole('toolbar', { name: 'Text style' })).toHaveAttribute(
-      'aria-orientation',
-      'horizontal'
-    );
+    expect({
+      listChecked: screen
+        .getByRole('radio', { name: 'List' })
+        .getAttribute('aria-checked'),
+      gridChecked: screen
+        .getByRole('radio', { name: 'Grid' })
+        .getAttribute('aria-checked'),
+      pinVariant: screen
+        .getByRole('button', { name: 'Pin' })
+        .getAttribute('data-variant'),
+      boldVariant: screen
+        .getByRole('button', { name: 'Bold' })
+        .getAttribute('data-variant'),
+      italicVariant: screen
+        .getByRole('button', { name: 'Italic' })
+        .getAttribute('data-variant'),
+      toolbarOrientation: screen
+        .getByRole('toolbar', { name: 'Text style' })
+        .getAttribute('aria-orientation'),
+    }).toMatchObject({
+      listChecked: 'true',
+      gridChecked: 'false',
+      pinVariant: 'secondary',
+      boldVariant: 'quiet',
+      italicVariant: 'primary',
+      toolbarOrientation: 'horizontal',
+    });
     expect(screen.getByRole('radio', { name: 'List' })).toHaveClass(
-      'segmented-control-item'
+      'segmented-control-item',
     );
     expect(screen.getByRole('radio', { name: 'Grid' })).toHaveClass(
-      'segmented-control-item'
+      'segmented-control-item',
     );
   });
 
   it('renders table wrappers with sorting, selection, row headers, and load-more status', () => {
+    expect.hasAssertions();
+
     render(
       <ResizableTableContainer>
         <Table
@@ -565,28 +631,35 @@ describe('React Aria evaluation wrappers', () => {
               <Cell>Games</Cell>
               <Cell>Folder</Cell>
             </Row>
-            <TableLoadMoreItem onLoadMore={vi.fn()} />
+            <TableLoadMoreItem onLoadMore={vi.fn<() => void>()} />
           </TableBody>
         </Table>
-      </ResizableTableContainer>
+      </ResizableTableContainer>,
     );
 
-    expect(screen.getByRole('grid', { name: 'Files' })).toBeInTheDocument();
-    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveClass(
-      'button-base'
-    );
-    expect(
-      screen.getByRole('rowheader', { name: 'Games' })
-    ).toBeInTheDocument();
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    expect(screen.getByTestId('loadMoreSentinel')).toBeInTheDocument();
-    expect(
-      document.querySelector('[data-nmi-icon="chevron-up"]')
-    ).toBeInTheDocument();
+    expect({
+      grid: screen.getByRole('grid', { name: 'Files' }),
+      columnClass: screen
+        .getByRole('columnheader', { name: /Name/ })
+        .getAttribute('class'),
+      rowHeader: screen.getByRole('rowheader', { name: 'Games' }),
+      checkboxCount: screen.getAllByRole('checkbox').length,
+      loadMore: screen.getByTestId('loadMoreSentinel'),
+      chevron: document.querySelector('[data-nmi-icon="chevron-up"]'),
+    }).toMatchObject({
+      grid: expectAnything(),
+      columnClass: expectStringContaining('button-base'),
+      rowHeader: expectAnything(),
+      checkboxCount: 2,
+      loadMore: expectAnything(),
+      chevron: expectAnything(),
+    });
   });
 
   it('renders tabs and changes the visible panel through the wrapped tab pieces', async () => {
-    const onSelectionChange = vi.fn();
+    expect.hasAssertions();
+
+    const onSelectionChange = vi.fn<(key: Key) => void>();
     const user = userEvent.setup();
 
     render(
@@ -599,27 +672,29 @@ describe('React Aria evaluation wrappers', () => {
           <TabPanel id='details'>Application details</TabPanel>
           <TabPanel id='documents'>Supporting documents</TabPanel>
         </TabPanels>
-      </Tabs>
+      </Tabs>,
     );
 
     expect(screen.getByRole('tabpanel')).toHaveTextContent(
-      'Application details'
+      'Application details',
     );
 
     await user.click(screen.getByRole('tab', { name: 'Documents' }));
 
     expect(screen.getByRole('tab', { name: 'Documents' })).toHaveAttribute(
       'aria-selected',
-      'true'
+      'true',
     );
     expect(screen.getByRole('tabpanel')).toHaveTextContent(
-      'Supporting documents'
+      'Supporting documents',
     );
     expect(onSelectionChange).toHaveBeenCalledWith('documents');
   });
 
   it('renders removable tags and empty tag groups', () => {
-    const onRemove = vi.fn();
+    expect.hasAssertions();
+
+    const onRemove = vi.fn<(keys: Set<Key>) => void>();
     const { rerender } = render(
       <TagGroup
         label='Selected services'
@@ -632,20 +707,20 @@ describe('React Aria evaluation wrappers', () => {
         <Tag id='volume' textValue='Volume'>
           <span>Volume</span>
         </Tag>
-      </TagGroup>
+      </TagGroup>,
     );
 
     expect(
-      screen.getByRole('grid', { name: 'Selected services' })
+      screen.getByRole('grid', { name: 'Selected services' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Remove services no longer required')
+      screen.getByText('Remove services no longer required'),
     ).toBeInTheDocument();
     expect(screen.getByText('Select at least one service')).toBeInTheDocument();
     expect(
       within(screen.getByRole('row', { name: /Mass/ })).getByRole('button', {
         name: 'Remove Mass',
-      })
+      }),
     ).toBeInTheDocument();
 
     rerender(
@@ -654,26 +729,31 @@ describe('React Aria evaluation wrappers', () => {
         renderEmptyState={() => 'No services selected'}
       >
         {[]}
-      </TagGroup>
+      </TagGroup>,
     );
+
     expect(screen.getByText('No services selected')).toBeInTheDocument();
   });
 
   it('renders modal dialog content when open', () => {
+    expect.hasAssertions();
+
     render(
       <Modal isOpen>
         <div role='dialog' aria-label='Review application'>
           Modal content
         </div>
-      </Modal>
+      </Modal>,
     );
 
     expect(
-      screen.getByRole('dialog', { name: 'Review application' })
+      screen.getByRole('dialog', { name: 'Review application' }),
     ).toHaveTextContent('Modal content');
   });
 
   it('opens sheet content from dialog trigger context', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -683,17 +763,19 @@ describe('React Aria evaluation wrappers', () => {
           <SheetHeading slot='title'>Sheet title</SheetHeading>
           <p>Sheet content</p>
         </Sheet>
-      </DialogTrigger>
+      </DialogTrigger>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Open sheet' }));
 
     expect(
-      screen.getByRole('dialog', { name: 'Sheet title' })
+      screen.getByRole('dialog', { name: 'Sheet title' }),
     ).toHaveTextContent('Sheet content');
   });
 
   it('opens popover content from dialog trigger context', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -702,34 +784,39 @@ describe('React Aria evaluation wrappers', () => {
         <Popover>
           <div>Popover content</div>
         </Popover>
-      </DialogTrigger>
+      </DialogTrigger>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Open popover' }));
 
     expect(screen.getByText('Popover content')).toBeInTheDocument();
     expect(screen.getByRole('dialog', { name: 'Open popover' })).toHaveClass(
-      'react-aria-Popover'
+      'react-aria-Popover',
     );
   });
 
   it('shows tooltip content from its trigger', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
       <TooltipTrigger delay={0}>
         <Button>Help</Button>
         <Tooltip>Tooltip content</Tooltip>
-      </TooltipTrigger>
+      </TooltipTrigger>,
     );
 
     await user.hover(screen.getByRole('button', { name: 'Help' }));
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Tooltip content'
+
+    await expect(screen.findByRole('tooltip')).resolves.toHaveTextContent(
+      'Tooltip content',
     );
   });
 
   it('renders and dismisses queued toast content', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(<MyToastRegion />);
@@ -744,10 +831,10 @@ describe('React Aria evaluation wrappers', () => {
     await screen.findByText('Files uploaded');
 
     expect(
-      screen.getByRole('alertdialog', { name: 'Files uploaded' })
+      screen.getByRole('alertdialog', { name: 'Files uploaded' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('3 files uploaded successfully.')
+      screen.getByText('3 files uploaded successfully.'),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
@@ -757,6 +844,8 @@ describe('React Aria evaluation wrappers', () => {
   });
 
   it('renders tree sections, selectable child items, and load-more status', () => {
+    expect.hasAssertions();
+
     render(
       <Tree
         aria-label='Files'
@@ -770,35 +859,37 @@ describe('React Aria evaluation wrappers', () => {
             <TreeItem id='report' title='Weekly Report' />
           </TreeItem>
         </TreeSection>
-        <TreeLoadMoreItem onLoadMore={vi.fn()} />
-      </Tree>
+        <TreeLoadMoreItem onLoadMore={vi.fn<() => void>()} />
+      </Tree>,
     );
 
     expect(screen.getByRole('treegrid', { name: 'Files' })).toBeInTheDocument();
     expect(screen.getByText('Shared files')).toBeInTheDocument();
     expect(screen.getByRole('row', { name: /Documents/ })).toHaveAttribute(
       'aria-expanded',
-      'true'
+      'true',
     );
     expect(
-      screen.getByRole('row', { name: /Weekly Report/ })
+      screen.getByRole('row', { name: /Weekly Report/ }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('loadMoreSentinel')).toBeInTheDocument();
   });
 
   it('provides toolbar orientation context to child controls', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <Toolbar aria-label='Formatting'>
         <ToggleButtonGroup aria-label='Text style'>
           <ToggleButton id='bold'>Bold</ToggleButton>
         </ToggleButtonGroup>
         <Separator />
-      </Toolbar>
+      </Toolbar>,
     );
 
     expect(screen.getByRole('toolbar', { name: 'Formatting' })).toHaveAttribute(
       'aria-orientation',
-      'horizontal'
+      'horizontal',
     );
     expect(screen.getByRole('separator')).toBeInTheDocument();
 
@@ -808,12 +899,12 @@ describe('React Aria evaluation wrappers', () => {
           <ToggleButton id='bold'>Bold</ToggleButton>
         </ToggleButtonGroup>
         <Separator />
-      </Toolbar>
+      </Toolbar>,
     );
 
     expect(screen.getByRole('toolbar', { name: 'Formatting' })).toHaveAttribute(
       'aria-orientation',
-      'vertical'
+      'vertical',
     );
     expect(screen.getByRole('separator')).toBeInTheDocument();
   });

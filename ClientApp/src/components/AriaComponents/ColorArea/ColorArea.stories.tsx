@@ -1,23 +1,27 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorArea } from './ColorArea';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorArea',
   component: ColorArea,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorArea>;
+});
 
-export default meta;
-type Story = StoryFn<typeof ColorArea>;
+export const Example = meta.story({
+  render: (args) => <ColorArea {...args} style={{ width: 200 }} />,
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)',
+  },
+  play: async ({ canvas }) => {
+    const colorArea = canvas.getByRole('group');
+    const marker = 'group';
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorArea {...args} style={{ width: 200 }} />
-);
-
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)',
-};
+    await expect(colorArea).toBeInTheDocument();
+    await expect(colorArea).toHaveAttribute('role', marker);
+  },
+});

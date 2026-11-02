@@ -1,6 +1,5 @@
 import { removeEmptyKeys } from '../../utils';
 import { getIn, isObject, setIn } from './formPath';
-import { entriesIn, fromPairs, isBoolean, isFunction, toPath } from 'lodash';
 import type { ValidationError } from 'yup';
 import type {
   FormErrors,
@@ -8,71 +7,80 @@ import type {
   Hideable,
   ValidationSchema,
 } from './types';
-export const isFieldPathHidden = <TValues>(hidden: any, values: TValues) =>
+export const isFieldPathHidden = <TValues>(
+  hidden: unknown,
+  values: TValues,
+): boolean =>
   hidden !== undefined &&
-  ((isBoolean(hidden) && hidden === true) ||
-    (isFunction(hidden) && hidden(values)));
+  (hidden === true ||
+    (typeof hidden === 'function' &&
+      (hidden as (currentValues: TValues) => boolean)(values)));
+
+const parentPath = (path: string): string =>
+  path.replace(/(?:\.[^.[]+|\[[^\]]+\])$/, '');
 
 export const isHidden = <T, TValues>(
   fieldPath: string,
   hidden: Hideable<Partial<T>, Partial<TValues>>,
-  values: TValues
+  values: TValues,
 ): boolean => {
-  const isFieldHidden = getIn(hidden, fieldPath);
+  const isFieldHidden: unknown = getIn(hidden, fieldPath);
   if (isFieldPathHidden(isFieldHidden, values)) {
     return true;
   }
-  const isGroupHidden = getIn(hidden, `${fieldPath}.this`);
+  const isGroupHidden: unknown = getIn(hidden, `${fieldPath}.this`);
   if (isFieldPathHidden(isGroupHidden, values)) {
     return true;
   }
 
-  const pathArray = toPath(fieldPath);
+  const path = parentPath(fieldPath);
 
-  if (pathArray.length === 0) {
+  if (path === fieldPath) {
     return false;
   }
 
-  const path = pathArray.slice(0, -1).join('.');
   return isHidden(path, hidden, values);
 };
 
 export const removeHidden = <T extends FormValues>(
-  fieldValue: any,
+  fieldValue: unknown,
   values: T,
   hide: Hideable<Partial<T>, Partial<T>>,
-  path?: string
-): any =>
-  fromPairs(
-    entriesIn(fieldValue)
-      .filter(([key, _]) =>
-        path
-          ? !isHidden(`${path}.${key}`, hide, values)
-          : !isHidden(key, hide, values)
-      )
-      .map(([key, value]) => {
-        if (Array.isArray(value)) {
-          const newValues: any[] = [];
-          value.forEach((x) => {
-            if (isObject(x)) {
-              newValues.push(removeHidden(x, values, hide, key));
-            } else {
-              newValues.push(x);
-            }
-          });
-          return [key, newValues];
-        }
-        return [
-          key,
-          isObject(value) ? removeHidden(value, values, hide, key) : value,
-        ];
-      })
-  );
+  path?: string,
+): T => {
+  const source = isObject(fieldValue) ? fieldValue : {};
+  const entries = Object.entries(source)
+    .filter(([key]) =>
+      path
+        ? !isHidden(`${path}.${key}`, hide, values)
+        : !isHidden(key, hide, values),
+    )
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        const newValues: unknown[] = [];
+        (value as unknown[]).forEach((item) => {
+          if (isObject(item)) {
+            newValues.push(removeHidden(item, values, hide, key));
+          } else {
+            newValues.push(item);
+          }
+        });
+        return [key, newValues] as const;
+      }
+
+      return [
+        key,
+        isObject(value) ? removeHidden(value, values, hide, key) : value,
+      ] as const;
+    });
+
+  return Object.fromEntries(entries) as T;
+};
 
 const toFormErrors = <T, TValues>(
   yupError: ValidationError,
   hidden: Hideable<Partial<T>, Partial<TValues>>,
-  values: TValues
+  values: TValues,
 ): FormErrors<TValues> => {
   let errors: FormErrors<TValues> = {};
   if (yupError.inner) {
@@ -100,7 +108,7 @@ const toFormErrors = <T, TValues>(
 export const validateForm =
   <T, TValues>(
     schema: ValidationSchema | undefined,
-    hidden: Hideable<Partial<T>, Partial<TValues>>
+    hidden: Hideable<Partial<T>, Partial<TValues>>,
   ) =>
   async (values: TValues) => {
     let errors: FormErrors<TValues> = {};
@@ -127,5 +135,5 @@ export const validateForm =
  */
 export const normalizeSubmitValues = <T extends FormValues>(
   values: T,
-  hidden: Hideable<Partial<T>, Partial<T>>
+  hidden: Hideable<Partial<T>, Partial<T>>,
 ): T => removeEmptyKeys(removeHidden(values, values, hidden));

@@ -14,7 +14,7 @@ const FAQs = () => {
     { to: '', text: 'Frequently Asked Questions (FAQs)' },
   ];
   useHtmlTitle(
-    'Frequently Asked Questions (FAQs) - Help guide | NMI Services portal'
+    'Frequently Asked Questions (FAQs) - Help guide | NMI Services portal',
   );
   useBodyClass('help-guide');
 

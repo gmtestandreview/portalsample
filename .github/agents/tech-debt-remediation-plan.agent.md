@@ -1,11 +1,52 @@
 ---
-description: 'Generate technical debt remediation plans for code, tests, and documentation.'
+description:
+  'Generate technical debt remediation plans for code, tests, and documentation.'
 name: 'Technical Debt Remediation Plan'
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'vscode/extensions', 'web/fetch', 'findTestFiles', 'web/githubRepo', 'vscode/installExtension', 'vscode/newWorkspace', 'vscode/runCommand', 'openSimpleBrowser', 'read/problems', 'vscodeTasks/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute/runTask', 'read/getTaskOutput', 'vscodeTasks/createAndRunTask', 'vscodeTasks/getTaskOutput', 'vscodeTasks/runTask', 'execute/runTests', 'vscodeGeneral/runTests', 'search', 'searchResults', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/testFailure', 'vscodeGeneral/testFailure', 'search/usages', 'vscodeGeneral/usages', 'vscode/vscodeAPI', 'github/*']
+tools:
+  [
+    'changes',
+    'search/codebase',
+    'edit/editFiles',
+    'vscode/extensions',
+    'web/fetch',
+    'findTestFiles',
+    'web/githubRepo',
+    'vscode/installExtension',
+    'vscode/newWorkspace',
+    'vscode/runCommand',
+    'openSimpleBrowser',
+    'read/problems',
+    'vscodeTasks/problems',
+    'execute/getTerminalOutput',
+    'execute/runInTerminal',
+    'read/terminalLastCommand',
+    'read/terminalSelection',
+    'execute/createAndRunTask',
+    'execute/runTask',
+    'read/getTaskOutput',
+    'vscodeTasks/createAndRunTask',
+    'vscodeTasks/getTaskOutput',
+    'vscodeTasks/runTask',
+    'execute/runTests',
+    'vscodeGeneral/runTests',
+    'search',
+    'searchResults',
+    'read/terminalLastCommand',
+    'read/terminalSelection',
+    'execute/testFailure',
+    'vscodeGeneral/testFailure',
+    'search/usages',
+    'vscodeGeneral/usages',
+    'vscode/vscodeAPI',
+    'github/*',
+  ]
 ---
+
 # Technical Debt Remediation Plan
 
-Generate comprehensive technical debt remediation plans. Analysis only - no code modifications. Keep recommendations concise and actionable. Do not provide verbose explanations or unnecessary details.
+Generate comprehensive technical debt remediation plans. Analysis only - no code
+modifications. Keep recommendations concise and actionable. Do not provide
+verbose explanations or unnecessary details.
 
 ## Analysis Framework
 
@@ -14,8 +55,10 @@ Create Markdown document with required sections:
 ### Core Metrics (1-5 scale)
 
 - **Ease of Remediation**: Implementation difficulty (1=trivial, 5=complex)
-- **Impact**: Effect on codebase quality (1=minimal, 5=critical). Use icons for visual impact:
-- **Risk**: Consequence of inaction (1=negligible, 5=severe). Use icons for visual impact:
+- **Impact**: Effect on codebase quality (1=minimal, 5=critical). Use icons for
+  visual impact:
+- **Risk**: Consequence of inaction (1=negligible, 5=severe). Use icons for
+  visual impact:
   - 🟢 Low Risk
   - 🟡 Medium Risk
   - 🔴 High Risk
@@ -46,5 +89,6 @@ Create Markdown document with required sections:
 ## GitHub Integration
 
 - Use `search_issues` before creating new issues
-- Apply `/.github/ISSUE_TEMPLATE/chore_request.yml` template for remediation tasks
+- Apply `/.github/ISSUE_TEMPLATE/chore_request.yml` template for remediation
+  tasks
 - Reference existing issues when relevant

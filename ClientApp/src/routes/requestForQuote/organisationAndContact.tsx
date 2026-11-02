@@ -1,38 +1,36 @@
 import Row from 'react-bootstrap/Row';
 import { useLocation, useParams } from 'react-router';
 import { Alert, Button } from 'react-bootstrap';
-import { useField, useFormikContext } from 'formik';
-import { getIn } from '../../components/forms/formPath';
+import { useFormikContext } from 'formik';
 import { PatternFormat } from 'react-number-format';
 import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
 import HidableField from '../../components/forms/HidableField';
 import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
 import { formatTradingBranchFromStrings } from '../common/helperFunctions';
 import { useModalDispatch } from '../../components/modals/ModalContext';
-
-const GetFieldValue = ({ fieldName }: Readonly<{ fieldName: string }>) => {
-  const [_field] = useField(fieldName);
-  return <>{_field.value}</>;
-};
-
-const GetFieldValueString = ({ fieldName }: { fieldName: string }) => {
-  const [_field] = useField(fieldName);
-  return _field.value;
-};
+import { YesNo } from '../../api/web-api-client';
+import type { OrganisationAndContact as OrganisationAndContactValues } from '../../api/web-api-client';
 
 const OrganisationAndContact = () => {
-  const { values } = useFormikContext<any>();
-  const [sourceReferenceField] = useField('sourceReferenceId');
+  const { values } = useFormikContext<OrganisationAndContactValues>();
+  const {
+    sourceReferenceId,
+    abn,
+    name,
+    businessOrTradingName,
+    branchOrLocationName,
+    organisationCount,
+    currentContact,
+  } = values;
   const modalDispatch = useModalDispatch();
   const location = useLocation();
   const { id } = useParams();
   const rFQId = id || '';
 
-  const isCorrectBranchOrLocation =
-    getIn(values, 'isCorrectBranchOrLocation') ?? '';
+  const isCorrectBranchOrLocation = values.isCorrectBranchOrLocation;
 
   const onShowBranchSelectorClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => {
     e.preventDefault();
     modalDispatch?.setShowRFQSelectModal(true, rFQId, location.pathname);
@@ -40,11 +38,10 @@ const OrganisationAndContact = () => {
 
   const renderMyContactDetails = () => (
     <>
-      <GetFieldValue fieldName='currentContact.title' />{' '}
-      <GetFieldValue fieldName='currentContact.firstName' />{' '}
-      <GetFieldValue fieldName='currentContact.lastName' />
+      {currentContact?.title} {currentContact?.firstName}{' '}
+      {currentContact?.lastName}
       <br />
-      <GetFieldValue fieldName='currentContact.email' />
+      {currentContact?.email}
       <br />
     </>
   );
@@ -126,7 +123,7 @@ const OrganisationAndContact = () => {
             help you group your NMI Service portal requests for simplified
             management. Ensure you are using the correct branch/location.
           </p>
-          {!!sourceReferenceField.value && (
+          {!!sourceReferenceId && (
             <p>
               This &quot;Recalibration Request&quot; is prefilled based on the
               previous original quote request. Please review and update if any
@@ -148,21 +145,15 @@ const OrganisationAndContact = () => {
           </span>
           <span className='d-block text-break'>
             {formatTradingBranchFromStrings(
-              GetFieldValueString({
-                fieldName: 'businessOrTradingName',
-              }),
-              GetFieldValueString({
-                fieldName: 'branchOrLocationName',
-              })
+              businessOrTradingName ?? '',
+              branchOrLocationName ?? '',
             )}
           </span>
-          <span className='d-block text-break'>
-            <GetFieldValue fieldName='name' />
-          </span>
+          <span className='d-block text-break'>{name}</span>
           <span id='orgABN' className='d-inline-block me-3 fs-5 fw-normal'>
             {'ABN: '}
             <PatternFormat
-              value={GetFieldValue({ fieldName: 'abn' }).props?.children}
+              value={abn ?? null}
               displayType='text'
               format='## ### ### ###'
               aria-hidden='true'
@@ -170,17 +161,10 @@ const OrganisationAndContact = () => {
               valueIsNumericString={false}
             />
           </span>
-          <span className='visually-hidden'>
-            {GetFieldValue({ fieldName: 'abn' })
-              .props?.children?.split('')
-              .join(' ')}
-          </span>
+          <span className='visually-hidden'>{abn?.split('').join(' ')}</span>
         </h2>
       </Row>
-      {Number.parseInt(
-        GetFieldValueString({ fieldName: 'organisationCount' }),
-        10
-      ) > 1 && (
+      {Number.parseInt(String(organisationCount ?? ''), 10) > 1 && (
         <Row className='mb-4'>
           <RadioButtonGroup
             legend='Are you creating this request for the correct branch or location above?'
@@ -215,7 +199,7 @@ const OrganisationAndContact = () => {
               role='button'
               onClick={onShowBranchSelectorClick}
               className='ms-2'
-              disabled={isCorrectBranchOrLocation !== 'No'}
+              disabled={isCorrectBranchOrLocation !== YesNo.No}
             >
               Change branch/location
             </Button>

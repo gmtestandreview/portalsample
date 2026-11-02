@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { playwright } from '@vitest/browser-playwright';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { defineConfig } from 'vitest/config';
-import { storybookCoverageConfig } from './vitest.storybook.coverage';
-import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime';
+import { storybookCoverageConfig } from './vitest.storybook.coverage.ts';
+import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime.ts';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 // Fixed port below the Windows dynamic range (49152+); the excluded TCP ranges
@@ -29,8 +29,20 @@ export default defineConfig({
     storybookTest({ configDir: path.join(dirname, '.storybook') }),
     storybookVitestRuntimePlugin,
   ],
+  // Prebundle the preview addon before Browser Mode starts. Discovering this
+  // dependency during a run makes Vite reload the test module, which can cause
+  // Vitest to evaluate a story outside an active suite.
+  optimizeDeps: {
+    include: ['msw-storybook-addon/preview'],
+  },
+  // Browser Mode serves optimized dependencies from Storybook's cache. Keep
+  // React and React DOM on one module instance or hooks lose their dispatcher.
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
   test: {
     name: 'storybook',
+    api: storybookBrowserApi,
     // Single run unless `--watch` is passed (see `test:storybook:watch`).
     // A resident watch process here accumulates the Vite module graph and
     // v8 coverage data in Browser Mode until it exhausts the Node heap.
@@ -39,14 +51,10 @@ export default defineConfig({
     setupFiles: ['./vitest.storybook.setup.ts'],
     testTimeout: 15000,
     coverage: storybookCoverageConfig,
-    // The addon keeps this project alive for MCP-triggered runs. A single
-    // orchestrator prevents broad runs from exhausting the shared browser
-    // and leaving a ready session whose orchestrator has disconnected.
     maxWorkers: 1,
     browser: {
       enabled: true,
       headless: true,
-      api: storybookBrowserApi,
       provider: playwright({}),
       instances: [{ browser: 'chromium' }],
     },

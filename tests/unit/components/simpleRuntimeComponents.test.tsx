@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
 import {
   AlertError,
@@ -22,29 +22,45 @@ import Welcome from '@/components/Welcome';
 import { useAccountState } from '@/authentication/hooks';
 import { NotificationSeverity } from '@/storage/types';
 
-vi.mock('@/components/get-started/get-started', () => ({
-  default: () => <main>Get started content</main>,
-}));
+vi.mock(
+  import('@/components/get-started/get-started'),
+  () =>
+    ({
+      default: () => <main>Get started content</main>,
+    }) satisfies __ExactMockModule<__TestMockModule54>,
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: vi.fn(),
-}));
+vi.mock(
+  import('@/authentication/hooks'),
+  () =>
+    ({
+      useAccountState: vi.fn<typeof useAccountState>(),
+    }) satisfies __ExactMockModule<__TestMockModule26>,
+);
 
 const renderWithRouter = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);
 
-describe('simple reusable runtime components', () => {
-  beforeEach(() => {
-    vi.mocked(useAccountState).mockReturnValue(null);
-  });
+const resetSimpleRuntimeMocks = () => {
+  vi.mocked(useAccountState).mockReturnValue(null);
+};
 
-  it('Home delegates to the get started entry content', () => {
+describe('simple reusable runtime components', () => {
+  it('home delegates to the get started entry content', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     renderWithRouter(<Home />);
 
     expect(screen.getByRole('main')).toHaveTextContent('Get started content');
   });
 
   it('renders accordion header parts and custom container/body classes', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { container } = render(
       <CustomAccordion id='quote-accordion' containerClassName='quote-wrapper'>
         <CustomAccordionBody
@@ -59,53 +75,63 @@ describe('simple reusable runtime components', () => {
         >
           Calibration request details
         </CustomAccordionBody>
-      </CustomAccordion>
+      </CustomAccordion>,
     );
 
     expect(container.querySelector('#quote-accordion')).toHaveClass(
-      'quote-wrapper'
+      'quote-wrapper',
     );
     expect(
       screen.getByRole('button', {
         name: /Quote details\s*Required\s*Reference ABC-123/i,
-      })
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText('Required').parentElement).toHaveClass(
-      'text-muted'
+      'text-muted',
     );
     expect(screen.getByText('Reference ABC-123')).toHaveClass('reference-line');
     expect(
-      screen.getByText('Calibration request details').closest('.accordion-body')
+      screen
+        .getByText('Calibration request details')
+        .closest('.accordion-body'),
     ).toHaveClass('quote-body');
   });
 
   it('renders accordion content without optional header parts or wrapper classes', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { container } = render(
       <CustomAccordion id='simple-accordion'>
         <CustomAccordionBody eventKey='0' name='Simple section'>
           Simple content
         </CustomAccordionBody>
-      </CustomAccordion>
+      </CustomAccordion>,
     );
 
     expect(container.querySelector('#simple-accordion')).toHaveAttribute(
       'class',
-      ''
+      '',
     );
     expect(
-      screen.getByRole('button', { name: 'Simple section' })
+      screen.getByRole('button', { name: 'Simple section' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Simple content')).toBeInTheDocument();
   });
 
   it('dismisses closeable alerts and invokes the close callback', async () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const user = userEvent.setup();
-    const onClose = vi.fn();
+    const onClose = vi.fn<() => void>();
 
     render(
       <AlertWarning canClose onClose={onClose}>
         Review this warning
-      </AlertWarning>
+      </AlertWarning>,
     );
     await user.click(screen.getByRole('button', { name: 'Close alert' }));
 
@@ -113,12 +139,17 @@ describe('simple reusable runtime components', () => {
   });
 
   it('resets a dismissed alert when the message changes', async () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const user = userEvent.setup();
     const { rerender } = render(<AlertInfo canClose>First message</AlertInfo>);
 
     await user.click(screen.getByRole('button', { name: 'Close alert' }));
 
     rerender(<AlertInfo canClose>Second message</AlertInfo>);
+
     expect(screen.getByText('Second message')).toBeInTheDocument();
   });
 
@@ -130,13 +161,18 @@ describe('simple reusable runtime components', () => {
   ])(
     'renders the %s alert variant with live-region behavior',
     (Component, message, ariaLive, className) => {
+      expect.hasAssertions();
+
+      resetSimpleRuntimeMocks();
+
       render(<Component testId='alert-message'>{message}</Component>);
 
       const alert = screen.getByTestId('alert-message');
+
       expect(alert).toHaveTextContent(message);
       expect(alert).toHaveAttribute('aria-live', ariaLive);
       expect(alert).toHaveClass(className);
-    }
+    },
   );
 
   it.each([
@@ -168,7 +204,11 @@ describe('simple reusable runtime components', () => {
   ])(
     'renders notification messages for %s severity',
     (severity, id, message, iconClassName) => {
-      const onClose = vi.fn();
+      expect.hasAssertions();
+
+      resetSimpleRuntimeMocks();
+
+      const onClose = vi.fn<() => void>();
       const { container } = render(
         <NotificationMessage
           severity={severity}
@@ -177,53 +217,73 @@ describe('simple reusable runtime components', () => {
           onClose={onClose}
           role='status'
           ariaLive='assertive'
-        />
+        />,
       );
 
       const notification = screen.getByRole('status');
+
       expect(notification).toHaveAttribute('id', id);
       expect(notification).toHaveTextContent(message);
       expect(container.querySelector(`.${iconClassName}`)).toBeInTheDocument();
       expect(notification).toHaveAttribute('aria-live', 'assertive');
-    }
+    },
   );
 
   it('uses a supplied notification id instead of the default id', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { container } = render(
       <NotificationMessage
         id='custom-notification'
         severity={NotificationSeverity.Success}
         message='Saved with a custom id'
-      />
+      />,
     );
 
     const notification = container.querySelector('#custom-notification');
+
     expect(notification).toHaveTextContent('Saved with a custom id');
     expect(notification).toHaveAttribute('role', 'alert');
   });
 
   it('uses assertive error semantics when notification severity is missing', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     render(<NotificationMessage message='Unknown failure' />);
 
     const notification = screen.getByRole('alert');
+
     expect(notification).toHaveAttribute('aria-live', 'assertive');
     expect(notification).toHaveTextContent('Unknown failure');
   });
 
   it('renders full-page and partial block UI spinners with different announcement priority', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { rerender } = render(
-      <BlockUISpinner>Loading the page</BlockUISpinner>
+      <BlockUISpinner>Loading the page</BlockUISpinner>,
     );
 
     expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'assertive');
     expect(screen.getByText('Loading the page')).toBeInTheDocument();
 
     rerender(<BlockUISpinner partial>Loading this panel</BlockUISpinner>);
+
     expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByText('Loading this panel')).toBeInTheDocument();
   });
 
   it('renders breadcrumb links and marks the current page', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     renderWithRouter(
       <Breadcrumb
         ariaLabel='Request trail'
@@ -232,51 +292,68 @@ describe('simple reusable runtime components', () => {
           { text: 'Dashboard', to: '/dashboard' },
           { text: 'Request details' },
         ]}
-      />
+      />,
     );
 
     const navigation = screen.getByRole('navigation', {
       name: 'Request trail',
     });
+
     expect(navigation).toHaveClass('mt-3');
     expect(navigation.querySelector('.custom-breadcrumb')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
     expect(screen.getByText('Request details')).toHaveAttribute(
       'aria-current',
-      'page'
+      'page',
     );
   });
 
   it('renders no breadcrumb when there are no breadcrumb items', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { container } = renderWithRouter(<Breadcrumb breadcrumbs={[]} />);
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it('requires non-current breadcrumb items to provide a destination', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     expect(() =>
       Breadcrumb({
         breadcrumbs: [{ text: 'Missing link' }, { text: 'Current page' }],
-      })
+      }),
     ).toThrow('Breadcrumb item "Missing link" must include "to"');
   });
 
   it('renders a dashboard link with supplied wrapper and link classes', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { container } = renderWithRouter(
-      <BackToDashboardButton containerClassName='mt-4' className='wide-link' />
+      <BackToDashboardButton containerClassName='mt-4' className='wide-link' />,
     );
 
     expect(container.firstElementChild).toHaveClass('mt-4');
     expect(
-      screen.getByRole('link', { name: /Back to dashboard/i })
+      screen.getByRole('link', { name: /Back to dashboard/i }),
     ).toHaveAttribute('href', '/dashboard');
     expect(screen.getByTestId('back-button')).toHaveClass('wide-link');
   });
 
   it('navigates from EditButton when a link is supplied', async () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const user = userEvent.setup();
     const LocationDisplay = () => {
       const location = useLocation();
@@ -287,7 +364,7 @@ describe('simple reusable runtime components', () => {
       <>
         <EditButton link='/profile/edit' />
         <LocationDisplay />
-      </>
+      </>,
     );
     await user.click(screen.getByRole('button', { name: 'Edit this section' }));
 
@@ -295,6 +372,10 @@ describe('simple reusable runtime components', () => {
   });
 
   it('leaves the current route unchanged when EditButton has no link', async () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const user = userEvent.setup();
     const LocationDisplay = () => {
       const location = useLocation();
@@ -305,17 +386,21 @@ describe('simple reusable runtime components', () => {
       <>
         <EditButton />
         <LocationDisplay />
-      </>
+      </>,
     );
     await user.click(screen.getByRole('button', { name: 'Edit this section' }));
 
     expect(screen.getByText('/')).toBeInTheDocument();
   });
 
-  it('renders LinkButton as either an external anchor or an internal router link', async () => {
+  it('renders LinkButton as an external anchor', async () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const user = userEvent.setup();
-    const onClick = vi.fn();
-    const { rerender } = renderWithRouter(
+    const onClick = vi.fn<() => void>();
+    renderWithRouter(
       <LinkButton
         as='a'
         href='https://measurement.gov.au'
@@ -323,76 +408,97 @@ describe('simple reusable runtime components', () => {
         onClick={onClick}
       >
         NMI website
-      </LinkButton>
+      </LinkButton>,
     );
 
     const externalButtonLink = screen.getByRole('link', {
       name: 'NMI website',
     });
+
     expect(externalButtonLink).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
     expect(externalButtonLink).toHaveAttribute('target', '_blank');
     expect(externalButtonLink).toHaveClass('btn-nmi-primary');
-    await user.click(externalButtonLink);
-    expect(onClick).toHaveBeenCalledTimes(1);
 
-    rerender(
-      <MemoryRouter>
-        {/* eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */}
-        <LinkButton
-          as='Link'
-          to='/dashboard'
-          variant='secondary'
-          className='dashboard-button'
-        >
-          Dashboard
-        </LinkButton>
-      </MemoryRouter>
+    await user.click(externalButtonLink);
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders LinkButton as an internal router link', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
+    renderWithRouter(
+      /* eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */
+      <LinkButton
+        as='Link'
+        to='/dashboard'
+        variant='secondary'
+        className='dashboard-button'
+      >
+        Dashboard
+      </LinkButton>,
     );
 
     const internalLink = screen.getByRole('link', { name: 'Dashboard' });
+
     expect(internalLink).toHaveAttribute('href', '/dashboard');
     expect(internalLink).toHaveClass('btn-secondary', 'dashboard-button');
   });
 
   it('uses the default button variant for internal LinkButton links', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     renderWithRouter(
       // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
       <LinkButton as='Link' to='/help'>
         Help
-      </LinkButton>
+      </LinkButton>,
     );
 
     expect(screen.getByRole('link', { name: 'Help' })).toHaveClass(
-      'btn-nmi-primary'
+      'btn-nmi-primary',
     );
   });
 
   it('adds external-link affordances only for links that open in a new tab', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { rerender } = render(
       <InTextLink href='https://example.gov.au' target='_blank'>
         External resource
-      </InTextLink>
+      </InTextLink>,
     );
 
     expect(
       screen.getByRole('link', {
         name: /External resource\s*Opens in a new tab/i,
-      })
+      }),
     ).toHaveAttribute('rel', 'nofollow noreferrer noopener');
 
     rerender(<InTextLink href='/help'>Internal resource</InTextLink>);
+
     expect(
-      screen.getByRole('link', { name: 'Internal resource' })
+      screen.getByRole('link', { name: 'Internal resource' }),
     ).not.toHaveAttribute('rel');
     expect(screen.queryByText('Opens in a new tab')).not.toBeInTheDocument();
   });
 
   it('shows pagination ranges and hides the summary when there are no results', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     const { rerender } = render(
-      <PaginationHeader totalCount={25} pageSize={10} currentPage={3} />
+      <PaginationHeader totalCount={25} pageSize={10} currentPage={3} />,
     );
 
     expect(screen.getByText('21 - 25')).toBeInTheDocument();
@@ -400,16 +506,25 @@ describe('simple reusable runtime components', () => {
     expect(screen.getByText('Results')).toHaveClass('visually-hidden');
 
     rerender(<PaginationHeader totalCount={0} pageSize={10} currentPage={1} />);
+
     expect(screen.getByText(/Displaying/i)).toHaveAttribute('hidden');
   });
 
   it('shows a full pagination range before the final page', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     render(<PaginationHeader totalCount={25} pageSize={10} currentPage={1} />);
 
     expect(screen.getByText('1 - 10')).toBeInTheDocument();
   });
 
   it('renders the welcome banner with a given name when account details are available', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     vi.mocked(useAccountState).mockReturnValue({
       details: {
         givenName: 'Alex',
@@ -420,19 +535,23 @@ describe('simple reusable runtime components', () => {
 
     expect(screen.getByTestId('welcome-banner')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: /Welcome Alex/i })
+      screen.getByRole('heading', { name: /Welcome Alex/i }),
     ).toBeInTheDocument();
   });
 
   it('renders the welcome banner without a name when account details are absent', () => {
+    expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
+
     vi.mocked(useAccountState).mockReturnValue(
-      {} as ReturnType<typeof useAccountState>
+      {} as ReturnType<typeof useAccountState>,
     );
 
     render(<Welcome />);
 
     expect(
-      screen.getByRole('heading', { name: 'Welcome' })
+      screen.getByRole('heading', { name: 'Welcome' }),
     ).toBeInTheDocument();
   });
 });

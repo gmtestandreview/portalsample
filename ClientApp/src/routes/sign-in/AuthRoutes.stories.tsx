@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { InteractionStatus } from '@azure/msal-browser';
 import SignIn from './index';
 import SignOut from '../sign-out';
@@ -8,21 +8,18 @@ import {
   mockMsalAccount,
 } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Auth',
   component: SignIn,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof SignIn>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export const SignInLoading = meta.story();
 
-export const SignInLoading: Story = {};
-
-export const SignOutLoading: Story = {
+export const SignOutLoading = meta.story({
   render: () => <SignOut />,
   parameters: {
     portal: {
@@ -33,9 +30,9 @@ export const SignOutLoading: Story = {
       },
     },
   },
-};
+});
 
-export const SignOutCompletion: Story = {
+export const SignOutCompletion = meta.story({
   render: () => <SignOutHelper />,
   parameters: {
     portal: {
@@ -43,4 +40,4 @@ export const SignOutCompletion: Story = {
       initialEntries: ['/sign-out-helper'],
     },
   },
-};
+});

@@ -14,6 +14,8 @@ import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
+type DateFieldValue = string | Date | null | undefined;
+
 const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   const {
     calendarButtonTitle,
@@ -28,7 +30,7 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
     ...theRest
   } = datePickerProps;
 
-  const [_field, _meta] = useField(name);
+  const [_field, _meta] = useField<DateFieldValue>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext();
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
 
@@ -82,7 +84,7 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
     const dateOnlyValue = parseApiDateOnlyInput(_field.value);
     const displayValue = dateOnlyValue
       ? formatDateOnlyForDisplay(dateOnlyValue)
-      : _field.value;
+      : String(_field.value ?? '');
 
     return (
       <SummaryDisplay
@@ -106,7 +108,9 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
       })}
       containerClassName={`custom-date-picker-div ${containerClassName || ''}`}
       currentDate={currentDate}
-      dateOnBlur={dateOnBlur}
+      dateOnBlur={(event) => {
+        void dateOnBlur(event);
+      }}
       dateOnChange={dateOnChange}
       hasError={!!(_meta.touched && _meta.error)}
       name={name}

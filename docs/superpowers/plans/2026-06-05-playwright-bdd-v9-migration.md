@@ -309,7 +309,7 @@ WhenStep(
       .first();
     await expect(requestCard).toBeVisible({ timeout: 15000 });
     await requestCard.scrollIntoViewIfNeeded();
-  }
+  },
 );
 ```
 
@@ -344,7 +344,7 @@ GivenStep(
       mockRequestStatusByReference.set(row.referenceId, row.status);
     }
     await mockApiDefaults(page);
-  }
+  },
 );
 ```
 
@@ -355,7 +355,7 @@ ThenStep(
   'the story iframe should contain the following text:',
   async ({ page }, expectedText: string) => {
     await expect(page.locator('body')).toContainText(expectedText);
-  }
+  },
 );
 ```
 

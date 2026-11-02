@@ -1,6 +1,5 @@
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
-import { map } from 'lodash';
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
@@ -24,7 +23,7 @@ const isAllowedFile = (file: File, allowedTypes: string[]) =>
 const getUploadValidationErrors = (
   files: File[],
   allowedTypes: string[],
-  maxFiles: number
+  maxFiles: number,
 ): string[] => {
   const typeError =
     `${files.length > 1 ? 'Files' : 'File'} must be` +
@@ -36,14 +35,14 @@ const getUploadValidationErrors = (
 
   if (files.length > maxFiles) {
     errors.push(
-      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`
+      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`,
     );
   }
   return errors;
 };
 
 const AttachmentNew = (
-  props: Readonly<AttachmentProps & FieldHookConfig<AttachmentDto[]>>
+  props: Readonly<AttachmentProps & FieldHookConfig<AttachmentDto[]>>,
 ) => {
   const {
     id,
@@ -81,10 +80,10 @@ const AttachmentNew = (
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const unidentifiedAttachmentKeys = useRef(
-    new WeakMap<AttachmentDto, string>()
+    new WeakMap<AttachmentDto, string>(),
   );
 
-  const inputRef = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // console.log('SD: ', value);
   const maxSizeInKb = maxSizeInMB * 1024 * 1024;
 
@@ -93,7 +92,7 @@ const AttachmentNew = (
 
   const clearFileInput = () => {
     if (inputRef.current && inputRef.current.value !== null) {
-      inputRef.current.value = null;
+      inputRef.current.value = '';
       inputRef.current.files = null;
     }
   };
@@ -108,8 +107,8 @@ const AttachmentNew = (
     addErrors(
       oversizeFiles.map(
         (file) =>
-          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInKb)} limit.`
-      )
+          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInKb)} limit.`,
+      ),
     );
 
     if (files.length === 1) {
@@ -138,7 +137,7 @@ const AttachmentNew = (
       const validationErrors = getUploadValidationErrors(
         files,
         allowedTypeList,
-        maxFiles
+        maxFiles,
       );
 
       if (validationErrors.length > 0) {
@@ -147,8 +146,12 @@ const AttachmentNew = (
         try {
           await uploadSelectedFiles(files);
         } catch (error_) {
+          const problemDetails = error_ as ProblemDetails;
           addErrors(
-            map((error_ as ProblemDetails)['errors'], (error) => error)
+            Object.values(
+              (problemDetails['errors'] as
+                Record<string, string[]> | undefined) ?? {},
+            ).flat(),
           );
         }
       }
@@ -163,15 +166,20 @@ const AttachmentNew = (
       if (attachment.id) {
         await onDeleteFile(attachment.id);
         await setValue(
-          attachments.filter((item: AttachmentDto) => item.id !== attachment.id)
+          attachments.filter(
+            (item: AttachmentDto) => item.id !== attachment.id,
+          ),
         );
         if (inputRef.current && inputRef.current.value !== null) {
-          inputRef.current.value = null;
+          inputRef.current.value = '';
           inputRef.current.files = null;
         }
       }
     } catch (error_) {
-      setErrors((newErrors) => [...newErrors, `${error_}`]);
+      setErrors((newErrors) => [
+        ...newErrors,
+        error_ instanceof Error ? error_.message : String(error_),
+      ]);
     }
     setIsDeleting(false);
   };
@@ -285,7 +293,9 @@ const AttachmentNew = (
                   cursor: 'grab',
                   zIndex: 2,
                 }}
-                onChange={onInputFileChange}
+                onChange={(event) => {
+                  void onInputFileChange(event);
+                }}
               />
               <input
                 disabled={disableUpload}
@@ -303,7 +313,7 @@ const AttachmentNew = (
                     : `help-${id ?? name}`
                 }
                 onClick={() => {
-                  inputRef.current.click();
+                  inputRef.current?.click();
                 }}
               />
               {/* </>

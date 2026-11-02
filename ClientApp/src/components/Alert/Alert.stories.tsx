@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from './index';
 
@@ -14,50 +14,52 @@ import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from './index';
  * @prop {StoryObj} Error - Story demonstrating an error alert message.
  */
 
-const meta = {
+const meta = preview.meta({
   component: AlertInfo,
-  tags: ['ai-generated', 'needs-work', '!autodocs'],
-} satisfies Meta<typeof AlertInfo>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Info: Story = {
+export const Info = meta.story({
   args: {
     children: 'This is informational guidance for users.',
   },
-};
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('This is informational guidance for users.'),
+    ).toBeVisible();
+  },
+});
 
-export const Success: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
-    <AlertSuccess {...args} />
-  ),
+export const Success = meta.story({
+  render: (args) => <AlertSuccess {...args} />,
   args: {
     children: 'Saved successfully.',
   },
-};
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Saved successfully.')).toBeVisible();
+  },
+});
 
-export const Warning: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
-    <AlertWarning {...args} />
-  ),
+export const Warning = meta.story({
+  render: (args) => <AlertWarning {...args} />,
   args: {
     children: 'Please review this warning before you continue.',
   },
-};
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('Please review this warning before you continue.'),
+    ).toBeVisible();
+  },
+});
 
-export const ErrorDismissible: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
-    <AlertError {...args} />
-  ),
+export const ErrorDismissible = meta.story({
+  render: (args) => <AlertError {...args} />,
   args: {
     children: 'Something went wrong. Try again shortly.',
     canClose: true,
   },
-  play: async ({
-    canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    const closeButton = canvas.getByRole('button', { name: /close/i });
-    await expect(closeButton).toBeVisible();
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('button', { name: 'Close alert' }),
+    ).toBeVisible();
   },
-};
+});

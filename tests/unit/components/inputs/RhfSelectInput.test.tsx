@@ -13,7 +13,7 @@ const options = [
 ];
 
 interface Values {
-  category: string | number;
+  category: string | number | null;
 }
 
 let formMethods: UseFormReturn<Values> | undefined;
@@ -30,7 +30,7 @@ const Harness = ({
   resolver,
   children,
 }: Readonly<{
-  defaultValue?: string | number;
+  defaultValue?: string | number | null;
   resolver?: Resolver<Values>;
   children: ReactNode;
 }>) => {
@@ -49,15 +49,17 @@ const Harness = ({
   );
 };
 
-const failingResolver: Resolver<Values> = async () => ({
+const failingResolver: Resolver<Values> = () => ({
   values: {},
   errors: {
     category: { type: 'validation', message: 'Select a category' },
   },
 });
 
-describe('RhfSelectInput', () => {
+describe('rhf select input behavior', () => {
   it('renders the label, a blank option and the given options', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput
@@ -68,18 +70,21 @@ describe('RhfSelectInput', () => {
           containerClassName='extra'
           className='form-select-sm'
         />
-      </Harness>
+      </Harness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(select).toHaveClass('form-select-sm');
     expect(screen.getByRole('option', { name: 'Please select' })).toHaveValue(
-      ''
+      '',
     );
     expect(screen.getByRole('option', { name: 'Manuals' })).toBeDisabled();
   });
 
   it('uses a custom blank label and renders no options when none are given', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput
@@ -88,7 +93,7 @@ describe('RhfSelectInput', () => {
           addBlank
           defaultDisplayText='Select'
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getAllByRole('option')).toHaveLength(1);
@@ -96,16 +101,20 @@ describe('RhfSelectInput', () => {
   });
 
   it('omits the blank option unless asked for', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getAllByRole('option')).toHaveLength(2);
   });
 
   it('shows the form value and applies the id and disabled state', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput
@@ -115,17 +124,20 @@ describe('RhfSelectInput', () => {
           options={options}
           disabled
         />
-      </Harness>
+      </Harness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(select).toHaveValue('cert');
     expect(select).toHaveAttribute('id', 'category-select');
     expect(select).toBeDisabled();
   });
 
   it('stores the chosen option and calls onChange with it', async () => {
-    const onChange = vi.fn();
+    expect.hasAssertions();
+
+    const onChange = vi.fn<() => void>();
     render(
       <Harness>
         <RhfSelectInput
@@ -135,7 +147,7 @@ describe('RhfSelectInput', () => {
           addBlank
           onChange={onChange}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), 'cert');
@@ -145,6 +157,8 @@ describe('RhfSelectInput', () => {
   });
 
   it('keeps the typed value of numeric options', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput<number>
@@ -155,7 +169,7 @@ describe('RhfSelectInput', () => {
             { displayText: 'Two', value: 2 },
           ]}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), 'Two');
@@ -164,7 +178,9 @@ describe('RhfSelectInput', () => {
   });
 
   it('stores the blank option value when it is chosen again', async () => {
-    const onChange = vi.fn();
+    expect.hasAssertions();
+
+    const onChange = vi.fn<() => void>();
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput
@@ -174,7 +190,7 @@ describe('RhfSelectInput', () => {
           addBlank
           onChange={onChange}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), '');
@@ -184,10 +200,12 @@ describe('RhfSelectInput', () => {
   });
 
   it('updates the form value without an onChange callback', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), 'cert');
@@ -196,37 +214,44 @@ describe('RhfSelectInput', () => {
   });
 
   it('treats a null form value as the blank selection', () => {
+    expect.hasAssertions();
+
     render(
-      <Harness defaultValue={null as unknown as string}>
+      <Harness defaultValue={null}>
         <RhfSelectInput
           name='category'
           label='Category'
           options={options}
           addBlank
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox')).toHaveValue('');
   });
 
   it('shows the blank option for a value that matches no option', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput name='category' label='Category' addBlank />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox')).toHaveValue('');
   });
 
   it('shows the validation message only after a submit attempt', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness resolver={failingResolver}>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(screen.queryByText('Select a category')).not.toBeInTheDocument();
 
     await act(async () => {
@@ -235,34 +260,39 @@ describe('RhfSelectInput', () => {
 
     expect(screen.getByText('Select a category')).toHaveAttribute(
       'id',
-      'category-validation-msg'
+      'category-validation-msg',
     );
     expect(select).toHaveClass('is-invalid');
     expect(select).toHaveAttribute(
       'aria-describedby',
-      'category-validation-msg'
+      'category-validation-msg',
     );
     expect(select).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('has no aria-describedby or aria-invalid while the field is valid', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(select).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('aria-invalid');
   });
 
   it('shows the validation message once the field has been touched', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness resolver={failingResolver}>
         <RhfSelectInput name='category' label='Category' options={options} />
         <button type='button'>Elsewhere</button>
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByRole('combobox'));
@@ -275,6 +305,8 @@ describe('RhfSelectInput', () => {
   });
 
   it('renders inline help and links it to the select', () => {
+    expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput
@@ -283,18 +315,21 @@ describe('RhfSelectInput', () => {
           options={options}
           inlineHelp='Pick the closest match'
         />
-      </Harness>
+      </Harness>,
     );
 
     const help = screen.getByText('Pick the closest match');
+
     expect(help).toHaveAttribute('id', 'help-category');
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
       'aria-describedby',
-      'help-category'
+      'help-category',
     );
   });
 
   it('describes the select by both the help and the validation message', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness resolver={failingResolver}>
         <RhfSelectInput
@@ -303,7 +338,7 @@ describe('RhfSelectInput', () => {
           options={options}
           inlineHelp='Pick the closest match'
         />
-      </Harness>
+      </Harness>,
     );
 
     await act(async () => {
@@ -312,11 +347,13 @@ describe('RhfSelectInput', () => {
 
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
       'aria-describedby',
-      'help-category category-validation-msg'
+      'help-category category-validation-msg',
     );
   });
 
   it('renders a summary line for the selected option', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput
@@ -325,7 +362,7 @@ describe('RhfSelectInput', () => {
           options={options}
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Category')).toBeInTheDocument();
@@ -334,16 +371,20 @@ describe('RhfSelectInput', () => {
   });
 
   it('renders an empty summary value when the selection matches no option', () => {
+    expect.hasAssertions();
+
     render(
       <Harness defaultValue='other'>
         <RhfSelectInput name='category' label='Category' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Category')).toBeInTheDocument();
   });
 
   it('renders nothing in summary mode when no value is selected', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <Harness>
         <RhfSelectInput
@@ -352,7 +393,7 @@ describe('RhfSelectInput', () => {
           options={options}
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(container.querySelector('form')).toBeEmptyDOMElement();

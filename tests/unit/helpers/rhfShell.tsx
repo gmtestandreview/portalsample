@@ -35,7 +35,7 @@ type ShellProps<T extends FormValues> = Omit<RhfFormProps<T>, 'children'>;
  */
 export const renderRhfShell = <T extends FormValues>(
   props: ShellProps<T>,
-  fields: ReactNode
+  fields: ReactNode,
 ) => {
   const tree = (next: ShellProps<T>) => (
     <RhfForm<T> {...next}>

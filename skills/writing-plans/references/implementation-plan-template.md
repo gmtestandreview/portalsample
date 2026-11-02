@@ -1,6 +1,8 @@
 # Standard Implementation Plan Template
 
-Load this reference when producing the normal human/agent-readable implementation plan. Do not use it when the user explicitly requires the deterministic identifier-based template in `deterministic-plan-template.md`.
+Load this reference when producing the normal human/agent-readable
+implementation plan. Do not use it when the user explicitly requires the
+deterministic identifier-based template in `deterministic-plan-template.md`.
 
 Replace every bracketed placeholder before finalizing.
 
@@ -27,22 +29,24 @@ Replace every bracketed placeholder before finalizing.
 ## Requirement Traceability
 
 | Requirement | Task(s) | Notes |
-|---|---|---|
+| ----------- | ------- | ----- |
 
 ## Framework Fit
 
-[State which additional planning frameworks are used or not needed, with a short rationale.]
+[State which additional planning frameworks are used or not needed, with a short
+rationale.]
 
 ## Files and Responsibilities
 
 | Path | Action | Responsibility |
-|---|---|---|
+| ---- | ------ | -------------- |
 
 ## Tasks
 
 ### Task N: [Specific component or behavior]
 
 **Files**
+
 - Create: `exact/path`
 - Modify: `exact/path`
 - Test: `exact/path`
@@ -72,14 +76,16 @@ Expected: `exact result`
 
 - [ ] **Step 6: Commit when the repository workflow uses commits**
 
-If commits are part of the repository workflow, stage only the files for this task and create the targeted commit:
+If commits are part of the repository workflow, stage only the files for this
+task and create the targeted commit:
 
 ```bash
 git add exact/path exact/path
 git commit -m "type: concise specific change"
 ```
 
-If the repository workflow does not use commits, omit this step rather than inventing a commit requirement.
+If the repository workflow does not use commits, omit this step rather than
+inventing a commit requirement.
 
 ## Safety, Rollback, and Verification
 
@@ -105,4 +111,6 @@ If the repository workflow does not use commits, omit this step rather than inve
 - Supported execution mode:
 ````
 
-If Superpowers skills are explicitly available in the target environment, the handoff may reference `superpowers:subagent-driven-development` or `superpowers:executing-plans`. Otherwise keep the handoff standalone.
+If Superpowers skills are explicitly available in the target environment, the
+handoff may reference `superpowers:subagent-driven-development` or
+`superpowers:executing-plans`. Otherwise keep the handoff standalone.

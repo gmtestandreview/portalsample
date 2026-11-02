@@ -8,8 +8,7 @@ Copy and use this template for your code reviews.
 
 [Brief overview of what was reviewed - 1-2 sentences]
 
-**PR Size:** [Small/Medium/Large] (~X lines)
-**Review Time:** [X minutes]
+**PR Size:** [Small/Medium/Large] (~X lines) **Review Time:** [X minutes]
 
 ## Strengths
 
@@ -19,38 +18,41 @@ Copy and use this template for your code reviews.
 
 ## Architecture & Performance
 
-**Architecture Assessment**
+### Architecture Assessment
 
 - [ ] Separation of concerns — are responsibilities clearly divided?
 - [ ] Module responsibilities — does each module have a single purpose?
 - [ ] Dependency direction — do dependencies flow toward stability?
 - [ ] Consistent with existing patterns and conventions
 
-> See [Architecture Review Guide](../references/architecture-review-guide.md) for detailed SOLID, anti-pattern, and coupling analysis.
+> See [Architecture Review Guide](../references/architecture-review-guide.md)
+> for detailed SOLID, anti-pattern, and coupling analysis.
 
-**Performance Assessment**
+### Performance Assessment
 
 - [ ] Algorithm complexity — any O(n²) or worse on large inputs?
 - [ ] Memory impact — large allocations, leaks, unbounded growth?
 - [ ] I/O impact — excessive API calls, unbatched writes, missing caching?
 - [ ] Database queries — N+1 risks, missing indexes, unoptimized joins?
 
-> See [Performance Review Guide](../references/performance-review-guide.md) for comprehensive Web Vitals, N+1, and caching guidance.
+> See [Performance Review Guide](../references/performance-review-guide.md) for
+> comprehensive Web Vitals, N+1, and caching guidance.
 
 ## Required Changes
 
 🔴 **[blocking]** [Issue description]
-> [Code location or example]
-> [Suggested fix or explanation]
+
+> [Code location or example] [Suggested fix or explanation]
 
 🔴 **[blocking]** [Issue description]
+
 > [Details]
 
 ## Important Suggestions
 
 🟡 **[important]** [Issue description]
-> [Why this matters]
-> [Suggested approach]
+
+> [Why this matters] [Suggested approach]
 
 ## Minor Suggestions
 
@@ -74,7 +76,8 @@ Copy and use this template for your code reviews.
 - [ ] Sensitive data not leaked in logs/errors
 - [ ] Dependency vulnerabilities checked (npm audit / pip audit / cargo audit)
 
-> See [Security Review Guide](../references/security-review-guide.md) for comprehensive injection, XSS, CSRF, secrets, and auth checklist.
+> See [Security Review Guide](../references/security-review-guide.md) for
+> comprehensive injection, XSS, CSRF, secrets, and auth checklist.
 
 ## Test Coverage
 
@@ -84,9 +87,8 @@ Copy and use this template for your code reviews.
 
 ## Verdict
 
-**[ ] ✅ Approve** - Ready to merge
-**[ ] 💬 Comment** - Minor suggestions, can merge
-**[ ] 🔄 Request Changes** - Must address blocking issues
+**[ ] ✅ Approve** - Ready to merge **[ ] 💬 Comment** - Minor suggestions, can
+merge **[ ] 🔄 Request Changes** - Must address blocking issues
 
 ---
 
@@ -94,7 +96,7 @@ Copy and use this template for your code reviews.
 
 ### Blocking Issue
 
-```
+```text
 🔴 **[blocking]** [Title]
 
 [Description of the issue]
@@ -109,7 +111,7 @@ Copy and use this template for your code reviews.
 
 ### Important Suggestion
 
-```
+```text
 🟡 **[important]** [Title]
 
 [Why this is important]
@@ -121,7 +123,7 @@ Copy and use this template for your code reviews.
 
 ### Minor Suggestion
 
-```
+```text
 🟢 **[nit]** [Suggestion]
 
 Not blocking, but consider [improvement].
@@ -129,7 +131,7 @@ Not blocking, but consider [improvement].
 
 ### Praise
 
-```
+```text
 🎉 **[praise]** Great work on [specific thing]!
 
 [Why this is good]
@@ -137,8 +139,18 @@ Not blocking, but consider [improvement].
 
 ### Learning
 
-```
+```text
 📚 **[learning]** [Educational note]
 
 For context, [X] works this way because [Y]. No action needed — just sharing.
+```
+
+### Question
+
+```text
+❓ **[question]** [Your question]
+
+**Context:** [Why you're asking]
+
+**Suggestion:** [If you have one]
 ```

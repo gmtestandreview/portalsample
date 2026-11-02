@@ -50,7 +50,7 @@ const AddBranch = () => {
           instance,
           statuses,
           account,
-          onShowBranchSelector
+          onShowBranchSelector,
         )}
       >
         <OrganisationDetails />

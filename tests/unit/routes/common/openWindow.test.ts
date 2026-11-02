@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest';
 import {
   openInternalRouteInNewTab,
   openPdfPageInSecureNewTab,
@@ -7,14 +8,20 @@ import {
 describe('openWindow helpers', () => {
   const originalOpen = globalThis.open;
 
-  afterEach(() => {
+  const resetOpenWindowState = () => {
     globalThis.open = originalOpen;
     vi.restoreAllMocks();
-  });
+  };
 
   it('opens internal routes with noopener,noreferrer and clears opener fallback', () => {
+    expect.hasAssertions();
+
+    resetOpenWindowState();
+
     const openedWindow = { opener: {} } as Window;
-    const open = vi.fn().mockReturnValue(openedWindow);
+    const open = vi
+      .fn<(...args: unknown[]) => unknown>()
+      .mockReturnValue(openedWindow);
     globalThis.open = open as typeof globalThis.open;
 
     openInternalRouteInNewTab('/request-for-quote/123/view-summary');
@@ -22,13 +29,17 @@ describe('openWindow helpers', () => {
     expect(open).toHaveBeenCalledWith(
       '/request-for-quote/123/view-summary',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
     expect(openedWindow.opener).toBeNull();
   });
 
   it('does not open external or protocol-relative routes through internal route helper', () => {
-    const open = vi.fn();
+    expect.hasAssertions();
+
+    resetOpenWindowState();
+
+    const open = vi.fn<(...args: unknown[]) => unknown>();
     globalThis.open = open as typeof globalThis.open;
 
     openInternalRouteInNewTab('https://example.test/request');
@@ -39,23 +50,31 @@ describe('openWindow helpers', () => {
   });
 
   it('encodes PDF page fragments before opening the URL', () => {
-    const open = vi.fn().mockReturnValue(null);
+    expect.hasAssertions();
+
+    resetOpenWindowState();
+
+    const open = vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;
 
     openPdfPageInSecureNewTab(
       'blob:https://portal.measurement.gov.au/pdf-id',
-      '2&evil=1'
+      '2&evil=1',
     );
 
     expect(open).toHaveBeenCalledWith(
       'blob:https://portal.measurement.gov.au/pdf-id#page=2%26evil%3D1',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
   });
 
   it('opens blob URLs with secure features', () => {
-    const open = vi.fn().mockReturnValue(null);
+    expect.hasAssertions();
+
+    resetOpenWindowState();
+
+    const open = vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;
 
     openUrlInSecureNewTab('blob:https://portal.measurement.gov.au/pdf-id');
@@ -63,7 +82,7 @@ describe('openWindow helpers', () => {
     expect(open).toHaveBeenCalledWith(
       'blob:https://portal.measurement.gov.au/pdf-id',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
   });
 });

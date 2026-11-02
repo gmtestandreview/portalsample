@@ -14,7 +14,7 @@ proven by tests rather than manual inspection.
 for the new platform. Task 2 creates a formal backend-verification artifact for
 the SEC-010 IDOR finding. Task 4 produces a migration supplement to the existing
 acquireTokenSilent ADR. Task 6 fixes two incorrect font-file import paths in
-Storybook's `preview.ts` that cause all 56 story render failures.
+Storybook's `preview.tsx` that cause all 56 story render failures.
 
 **Tech Stack:** React 18 + TypeScript, Vitest 4 + `@testing-library/react` 16 +
 MSW v2 (Tasks 1/3), Yup 1.4 (Task 5), `@storybook/react-vite` 10 (Task 6). Tests
@@ -33,7 +33,7 @@ run from `quality/_phase5_seed/` with `npm run test:unit`.
     comment at line 404
   - `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts`: 19
     custom Yup string methods; only `businessName` regression-tested
-  - `.storybook/preview.ts`: imports `'../fonts/fonts.css'` and
+  - `.storybook/preview.tsx`: imports `'../fonts/fonts.css'` and
     `'../fonts/nmi-iconfonts.css'` — paths that do not exist (fonts are in
     `ClientApp/public/fonts/`)
   - `quality/_phase5_seed/static/js/validationSchemas/yupExtensions/stringExtensions.ts`:
@@ -76,7 +76,7 @@ run from `quality/_phase5_seed/` with `npm run test:unit`.
 | Section 7, Gap 7: Dashboard filter/pagination untested     | Task 3  | MSW v2 + tab/page/search state coverage                       |
 | 35+ distributed acquireTokenSilent call sites              | Task 4  | ADR done; migration checklist supplement added                |
 | Section 7, Gap 4: 18 of 19 Yup validators untested         | Task 5  | One test file covers all remaining methods                    |
-| 56 Storybook asset failures                                | Task 6  | 2-line fix to font import paths in `preview.ts`               |
+| 56 Storybook asset failures                                | Task 6  | 2-line fix to font import paths in `preview.tsx`              |
 
 ---
 
@@ -105,7 +105,7 @@ run from `quality/_phase5_seed/` with `npm run test:unit`.
 | `docs/adr/2026-05-30-acquire-token-silent-interceptor.md`                 | Read-only     | Task 4 — Existing ADR (already complete)                 |
 | `docs/migration/2026-05-30-auth-token-acquisition-migration-checklist.md` | Create        | Task 4 — Migration sprint checklist                      |
 | `quality/_phase5_seed/tests/unit/validation/stringExtensions.test.ts`     | Create        | Task 5 — Yup validator coverage for 18 remaining methods |
-| `.storybook/preview.ts`                                                   | Modify        | Task 6 — Fix two font import paths                       |
+| `.storybook/preview.tsx`                                                  | Modify        | Task 6 — Fix two font import paths                       |
 
 ---
 
@@ -117,13 +117,13 @@ run from `quality/_phase5_seed/` with `npm run test:unit`.
 
 **Files:**
 
-- Modify: `.storybook/preview.ts`
+- Modify: `.storybook/preview.tsx`
 
-**Root cause:** `preview.ts` imports `'../fonts/fonts.css'` and
+**Root cause:** `preview.tsx` imports `'../fonts/fonts.css'` and
 `'../fonts/nmi-iconfonts.css'`. From `.storybook/`, `..` resolves to the
 workspace root. No `fonts/` directory exists there. The font files live at
 `ClientApp/public/fonts/`. Vite fails to resolve the imports at build time,
-causing `preview.ts` to throw, which cascades to 56 story failures.
+causing `preview.tsx` to throw, which cascades to 56 story failures.
 
 - [ ] **Step 1: Verify the broken import paths**
 
@@ -136,7 +136,7 @@ causing `preview.ts` to throw, which cascades to 56 story failures.
 
 - [ ] **Step 2: Fix the two import lines**
 
-  In `.storybook/preview.ts`, lines 6–7, replace:
+  In `.storybook/preview.tsx`, lines 6–7, replace:
 
   ```ts
   import '../fonts/fonts.css';
@@ -171,7 +171,7 @@ causing `preview.ts` to throw, which cascades to 56 story failures.
 - [ ] **Step 4: Commit**
 
   ```bash
-  git add .storybook/preview.ts
+  git add .storybook/preview.tsx
   git commit -m "fix(storybook): correct font CSS import paths from .storybook to ClientApp/public/fonts"
   ```
 
@@ -700,7 +700,7 @@ for all child components and MSAL hooks to isolate the routing logic.
         SelectAndEditOrg: 'SelectAndEditOrg',
         RFQSelectOrg: 'RFQSelectOrg',
       },
-    })
+    }),
   );
   vi.mock('../../../static/js/storage/notification', () => ({
     clearDashboardNotification: vi.fn(),
@@ -710,14 +710,14 @@ for all child components and MSAL hooks to isolate the routing logic.
   }));
   vi.mock(
     '../../../static/js/components/Utilities/routeChangeScrollTop',
-    () => ({ default: () => null })
+    () => ({ default: () => null }),
   );
   vi.mock('../../../static/js/components/Utilities/backToTopButton', () => ({
     default: () => null,
   }));
   vi.mock(
     '../../../static/js/components/Utilities/routeAccessibleNavigation',
-    () => ({ default: () => null })
+    () => ({ default: () => null }),
   );
 
   // ─── Auth mocks ────────────────────────────────────────────────────────────────
@@ -754,7 +754,7 @@ for all child components and MSAL hooks to isolate the routing logic.
   const renderAt = (
     path: string,
     details: AccountDetails | null = BASE_DETAILS,
-    authenticated = true
+    authenticated = true,
   ) => {
     mockIsAuthenticated.mockReturnValue(authenticated);
     mockAccountState.mockReturnValue({ details });
@@ -772,7 +772,7 @@ for all child components and MSAL hooks to isolate the routing logic.
         <PreConditions displayHeaderAndFooter>
           <div data-testid='child-content'>child</div>
         </PreConditions>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -867,7 +867,7 @@ for all child components and MSAL hooks to isolate the routing logic.
     it('autoShowBranchSelector: does NOT render BranchSelectorModal when defaultOrganisationId is set', () => {
       renderAt('/dashboard');
       expect(
-        screen.queryByTestId('branch-selector-modal')
+        screen.queryByTestId('branch-selector-modal'),
       ).not.toBeInTheDocument();
     });
 
@@ -880,7 +880,7 @@ for all child components and MSAL hooks to isolate the routing logic.
       };
       renderAt('/success-creating-account', details);
       expect(
-        screen.queryByTestId('branch-selector-modal')
+        screen.queryByTestId('branch-selector-modal'),
       ).not.toBeInTheDocument();
     });
   });
@@ -1080,7 +1080,7 @@ call.
     '../../../static/js/components/modals/BranchSelectorModal/enums',
     () => ({
       BranchSelectionModalMode: { SelectAndEditOrg: 'SelectAndEditOrg' },
-    })
+    }),
   );
   vi.mock('../../../static/js/analytics/GoogleAnalytics', () => ({
     trackGAEvent: vi.fn(),
@@ -1190,7 +1190,7 @@ call.
     render(
       <MemoryRouter>
         <Dashboard />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
   // ─── Tests ─────────────────────────────────────────────────────────────────────
@@ -1203,7 +1203,7 @@ call.
       setupMocks();
       renderDashboard();
       await waitFor(() =>
-        expect(screen.getByTestId('welcome')).toBeInTheDocument()
+        expect(screen.getByTestId('welcome')).toBeInTheDocument(),
       );
     });
 
@@ -1230,7 +1230,7 @@ call.
       setupMocks();
       renderDashboard();
       await waitFor(() =>
-        expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token')
+        expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token'),
       );
     });
 
@@ -1250,7 +1250,7 @@ call.
       });
       renderDashboard();
       await waitFor(() =>
-        expect(screen.getByTestId('no-requests')).toBeInTheDocument()
+        expect(screen.getByTestId('no-requests')).toBeInTheDocument(),
       );
     });
 
@@ -1301,7 +1301,7 @@ call.
       // Navigate renders to /unexpected-error; child is absent
       await waitFor(
         () => expect(screen.queryByTestId('welcome')).not.toBeInTheDocument(),
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
     });
   });
@@ -1348,12 +1348,12 @@ call.
     existing tests still pass before adding the new test file.
   - **Rollback:** Delete the ported file (`git rm`) and commit.
 
-- **Risk (Task 6 — Storybook preview.ts):** Changing font import paths breaks
+- **Risk (Task 6 — Storybook preview.tsx):** Changing font import paths breaks
   the Storybook build if the new paths don't exist.
   - **Verification:** Confirm `ClientApp/public/fonts/fonts.css` exists before
     editing. Run `npm run build-storybook` from `quality/_phase5_seed/` to
     confirm 0 asset errors.
-  - **Rollback:** `git checkout .storybook/preview.ts`
+  - **Rollback:** `git checkout .storybook/preview.tsx`
 
 - **Risk (Task 5 — Yup tests):** No production code is modified; pure test
   additions. No rollback risk.

@@ -21,6 +21,7 @@ type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
 interface HarnessProps {
   values?: Values;
   withHiddenRules?: boolean;
+  status?: unknown;
   onSubmit?: (values: SummaryAndAcceptStep) => void;
 }
 
@@ -36,25 +37,29 @@ function Probe() {
 function Harness({
   values = {},
   withHiddenRules = true,
-  onSubmit = vi.fn(),
+  status,
+  onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
   return (
     <Formik<Values>
       initialValues={values}
-      {...(withHiddenRules
-        ? { initialStatus: { hidden: summaryAndAcceptOwnHidingFields } }
-        : {})}
+      initialStatus={
+        status ??
+        (withHiddenRules
+          ? { hidden: summaryAndAcceptOwnHidingFields }
+          : undefined)
+      }
       validate={(formValues) =>
         validateForm(
           formValues.saveAndExit
             ? summaryAndAcceptSaveValidation
             : summaryAndAcceptSubmitValidation,
-          summaryAndAcceptOwnHidingFields
+          summaryAndAcceptOwnHidingFields,
         )(formValues)
       }
       onSubmit={(submitted) =>
         onSubmit(
-          removeHidden(submitted, submitted, summaryAndAcceptOwnHidingFields)
+          removeHidden(submitted, submitted, summaryAndAcceptOwnHidingFields),
         )
       }
     >
@@ -77,8 +82,9 @@ const ACCEPT_MESSAGE =
   'You must accept our terms before accepting this quotation';
 const DISPUTE_LABEL = /Please provide details of the associated dispute/;
 
-const submitted = (onSubmit: ReturnType<typeof vi.fn>) =>
-  defined(onSubmit.mock.calls[0], 'submit call')[0];
+const submitted = (
+  onSubmit: ReturnType<typeof vi.fn<(values: SummaryAndAcceptStep) => void>>,
+): SummaryAndAcceptStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
 const probe = () =>
   JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
@@ -86,26 +92,34 @@ const probe = () =>
     dirty: boolean;
   };
 
-describe('SummaryAndAcceptFormikBridge', () => {
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(SummaryAndAcceptFormikBridge, () => {
   it('renders its children between the bridged fields', () => {
+    expect.hasAssertions();
+
     render(<Harness />);
 
     expect(screen.getByText('Between the fields')).toBeInTheDocument();
   });
 
   it('mirrors the answers into the submit payload', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(<Harness onSubmit={onSubmit} />);
 
     await user.click(screen.getByRole('radio', { name: 'Yes' }));
     await user.type(screen.getByLabelText(DISPUTE_LABEL), 'Late delivery');
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
-    expect(probe()).toEqual({ acceptance: true, dirty: true });
+
+    expect(probe()).toStrictEqual({ acceptance: true, dirty: true });
+
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(submitted(onSubmit)).toEqual({
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    expect(submitted(onSubmit)).toStrictEqual({
       associatedDisputes: 'Yes',
       associatedDispute: 'Late delivery',
       acceptanceOfQuote: true,
@@ -113,8 +127,10 @@ describe('SummaryAndAcceptFormikBridge', () => {
   });
 
   it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(
       <Harness
         values={{
@@ -123,10 +139,11 @@ describe('SummaryAndAcceptFormikBridge', () => {
           acceptanceOfQuote: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     const dispute = screen.getByLabelText(DISPUTE_LABEL);
+
     expect(screen.getByRole('radio', { name: 'Yes' })).toBeChecked();
     expect(dispute).toHaveValue('Existing dispute');
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked();
@@ -135,8 +152,9 @@ describe('SummaryAndAcceptFormikBridge', () => {
     await user.type(dispute, 'Edited dispute');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(submitted(onSubmit)).toEqual({
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    expect(submitted(onSubmit)).toStrictEqual({
       associatedDisputes: YesNo.Yes,
       associatedDispute: 'Edited dispute',
       acceptanceOfQuote: true,
@@ -144,8 +162,10 @@ describe('SummaryAndAcceptFormikBridge', () => {
   });
 
   it('shows messages only after a failed submit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{
@@ -153,35 +173,43 @@ describe('SummaryAndAcceptFormikBridge', () => {
           acceptanceOfQuote: false,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
-    expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
-    expect(screen.queryByText(/is a required field/)).not.toBeInTheDocument();
+    expect([
+      screen.queryByText(ACCEPT_MESSAGE),
+      screen.queryByText(/is a required field/),
+    ]).toStrictEqual([null, null]);
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(ACCEPT_MESSAGE)).toBeInTheDocument();
+    await expect(
+      screen.findByText(ACCEPT_MESSAGE),
+    ).resolves.toBeInTheDocument();
     expect(
-      screen.getByText('Associated dispute is a required field')
+      screen.getByText('Associated dispute is a required field'),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInvalid();
     expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInvalid();
   });
 
   it('does not dirty the outer form when a failed submit touches unset fields', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(<Harness values={{ associatedDisputes: YesNo.Yes }} />);
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await screen.findByText(/is a required field/);
 
-    expect(probe()).toEqual({ dirty: false });
+    expect(probe()).toStrictEqual({ dirty: false });
   });
 
   it('applies the soft schema once the outer form is saving and exiting', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(
       <Harness
         values={{
@@ -190,19 +218,22 @@ describe('SummaryAndAcceptFormikBridge', () => {
           saveAndExit: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
     expect(screen.queryByText(/is a required field/)).not.toBeInTheDocument();
   });
 
   it('still enforces the dispute length when saving and exiting', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(
       <Harness
         values={{
@@ -211,30 +242,48 @@ describe('SummaryAndAcceptFormikBridge', () => {
           saveAndExit: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' }),
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('follows the hide rules from the form status', () => {
+    expect.hasAssertions();
+
     const { unmount } = render(
-      <Harness values={{ associatedDisputes: YesNo.No }} />
+      <Harness values={{ associatedDisputes: YesNo.No }} />,
     );
+
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
+
     unmount();
 
     render(
       <Harness
         withHiddenRules={false}
         values={{ associatedDisputes: YesNo.No }}
-      />
+      />,
     );
+
+    expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
+  });
+
+  it('falls back to no hide rules when the status has non-object hidden rules', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness
+        status={{ hidden: null }}
+        values={{ associatedDisputes: YesNo.No }}
+      />,
+    );
+
     expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
   });
 });
