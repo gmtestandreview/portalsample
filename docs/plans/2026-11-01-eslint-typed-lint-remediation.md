@@ -657,9 +657,9 @@ replay.
 - App E2E passed 41/41 tests. Storybook E2E passed 153/153 tests.
 - The first full unit rerun exposed an incomplete `ReturnAddressTypeValues` API
   mock in `tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx`; the mock
-  was repaired and its focused suite passed 9/9. The final full unit rerun passed
-  262/262 files and 3,011/3,011 tests. The route harness teardown was corrected
-  to preserve the exact original `window.fetch` reference instead of restoring a
-  newly bound wrapper; its focused suite passed 12/12.
+  was repaired and its focused suite passed 9/9. The final full unit rerun
+  passed 262/262 files and 3,011/3,011 tests. The route harness teardown was
+  corrected to preserve the exact original `window.fetch` reference instead of
+  restoring a newly bound wrapper; its focused suite passed 12/12.
 - With the full unit gate green, all closure checks passed and the plan is now
   VERIFIED. The refreshed typed-lint report remains at zero diagnostics.
