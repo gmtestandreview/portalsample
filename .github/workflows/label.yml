@@ -40,6 +40,6 @@ jobs:
               Buffer.from(response.data.content, 'base64'),
             );
 
-      - uses: actions/labeler@v4
+      - uses: actions/labeler@v7
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
