@@ -177,7 +177,13 @@ const ApplicationForTypeApproval = () => {
         ) ?? [];
     } catch (e) {
       // handle errors as needed
-      const status = (e as any)?.status as number | undefined;
+      const status =
+        typeof e === 'object' &&
+        e !== null &&
+        'status' in e &&
+        typeof e.status === 'number'
+          ? e.status
+          : undefined;
 
       if (status === 403) {
         setSubmitErrors([

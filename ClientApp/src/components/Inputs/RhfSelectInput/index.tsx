@@ -38,6 +38,11 @@ const RhfSelectInput = <T extends string | number = string>(
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp });
 
+  const fieldValue =
+    typeof field.value === 'string' || typeof field.value === 'number'
+      ? field.value
+      : '';
+
   if (isSummary) {
     if (field.value === undefined || field.value === null || field.value === '')
       return null;
@@ -80,7 +85,7 @@ const RhfSelectInput = <T extends string | number = string>(
           className={`form-field form-select ${className}`}
           name={field.name}
           ref={field.ref}
-          value={field.value ?? ''}
+          value={fieldValue}
           onBlur={field.onBlur}
           onChange={(event) => onSelectChange(event.target.value)}
           isInvalid={!!errorMessage}

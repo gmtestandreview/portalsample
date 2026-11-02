@@ -1,6 +1,7 @@
 import { useFormikContext } from 'formik';
 import type { AddressDetailsDto } from '../../api/web-api-client';
 import { FormProvider } from 'react-hook-form';
+import type { Hideable } from '../../components/forms/types';
 import { useFormikRhfBridge } from '../../components/forms/useFormikRhfBridge';
 import { RhfHiddenRulesProvider } from '../../components/forms/RhfHidableField';
 import {
@@ -29,6 +30,18 @@ const isBridgedFieldName = createBridgedNamePredicate({
   prefixes: ['businessStreetAddress.'],
 });
 
+const isHideable = (value: unknown): value is Hideable =>
+  typeof value === 'object' && value !== null;
+
+const getHiddenRules = (status: unknown): Hideable => {
+  if (!isHideable(status)) {
+    return NO_HIDDEN_RULES;
+  }
+
+  const hidden = status['hidden'];
+  return isHideable(hidden) ? hidden : NO_HIDDEN_RULES;
+};
+
 interface ReportRecipientFormikBridgeProps {
   streetAddress?: AddressDetailsDto | undefined;
   postalAddress?: AddressDetailsDto | undefined;
@@ -44,7 +57,7 @@ const ReportRecipientFormikBridge = ({
   streetAddress,
   postalAddress,
 }: Readonly<ReportRecipientFormikBridgeProps>) => {
-  const { status } = useFormikContext<ReportRecipientFormValues>();
+  const status: unknown = useFormikContext<ReportRecipientFormValues>().status;
   const methods = useFormikRhfBridge<ReportRecipientFormValues>({
     softSchema: reportRecipientSaveValidation,
     hardSchema: reportRecipientSubmitValidation,
@@ -54,7 +67,7 @@ const ReportRecipientFormikBridge = ({
 
   return (
     <FormProvider {...methods}>
-      <RhfHiddenRulesProvider rules={status?.hidden ?? NO_HIDDEN_RULES}>
+      <RhfHiddenRulesProvider rules={getHiddenRules(status)}>
         <ReportRecipientFormFields
           streetAddress={streetAddress}
           postalAddress={postalAddress}

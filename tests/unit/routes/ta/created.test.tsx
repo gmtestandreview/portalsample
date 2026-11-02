@@ -102,11 +102,6 @@ describe(RequestForPatternApprovalCreated, () => {
     expect({
       titleCall: mocks.useHtmlTitle.mock.calls,
       bodyClassCall: mocks.useBodyClass.mock.calls,
-      banner: screen.getByTestId('form-banner').textContent,
-      heading: screen.getByRole('heading', {
-        name: 'Your application has been submitted',
-      }).textContent,
-      success: screen.getByTestId('application-submit-success').textContent,
     }).toStrictEqual({
       titleCall: [
         [
@@ -114,10 +109,19 @@ describe(RequestForPatternApprovalCreated, () => {
         ],
       ],
       bodyClassCall: [['application-created']],
-      banner: expect.stringContaining('Pattern/type approval - Application'),
-      heading: 'Your application has been submitted',
-      success: expect.stringContaining('PA-200'),
     });
+
+    expect(screen.getByTestId('form-banner')).toHaveTextContent(
+      'Pattern/type approval - Application',
+    );
+    expect(
+      screen.getByRole('heading', {
+        name: 'Your application has been submitted',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('application-submit-success')).toHaveTextContent(
+      'PA-200',
+    );
   });
 
   it('sets the dashboard tab marker and navigates when the dashboard button is clicked', () => {

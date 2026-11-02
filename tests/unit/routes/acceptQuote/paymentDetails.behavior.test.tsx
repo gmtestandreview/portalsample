@@ -85,7 +85,7 @@ const hidingFields = {
     values.invoiceSentTo === InvoiceSentToValues.SamePerson,
   contact: {
     titleOther: (values: PaymentDetailsStep) =>
-      values.contact?.title !== 'Other',
+      values.contact?.title !== Title.Other,
   },
 };
 
@@ -204,10 +204,12 @@ describe('paymentDetails form behavior', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
     expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
+      expect.objectContaining<Record<string, unknown>>({
         purchaseOrderNo: 'PO-123',
         invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-        contact: expect.objectContaining({ email: 'billing@nmi.gov.au' }),
+        contact: expect.objectContaining<Record<string, unknown>>({
+          email: 'billing@nmi.gov.au',
+        }),
       }),
       expect.anything(),
     );
@@ -271,8 +273,8 @@ describe('paymentDetails form behavior', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toStrictEqual(
-      expect.objectContaining({
-        contact: expect.objectContaining({
+      expect.objectContaining<Record<string, unknown>>({
+        contact: expect.objectContaining<Record<string, unknown>>({
           title: Title.Other,
           titleOther: 'Mx',
           email: 'billing@nmi.gov.au',

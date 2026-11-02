@@ -2,7 +2,11 @@ import { useMsal } from '@azure/msal-react';
 import Row from 'react-bootstrap/Row';
 import { Alert, Col } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { AcceptQuoteClient, AccountsClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  AccountsClient,
+  ReturnAddressTypeValues,
+} from '../../api/web-api-client';
 import type {
   AcceptQuotePreInfoDto,
   AddressDetailsDto,
@@ -50,15 +54,15 @@ const ReturnAddressSummary = ({
   const organisationName = returnOrganisationName;
 
   switch (returnAddressType) {
-    case 'BusinessAddress':
+    case ReturnAddressTypeValues.BusinessAddress:
       address = streetAddress;
       break;
-    case 'PostalAddress':
+    case ReturnAddressTypeValues.PostalAddress:
       address = rfqOrganisation?.postalAddressSameAsStreetAddress
         ? streetAddress
         : postalAddress;
       break;
-    case 'Other':
+    case ReturnAddressTypeValues.Other:
       address = returnAddress;
       break;
     default:

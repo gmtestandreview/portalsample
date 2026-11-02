@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { useModalState, useModalDispatch } from '../ModalContext';
 import PrimaryButton from '../../Buttons/PrimaryButton';
 import ButtonGroup from '../../Buttons/ButtonGroup';
+import type { ButtonGroupProps } from '../../Buttons/ButtonGroup';
 import {
   ApplicationClient,
   ApplicationType,
@@ -32,10 +33,7 @@ const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
   );
 };
 
-interface RFQDeleteButtonsProps {
-  left: any;
-  right: any;
-}
+type RFQDeleteButtonsProps = ButtonGroupProps;
 
 const RFQDeleteButtons = (props: Readonly<RFQDeleteButtonsProps>) => {
   const { left, right } = props;

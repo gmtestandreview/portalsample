@@ -173,8 +173,9 @@ function StepHarness({
 const renderStep = (options: StepHarnessProps = {}) =>
   render(<StepHarness {...options} />);
 
-const submittedValues = (onSubmit: ReturnType<typeof vi.fn>) =>
-  defined(onSubmit.mock.calls[0], 'submit call')[0];
+const submittedValues = (
+  onSubmit: ReturnType<typeof vi.fn<(values: SummaryAndAcceptStep) => void>>,
+): SummaryAndAcceptStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
 const ACCEPT_LABEL =
   'Yes, on behalf of my organisation, I accept the quotation';
@@ -252,7 +253,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ onSubmit });
     await waitForLoad();
 
@@ -280,7 +281,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.No,
@@ -345,7 +346,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ onSubmit });
     await waitForLoad();
 
@@ -373,7 +374,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -404,7 +405,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ values: { associatedDisputes: YesNo.No }, onSubmit });
     await waitForLoad();
 
@@ -425,7 +426,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ values: { associatedDisputes: YesNo.No }, onSubmit });
     await waitForLoad();
 
@@ -443,7 +444,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -469,7 +470,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({ onSubmit });
     await waitForLoad();
 
@@ -487,7 +488,7 @@ describe('summaryAndAccept behavior', () => {
     resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,

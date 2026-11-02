@@ -5,7 +5,7 @@ import { failureKey } from '../support/mock-failure';
 
 Given(
   'instrument {string} has an issued report',
-  async ({ scenarioState }, name: string) => {
+  ({ scenarioState }, name: string) => {
     scenarioState.activeReferenceId = name;
   },
 );
@@ -51,7 +51,7 @@ Then('report {string} is displayed', async ({ page }, reportId: string) => {
 
 Given(
   'report {string} is available',
-  async ({ scenarioState }, referenceId: string) => {
+  ({ scenarioState }, referenceId: string) => {
     scenarioState.activeReferenceId = referenceId;
     scenarioState.quotes.set(referenceId, buildMeasurementReport(referenceId));
   },
@@ -59,7 +59,7 @@ Given(
 
 Given(
   'report PDF retrieval will fail with status {int}',
-  async ({ scenarioState }, status: number) => {
+  ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey('GET', '/api/dashboard/get-quote-report-pdf'),
       { status, once: false },

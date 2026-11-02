@@ -16,7 +16,7 @@ const ParamProbe = () => {
 };
 
 const LoaderProbe = () => {
-  const data = useLoaderData() as { label: string };
+  const data = useLoaderData<{ label: string }>();
 
   return <span data-testid='loader-label'>{data.label}</span>;
 };
@@ -25,7 +25,7 @@ const NavigateProbe = () => {
   const navigate = useNavigate();
 
   return (
-    <button type='button' onClick={() => navigate('/not-found')}>
+    <button type='button' onClick={() => void navigate('/not-found')}>
       leave
     </button>
   );

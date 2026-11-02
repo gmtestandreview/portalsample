@@ -258,7 +258,7 @@ const renderQuotationContent = (
             onClick={() => {
               trackGAEvent('Request item/quotation tab');
 
-              navigate(
+              void navigate(
                 useQuoteId
                   ? `/quotation/${dashboardQuoteDto.quotationId}`
                   : `/quotation/${referenceId}`,
@@ -365,7 +365,7 @@ const renderReportDtoContent = (
             className='ms-md-auto mb-3'
             onClick={() => {
               trackGAEvent('Request item/report tab');
-              navigate(`/report/${requestForQuoteId}`);
+              void navigate(`/report/${requestForQuoteId}`);
             }}
           >
             View report

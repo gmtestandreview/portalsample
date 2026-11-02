@@ -386,7 +386,8 @@ describe('application and instrument step', () => {
       });
       await act(async () => {
         formik?.setErrors({ instrumentCategory: 'Category is required' });
-        formik?.setTouched({ instrumentCategory: true });
+        await formik?.setTouched({ instrumentCategory: true });
+        await Promise.resolve();
       });
 
       await user.click(
@@ -409,6 +410,7 @@ describe('application and instrument step', () => {
 
       await act(async () => {
         formik?.setErrors({ instrumentCategory: 'Category is required' });
+        await Promise.resolve();
       });
 
       await user.click(
@@ -572,6 +574,7 @@ describe('application and instrument step', () => {
         selectNamed('instrumentCategory').onChange?.({
           target: { value: 'cat-weighing' },
         });
+        await Promise.resolve();
       });
 
       // No lookup means no options to narrow; the field is still cleared for re-entry.

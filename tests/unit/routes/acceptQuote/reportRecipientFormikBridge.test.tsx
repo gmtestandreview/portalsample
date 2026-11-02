@@ -59,7 +59,7 @@ vi.mock(
 
 const hidingFields = {
   businessStreetAddress: (x: ReportRecipientStep) =>
-    x.reportAddressType !== 'Other',
+    x.reportAddressType !== ReportAddressTypeValues.Other,
 };
 
 interface HarnessProps {
@@ -114,7 +114,7 @@ describe(ReportRecipientFormikBridge, () => {
     resetReportRecipientFormikBridgeMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: ReportRecipientStep) => void>();
     render(
       <Harness
         values={{ reportAddressType: ReportAddressTypeValues.Other }}
@@ -149,7 +149,7 @@ describe(ReportRecipientFormikBridge, () => {
     resetReportRecipientFormikBridgeMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: ReportRecipientStep) => void>();
     render(
       <Harness
         values={{
@@ -202,7 +202,7 @@ describe(ReportRecipientFormikBridge, () => {
       ],
     });
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: ReportRecipientStep) => void>();
     render(
       <Harness
         values={{ reportAddressType: ReportAddressTypeValues.Other }}
@@ -234,7 +234,7 @@ describe(ReportRecipientFormikBridge, () => {
     resetReportRecipientFormikBridgeMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: ReportRecipientStep) => void>();
     render(
       <Harness
         values={{ reportAddressType: ReportAddressTypeValues.Other }}
@@ -293,7 +293,10 @@ describe(ReportRecipientFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await screen.findByText(/is required/i);
 
-    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '');
+    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
+      address?: unknown;
+      dirty: boolean;
+    };
 
     expect(probe.dirty).toBe(false);
     expect(probe.address).toBeUndefined();

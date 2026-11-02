@@ -2,7 +2,7 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { RequestForQuoteClient, YesNo } from '../../api/web-api-client';
+import { RequestForQuoteClient, Title, YesNo } from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   OrganisationAndContact,
@@ -99,7 +99,8 @@ const organisationAndContactProps = (
     principalContactHide: (x: OrganisationAndContact) =>
       x.isPrincipalContact === YesNo.Yes,
     contact: {
-      titleOther: (x: OrganisationAndContact) => x.contact?.title !== 'Other',
+      titleOther: (x: OrganisationAndContact) =>
+        x.contact?.title !== Title.Other,
     },
   },
   validateHard: organisationAndContactSubmitValidation,

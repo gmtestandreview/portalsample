@@ -39,6 +39,6 @@ describe('yup stringExtensions — businessName', () => {
   it('yup.string() exposes .businessName as a function — declaration is present', () => {
     expect.hasAssertions();
 
-    expect(Yup.string().businessName).toBeTypeOf('function');
+    expect(Yup.string().businessName.bind(Yup.string())).toBeTypeOf('function');
   });
 });

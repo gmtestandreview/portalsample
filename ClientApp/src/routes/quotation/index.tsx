@@ -249,7 +249,8 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         fileError={fileError}
       />
       {!!quotationData?.quoteRequestStatus &&
-        quotationData?.quoteRequestStatus !== QuoteStatus.QuoteExpired && (
+        quotationData?.quoteRequestStatus !==
+          String(QuoteStatus.QuoteExpired) && (
           <Row className='mb-3'>
             <Col md={12}>
               <div>
@@ -376,7 +377,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
           </>
         }
         onModalNo={closeDeclineQuoteModal}
-        onModalYes={declineQuote}
+        onModalYes={() => void declineQuote()}
         noButtonTitle='Cancel'
         yesButtonTitle='Decline quote'
       />

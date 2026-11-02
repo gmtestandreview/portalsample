@@ -1,6 +1,7 @@
 import { useFormikContext } from 'formik';
 import { FormProvider } from 'react-hook-form';
 import type { AddressDetailsDto } from '../../api/web-api-client';
+import type { Hideable } from '../../components/forms/types';
 import { useFormikRhfBridge } from '../../components/forms/useFormikRhfBridge';
 import { RhfHiddenRulesProvider } from '../../components/forms/RhfHidableField';
 import {
@@ -54,6 +55,18 @@ const isBridgedFieldName = createBridgedNamePredicate({
   prefixes: ['contact.', 'returnAddress.'],
 });
 
+const isHideable = (value: unknown): value is Hideable =>
+  typeof value === 'object' && value !== null;
+
+const getHiddenRules = (status: unknown): Hideable => {
+  if (!isHideable(status)) {
+    return NO_HIDDEN_RULES;
+  }
+
+  const hidden = status['hidden'];
+  return isHideable(hidden) ? hidden : NO_HIDDEN_RULES;
+};
+
 interface DeliveryAndReturnFormikBridgeProps {
   streetAddress?: AddressDetailsDto | undefined;
   postalAddress?: AddressDetailsDto | undefined;
@@ -69,7 +82,8 @@ const DeliveryAndReturnFormikBridge = ({
   streetAddress,
   postalAddress,
 }: Readonly<DeliveryAndReturnFormikBridgeProps>) => {
-  const { status } = useFormikContext<DeliveryAndReturnFormValues>();
+  const status: unknown =
+    useFormikContext<DeliveryAndReturnFormValues>().status;
   const methods = useFormikRhfBridge<DeliveryAndReturnFormValues>({
     softSchema: deliveryAndReturnSaveValidation,
     hardSchema: deliveryAndReturnSubmitValidation,
@@ -79,7 +93,7 @@ const DeliveryAndReturnFormikBridge = ({
 
   return (
     <FormProvider {...methods}>
-      <RhfHiddenRulesProvider rules={status?.hidden ?? NO_HIDDEN_RULES}>
+      <RhfHiddenRulesProvider rules={getHiddenRules(status)}>
         <DeliveryAndReturnFormFields
           streetAddress={streetAddress}
           postalAddress={postalAddress}

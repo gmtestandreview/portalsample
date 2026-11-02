@@ -67,15 +67,13 @@ describe('validateFreezeRecord', () => {
   ])('rejects %s', (_name, overrides) => {
     expect.hasAssertions();
 
-    expect(
-      moduleUnderTest.validateFreezeRecord({
-        freeze: overrides.freeze ?? freeze,
-        expectedInputDigest: overrides.expectedInputDigest ?? 'sha256:inputs',
-        selectedPaths: overrides.selectedPaths ?? [
-          'ClientApp/src',
-          '.storybook',
-        ],
-      }),
-    ).toMatchObject({ ok: false, errors: expect.any(Array) });
+    const result = moduleUnderTest.validateFreezeRecord({
+      freeze: overrides.freeze ?? freeze,
+      expectedInputDigest: overrides.expectedInputDigest ?? 'sha256:inputs',
+      selectedPaths: overrides.selectedPaths ?? ['ClientApp/src', '.storybook'],
+    });
+
+    expect(result.ok).toBe(false);
+    expect(Array.isArray(result.errors)).toBe(true);
   });
 });

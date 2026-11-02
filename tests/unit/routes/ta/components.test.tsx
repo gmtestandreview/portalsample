@@ -436,7 +436,7 @@ describe(OrganisationAndContact, () => {
       contactNames: ['contact', 'invoiceContact'],
       heading: 'Contact',
       noInformationHeading: null,
-      principalContact: expect.stringContaining('Ms Grace Hopper'),
+      principalContact: expect.stringContaining('Ms Grace Hopper') as unknown,
     });
   });
 });
@@ -500,7 +500,9 @@ describe(SummaryAndSubmit, () => {
       backButton: screen.queryByTestId('back-button'),
     }).toStrictEqual({
       bodyClassCalls: [['summary']],
-      guidance: expect.stringMatching(/Before you submit your request/),
+      guidance: expect.stringMatching(
+        /Before you submit your request/,
+      ) as unknown,
       organisation: 'Organisation name',
       application: 'Application type',
       supportingDocuments: 'supportingDocuments.form.documents',
@@ -514,7 +516,9 @@ describe(SummaryAndSubmit, () => {
         'acceptTermsAndConditions',
         'acceptDeclaration',
       ],
-      terms: expect.stringMatching(/You must read and accept the NMI P 106/),
+      terms: expect.stringMatching(
+        /You must read and accept the NMI P 106/,
+      ) as unknown,
       pdfTarget: '_blank',
       backButton: null,
     });

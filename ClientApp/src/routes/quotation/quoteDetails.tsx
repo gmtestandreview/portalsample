@@ -371,7 +371,8 @@ const QuoteDetails = (
         </>
       )}
       {!!quotationData?.quoteRequestStatus &&
-        quotationData.quoteRequestStatus !== QuoteStatus.QuoteExpired && (
+        quotationData.quoteRequestStatus !==
+          String(QuoteStatus.QuoteExpired) && (
           <Row className='mb-3'>
             <Col md={12}>
               {/* Render field label + values

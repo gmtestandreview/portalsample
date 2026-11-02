@@ -2,7 +2,11 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AccountsClient, UsersClient } from '../../../api/web-api-client';
+import {
+  AccountsClient,
+  Title,
+  UsersClient,
+} from '../../../api/web-api-client';
 import type {
   AccountDto,
   GetAccountValuesDto,
@@ -184,7 +188,7 @@ const addBranchProps = (
     postalAddress: (x: GetAccountValuesDto) =>
       x.postalAddressSameAsStreetAddress === true,
     contact: {
-      titleOther: (x: GetAccountValuesDto) => x.contact?.title !== 'Other',
+      titleOther: (x: GetAccountValuesDto) => x.contact?.title !== Title.Other,
     },
   },
   validateHard: branchSubmitValidation,

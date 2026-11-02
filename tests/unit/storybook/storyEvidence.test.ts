@@ -286,7 +286,9 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([expect.objectContaining({ code })]),
+      errors: expect.arrayContaining<unknown>([
+        expect.objectContaining({ code }),
+      ]) as unknown,
     });
   });
 
@@ -317,9 +319,9 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([
+      errors: expect.arrayContaining<unknown>([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
-      ]),
+      ]) as unknown,
     });
 
     expect(
@@ -362,9 +364,9 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([
+      errors: expect.arrayContaining<unknown>([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
-      ]),
+      ]) as unknown,
     });
 
     const nonAssertionMarker = storyContent.replace(
@@ -383,9 +385,9 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([
+      errors: expect.arrayContaining<unknown>([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
-      ]),
+      ]) as unknown,
     });
   });
 });

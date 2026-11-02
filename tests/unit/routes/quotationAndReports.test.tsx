@@ -22,6 +22,7 @@ import type {
 } from '../../../ClientApp/src/storage/notification';
 import { ApplicationType } from '../../../ClientApp/src/api/web-api-client';
 import { QuoteStatus } from '../../../ClientApp/src/routes/common/enums';
+import { NotificationSeverity } from '../../../ClientApp/src/storage/types';
 
 const mocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
@@ -37,7 +38,12 @@ const mocks = vi.hoisted(() => ({
   getDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
   clearDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
   clearDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
-  setDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  setDashboardNotification:
+    vi.fn<
+      (
+        ...args: Parameters<typeof SetDashboardNotification>
+      ) => ReturnType<typeof SetDashboardNotification>
+    >(),
   setDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
   openInternalRouteInNewTab: vi.fn<(...args: unknown[]) => unknown>(),
   handleReportFileError: vi.fn<(...args: unknown[]) => unknown>(),
@@ -49,6 +55,15 @@ const mocks = vi.hoisted(() => ({
     instance: { acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>() },
   },
 }));
+
+function requireNotification<Value>(value: Value | undefined): Value {
+  if (value === undefined) {
+    throw new Error(
+      'Expected a dashboard notification after the failed decline',
+    );
+  }
+  return value;
+}
 
 vi.mock(
   import('@azure/msal-react'),
@@ -621,11 +636,21 @@ describe('quotation and measurement report routes', () => {
       ),
     );
 
-    expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('downloading the PDF quote'),
-      }),
+    const notification = requireNotification(
+      mocks.setDashboardNotification.mock.calls.at(-1)?.[0],
     );
+
+    expect({
+      callCount: mocks.setDashboardNotification.mock.calls.length,
+      severity: notification.severity,
+      messageContains: notification.message.includes(
+        'downloading the PDF quote',
+      ),
+    }).toStrictEqual({
+      callCount: 1,
+      severity: NotificationSeverity.Error,
+      messageContains: true,
+    });
   });
 
   it('closes the decline confirmation without submitting', async () => {

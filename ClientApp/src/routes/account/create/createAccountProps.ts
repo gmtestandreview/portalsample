@@ -2,7 +2,7 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AccountsClient } from '../../../api/web-api-client';
+import { AccountsClient, Title } from '../../../api/web-api-client';
 import type {
   AccountDto,
   GetAccountValuesDto,
@@ -129,7 +129,7 @@ const createAccountProps = (
     postalAddress: (x: GetAccountValuesDto) =>
       x.postalAddressSameAsStreetAddress === true,
     contact: {
-      titleOther: (x: GetAccountValuesDto) => x.contact?.title !== 'Other',
+      titleOther: (x: GetAccountValuesDto) => x.contact?.title !== Title.Other,
     },
   },
   validateHard: accountSubmitValidation,

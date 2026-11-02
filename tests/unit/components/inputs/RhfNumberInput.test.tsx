@@ -32,7 +32,7 @@ const Harness = ({
   </FieldHarness>
 );
 
-const failingResolver: Resolver<Values> = async () => ({
+const failingResolver: Resolver<Values> = () => ({
   values: {},
   errors: { amount: { type: 'validation', message: 'Enter an amount' } },
 });

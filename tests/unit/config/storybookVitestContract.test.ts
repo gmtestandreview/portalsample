@@ -110,8 +110,8 @@ describe('storybook/Vitest runtime bridge contract', () => {
   it('routes the deprecated call and keeps JSON out of manager-path remapping', () => {
     expect.hasAssertions();
 
-    const standalone = vi.fn<() => Promise<void>>(async () => undefined);
-    const legacyInit = vi.fn<() => Promise<void>>(async () => undefined);
+    const standalone = vi.fn<() => Promise<void>>(() => Promise.resolve());
+    const legacyInit = vi.fn<() => Promise<void>>(() => Promise.resolve());
     const vitest = {
       config: { coverage: { exclude: [] as string[] } },
       init: legacyInit,

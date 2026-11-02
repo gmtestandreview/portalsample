@@ -20,7 +20,7 @@ const Signout = () => {
       }
     }
     if (!isUnmountedRef.current) {
-      logoutRedirect();
+      void logoutRedirect();
       clearTargetOrganisation();
     }
     return () => {

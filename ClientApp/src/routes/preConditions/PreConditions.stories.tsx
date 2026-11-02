@@ -39,7 +39,7 @@ const createTermsFetch =
     observed.current.requests.push({
       method: init?.method ?? 'GET',
       url,
-      body: JSON.parse(String(init?.body ?? 'null')) as unknown,
+      body: typeof init?.body === 'string' ? JSON.parse(init.body) : null,
     });
     return Promise.resolve(new Response('', { status }));
   };

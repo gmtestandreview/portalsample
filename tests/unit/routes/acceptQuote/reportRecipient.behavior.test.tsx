@@ -103,7 +103,7 @@ vi.mock(
 
 const hidingFields = {
   businessStreetAddress: (x: ReportRecipientStep) =>
-    x.reportAddressType !== 'Other',
+    x.reportAddressType !== ReportAddressTypeValues.Other,
 };
 
 const streetAddress = {

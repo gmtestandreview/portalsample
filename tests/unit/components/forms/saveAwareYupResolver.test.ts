@@ -151,11 +151,14 @@ describe('save aware yup resolver', () => {
     expect.hasAssertions();
 
     const values = { saveAndExit: false };
-    const errorWithoutInner = {
-      name: 'ValidationError',
-      message: 'carrierName is required',
-      path: 'carrierName',
-    };
+    const errorWithoutInner = Object.assign(
+      new Error('carrierName is required'),
+      {
+        name: 'ValidationError',
+        message: 'carrierName is required',
+        path: 'carrierName',
+      },
+    );
     const schema: ValidationSchema = {
       validate: () => Promise.reject(errorWithoutInner),
     };
@@ -172,12 +175,15 @@ describe('save aware yup resolver', () => {
     expect.hasAssertions();
 
     const values = { saveAndExit: false };
-    const errorWithPathlessInner = {
-      name: 'ValidationError',
-      message: '1 error occurred',
-      path: undefined,
-      inner: [{ path: '', message: 'root-level error with no path' }],
-    };
+    const errorWithPathlessInner = Object.assign(
+      new Error('1 error occurred'),
+      {
+        name: 'ValidationError',
+        message: '1 error occurred',
+        path: undefined,
+        inner: [{ path: '', message: 'root-level error with no path' }],
+      },
+    );
     const schema: ValidationSchema = {
       validate: () => Promise.reject(errorWithPathlessInner),
     };
@@ -199,12 +205,15 @@ describe('save aware yup resolver', () => {
     expect.hasAssertions();
 
     const values = { saveAndExit: false };
-    const pathlessError = {
-      name: 'ValidationError',
-      message: 'unresolvable validation error',
-      path: undefined,
-      inner: [],
-    };
+    const pathlessError = Object.assign(
+      new Error('unresolvable validation error'),
+      {
+        name: 'ValidationError',
+        message: 'unresolvable validation error',
+        path: undefined,
+        inner: [],
+      },
+    );
     const schema: ValidationSchema = {
       validate: () => Promise.reject(pathlessError),
     };

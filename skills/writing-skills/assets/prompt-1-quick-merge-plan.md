@@ -424,7 +424,7 @@ If a gate fails, state the smallest practical correction needed.
 
 Also include:
 
-**Fresh Critical Review**
+#### Fresh Critical Review
 
 Identify remaining:
 
@@ -433,7 +433,7 @@ Identify remaining:
 - Unverified matters.
 - Required decisions.
 
-**Plan Verification Status**
+#### Plan Verification Status
 
 Select one:
 

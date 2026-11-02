@@ -111,7 +111,9 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
       {...omitUndefined({ text })}
       fileSize={fileSize}
       isLoaded={pdfSizeLoaded}
-      getPdf={viewReportPdf}
+      getPdf={() => {
+        void viewReportPdf();
+      }}
       gaLabel='report'
     />
   );

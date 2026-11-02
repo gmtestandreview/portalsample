@@ -481,18 +481,23 @@ describe('route common helper functions', () => {
 
     handleUnexpectedError({});
 
-    expect(vi.mocked(setDashboardNotification).mock.calls).toMatchObject([
-      [
-        {
-          message: expect.stringContaining(
-            'unexpected error has occurred with downloading the PDF report',
-          ),
-          severity: NotificationSeverity.Error,
-        },
-      ],
-      [expect.objectContaining({ severity: NotificationSeverity.Error })],
-      [expect.objectContaining({ severity: NotificationSeverity.Error })],
-    ]);
+    const notificationCalls = vi.mocked(setDashboardNotification).mock.calls;
+
+    expect({
+      count: notificationCalls.length,
+      firstSeverity: notificationCalls[0]?.[0].severity,
+      firstMessageContains: notificationCalls[0]?.[0].message.includes(
+        'unexpected error has occurred with downloading the PDF report',
+      ),
+      secondSeverity: notificationCalls[1]?.[0].severity,
+      thirdSeverity: notificationCalls[2]?.[0].severity,
+    }).toStrictEqual({
+      count: 3,
+      firstSeverity: NotificationSeverity.Error,
+      firstMessageContains: true,
+      secondSeverity: NotificationSeverity.Error,
+      thirdSeverity: NotificationSeverity.Error,
+    });
   });
 
   it.each([

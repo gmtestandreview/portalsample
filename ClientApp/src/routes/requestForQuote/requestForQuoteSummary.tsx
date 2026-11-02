@@ -17,15 +17,22 @@ import type {
 } from './summary/types';
 import { useAccountState } from '../../authentication/hooks';
 
+type RfqFormikStatus = {
+  hidden?: RfqSummarySectionProps['hidden'];
+};
+
+const isRfqFormikStatus = (status: unknown): status is RfqFormikStatus =>
+  typeof status === 'object' && status !== null && 'hidden' in status;
+
 const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const isEditable = !isSubmitted;
-  const { values, status } =
-    useFormikContext<RfqSummarySectionProps['values']>();
+  const formikContext = useFormikContext<RfqSummarySectionProps['values']>();
+  const { values } = formikContext;
+  const status: unknown = formikContext.status as unknown;
   // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
   const hidden: RfqSummarySectionProps['hidden'] =
-    (status as { hidden?: RfqSummarySectionProps['hidden'] } | undefined)
-      ?.hidden ?? {};
+    (isRfqFormikStatus(status) && status.hidden) || {};
   const details = useAccountState()?.details;
   const accountName = [details?.givenName, details?.familyName]
     .filter(Boolean)

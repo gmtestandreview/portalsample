@@ -115,10 +115,10 @@ const renderLoaded = async (values: Values) => {
 
 const resetRfqInstrumentSummaryMocks = () => {
   resetMsalMock();
-  vi.mocked(AppLogger.error).mockClear();
+  vi.mocked(AppLogger)['error'].mockClear();
   stateSetterCalls.calls.length = 0;
   clients.lookup.methods.getLookup.mockReset();
-  mockSummaryLookups(clients.lookup.methods.getLookup);
+  mockSummaryLookups(clients.lookup.methods['getLookup']);
 };
 
 // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
@@ -157,7 +157,7 @@ describe(RfqInstrumentSummary, () => {
     const result = renderInstrument(populated);
 
     await waitFor(() =>
-      expect(AppLogger.error).toHaveBeenCalledWith(
+      expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
         'Failed to retrieve look ups',
         failure,
       ),
@@ -180,7 +180,7 @@ describe(RfqInstrumentSummary, () => {
     renderInstrument(populated);
 
     await waitFor(() =>
-      expect(AppLogger.error).toHaveBeenCalledWith(
+      expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
         'Failed to retrieve look ups',
         new Error('boom'),
       ),

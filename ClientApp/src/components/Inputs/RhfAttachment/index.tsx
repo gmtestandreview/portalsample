@@ -40,6 +40,9 @@ const getUploadValidationErrors = (
   return errors;
 };
 
+const isAttachmentDto = (value: unknown): value is AttachmentDto =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
 /**
  * React Hook Form counterpart of `AttachmentNew`. It reads the attachment list
  * through `useController`, so it must render inside a `FormProvider`. The
@@ -73,7 +76,9 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const value: unknown = field.value;
   // A form may hand us a bare object or null; normalise once so every reader
   // below, and each item's `name.index.category` path, sees a list.
-  const attachments: AttachmentDto[] = Array.isArray(value) ? value : [];
+  const attachments: AttachmentDto[] = Array.isArray(value)
+    ? value.filter(isAttachmentDto)
+    : [];
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const unidentifiedAttachmentKeys = useRef(
@@ -100,7 +105,10 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
 
   const uploadFiles = async (files: File[]) => {
     const result = await onUploadFiles(files);
-    field.onChange([...(result as AttachmentDto[])]);
+    const uploadedAttachments: AttachmentDto[] = Array.isArray(result)
+      ? result
+      : [result];
+    field.onChange(uploadedAttachments);
   };
 
   const uploadSelectedFiles = async (files: File[]) => {
@@ -170,7 +178,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
         clearFileInput();
       }
     } catch (error_) {
-      setErrors((newErrors) => [...newErrors, `${error_}`]);
+      setErrors((newErrors) => [...newErrors, String(error_)]);
     }
     setIsDeleting(false);
   };
@@ -265,7 +273,9 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                   cursor: 'grab',
                   zIndex: 2,
                 }}
-                onChange={onInputFileChange}
+                onChange={(event) => {
+                  void onInputFileChange(event);
+                }}
               />
               <input
                 disabled={disableUpload}

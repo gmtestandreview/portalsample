@@ -12,7 +12,13 @@ import {
   type ComponentType,
   type ReactNode,
 } from 'react';
-import { Formik, Form as FormikForm } from 'formik';
+import {
+  Formik,
+  Form as FormikForm,
+  type FormikConfig,
+  type FormikErrors,
+  type FormikTouched,
+} from 'formik';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   createMemoryRouter,
@@ -151,8 +157,8 @@ const baseMsalInstance = {
 export interface PortalFormikConfig {
   initialValues: Record<string, unknown>;
   validationSchema?: unknown;
-  initialErrors?: Record<string, unknown>;
-  initialTouched?: Record<string, unknown>;
+  initialErrors?: FormikErrors<Record<string, unknown>>;
+  initialTouched?: FormikTouched<Record<string, unknown>>;
   initialStatus?: Record<string, unknown>;
 }
 
@@ -303,15 +309,21 @@ const withOptionalFormik = (
     return children;
   }
 
+  const formikConfig: FormikConfig<Record<string, unknown>> = {
+    initialValues: formik.initialValues,
+    initialStatus: { hidden: {}, ...formik.initialStatus },
+    validationSchema: formik.validationSchema,
+    onSubmit: noop,
+    ...(formik.initialErrors === undefined
+      ? {}
+      : { initialErrors: formik.initialErrors }),
+    ...(formik.initialTouched === undefined
+      ? {}
+      : { initialTouched: formik.initialTouched }),
+  };
+
   return (
-    <Formik
-      initialValues={formik.initialValues}
-      initialErrors={formik.initialErrors as any}
-      initialTouched={formik.initialTouched as any}
-      initialStatus={{ hidden: {}, ...formik.initialStatus }}
-      validationSchema={formik.validationSchema}
-      onSubmit={noop}
-    >
+    <Formik {...formikConfig}>
       <FormikForm noValidate>{children}</FormikForm>
     </Formik>
   );
@@ -379,7 +391,7 @@ const PatchedFetch = ({
   useLayoutEffect(() => {
     if (activeFetchOverrides.length === 0) {
       baselineFetch = globalThis.fetch;
-      baselineWindowFetch = globalThis.window.fetch;
+      baselineWindowFetch = Reflect.get(globalThis.window, 'fetch');
     }
 
     const token = Symbol('storybook-fetch-override');

@@ -1,5 +1,5 @@
 import preview from '../../../../.storybook/preview';
-import { expect } from 'storybook/test';
+import { expect, userEvent } from 'storybook/test';
 import Actions from './index';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
@@ -37,7 +37,7 @@ const meta = preview.meta({
 
 export const TextButton = meta.story({
   play: async ({ canvas }) => {
-    await canvas.getByRole('button', { name: 'Actions' }).click();
+    await userEvent.click(canvas.getByRole('button', { name: 'Actions' }));
 
     await expect(
       canvas.getByRole('menuitem', { name: 'View details' }),
@@ -59,7 +59,7 @@ export const IconButton = meta.story({
       'Actions for request RFQ-2024-001234',
     );
 
-    await trigger.click();
+    await userEvent.click(trigger);
 
     await expect(
       canvas.getByRole('menuitem', { name: 'Delete draft' }),

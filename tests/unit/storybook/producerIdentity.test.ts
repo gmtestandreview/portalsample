@@ -75,14 +75,15 @@ describe('validateProducerIdentity', () => {
   ])('rejects %s', (_name, overrides) => {
     expect.hasAssertions();
 
-    expect(
-      moduleUnderTest.validateProducerIdentity({
-        producer,
-        receipt: overrides.receipt ?? receipt,
-        expectedMcpURL: overrides.expectedMcpURL ?? 'http://localhost:6007/mcp',
-        expectedFreezeId: overrides.expectedFreezeId ?? 'freeze-1',
-        expectedChildEpoch: overrides.expectedChildEpoch ?? receipt.childEpoch,
-      }),
-    ).toMatchObject({ ok: false, errors: expect.any(Array) });
+    const result = moduleUnderTest.validateProducerIdentity({
+      producer,
+      receipt: overrides.receipt ?? receipt,
+      expectedMcpURL: overrides.expectedMcpURL ?? 'http://localhost:6007/mcp',
+      expectedFreezeId: overrides.expectedFreezeId ?? 'freeze-1',
+      expectedChildEpoch: overrides.expectedChildEpoch ?? receipt.childEpoch,
+    });
+
+    expect(result.ok).toBe(false);
+    expect(Array.isArray(result.errors)).toBe(true);
   });
 });

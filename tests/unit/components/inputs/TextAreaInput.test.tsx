@@ -23,6 +23,7 @@ describe('text area input behavior', () => {
     await act(async () => {
       fireEvent.paste(input);
       fireEvent.change(input, { target: { value: pastedValue } });
+      await Promise.resolve();
     });
 
     expect(input).toHaveValue(normalizedValue);
@@ -41,6 +42,7 @@ describe('text area input behavior', () => {
 
     await act(async () => {
       fireEvent.blur(input);
+      await Promise.resolve();
     });
 
     expect(input).toHaveValue('');

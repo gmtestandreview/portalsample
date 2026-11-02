@@ -117,9 +117,11 @@ const consoleErrorSpy = vi
   });
 
 const handleExpectedErrorBoundaryStoryError = (event: ErrorEvent) => {
-  if (
-    isExpectedErrorBoundaryStoryError(event.error?.message ?? event.message)
-  ) {
+  const eventError: unknown = event.error;
+  const message =
+    eventError instanceof Error ? eventError.message : event.message;
+
+  if (isExpectedErrorBoundaryStoryError(message)) {
     event.preventDefault();
   }
 };

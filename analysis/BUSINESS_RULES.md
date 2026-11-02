@@ -203,7 +203,7 @@ And    on acceptance, call AccountLoginClient.acceptTerms; setAgree() in Account
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
 `ClientApp/src/routes/preConditions/PreConditions.tsx:84-88`,
-`ClientApp/src/components/modals/BranchSelectorModal/index.tsx:126-162` **Plain
+`ClientApp/src/components/modals/BranchSelectorModal/index.tsx:154-162` **Plain
 English:** After accepting T&C, if the user has no default organisation
 selected, a blocking branch-selector modal is shown. The user cannot dismiss it
 without selecting an organisation. **Specification:**

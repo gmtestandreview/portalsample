@@ -8,9 +8,9 @@ const handleHashLinkClick = (
 ): void => {
   e.preventDefault();
 
-  const linkedElement = document.querySelector(
+  const linkedElement = document.querySelector<HTMLElement>(
     `[id="${id.replaceAll('#', '')}"]`,
-  ) as HTMLElement | null;
+  );
 
   // if the linked element is within an accordion, expand it and toggle the button
   const accordionHeader = linkedElement?.closest(

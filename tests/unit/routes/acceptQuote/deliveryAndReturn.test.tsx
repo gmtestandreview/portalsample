@@ -64,6 +64,11 @@ vi.mock(
       AccountsClient: class {
         setAuthToken = vi.fn<(token: string) => void>();
       },
+      ReturnAddressTypeValues: {
+        BusinessAddress: 'BusinessAddress',
+        PostalAddress: 'PostalAddress',
+        Other: 'Other',
+      },
       Title: {
         Mr: 'Mr',
         Mrs: 'Mrs',

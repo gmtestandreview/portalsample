@@ -1,6 +1,12 @@
 import { useIsAuthenticated } from '@azure/msal-react';
 import { Navigate, useLocation } from 'react-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import {
   useAccountState,
   useAccountDispatch,
@@ -24,7 +30,7 @@ import type { ModalState } from '../../components/modals/ModalContext';
 import { BranchSelectionModalMode } from '../../components/modals/BranchSelectorModal/enums';
 
 export interface PreConditionsProps {
-  children: any;
+  children: ReactNode;
   displayHeaderAndFooter?: boolean;
 }
 

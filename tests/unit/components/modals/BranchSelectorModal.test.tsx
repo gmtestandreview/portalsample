@@ -407,6 +407,7 @@ describe('branch selector modal', () => {
 
     await act(async () => {
       resolveLoad(mockBranches);
+      await Promise.resolve();
     });
     await Promise.resolve();
 
@@ -430,6 +431,7 @@ describe('branch selector modal', () => {
 
     await act(async () => {
       rejectLoad(new Error('stale error'));
+      await Promise.resolve();
     });
     await Promise.resolve();
 

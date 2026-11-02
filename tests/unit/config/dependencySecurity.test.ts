@@ -16,21 +16,126 @@ type RootPackage = {
   overrides?: Record<string, string | Record<string, string>>;
 };
 
-const lock = JSON.parse(
-  readFileSync('package-lock.json', 'utf8'),
-) as PackageLock;
-const rootPackage = JSON.parse(
-  readFileSync('package.json', 'utf8'),
-) as RootPackage;
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const parseJson = (text: string): unknown => JSON.parse(text);
+
+const parseStringRecord = (
+  value: unknown,
+  fieldName: string,
+): Record<string, string> => {
+  if (!isRecord(value)) {
+    throw new Error(`${fieldName} must be an object`);
+  }
+
+  const entries: Array<[string, string]> = [];
+  for (const [key, entry] of Object.entries(value)) {
+    if (typeof entry !== 'string') {
+      throw new Error(`${fieldName}.${key} must be a string`);
+    }
+    entries.push([key, entry]);
+  }
+  return Object.fromEntries(entries);
+};
+
+const parsePackageLock = (value: unknown): PackageLock => {
+  if (
+    !isRecord(value) ||
+    typeof value['lockfileVersion'] !== 'number' ||
+    !isRecord(value['packages'])
+  ) {
+    throw new Error('package-lock.json has an unexpected shape');
+  }
+
+  const packageEntries: Array<[string, LockPackage & { deprecated?: string }]> =
+    [];
+  for (const [packagePath, metadata] of Object.entries(value['packages'])) {
+    if (!isRecord(metadata)) {
+      throw new Error(`package-lock.json entry ${packagePath} is invalid`);
+    }
+
+    const packageMetadata: LockPackage & { deprecated?: string } = {};
+    if (metadata['version'] !== undefined) {
+      if (typeof metadata['version'] !== 'string') {
+        throw new Error(
+          `package-lock.json entry ${packagePath} has an invalid version`,
+        );
+      }
+      packageMetadata.version = metadata['version'];
+    }
+    if (metadata['deprecated'] !== undefined) {
+      if (typeof metadata['deprecated'] !== 'string') {
+        throw new Error(
+          `package-lock.json entry ${packagePath} has an invalid deprecation`,
+        );
+      }
+      packageMetadata.deprecated = metadata['deprecated'];
+    }
+    packageEntries.push([packagePath, packageMetadata]);
+  }
+
+  return {
+    lockfileVersion: value['lockfileVersion'],
+    packages: Object.fromEntries(packageEntries),
+  };
+};
+
+const parseRootPackage = (value: unknown): RootPackage => {
+  if (!isRecord(value)) {
+    throw new Error('package.json has an unexpected shape');
+  }
+
+  const overrides = value['overrides'];
+  const parsedOverrides: RootPackage['overrides'] =
+    overrides === undefined
+      ? undefined
+      : (() => {
+          if (!isRecord(overrides)) {
+            throw new Error('package.json overrides must be an object');
+          }
+          const entries: Array<[string, string | Record<string, string>]> = [];
+          for (const [key, entry] of Object.entries(overrides)) {
+            entries.push([
+              key,
+              typeof entry === 'string'
+                ? entry
+                : parseStringRecord(entry, `overrides.${key}`),
+            ]);
+          }
+          return Object.fromEntries(entries);
+        })();
+
+  const result: RootPackage = {};
+  const devDependencies = value['devDependencies'];
+  if (devDependencies !== undefined) {
+    result.devDependencies = parseStringRecord(
+      devDependencies,
+      'devDependencies',
+    );
+  }
+  if (parsedOverrides !== undefined) {
+    result.overrides = parsedOverrides;
+  }
+  return result;
+};
+
+const lock = parsePackageLock(
+  parseJson(readFileSync('package-lock.json', 'utf8')),
+);
+const rootPackage = parseRootPackage(
+  parseJson(readFileSync('package.json', 'utf8')),
+);
 
 const recordValue = <Value>(
   record: Record<string, Value> | undefined,
   key: string,
-): Value | undefined =>
-  (
-    Object.entries(record ?? {}).find(([entryKey]) => entryKey === key) as
-      [string, Value] | undefined
-  )?.[1];
+): Value | undefined => {
+  const entry = Object.entries(record ?? {}).find(
+    ([entryKey]) => entryKey === key,
+  );
+  return entry?.[1];
+};
 
 const installedVersions = (packageName: string): string[] =>
   Object.entries(lock.packages)

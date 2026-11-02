@@ -68,9 +68,10 @@ const meta = preview.meta({
 });
 
 const confirmSave = async (
-  canvas: ReturnType<typeof within>,
+  canvasElement: HTMLElement,
   userEvent: { click: (element: Element) => Promise<void> },
 ) => {
+  const canvas = within(canvasElement);
   await userEvent.click(
     await canvas.findByRole('button', { name: SAVE_BUTTON_NAME }),
   );
@@ -103,7 +104,8 @@ export const ConfirmationCancelThenConfirmSaves = meta.story({
   beforeEach({ msw }) {
     msw.use(...contactHandlers(204));
   },
-  play: async ({ canvas, userEvent }) => {
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
     await canvas.findByDisplayValue('Jordan');
     await userEvent.click(
       await canvas.findByRole('button', { name: SAVE_BUTTON_NAME }),
@@ -124,7 +126,7 @@ export const ConfirmationCancelThenConfirmSaves = meta.story({
 
     await expect(state.observed.savedBodies).toHaveLength(0);
 
-    await confirmSave(canvas, userEvent);
+    await confirmSave(canvasElement, userEvent);
 
     await expect(
       await canvas.findByRole('heading', { name: 'Home destination' }),
@@ -142,9 +144,10 @@ export const SaveFailureStillCompletes = meta.story({
   beforeEach({ msw }) {
     msw.use(...contactHandlers(500));
   },
-  play: async ({ canvas, userEvent }) => {
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
     await canvas.findByDisplayValue('Jordan');
-    await confirmSave(canvas, userEvent);
+    await confirmSave(canvasElement, userEvent);
 
     await expect(
       await canvas.findByRole('heading', { name: 'Home destination' }),

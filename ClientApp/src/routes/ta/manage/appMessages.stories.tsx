@@ -63,7 +63,7 @@ export const MessagesTab = meta.story({
         });
         const anchor = globalThis.getSelection()?.anchorNode ?? null;
 
-        expect(anchor !== null && editor.contains(anchor)).toBe(true);
+        await expect(anchor !== null && editor.contains(anchor)).toBe(true);
       },
       { timeout: 5000 },
     );

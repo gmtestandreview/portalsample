@@ -4,7 +4,7 @@ import { failureKey } from '../support/mock-failure';
 
 Given(
   'saving the RFQ instrument step will fail with status {int}',
-  async ({ scenarioState }, status: number) => {
+  ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey(
         'PUT',
@@ -17,7 +17,7 @@ Given(
 
 Given(
   'saving the organisation will fail with status {int}',
-  async ({ scenarioState }, status: number) => {
+  ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey('PUT', '/api/forms/accounts/create-account/complete'),
       {
@@ -54,7 +54,7 @@ When('the user cancels leaving the form', async ({ page }) => {
 
 Given(
   'saving the quote report recipient step will fail with status {int}',
-  async ({ scenarioState }, status: number) => {
+  ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey(
         'PUT',
@@ -67,7 +67,7 @@ Given(
 
 Given(
   'saving the type-approval application details step will fail with status {int}',
-  async ({ scenarioState }, status: number) => {
+  ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey(
         'PUT',

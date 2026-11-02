@@ -6,7 +6,7 @@ import { readTextFile, statPath } from '../../helpers/safeTestFilesystem';
 const repositoryRoot = path.resolve(__dirname, '../../..');
 const publicDirectory = path.join(repositoryRoot, 'ClientApp/public');
 
-const getPublicAsset = async (document: Document, selector: string) => {
+const getPublicAsset = (document: Document, selector: string): string => {
   const element = document.querySelector<HTMLLinkElement | HTMLMetaElement>(
     selector,
   );
@@ -23,7 +23,11 @@ const getPublicAsset = async (document: Document, selector: string) => {
 
   expect(publicUrl).toMatch(/^\/[A-Za-z0-9.-]+$/);
 
-  const assetPath = path.join(publicDirectory, publicUrl!.slice(1));
+  if (publicUrl === null || publicUrl === undefined) {
+    throw new Error(`Expected a URL for ${selector}`);
+  }
+
+  const assetPath = path.join(publicDirectory, publicUrl.slice(1));
   const asset = statPath(assetPath, publicDirectory);
 
   expect(asset.isFile()).toBe(true);
@@ -41,17 +45,15 @@ describe('application shell identity assets', () => {
     );
     const document = new DOMParser().parseFromString(html, 'text/html');
 
-    await expect(getPublicAsset(document, 'link[rel="icon"]')).resolves.toBe(
-      '/favicon.ico',
+    expect(getPublicAsset(document, 'link[rel="icon"]')).toBe('/favicon.ico');
+    expect(getPublicAsset(document, 'meta[property="og:image"]')).toBe(
+      '/NMI-tile.png',
     );
-    await expect(
-      getPublicAsset(document, 'meta[property="og:image"]'),
-    ).resolves.toBe('/NMI-tile.png');
-    await expect(
-      getPublicAsset(document, 'link[rel="apple-touch-icon"]'),
-    ).resolves.toBe('/NMI-tile.png');
-    await expect(
+    expect(getPublicAsset(document, 'link[rel="apple-touch-icon"]')).toBe(
+      '/NMI-tile.png',
+    );
+    expect(
       getPublicAsset(document, 'meta[name="msapplication-TileImage"]'),
-    ).resolves.toBe('/NMI-tile.png');
+    ).toBe('/NMI-tile.png');
   });
 });

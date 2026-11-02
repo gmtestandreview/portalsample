@@ -277,6 +277,7 @@ describe('application for type approval', () => {
 
       await act(async () => {
         releaseStatuses(statuses);
+        await Promise.resolve();
       });
 
       await waitFor(() =>
@@ -643,6 +644,7 @@ describe('application for type approval', () => {
       unmount();
       await act(async () => {
         failPoll(new Error('aborted'));
+        await Promise.resolve();
       });
 
       const callsAfterUnmount =
@@ -732,8 +734,8 @@ describe('application for type approval', () => {
 
       expect(clients.progress.methods.cancelFile).not.toHaveBeenCalled();
       expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          account: expect.objectContaining({
+        expect.objectContaining<Record<string, unknown>>({
+          account: expect.objectContaining<Record<string, unknown>>({
             homeAccountId: 'test-home-account-id',
           }),
           scopes: ['api://ta/.default'],

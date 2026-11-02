@@ -77,8 +77,9 @@ const ACCEPT_MESSAGE =
   'You must accept our terms before accepting this quotation';
 const DISPUTE_LABEL = /Please provide details of the associated dispute/;
 
-const submitted = (onSubmit: ReturnType<typeof vi.fn>) =>
-  defined(onSubmit.mock.calls[0], 'submit call')[0];
+const submitted = (
+  onSubmit: ReturnType<typeof vi.fn<(values: SummaryAndAcceptStep) => void>>,
+): SummaryAndAcceptStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
 const probe = () =>
   JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
@@ -100,7 +101,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
     expect.hasAssertions();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(<Harness onSubmit={onSubmit} />);
 
     await user.click(screen.getByRole('radio', { name: 'Yes' }));
@@ -124,7 +125,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
     expect.hasAssertions();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(
       <Harness
         values={{
@@ -180,15 +181,10 @@ describe(SummaryAndAcceptFormikBridge, () => {
     await expect(
       screen.findByText(ACCEPT_MESSAGE),
     ).resolves.toBeInTheDocument();
-    expect({
-      disputeMessage: screen.getByText(
-        'Associated dispute is a required field',
-      ),
-      submitCalls: onSubmit.mock.calls,
-    }).toMatchObject({
-      disputeMessage: expect.any(HTMLElement),
-      submitCalls: [],
-    });
+    expect(
+      screen.getByText('Associated dispute is a required field'),
+    ).toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInvalid();
   });
 
@@ -208,7 +204,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
     expect.hasAssertions();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(
       <Harness
         values={{
@@ -232,7 +228,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
     expect.hasAssertions();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: SummaryAndAcceptStep) => void>();
     render(
       <Harness
         values={{

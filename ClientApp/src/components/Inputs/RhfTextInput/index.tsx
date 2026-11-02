@@ -39,9 +39,11 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
 
+  const fieldValue = typeof field.value === 'string' ? field.value : '';
+
   if (isSummary) {
     return (
-      <SummaryDisplay label={label} value={field.value} as='p' id={controlId} />
+      <SummaryDisplay label={label} value={fieldValue} as='p' id={controlId} />
     );
   }
 
@@ -88,7 +90,7 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
           autoComplete,
           placeholder,
         })}
-        value={field.value ?? ''}
+        value={fieldValue}
         onBlur={handleBlur}
         onChange={(event) => {
           field.onChange(event.target.value);

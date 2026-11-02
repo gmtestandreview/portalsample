@@ -196,7 +196,9 @@ const RhfAttachmentItem = ({
             titleText='Confirm deletion'
             bodyText='Are you sure you want to remove this file?'
             onModalNo={closeModal}
-            onModalYes={() => onRemoveItem?.(attachment)}
+            onModalYes={() => {
+              void onRemoveItem?.(attachment);
+            }}
             noButtonTitle='Cancel'
             yesButtonTitle='Yes, delete'
           />

@@ -121,8 +121,9 @@ function Harness({
   );
 }
 
-const submitted = (onSubmit: ReturnType<typeof vi.fn>) =>
-  defined(onSubmit.mock.calls[0], 'submit call')[0];
+const submitted = (
+  onSubmit: ReturnType<typeof vi.fn<(values: DeliveryAndReturnStep) => void>>,
+): DeliveryAndReturnStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
 const resetDeliveryAndReturnMocks = () => {
   vi.clearAllMocks();
@@ -138,7 +139,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
@@ -173,7 +174,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{
@@ -226,7 +227,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
       ],
     });
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
@@ -261,7 +262,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
@@ -326,7 +327,10 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await screen.findByText(/is required/i);
 
-    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '');
+    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
+      address?: unknown;
+      dirty: boolean;
+    };
 
     expect(probe.dirty).toBe(false);
     expect(probe.address).toBeUndefined();
@@ -338,7 +342,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     render(
       <Harness
         values={{

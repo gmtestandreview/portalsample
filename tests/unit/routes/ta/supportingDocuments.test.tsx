@@ -232,6 +232,7 @@ const setFormikErrors = async (errors: Record<string, unknown>) => {
     // so exercising those arms means handing it shapes the type does not admit. The cast is
     // confined to the test harness; it is not asserting anything about production values.
     formik?.setErrors(errors as FormikErrors<Record<string, unknown>>);
+    await Promise.resolve();
   });
 };
 
@@ -402,6 +403,7 @@ describe('supporting documents', () => {
 
       await act(async () => {
         attachmentControl.props.setErrors([ValidationMessages.RequiredTag]);
+        await Promise.resolve();
       });
 
       expect(document.querySelector('#form-error-summary-custom')).toBeNull();
@@ -547,8 +549,8 @@ describe('supporting documents', () => {
       });
 
       expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          account: expect.objectContaining({
+        expect.objectContaining<Record<string, unknown>>({
+          account: expect.objectContaining<Record<string, unknown>>({
             homeAccountId: 'test-home-account-id',
           }),
           scopes: ['api://ta/.default'],
@@ -661,7 +663,7 @@ describe('supporting documents', () => {
 
       await waitFor(() =>
         expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
-          expect.objectContaining({
+          expect.objectContaining<Record<string, unknown>>({
             message: expect.stringContaining('Client Org'),
             severity: 'Error',
           }),

@@ -51,16 +51,17 @@ describe('storybook client directives', () => {
       hasClientHeader: chunk.code.startsWith('"use client";'),
       exports: chunk.exports,
       hasAnswer: chunk.code.includes('42'),
-      sourceContent: chunk.map?.sourcesContent,
       mappingsType: typeof chunk.map?.mappings,
     }).toStrictEqual({
       warnings: [],
       hasClientHeader: true,
       exports: ['answer'],
       hasAnswer: true,
-      sourceContent: expect.arrayContaining([source]),
       mappingsType: 'string',
     });
+    expect(chunk.map?.sourcesContent).toStrictEqual(
+      expect.arrayContaining([source]),
+    );
   });
 
   it('handles TypeScript and JSX before Rolldown internal transforms', async () => {

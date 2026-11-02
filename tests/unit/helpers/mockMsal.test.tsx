@@ -171,7 +171,7 @@ describe('shared MSAL harness', () => {
     );
   });
 
-  it('signs out so token-guarded effects never run', async () => {
+  it('signs out so token-guarded effects never run', () => {
     expect.hasAssertions();
 
     resetMsalMock();

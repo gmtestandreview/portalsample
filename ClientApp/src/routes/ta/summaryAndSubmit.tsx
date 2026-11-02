@@ -16,15 +16,23 @@ import useBodyClass from '../../components/Utilities/useBodyClass';
 import Checkbox from '../../components/Inputs/Checkbox';
 import InTextLink from '../../components/InTextLink';
 
+type TaFormikStatus = {
+  hidden?: TaSummarySectionProps['hidden'];
+};
+
+const isTaFormikStatus = (status: unknown): status is TaFormikStatus =>
+  typeof status === 'object' && status !== null && 'hidden' in status;
+
 const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted } = props;
-  const { values, status } =
-    useFormikContext<TaSummarySectionProps['values']>();
+  const formikContext = useFormikContext<TaSummarySectionProps['values']>();
+  const { values } = formikContext;
+  const status: unknown = formikContext.status as unknown;
   // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
-  const hidden: TaSummarySectionProps['hidden'] =
-    (status as { hidden?: TaSummarySectionProps['hidden'] } | undefined)
-      ?.hidden ?? {};
+  const hidden: TaSummarySectionProps['hidden'] = isTaFormikStatus(status)
+    ? (status.hidden ?? {})
+    : {};
 
   useBodyClass('summary');
   return (
@@ -146,8 +154,8 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
               replace
               className='btn btn-tertiary'
             >
-              <i className='icon-back me-1' aria-hidden='true' />
-              Back to dashboard
+              <i className='icon-back me-1' aria-hidden='true' /> Back to
+              dashboard
             </Link>
           </div>
         </Row>

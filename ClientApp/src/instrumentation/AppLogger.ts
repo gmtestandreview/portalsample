@@ -1,33 +1,32 @@
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 import { getAppInsights } from './AppInsightsService';
 
+type AppLoggerProperties = object | null;
+
 class AppLogger {
-  static info(message: string, properties?: any) {
+  static info(message: string, properties?: AppLoggerProperties) {
     this.trace(message, SeverityLevel.Information, properties);
   }
 
-  static warning(message: string, properties?: any) {
+  static warning(message: string, properties?: AppLoggerProperties) {
     this.trace(message, SeverityLevel.Warning, properties);
   }
 
-  static verbose(message: string, properties?: any) {
+  static verbose(message: string, properties?: AppLoggerProperties) {
     this.trace(message, SeverityLevel.Verbose, properties);
   }
 
-  static critical(message: string, properties?: any) {
+  static critical(message: string, properties?: AppLoggerProperties) {
     this.trace(message, SeverityLevel.Critical, properties);
   }
 
   static trace(
     message: string,
     severityLevel: SeverityLevel,
-    properties?: any,
+    properties?: AppLoggerProperties,
   ) {
-    const obj = {
-      message,
-      severityLevel,
-      properties,
-    };
+    const obj = { message, severityLevel };
+    Object.assign(obj, { properties });
 
     const insights = getAppInsights();
     if (insights) {
@@ -35,13 +34,17 @@ class AppLogger {
     }
   }
 
-  static error(message: string, error: Error, properties?: any) {
+  static error(
+    message: string,
+    error: Error,
+    properties?: AppLoggerProperties,
+  ) {
     const obj = {
       message,
       severityLevel: SeverityLevel.Error,
       error,
-      properties,
     };
+    Object.assign(obj, { properties });
 
     const insights = getAppInsights();
     if (insights) {
@@ -49,11 +52,9 @@ class AppLogger {
     }
   }
 
-  static trackEvent(name: string, properties?: any) {
-    const obj = {
-      name,
-      properties,
-    };
+  static trackEvent(name: string, properties?: AppLoggerProperties) {
+    const obj = { name };
+    Object.assign(obj, { properties });
 
     const insights = getAppInsights();
     if (insights) {

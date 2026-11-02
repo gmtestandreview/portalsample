@@ -2,7 +2,11 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  InvoiceSentToValues,
+  Title,
+} from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   PaymentDetailsStep,
@@ -93,14 +97,14 @@ const saveStep =
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) => {
     if (
-      errorCode === HttpStatusCode.PreconditionFailed &&
+      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
       errorType === ErrorType.Load
     ) {
       return `/accept-quote/${id}/view-summary`;
     }
 
     if (
-      errorCode === HttpStatusCode.NotFound &&
+      errorCode === Number(HttpStatusCode.NotFound) &&
       errorType === ErrorType.Update
     ) {
       setDashboardNotification({
@@ -128,9 +132,10 @@ const paymentDetailsProps = (
   location: '/payment-details',
   title: 'Payment details',
   hidingFields: {
-    contactHide: (x: PaymentDetailsStep) => x.invoiceSentTo === 'SamePerson',
+    contactHide: (x: PaymentDetailsStep) =>
+      x.invoiceSentTo === InvoiceSentToValues.SamePerson,
     contact: {
-      titleOther: (x: PaymentDetailsStep) => x.contact?.title !== 'Other',
+      titleOther: (x: PaymentDetailsStep) => x.contact?.title !== Title.Other,
     },
   },
   validateHard: paymentDetailsSubmitValidation,

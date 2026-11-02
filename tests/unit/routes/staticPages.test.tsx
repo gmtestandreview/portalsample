@@ -163,7 +163,7 @@ describe('static route pages', () => {
         .getAttribute('href'),
     }).toStrictEqual({
       heading: 'Frequently Asked Questions (FAQs)',
-      navigation: expect.any(String),
+      navigation: expect.any(String) as unknown,
       portalBenefitsHref: '#faqs-01',
       backHref: '/help-guide',
     });
@@ -185,8 +185,8 @@ describe('static route pages', () => {
     }).toStrictEqual({
       heading: expect.stringMatching(
         /How to set up access to the .*NMI Services portal/i,
-      ),
-      navigation: expect.any(String),
+      ) as unknown,
+      navigation: expect.any(String) as unknown,
       faqsHref: '/help-guide/faqs/',
     });
   });
@@ -210,7 +210,7 @@ describe('static route pages', () => {
       bodyClass: document.body.classList.contains('services-we-offer'),
     }).toStrictEqual({
       heading: 'Services we offer',
-      group: expect.any(String),
+      group: expect.any(String) as unknown,
       title: 'Services we offer | NMI Services portal',
       bodyClass: true,
     });

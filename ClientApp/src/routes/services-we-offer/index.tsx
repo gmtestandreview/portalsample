@@ -431,7 +431,9 @@ const ServicesWeOffer = () => {
                 </Button>
                 <PrimaryButton
                   data-testid='save-button'
-                  onClick={() => updateUserProfileServicesOffered()}
+                  onClick={() => {
+                    void updateUserProfileServicesOffered();
+                  }}
                   className='ms-md-auto'
                 >
                   Save and continue

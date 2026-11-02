@@ -100,7 +100,9 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
       text={text}
       fileSize={fileSize as string}
       isLoaded={pdfSizeLoaded}
-      getPdf={viewOfferedQuotePdf}
+      getPdf={() => {
+        void viewOfferedQuotePdf();
+      }}
       gaLabel='Quote'
     />
   );

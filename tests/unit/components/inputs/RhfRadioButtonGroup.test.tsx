@@ -45,7 +45,11 @@ const Submittable = ({
   const methods = useForm<Values>({ defaultValues: { status: '' } });
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(() => undefined)}>
+      <form
+        onSubmit={(event) => {
+          void methods.handleSubmit(() => undefined)(event);
+        }}
+      >
         <RhfRadioButtonGroup
           name='status'
           id='q-status'
@@ -345,7 +349,7 @@ describe('rhf radio button group behavior', () => {
       case: 'help only',
       inlineHelp: 'Pick one',
       required: false,
-      expectedValidation: null,
+      expectsValidation: false,
       describedByBefore: 'help-q-status',
       describedByAfter: 'help-q-status',
       invalidAfter: null,
@@ -354,7 +358,7 @@ describe('rhf radio button group behavior', () => {
       case: 'error only',
       inlineHelp: undefined,
       required: true,
-      expectedValidation: expect.anything(),
+      expectsValidation: true,
       describedByBefore: null,
       describedByAfter: 'q-status-validation-msg',
       invalidAfter: 'true',
@@ -363,7 +367,7 @@ describe('rhf radio button group behavior', () => {
       case: 'help and error',
       inlineHelp: 'Pick one',
       required: true,
-      expectedValidation: expect.anything(),
+      expectsValidation: true,
       describedByBefore: 'help-q-status',
       describedByAfter: 'help-q-status q-status-validation-msg',
       invalidAfter: 'true',
@@ -373,7 +377,7 @@ describe('rhf radio button group behavior', () => {
     async ({
       inlineHelp,
       required,
-      expectedValidation,
+      expectsValidation,
       describedByBefore,
       describedByAfter,
       invalidAfter,
@@ -391,7 +395,7 @@ describe('rhf radio button group behavior', () => {
       await waitFor(() => {
         const validationMessage = screen.queryByText('Choose a status');
 
-        expect(validationMessage).toStrictEqual(expectedValidation);
+        expect(validationMessage !== null).toBe(expectsValidation);
       });
 
       expect(group.getAttribute('aria-describedby')).toBe(describedByAfter);

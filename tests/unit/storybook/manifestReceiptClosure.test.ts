@@ -96,20 +96,19 @@ describe('manifest receipt closure', () => {
 
   it('rejects a closure receipt that omits the manifest story ID', () => {
     expect.hasAssertions();
-    expect(
-      moduleUnderTest.validateClosure({
-        manifest,
-        fullIndex,
-        docsIndex,
-        receipts: [{ ...receipt, requestedStoryIds: [], executedStoryIds: [] }],
-        freeze,
-        producer,
-      }),
-    ).toMatchObject({
-      ok: false,
-      errors: expect.arrayContaining([
-        expect.objectContaining({ code: 'EXECUTION_INCOMPLETE' }),
-      ]),
+
+    const result = moduleUnderTest.validateClosure({
+      manifest,
+      fullIndex,
+      docsIndex,
+      receipts: [{ ...receipt, requestedStoryIds: [], executedStoryIds: [] }],
+      freeze,
+      producer,
     });
+
+    expect(result.ok).toBe(false);
+    expect(
+      result.errors.some((error) => error.code === 'EXECUTION_INCOMPLETE'),
+    ).toBe(true);
   });
 });

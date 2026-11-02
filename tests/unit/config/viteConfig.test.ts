@@ -58,8 +58,13 @@ interface ViteConfig {
 let config: ViteConfig;
 let configFn: (env: { command: string; mode: string }) => ViteConfig;
 const repositoryRoot = path.resolve(import.meta.dirname, '../../..');
-const readEnv = (key: string): string | undefined =>
-  Reflect.get(process.env, key) as string | undefined;
+const readEnv = (key: string): string | undefined => {
+  const value: unknown = Object.getOwnPropertyDescriptor(
+    process.env,
+    key,
+  )?.value;
+  return typeof value === 'string' ? value : undefined;
+};
 const writeEnv = (key: string, value: string): void => {
   Reflect.set(process.env, key, value);
 };

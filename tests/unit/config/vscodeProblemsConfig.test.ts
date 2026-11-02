@@ -117,11 +117,12 @@ describe('vS Code Problems configuration', () => {
       results: Array<{ where: string; cited: number | null }>;
     };
 
-    expect(report.results).toStrictEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ where: 'detail', cited: expect.any(Number) }),
-      ]),
-    );
+    expect(
+      report.results.some(
+        (result) =>
+          result.where === 'detail' && typeof result.cited === 'number',
+      ),
+    ).toBe(true);
   });
 
   it('defines VS Code tasks that feed diagnostics into Problems', () => {

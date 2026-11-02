@@ -12,7 +12,12 @@ function AccessibilityProbe() {
         Main content
       </main>
       <output aria-label='Route announcement'>{announcement}</output>
-      <button type='button' onClick={() => navigate('/next')}>
+      <button
+        type='button'
+        onClick={() => {
+          void navigate('/next');
+        }}
+      >
         Next route
       </button>
     </>

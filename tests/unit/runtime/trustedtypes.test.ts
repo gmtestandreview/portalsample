@@ -48,11 +48,13 @@ describe('trustedTypes', () => {
 
     TrustedTypes.createTrustedTypePolicy();
 
-    expect(createPolicy).toHaveBeenCalledWith('default', {
+    const expectedPolicy: Record<string, unknown> = {
       createScriptURL: expect.any(Function),
       createHTML: expect.any(Function),
       createScript: expect.any(Function),
-    });
+    };
+
+    expect(createPolicy).toHaveBeenCalledWith('default', expectedPolicy);
 
     const [, policy] = defined(createPolicy.mock.calls[0], 'createPolicy call');
 

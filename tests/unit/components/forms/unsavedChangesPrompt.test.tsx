@@ -107,7 +107,7 @@ describe('unsavedFormPrompt (Formik)', () => {
 
     expect(screen.getByTestId('errors')).toHaveTextContent('Required');
 
-    await act(async () => {
+    act(() => {
       guardProps.last?.onProceed?.();
     });
 

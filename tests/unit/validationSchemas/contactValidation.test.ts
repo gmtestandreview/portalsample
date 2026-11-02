@@ -14,6 +14,11 @@ import {
   titleSchema,
 } from '../../../ClientApp/src/validationSchemas/contactValidation';
 
+const arrayContainingStrings = (values: string[]): unknown => {
+  const matcher: unknown = expect.arrayContaining<string>(values);
+  return matcher;
+};
+
 const validContact = {
   title: 'Dr',
   titleOther: 'Mx',
@@ -40,7 +45,7 @@ describe('contact validation field schemas', () => {
     await expect(
       titleOtherSchema('Other title').validate('A@', { abortEarly: false }),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Other title has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen',
         'Please enter a valid other title',
       ]),
@@ -118,7 +123,7 @@ describe('contact validation field schemas', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Business phone is required',
         'Mobile phone is required',
       ]),
@@ -150,7 +155,7 @@ describe('contact object schemas', () => {
     await expect(
       contactSchema().validate({}, { abortEarly: false }),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Title other is required',
         'First name is required',
         'Last name is required',

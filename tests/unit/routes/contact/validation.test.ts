@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 import '../../../../ClientApp/src/validationSchemas/yupExtensions';
 import contactSubmitValidation from '../../../../ClientApp/src/routes/contact/validation';
 
+const arrayContainingStrings = (values: string[]): unknown => {
+  const matcher: unknown = expect.arrayContaining<string>(values);
+  return matcher;
+};
+
 const validContact = {
   title: '',
   titleOther: 'Mx',
@@ -26,7 +31,7 @@ describe('contact submit validation', () => {
     await expect(
       contactSubmitValidation.validate({ contact: {} }, { abortEarly: false }),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Title other is required',
         'First name is required',
         'Last name is required',
@@ -53,7 +58,7 @@ describe('contact submit validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'First name cannot be less than 2 characters',
         'Last name cannot be less than 2 characters',
         'Please enter a valid Business phone',
@@ -94,7 +99,7 @@ describe('contact submit validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Title other cannot be greater than 100 characters',
         'First name cannot be greater than 50 characters',
         'Last name cannot be greater than 99 characters',

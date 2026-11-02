@@ -221,7 +221,9 @@ const renderInstrumentReportsContent = (
             variant='secondary'
             data-testid={`RefId-${artefact.tmasTcReportName}-view-latest-ReportDto-button`}
             className='ms-md-auto mb-3'
-            onClick={() => navigate(`/report/${requestForQuoteId}`)}
+            onClick={() => {
+              void navigate(`/report/${requestForQuoteId}`);
+            }}
           >
             View latest report
           </Button>

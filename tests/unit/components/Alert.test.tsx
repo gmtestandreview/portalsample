@@ -9,7 +9,7 @@ describe('alert variants', () => {
     const { getByRole } = render(
       // Spread after the hardcoded ariaLive='polite' inside AlertSuccess, so
       // an explicit undefined here overrides it and triggers the || 'polite' fallback.
-      <AlertSuccess ariaLive={undefined as any}>Fallback</AlertSuccess>,
+      <AlertSuccess ariaLive={undefined}>Fallback</AlertSuccess>,
     );
 
     expect(getByRole('alert')).toHaveAttribute('aria-live', 'polite');

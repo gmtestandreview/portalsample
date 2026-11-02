@@ -2,7 +2,11 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  ReportAddressTypeValues,
+  Title,
+} from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   ReportRecipientStep,
@@ -97,14 +101,14 @@ const discardChanges = (id: string): DiscardProps => ({
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) => {
     if (
-      errorCode === HttpStatusCode.PreconditionFailed &&
+      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
       errorType === ErrorType.Load
     ) {
       return `/accept-quote/${id}/view-summary`;
     }
 
     if (
-      errorCode === HttpStatusCode.NotFound &&
+      errorCode === Number(HttpStatusCode.NotFound) &&
       errorType === ErrorType.Update
     ) {
       setDashboardNotification({
@@ -137,10 +141,10 @@ const reportRecipientProps = (
   title: 'Report recipient',
   hidingFields: {
     contact: {
-      titleOther: (x: ReportRecipientStep) => x.contact?.title !== 'Other',
+      titleOther: (x: ReportRecipientStep) => x.contact?.title !== Title.Other,
     },
     businessStreetAddress: (x: ReportRecipientStep) =>
-      x.reportAddressType !== 'Other',
+      x.reportAddressType !== ReportAddressTypeValues.Other,
   },
   validateHard: reportRecipientSubmitValidation,
   validateSoft: reportRecipientSaveValidation,

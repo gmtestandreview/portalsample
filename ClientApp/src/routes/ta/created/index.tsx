@@ -25,7 +25,7 @@ const RequestForPatternApprovalCreated = () => {
       DashboardTab.Requests,
       'set-tabop-after-save',
     );
-    navigate('/dashboard-ta');
+    void navigate('/dashboard-ta');
   }
   return (
     <>

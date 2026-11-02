@@ -432,7 +432,7 @@ describe('formatting helpers', () => {
     await expect(blob.text()).resolves.toBe('default slice');
   });
 
-  it('substitutes 0 when codePointAt returns undefined for a code unit', async () => {
+  it('substitutes 0 when codePointAt returns undefined for a code unit', () => {
     expect.hasAssertions();
 
     const spy = vi

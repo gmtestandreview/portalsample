@@ -136,7 +136,9 @@ const ApplicationDetails = () => {
         // which this effect's cleanup calls and which does invoke
         // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
         // eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
-        pollTimeoutRef.current = setTimeout(poll, POLL_MS);
+        pollTimeoutRef.current = setTimeout(() => {
+          void poll();
+        }, POLL_MS);
       }
     };
 

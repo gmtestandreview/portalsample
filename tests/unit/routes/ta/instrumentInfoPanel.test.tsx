@@ -187,10 +187,10 @@ describe(InstrumentInfoPanel, () => {
         .textContent,
       calls: mocks.getInfoPanelContent.mock.calls,
     }).toStrictEqual({
-      alert: expect.any(String),
+      alert: expect.any(String) as unknown,
       guidance: expect.stringMatching(
         /select an instrument category and type/i,
-      ),
+      ) as unknown,
       calls: [],
     });
 
@@ -208,10 +208,10 @@ describe(InstrumentInfoPanel, () => {
         .textContent,
       calls: mocks.getInfoPanelContent.mock.calls,
     }).toStrictEqual({
-      alert: expect.any(String),
+      alert: expect.any(String) as unknown,
       guidance: expect.stringMatching(
         /select an instrument category and type/i,
-      ),
+      ) as unknown,
       calls: [],
     });
   });

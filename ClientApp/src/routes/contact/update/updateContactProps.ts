@@ -6,6 +6,7 @@ import type {
   ContactFormStep,
   FormStepStatusDto,
 } from '../../../api/web-api-client';
+import { Title } from '../../../api/web-api-client';
 import type { DiscardProps } from '../../../components/forms/types';
 import type {
   ErrorType,
@@ -50,7 +51,7 @@ const updateContactProps = (
   title: 'My contact details',
   hidingFields: {
     contact: {
-      titleOther: (x: ContactFormStep) => x.contact?.title !== 'Other',
+      titleOther: (x: ContactFormStep) => x.contact?.title !== Title.Other,
     },
   },
   validateHard: contactSubmitValidation,

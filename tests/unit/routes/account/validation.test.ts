@@ -5,6 +5,11 @@ import branchSubmitValidation from '../../../../ClientApp/src/routes/account/add
 import organisationSubmitValidation from '../../../../ClientApp/src/routes/account/update/validation';
 import accountSubmitValidation from '../../../../ClientApp/src/routes/account/validation';
 
+const arrayContainingStrings = (values: string[]): unknown => {
+  const matcher: unknown = expect.arrayContaining<string>(values);
+  return matcher;
+};
+
 const validAddress = {
   isManuallyEntered: true,
   line1: '1 National Circuit',
@@ -56,7 +61,7 @@ describe('account submit validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Address line 1 is required',
         'Postcode is required',
         'Suburb is required',
@@ -81,7 +86,7 @@ describe('account submit validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Business or trading name cannot be less than 2 characters',
         'Branch or location name cannot be less than 2 characters',
         'Business website address is not a valid website address',
@@ -125,7 +130,7 @@ describe('account submit validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Business or trading name cannot be greater than 160 characters',
         'Branch or location name cannot be greater than 160 characters',
         'Business website address cannot be greater than 100 characters',

@@ -61,6 +61,7 @@ const placeCaret = async (editor: Editor, offset = 0) => {
       anchor: { path: [0, 0], offset },
       focus: { path: [0, 0], offset },
     });
+    await Promise.resolve();
   });
 };
 
@@ -74,6 +75,7 @@ const placeCaret = async (editor: Editor, offset = 0) => {
 const applyEdit = async (change: () => void) => {
   await act(async () => {
     change();
+    await Promise.resolve();
   });
 };
 

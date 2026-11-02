@@ -313,7 +313,7 @@ describe('yup string extension branch coverage', () => {
   it('executes the yupExtensions barrel module explicitly', () => {
     expect.hasAssertions();
 
-    expect(Yup.string().maxLength).toBeTypeOf('function');
+    expect(Yup.string().maxLength.bind(Yup.string())).toBeTypeOf('function');
   });
 
   it('allows repeat registration without adding duplicate methods', () => {
@@ -321,7 +321,7 @@ describe('yup string extension branch coverage', () => {
 
     registerYupStringExtensions();
 
-    expect(Yup.string().maxLength).toBeTypeOf('function');
+    expect(Yup.string().maxLength.bind(Yup.string())).toBeTypeOf('function');
   });
 
   it('resets consecutive-letter tracking at non-letter characters', () => {

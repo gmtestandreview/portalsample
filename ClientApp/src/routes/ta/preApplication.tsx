@@ -136,9 +136,8 @@ const PreApplication = () => {
                         );
                       }}
                     >
-                      Download credit check application form
+                      Download credit check application form{' '}
                       <span className='visually-hidden'>
-                        {' '}
                         Opens in a new tab
                       </span>
                     </InTextLink>
@@ -158,14 +157,15 @@ const PreApplication = () => {
                 to='/dashboard-ta'
                 className='btn btn-tertiary me-md-auto order-2 order-md-0'
               >
-                <i className='icon-close me-1' aria-hidden='true' />
-                Cancel
+                <i className='icon-close me-1' aria-hidden='true' /> Cancel
               </Link>
               <Button
                 data-testid='start-application-button'
                 variant='primary'
                 className='ms-md-auto'
-                onClick={() => navigate('/ta/type-approval-create')}
+                onClick={() => {
+                  void navigate('/ta/type-approval-create');
+                }}
               >
                 Start application
               </Button>

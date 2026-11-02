@@ -222,11 +222,11 @@ describe('error boundary', () => {
         error: expectedError,
         exception: expectedError,
         severityLevel: SeverityLevel.Error,
-        properties: expect.objectContaining({
-          componentStack: expect.any(String),
-        }),
       }),
     );
+    expect(
+      trackException.mock.calls[0]?.[0]?.properties?.['componentStack'],
+    ).toStrictEqual(expect.any(String));
   });
 
   it('uses the server-error fallback when a thrown error has no status', () => {
@@ -271,18 +271,21 @@ describe('error boundary', () => {
     resetErrorBoundaryTest();
 
     const thrown = 'plain string failure';
+    const throwUnknown = (value: unknown): never => {
+      // The runtime value deliberately remains a string; the assertion only
+      // satisfies TypeScript for this non-Error throw fixture.
+      throw value as Error;
+    };
     const ThrowingChild = () => {
-      throw thrown;
+      return throwUnknown(thrown);
     };
     const trackException = vi.fn<TrackException>();
     const appInsights = {
       getAppInsights: () => ({ trackException }),
     };
 
-    // react-error-boundary v6 surfaces the raw thrown value (here a string),
-    // so the boundary must normalise it to an Error before reporting. React
-    // logs its own error for the uncaught throw; suppress it for this
-    // deliberate failure so the test only asserts the normalisation.
+    // React logs its own error for the deliberate failure; suppress it so the
+    // test only asserts the normalisation.
     const preventError = (event: ErrorEvent) => {
       event.preventDefault();
     };

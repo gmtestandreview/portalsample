@@ -2,7 +2,7 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { RequestForQuoteClient } from '../../api/web-api-client';
+import { RequestForQuoteClient, Title } from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   RequestForQuoteSummary,
@@ -100,7 +100,7 @@ const requestForQuoteSummaryProps = (
       principalContactHide: (_x: RequestForQuoteSummary) => false,
       contact: {
         titleOther: (x: RequestForQuoteSummary) =>
-          x.organisationAndContact?.contact?.title !== 'Other',
+          x.organisationAndContact?.contact?.title !== Title.Other,
       },
     },
   },

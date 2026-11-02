@@ -88,7 +88,7 @@ const CheckboxGroup = <T,>(
         {displayHorizontally ? (
           <Row>
             {options.map((option) => (
-              <Col key={`${option.value}`}>
+              <Col key={String(option.value)}>
                 <Checkbox
                   name={name}
                   onChange={onChange}
@@ -105,7 +105,7 @@ const CheckboxGroup = <T,>(
         ) : (
           options.map((option) => (
             <Checkbox
-              key={`${option.value}`}
+              key={String(option.value)}
               name={name}
               onChange={onChange}
               containerClassName='mb-0'

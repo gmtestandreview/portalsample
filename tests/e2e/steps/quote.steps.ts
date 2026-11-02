@@ -6,24 +6,21 @@ import { waitForAppReady } from './common.steps';
 
 Given(
   'quote {string} is available',
-  async ({ scenarioState }, referenceId: string) => {
+  ({ scenarioState }, referenceId: string) => {
     scenarioState.activeReferenceId = referenceId;
     scenarioState.requests.set(referenceId, 'Quote offer is available');
     scenarioState.quotes.set(referenceId, buildQuote(referenceId));
   },
 );
 
-Given(
-  'quote {string} is expired',
-  async ({ scenarioState }, referenceId: string) => {
-    scenarioState.activeReferenceId = referenceId;
-    scenarioState.requests.set(referenceId, 'Quote offer expired');
-    scenarioState.quotes.set(
-      referenceId,
-      buildQuote(referenceId, QuoteStatus.QuoteExpired),
-    );
-  },
-);
+Given('quote {string} is expired', ({ scenarioState }, referenceId: string) => {
+  scenarioState.activeReferenceId = referenceId;
+  scenarioState.requests.set(referenceId, 'Quote offer expired');
+  scenarioState.quotes.set(
+    referenceId,
+    buildQuote(referenceId, QuoteStatus.QuoteExpired),
+  );
+});
 
 Given(
   'the user is viewing quotation {string}',
@@ -224,14 +221,14 @@ Then('the accepted quote success page is displayed', async ({ page }) => {
 
 Then(
   'the quote acceptance step {string} has been saved',
-  async ({ scenarioState }, step: string) => {
+  ({ scenarioState }, step: string) => {
     expect(scenarioState.completedAcceptQuoteSteps.has(step)).toBe(true);
   },
 );
 
 Then(
   'the quote acceptance step {string} has not been saved',
-  async ({ scenarioState }, step: string) => {
+  ({ scenarioState }, step: string) => {
     expect(scenarioState.completedAcceptQuoteSteps.has(step)).toBe(false);
   },
 );

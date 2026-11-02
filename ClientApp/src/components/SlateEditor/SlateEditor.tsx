@@ -248,7 +248,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
             style={{ minHeight: '4rem' }}
             spellCheck
             renderLeaf={({ attributes, children, leaf }) => {
-              let rendered = children;
+              let rendered: React.ReactNode = <>{children}</>;
               if (leaf.bold) {
                 rendered = <strong>{rendered}</strong>;
               }

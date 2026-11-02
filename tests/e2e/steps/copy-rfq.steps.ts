@@ -4,7 +4,7 @@ import { waitForAppReady } from './common.steps';
 
 Given(
   'completed report {string} is available',
-  async ({ scenarioState }, referenceId: string) => {
+  ({ scenarioState }, referenceId: string) => {
     scenarioState.activeReferenceId = referenceId;
     scenarioState.requests.set(referenceId, 'Report is available');
   },

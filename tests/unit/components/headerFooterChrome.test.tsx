@@ -196,7 +196,7 @@ describe('header chrome', () => {
       measurement: screen.getByText('Measurement Pty Ltd').textContent,
     }).toStrictEqual({
       environment: 'Environment:TEST',
-      user: expect.stringContaining('Alex Citizen'),
+      user: expect.stringContaining('Alex Citizen') as unknown,
       precision: 'Precision Labs - Canberra',
       measurement: 'Measurement Pty Ltd',
     });
@@ -361,7 +361,7 @@ describe('footer chrome', () => {
       date: screen.getByText('9 July, 2024').textContent,
     }).toStrictEqual({
       heading: '1. General',
-      date: expect.stringContaining('9 July, 2024'),
+      date: expect.stringContaining('9 July, 2024') as unknown,
     });
 
     rerender(<Privacy />);

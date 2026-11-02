@@ -232,13 +232,12 @@ describe('closure evidence validation', () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(result.errors).toContainEqual(
-      expect.objectContaining({
-        code: 'EXECUTION_INCOMPLETE',
-        message: expect.stringContaining(
-          'executable story has no passing receipt',
-        ),
-      }),
-    );
+    expect(
+      result.errors.some(
+        (error) =>
+          error.code === 'EXECUTION_INCOMPLETE' &&
+          error.message.includes('executable story has no passing receipt'),
+      ),
+    ).toBe(true);
   });
 });

@@ -9,6 +9,13 @@ type ReactPluginFactory = (
   ...args: ConstructorParameters<typeof ReactPlugin>
 ) => InstanceType<typeof ReactPlugin>;
 
+const requireReactPlugin = (plugin: ReactPlugin | null): ReactPlugin => {
+  if (plugin === null) {
+    throw new Error('Expected the React telemetry plugin to be initialized');
+  }
+  return plugin;
+};
+
 describe('appInsightsService', () => {
   const resetAppInsightsTest = () => {
     vi.resetModules();
@@ -67,17 +74,28 @@ describe('appInsightsService', () => {
       reactPluginCtor.mock.calls.length,
       applicationInsightsCtor.mock.calls.length,
     ]).toStrictEqual([1, 1]);
-    expect(applicationInsightsCtor).toHaveBeenCalledWith({
-      config: expect.objectContaining({
-        connectionString: 'InstrumentationConnectionString=test-value',
-        enableAutoRouteTracking: true,
-        extensions: [expect.objectContaining({ plugin: 'react' })],
-      }),
+
+    const appInsightsOptions = applicationInsightsCtor.mock.calls[0]?.[0];
+    const reactPlugin = requireReactPlugin(module.ai.reactPlugin);
+
+    expect({
+      connectionString: appInsightsOptions?.config.connectionString,
+      enableAutoRouteTracking:
+        appInsightsOptions?.config.enableAutoRouteTracking,
+      hasReactExtension:
+        appInsightsOptions?.config.extensions?.includes(reactPlugin),
+    }).toStrictEqual({
+      connectionString: 'InstrumentationConnectionString=test-value',
+      enableAutoRouteTracking: true,
+      hasReactExtension: true,
     });
+
     expect(loadAppInsights).toHaveBeenCalledTimes(1);
-    expect(module.ai.reactPlugin).toStrictEqual(
+
+    expect(reactPlugin).toStrictEqual(
       expect.objectContaining({ plugin: 'react' }),
     );
+
     expect(module.getAppInsights()).toStrictEqual(
       expect.objectContaining({ loadAppInsights }),
     );

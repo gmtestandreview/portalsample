@@ -1,5 +1,5 @@
 'use client';
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef, type CSSProperties } from 'react';
 import {
   Meter as AriaMeter,
   type MeterProps as AriaMeterProps,
@@ -45,7 +45,7 @@ export function Meter({ label, ...props }: Readonly<MeterProps>) {
                 {
                   width: percentage + '%',
                   '--fill-color': getFillColor(percentage),
-                } as any
+                } as CSSProperties & { '--fill-color': string }
               }
             />
           </div>

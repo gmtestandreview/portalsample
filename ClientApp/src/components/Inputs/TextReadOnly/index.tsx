@@ -58,12 +58,13 @@ const TextReadOnly = ({
 }: Readonly<TextReadOnlyProps>) => {
   const [_field, _meta] = useField(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const fieldValue = typeof _field.value === 'string' ? _field.value : '';
 
   if (isSummary) {
     return (
       <SummaryDisplay
         label={label}
-        value={_field.value}
+        value={fieldValue}
         as={as}
         id={id || name}
         format={format}
@@ -103,7 +104,7 @@ const TextReadOnly = ({
         type={type || 'text'}
         name={name}
         readOnly
-        value={value || _field.value}
+        value={value || fieldValue}
       />
     </Form.Group>
   );

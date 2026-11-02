@@ -162,8 +162,9 @@ function StepHarness({
 const renderStep = (options: StepHarnessProps = {}) =>
   render(<StepHarness {...options} />);
 
-const submittedValues = (onSubmit: ReturnType<typeof vi.fn>) =>
-  defined(onSubmit.mock.calls[0], 'submit call')[0];
+const submittedValues = (
+  onSubmit: ReturnType<typeof vi.fn<(values: DeliveryAndReturnStep) => void>>,
+): DeliveryAndReturnStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
 const waitForLoad = () => screen.findByText(/1 Street Road/);
 
@@ -317,7 +318,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.SamePerson,
@@ -381,7 +382,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.SamePerson,
@@ -416,7 +417,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.DifferentPerson,
@@ -449,7 +450,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.DifferentPerson,
@@ -484,7 +485,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -510,7 +511,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -536,7 +537,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -560,7 +561,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
-    const onSubmit = vi.fn<(...args: unknown[]) => void>();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,

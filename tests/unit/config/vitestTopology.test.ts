@@ -8,8 +8,8 @@ vi.mock(
   import('@storybook/addon-vitest/vitest-plugin'),
   () =>
     ({
-      storybookTest: vi.fn<typeof StorybookVitestPlugin.storybookTest>(
-        async () => [],
+      storybookTest: vi.fn<typeof StorybookVitestPlugin.storybookTest>(() =>
+        Promise.resolve([]),
       ),
     }) satisfies __ExactMockModule<__TestMockModule56>,
 );

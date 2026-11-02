@@ -47,6 +47,12 @@ interface FormikHarnessProps<TValues extends FormikValues> {
   readonly children: React.ReactNode;
 }
 
+type AccountFormValues = {
+  account: {
+    type: string;
+  };
+};
+
 function FormikHarness<TValues extends FormikValues>({
   initialValues,
   initialStatus,
@@ -181,7 +187,10 @@ describe('form helper components', () => {
         initialValues={{ account: { type: 'business', abn: '123' } }}
         initialStatus={{
           hidden: {
-            account: { abn: ({ account }: any) => account.type !== 'business' },
+            account: {
+              abn: ({ account }: AccountFormValues) =>
+                account.type !== 'business',
+            },
           },
         }}
       >
@@ -200,7 +209,10 @@ describe('form helper components', () => {
         initialValues={{ account: { type: 'individual', abn: '123' } }}
         initialStatus={{
           hidden: {
-            account: { abn: ({ account }: any) => account.type !== 'business' },
+            account: {
+              abn: ({ account }: AccountFormValues) =>
+                account.type !== 'business',
+            },
           },
         }}
       >

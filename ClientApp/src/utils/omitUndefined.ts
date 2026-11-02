@@ -3,7 +3,7 @@ type WithoutUndefined<T extends object> = {
 };
 
 const isPlainObject = (value: object): boolean => {
-  const prototype = Object.getPrototypeOf(value);
+  const prototype = Reflect.getPrototypeOf(value);
   return prototype === Object.prototype || prototype === null;
 };
 

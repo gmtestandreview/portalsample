@@ -82,7 +82,7 @@ const RadioButtonGroup = <T,>(
         {displayHorizontally ? (
           <Row>
             {options.map((option) => (
-              <Col key={`${option.value}`}>
+              <Col key={String(option.value)}>
                 <RadioButton
                   name={name}
                   {...omitUndefined({ onChange, subFormField })}
@@ -95,7 +95,7 @@ const RadioButtonGroup = <T,>(
         ) : (
           options.map((option) => (
             <RadioButton
-              key={`${option.value}`}
+              key={String(option.value)}
               name={name}
               {...omitUndefined({ onChange, subFormField })}
               {...option}

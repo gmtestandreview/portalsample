@@ -17,7 +17,7 @@ metadata:
   domain: cto-leadership
   updated: 2025-10-20
   python-tools: tech_debt_analyzer.py, team_scaling_calculator.py
-  frameworks: DORA-metrics, architecture-decision-records, engineering-metrics
+  frameworks: DORA-metrics, adr, engineering-metrics
   tech-stack: engineering-management, team-organization
 ---
 

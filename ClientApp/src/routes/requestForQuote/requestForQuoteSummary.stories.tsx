@@ -1,11 +1,14 @@
 import preview from '../../../../.storybook/preview';
-import { within, expect } from 'storybook/test';
+import { expect, type screen } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import RequestForQuoteSummary from './requestForQuoteSummary';
 
-const expectInstrumentSectionReady = async (
-  canvas: ReturnType<typeof within>,
-) => {
+type PlayCanvas = Pick<
+  typeof screen,
+  'findByText' | 'getByText' | 'getByTestId' | 'queryByText'
+>;
+
+const expectInstrumentSectionReady = async (canvas: PlayCanvas) => {
   await expect(await canvas.findByText('Request details')).toBeInTheDocument();
 };
 
@@ -38,9 +41,7 @@ const meta = preview.meta({
 });
 
 export const Editable = meta.story({
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+  play: async ({ canvas }) => {
     await expect(canvas.getByText('Organisation and Contact')).toBeVisible();
     await expect(canvas.getByText('Instrument and Request')).toBeVisible();
 
@@ -57,8 +58,7 @@ export const Submitted = meta.story({
   args: {
     isSubmitted: true,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async ({ canvas }) => {
     await expectInstrumentSectionReady(canvas);
 
     // Submitted view replaces guidance/edit with a back-to-dashboard link.

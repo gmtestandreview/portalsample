@@ -346,7 +346,7 @@ describe('payment details', () => {
       renderPaymentDetails();
 
       await waitFor(() => {
-        expect(AppLogger.error).toHaveBeenCalledWith(
+        expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
           'Failed to load Payment details',
           expect.any(Error),
           { Id: 'TEST-001' },

@@ -67,7 +67,8 @@ delete pre-existing or tracked files.
 | -------------------------------------------------------------------------- | ------------------------------------------------------- |
 | Designing an architecture for new work from requirements                   | **architecture-design** skill (after **brainstorming**) |
 | Assessing a design, RFC, proposal, or structural PR someone brings you     | **architecture-review** skill                           |
-| Recording or revisiting a hard-to-reverse decision                         | **adr** skill                                           |
+| Recording, superseding, or deprecating a hard-to-reverse decision          | **adr** skill                                           |
+| Onboarding to, reviewing, or setting up the ADR log (docs/adr/)            | **adr** skill                                           |
 | "Will it scale / handle Nx / survive the launch"                           | **scalability-review** skill                            |
 | Inherited/unfamiliar codebase, scaling milestone, or periodic health check | **architecture-audit** skill                            |
 | System design or tech-stack/pattern decision needing a specialist          | **architect** agent (routes to the skills above)        |

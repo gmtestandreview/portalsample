@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import AutoSuggestContainer from '@/components/Inputs/AutoSuggest/AutoSuggestContainer';
@@ -243,11 +249,9 @@ describe('residual input branches', () => {
     );
 
     const input = screen.getByRole('textbox', { name: 'Nickname' });
-    await act(async () => {
-      fireEvent.blur(input);
-    });
+    fireEvent.blur(input);
 
-    expect(input).toHaveValue('');
+    await waitFor(() => expect(input).toHaveValue(''));
   });
 
   it('keeps AutoSuggest keyboard movement inert while closed and uses fallback ids', async () => {

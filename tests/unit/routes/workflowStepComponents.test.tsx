@@ -267,6 +267,7 @@ describe('workflow step components', () => {
 
     await act(async () => {
       triggerInputChange('measurementCategory', 'no-measurement');
+      await Promise.resolve();
     });
 
     await waitFor(() =>
@@ -402,6 +403,7 @@ describe('workflow step components', () => {
     );
     await act(async () => {
       triggerInputChange('measurementCategory', 'measurement-1');
+      await Promise.resolve();
     });
 
     expect(mocks.setFieldValue).toHaveBeenCalledWith(
@@ -436,6 +438,7 @@ describe('workflow step components', () => {
     await act(async () => {
       triggerInputChange('measurementCategory', '');
       triggerInputChange('measurementCategory', null);
+      await Promise.resolve();
     });
 
     expect(mocks.setFieldValue).toHaveBeenCalledWith(

@@ -194,6 +194,6 @@ describe('common validation helpers', () => {
   it('exposes registered string extensions through the side-effect index', () => {
     expect.hasAssertions();
 
-    expect(yup.string().maxLength).toBeTypeOf('function');
+    expect(yup.string().maxLength.bind(yup.string())).toBeTypeOf('function');
   });
 });

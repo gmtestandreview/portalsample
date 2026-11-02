@@ -4,6 +4,21 @@ import {
   ApplicationType,
   CRMLookupTypes,
   FormStepStatus,
+  PatternApprovalRequiredValueOptions,
+  PatternApprovalRequiredValues,
+  State,
+  Title,
+  YesNo,
+} from '../../../ClientApp/src/api/web-api-client';
+import type {
+  AddressDetailsDto,
+  ApplicationAndInstrumentStep,
+  AttachmentDto,
+  AuthorisedAgent,
+  ContactStep,
+  PatternApprovalOrgAndContact,
+  SupportingDocumentsForm,
+  SupportingDocumentsStep,
 } from '../../../ClientApp/src/api/web-api-client';
 import {
   createDraftTypeApprovalApplication,
@@ -18,9 +33,207 @@ const json = (route: Route, body: unknown, status = 200) =>
     body: JSON.stringify(body),
   });
 
-const parseJsonBody = (route: Route): Record<string, any> => {
+type JsonObject = Record<string, unknown>;
+
+const isJsonObject = (value: unknown): value is JsonObject =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isEnumValue = <T extends string>(
+  value: unknown,
+  values: readonly T[],
+): value is T => typeof value === 'string' && values.includes(value as T);
+
+const hasOptionalString = (object: JsonObject, key: string): boolean =>
+  Reflect.get(object, key) === undefined ||
+  typeof Reflect.get(object, key) === 'string';
+
+const hasOptionalNumber = (object: JsonObject, key: string): boolean =>
+  Reflect.get(object, key) === undefined ||
+  typeof Reflect.get(object, key) === 'number';
+
+const hasOptionalBoolean = (object: JsonObject, key: string): boolean =>
+  Reflect.get(object, key) === undefined ||
+  typeof Reflect.get(object, key) === 'boolean';
+
+const hasOptionalEnum = <T extends string>(
+  object: JsonObject,
+  key: string,
+  values: readonly T[],
+): boolean =>
+  Reflect.get(object, key) === undefined ||
+  isEnumValue(Reflect.get(object, key), values);
+
+const hasOptionalObject = <T>(
+  object: JsonObject,
+  key: string,
+  guard: (value: unknown) => value is T,
+): boolean =>
+  Reflect.get(object, key) === undefined || guard(Reflect.get(object, key));
+
+const hasOptionalArray = <T>(
+  object: JsonObject,
+  key: string,
+  guard: (value: unknown) => value is T,
+): boolean => {
+  const value = Reflect.get(object, key);
+  return value === undefined || (Array.isArray(value) && value.every(guard));
+};
+
+const isAddressDetails = (value: unknown): value is AddressDetailsDto =>
+  isJsonObject(value) &&
+  hasOptionalNumber(value, 'id') &&
+  hasOptionalNumber(value, 'type') &&
+  hasOptionalString(value, 'line1') &&
+  hasOptionalString(value, 'line2') &&
+  hasOptionalString(value, 'line3') &&
+  hasOptionalString(value, 'suburb') &&
+  hasOptionalString(value, 'postcode') &&
+  hasOptionalEnum(value, 'state', Object.values(State)) &&
+  hasOptionalBoolean(value, 'isManuallyEntered') &&
+  hasOptionalString(value, 'searchText') &&
+  hasOptionalString(value, 'timeStamp');
+
+const isContactStep = (value: unknown): value is ContactStep =>
+  isJsonObject(value) &&
+  hasOptionalEnum(value, 'title', Object.values(Title)) &&
+  hasOptionalString(value, 'titleOther') &&
+  hasOptionalString(value, 'firstName') &&
+  hasOptionalString(value, 'lastName') &&
+  hasOptionalString(value, 'role') &&
+  hasOptionalString(value, 'phone') &&
+  hasOptionalString(value, 'mobile') &&
+  hasOptionalString(value, 'email') &&
+  hasOptionalEnum(value, 'formStepStatus', Object.values(FormStepStatus));
+
+const isAuthorisedAgent = (value: unknown): value is AuthorisedAgent =>
+  isJsonObject(value) &&
+  hasOptionalString(value, 'manufacturerName') &&
+  hasOptionalString(value, 'companyIdentifier') &&
+  hasOptionalObject(value, 'streetAddress', isAddressDetails) &&
+  hasOptionalString(value, 'abn');
+
+const isPatternApprovalOrgAndContact = (
+  value: unknown,
+): value is PatternApprovalOrgAndContact =>
+  isJsonObject(value) &&
+  hasOptionalString(value, 'sourceReferenceId') &&
+  hasOptionalString(value, 'abn') &&
+  hasOptionalString(value, 'name') &&
+  hasOptionalString(value, 'businessOrTradingName') &&
+  hasOptionalString(value, 'branchOrLocationName') &&
+  hasOptionalString(value, 'businessWebsiteAddress') &&
+  hasOptionalObject(value, 'streetAddress', isAddressDetails) &&
+  hasOptionalObject(value, 'authorisedAgent', isAuthorisedAgent) &&
+  hasOptionalBoolean(value, 'principalContactHide') &&
+  hasOptionalBoolean(value, 'principalInvoiceContactHide') &&
+  hasOptionalBoolean(value, 'isManufacturerHide') &&
+  hasOptionalBoolean(value, 'isCurrentOrganisationHide') &&
+  hasOptionalEnum(value, 'isManufacturer', Object.values(YesNo)) &&
+  hasOptionalEnum(value, 'isPrincipalContact', Object.values(YesNo)) &&
+  hasOptionalEnum(value, 'isCorrectBranchOrLocation', Object.values(YesNo)) &&
+  hasOptionalEnum(value, 'isPrincipalInvoiceContact', Object.values(YesNo)) &&
+  hasOptionalObject(value, 'contact', isContactStep) &&
+  hasOptionalObject(value, 'currentContact', isContactStep) &&
+  hasOptionalObject(value, 'invoiceContact', isContactStep) &&
+  hasOptionalNumber(value, 'organisationCount') &&
+  hasOptionalEnum(value, 'formStepStatus', Object.values(FormStepStatus));
+
+const isApplicationAndInstrument = (
+  value: unknown,
+): value is ApplicationAndInstrumentStep =>
+  isJsonObject(value) &&
+  hasOptionalString(value, 'sourceReferenceId') &&
+  hasOptionalEnum(
+    value,
+    'patternApprovalType',
+    Object.values(PatternApprovalRequiredValues),
+  ) &&
+  hasOptionalArray(
+    value,
+    'newSubOptions',
+    (item): item is PatternApprovalRequiredValueOptions =>
+      isEnumValue(item, Object.values(PatternApprovalRequiredValueOptions)),
+  ) &&
+  hasOptionalArray(
+    value,
+    'varSubOptions',
+    (item): item is PatternApprovalRequiredValueOptions =>
+      isEnumValue(item, Object.values(PatternApprovalRequiredValueOptions)),
+  ) &&
+  hasOptionalArray(
+    value,
+    'othSubOptions',
+    (item): item is PatternApprovalRequiredValueOptions =>
+      isEnumValue(item, Object.values(PatternApprovalRequiredValueOptions)),
+  ) &&
+  hasOptionalString(value, 'instrumentCategory') &&
+  hasOptionalString(value, 'instrumentType') &&
+  hasOptionalBoolean(value, 'isApplNewHide') &&
+  hasOptionalBoolean(value, 'isApplNewInstrumentHide') &&
+  hasOptionalBoolean(value, 'isApplVariationHide') &&
+  hasOptionalBoolean(value, 'isApplOtherHide') &&
+  hasOptionalBoolean(value, 'isApplOIMLHide') &&
+  hasOptionalString(value, 'certificateNumber') &&
+  hasOptionalString(value, 'certificateNumberId') &&
+  hasOptionalString(value, 'make') &&
+  hasOptionalString(value, 'model') &&
+  hasOptionalString(value, 'summary') &&
+  hasOptionalEnum(value, 'formStepStatus', Object.values(FormStepStatus));
+
+const isAttachment = (value: unknown): value is AttachmentDto =>
+  isJsonObject(value) &&
+  hasOptionalString(value, 'id') &&
+  hasOptionalString(value, 'documentReference') &&
+  hasOptionalString(value, 'attachmentMimeType') &&
+  hasOptionalString(value, 'attachmentType') &&
+  hasOptionalString(value, 'attachmentCategory') &&
+  hasOptionalString(value, 'attachmentName') &&
+  hasOptionalString(value, 'attachmentSize') &&
+  hasOptionalString(value, 'attachmentUrl') &&
+  hasOptionalString(value, 'parentTimestamp') &&
+  hasOptionalBoolean(value, 'documentLocked') &&
+  hasOptionalString(value, 'documentBytes');
+
+const isSupportingDocumentsForm = (
+  value: unknown,
+): value is SupportingDocumentsForm =>
+  isJsonObject(value) &&
+  hasOptionalArray(value, 'documents', isAttachment) &&
+  hasOptionalString(value, 'instrumentCategory') &&
+  hasOptionalString(value, 'instrumentType') &&
+  hasOptionalString(value, 'applicationStatus') &&
+  hasOptionalEnum(
+    value,
+    'patternApprovalType',
+    Object.values(PatternApprovalRequiredValues),
+  );
+
+const isSupportingDocuments = (
+  value: unknown,
+): value is SupportingDocumentsStep =>
+  isJsonObject(value) &&
+  hasOptionalObject(value, 'form', isSupportingDocumentsForm) &&
+  hasOptionalEnum(value, 'formStepStatus', Object.values(FormStepStatus)) &&
+  hasOptionalString(value, 'uploadId');
+
+const requireJsonProperty = <T>(
+  object: JsonObject,
+  key: string,
+  guard: (value: unknown) => value is T,
+): T => {
+  const value = Reflect.get(object, key);
+  if (!guard(value)) {
+    throw new TypeError(`Expected ${key} to be a valid JSON object`);
+  }
+  return value;
+};
+
+const parseJsonBody = (route: Route): JsonObject => {
   const body = route.request().postData();
-  return body ? (JSON.parse(body) as Record<string, any>) : {};
+  if (!body) return {};
+
+  const parsed: unknown = JSON.parse(body) as unknown;
+  return isJsonObject(parsed) ? parsed : {};
 };
 
 const multipartValue = (body: string, name: string): string | undefined => {
@@ -153,8 +366,10 @@ const patternPath =
   ({ pathname, method: requestMethod }: MockContext): boolean =>
     pattern.test(pathname) && requestMethod === method;
 
-const stepStatusFor = (command: Record<string, any>): FormStepStatus =>
-  command['isCompletingStep'] ? FormStepStatus.Completed : FormStepStatus.Saved;
+const stepStatusFor = (command: JsonObject): FormStepStatus =>
+  Reflect.get(command, 'isCompletingStep')
+    ? FormStepStatus.Completed
+    : FormStepStatus.Saved;
 
 const unreadMessageCount = (application: TypeApprovalApplicationState) =>
   application.messages.filter((message) => !message.messageRead).length;
@@ -418,7 +633,11 @@ const putOrganisationAndContact: ApplicationHandler = async ({
 }) => {
   const command = parseJsonBody(route);
   const status = stepStatusFor(command);
-  application.organisationAndContact = command['formStep'];
+  application.organisationAndContact = requireJsonProperty(
+    command,
+    'formStep',
+    isPatternApprovalOrgAndContact,
+  );
   application.organisationAndContact.formStepStatus = status;
   application.stepStatuses[0] = status;
   await json(route, {});
@@ -430,7 +649,11 @@ const putApplicationAndInstrument: ApplicationHandler = async ({
 }) => {
   const command = parseJsonBody(route);
   const status = stepStatusFor(command);
-  application.applicationAndInstrument = command['formStep'];
+  application.applicationAndInstrument = requireJsonProperty(
+    command,
+    'formStep',
+    isApplicationAndInstrument,
+  );
   application.applicationAndInstrument.formStepStatus = status;
   application.stepStatuses[1] = status;
   await json(route, {});
@@ -454,7 +677,11 @@ const putSupportingDocuments: ApplicationHandler = async ({
 }) => {
   const command = parseJsonBody(route);
   const status = stepStatusFor(command);
-  application.supportingDocuments = command['formStep'];
+  application.supportingDocuments = requireJsonProperty(
+    command,
+    'formStep',
+    isSupportingDocuments,
+  );
   application.supportingDocuments.formStepStatus = status;
   application.stepStatuses[2] = status;
   await json(route, {});
@@ -491,7 +718,11 @@ const putCommitAppDocuments: ApplicationHandler = async ({
   application,
 }) => {
   const command = parseJsonBody(route);
-  application.supportingDocuments.form = command['form'];
+  application.supportingDocuments.form = requireJsonProperty(
+    command,
+    'form',
+    isSupportingDocumentsForm,
+  );
   await json(route, supportingDocumentsResponse(application));
 };
 

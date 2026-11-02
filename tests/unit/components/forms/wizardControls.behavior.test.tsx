@@ -17,14 +17,16 @@ type Submit = NonNullable<FormikConfig<WizardValues>['onSubmit']>;
 type Validate = NonNullable<FormikConfig<WizardValues>['validate']>;
 type AnalyticsProps = ComponentProps<typeof GoogleAnalytics>;
 type ErrorBoundaryProps = ComponentProps<typeof ErrorBoundary>;
+type ErrorBoundaryMock = (
+  props: ErrorBoundaryProps,
+  context?: Record<string, never>,
+) => React.ReactElement;
 
 const wrapperMocks = vi.hoisted(() => ({
   analytics: vi.fn<(props: AnalyticsProps) => React.ReactElement>(
     ({ children }) => <>{children}</>,
   ),
-  errorBoundary: vi.fn<(props: ErrorBoundaryProps) => React.ReactElement>(
-    ({ children }) => <>{children}</>,
-  ),
+  errorBoundary: vi.fn<ErrorBoundaryMock>(({ children }) => <>{children}</>),
 }));
 
 vi.mock(
@@ -303,10 +305,11 @@ describe('wizard control behavior', () => {
     );
 
     expect(screen.getByText('Wrapped step content')).toBeInTheDocument();
-    expect(wrapperMocks.errorBoundary).toHaveBeenCalledWith(
-      expect.objectContaining({ children: expect.anything() }),
-      {},
+    expect(wrapperMocks.errorBoundary).toHaveBeenCalledTimes(1);
+    expect(wrapperMocks.errorBoundary.mock.calls[0]?.[0]).toHaveProperty(
+      'children',
     );
+    expect(wrapperMocks.errorBoundary.mock.calls[0]?.[1]).toStrictEqual({});
     expect(wrapperMocks.analytics).toHaveBeenCalledWith(
       expect.objectContaining({
         anonymiseIp: false,

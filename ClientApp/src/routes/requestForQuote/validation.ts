@@ -226,7 +226,17 @@ export const instrumentAndRequestSaveValidation = yup.object<
   numberOfItems: yup
     .number()
     .label('Number of items')
-    .transform((value) => (Number.isNaN(value) ? undefined : value))
+    .transform((value: unknown): number | null | undefined => {
+      if (value === null) {
+        return null;
+      }
+
+      if (typeof value === 'number' && !Number.isNaN(value)) {
+        return value;
+      }
+
+      return undefined;
+    })
     .nullable()
     .min(1, 'Number of items cannot be less than 1')
     .max(100, 'Number of items cannot be greater than 100'),

@@ -191,7 +191,7 @@ Use a verification method appropriate to each claim:
 
 For important criteria, record:
 
-**Criterion → Method → Evidence → Status**
+### Criterion → Method → Evidence → Status
 
 Distinguish:
 

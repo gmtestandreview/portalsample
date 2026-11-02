@@ -18,6 +18,11 @@ import {
   summaryAndAcceptSubmitValidation,
 } from '../../../../ClientApp/src/routes/acceptQuote/validation';
 
+const arrayContainingStrings = (values: string[]): unknown => {
+  const matcher: unknown = expect.arrayContaining<string>(values);
+  return matcher;
+};
+
 describe('report recipient validation', () => {
   it('accepts valid submit and empty save objects', async () => {
     expect.hasAssertions();
@@ -109,7 +114,7 @@ describe('delivery and return validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'First name is required',
         'Return address is required',
         'Carrier name is required',
@@ -132,7 +137,7 @@ describe('delivery and return validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Carrier name cannot be less than 2 characters',
         'Carrier account number or Pre-paid shipment reference cannot be less than 2 characters',
         'Carrier contact person cannot be less than 2 characters',
@@ -170,7 +175,7 @@ describe('delivery and return validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Packaging notes cannot be greater than 300 characters',
         'Carrier name cannot be greater than 100 characters',
         'Carrier account number or Pre-paid shipment reference cannot be greater than 100 characters',
@@ -262,7 +267,7 @@ describe('summary and accept validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: arrayContainingStrings([
         'Associated dispute is a required field',
         'You must accept our terms before accepting this quotation',
       ]),

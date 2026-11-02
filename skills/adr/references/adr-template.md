@@ -7,12 +7,12 @@ template's defaults where they differ:
 
 - **Location:** `docs/adr/`.
 - **Read the most recent files in `docs/adr/` first** and match their structure,
-  front matter, and file naming. Conventions in this repo have drifted (a
-  date-prefixed freeform style and a numbered `adr-NNNN-slug.md` coded-bullet
-  style both exist) — match the most recent precedent, do not invent a third. If
-  only 0–1 real ADRs exist, take format from what is there (or from
-  `adr-generator.agent.md`) and section structure from this template. See
-  `SKILL.md` → "Match Repo Precedent First" for the precedence rule.
+  front matter, and file naming — not the example in `adr-generator.agent.md`,
+  which describes a numbered `adr-NNNN-slug.md` coded-bullet style that may
+  differ from the actual files. Do not invent a third style. If only 0–1 real
+  ADRs exist, take format from what is there (or from `adr-generator.agent.md`)
+  and section structure from this template. See `SKILL.md` → "Match Repo
+  Precedent First" for the precedence rule.
 - `.github/agents/adr-generator.agent.md` is the fuller in-repo spec (Status,
   Context, Decision, Consequences plus/minus, Alternatives Considered with
   rejection reasons, Implementation Notes, References, coded bullets like
@@ -29,11 +29,15 @@ only if you can state why it does not apply.
 
 ## Status
 
-Proposed | Accepted | Superseded by ADR-NNN
+Proposed | Accepted | Rejected | Superseded by ADR-NNN | Deprecated
+
+## Deciders
+
+<names of people who actually decided; omit and keep Proposed if none>
 
 ## Date
 
-YYYY-MM-DD
+YYYY-MM-DD (the real date of writing)
 
 ## Context
 

@@ -81,6 +81,7 @@ describe('certificateNumberLookup debounce', () => {
         await act(async () => {
           fireEvent.change(inputElement, { target: { value: input } });
           vi.advanceTimersByTime(DEBOUNCE_MS);
+          await Promise.resolve();
         });
 
         expect(
@@ -104,11 +105,12 @@ describe('certificateNumberLookup debounce', () => {
         { lookupName: 'Alpha Certificate' },
       ]);
 
-      act(() => {
+      await act(async () => {
         fireEvent.change(screen.getByRole('textbox'), {
           target: { value: 'Alpha' },
         });
         vi.advanceTimersByTime(DEBOUNCE_MS);
+        await Promise.resolve();
       });
 
       expect(
@@ -132,6 +134,7 @@ describe('certificateNumberLookup debounce', () => {
           target: { value: 'Alpha' },
         });
         vi.advanceTimersByTime(DEBOUNCE_MS);
+        await Promise.resolve();
       });
 
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
@@ -140,7 +143,7 @@ describe('certificateNumberLookup debounce', () => {
     }
   });
 
-  it('ignores lookup records that do not contain the configured field', () => {
+  it('ignores lookup records that do not contain the configured field', async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers();
@@ -149,11 +152,12 @@ describe('certificateNumberLookup debounce', () => {
         optionsFieldName: 'missingField',
       });
 
-      act(() => {
+      await act(async () => {
         fireEvent.change(screen.getByRole('textbox'), {
           target: { value: 'Alpha' },
         });
         vi.advanceTimersByTime(DEBOUNCE_MS);
+        await Promise.resolve();
       });
 
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
@@ -186,6 +190,7 @@ describe('certificateNumberLookup debounce', () => {
           target: { value: 'Al' },
         });
         vi.advanceTimersByTime(DEBOUNCE_MS);
+        await Promise.resolve();
       });
 
       expect(

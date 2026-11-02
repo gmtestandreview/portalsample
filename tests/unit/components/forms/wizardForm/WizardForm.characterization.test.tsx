@@ -145,7 +145,7 @@ const renderWizard = (saves: Saves, step1Validation = requiredName) => {
                       location='/step-1'
                       initialValues={{ name: '' }}
                       stepStatuses={statuses}
-                      loadStepValues={async () => ({
+                      loadStepValues={() => ({
                         stepValues: { name: '' },
                       })}
                       onSaveAndNext={saves.step1}
@@ -159,7 +159,7 @@ const renderWizard = (saves: Saves, step1Validation = requiredName) => {
                       location='/step-2'
                       initialValues={{ other: '' }}
                       stepStatuses={statuses}
-                      loadStepValues={async () => ({
+                      loadStepValues={() => ({
                         stepValues: { other: '' },
                       })}
                       onSaveAndNext={saves.step2}
@@ -208,8 +208,8 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   const resetWizardCharacterization = () => {
     vi.clearAllMocks();
     saves = {
-      step1: vi.fn<SaveStepFn>(async () => ({})),
-      step2: vi.fn<SaveStepFn>(async () => ({})),
+      step1: vi.fn<SaveStepFn>(() => Promise.resolve({})),
+      step2: vi.fn<SaveStepFn>(() => Promise.resolve({})),
     };
   };
 

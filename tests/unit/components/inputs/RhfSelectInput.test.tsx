@@ -49,7 +49,7 @@ const Harness = ({
   );
 };
 
-const failingResolver: Resolver<Values> = async () => ({
+const failingResolver: Resolver<Values> = () => ({
   values: {},
   errors: {
     category: { type: 'validation', message: 'Select a category' },

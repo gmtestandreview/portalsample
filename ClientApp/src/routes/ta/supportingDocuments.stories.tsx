@@ -28,8 +28,8 @@ const meta = preview.meta({
   args: {
     name: 'supportingDocuments.form.documents',
     isSummary: false,
-    attachment: { onUploadFiles: fn(async () => []) },
-    onUploadAttachment: fn(async () => []),
+    attachment: { onUploadFiles: fn(() => Promise.resolve([])) },
+    onUploadAttachment: fn(() => Promise.resolve([])),
   },
 });
 

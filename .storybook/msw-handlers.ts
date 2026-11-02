@@ -225,8 +225,10 @@ export const mswHandlers = [
     const fixture =
       lookupType === null || !Object.hasOwn(lookupResponsesByType, lookupType)
         ? undefined
-        : (Reflect.get(lookupResponsesByType, lookupType) as
-            LookupResponse[] | undefined);
+        : Reflect.get<typeof lookupResponsesByType, CRMLookupTypes>(
+            lookupResponsesByType,
+            lookupType,
+          );
 
     if (fixture === undefined) {
       return HttpResponse.json(
