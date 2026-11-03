@@ -238,7 +238,9 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   );
   useBodyClass('quotation');
 
-  clearDashboardInfoNotification();
+  useEffect(() => {
+    clearDashboardInfoNotification();
+  }, []);
   const renderQuotationSummary = () => (
     <>
       <QuoteDetails
