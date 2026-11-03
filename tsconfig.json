@@ -54,11 +54,14 @@
   "include": [
     "*.ts",
     "*.tsx",
+    "*.mts",
+    "*.mjs",
+    "ClientApp/src/**/*.ts",
+    "ClientApp/src/**/*.tsx",
     "scripts/**/*",
     "scripts/**/*.tsx",
     "scripts/**/*.ts",
     "quality/**/*",
-    "ClientApp/src/**/*",
     ".storybook/**/*",
     "tests/**/*"
   ],

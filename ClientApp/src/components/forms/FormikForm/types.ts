@@ -10,7 +10,7 @@ export interface FormikFormProps<T extends FormikValues> {
   onSubmit: (
     values: T,
     formikHelpers: FormikHelpers<T>,
-  ) => void | Promise<unknown>;
+  ) => undefined | Promise<unknown>;
   promptPath?: string;
   children?: ReactNode | ((bag: FormikProps<T>) => ReactNode);
   banner?: ReactNode;
@@ -19,7 +19,7 @@ export interface FormikFormProps<T extends FormikValues> {
   onSaveAndExit?: (
     values: T,
     formikHelpers: FormikHelpers<T>,
-  ) => void | Promise<unknown>;
+  ) => undefined | Promise<unknown>;
   bannerTitle?: string;
   bannerRefTitle?: string;
   bannerSubTitle?: string;

@@ -66,8 +66,12 @@ const RhfAttachmentItem = ({
       isMounted.current = false;
     };
   }, []);
-  const closeModal = () => setDeleteDialogOpen(false);
-  const showModal = () => setDeleteDialogOpen(true);
+  const closeModal = () => {
+    setDeleteDialogOpen(false);
+  };
+  const showModal = () => {
+    setDeleteDialogOpen(true);
+  };
   const { documentBytes } = attachment;
   // One object URL per document, not per render, released when it changes or the row goes.
   const fileUrl = useMemo(
@@ -156,9 +160,11 @@ const RhfAttachmentItem = ({
         <div
           className='ms-3'
           style={{ width: '260px' }}
-          onBlur={() => setCategoryTouched(true)}
+          onBlur={() => {
+            setCategoryTouched(true);
+          }}
         >
-          <RhfSelectInput<string>
+          <RhfSelectInput
             id={categoryName}
             key={categoryName}
             name={categoryName}

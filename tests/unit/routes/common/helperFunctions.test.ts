@@ -459,10 +459,12 @@ describe('route common helper functions', () => {
     notification.id = '#notif-test';
     const scrollIntoView = vi
       .spyOn(notification, 'scrollIntoView')
-      .mockImplementation(() => {});
-    const focus = vi.spyOn(notification, 'focus').mockImplementation(() => {});
+      .mockImplementation(() => undefined);
+    const focus = vi
+      .spyOn(notification, 'focus')
+      .mockImplementation(() => undefined);
     document.body.append(notification);
-    vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => {});
+    vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => undefined);
 
     handleReportFileError();
     vi.runAllTimers();
@@ -602,7 +604,7 @@ describe('route common helper functions', () => {
       lookups: [sortedLookups.map((lookup) => lookup.name), lastLookupId],
       empty: sortList([], 'anything', 'name'),
       undefined: sortList(
-        undefined as unknown as Array<{ name: string }>,
+        undefined as unknown as { name: string }[],
         'anything',
         'name',
       ),

@@ -15,14 +15,17 @@ import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import { readTextFile } from './safe-file-io.mjs';
 
-export type TargetHit = { target: string; count: number };
+export interface TargetHit {
+  target: string;
+  count: number;
+}
 
-export type LogAudit = {
+export interface LogAudit {
   completed: boolean;
   truncatedBy: string[];
   hits: TargetHit[];
   verdict: 'clean' | 'dirty' | 'invalid';
-};
+}
 
 export const TARGET_STRINGS: readonly string[] = [
   'DEPRECATED',

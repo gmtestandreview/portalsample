@@ -79,7 +79,7 @@ const PaRequestItem = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
-  const onDelete = () => (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onDelete = () => (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (!isNonEmptyReferenceId(portalReferenceId)) {
       return;
@@ -89,7 +89,9 @@ const PaRequestItem = ({
     setDeleteDialogOpen(true);
   };
 
-  const closeModal = () => setDeleteDialogOpen(false);
+  const closeModal = () => {
+    setDeleteDialogOpen(false);
+  };
 
   const onRemoveItem = async () => {
     if (!isNonEmptyReferenceId(deleteId)) {
@@ -143,7 +145,9 @@ const PaRequestItem = ({
             action: PaRequestAction.Edit,
             text: 'Resume application',
             route: editRoute,
-            onClick: () => trackGAEvent('Editapplication'),
+            onClick: () => {
+              trackGAEvent('Editapplication');
+            },
           },
           {
             action: PaRequestAction.Delete,
@@ -164,7 +168,9 @@ const PaRequestItem = ({
             action: PaRequestAction.Edit,
             text: 'View application details',
             route: editRoute,
-            onClick: () => trackGAEvent('Viewapplicationdetails'),
+            onClick: () => {
+              trackGAEvent('Viewapplicationdetails');
+            },
           },
           {
             action: PaRequestAction.Messages,
@@ -192,8 +198,12 @@ const PaRequestItem = ({
         className='mb-4 p-2 shadow'
         tabIndex={0}
         aria-labelledby={labelledBy}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={() => {
+          setIsFocused(true);
+        }}
+        onBlur={() => {
+          setIsFocused(false);
+        }}
       >
         <Card.Body>
           <Row className='mb-4 align-items-center'>
@@ -293,7 +303,9 @@ const PaRequestItem = ({
               )}
               {status !== PaDashboardItemStatus.PaDraft && (
                 <Button
-                  onClick={() => routeToMessages()}
+                  onClick={() => {
+                    routeToMessages();
+                  }}
                   type='button'
                   className='btn btn-secondary ms-4'
                   title={`${messageCount} unread messages`}

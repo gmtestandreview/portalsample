@@ -143,15 +143,15 @@ function StepHarness({
                   summaryAndAcceptOwnHidingFields,
                 )(formValues)
               }
-              onSubmit={(submitted) =>
+              onSubmit={(submitted) => {
                 onSubmit(
                   removeHidden(
                     submitted,
                     submitted,
                     summaryAndAcceptOwnHidingFields,
                   ),
-                )
-              }
+                );
+              }}
             >
               <Form noValidate>
                 <ErrorSummary />
@@ -265,7 +265,9 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'Yes',
@@ -294,7 +296,9 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
@@ -359,7 +363,9 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
@@ -432,7 +438,9 @@ describe('summaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
@@ -476,7 +484,9 @@ describe('summaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
@@ -519,9 +529,9 @@ describe('summaryAndAccept behavior', () => {
 
     rerender(<StepHarness values={{ acceptanceOfQuote: true }} />);
 
-    await waitFor(() =>
-      expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked(),
-    );
+    await waitFor(() => {
+      expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked();
+    });
   });
 
   it('keeps rendering and logs when the summary fails to load', async () => {
@@ -530,13 +540,13 @@ describe('summaryAndAccept behavior', () => {
     mocks.getSummaryAndAccept.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.error).toHaveBeenCalledWith(
         'Failed to retrieve getAcceptQuotePreInfo',
         expect.any(Error),
         { Id: 'quote-1' },
-      ),
-    );
+      );
+    });
 
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInTheDocument();
   });

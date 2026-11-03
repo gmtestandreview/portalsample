@@ -153,7 +153,7 @@ describe('appInsightsService', () => {
 
     resetAppInsightsTest();
 
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 
     vi.doMock(
       import('@microsoft/applicationinsights-web') as unknown as string,
@@ -192,7 +192,7 @@ describe('appInsightsService', () => {
 
     resetAppInsightsTest();
 
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 
     vi.doMock(
       import('@microsoft/applicationinsights-web') as unknown as string,
@@ -234,7 +234,7 @@ describe('appInsightsService', () => {
 
     resetAppInsightsTest();
 
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 
     vi.doMock(
       import('@microsoft/applicationinsights-web') as unknown as string,

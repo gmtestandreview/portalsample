@@ -42,7 +42,9 @@ const NotificationDecorator = (Story: ComponentType) => {
   });
 
   useEffect(() => {
-    return () => clearDashboardNotification();
+    return () => {
+      clearDashboardNotification();
+    };
   }, []);
 
   return (

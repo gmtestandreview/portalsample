@@ -2,7 +2,7 @@ import Row from 'react-bootstrap/Row';
 import { Alert } from 'react-bootstrap';
 import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
 
-const getContactFieldName = (localName: string) => `${localName}`;
+const getContactFieldName = (localName: string) => localName;
 
 const ContactDetails = () => {
   return (

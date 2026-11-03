@@ -75,16 +75,16 @@ const MailingLabel = ({
               <p>Deliver to:</p>
               <p>
                 {'Quotation ID: '}
-                {!!quotationIdNum && `${quotationIdNum}`}
+                {!!quotationIdNum && quotationIdNum}
               </p>
               <p className='fs-4'>
                 <strong>
                   {'ATTN: '}
-                  {!!nmiTestOfficerName && `${nmiTestOfficerName}`}
+                  {!!nmiTestOfficerName && nmiTestOfficerName}
                   <br />
-                  {!!nmiFacilityName && `${nmiFacilityName}`}
+                  {!!nmiFacilityName && nmiFacilityName}
                   <br />
-                  {!!nmiFacilityAddress && `${nmiFacilityAddress}`}
+                  {!!nmiFacilityAddress && nmiFacilityAddress}
                 </strong>
               </p>
             </Col>

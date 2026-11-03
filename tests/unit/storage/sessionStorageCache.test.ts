@@ -3,7 +3,9 @@ import SessionStorageCache from '../../../ClientApp/src/storage/sessionStorageCa
 
 // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(SessionStorageCache, () => {
-  const clearSessionStorage = () => globalThis.sessionStorage.clear();
+  const clearSessionStorage = () => {
+    globalThis.sessionStorage.clear();
+  };
 
   describe('getItem', () => {
     it('returns undefined for a missing key', () => {
@@ -92,7 +94,9 @@ describe(SessionStorageCache, () => {
 
       clearSessionStorage();
 
-      expect(() => SessionStorageCache().removeItem('ghost-key')).not.toThrow();
+      expect(() => {
+        SessionStorageCache().removeItem('ghost-key');
+      }).not.toThrow();
     });
   });
 

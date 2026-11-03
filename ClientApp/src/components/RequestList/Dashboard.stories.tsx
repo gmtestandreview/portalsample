@@ -1,4 +1,5 @@
 import preview from '../../../../.storybook/preview';
+import { fn } from 'storybook/test';
 import type { ComponentType } from 'react';
 import {
   AccountStateCtx,
@@ -10,7 +11,7 @@ import { DashboardItemStatus } from '../../routes/common/enums';
 import type { DashboardItemDto } from '../../api/web-api-client';
 import { omitUndefined } from '../../utils/omitUndefined';
 
-const noop = () => {};
+const noop = fn();
 
 const mockAccountContext: AccountContextState = {
   isLoading: false,

@@ -55,12 +55,12 @@ describe(PortalStoryRouter, () => {
 
     expect(screen.getByText('Initial request: start-7')).toBeVisible();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/request/start-7',
         params: { requestId: 'start-7' },
-      }),
-    );
+      });
+    });
   });
 
   it('matches an exact destination ahead of the story wildcard and reports destination params', async () => {
@@ -86,12 +86,12 @@ describe(PortalStoryRouter, () => {
       screen.findByText('Destination reference: returned-42'),
     ).resolves.toBeVisible();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(observations).toContainEqual({
         pathname: '/complete/returned-42',
         params: { reference: 'returned-42' },
-      }),
-    );
+      });
+    });
   });
 
   it('falls through to the story wildcard for a wrong returned reference', async () => {
@@ -129,12 +129,12 @@ describe(PortalStoryRouter, () => {
     ).resolves.toBeVisible();
     expect(screen.queryByText('Destination reference: wrong-42')).toBeNull();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/complete/wrong-42',
         params: { '*': 'complete/wrong-42' },
-      }),
-    );
+      });
+    });
   });
 
   it('keeps navigation on the same route while an async response settles', async () => {
@@ -150,7 +150,9 @@ describe(PortalStoryRouter, () => {
       const [settled, setSettled] = useState(false);
 
       useEffect(() => {
-        void pendingResponse.then(() => setSettled(true));
+        void pendingResponse.then(() => {
+          setSettled(true);
+        });
       }, []);
 
       return (
@@ -187,12 +189,12 @@ describe(PortalStoryRouter, () => {
 
     expect(screen.queryByText('Response settled')).toBeNull();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/complete/settled-42',
         params: { reference: 'settled-42' },
-      }),
-    );
+      });
+    });
   });
 
   it('keeps one router and renders current story args across rerenders', async () => {
@@ -214,12 +216,12 @@ describe(PortalStoryRouter, () => {
 
     expect(screen.getByText('Current value: first')).toBeVisible();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/request/123',
         params: { requestId: '123' },
-      }),
-    );
+      });
+    });
 
     view.rerender(
       <PortalStoryRouter
@@ -310,12 +312,12 @@ describe(PortalStoryRouter, () => {
       screen.findByText('Wildcard story remains mounted'),
     ).resolves.toBeVisible();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/unmatched/path',
         params: { '*': 'unmatched/path' },
-      }),
-    );
+      });
+    });
   });
 
   it('cleans up overlapping router observers in either unmount order', async () => {
@@ -378,12 +380,12 @@ describe(PortalStoryRouter, () => {
     await act(async () => {
       await firstNavigate?.('/after-first-unmount');
     });
-    await waitFor(() =>
+    await waitFor(() => {
       expect(firstObservations).toContainEqual({
         pathname: '/after-first-unmount',
         params: { '*': 'after-first-unmount' },
-      }),
-    );
+      });
+    });
 
     const firstObservationCount = firstObservations.length;
     view.unmount();
@@ -503,12 +505,12 @@ describe(PortalStoryRouter, () => {
       />,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/start',
         params: { '*': 'start' },
-      }),
-    );
+      });
+    });
     const observationCount = observeLocation.mock.calls.length;
 
     view.unmount();

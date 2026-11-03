@@ -19,11 +19,11 @@ interface AccountProviderProps {
   children: ReactNode;
 }
 
-type AccountTokenClaims = {
+interface AccountTokenClaims {
   email?: string;
   family_name?: string;
   given_name?: string;
-};
+}
 
 const toAccountDetails = (
   account: AccountInfo,

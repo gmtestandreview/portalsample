@@ -184,7 +184,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   (() =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>) as unknown as __DynamicPartialMockFactory<__TestMockModule89>,
 );
 
@@ -192,7 +192,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   (() =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>) as unknown as __DynamicPartialMockFactory<__TestMockModule59>,
 );
 
@@ -379,7 +379,9 @@ vi.mock(
           type='button'
           data-testid='pagination'
           data-total={totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => {
+            onPageChange(currentPage + 1);
+          }}
         >
           Page {currentPage}
         </button>
@@ -518,12 +520,12 @@ const renderRoute = (
   );
 
 const settleQuotationEffects = async () => {
-  await waitFor(() =>
+  await waitFor(() => {
     expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalledWith(
       ApplicationType.QuoteRequest,
       'RFQ-100',
-    ),
-  );
+    );
+  });
   await act(async () => {
     await Promise.resolve();
   });
@@ -582,11 +584,11 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.getByRole('heading', { name: 'Quotation' }),
-      ).toBeInTheDocument(),
-    );
+      ).toBeInTheDocument();
+    });
 
     expect(screen.getAllByText('Q-100').length).toBeGreaterThan(0);
     expect(screen.getByTestId('view-quote-terms')).toHaveTextContent(
@@ -598,13 +600,13 @@ describe('quotation and measurement report routes', () => {
       screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.declineQuote).toHaveBeenCalledWith(
         'CRM-QUOTE-1',
         'Alex',
         'Tester',
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('dashboard-route')).toBeInTheDocument();
   });
@@ -620,21 +622,21 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
-    await waitFor(() =>
-      expect(screen.getByTestId('decline-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('decline-button')).toBeInTheDocument();
+    });
     fireEvent.click(screen.getByTestId('decline-button'));
     fireEvent.click(
       screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to decline quote',
         expect.any(Error),
         { Id: 'RFQ-100' },
-      ),
-    );
+      );
+    });
 
     const notification = requireNotification(
       mocks.setDashboardNotification.mock.calls.at(-1)?.[0],
@@ -689,9 +691,9 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
-    await waitFor(() =>
-      expect(quotation.quoteRequestStatus).toBe('Quote - Accepted'),
-    );
+    await waitFor(() => {
+      expect(quotation.quoteRequestStatus).toBe('Quote - Accepted');
+    });
 
     expect(quotation.outcomeDate).toBeInstanceOf(Date);
     expect(mocks.sessionRemoveItem).toHaveBeenCalledWith('view-quote-id');
@@ -713,9 +715,9 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
 
-    await waitFor(() =>
-      expect(mocks.sessionRemoveItem).toHaveBeenCalledWith('view-quote-id'),
-    );
+    await waitFor(() => {
+      expect(mocks.sessionRemoveItem).toHaveBeenCalledWith('view-quote-id');
+    });
 
     // Status is NOT mutated because the IDs don't match
     expect(quotation.quoteRequestStatus).toBe('Quote - Available');
@@ -788,9 +790,9 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/quotation/RFQ-404', <Quotation />, '/quotation/:id');
 
-    await waitFor(() =>
-      expect(screen.getByTestId('not-found')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('not-found')).toBeInTheDocument();
+    });
 
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
@@ -843,11 +845,11 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/report/AQ-100', <MeasurementReport />, '/report/:id');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.getByRole('heading', { name: 'Report' }),
-      ).toBeInTheDocument(),
-    );
+      ).toBeInTheDocument();
+    });
 
     expect(screen.getByText('RPT-100')).toBeInTheDocument();
     expect(
@@ -873,9 +875,9 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/report/AQ-404', <MeasurementReport />, '/report/:id');
 
-    await waitFor(() =>
-      expect(screen.getByTestId('not-found')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('not-found')).toBeInTheDocument();
+    });
 
     expect(mocks.handleReportFileError).toHaveBeenCalledWith();
   });
@@ -922,9 +924,9 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/reports/Balance', <InstrMeasurementReport />, '/reports/:id');
 
-    await waitFor(() =>
-      expect(screen.getByText('RPT-100')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('RPT-100')).toBeInTheDocument();
+    });
 
     expect(screen.getByRole('link', { name: 'View report' })).toHaveAttribute(
       'href',
@@ -938,14 +940,14 @@ describe('quotation and measurement report routes', () => {
 
     fireEvent.click(screen.getByTestId('pagination'));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.getDashboardInstrumentReports).toHaveBeenLastCalledWith(
         'ORG-CRM-1',
         'Balance',
         10,
         2,
-      ),
-    );
+      );
+    });
   });
 
   it('handles measurement report history load failures', async () => {
@@ -962,9 +964,9 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/reports/Balance', <InstrMeasurementReport />, '/reports/:id');
 
-    await waitFor(() =>
-      expect(mocks.handleReportFileError).toHaveBeenCalledWith(),
-    );
+    await waitFor(() => {
+      expect(mocks.handleReportFileError).toHaveBeenCalledWith();
+    });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to get Measurement report data',
@@ -1167,9 +1169,9 @@ describe('quotation and measurement report routes', () => {
       screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
     );
 
-    await waitFor(() =>
-      expect(screen.queryByTestId('confirmation-modal')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByTestId('confirmation-modal')).toBeInTheDocument();
+    });
 
     expect(mocks.declineQuote).not.toHaveBeenCalled();
   });

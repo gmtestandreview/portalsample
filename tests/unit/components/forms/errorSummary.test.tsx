@@ -237,9 +237,7 @@ describe('error summary', () => {
           />
         </TestRouter>,
       );
-      const summaryEl = document.querySelector(
-        '#form-error-summary',
-      ) as HTMLElement;
+      const summaryEl = document.querySelector('#form-error-summary')!;
       const scrollIntoView = vi.spyOn(summaryEl, 'scrollIntoView');
 
       expect(summaryEl).not.toBeNull();

@@ -1,6 +1,6 @@
 import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
-import { within, expect, userEvent } from 'storybook/test';
+import { within, expect, fn, userEvent } from 'storybook/test';
 import CustomPagination from './index';
 
 const PaginationStory = ({
@@ -36,7 +36,7 @@ export const MidRange = meta.story({
   args: {
     currentPage: 6,
     totalPages: 12,
-    onPageChange: () => {},
+    onPageChange: fn(),
   },
   render: () => <PaginationStory totalPages={12} startPage={6} />,
 });
@@ -45,7 +45,7 @@ export const SinglePageHidden = meta.story({
   args: {
     currentPage: 1,
     totalPages: 1,
-    onPageChange: () => {},
+    onPageChange: fn(),
   },
   render: () => <PaginationStory totalPages={1} />,
 });
@@ -54,7 +54,7 @@ export const FirstPage = meta.story({
   args: {
     currentPage: 1,
     totalPages: 12,
-    onPageChange: () => {},
+    onPageChange: fn(),
   },
   render: () => <PaginationStory totalPages={12} startPage={1} />,
   play: async ({ canvasElement }) => {
@@ -73,7 +73,7 @@ export const LastPage = meta.story({
   args: {
     currentPage: 12,
     totalPages: 12,
-    onPageChange: () => {},
+    onPageChange: fn(),
   },
   render: () => <PaginationStory totalPages={12} startPage={12} />,
   play: async ({ canvasElement }) => {
@@ -93,7 +93,7 @@ export const CustomStyleVariant = meta.story({
   args: {
     currentPage: 3,
     totalPages: 8,
-    onPageChange: () => {},
+    onPageChange: fn(),
   },
   render: () => <PaginationStory totalPages={8} startPage={3} />,
   play: async ({ canvasElement }) => {

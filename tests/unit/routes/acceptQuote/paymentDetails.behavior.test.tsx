@@ -119,12 +119,12 @@ function Harness({
       initialStatus={{ hidden: hidingFields }}
       validationSchema={paymentDetailsSubmitValidation}
       enableReinitialize
-      onSubmit={(submittedValues, helpers) =>
+      onSubmit={(submittedValues, helpers) => {
         onSubmit(
           removeHidden(submittedValues, submittedValues, hidingFields),
           helpers,
-        )
-      }
+        );
+      }}
     >
       <Form>
         <PaymentDetails id='TEST-001' />
@@ -135,10 +135,10 @@ function Harness({
 }
 
 interface DirectFieldsHarnessProps {
-  errors?: Array<{
+  errors?: {
     message: string;
     name: FieldPath<PaymentDetailsFormValues>;
-  }>;
+  }[];
 }
 
 function DirectFieldsHarness({ errors = [] }: DirectFieldsHarnessProps) {
@@ -201,7 +201,9 @@ describe('paymentDetails form behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining<Record<string, unknown>>({
@@ -270,7 +272,9 @@ describe('paymentDetails form behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toStrictEqual(
       expect.objectContaining<Record<string, unknown>>({
@@ -362,11 +366,11 @@ describe('paymentDetails form behavior', () => {
       />,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.getByLabelText('Purchase Order (PO) number (optional)'),
-      ).toHaveValue('PO-LOADED'),
-    );
+      ).toHaveValue('PO-LOADED');
+    });
   });
 
   it('shows validation errors after reinitializing following an invalid submit', async () => {
@@ -401,11 +405,11 @@ describe('paymentDetails form behavior', () => {
       />,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.queryByText('Email address is required'),
-      ).not.toBeInTheDocument(),
-    );
+      ).not.toBeInTheDocument();
+    });
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
@@ -577,7 +581,9 @@ describe('paymentDetails form behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',
@@ -610,7 +616,9 @@ describe('paymentDetails form behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',

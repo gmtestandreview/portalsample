@@ -6,7 +6,7 @@ import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 interface VitePlugin {
   name: string;
   transformIndexHtml?: (html: string) => string;
-  configureServer?: (server: unknown) => void | (() => void);
+  configureServer?: (server: unknown) => (() => void) | undefined;
   resolveId?: (source: string) => unknown;
 }
 
@@ -45,10 +45,10 @@ interface ViteConfig {
           names?: string[];
         }) => string;
         codeSplitting: {
-          groups: Array<{
+          groups: {
             name: string;
             test: RegExp;
-          }>;
+          }[];
         };
       };
     };

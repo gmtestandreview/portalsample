@@ -1,18 +1,18 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 
-type EvidenceResult = {
+interface EvidenceResult {
   ok: boolean;
-  errors: Array<{ code: string; message: string; path?: string }>;
-};
+  errors: { code: string; message: string; path?: string }[];
+}
 
-type EvidenceModule = {
+interface EvidenceModule {
   validateStoryEvidence(input: {
     manifest: unknown;
-    files: Array<{ path: string; content: string | Uint8Array }>;
+    files: { path: string; content: string | Uint8Array }[];
     index: unknown;
   }): EvidenceResult;
-};
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.
@@ -286,7 +286,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code }),
       ]) as unknown,
     });
@@ -319,7 +319,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
       ]) as unknown,
     });
@@ -364,7 +364,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
       ]) as unknown,
     });
@@ -385,7 +385,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
       ]) as unknown,
     });

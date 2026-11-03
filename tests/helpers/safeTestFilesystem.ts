@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 
-type TextDirectoryEntries = Dirent<string>[];
+type TextDirectoryEntries = Dirent[];
 
 const resolveWithinRoot = (filePath: string, root: string): string => {
   const resolvedRoot = path.resolve(root);

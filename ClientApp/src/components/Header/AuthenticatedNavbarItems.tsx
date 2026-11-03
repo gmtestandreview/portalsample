@@ -14,9 +14,9 @@ const DisplayUserAndOrgName = () => {
         <span className='visually-hidden'>,</span>
       </span>
       <span className='d-block org-name text-break'>
-        {!!account?.details?.trading && `${account?.details?.trading}`}
+        {!!account?.details?.trading && account?.details?.trading}
         {!!account?.details?.trading && !!account?.details?.branch && ' - '}
-        {!!account?.details?.branch && `${account?.details?.branch}`}
+        {!!account?.details?.branch && account?.details?.branch}
       </span>
       <span className='d-block org-name text-break'>
         {account?.details?.organisation}

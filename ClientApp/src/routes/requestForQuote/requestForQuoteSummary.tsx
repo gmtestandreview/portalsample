@@ -17,9 +17,9 @@ import type {
 } from './summary/types';
 import { useAccountState } from '../../authentication/hooks';
 
-type RfqFormikStatus = {
+interface RfqFormikStatus {
   hidden?: RfqSummarySectionProps['hidden'];
-};
+}
 
 const isRfqFormikStatus = (status: unknown): status is RfqFormikStatus =>
   typeof status === 'object' && status !== null && 'hidden' in status;

@@ -27,11 +27,11 @@ import InstrumentInfoPanel from './instrumentInfoPanel';
 
 const isString = (e: unknown): e is string => typeof e === 'string';
 
-type UploadProblemDetails = {
+interface UploadProblemDetails {
   status?: number;
   title?: string;
   errors?: Record<string, unknown[]>;
-};
+}
 
 /** Normalises Formik's string | string[] | nested-object error for one field to string[]. */
 const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {

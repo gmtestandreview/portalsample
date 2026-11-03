@@ -56,7 +56,7 @@ vi.mock(
     >() => Promise<TOriginal>,
   ) =>
     ({
-      ...(await importOriginal<typeof WebApiClientModule>()),
+      ...(await importOriginal()),
       AddressClient,
     }) satisfies __ExactMockModule<__TestMockModule4>) as unknown as __DynamicPartialMockFactory<__TestMockModule4>,
 );
@@ -152,7 +152,7 @@ describe('rhfAddressLookup selection', () => {
       await screen.findByRole('option', { name: /1 National Circuit/ }),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(formValue()).toStrictEqual({
         id: 7,
         type: 'postal',
@@ -165,8 +165,8 @@ describe('rhfAddressLookup selection', () => {
         postcode: '2600',
         isManuallyEntered: false,
         searchText: match.displayText,
-      }),
-    );
+      });
+    });
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('unit-token');
     expect(mocks.addressSearch).toHaveBeenCalledWith(
@@ -193,15 +193,15 @@ describe('rhfAddressLookup selection', () => {
     );
     await userEvent.click((await screen.findAllByRole('option'))[0]!);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(formValue()).toMatchObject({
         line1: '',
         line2: 'Suite 2',
         suburb: '',
         postcode: '',
         searchText: '',
-      }),
-    );
+      });
+    });
   });
 
   it('clears the address when the search text is cleared', async () => {
@@ -219,7 +219,9 @@ describe('rhfAddressLookup selection', () => {
       screen.getByRole('combobox', { name: 'Postal address' }),
     );
 
-    await waitFor(() => expect(formValue()['line1']).toBe(''));
+    await waitFor(() => {
+      expect(formValue()['line1']).toBe('');
+    });
 
     expect(formValue()).toMatchObject({
       id: 2,
@@ -283,20 +285,22 @@ describe('rhfAddressLookup results', () => {
     resetMocks();
     const failure = { status: 500 };
     mocks.addressSearch.mockRejectedValue(failure);
-    const logError = vi.spyOn(AppLogger, 'error').mockImplementation(() => {});
+    const logError = vi
+      .spyOn(AppLogger, 'error')
+      .mockImplementation(() => undefined);
     renderLookup();
 
     await search('12 Secret Street');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(logError).toHaveBeenCalledWith(
         'Failed to execute address search',
         failure,
-      ),
-    );
-    logError.mock.calls.forEach(([message]) =>
-      expect(String(message)).not.toContain('Secret'),
-    );
+      );
+    });
+    logError.mock.calls.forEach(([message]) => {
+      expect(String(message)).not.toContain('Secret');
+    });
     logError.mockRestore();
   });
 
@@ -331,7 +335,9 @@ describe('rhfAddressLookup results', () => {
 
     await search('first');
 
-    await waitFor(() => expect(firstSignal?.aborted).toBe(true));
+    await waitFor(() => {
+      expect(firstSignal?.aborted).toBe(true);
+    });
   });
 });
 
@@ -346,9 +352,9 @@ describe('rhfAddressLookup manual entry', () => {
     );
     await search('ab');
     await userEvent.tab();
-    await waitFor(() =>
-      expect(screen.getByTestId('touched')).toHaveTextContent('searchText'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('touched')).toHaveTextContent('searchText');
+    });
 
     await userEvent.click(
       screen.getByRole('button', { name: /Enter it manually/ }),

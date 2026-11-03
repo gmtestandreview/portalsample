@@ -23,7 +23,7 @@ export const flattenRhfErrors = (
     return result;
   }
 
-  const entries = Object.entries(errors) as Array<[string, unknown]>;
+  const entries = Object.entries(errors) as [string, unknown][];
 
   entries.forEach(([key, value]) => {
     if (value === null || typeof value !== 'object') {

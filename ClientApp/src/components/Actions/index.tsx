@@ -39,14 +39,14 @@ export interface DropdownActionItem {
   action: string;
   text: string;
   route?: string;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 interface ActionsProps {
   id?: string;
   as?: 'icon';
   dropDownActions: DropdownActionItem[];
-  onItemClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onItemClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   variant?: string;
   containerClassName?: string;
   className?: string;

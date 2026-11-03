@@ -336,16 +336,16 @@ describe('rhfAttachment', () => {
       file('manual.pdf', 10),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
-      ]),
-    );
-    await waitFor(() =>
+      ]);
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachments":[{"id":"doc-1"',
-      ),
-    );
+      );
+    });
   });
 
   it('normalizes a single uploaded attachment object into a list', async () => {
@@ -362,11 +362,11 @@ describe('rhfAttachment', () => {
       file('manual.pdf', 10),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachments":[{"id":"doc-1"',
-      ),
-    );
+      );
+    });
   });
 
   it('uploads multiple valid files and replaces the attachment list with the server result', async () => {
@@ -390,17 +390,17 @@ describe('rhfAttachment', () => {
       file('diagram.jpg', 10, 'image/jpeg'),
     ]);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
         expect.objectContaining({ name: 'diagram.jpg' }),
-      ]),
-    );
-    await waitFor(() =>
+      ]);
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentName":"diagram.jpg"',
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('values')).not.toHaveTextContent(
       '"attachmentName":"manual.pdf"',
@@ -425,21 +425,21 @@ describe('rhfAttachment', () => {
       file('small.pdf', 10),
     ]);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'small.pdf' }),
-      ]),
-    );
+      ]);
+    });
 
     expect(
       screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
     ).toBeInTheDocument();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentName":"small.pdf"',
-      ),
-    );
+      );
+    });
   });
 
   it('stores a single-file upload as a one-item list while progress is still running', async () => {
@@ -468,11 +468,11 @@ describe('rhfAttachment', () => {
       file('manual.pdf', 10),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachments":[{"id":"doc-1"',
-      ),
-    );
+      );
+    });
 
     expect(
       screen.getByRole('progressbar', { name: 'Uploading' }),
@@ -591,9 +591,9 @@ describe('rhfAttachment', () => {
       file('manual.pdf', 10),
     );
 
-    await waitFor(() =>
-      expect(onUploadFiles).toHaveBeenCalledWith([expect.any(File)]),
-    );
+    await waitFor(() => {
+      expect(onUploadFiles).toHaveBeenCalledWith([expect.any(File)]);
+    });
 
     expect(
       within(screen.getByRole('list', { name: 'upload errors' })).queryByRole(
@@ -674,11 +674,11 @@ describe('rhfAttachment', () => {
 
     expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachments":[]',
-      ),
-    );
+      );
+    });
   });
 
   it('does not call delete when the selected attachment has no id', async () => {
@@ -786,7 +786,9 @@ describe('rhfAttachment', () => {
   it('survives an upload that finishes after the control has gone', async () => {
     expect.hasAssertions();
 
-    let finishUpload: (value: AttachmentDto[]) => void = () => {};
+    let finishUpload: (value: AttachmentDto[]) => void = () => {
+      // Placeholder until the upload promise executor assigns the real resolve function.
+    };
     const onUploadFiles = vi.fn<UploadFiles>(
       () =>
         new Promise<AttachmentDto[]>((resolve) => {
@@ -799,7 +801,9 @@ describe('rhfAttachment', () => {
       screen.getByTestId('drag-upload-supporting-documents'),
       file('manual.pdf', 10),
     );
-    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onUploadFiles).toHaveBeenCalledTimes(1);
+    });
 
     // The post-upload reset of the file input has nothing to write to once the ref detaches.
     unmount();
@@ -813,7 +817,9 @@ describe('rhfAttachment', () => {
   it('survives a delete that finishes after the control has gone', async () => {
     expect.hasAssertions();
 
-    let finishDelete: () => void = () => {};
+    let finishDelete: () => void = () => {
+      // Placeholder until the delete promise executor assigns the real resolve function.
+    };
     const onDeleteFile = vi.fn<DeleteFile>(
       () =>
         new Promise<void>((resolve) => {
@@ -826,7 +832,9 @@ describe('rhfAttachment', () => {
 
     await userEvent.click(screen.getByTestId('cancel-button-doc-1'));
     await userEvent.click(screen.getByRole('button', { name: 'Yes, delete' }));
-    await waitFor(() => expect(onDeleteFile).toHaveBeenCalledWith('doc-1'));
+    await waitFor(() => {
+      expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
+    });
 
     unmount();
     act(() => {
@@ -875,9 +883,9 @@ describe('rhfAttachment', () => {
     await user.click(screen.getByTestId('cancel-button-doc-1'));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
-    await waitFor(() =>
-      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument();
+    });
 
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
       'Certificate',
@@ -895,7 +903,7 @@ describe('rhfAttachment', () => {
         attachmentCategory: '',
       }) satisfies AttachmentDto;
     const rowOf = (fileName: string) =>
-      screen.getByText(fileName).closest('.attachment') as HTMLElement;
+      screen.getByText(fileName).closest('.attachment')!;
     const touchCategory = async (
       user: ReturnType<typeof userEvent.setup>,
       fileName: string,
@@ -912,9 +920,9 @@ describe('rhfAttachment', () => {
     ) => {
       await user.click(screen.getByTestId(`cancel-button-${id}`));
       await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
-      await waitFor(() =>
-        expect(screen.queryByText(fileName)).not.toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.queryByText(fileName)).not.toBeInTheDocument();
+      });
     };
 
     it('shows no error on an untouched row that moves up after a touched row is deleted', async () => {
@@ -960,9 +968,9 @@ describe('rhfAttachment', () => {
         file('second.pdf', 10),
       );
 
-      await waitFor(() =>
-        expect(screen.getByText('second.pdf')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('second.pdf')).toBeInTheDocument();
+      });
 
       expect(screen.queryByText('first.pdf')).not.toBeInTheDocument();
       expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
@@ -1018,9 +1026,13 @@ describe('rhfAttachment', () => {
       attachmentName: 'second.pdf',
       attachmentCategory: 'Certificate',
     } satisfies AttachmentDto;
-    let rejectSave: () => void = () => {};
+    let rejectSave: () => void = () => {
+      // Placeholder until the save-rejection executor assigns the real reject function.
+    };
     const savePromise = new Promise<void>((_, reject) => {
-      rejectSave = () => reject(new Error('offline'));
+      rejectSave = () => {
+        reject(new Error('offline'));
+      };
     });
     const onCategoryUpdate = vi
       .fn<CategoryUpdate>()
@@ -1036,19 +1048,19 @@ describe('rhfAttachment', () => {
     );
     await user.click(screen.getByTestId('cancel-button-doc-1'));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
-    await waitFor(() =>
-      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument();
+    });
     await act(async () => {
       rejectSave();
-      await savePromise.catch(() => {});
+      await savePromise.catch(() => undefined);
     });
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
         'Certificate',
-      ),
-    );
+      );
+    });
     const values = JSON.parse(
       screen.getByTestId('values').textContent ?? '{}',
     ) as { attachments: AttachmentDto[] };
@@ -1073,13 +1085,15 @@ describe('rhfAttachment', () => {
     await user.selectOptions(select, 'Certificate');
     await user.selectOptions(select, 'Other');
 
-    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalledTimes(2));
-    await waitFor(() =>
+    await waitFor(() => {
+      expect(onCategoryUpdate).toHaveBeenCalledTimes(2);
+    });
+    await waitFor(() => {
       expect(
         within(
           screen.getByRole('list', { name: 'upload errors' }),
         ).getAllByText('Could not save the category for manual.pdf.'),
-      ).toHaveLength(1),
-    );
+      ).toHaveLength(1);
+    });
   });
 });

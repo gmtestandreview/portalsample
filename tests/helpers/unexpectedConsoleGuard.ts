@@ -20,28 +20,28 @@ import {
 export type GuardedConsoleLevel = 'warn' | 'error';
 
 /** The subset of the Vitest hook API the guard needs, injectable for testing. */
-export type ConsoleGuardHooks = {
+export interface ConsoleGuardHooks {
   beforeEach: (fn: () => void) => void;
   afterEach: (fn: () => void) => void;
-};
+}
 
-type CapturedMessage = {
+interface CapturedMessage {
   level: GuardedConsoleLevel;
   text: string;
   consumed: boolean;
-};
+}
 
-type ActiveExpectation = {
+interface ActiveExpectation {
   level: GuardedConsoleLevel;
   pattern: RegExp;
   matched: number;
-};
+}
 
-type GuardState = {
+interface GuardState {
   captured: CapturedMessage[];
   original: Record<GuardedConsoleLevel, (...args: unknown[]) => void>;
   expectation: ActiveExpectation | null;
-};
+}
 
 const GUARDED_LEVELS: readonly GuardedConsoleLevel[] = ['warn', 'error'];
 

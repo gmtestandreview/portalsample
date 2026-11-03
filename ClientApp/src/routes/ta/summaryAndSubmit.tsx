@@ -16,9 +16,9 @@ import useBodyClass from '../../components/Utilities/useBodyClass';
 import Checkbox from '../../components/Inputs/Checkbox';
 import InTextLink from '../../components/InTextLink';
 
-type TaFormikStatus = {
+interface TaFormikStatus {
   hidden?: TaSummarySectionProps['hidden'];
-};
+}
 
 const isTaFormikStatus = (status: unknown): status is TaFormikStatus =>
   typeof status === 'object' && status !== null && 'hidden' in status;

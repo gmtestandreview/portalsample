@@ -272,7 +272,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                       <br />
                       <span className='text-break'>
                         {requestForQuote?.contact?.firstName &&
-                          `${requestForQuote?.contact?.firstName}`}
+                          requestForQuote?.contact?.firstName}
                         {requestForQuote?.contact?.lastName &&
                           ` ${requestForQuote?.contact?.lastName}`}
                         <br />
@@ -342,7 +342,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                       )}
                       <span className='text-break'>
                         {organisationDto?.streetAddress?.suburb &&
-                          `${organisationDto?.streetAddress?.suburb}`}
+                          organisationDto?.streetAddress?.suburb}
                         {organisationDto?.streetAddress?.state &&
                           ` ${organisationDto?.streetAddress?.state}`}
                         {organisationDto?.streetAddress?.postcode &&

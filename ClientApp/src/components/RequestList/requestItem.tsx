@@ -425,7 +425,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
   const requestForQuoteId = request.quote?.quotationId;
   const modalDispatch = useModalDispatch();
 
-  const onDelete = () => (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onDelete = () => (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     onShowRFQDeleteModalClick();
   };
@@ -446,7 +446,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
             action: RequestAction.Edit,
             text: 'Edit request',
             route: `/request-for-quote/${referenceId}/instrument-and-request`,
-            onClick: () => trackGAEvent('Editrequest'),
+            onClick: () => {
+              trackGAEvent('Editrequest');
+            },
           },
           {
             action: RequestAction.Delete,
@@ -463,7 +465,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           action: RequestAction.View,
           text: 'View report',
           route: `/report/${requestForQuoteId}`,
-          onClick: () => trackGAEvent('Viewreport'),
+          onClick: () => {
+            trackGAEvent('Viewreport');
+          },
         });
         break;
       case DashboardItemStatus.QuoteAvailable:
@@ -471,7 +475,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           action: RequestAction.View,
           text: 'View/accept quotation',
           route: `/quotation/${referenceId}`,
-          onClick: () => trackGAEvent('View/acceptquotation'),
+          onClick: () => {
+            trackGAEvent('View/acceptquotation');
+          },
         });
         break;
       default:
@@ -483,7 +489,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
         action: RequestAction.View,
         text: 'View quotation',
         route: `/quotation/${requestForQuoteId}`,
-        onClick: () => trackGAEvent('Viewquotation'),
+        onClick: () => {
+          trackGAEvent('Viewquotation');
+        },
       });
     }
 
@@ -493,7 +501,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
         action: RequestAction.View,
         text: 'View request',
         route: `/request-for-quote/${referenceId}/view-summary`,
-        onClick: () => trackGAEvent('Viewrequest'),
+        onClick: () => {
+          trackGAEvent('Viewrequest');
+        },
       });
     }
 
@@ -502,7 +512,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
         action: RequestAction.View,
         text: 'Request recalibration',
         route: `/request-for-quote-copy/${referenceId}`,
-        onClick: () => trackGAEvent('Requestrecalibration'),
+        onClick: () => {
+          trackGAEvent('Requestrecalibration');
+        },
       });
     }
 
@@ -512,13 +524,17 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           action: RequestAction.View,
           text: 'Request recalibration',
           route: `/request-for-quote-copy/${referenceId}`,
-          onClick: () => trackGAEvent('Requestrecalibration'),
+          onClick: () => {
+            trackGAEvent('Requestrecalibration');
+          },
         },
         {
           action: RequestAction.View,
           text: 'View quotation',
           route: `/quotation/${requestForQuoteId}`,
-          onClick: () => trackGAEvent('Viewquotation'),
+          onClick: () => {
+            trackGAEvent('Viewquotation');
+          },
         },
       );
     }

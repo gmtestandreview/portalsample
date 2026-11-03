@@ -174,7 +174,9 @@ const WizardRoutedStep = (
                     {discard?.showCancelButton ? (
                       <Button
                         data-testid='cancel-button'
-                        onClick={() => cancel()}
+                        onClick={() => {
+                          cancel();
+                        }}
                         variant='tertiary'
                         className='me-md-auto order-2 order-md-0'
                       >

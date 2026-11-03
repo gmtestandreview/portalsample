@@ -27,7 +27,7 @@ function FormikHarness<TValues extends FormikValues>({
       initialValues={initialValues}
       {...(initialTouched === undefined ? {} : { initialTouched })}
       {...(initialErrors === undefined ? {} : { initialErrors })}
-      onSubmit={async () => {}}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>{children}</Form>
     </Formik>

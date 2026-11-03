@@ -114,9 +114,9 @@ describe('object and array helpers', () => {
   it('returns typed property names and prefixed property names', () => {
     expect.hasAssertions();
 
-    type Example = {
+    interface Example {
       child: string;
-    };
+    }
 
     expect(utils.propertyOf<Example>('child')).toBe('child');
     expect(utils.prefixedPropertyOf<Example>('parent')('child')).toBe(

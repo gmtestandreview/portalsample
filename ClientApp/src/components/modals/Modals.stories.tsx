@@ -54,10 +54,10 @@ interface RecordedRequest {
 
 interface ModalObservations {
   requests: RecordedRequest[];
-  defaultOrganisation: Array<[number | undefined, string | undefined]>;
-  organisationAndBranch: Array<[string, string, string]>;
+  defaultOrganisation: [number | undefined, string | undefined][];
+  organisationAndBranch: [string, string, string][];
   branchSelectorVisibility: boolean[];
-  rfqDeleteVisibility: Array<[boolean, string]>;
+  rfqDeleteVisibility: [boolean, string][];
 }
 
 const emptyObservations = (): ModalObservations => ({
@@ -175,7 +175,13 @@ const ModalHost = ({
   return (
     <ModalStateCtx.Provider value={state}>
       <ModalDispatchCtx.Provider value={dispatch}>
-        <Button onClick={() => openModal(dispatch)}>{triggerLabel}</Button>
+        <Button
+          onClick={() => {
+            openModal(dispatch);
+          }}
+        >
+          {triggerLabel}
+        </Button>
         {children(state)}
       </ModalDispatchCtx.Provider>
     </ModalStateCtx.Provider>
@@ -186,12 +192,24 @@ const DeleteConfirmationDemo = () => {
   const [open, setOpen] = useState(true);
   return (
     <div>
-      <Button onClick={() => setOpen(true)}>Open confirmation</Button>
+      <Button
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Open confirmation
+      </Button>
       <ConfirmationModal
         isOpen={open}
-        closeModal={() => setOpen(false)}
-        onModalYes={() => setOpen(false)}
-        onModalNo={() => setOpen(false)}
+        closeModal={() => {
+          setOpen(false);
+        }}
+        onModalYes={() => {
+          setOpen(false);
+        }}
+        onModalNo={() => {
+          setOpen(false);
+        }}
         titleText='Delete this request?'
         bodyText='Are you sure you want to delete this draft request? This action cannot be undone.'
         noButtonTitle='Cancel'
@@ -206,13 +224,25 @@ const SaveAndExitDemo = () => {
   const [outcome, setOutcome] = useState('No choice made');
   return (
     <div>
-      <Button onClick={() => setOpen(true)}>Open confirmation modal</Button>
+      <Button
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Open confirmation modal
+      </Button>
       <output>{outcome}</output>
       <ConfirmationModal
         isOpen={open}
-        closeModal={() => setOpen(false)}
-        onModalYes={() => setOutcome('Saved draft and exited')}
-        onModalNo={() => setOutcome('Chose to continue editing')}
+        closeModal={() => {
+          setOpen(false);
+        }}
+        onModalYes={() => {
+          setOutcome('Saved draft and exited');
+        }}
+        onModalNo={() => {
+          setOutcome('Chose to continue editing');
+        }}
         titleText='Save and exit?'
         bodyText='Your changes will be saved as a draft. You can continue editing from the dashboard.'
         noButtonTitle='Continue editing'
@@ -465,7 +495,9 @@ const expectEscapeLeavesOpen = async (dialog: HTMLElement) => {
 const branchSelectorHost = (
   <ModalHost
     triggerLabel='Manage branch or location'
-    openModal={(dispatch) => dispatch.setShowBranchSelector(true)}
+    openModal={(dispatch) => {
+      dispatch.setShowBranchSelector(true);
+    }}
   >
     {(state) => (state.showBranchSelector ? <BranchSelectorModal /> : null)}
   </ModalHost>
@@ -594,9 +626,9 @@ export const BranchSelectorCancelDiscardsSelection = meta.story({
 const rfqDeleteHost = (
   <ModalHost
     triggerLabel='Delete draft request'
-    openModal={(dispatch) =>
-      dispatch.setShowRFQDeleteModal(true, 'RFQ-2024-001234')
-    }
+    openModal={(dispatch) => {
+      dispatch.setShowRFQDeleteModal(true, 'RFQ-2024-001234');
+    }}
   >
     {(state) => (state.showRFQDeleteModal ? <RFQDeleteModal /> : null)}
   </ModalHost>

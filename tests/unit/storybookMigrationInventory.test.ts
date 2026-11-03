@@ -12,7 +12,7 @@ const read = (...segments: string[]) =>
 const readSource = (...segments: string[]) =>
   read('ClientApp', 'src', ...segments);
 
-const normalizeRoutePaths = (rawPaths: Array<string | undefined>): string[] => {
+const normalizeRoutePaths = (rawPaths: (string | undefined)[]): string[] => {
   const uniquePaths = [
     ...new Set(
       rawPaths.filter(

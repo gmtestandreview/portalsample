@@ -203,7 +203,7 @@ const mockBranchUndefinedName = {
   streetAddress: { suburb: 'Perth', state: State.WA },
 };
 
-const noop = () => {};
+const noop = vi.fn<() => void>();
 
 const mockMsalContext: IMsalContext = {
   instance: {

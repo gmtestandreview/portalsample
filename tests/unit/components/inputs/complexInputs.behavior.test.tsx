@@ -46,7 +46,7 @@ function AddressClient() {
 const mocks: {
   acquireTokenSilent: ReturnType<typeof vi.fn>;
   account: MockAccount;
-  accounts: Array<{ homeAccountId: string }>;
+  accounts: { homeAccountId: string }[];
   addressSearch: ReturnType<typeof vi.fn<AddressSearch>>;
   inProgress: string;
   setAuthToken: ReturnType<typeof vi.fn>;
@@ -79,7 +79,7 @@ vi.mock(import('@/api/web-api-client'), (async (
     TOriginal = typeof WebApiClientModule,
   >() => Promise<TOriginal>,
 ) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
+  const actual = await importOriginal();
   return {
     ...actual,
     AddressClient,
@@ -566,9 +566,9 @@ describe('complex input behavior slice', () => {
       name: 'Street address',
     });
     await user.clear(selectedSearch);
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"line1":""'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent('"line1":""');
+    });
 
     expect(screen.getByTestId('values')).toHaveTextContent(
       '"isManuallyEntered":false',
@@ -616,7 +616,9 @@ describe('complex input behavior slice', () => {
       .mockImplementationOnce(
         (_term: string | null | undefined, signal?: AbortSignal) => {
           firstSignal = signal;
-          return new Promise<Awaited<ReturnType<AddressSearch>>>(() => {});
+          return new Promise<Awaited<ReturnType<AddressSearch>>>(() => {
+            // Never resolves — the test only needs the captured abort signal.
+          });
         },
       )
       .mockResolvedValueOnce({ matches: [] });
@@ -680,11 +682,11 @@ describe('complex input behavior slice', () => {
     const getOptions = vi
       .fn<
         () => Promise<
-          Array<{
+          {
             id: string;
             displayText: string;
             value: { id: number };
-          }>
+          }[]
         >
       >()
       .mockResolvedValue([
@@ -782,13 +784,13 @@ describe('complex input behavior slice', () => {
     await user.click(combobox);
     await user.keyboard('{ArrowDown}{ArrowDown}{Enter}');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onSelectedOption).toHaveBeenCalledWith({
         id: 'park',
         displayText: 'Sydney Olympic Park NSW',
         value: 'park',
-      }),
-    );
+      });
+    });
 
     await user.keyboard('{Escape}');
 
@@ -846,13 +848,13 @@ describe('complex input behavior slice', () => {
     );
 
     await user.keyboard('{Tab}');
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onSelectedOption).toHaveBeenCalledWith({
         id: 'first',
         displayText: 'First suburb',
         value: 'first',
-      }),
-    );
+      });
+    });
 
     expect(onCancel).not.toHaveBeenCalled();
   });
@@ -1005,11 +1007,11 @@ describe('complex input behavior slice', () => {
       </FormikHarness>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByRole('combobox', { name: 'Service' })).toHaveValue(
         'Updated service',
-      ),
-    );
+      );
+    });
   });
 
   it('renders AutoSuggestOption within its collection and exposes selected state', () => {
@@ -1084,11 +1086,11 @@ describe('complex input behavior slice', () => {
     ).not.toBeInTheDocument();
 
     await user.keyboard('{ArrowDown}{Enter}');
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"organisationName":"Alpha Labs"',
-      ),
-    );
+      );
+    });
 
     await user.clear(combobox);
     await user.type(combobox, 'Alp');
@@ -1096,11 +1098,11 @@ describe('complex input behavior slice', () => {
       await screen.findByRole('option', { name: /Alpine Metrology/ }),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"organisationName":"Alpine Metrology"',
-      ),
-    );
+      );
+    });
   });
 
   it('handles OrganisationNameLookup short input, ArrowUp navigation, and escape', async () => {
@@ -1145,12 +1147,12 @@ describe('complex input behavior slice', () => {
     await screen.findByRole('listbox', { name: 'Suggested options' });
 
     await user.keyboard('{ArrowUp}');
-    await waitFor(() =>
+    await waitFor(() => {
       expect(combobox).toHaveAttribute(
         'aria-activedescendant',
         'organisationName-option-1',
-      ),
-    );
+      );
+    });
 
     expect(scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
@@ -1248,11 +1250,11 @@ describe('complex input behavior slice', () => {
 
     await user.clear(combobox);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.queryByRole('listbox', { name: 'Suggested options' }),
-      ).not.toBeInTheDocument(),
-    );
+      ).not.toBeInTheDocument();
+    });
   });
 
   it('accepts OrganisationNameLookup free text when Enter is pressed without an active option', async () => {
@@ -1293,7 +1295,7 @@ describe('complex input behavior slice', () => {
     vi.useFakeTimers();
 
     const renderLookup = (
-      certNameOptions: Array<{ id: string; lookupName: string }>,
+      certNameOptions: { id: string; lookupName: string }[],
     ) => (
       <FormikHarness
         initialValues={{
@@ -1954,12 +1956,12 @@ describe('complex input behavior slice', () => {
     await screen.findByRole('listbox', { name: 'Suggested options' });
     await user.keyboard('{ArrowDown}{ArrowDown}{ArrowUp}');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(combobox).toHaveAttribute(
         'aria-activedescendant',
         'organisationName-option-0',
-      ),
-    );
+      );
+    });
   });
 
   it('handles OrganisationNameLookup validation and missing option data', async () => {
@@ -2100,13 +2102,15 @@ describe('complex input behavior slice', () => {
     expect(screen.getByText('$')).toBeInTheDocument();
     expect(screen.getByText('AUD')).toBeInTheDocument();
 
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"amount":1200'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent('"amount":1200');
+    });
 
     await user.clear(amount);
     await user.type(amount, '2500');
-    await waitFor(() => expect(amount).toHaveValue('2,500'));
+    await waitFor(() => {
+      expect(amount).toHaveValue('2,500');
+    });
   });
 
   it('formats NumberInput phone values and summary values', () => {
@@ -2161,17 +2165,17 @@ describe('complex input behavior slice', () => {
       </FormikHarness>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"amount":2400'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent('"amount":2400');
+    });
 
     const amount = screen.getByRole('textbox', { name: 'Amount' });
     await user.clear(amount);
     await user.type(amount, '25');
 
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"amount":"25"'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent('"amount":"25"');
+    });
   });
 
   it.each([

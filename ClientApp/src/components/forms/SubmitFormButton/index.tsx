@@ -27,7 +27,7 @@ const FormikSubmitFormButton = ({
     }
   }, [submitClickField, submitForm, submitClickHelper]);
 
-  const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     void submitClickHelper.setValue(true);
     void saveAndExitHelper.setValue(false);
@@ -48,7 +48,7 @@ const FormikSubmitFormButton = ({
 const RhfSubmitFormButton = ({ children }: Readonly<SubmitFormButtonProps>) => {
   const { submit } = useRhfFormApi();
 
-  const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     void submit('next');
   };

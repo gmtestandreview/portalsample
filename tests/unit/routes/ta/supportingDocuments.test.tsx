@@ -173,10 +173,10 @@ const defaultValues = {
   },
 };
 
-type RenderOptions = {
+interface RenderOptions {
   props?: Record<string, unknown>;
   values?: Record<string, unknown>;
-};
+}
 
 let formik: FormikProps<Record<string, unknown>> | undefined;
 
@@ -495,12 +495,12 @@ describe('supporting documents', () => {
         props: { externalErrors: [ValidationMessages.RequiredDoc] },
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(scrollIntoView).toHaveBeenCalledWith({
           behavior: 'smooth',
           block: 'start',
-        }),
-      );
+        });
+      });
 
       expect(focus).toHaveBeenCalledWith();
 
@@ -661,14 +661,14 @@ describe('supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
           expect.objectContaining<Record<string, unknown>>({
             message: expect.stringContaining('Client Org'),
             severity: 'Error',
           }),
-        ),
-      );
+        );
+      });
 
       expect(
         defined(
@@ -702,9 +702,9 @@ describe('supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      await waitFor(() =>
-        expect(mocks.setTargetOrganisation).toHaveBeenCalledWith('', ''),
-      );
+      await waitFor(() => {
+        expect(mocks.setTargetOrganisation).toHaveBeenCalledWith('', '');
+      });
     });
 
     it('treats a 403 without the third-party title as an ordinary failure', async () => {
@@ -967,7 +967,9 @@ describe('supporting documents', () => {
         props: { setProgress: undefined },
       });
 
-      expect(() => unmount()).not.toThrow();
+      expect(() => {
+        unmount();
+      }).not.toThrow();
     });
   });
 });

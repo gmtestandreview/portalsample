@@ -115,10 +115,10 @@ const renderLoaded = async (values: Values) => {
 
 const resetRfqInstrumentSummaryMocks = () => {
   resetMsalMock();
-  vi.mocked(AppLogger)['error'].mockClear();
+  vi.mocked(AppLogger).error.mockClear();
   stateSetterCalls.calls.length = 0;
   clients.lookup.methods.getLookup.mockReset();
-  mockSummaryLookups(clients.lookup.methods['getLookup']);
+  mockSummaryLookups(clients.lookup.methods.getLookup);
 };
 
 // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
@@ -156,12 +156,12 @@ describe(RfqInstrumentSummary, () => {
 
     const result = renderInstrument(populated);
 
-    await waitFor(() =>
-      expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
+    await waitFor(() => {
+      expect(vi.mocked(AppLogger).error).toHaveBeenCalledWith(
         'Failed to retrieve look ups',
         failure,
-      ),
-    );
+      );
+    });
 
     expect(result.getByText('Loading...')).toBeInTheDocument();
     expect(result.queryByText('Request details')).not.toBeInTheDocument();
@@ -179,12 +179,12 @@ describe(RfqInstrumentSummary, () => {
 
     renderInstrument(populated);
 
-    await waitFor(() =>
-      expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
+    await waitFor(() => {
+      expect(vi.mocked(AppLogger).error).toHaveBeenCalledWith(
         'Failed to retrieve look ups',
         new Error('boom'),
-      ),
-    );
+      );
+    });
   });
 
   it('keeps the spinner and does not load when nobody is signed in', () => {
@@ -219,14 +219,14 @@ describe(RfqInstrumentSummary, () => {
     );
 
     const { unmount } = renderHook(() => useRfqInstrumentLookups());
-    await waitFor(() =>
-      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2),
-    );
+    await waitFor(() => {
+      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2);
+    });
     unmount();
     release([]);
-    await vi.waitFor(() =>
-      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2),
-    );
+    await vi.waitFor(() => {
+      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2);
+    });
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(setLookupsCalls()).toHaveLength(0);
@@ -242,7 +242,9 @@ describe(RfqInstrumentSummary, () => {
 
     const { result } = renderHook(() => useRfqInstrumentLookups());
 
-    await waitFor(() => expect(result.current).toBeDefined());
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
 
     expect(setLookupsCalls()).toHaveLength(1);
   });
@@ -490,7 +492,9 @@ describe(useRfqInstrumentLookups, () => {
 
     const { result } = renderHook(() => useRfqInstrumentLookups());
 
-    await waitFor(() => expect(result.current).toBeDefined());
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
 
     expect(
       result.current?.measurementCategories.map((o) => o.displayText),
@@ -527,7 +531,9 @@ describe(useRfqInstrumentLookups, () => {
       .mockResolvedValueOnce(types);
 
     const { result } = renderHook(() => useRfqInstrumentLookups());
-    await waitFor(() => expect(result.current).toBeDefined());
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
 
     expect(categories).toStrictEqual(measurementCategoryLookup);
     expect(types).toStrictEqual(artefactTypeLookup);
@@ -546,7 +552,9 @@ describe(useRfqInstrumentLookups, () => {
       .mockResolvedValueOnce([{ label: 'only-label' }, { id: 'no-label' }]);
 
     const { result } = renderHook(() => useRfqInstrumentLookups());
-    await waitFor(() => expect(result.current).toBeDefined());
+    await waitFor(() => {
+      expect(result.current).toBeDefined();
+    });
 
     expect(result.current?.measurementCategories).toStrictEqual([
       { displayText: '', value: 'only-id' },

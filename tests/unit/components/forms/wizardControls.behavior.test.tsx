@@ -12,7 +12,9 @@ import type GoogleAnalytics from '@/analytics/GoogleAnalytics';
 import type ErrorBoundary from '@/components/ErrorBoundary';
 import type { ComponentProps } from 'react';
 
-type WizardValues = { name: string };
+interface WizardValues {
+  name: string;
+}
 type Submit = NonNullable<FormikConfig<WizardValues>['onSubmit']>;
 type Validate = NonNullable<FormikConfig<WizardValues>['validate']>;
 type AnalyticsProps = ComponentProps<typeof GoogleAnalytics>;
@@ -136,7 +138,9 @@ describe('wizard control behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Finish' }));
     await user.click(screen.getByRole('button', { name: 'Confirm yes' }));
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('submits directly when final-step validation already has errors', async () => {
@@ -161,7 +165,9 @@ describe('wizard control behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
@@ -188,9 +194,9 @@ describe('wizard control behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
-    await waitFor(() =>
-      expect(validate).toHaveBeenCalledWith({ name: '' }, undefined),
-    );
+    await waitFor(() => {
+      expect(validate).toHaveBeenCalledWith({ name: '' }, undefined);
+    });
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
@@ -267,11 +273,13 @@ describe('wizard control behavior', () => {
   it('rejects invalid WizardForm children', () => {
     expect.hasAssertions();
 
-    const preventError = (event: ErrorEvent) => event.preventDefault();
+    const preventError = (event: ErrorEvent) => {
+      event.preventDefault();
+    };
     globalThis.addEventListener('error', preventError);
     const consoleError = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {});
+      .mockImplementation(() => undefined);
 
     try {
       expect(() =>

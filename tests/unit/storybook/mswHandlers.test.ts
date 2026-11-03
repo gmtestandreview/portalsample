@@ -16,11 +16,11 @@ const expectAnyString = (): unknown => expect.any(String);
 const expectObjectContaining = (value: Record<string, unknown>): unknown =>
   expect.objectContaining(value);
 
-type ApiRequest = {
+interface ApiRequest {
   method: 'GET' | 'POST';
   path: string;
   body?: string;
-};
+}
 
 const assertRouteCoveragePayload = (request: ApiRequest, payload: unknown) => {
   if (request.path.includes('get-quote-request-details-byrefid')) {
@@ -114,13 +114,19 @@ const storyBlocksWithRequests = (source: string) => {
 
 describe('storybook MSW handlers', () => {
   // eslint-disable-next-line vitest/no-hooks -- MSW server lifecycle spans the suite.
-  beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
+  beforeAll(() => {
+    server.listen({ onUnhandledFrame: 'error' });
+  });
 
   // eslint-disable-next-line vitest/no-hooks -- each test starts with clean handlers.
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+  });
 
   // eslint-disable-next-line vitest/no-hooks -- close the shared MSW server after the suite.
-  afterAll(() => server.close());
+  afterAll(() => {
+    server.close();
+  });
 
   it('finds the lookup call sites it is supposed to cover', () => {
     expect.hasAssertions();

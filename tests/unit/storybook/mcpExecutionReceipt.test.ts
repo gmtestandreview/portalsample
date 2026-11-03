@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-type ReceiptModule = {
+interface ReceiptModule {
   normalizeMcpReceipt(input: {
     requestId: number | string;
     requestedStoryIds: string[];
@@ -14,10 +14,10 @@ type ReceiptModule = {
     expectedProducerIdentityDigest?: string;
   }): {
     ok: boolean;
-    errors: Array<{ code: string; message: string }>;
+    errors: { code: string; message: string }[];
     receipt?: Record<string, unknown>;
   };
-};
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.

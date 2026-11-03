@@ -14,7 +14,9 @@ const meta = preview.meta({
   decorators: [withPortalProviders],
   beforeEach: () => {
     globalThis.sessionStorage.removeItem(TAB_AFTER_SAVE_KEY);
-    return () => globalThis.sessionStorage.removeItem(TAB_AFTER_SAVE_KEY);
+    return () => {
+      globalThis.sessionStorage.removeItem(TAB_AFTER_SAVE_KEY);
+    };
   },
   parameters: {
     layout: 'fullscreen',

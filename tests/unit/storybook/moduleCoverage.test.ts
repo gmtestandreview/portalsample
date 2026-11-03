@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-type CoverageState = {
+interface CoverageState {
   name: string;
   applicability: 'required' | 'not-supported';
   outcome: string;
@@ -13,34 +13,34 @@ type CoverageState = {
   assertionExport: string | null;
   assertionMarker: string | null;
   rationale: string;
-};
+}
 
-type SourceExport = {
+interface SourceExport {
   source: string;
   export: string;
   kind: 'renderable' | 'nonvisual';
-};
+}
 
-type UnresolvedExport = {
+interface UnresolvedExport {
   source: string;
   export: string;
   code: string;
   reason: string;
-};
+}
 
-type Discovery = {
+interface Discovery {
   exports: SourceExport[];
   unresolved: UnresolvedExport[];
-};
+}
 
-type ValidationResult = {
+interface ValidationResult {
   ok: boolean;
-  errors: Array<{ code: string; message?: string; path?: string }>;
-};
+  errors: { code: string; message?: string; path?: string }[];
+}
 
-type CoverageModule = {
+interface CoverageModule {
   discoverSourceExports(input: {
-    files: Array<{ path: string; content: string }>;
+    files: { path: string; content: string }[];
   }): Discovery;
   main(argv?: string[]): {
     exitCode: number;
@@ -53,7 +53,7 @@ type CoverageModule = {
   }): ValidationResult;
   validateStoryEvidence(input: {
     manifest: unknown;
-    files: Array<{ path: string; content: string }>;
+    files: { path: string; content: string }[];
   }): ValidationResult;
   parseJsonDocument(text: string): unknown;
   validateSourceClaims(
@@ -69,7 +69,7 @@ type CoverageModule = {
       matrix: string;
     };
   };
-};
+}
 
 // The maintained CLI is JavaScript; this local contract keeps the test typed
 // without adding a declaration file outside the approved T2a write set.
@@ -1020,11 +1020,9 @@ describe('ta/manage forwarding equivalence', () => {
   });
 
   describe('story evidence wiring', () => {
-    const forwardingErrors = (
-      files: Array<{ path: string; content: string }>,
-    ) =>
+    const forwardingErrors = (files: { path: string; content: string }[]) =>
       validateStoryEvidence({ manifest: validManifest, files }).errors.filter(
-        (entry) => /consumer sufficiency/u.test(entry.message ?? ''),
+        (entry) => (entry.message ?? '').includes('consumer sufficiency'),
       );
     const targetFile = {
       path: targetSource,

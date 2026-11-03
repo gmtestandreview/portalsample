@@ -155,9 +155,9 @@ describe('services we offer', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
 
       expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
         scopes: ['api://services/.default'],
@@ -176,9 +176,9 @@ describe('services we offer', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
 
       const [testing, pattern] = screen.getAllByRole('checkbox', {
         hidden: true,
@@ -205,9 +205,9 @@ describe('services we offer', () => {
 
       await renderRoute('/services-we-offer?mode=manage');
 
-      await waitFor(() =>
-        expect(screen.getByText('Pattern approval')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Pattern approval')).toBeInTheDocument();
+      });
       const [testingRadio, patternRadio] = screen.getAllByRole('radio', {
         hidden: true,
       });
@@ -230,15 +230,15 @@ describe('services we offer', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Loading data...')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Loading data...')).toBeInTheDocument();
+      });
 
       releaseServices(serviceDtos);
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
 
       expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
     });
@@ -256,12 +256,12 @@ describe('services we offer', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
           scopes: ['api://services/.default'],
           account: testAccount,
-        }),
-      );
+        });
+      });
 
       expect(screen.getByText('Loading data...')).toBeInTheDocument();
       expect(
@@ -280,12 +280,12 @@ describe('services we offer', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to retrieve service look ups',
           expect.any(Error),
-        ),
-      );
+        );
+      });
 
       expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
     });
@@ -299,12 +299,12 @@ describe('services we offer', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to retrieve service look ups',
           expect.any(Error),
-        ),
-      );
+        );
+      });
 
       expect(clients.lookup.methods.getServices).not.toHaveBeenCalled();
     });
@@ -319,11 +319,11 @@ describe('services we offer', () => {
       await renderRoute('/services-we-offer?mode=manage');
 
       // "Services we offer" is both the page heading and a breadcrumb, so match the heading.
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           screen.getByRole('heading', { name: 'Services we offer', level: 1 }),
-        ).toBeInTheDocument(),
-      );
+        ).toBeInTheDocument();
+      });
 
       expect(msalMocks.acquireTokenSilent).not.toHaveBeenCalled();
       expect(clients.lookup.methods.getServices).not.toHaveBeenCalled();
@@ -349,9 +349,9 @@ describe('services we offer', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Pattern approval')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Pattern approval')).toBeInTheDocument();
+      });
       const [testing, pattern] = screen.getAllByRole('checkbox', {
         hidden: true,
       });
@@ -372,9 +372,9 @@ describe('services we offer', () => {
 
       await renderRoute('/services-we-offer?mode=manage');
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true });
 
       expect(checkboxes).toHaveLength(2);
@@ -418,7 +418,9 @@ describe('services we offer', () => {
 
       const { currentPath } = await renderRoute();
 
-      await waitFor(() => expect(currentPath()).toBe('/dashboard'));
+      await waitFor(() => {
+        expect(currentPath()).toBe('/dashboard');
+      });
     });
 
     it('sends a pattern approval user to the type approval dashboard', async () => {
@@ -438,7 +440,9 @@ describe('services we offer', () => {
 
       const { currentPath } = await renderRoute();
 
-      await waitFor(() => expect(currentPath()).toBe('/dashboard-ta'));
+      await waitFor(() => {
+        expect(currentPath()).toBe('/dashboard-ta');
+      });
     });
 
     it('falls back to the services page for a default service it does not recognise', async () => {
@@ -460,7 +464,9 @@ describe('services we offer', () => {
 
       const { currentPath } = await renderRoute();
 
-      await waitFor(() => expect(currentPath()).toBe('/services-we-offer'));
+      await waitFor(() => {
+        expect(currentPath()).toBe('/services-we-offer');
+      });
 
       // shouldRedirect makes the component render null, so the heading proves which arm ran.
       expect(
@@ -487,9 +493,9 @@ describe('services we offer', () => {
         '/services-we-offer?mode=manage',
       );
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
 
       expect(currentPath()).toBe('/services-we-offer');
     });
@@ -504,9 +510,9 @@ describe('services we offer', () => {
       const user = userEvent.setup();
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Pattern approval')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Pattern approval')).toBeInTheDocument();
+      });
       const [, patternRadio] = screen.getAllByRole('radio', { hidden: true });
       const [, patternCheckbox] = screen.getAllByRole('checkbox', {
         hidden: true,
@@ -530,9 +536,9 @@ describe('services we offer', () => {
       const user = userEvent.setup();
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Pattern approval')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Pattern approval')).toBeInTheDocument();
+      });
       const [, patternRadio] = screen.getAllByRole('radio', { hidden: true });
       const [, patternCheckbox] = screen.getAllByRole('checkbox', {
         hidden: true,
@@ -556,9 +562,9 @@ describe('services we offer', () => {
       const user = userEvent.setup();
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
       const [testingCheckbox] = screen.getAllByRole('checkbox', {
         hidden: true,
       });
@@ -599,9 +605,9 @@ describe('services we offer', () => {
       );
 
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByTestId('save-button'));
 
@@ -617,9 +623,9 @@ describe('services we offer', () => {
       const user = userEvent.setup();
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
 
       // The first service is active from the stored profile, so checkedCount is 1 while
       // defaultService is still undefined - the second of the two guards.
@@ -637,15 +643,15 @@ describe('services we offer', () => {
       const user = userEvent.setup();
       const { currentPath } = await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
       const [testingRadio] = screen.getAllByRole('radio', { hidden: true });
 
       await user.click(defined(testingRadio));
       await user.click(screen.getByTestId('save-button'));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.setUserProfile).toHaveBeenCalledWith({
           email: 'tester@example.gov.au',
           services: [
@@ -660,9 +666,11 @@ describe('services we offer', () => {
               isDefault: false,
             },
           ],
-        }),
-      );
-      await waitFor(() => expect(currentPath()).toBe('/dashboard'));
+        });
+      });
+      await waitFor(() => {
+        expect(currentPath()).toBe('/dashboard');
+      });
 
       expect(mocks.appLoggerInfo).toHaveBeenCalledWith(
         'Services offered updated successfully in user profile.',
@@ -678,20 +686,20 @@ describe('services we offer', () => {
       mocks.setUserProfile.mockRejectedValue(new Error('save failed'));
       const { currentPath } = await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Pattern approval')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Pattern approval')).toBeInTheDocument();
+      });
       const [, patternRadio] = screen.getAllByRole('radio', { hidden: true });
 
       await user.click(defined(patternRadio));
       await user.click(screen.getByTestId('save-button'));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to update services offered in user profile.',
           expect.any(Error),
-        ),
-      );
+        );
+      });
 
       expect(currentPath()).toBe('/services-we-offer');
     });
@@ -717,13 +725,15 @@ describe('services we offer', () => {
       const { currentPath } = await renderRoute(
         '/services-we-offer?mode=manage',
       );
-      await waitFor(() =>
-        expect(screen.getByText('Pattern approval')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Pattern approval')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByTestId('go-to-dashboard-button'));
 
-      await waitFor(() => expect(currentPath()).toBe('/dashboard-ta'));
+      await waitFor(() => {
+        expect(currentPath()).toBe('/dashboard-ta');
+      });
     });
 
     it('stays put when the saved default maps to no dashboard, and falls back to a default icon', async () => {
@@ -756,9 +766,9 @@ describe('services we offer', () => {
       const { container, currentPath } = await renderRoute(
         '/services-we-offer?mode=manage',
       );
-      await waitFor(() =>
-        expect(screen.getByText('Future service')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Future service')).toBeInTheDocument();
+      });
 
       expect(container.querySelector('.icon-file')).toBeInTheDocument();
 
@@ -780,9 +790,9 @@ describe('services we offer', () => {
       const user = userEvent.setup();
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Testing and calibration')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Testing and calibration')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByTestId('go-to-dashboard-button'));
 

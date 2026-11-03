@@ -194,9 +194,9 @@ const renderRoute = async (path = '/ta/APP-1') => {
 /** Renders and waits for the wizard, which is the precondition for every handler test. */
 const renderLoadedWizard = async () => {
   const result = await renderRoute();
-  await waitFor(() =>
-    expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
-  );
+  await waitFor(() => {
+    expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+  });
 
   return result;
 };
@@ -280,9 +280,9 @@ describe('application for type approval', () => {
         await Promise.resolve();
       });
 
-      await waitFor(() =>
-        expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+      });
     });
 
     it('redirects to not found when the statuses fail to load', async () => {
@@ -296,7 +296,9 @@ describe('application for type approval', () => {
 
       const { currentPath } = await renderRoute();
 
-      await waitFor(() => expect(currentPath()).toBe('/not-found'));
+      await waitFor(() => {
+        expect(currentPath()).toBe('/not-found');
+      });
 
       expect(screen.getByTestId(NOT_FOUND_TEST_ID)).toBeInTheDocument();
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
@@ -422,12 +424,12 @@ describe('application for type approval', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
           'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
-        ),
-      );
+        );
+      });
 
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application documents',
@@ -450,12 +452,12 @@ describe('application for type approval', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
           'A server error occurred. Please try again.',
-        ),
-      );
+        );
+      });
     });
 
     it('falls back to a generic message when the failure carries no status', async () => {
@@ -472,12 +474,12 @@ describe('application for type approval', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
           'Failed to commit documents.',
-        ),
-      );
+        );
+      });
     });
 
     it('hands the documents step an inert onUploadFiles stub', async () => {
@@ -527,17 +529,17 @@ describe('application for type approval', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.progress.methods.deleteProgressStatistics,
-        ).toHaveBeenCalledWith('upload-1'),
-      );
-      await waitFor(() =>
+        ).toHaveBeenCalledWith('upload-1');
+      });
+      await waitFor(() => {
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-uploading',
           'false',
-        ),
-      );
+        );
+      });
     });
 
     it('also stops when the upload completes with errors', async () => {
@@ -555,11 +557,11 @@ describe('application for type approval', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.progress.methods.deleteProgressStatistics,
-        ).toHaveBeenCalledWith('upload-1'),
-      );
+        ).toHaveBeenCalledWith('upload-1');
+      });
     });
 
     it('logs a failed cleanup without disturbing the upload', async () => {
@@ -576,13 +578,13 @@ describe('application for type approval', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to delete progress statistics',
           expect.any(Error),
           { uploadId: 'upload-1' },
-        ),
-      );
+        );
+      });
     });
 
     it('retries after a failed poll and still finishes', async () => {
@@ -603,10 +605,11 @@ describe('application for type approval', () => {
       // than waitFor's 1s default - so this asserts against the real backoff rather than
       // faking timers, which RTL's waitFor does not reliably detect under Vitest.
       await waitFor(
-        () =>
+        () => {
           expect(
             clients.progress.methods.deleteProgressStatistics,
-          ).toHaveBeenCalledWith('upload-1'),
+          ).toHaveBeenCalledWith('upload-1');
+        },
         { timeout: 10000 },
       );
 
@@ -631,13 +634,13 @@ describe('application for type approval', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(clients.progress.methods.getProgress).toHaveBeenCalledWith(
           'upload-1',
           -1,
           expect.any(AbortSignal),
-        ),
-      );
+        );
+      });
 
       // Unmount aborts the controller, so the in-flight poll's rejection must break the loop
       // rather than spin on it.

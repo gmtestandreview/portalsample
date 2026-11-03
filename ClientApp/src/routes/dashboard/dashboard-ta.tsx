@@ -161,7 +161,7 @@ const resolveFilterParams = (
 });
 
 const classifyLoadError = (error: ProblemDetails) => {
-  const status = (error.status ?? 0) > 0 ? { status: error.status! } : {};
+  const status = (error.status ?? 0) > 0 ? { status: error.status ?? 0 } : {};
   if (error.status !== HttpStatusCode.Forbidden) {
     return { ...status, hasError: true };
   }
@@ -196,8 +196,8 @@ const DashboardTA = () => {
   >(undefined);
   const dashboardMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();
-  const orgName = accountContext?.details?.targetOrganisation
-    ?.targetOrganisationName as string;
+  const orgName =
+    accountContext?.details?.targetOrganisation?.targetOrganisationName ?? '';
 
   // Paging
   const [currentPage, setCurrentPage] = useState(1);
@@ -316,7 +316,7 @@ const DashboardTA = () => {
         };
         setActiveTab(tabFromSession as DashboardTab);
         // changePlaceholderForSearchBox(p!.filterActiveTab! as DashboardTab);
-        setCurrentPage(updatedP.filterCurrentPage!);
+        setCurrentPage(updatedP.filterCurrentPage ?? 1);
         SessionStorageCache().removeItem('set-tabop-after-save');
 
         // Only need to do this on first load`
@@ -414,17 +414,17 @@ const DashboardTA = () => {
           tab: initialFilters.filterActiveTab as DashboardTab,
           client,
           sortOrder: 'descending', // TS whats up here are we changing this?
-          currentPage: initialFilters.filterCurrentPage!,
+          currentPage: initialFilters.filterCurrentPage ?? 1,
           pageSize: DEFAULT_DASHBOARD_PAGESIZE, // TS should we add a pagesize dropdown in the future?
           accountDetailsCrmGuid: accountDetails?.organisationCRMGuid,
           filterSearchText: initialFilters.filterSearchText,
           actualYear,
           actualStatus,
         });
-        setRequests(requestsResponse.items!);
-        setCurrentPage(requestsResponse.currentPage!);
-        setTotalPages(requestsResponse.totalPages!);
-        setTotalCount(requestsResponse.totalCount!);
+        setRequests(requestsResponse.items ?? []);
+        setCurrentPage(requestsResponse.currentPage ?? 1);
+        setTotalPages(requestsResponse.totalPages ?? 0);
+        setTotalCount(requestsResponse.totalCount ?? 0);
         // trackGAPii(); // Keep this here for later when we track pii-data
       } catch (error) {
         AppLogger.error('Failed to load dashboard.', error as Error);
@@ -479,7 +479,9 @@ const DashboardTA = () => {
               data-testid='new-application-button'
               to='/ta/type-approval-create-pre'
               className='btn btn-primary text-nowrap'
-              onClick={() => trackGAEvent('New TA application')}
+              onClick={() => {
+                trackGAEvent('New TA application');
+              }}
             >
               <i className='icon-plus me-md-2' aria-hidden='true' />
               <span className='d-none d-md-inline-block'>New application</span>
@@ -575,7 +577,9 @@ const DashboardTA = () => {
         <Tab.Container
           id='dashboard-type'
           activeKey={activeTab}
-          onSelect={(key) => changeTab(key as DashboardTab)}
+          onSelect={(key) => {
+            changeTab(key as DashboardTab);
+          }}
         >
           <Nav
             as='ul'
@@ -696,16 +700,16 @@ const DashboardTA = () => {
                   </span>
                   <span className='d-none d-block text-break'>
                     {!!accountContext?.details?.trading &&
-                      `${accountContext?.details?.trading}`}
+                      accountContext?.details?.trading}
                     {!!accountContext?.details?.trading &&
                       !!accountContext?.details?.branch &&
                       ' - '}
                     {!!accountContext?.details?.branch &&
-                      `${accountContext?.details?.branch}`}
+                      accountContext?.details?.branch}
                   </span>
                   <span className='d-block text-break'>
                     {!!accountContext?.details?.organisation &&
-                      `${accountContext?.details?.organisation}`}
+                      accountContext?.details?.organisation}
                   </span>
                 </h2>
                 {!!accountContext?.details?.abn && (

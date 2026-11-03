@@ -1,8 +1,6 @@
 type MatchType = 'startsWith' | 'includes' | 'endsWith';
 
-interface SuggestionOption {
-  [key: string]: unknown;
-}
+type SuggestionOption = Record<string, unknown>;
 
 interface GetFilteredSuggestionsArgs {
   inputValue: string;

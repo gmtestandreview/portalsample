@@ -16,7 +16,9 @@ import type * as GoogleAnalyticsModule from '@/analytics/GoogleAnalytics';
 type FilterStateSetter = Dispatch<SetStateAction<UserProfile | undefined>>;
 type PageStateSetter = Dispatch<SetStateAction<number>>;
 type SearchSubmit = (value: string | undefined) => void;
-type DashboardProfile = { testingCalibrationDashboard: UserProfile };
+interface DashboardProfile {
+  testingCalibrationDashboard: UserProfile;
+}
 type FilterUpdater = (
   previous: UserProfile | undefined,
 ) => UserProfile | undefined;

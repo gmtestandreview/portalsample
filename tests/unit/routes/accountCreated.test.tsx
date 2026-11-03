@@ -40,14 +40,14 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 

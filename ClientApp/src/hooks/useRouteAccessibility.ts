@@ -14,7 +14,7 @@ export function useRouteAccessibility(): RouteAccessibilityResult {
       setAnnouncement(`Navigated to ${document.title || ''} page.`);
       document.getElementById('main')?.focus();
     }, 100);
-    return () => clearTimeout(id);
+    return () => { clearTimeout(id); };
   }, [location.pathname]);
 
   return { announcement };

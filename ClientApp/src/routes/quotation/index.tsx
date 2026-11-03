@@ -73,9 +73,7 @@ const setInfoNotification = () => {
 const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el: HTMLElement = document.querySelector(
-      '[id^="#notif-"]',
-    ) as HTMLElement;
+    const el: HTMLElement = document.querySelector('[id^="#notif-"]')!;
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
@@ -93,8 +91,12 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   >();
   const [declineQuoteDialogOpen, setDeclineQuoteDialogOpen] = useState(false);
   const [fileError, setFileError] = useState(false);
-  const closeDeclineQuoteModal = () => setDeclineQuoteDialogOpen(false);
-  const showDeclineQuoteModal = () => setDeclineQuoteDialogOpen(true);
+  const closeDeclineQuoteModal = () => {
+    setDeclineQuoteDialogOpen(false);
+  };
+  const showDeclineQuoteModal = () => {
+    setDeclineQuoteDialogOpen(true);
+  };
   const accountState = useAccountState();
   const dashboardMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();

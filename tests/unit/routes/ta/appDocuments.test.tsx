@@ -16,14 +16,14 @@ import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 import { defined } from '../../helpers/defined';
 
-type CommitAppDocumentsValues = {
+interface CommitAppDocumentsValues {
   form: {
-    documents: Array<{
+    documents: {
       documentBytes?: unknown;
       attachmentName?: string;
-    }>;
+    }[];
   };
-};
+}
 
 type CommitAppDocumentsCall = [string, CommitAppDocumentsValues];
 
@@ -176,9 +176,9 @@ const renderRoute = async (
 
 const renderLoaded = async () => {
   const result = await renderRoute();
-  await waitFor(() =>
-    expect(screen.getByTestId('supporting-documents')).toBeInTheDocument(),
-  );
+  await waitFor(() => {
+    expect(screen.getByTestId('supporting-documents')).toBeInTheDocument();
+  });
 
   return result;
 };
@@ -330,9 +330,9 @@ describe('application documents', () => {
         release(appDocuments([document1()]));
       });
 
-      await waitFor(() =>
-        expect(screen.getByTestId('supporting-documents')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('supporting-documents')).toBeInTheDocument();
+      });
     });
 
     it('logs a failed load and clears the spinner', async () => {
@@ -346,13 +346,13 @@ describe('application documents', () => {
 
       await renderRoute();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to load application documents',
           expect.any(Error),
           { Id: 'APP-1' },
-        ),
-      );
+        );
+      });
 
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
@@ -418,11 +418,11 @@ describe('application documents', () => {
         documentReference: 'doc-2',
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           screen.getByRole('button', { name: 'Commit' }),
-        ).toBeInTheDocument(),
-      );
+        ).toBeInTheDocument();
+      });
     });
 
     it('returns an empty list when the response carries no form', async () => {
@@ -511,11 +511,11 @@ describe('application documents', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.progress.methods.deleteProgressStatistics,
-        ).toHaveBeenCalledWith('upload-1'),
-      );
+        ).toHaveBeenCalledWith('upload-1');
+      });
     });
 
     it('also stops when the upload completes with errors', async () => {
@@ -533,11 +533,11 @@ describe('application documents', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.progress.methods.deleteProgressStatistics,
-        ).toHaveBeenCalledWith('upload-1'),
-      );
+        ).toHaveBeenCalledWith('upload-1');
+      });
     });
 
     it('logs a failed cleanup', async () => {
@@ -554,13 +554,13 @@ describe('application documents', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to delete progress statistics',
           expect.any(Error),
           { uploadId: 'upload-1' },
-        ),
-      );
+        );
+      });
     });
 
     it('retries after a failed poll and still finishes', async () => {
@@ -581,10 +581,11 @@ describe('application documents', () => {
       // than waitFor's 1s default - so this asserts against the real backoff rather than
       // faking timers, which RTL's waitFor does not reliably detect under Vitest.
       await waitFor(
-        () =>
+        () => {
           expect(
             clients.progress.methods.deleteProgressStatistics,
-          ).toHaveBeenCalledWith('upload-1'),
+          ).toHaveBeenCalledWith('upload-1');
+        },
         { timeout: 10000 },
       );
 
@@ -608,13 +609,13 @@ describe('application documents', () => {
       await act(async () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
-      await waitFor(() =>
+      await waitFor(() => {
         expect(clients.progress.methods.getProgress).toHaveBeenCalledWith(
           'upload-1',
           -1,
           expect.any(AbortSignal),
-        ),
-      );
+        );
+      });
 
       unmount();
       act(() => {
@@ -701,11 +702,11 @@ describe('application documents', () => {
 
       await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.commitAppDocuments,
-        ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
-      );
+        ).toHaveBeenCalledWith('APP-1', expect.any(Object));
+      });
       const [applicationId, values] = defined(
         clients.patternApproval.methods.commitAppDocuments.mock
           .calls[0] as unknown as CommitAppDocumentsCall,
@@ -736,11 +737,11 @@ describe('application documents', () => {
 
       await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppDocuments.mock.calls.length,
-        ).toBeGreaterThan(fetchesBefore),
-      );
+        ).toBeGreaterThan(fetchesBefore);
+      });
     });
 
     it('reports a blocked commit distinctly', async () => {
@@ -756,12 +757,12 @@ describe('application documents', () => {
       await renderLoaded();
       await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
           'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
-        ),
-      );
+        );
+      });
 
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application documents',
@@ -783,12 +784,12 @@ describe('application documents', () => {
       await renderLoaded();
       await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
           'A server error occurred. Please try again.',
-        ),
-      );
+        );
+      });
     });
 
     it('falls back to a generic message when the failure carries no status', async () => {
@@ -804,12 +805,12 @@ describe('application documents', () => {
       await renderLoaded();
       await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
           'Failed to commit documents.',
-        ),
-      );
+        );
+      });
     });
   });
 });

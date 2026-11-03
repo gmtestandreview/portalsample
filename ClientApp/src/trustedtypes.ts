@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 
-export class TrustedTypes {
-  static readonly createTrustedTypePolicy = () => {
+export const TrustedTypes = {
+  createTrustedTypePolicy: () => {
     const { trustedTypes } = globalThis as typeof globalThis & {
       trustedTypes?: TrustedTypePolicyFactory;
     };
@@ -17,7 +17,7 @@ export class TrustedTypes {
         },
       });
     }
-  };
-}
+  },
+};
 
 export default TrustedTypes;

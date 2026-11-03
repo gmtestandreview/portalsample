@@ -34,7 +34,7 @@ export const CustomAccordion: FunctionComponent<CustomAccordionProps> = (
   const { id, containerClassName, children } = props;
 
   return (
-    <div id={id} className={`${containerClassName ?? ''}`}>
+    <div id={id} className={containerClassName ?? ''}>
       <Accordion defaultActiveKey='0' bsPrefix='wizard-accordion'>
         {children}
       </Accordion>

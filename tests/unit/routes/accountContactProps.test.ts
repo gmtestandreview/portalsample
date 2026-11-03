@@ -38,15 +38,15 @@ const mocks = vi.hoisted(() => ({
 
 type HideRule<T> = (values: Partial<T>) => boolean;
 
-type AccountHidingFields = {
+interface AccountHidingFields {
   isDefaultOrganisation: HideRule<GetAccountValuesDto>;
   postalAddress: HideRule<GetAccountValuesDto>;
   contact: { titleOther: HideRule<GetAccountValuesDto> };
-};
+}
 
-type ContactHidingFields = {
+interface ContactHidingFields {
   contact: { titleOther: HideRule<ContactFormStep> };
-};
+}
 
 const expectStringContaining = (value: string): unknown =>
   expect.stringContaining(value);

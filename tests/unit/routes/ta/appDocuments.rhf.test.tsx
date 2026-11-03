@@ -102,16 +102,16 @@ const appDocuments = (
   },
 });
 
-type CommitAppDocumentsValues = {
+interface CommitAppDocumentsValues {
   form: {
-    documents: Array<{
+    documents: {
       documentBytes?: unknown;
       attachmentName?: string;
       attachmentCategory?: string;
-    }>;
+    }[];
     instrumentCategory?: string;
   };
-};
+}
 type CommitAppDocumentsCall = [string, CommitAppDocumentsValues];
 
 const renderRoute = async (
@@ -173,11 +173,11 @@ describe('application documents with the real RHF form', () => {
 
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         clients.patternApproval.methods.commitAppDocuments,
-      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
-    );
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object));
+    });
     const [applicationId, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock
         .calls[0] as unknown as CommitAppDocumentsCall,
@@ -236,11 +236,11 @@ describe('application documents with the real RHF form', () => {
 
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         clients.patternApproval.methods.commitAppDocuments,
-      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
-    );
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object));
+    });
     const [, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock
         .calls[0] as unknown as CommitAppDocumentsCall,

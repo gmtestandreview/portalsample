@@ -102,7 +102,9 @@ const OrganisationNameLookup = (
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounce);
+    return () => {
+      clearTimeout(delayDebounce);
+    };
   }, [
     inputValue,
     _orgNameOptions.value,
@@ -138,7 +140,9 @@ const OrganisationNameLookup = (
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleSelect = (value: string, callback?: () => void) => {
@@ -262,7 +266,9 @@ const OrganisationNameLookup = (
                     action
                     className={`suggestion-option auto-suggestions mt-0 border-0 ${index === activeIndex ? 'highlighted' : ''}`}
                     onClick={() => {
-                      handleSelect(item, () => setActiveIndex(index));
+                      handleSelect(item, () => {
+                        setActiveIndex(index);
+                      });
                     }}
                     ref={(el: HTMLLIElement | null) => {
                       itemRefs.current.splice(index, 1, el);

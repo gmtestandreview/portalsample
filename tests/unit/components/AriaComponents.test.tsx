@@ -100,15 +100,21 @@ class TestIntersectionObserver implements IntersectionObserver {
   readonly scrollMargin = '';
   readonly thresholds = [];
 
-  disconnect() {}
+  disconnect() {
+    // Test double — no observation to tear down.
+  }
 
-  observe() {}
+  observe() {
+    // Test double — no observation to start.
+  }
 
   takeRecords() {
     return [];
   }
 
-  unobserve() {}
+  unobserve() {
+    // Test double — no observation to stop.
+  }
 }
 
 globalThis.IntersectionObserver ??= TestIntersectionObserver;
@@ -327,7 +333,7 @@ describe('react Aria evaluation wrappers', () => {
         screen.getByRole('meter', { name: 'Storage used' }),
       ).toHaveTextContent(`${value}%`);
 
-      const fill = container.querySelector('.fill') as HTMLElement;
+      const fill = container.querySelector('.fill')!;
 
       expect(fill.style.width).toBe(`${value}%`);
       expect(fill.style.getPropertyValue('--fill-color')).toBe(fillColor);
@@ -350,17 +356,13 @@ describe('react Aria evaluation wrappers', () => {
       screen.getByRole('progressbar', { name: 'Upload progress' }),
     ).toHaveTextContent('30%');
     expect(
-      (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent',
-      ),
+      container.querySelector('.fill')!.style.getPropertyValue('--percent'),
     ).toBe('30%');
 
     rerender(<ProgressBar label='Upload progress' isIndeterminate />);
 
     expect(
-      (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent',
-      ),
+      container.querySelector('.fill')!.style.getPropertyValue('--percent'),
     ).toBe('100%');
   });
 

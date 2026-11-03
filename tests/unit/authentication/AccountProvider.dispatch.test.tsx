@@ -358,9 +358,9 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
 
     await user.click(screen.getByRole('button', { name: 'agree' }));
     await user.click(screen.getByRole('button', { name: 'complete account' }));
@@ -398,7 +398,7 @@ describe('accountProvider dispatch callbacks', () => {
       targetOrganisationName: 'Target Org',
     });
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.setUserProfileApi).toHaveBeenCalledWith(
         undefined,
         undefined,
@@ -418,8 +418,8 @@ describe('accountProvider dispatch callbacks', () => {
         undefined,
         undefined,
         undefined,
-      ),
-    );
+      );
+    });
   });
 
   it('logs profile save failures without removing provider children', async () => {
@@ -436,17 +436,17 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to save userprofile',
         expect.any(Error),
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });
@@ -485,11 +485,11 @@ describe('accountProvider dispatch callbacks', () => {
       homeAccountId: 'active-id',
     }) as unknown as AccountInfo;
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
         account: activeAccountMatcher,
-      }),
-    );
+      });
+    });
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
       account: activeAccountMatcher,
@@ -515,11 +515,11 @@ describe('accountProvider dispatch callbacks', () => {
       homeAccountId: 'active-id',
     }) as unknown as AccountInfo;
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
         account: activeAccountMatcher,
-      }),
-    );
+      });
+    });
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledTimes(1);
 
@@ -606,9 +606,9 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('minimal-id'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('minimal-id');
+    });
 
     const details = screen.getByTestId('details').textContent ?? '';
 
@@ -650,9 +650,9 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('test-id'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('test-id');
+    });
 
     expect(providerMocks.setStoredTargetOrganisation).toHaveBeenCalledWith({
       targetOrganisationAbn: '',
@@ -673,9 +673,9 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
     await user.click(
       screen.getByRole('button', { name: 'set fallback org branch' }),
     );
@@ -700,9 +700,9 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
 
     await user.click(
       screen.getByRole('button', { name: 'set nullish org branch' }),
@@ -728,20 +728,20 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
     providerMocks.acquireTokenSilent.mockRejectedValueOnce(
       new Error('profile token failed'),
     );
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to save userprofile',
         expect.any(Error),
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });

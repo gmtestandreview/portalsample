@@ -80,7 +80,7 @@ const CustomDateInput = React.forwardRef<
   };
 
   const handleCustomBlur = <E extends HTMLElement>(
-    event: React.FocusEvent<E, Element>,
+    event: React.FocusEvent<E>,
   ) => {
     // OnBlur - target is what loses the focus and related target is what receives focus (if any)
     handleInputAndButtonFocusEvents(
@@ -92,7 +92,7 @@ const CustomDateInput = React.forwardRef<
   };
 
   const handleCustomFocus = <E extends HTMLElement>(
-    event: React.FocusEvent<E, Element>,
+    event: React.FocusEvent<E>,
   ) => {
     // OnFocus - target is what receives the focus and related target is what loses focus (if any)
     handleInputAndButtonFocusEvents(

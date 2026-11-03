@@ -60,7 +60,7 @@ const FormBanner = ({
                 ) : null}
               </div>
             </Navbar.Brand>
-            {showSaveAndExitButton === true || showDiscardButton === true ? (
+            {showSaveAndExitButton === true || showDiscardButton ? (
               <>
                 <Navbar.Toggle aria-controls='form-navbar' />
                 <Navbar.Collapse className='p-4'>
@@ -77,10 +77,12 @@ const FormBanner = ({
                     {showSaveAndExitButton === true ? (
                       <SaveAndExitButton />
                     ) : null}
-                    {showDiscardButton === true ? (
+                    {showDiscardButton ? (
                       <Button
                         data-testid='discard-changes-button'
-                        onClick={() => onClick()}
+                        onClick={() => {
+                          onClick();
+                        }}
                         variant='tertiary-colorbg'
                       >
                         <i className='icon-close me-1' aria-hidden='true' />

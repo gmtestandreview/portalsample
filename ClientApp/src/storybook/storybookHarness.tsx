@@ -46,8 +46,9 @@ import {
 } from '../components/modals/ModalContext';
 import type { UserProfile } from '../components/SearchFilter/types';
 import { omitUndefined } from '../utils/omitUndefined';
+import { fn } from 'storybook/test';
 
-const noop = () => {};
+const noop = fn();
 const noopAsync = () => Promise.resolve();
 
 export const defaultUserProfile: UserProfile = {
@@ -355,10 +356,10 @@ const withOptionalRhf = (children: ReactNode, rhf?: PortalRhfConfig) => {
   );
 };
 
-type FetchOverride = {
+interface FetchOverride {
   token: symbol;
   fetchImpl: typeof globalThis.fetch;
-};
+}
 
 const activeFetchOverrides: FetchOverride[] = [];
 let baselineFetch: typeof globalThis.fetch | undefined;
@@ -461,7 +462,7 @@ const ProviderLifecycleSentinel = ({
       if (globalThis.window.parent !== globalThis.window) {
         const parentWindow = globalThis.window
           .parent as typeof globalThis.window & {
-          __storybookPortalProviderEvents?: Array<typeof event>;
+          __storybookPortalProviderEvents?: (typeof event)[];
         };
         parentWindow.__storybookPortalProviderEvents?.push(event);
       }
@@ -520,12 +521,12 @@ const AccountContextLifecycleSentinel = ({
     if (globalThis.window.parent !== globalThis.window) {
       const parentWindow = globalThis.window
         .parent as typeof globalThis.window & {
-        __storybookAccountLifecycleEvents?: Array<{
+        __storybookAccountLifecycleEvents?: {
           type: 'storybook-account-context';
           phase: 'active' | 'cleaned';
           sentinel: string;
           targetOrganisationName: string | null;
-        }>;
+        }[];
       };
       parentWindow.__storybookAccountLifecycleEvents?.push({
         type: 'storybook-account-context',
@@ -549,12 +550,12 @@ const AccountContextLifecycleSentinel = ({
       if (globalThis.window.parent !== globalThis.window) {
         const parentWindow = globalThis.window
           .parent as typeof globalThis.window & {
-          __storybookAccountLifecycleEvents?: Array<{
+          __storybookAccountLifecycleEvents?: {
             type: 'storybook-account-context';
             phase: 'active' | 'cleaned';
             sentinel: string;
             targetOrganisationName: string | null;
-          }>;
+          }[];
         };
         parentWindow.__storybookAccountLifecycleEvents?.push({
           type: 'storybook-account-context',

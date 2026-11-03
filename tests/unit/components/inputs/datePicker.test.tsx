@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import DatePicker from '@/components/Inputs/DatePicker';
 
 const renderSummary = (value: string | Date | undefined) =>
   render(
-    <Formik initialValues={{ date: value }} onSubmit={() => {}}>
+    <Formik initialValues={{ date: value }} onSubmit={vi.fn<() => void>()}>
       <DatePicker isSummary label='Date' name='date' />
     </Formik>,
   );

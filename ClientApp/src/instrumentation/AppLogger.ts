@@ -3,24 +3,24 @@ import { getAppInsights } from './AppInsightsService';
 
 type AppLoggerProperties = object | null;
 
-class AppLogger {
-  static info(message: string, properties?: AppLoggerProperties) {
-    this.trace(message, SeverityLevel.Information, properties);
-  }
+const AppLogger = {
+  info(message: string, properties?: AppLoggerProperties) {
+    AppLogger.trace(message, SeverityLevel.Information, properties);
+  },
 
-  static warning(message: string, properties?: AppLoggerProperties) {
-    this.trace(message, SeverityLevel.Warning, properties);
-  }
+  warning(message: string, properties?: AppLoggerProperties) {
+    AppLogger.trace(message, SeverityLevel.Warning, properties);
+  },
 
-  static verbose(message: string, properties?: AppLoggerProperties) {
-    this.trace(message, SeverityLevel.Verbose, properties);
-  }
+  verbose(message: string, properties?: AppLoggerProperties) {
+    AppLogger.trace(message, SeverityLevel.Verbose, properties);
+  },
 
-  static critical(message: string, properties?: AppLoggerProperties) {
-    this.trace(message, SeverityLevel.Critical, properties);
-  }
+  critical(message: string, properties?: AppLoggerProperties) {
+    AppLogger.trace(message, SeverityLevel.Critical, properties);
+  },
 
-  static trace(
+  trace(
     message: string,
     severityLevel: SeverityLevel,
     properties?: AppLoggerProperties,
@@ -32,13 +32,9 @@ class AppLogger {
     if (insights) {
       insights.trackTrace(obj);
     }
-  }
+  },
 
-  static error(
-    message: string,
-    error: Error,
-    properties?: AppLoggerProperties,
-  ) {
+  error(message: string, error: Error, properties?: AppLoggerProperties) {
     const obj = {
       message,
       severityLevel: SeverityLevel.Error,
@@ -50,9 +46,9 @@ class AppLogger {
     if (insights) {
       insights.trackException(obj);
     }
-  }
+  },
 
-  static trackEvent(name: string, properties?: AppLoggerProperties) {
+  trackEvent(name: string, properties?: AppLoggerProperties) {
     const obj = { name };
     Object.assign(obj, { properties });
 
@@ -60,35 +56,35 @@ class AppLogger {
     if (insights) {
       insights.trackEvent(obj);
     }
-  }
+  },
 
-  static startTrackPage(name: string) {
+  startTrackPage(name: string) {
     const insights = getAppInsights();
     if (insights) {
       insights?.startTrackPage(name);
     }
-  }
+  },
 
-  static stopTrackPage(name: string) {
+  stopTrackPage(name: string) {
     const insights = getAppInsights();
     if (insights) {
       insights?.stopTrackPage(name);
     }
-  }
+  },
 
-  static startTrackEvent(name: string) {
+  startTrackEvent(name: string) {
     const insights = getAppInsights();
     if (insights) {
       insights?.startTrackEvent(name);
     }
-  }
+  },
 
-  static stopTrackEvent(name: string) {
+  stopTrackEvent(name: string) {
     const insights = getAppInsights();
     if (insights) {
       insights?.stopTrackEvent(name);
     }
-  }
-}
+  },
+};
 
 export default AppLogger;

@@ -479,7 +479,7 @@ export const registerYupStringExtensions = () => {
       errorMessage?: string,
     ) {
       const errType =
-        mobileOnly === undefined || mobileOnly === false
+        mobileOnly === undefined || !mobileOnly
           ? 'is not a valid phone number'
           : 'is not a valid mobile number';
 
@@ -509,7 +509,7 @@ export const registerYupStringExtensions = () => {
               return false;
             }
 
-            if (mobileOnly === undefined || mobileOnly === false) {
+            if (mobileOnly === undefined || !mobileOnly) {
               return matchesAnyPhonePattern(value, BUSINESS_PHONE_REGEXES);
             }
 
@@ -816,7 +816,7 @@ export const registerYupStringExtensions = () => {
             }
             // /[0-9a-zA-Z$ :%,;*,"@&?'#=~/\\_\-|(){}]$/
             const regExStr =
-              extended !== undefined && extended === false
+              extended !== undefined && !extended
                 ? /^[-–—0-9A-Za-z ‘.&#,]*$/
                 : /^[!-~\s\u2013\u2014\u2019\u2018\u201C\u201D]*$/;
 
@@ -861,7 +861,7 @@ export const registerYupStringExtensions = () => {
             }
             // /[a-zA-Z '\-]$/
             const regExStr =
-              extended !== undefined && extended === false
+              extended !== undefined && !extended
                 ? /^[-–—A-Za-z ‘]*$/
                 : /[0-9a-zA-Z$ :%,;*\u2013\u2014\u2019\u201C\u201D"@&?'#=~/\\_\-|(){}]$/;
 

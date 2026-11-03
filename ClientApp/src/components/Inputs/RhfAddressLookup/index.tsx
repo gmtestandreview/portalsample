@@ -144,8 +144,9 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
     });
   };
 
-  const writeAddress = (value: object) =>
+  const writeAddress = (value: object) => {
     setValue(name, value, { shouldDirty: true });
+  };
 
   const onSelectedOption = (option?: AutoSuggestOption<MatchedAddress>) => {
     if (!option) {
@@ -176,10 +177,11 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
     }
   };
 
-  const setManual = (isManuallyEntered: boolean) =>
+  const setManual = (isManuallyEntered: boolean) => {
     setValue(`${name}.isManuallyEntered`, isManuallyEntered, {
       shouldDirty: true,
     });
+  };
 
   const onEnterManually = () => {
     // Leaving the search box must not carry its touched flag into the next
@@ -214,7 +216,13 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
       </legend>
       <Form.Group className='form-field-container'>
         <Form.Text className='contextual-help'>
-          <Button variant='tertiary' size='sm' onClick={() => setManual(false)}>
+          <Button
+            variant='tertiary'
+            size='sm'
+            onClick={() => {
+              setManual(false);
+            }}
+          >
             <i className='icon-search me-1' aria-hidden='true' />
             {' Find an address'}
           </Button>

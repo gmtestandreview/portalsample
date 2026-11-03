@@ -20,7 +20,7 @@ const renderLookup = (
         certNameOptions: options,
         ...initialValues,
       }}
-      onSubmit={async () => {}}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>
         <CertificateNumberLookup

@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => ({
     vi.fn<
       (
         type: CRMLookupTypes,
-      ) => Promise<Array<{ id: CRMLookupTypes; name: CRMLookupTypes }>>
+      ) => Promise<{ id: CRMLookupTypes; name: CRMLookupTypes }[]>
     >(),
   getAllInfoPanelContent: vi.fn<(...args: unknown[]) => unknown>(),
   getNmiApplication: vi.fn<(...args: unknown[]) => unknown>(),
@@ -111,7 +111,7 @@ const accountDetails = {
   branch: 'Branch',
 } as AccountDetails;
 
-type ApplicationHidingFields = {
+interface ApplicationHidingFields {
   isApplNewHide: (values: Partial<ApplicationAndInstrumentStepDto>) => boolean;
   isApplNewInstrumentHide: (
     values: Partial<ApplicationAndInstrumentStepDto>,
@@ -123,9 +123,9 @@ type ApplicationHidingFields = {
     values: Partial<ApplicationAndInstrumentStepDto>,
   ) => boolean;
   isApplOIMLHide: (values: Partial<ApplicationAndInstrumentStepDto>) => boolean;
-};
+}
 
-type OrganisationHidingFields = {
+interface OrganisationHidingFields {
   isManufacturerHide: (
     values: Partial<PatternApprovalOrgAndContact>,
   ) => boolean;
@@ -144,14 +144,14 @@ type OrganisationHidingFields = {
   invoiceContact: {
     titleOther: (values: Partial<PatternApprovalOrgAndContact>) => boolean;
   };
-};
+}
 
-type SummaryDisplayValues = {
+interface SummaryDisplayValues {
   applicationAndInstrument?: Partial<ApplicationAndInstrumentStepDto>;
   organisationAndContact?: Partial<PatternApprovalOrgAndContact>;
-};
+}
 
-type SummaryHidingFields = {
+interface SummaryHidingFields {
   organisationAndContact: {
     branchOrLocationName: (values: SummaryDisplayValues) => boolean;
     isManufacturerHide: (values: SummaryDisplayValues) => boolean;
@@ -172,7 +172,7 @@ type SummaryHidingFields = {
       values: Partial<ApplicationAndInstrumentStepDto>,
     ) => boolean;
   };
-};
+}
 
 const resetTaPropsMocks = () => {
   vi.clearAllMocks();

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import axe from 'axe-core';
 import { MemoryRouter } from 'react-router';
@@ -14,7 +14,7 @@ import {
 } from '../../ClientApp/src/components/modals/ModalContext';
 import { DashboardItemStatus } from '../../ClientApp/src/routes/common/enums';
 
-const noop = () => {};
+const noop = vi.fn<() => void>();
 
 const instrumentFixture: DashboardItemDto = {
   referenceId: 'RFQ-2023-009012',

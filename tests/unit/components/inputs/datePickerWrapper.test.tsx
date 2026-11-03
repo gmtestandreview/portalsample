@@ -128,18 +128,18 @@ describe('datePicker wrapper', () => {
     expect(input).toHaveAttribute('placeholder', 'dd/mm/yyyy');
 
     await user.click(screen.getByRole('button', { name: 'Pick date object' }));
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"dueDate":"2026-06-12T00:00:00+00:00"',
-      ),
-    );
+      );
+    });
 
     await user.click(screen.getByRole('button', { name: 'Pick valid string' }));
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"dueDate":"2026-07-13T00:00:00+00:00"',
-      ),
-    );
+      );
+    });
   });
 
   it('normalizes invalid and cleared date values', async () => {
@@ -156,11 +156,11 @@ describe('datePicker wrapper', () => {
     await user.click(
       screen.getByRole('button', { name: 'Pick invalid string' }),
     );
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"dueDate":"not a date"',
-      ),
-    );
+      );
+    });
 
     await user.click(
       screen.getByRole('button', { name: 'Pick invalid date object' }),
@@ -246,9 +246,9 @@ describe('datePicker wrapper', () => {
     await user.clear(input);
     await user.tab();
 
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null');
+    });
   });
 
   it('renders summary values for string, Date, and empty inputs', () => {

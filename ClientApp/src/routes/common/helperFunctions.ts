@@ -201,9 +201,7 @@ export const openPdfPageInNewTab = (fileUrl: string, pageNumber: string) => {
 export const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el: HTMLElement = document.querySelector(
-      '[id^="#notif-"]',
-    ) as HTMLElement;
+    const el: HTMLElement = document.querySelector('[id^="#notif-"]')!;
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
@@ -222,7 +220,7 @@ export const handleUnexpectedError = (details: ProblemDetails) => {
   handleAlertScroll();
   setDashboardNotification(
     DashBoardNotifications.getDashboardErrorNotification(
-      details.status! ?? 0,
+      details.status ?? 0,
       '',
     ),
   );
@@ -247,7 +245,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
     let result = '';
 
     if (accountDetails.trading !== undefined && accountDetails.trading !== '') {
-      result = `${accountDetails.trading}`;
+      result = accountDetails.trading;
     }
 
     if (
@@ -261,7 +259,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
       accountDetails.branch !== undefined &&
       accountDetails.branch !== ''
     ) {
-      result = `${accountDetails.branch}`;
+      result = accountDetails.branch;
     }
 
     if (
@@ -270,7 +268,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
     ) {
       result = `${result} - ${accountDetails.organisation}`;
     } else {
-      result = `${accountDetails.organisation}`;
+      result = accountDetails.organisation;
     }
 
     return result;
@@ -316,7 +314,7 @@ export const formatTradingBranch = (accountDetails: AccountDetails): string => {
     let result = '';
 
     if (accountDetails.trading !== undefined && accountDetails.trading !== '') {
-      result = `${accountDetails.trading}`;
+      result = accountDetails.trading;
     }
 
     if (
@@ -330,7 +328,7 @@ export const formatTradingBranch = (accountDetails: AccountDetails): string => {
       accountDetails.branch !== undefined &&
       accountDetails.branch !== ''
     ) {
-      result = `${accountDetails.branch}`;
+      result = accountDetails.branch;
     }
 
     return result;
@@ -349,13 +347,13 @@ export const formatTradingBranchFromStrings = (
     let result = '';
 
     if (tradingName !== '') {
-      result = `${tradingName}`;
+      result = tradingName;
     }
 
     if (branchName !== '' && tradingName !== '') {
       result = `${result} - ${branchName}`;
     } else if (branchName !== '') {
-      result = `${branchName}`;
+      result = branchName;
     }
 
     return result;
@@ -388,7 +386,7 @@ export const contentLoaded = (sendPageView: boolean) => {
   const redactedData: Record<string, string> = {};
 
   piiFields.forEach((field) => {
-    const key = field.dataset['pii'] as string;
+    const key = field.dataset['pii']!;
     Object.defineProperty(redactedData, key, {
       configurable: true,
       enumerable: true,
@@ -439,7 +437,7 @@ export function sortList<T>(
     removeId = (item as LookupResponse | undefined)?.id ?? '';
   }
 
-  lastId = removeId!;
+  lastId = removeId ?? '';
 
   if (indexOfItemToRemove >= 0) {
     removedItems = list.splice(indexOfItemToRemove, 1);

@@ -35,11 +35,17 @@ interface Deferred {
 }
 
 const deferred = (): Deferred => {
-  let resolve = () => {};
-  let reject = () => {};
+  let resolve = () => {
+    // Placeholder until the promise executor assigns the real resolve function.
+  };
+  let reject = () => {
+    // Placeholder until the promise executor assigns the real reject function.
+  };
   const promise = new Promise<void>((res, rej) => {
     resolve = res;
-    reject = () => rej(new Error('save failed'));
+    reject = () => {
+      rej(new Error('save failed'));
+    };
   });
   return { promise, resolve, reject };
 };
@@ -141,16 +147,16 @@ describe('rhf attachment item behavior', () => {
 
     expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Certificate"',
-      ),
-    );
-    await waitFor(() =>
+      );
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('touched')).toHaveTextContent(
         '"attachmentCategory":true',
-      ),
-    );
+      );
+    });
   });
 
   it('reports a failed category save and puts the previous category back', async () => {
@@ -171,19 +177,19 @@ describe('rhf attachment item behavior', () => {
       'Certificate',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onCategoryError).toHaveBeenCalledWith(
         'Could not save the category for manual.pdf.',
-      ),
-    );
+      );
+    });
 
     expect(onCategoryError).toHaveBeenCalledTimes(1);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
         'Manuals',
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('values')).toHaveTextContent(
       '"attachmentCategory":"Manuals"',
@@ -206,11 +212,11 @@ describe('rhf attachment item behavior', () => {
       'Certificate',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
         '',
-      ),
-    );
+      );
+    });
     await new Promise((resolve) => setTimeout(resolve, 0));
     process.off('unhandledRejection', unhandled);
 
@@ -234,7 +240,7 @@ describe('rhf attachment item behavior', () => {
         } else {
           save.reject();
         }
-        await save.promise.catch(() => {});
+        await save.promise.catch(() => undefined);
       });
     };
 
@@ -255,11 +261,11 @@ describe('rhf attachment item behavior', () => {
       await settle(first, 'reject');
       await settle(second, 'reject');
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
           'Manuals',
-        ),
-      );
+        );
+      });
     });
 
     it('keeps a later successful save when an earlier one fails afterwards', async () => {
@@ -280,11 +286,11 @@ describe('rhf attachment item behavior', () => {
       await settle(second, 'resolve');
       await settle(first, 'reject');
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(onCategoryError).toHaveBeenCalledWith(
           'Could not save the category for manual.pdf.',
-        ),
-      );
+        );
+      });
 
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
         'Other',
@@ -312,11 +318,11 @@ describe('rhf attachment item behavior', () => {
       await pick(user, 'Specifications');
       await settle(third, 'reject');
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
           'Other',
-        ),
-      );
+        );
+      });
     });
 
     it('reverts to an empty category when the document never had one', async () => {
@@ -336,11 +342,11 @@ describe('rhf attachment item behavior', () => {
       await pick(user, 'Certificate');
       await settle(failing, 'reject');
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
           '',
-        ),
-      );
+        );
+      });
     });
 
     it.each([[[]], [null]])(
@@ -402,9 +408,9 @@ describe('rhf attachment item behavior', () => {
       'Certificate',
     );
 
-    await waitFor(() =>
-      expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate'),
-    );
+    await waitFor(() => {
+      expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate');
+    });
 
     expect(onCategoryError).not.toHaveBeenCalled();
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
@@ -434,11 +440,11 @@ describe('rhf attachment item behavior', () => {
     expect(onCategoryUpdate).not.toHaveBeenCalled();
     expect(screen.queryByText('2 kb')).not.toBeInTheDocument();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Manuals"',
-      ),
-    );
+      );
+    });
   });
 
   it('does not render removal controls in summary mode and tolerates missing file bytes', () => {
@@ -480,11 +486,11 @@ describe('rhf attachment item behavior', () => {
 
     expect(onRemoveItem).not.toHaveBeenCalled();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' }),
-      ).not.toBeInTheDocument(),
-    );
+      ).not.toBeInTheDocument();
+    });
   });
 
   it('confirms deletion with the current attachment value', async () => {
@@ -499,11 +505,11 @@ describe('rhf attachment item behavior', () => {
 
     expect(onRemoveItem).toHaveBeenCalledWith(attachment);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' }),
-      ).not.toBeInTheDocument(),
-    );
+      ).not.toBeInTheDocument();
+    });
   });
 
   it('names each delete button after its file', () => {

@@ -6,11 +6,11 @@ import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import SubmitFormButton from '@/components/forms/SubmitFormButton';
 import { FormikWrapper } from '../../helpers/formik';
 
-type ButtonFormValues = {
+interface ButtonFormValues {
   saveAndExit: boolean;
   saveAndExitClick?: boolean;
   submitClick?: boolean;
-};
+}
 
 type ButtonSubmit = (values: ButtonFormValues) => void | Promise<void>;
 
@@ -36,17 +36,19 @@ describe('form button controls', () => {
 
     await userEvent.click(screen.getByTestId('save-and-exit-button'));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-    await waitFor(() =>
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"saveAndExit":true',
-      ),
-    );
-    await waitFor(() =>
+      );
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"saveAndExitClick":false',
-      ),
-    );
+      );
+    });
   });
 
   it('renders SaveAndExitButton via render prop', async () => {
@@ -70,7 +72,9 @@ describe('form button controls', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Custom save' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('renders SubmitFormButton default text and submits after click', async () => {
@@ -89,17 +93,19 @@ describe('form button controls', () => {
 
     await userEvent.click(screen.getByTestId('submit-button'));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-    await waitFor(() =>
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"saveAndExit":false',
-      ),
-    );
-    await waitFor(() =>
+      );
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"submitClick":false',
-      ),
-    );
+      );
+    });
   });
 
   it('renders SubmitFormButton via render prop', async () => {
@@ -125,6 +131,8 @@ describe('form button controls', () => {
       screen.getByRole('button', { name: 'Custom submit' }),
     );
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 });

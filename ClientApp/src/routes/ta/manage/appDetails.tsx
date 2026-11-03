@@ -123,7 +123,9 @@ const ApplicationDetails = () => {
       setActiveTab(getTabFromQuery());
     };
     globalThis.addEventListener('popstate', onPopState);
-    return () => globalThis.removeEventListener('popstate', onPopState);
+    return () => {
+      globalThis.removeEventListener('popstate', onPopState);
+    };
   }, []);
 
   useEffect(() => {
@@ -288,7 +290,9 @@ const ApplicationDetails = () => {
                       <Row>
                         <Col md={12}>
                           <Button
-                            onClick={() => routeToMessages()}
+                            onClick={() => {
+                              routeToMessages();
+                            }}
                             type='button'
                             className='btn btn-secondary'
                             title={`${messageCount} unread messages`}

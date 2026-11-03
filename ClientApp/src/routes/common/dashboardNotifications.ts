@@ -2,110 +2,108 @@ import { NotificationSeverity } from '../../storage/types';
 import type { Notification } from '../../storage/types';
 import { HttpStatusCode } from '../../types';
 
-export class DashBoardNotifications {
-  static readonly getForbiddenNotification = (): Notification => {
+export const DashBoardNotifications = {
+  getForbiddenNotification: (): Notification => {
     const message = {
       message:
         'We are unable to process your request. Your changes have not been saved. Please contact support.',
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getConflictNotification = (): Notification => {
+  getConflictNotification: (): Notification => {
     const message = {
       message:
         'We are unable to process your request. Your changes have not been saved. Please contact support.',
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getNotFoundNotification = (): Notification => {
+  getNotFoundNotification: (): Notification => {
     const message = {
       message:
         'We are unable to process your request. Your changes have not been saved. Please contact support.',
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getPreconditionFailedNotification = (): Notification => {
+  getPreconditionFailedNotification: (): Notification => {
     const message = {
       message:
         'We are unable to process your request. Your changes have not been saved. Please contact support.',
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getServiceUnavailableNotification = (): Notification => {
+  getServiceUnavailableNotification: (): Notification => {
     const message = {
       message:
         'We are unable to process your request. Your changes have not been saved. Please contact support.',
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getUnprocessableNotification = (): Notification => {
+  getUnprocessableNotification: (): Notification => {
     const message = {
       message:
         'We are unable to process your request. Your changes have not been saved. Please contact support.',
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getServerErrorNotification = (): Notification => {
+  getServerErrorNotification: (): Notification => {
     const message = {
       message:
         'We are unable to process your request. Your changes have not been saved. Please contact support.',
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getThirdPartyAccessNotification = (
-    orgName: string,
-  ): Notification => {
+  getThirdPartyAccessNotification: (orgName: string): Notification => {
     const message = {
       message: `You no longer have access to the records for ${orgName}.  Your changes have not been saved.`,
       severity: NotificationSeverity.Error,
     };
     return message;
-  };
+  },
 
-  static readonly getReportFormsGeneratedNotification = (): Notification => {
+  getReportFormsGeneratedNotification: (): Notification => {
     const message = {
       message:
         'New initial reporting and/or ongoing reporting forms have been generated',
       severity: NotificationSeverity.Information,
     };
     return message;
-  };
+  },
 
-  static readonly getDashboardErrorNotification = (
+  getDashboardErrorNotification: (
     statusCode: HttpStatusCode,
     _orgName?: string,
   ): Notification => {
     switch (statusCode) {
       case HttpStatusCode.Conflict:
-        return this.getConflictNotification();
+        return DashBoardNotifications.getConflictNotification();
       case HttpStatusCode.Gone:
-        return this.getNotFoundNotification();
+        return DashBoardNotifications.getNotFoundNotification();
       case HttpStatusCode.PreconditionFailed:
-        return this.getPreconditionFailedNotification();
+        return DashBoardNotifications.getPreconditionFailedNotification();
       case HttpStatusCode.ServiceUnavailable:
-        return this.getServiceUnavailableNotification();
+        return DashBoardNotifications.getServiceUnavailableNotification();
       case HttpStatusCode.UnprocessableEntity:
-        return this.getUnprocessableNotification();
+        return DashBoardNotifications.getUnprocessableNotification();
       case HttpStatusCode.Forbidden:
-        return this.getForbiddenNotification();
+        return DashBoardNotifications.getForbiddenNotification();
       case HttpStatusCode.InternalServerError:
-        return this.getServerErrorNotification();
+        return DashBoardNotifications.getServerErrorNotification();
       default:
-        return this.getServerErrorNotification();
+        return DashBoardNotifications.getServerErrorNotification();
     }
-  };
-}
+  },
+};

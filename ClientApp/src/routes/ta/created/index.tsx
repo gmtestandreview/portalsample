@@ -71,7 +71,9 @@ const RequestForPatternApprovalCreated = () => {
                   <div className='d-grid d-md-block mb-2'>
                     <Button
                       data-testid='go-to-dashboard-button'
-                      onClick={() => goToDashboard()}
+                      onClick={() => {
+                        goToDashboard();
+                      }}
                       className='btn btn-secondary'
                     >
                       Go to dashboard

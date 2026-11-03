@@ -111,7 +111,7 @@ function makeTree(id: string, isSummary?: boolean): ReactNode {
       <Formik
         initialValues={{}}
         initialStatus={{ hidden: {} }}
-        onSubmit={() => {}}
+        onSubmit={vi.fn<() => void>()}
       >
         <Form noValidate>
           <DeliveryAndReturn id={id} isSummary={isSummary} />
@@ -179,11 +179,11 @@ describe(DeliveryAndReturn, () => {
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
       renderComponent();
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           screen.getByText(/does not require the delivery or return/i),
-        ).toBeInTheDocument(),
-      );
+        ).toBeInTheDocument();
+      });
 
       expect(
         screen.queryByRole('heading', {
@@ -193,7 +193,9 @@ describe(DeliveryAndReturn, () => {
 
       // Drain setIsLoading(false) and any Formik re-renders still in the
       // microtask queue so they don't fire outside act() after the test ends.
-      await act(async () => {});
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
     });
 
     it('shows the no-delivery alert panel in summary mode and hides the delivery section', async () => {
@@ -205,11 +207,11 @@ describe(DeliveryAndReturn, () => {
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
       renderComponent({ isSummary: true });
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           screen.getByText(/does not require the delivery or return/i),
-        ).toBeInTheDocument(),
-      );
+        ).toBeInTheDocument();
+      });
 
       expect(
         screen.queryByRole('heading', {
@@ -217,7 +219,9 @@ describe(DeliveryAndReturn, () => {
         }),
       ).not.toBeInTheDocument();
 
-      await act(async () => {});
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
     });
   });
 
@@ -233,10 +237,12 @@ describe(DeliveryAndReturn, () => {
         returnAddressType: 'BusinessAddress',
       });
       renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
-      );
-      await act(async () => {});
+      await waitFor(() => {
+        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument();
+      });
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
     });
 
     it('postalAddress with postalAddressSameAsStreetAddress=true falls back to street address', async () => {
@@ -253,10 +259,12 @@ describe(DeliveryAndReturn, () => {
         returnAddressType: 'PostalAddress',
       });
       renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
-      );
-      await act(async () => {});
+      await waitFor(() => {
+        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument();
+      });
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
     });
 
     it('postalAddress with postalAddressSameAsStreetAddress=false renders the postal address', async () => {
@@ -269,10 +277,12 @@ describe(DeliveryAndReturn, () => {
         returnAddressType: 'PostalAddress',
       });
       renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(screen.getByText(/Melbourne VIC 3000/)).toBeInTheDocument(),
-      );
-      await act(async () => {});
+      await waitFor(() => {
+        expect(screen.getByText(/Melbourne VIC 3000/)).toBeInTheDocument();
+      });
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
     });
 
     it('renders no return address block when the address type is unset', async () => {
@@ -282,10 +292,12 @@ describe(DeliveryAndReturn, () => {
 
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id'),
-      );
-      await act(async () => {});
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id');
+      });
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
 
       expect(
         screen.queryByRole('heading', {
@@ -304,10 +316,12 @@ describe(DeliveryAndReturn, () => {
         returnAddressType: 'Other',
       });
       renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(screen.getByText(/Brisbane QLD 4000/)).toBeInTheDocument(),
-      );
-      await act(async () => {});
+      await waitFor(() => {
+        expect(screen.getByText(/Brisbane QLD 4000/)).toBeInTheDocument();
+      });
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
     });
   });
 
@@ -322,18 +336,20 @@ describe(DeliveryAndReturn, () => {
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
       const { rerender } = render(makeTree('q-1'));
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-1'),
-      );
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-1');
+      });
 
       rerender(makeTree('q-2'));
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2'),
-      );
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2');
+      });
 
       expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(2);
 
-      await act(async () => {});
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
     });
   });
 
@@ -347,12 +363,14 @@ describe(DeliveryAndReturn, () => {
       mocks.getDeliveryAndReturn.mockRejectedValue(new Error('Network error'));
       renderComponent();
       // Wait until the API call has been attempted — the effect has fired.
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id'),
-      );
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id');
+      });
       // Drain queued state updates (setIsLoading(false) from catch block,
       // plus any Formik re-renders) so they don't fire outside act().
-      await act(async () => {});
+      await act(async () => {
+        // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+      });
 
       // Component must still be mounted with the info banner visible.
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();

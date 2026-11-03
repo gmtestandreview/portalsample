@@ -5,9 +5,9 @@ import { isHidden } from '../utils';
 import type { HidableFieldProps } from './types';
 import type { Hideable } from '../types';
 
-type HidableFormikStatus<T extends FormikValues> = {
+interface HidableFormikStatus<T extends FormikValues> {
   hidden?: Hideable<Partial<T>, Partial<T>>;
-};
+}
 
 const HidableField = <T extends FormikValues>(
   props: Readonly<PropsWithChildren<HidableFieldProps>>,

@@ -13,7 +13,7 @@ type MockDatePickerKeyboardEvent = Pick<
 
 type MockDatePickerFocusEvent = Pick<React.FocusEvent, 'type'>;
 
-type MockDatePickerProps = {
+interface MockDatePickerProps {
   customInput: React.ReactElement;
   disabled?: boolean;
   onBlur?: (event: MockDatePickerFocusEvent) => void;
@@ -22,15 +22,15 @@ type MockDatePickerProps = {
   onKeyDown?: (event: MockDatePickerKeyboardEvent) => void;
   open?: boolean;
   openToDate?: Date | null;
-  popperModifiers: Array<{
+  popperModifiers: {
     options: {
       offset: (args: { placement: string }) => [number, number];
     };
-  }>;
+  }[];
   readOnly?: boolean;
   selected?: Date | null;
   children?: React.ReactNode;
-};
+}
 
 type MockDatePickerRef = { state: { open: boolean } } | Record<string, never>;
 type MockDatePickerShape = 'with-open-state' | 'without-open-state';
@@ -149,7 +149,12 @@ vi.mock(import('react-datepicker'), (() => {
         </button>
         {props.open ? (
           <div>
-            <button type='button' onClick={() => props.onChange(mockDate)}>
+            <button
+              type='button'
+              onClick={() => {
+                props.onChange(mockDate);
+              }}
+            >
               Pick date
             </button>
             <button
@@ -163,7 +168,12 @@ vi.mock(import('react-datepicker'), (() => {
             >
               Escape
             </button>
-            <button type='button' onClick={() => props.onClickOutside?.()}>
+            <button
+              type='button'
+              onClick={() => {
+                props.onClickOutside?.();
+              }}
+            >
               Click outside
             </button>
             <button

@@ -17,7 +17,7 @@ import { omitUndefined } from '../../../utils/omitUndefined';
 
 const isAllowedFile = (file: File, allowedTypes: string[]) =>
   file.name.includes('.') &&
-  allowedTypes.includes(`.${file.name.split('.').pop()!}`);
+  allowedTypes.includes(`.${file.name.split('.').pop() ?? ''}`);
 
 /** Returns one message per disallowed file, plus one if too many files were chosen. */
 const getUploadValidationErrors = (
@@ -87,8 +87,9 @@ const AttachmentNew = (
   // console.log('SD: ', value);
   const maxSizeInKb = maxSizeInMB * 1024 * 1024;
 
-  const addErrors = (messages: string[]) =>
+  const addErrors = (messages: string[]) => {
     setErrors((newErrors) => [...newErrors, ...messages]);
+  };
 
   const clearFileInput = () => {
     if (inputRef.current && inputRef.current.value !== null) {
@@ -202,10 +203,10 @@ const AttachmentNew = (
           })}
           name={name}
           index={i}
-          canRemove={!isSummary && !attachment.documentLocked!}
+          canRemove={!isSummary && !attachment.documentLocked}
           cancelButtonId={`cancel-button-${attachment.id}`}
           onRemoveItem={onConfirmDeleteFile}
-          isSummary={isSummary || attachment.documentLocked!}
+          isSummary={isSummary || (attachment.documentLocked ?? false)}
         />
       );
     });
@@ -251,9 +252,9 @@ const AttachmentNew = (
               <Form.Label
                 htmlFor={`drag-upload-${id ?? name}`}
                 className='mb-0 text-center'
-                onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) =>
-                  e.preventDefault()
-                }
+                onClick={(e: React.MouseEvent<HTMLElement>) => {
+                  e.preventDefault();
+                }}
                 aria-label={ariaLabel}
               >
                 {label}
@@ -351,7 +352,10 @@ const AttachmentNew = (
       progress.status !== 'Completed' &&
       progress.status !== 'CompletedWithErrors' ? (
         <Col role='status' aria-live='polite'>
-          <ProgressBar percent={progress.percent!} status={progress.status!} />
+          <ProgressBar
+            percent={progress.percent ?? 0}
+            status={progress.status ?? ''}
+          />
           <p className='mt-2 mb-4 ms-1 text-muted small'>
             {progress.completedFiles}
             {' / '}
@@ -359,7 +363,7 @@ const AttachmentNew = (
             {' files processed'}
           </p>
           <ProgressFileList
-            files={progress.files!}
+            files={progress.files ?? []}
             {...omitUndefined({ onCancelFile: handleCancelFile })}
           />
         </Col>

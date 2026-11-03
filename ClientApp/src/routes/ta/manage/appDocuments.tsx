@@ -109,7 +109,9 @@ const ApplicationDocuments = () => {
         uploadId,
         signal: controller.signal,
         onProgress: setProgress,
-        onFinished: () => setUploading(false),
+        onFinished: () => {
+          setUploading(false);
+        },
       });
     },
     [accounts, instance],

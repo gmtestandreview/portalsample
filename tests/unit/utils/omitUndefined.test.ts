@@ -139,8 +139,8 @@ describe(omitUndefined, () => {
 
     expect(Object.hasOwn(result, '__proto__')).toBe(true);
     expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
-    expect(result['__proto__']).toBe(input['__proto__']);
-    expect(result).toStrictEqual({ ['__proto__']: input['__proto__'] });
+    expect(result.__proto__).toBe(input.__proto__);
+    expect(result).toStrictEqual({ ['__proto__']: input.__proto__ });
   });
 
   it('rejects arrays instead of returning a non-array object', () => {

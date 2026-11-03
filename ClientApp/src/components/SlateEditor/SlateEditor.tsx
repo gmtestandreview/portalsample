@@ -25,7 +25,7 @@ export const serializeToHtml = (value: CustomElement[]): string =>
       return children;
     })
     .join('');
-export type CustomElement = {
+export interface CustomElement {
   type: 'paragraph';
   children: {
     text: string;
@@ -33,7 +33,7 @@ export type CustomElement = {
     italic?: boolean;
     underline?: boolean;
   }[];
-};
+}
 // end slate helpers
 interface SlateEditorProps {
   value: CustomElement[];
@@ -43,12 +43,12 @@ interface SlateEditorProps {
   maxCharacters?: number;
 }
 
-type CustomText = {
+interface CustomText {
   text: string;
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
-};
+}
 declare module 'slate' {
   interface CustomTypes {
     Editor: BaseEditor;

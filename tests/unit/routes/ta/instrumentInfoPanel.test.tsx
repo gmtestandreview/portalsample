@@ -112,10 +112,10 @@ describe(InstrumentInfoPanel, () => {
     resetInstrumentInfoPanelMocks();
 
     let resolveInfoPanelContent: (
-      value: Array<{ requirements: string; requirementsLink: string }>,
+      value: { requirements: string; requirementsLink: string }[],
     ) => void;
     const infoPanelContent = new Promise<
-      Array<{ requirements: string; requirementsLink: string }>
+      { requirements: string; requirementsLink: string }[]
     >((resolve) => {
       resolveInfoPanelContent = resolve;
     });
@@ -161,9 +161,9 @@ describe(InstrumentInfoPanel, () => {
       creditCheckLink: null,
     });
 
-    await waitFor(() =>
-      expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token'),
-    );
+    await waitFor(() => {
+      expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token');
+    });
 
     expect(mocks.getInfoPanelContent).toHaveBeenCalledWith(typeId, categoryId);
   });

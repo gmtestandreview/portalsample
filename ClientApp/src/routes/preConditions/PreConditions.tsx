@@ -97,7 +97,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   const redirectToCreateAccount =
     isAuthenticated &&
     account?.details?.defaultOrganisationId != null &&
-    account?.details?.accountCreationCompleted === false &&
+    !account?.details?.accountCreationCompleted &&
     !path?.includes('create-account');
 
   const redirectToCreateContact =
@@ -110,9 +110,8 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   const redirectToDashboard =
     isAuthenticated &&
     account?.details?.accountCreationCompleted === true &&
-    account?.details?.accountContactCompleted === true &&
-    (path?.includes('create-account') === true ||
-      path?.includes('create-contact') === true);
+    account?.details?.accountContactCompleted &&
+    (path?.includes('create-account') || path?.includes('create-contact'));
 
   const showTermsAndConditions =
     isAuthenticated && account?.details?.userAcceptedTermsOfUse === false;
@@ -121,7 +120,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
     isAuthenticated &&
     account?.details?.userAcceptedTermsOfUse === true &&
     account?.details?.defaultOrganisationId === null &&
-    account?.details?.accountContactCompleted === true &&
+    account?.details?.accountContactCompleted &&
     !path?.includes('success-creating-account')
   );
 

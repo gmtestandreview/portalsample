@@ -45,24 +45,24 @@ const mocks = vi.hoisted(() => ({
 
 type HideRule<T> = (values: Partial<T>) => boolean;
 
-type DeliveryAndReturnHidingFields = {
+interface DeliveryAndReturnHidingFields {
   contactHide: HideRule<DeliveryAndReturnStep>;
   contact: { titleOther: HideRule<DeliveryAndReturnStep> };
   returnAddress: HideRule<DeliveryAndReturnStep>;
   carrierHide: HideRule<DeliveryAndReturnStep>;
-};
+}
 
-type PaymentDetailsHidingFields = {
+interface PaymentDetailsHidingFields {
   contactHide: HideRule<PaymentDetailsStep>;
   contact: { titleOther: HideRule<PaymentDetailsStep> };
-};
+}
 
-type ReportRecipientHidingFields = {
+interface ReportRecipientHidingFields {
   contact: { titleOther: HideRule<ReportRecipientStep> };
   businessStreetAddress: HideRule<ReportRecipientStep>;
-};
+}
 
-type SummaryAndAcceptHidingFields = {
+interface SummaryAndAcceptHidingFields {
   associatedDispute: HideRule<SummaryAndAcceptStep>;
   reportRecipient: {
     rfqHide: HideRule<SummaryAndAcceptStep>;
@@ -83,7 +83,7 @@ type SummaryAndAcceptHidingFields = {
   requestForQuote: {
     contact: { titleOther: HideRule<SummaryAndAcceptStep> };
   };
-};
+}
 
 const expectStringContaining = (value: string): unknown =>
   expect.stringContaining(value);

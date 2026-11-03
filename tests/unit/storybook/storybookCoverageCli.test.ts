@@ -3,13 +3,13 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-type CoverageCliModule = {
+interface CoverageCliModule {
   computeIndexDigest(index: unknown): string;
   main(argv: string[]): {
     exitCode: number;
-    errors: Array<{ code: string; message?: string }>;
+    errors: { code: string; message?: string }[];
   };
-};
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.

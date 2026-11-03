@@ -89,7 +89,7 @@ const QuoteDetails = (
 
   const renderNoDeliveryInfoPanel = () => (
     <Alert
-      variant={`${isSummary ? 'basic' : 'info'}`}
+      variant={isSummary ? 'basic' : 'info'}
       role='status'
       aria-live='off'
       className='d-flex mb-4'
@@ -158,8 +158,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation ID</div>
             <p className='mb-0 text-break'>
               {/* TO DO - insert correct Quotation ID */}
-              {!!quotationData?.quotationIdNum &&
-                `${quotationData?.quotationIdNum}`}
+              {!!quotationData?.quotationIdNum && quotationData?.quotationIdNum}
             </p>
           </div>
         </Col>
@@ -248,8 +247,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.serialNumber &&
-                  `${quotationData?.serialNumber}`}
+                {!!quotationData?.serialNumber && quotationData?.serialNumber}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -257,8 +255,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.manufacturer &&
-                  `${quotationData?.manufacturer}`}
+                {!!quotationData?.manufacturer && quotationData?.manufacturer}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -266,7 +263,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.model && `${quotationData?.model}`}
+                {!!quotationData?.model && quotationData?.model}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -274,11 +271,14 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='text-break'>
-                {!!quotationData?.description &&
-                  `${quotationData?.description}`}
+                {!!quotationData?.description && quotationData?.description}
               </p>
               <p className='mb-0'>
-                <InTextLink onClick={(_e) => showQuoteRequest()}>
+                <InTextLink
+                  onClick={(_e) => {
+                    showQuoteRequest();
+                  }}
+                >
                   View request
                   <ExternalLinkIcon className='ms-2' />
                   <span className='visually-hidden'> Opens in a new tab</span>
@@ -304,7 +304,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {quotationData !== undefined &&
-                  `${getMakeModelDetails(quotationData)}`}
+                  getMakeModelDetails(quotationData)}
               </p>
             </Col>
           </Row>
@@ -315,7 +315,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.servicesOffered &&
-                  `${quotationData?.servicesOffered}`}
+                  quotationData?.servicesOffered}
               </p>
             </Col>
           </Row>
@@ -326,7 +326,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.measurementReportCertificateRequired &&
-                  `${quotationData?.measurementReportCertificateRequired}`}
+                  quotationData?.measurementReportCertificateRequired}
               </p>
             </Col>
           </Row>
@@ -337,7 +337,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.specialConditions &&
-                  `${quotationData?.specialConditions}`}
+                  quotationData?.specialConditions}
               </p>
             </Col>
           </Row>

@@ -218,7 +218,9 @@ const AddressLookup = (
     }
   };
 
-  const onSearchAgain = () => setManual(false);
+  const onSearchAgain = () => {
+    setManual(false);
+  };
 
   const onEnterManually = () => {
     void setTouched(false);

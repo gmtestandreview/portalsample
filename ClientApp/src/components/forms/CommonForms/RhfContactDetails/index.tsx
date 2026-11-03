@@ -38,7 +38,7 @@ const ContactDetailsSummary = ({
 
   return (
     <>
-      <RhfSelectInput<string>
+      <RhfSelectInput
         name={getName('title')}
         label={titleLabel}
         options={TITLE_OPTIONS}
@@ -112,7 +112,7 @@ const ContactDetailsEdit = ({
     <Form.Group>
       <Row>
         <Col md={6}>
-          <RhfSelectInput<string>
+          <RhfSelectInput
             name={getName('title')}
             label={titleLabel}
             options={TITLE_OPTIONS}

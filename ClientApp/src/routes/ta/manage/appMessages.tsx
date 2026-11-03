@@ -73,19 +73,19 @@ const ApplicationMessages = () => {
             messageView,
             id,
           );
-          if (response.requestForPatternApprovalMessageDetails!.currentPage) {
+          if (response.requestForPatternApprovalMessageDetails?.currentPage) {
             setCurrentPage(
-              response.requestForPatternApprovalMessageDetails!.currentPage,
+              response.requestForPatternApprovalMessageDetails.currentPage,
             );
           }
-          if (response.requestForPatternApprovalMessageDetails!.totalPages) {
+          if (response.requestForPatternApprovalMessageDetails?.totalPages) {
             setTotalPages(
-              response.requestForPatternApprovalMessageDetails!.totalPages,
+              response.requestForPatternApprovalMessageDetails.totalPages,
             );
           }
-          if (response.requestForPatternApprovalMessageDetails!.totalCount) {
+          if (response.requestForPatternApprovalMessageDetails?.totalCount) {
             setTotalCount(
-              response.requestForPatternApprovalMessageDetails!.totalCount,
+              response.requestForPatternApprovalMessageDetails.totalCount,
             );
           }
           setMessage(response);
@@ -156,7 +156,7 @@ const ApplicationMessages = () => {
   );
 
   const messageCount =
-    message?.requestForPatternApprovalMessageDetails?.items!.length;
+    message?.requestForPatternApprovalMessageDetails?.items?.length;
 
   const renderToolbar = () => (
     <>
@@ -221,7 +221,7 @@ const ApplicationMessages = () => {
     return parse(safeHtml);
   };
 
-  const renderFooter = (footer: string) =>
+  const renderFooter = (footer: string | null | undefined) =>
     footer && (
       <>
         <p className='mt-2 mb-0'>Regards,</p>
@@ -250,7 +250,7 @@ const ApplicationMessages = () => {
             {message &&
               messageCount !== undefined &&
               messageCount > 0 &&
-              message.requestForPatternApprovalMessageDetails!.items!.map(
+              message.requestForPatternApprovalMessageDetails?.items?.map(
                 (msg) => (
                   <li key={msg.id} id={msg.id}>
                     <Card
@@ -284,7 +284,7 @@ const ApplicationMessages = () => {
                                 <div className='body-text'>
                                   {renderHtmlBody(msg.body)}
                                 </div>
-                                {renderFooter(msg.footer!)}
+                                {renderFooter(msg.footer)}
                               </>
                             ) : (
                               <div className='body-text'>{msg.body}</div>

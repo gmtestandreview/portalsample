@@ -165,14 +165,14 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 
@@ -390,7 +390,9 @@ describe('account and contact route wrappers', () => {
       -1,
     )?.[4] as () => void;
 
-    expect(() => onShowBranchSelector()).not.toThrow();
+    expect(() => {
+      onShowBranchSelector();
+    }).not.toThrow();
     expect(mocks.setShowBranchSelector).not.toHaveBeenCalled();
   });
 

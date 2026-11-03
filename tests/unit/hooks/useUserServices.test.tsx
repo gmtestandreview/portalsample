@@ -23,7 +23,7 @@ const dispatchContext: AccountDispatchContext = {
 };
 
 const ServicesProbe = () => {
-  const services = useUserServices() as Array<{ serviceName: string }>;
+  const services = useUserServices() as { serviceName: string }[];
 
   return (
     <output aria-label='Services'>

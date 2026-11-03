@@ -4,7 +4,7 @@ export const handleAlertScroll = () => {
   setTimeout(() => {
     const summaryRef: HTMLElement = document.querySelector(
       '#form-error-summary-custom',
-    ) as HTMLElement;
+    )!;
     summaryRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     summaryRef?.focus();
   }, 100);

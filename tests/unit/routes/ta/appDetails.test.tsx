@@ -280,11 +280,11 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
           'Balance pattern approval',
-        ),
-      );
+        );
+      });
 
       expect(screen.getByTestId('breadcrumb')).toHaveTextContent(
         'New certificate (APP-1)',
@@ -300,11 +300,11 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
           'Application details',
-        ),
-      );
+        );
+      });
     });
 
     it('shows the status, dates and assessment on the details tab', async () => {
@@ -314,9 +314,9 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       expect(
         screen.getByText('Non-automatic weighing instrument'),
@@ -346,9 +346,9 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       expect(
         screen.queryByText(auDate('2026-06-11T00:00:00.000Z')),
@@ -366,11 +366,11 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('breadcrumb')).toHaveTextContent(
           'null (APP-1)',
-        ),
-      );
+        );
+      });
     });
   });
 
@@ -384,17 +384,19 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessageCount,
-        ).toHaveBeenCalledWith('APP-1', 'APP-1'),
-      );
+        ).toHaveBeenCalledWith('APP-1', 'APP-1');
+      });
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
         DEFAULT_ACCESS_TOKEN,
       );
 
-      await waitFor(() => expect(screen.getByText('4')).toBeInTheDocument());
+      await waitFor(() => {
+        expect(screen.getByText('4')).toBeInTheDocument();
+      });
     });
 
     it('shows no badge when nothing is unread', async () => {
@@ -404,11 +406,11 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessageCount,
-        ).toHaveBeenCalledWith('APP-1', 'APP-1'),
-      );
+        ).toHaveBeenCalledWith('APP-1', 'APP-1');
+      });
 
       expect(
         screen.getByRole('button', { name: /Messages/ }),
@@ -460,11 +462,11 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessageCount,
-        ).toHaveBeenCalledWith('APP-1', 'APP-1'),
-      );
+        ).toHaveBeenCalledWith('APP-1', 'APP-1');
+      });
 
       expect(screen.queryByText('unread')).not.toBeInTheDocument();
     });
@@ -480,9 +482,9 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
-        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+      });
 
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     });
@@ -496,9 +498,9 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
-        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+      });
 
       expect(
         clients.patternApproval.methods.getAppMessageCount,
@@ -534,11 +536,11 @@ describe('application details', () => {
 
       const { unmount } = await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessageCount,
-        ).toHaveBeenCalledWith('APP-1', 'APP-1'),
-      );
+        ).toHaveBeenCalledWith('APP-1', 'APP-1');
+      });
       const callsAtUnmount =
         clients.patternApproval.methods.getAppMessageCount.mock.calls.length;
 
@@ -561,9 +563,9 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       // Messages mount lazily, so nothing is there until the tab is opened.
       expect(
@@ -578,9 +580,9 @@ describe('application details', () => {
 
       await renderDetails('?tab=messages');
 
-      await waitFor(() =>
-        expect(screen.getByTestId('application-messages')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('application-messages')).toBeInTheDocument();
+      });
     });
 
     it('ignores a tab the page does not have', async () => {
@@ -590,9 +592,9 @@ describe('application details', () => {
 
       await renderDetails('?tab=nonsense');
 
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       expect(
         screen.queryByTestId('application-messages'),
@@ -606,15 +608,15 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByRole('tab', { name: 'Messages' }));
 
-      await waitFor(() =>
-        expect(screen.getByTestId('application-messages')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('application-messages')).toBeInTheDocument();
+      });
 
       expect(globalThis.location.search).toContain('tab=messages');
     });
@@ -626,15 +628,15 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByRole('button', { name: /Messages/ }));
 
-      await waitFor(() =>
-        expect(screen.getByTestId('application-messages')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('application-messages')).toBeInTheDocument();
+      });
     });
 
     it('jumps to the documents tab from the supporting documents shortcut', async () => {
@@ -644,15 +646,15 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByRole('button', { name: 'View documents' }));
 
-      await waitFor(() =>
-        expect(globalThis.location.search).toContain('tab=documents'),
-      );
+      await waitFor(() => {
+        expect(globalThis.location.search).toContain('tab=documents');
+      });
 
       expect(globalThis.scrollTo).toHaveBeenCalledWith(0, 0);
     });
@@ -664,17 +666,17 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       const shortcut = screen.getByRole('button', { name: 'View documents' });
       shortcut.focus();
       await user.keyboard('{Enter}');
 
-      await waitFor(() =>
-        expect(globalThis.location.search).toContain('tab=documents'),
-      );
+      await waitFor(() => {
+        expect(globalThis.location.search).toContain('tab=documents');
+      });
     });
 
     it('also takes the space bar on the documents shortcut', async () => {
@@ -684,17 +686,17 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       const shortcut = screen.getByRole('button', { name: 'View documents' });
       shortcut.focus();
       await user.keyboard(' ');
 
-      await waitFor(() =>
-        expect(globalThis.location.search).toContain('tab=documents'),
-      );
+      await waitFor(() => {
+        expect(globalThis.location.search).toContain('tab=documents');
+      });
     });
 
     it('ignores other keys on the documents shortcut', async () => {
@@ -704,9 +706,9 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       const shortcut = screen.getByRole('button', { name: 'View documents' });
       shortcut.focus();
@@ -722,14 +724,14 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByRole('tab', { name: 'Messages' }));
-      await waitFor(() =>
-        expect(screen.getByTestId('application-messages')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('application-messages')).toBeInTheDocument();
+      });
 
       // Rewind the url the way a back navigation does, then announce it.
       act(() => {
@@ -737,9 +739,9 @@ describe('application details', () => {
         globalThis.dispatchEvent(new PopStateEvent('popstate'));
       });
 
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
     });
   });
 
@@ -753,13 +755,13 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to load application details',
           expect.any(Error),
           { Id: 'APP-1' },
-        ),
-      );
+        );
+      });
 
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
@@ -775,11 +777,11 @@ describe('application details', () => {
 
       // No type recorded, and the details panel renders from an empty set rather than
       // throwing on the way in.
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('breadcrumb')).toHaveTextContent(
           'null (APP-1)',
-        ),
-      );
+        );
+      });
 
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     });
@@ -790,9 +792,9 @@ describe('application details', () => {
       await resetApplicationDetailsState();
 
       const { router } = await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       let release: (value: unknown) => void = () => undefined;
       mocks.loadStepValues.mockReturnValue(
@@ -824,9 +826,9 @@ describe('application details', () => {
       await resetApplicationDetailsState();
 
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       act(() => {
         captured.selectTab('not-a-tab');
@@ -847,22 +849,22 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       const messagesTab = screen.getByRole('tab', { name: 'Messages' });
       await user.click(messagesTab);
-      await waitFor(() =>
-        expect(screen.getByTestId('application-messages')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('application-messages')).toBeInTheDocument();
+      });
 
       // Clicking the tab you are already on remounts the list rather than doing nothing.
       await user.click(messagesTab);
 
-      await waitFor(() =>
-        expect(screen.getByTestId('application-messages')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('application-messages')).toBeInTheDocument();
+      });
     });
 
     it('leaves messages unmounted when another tab is chosen', async () => {
@@ -872,15 +874,15 @@ describe('application details', () => {
 
       const user = userEvent.setup();
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByText('With the assessor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('With the assessor')).toBeInTheDocument();
+      });
 
       await user.click(screen.getByRole('tab', { name: 'Documents' }));
 
-      await waitFor(() =>
-        expect(globalThis.location.search).toContain('tab=documents'),
-      );
+      await waitFor(() => {
+        expect(globalThis.location.search).toContain('tab=documents');
+      });
 
       expect(
         screen.queryByTestId('application-messages'),
@@ -900,11 +902,11 @@ describe('application details', () => {
       );
 
       const { unmount } = await renderDetails();
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessageCount,
-        ).toHaveBeenCalledWith('APP-1', 'APP-1'),
-      );
+        ).toHaveBeenCalledWith('APP-1', 'APP-1');
+      });
 
       unmount();
       act(() => {
@@ -931,9 +933,9 @@ describe('application details', () => {
       await resetApplicationDetailsState();
 
       await renderDetails();
-      await waitFor(() =>
-        expect(screen.getByTestId('supporting-documents')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('supporting-documents')).toBeInTheDocument();
+      });
 
       await expect(
         captured.docsProps.onUploadAttachment(),
@@ -956,11 +958,11 @@ describe('application details', () => {
       try {
         await renderDetails();
 
-        await waitFor(() =>
+        await waitFor(() => {
           expect(
             screen.getByTestId('organisation-and-contact'),
-          ).toBeInTheDocument(),
-        );
+          ).toBeInTheDocument();
+        });
       } finally {
         Object.assign(mocks, { hidingFields: original });
       }
@@ -973,11 +975,11 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           screen.getByTestId('organisation-and-contact'),
-        ).toBeInTheDocument(),
-      );
+        ).toBeInTheDocument();
+      });
 
       expect(
         screen.getByTestId('application-and-instrument'),
@@ -992,9 +994,9 @@ describe('application details', () => {
 
       await renderDetails();
 
-      await waitFor(() =>
-        expect(screen.getAllByTestId('status-pill').length).toBeGreaterThan(0),
-      );
+      await waitFor(() => {
+        expect(screen.getAllByTestId('status-pill').length).toBeGreaterThan(0);
+      });
 
       expect(
         within(defined(screen.getAllByTestId('status-pill')[0])).getByText(

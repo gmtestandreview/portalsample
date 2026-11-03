@@ -4,7 +4,6 @@ import { Button, Alert } from 'react-bootstrap';
 import { Component, useState } from 'react';
 import ErrorBoundary from './index';
 import { ai } from '../../instrumentation/AppInsightsService';
-import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 const WorkingComponent = () => (
   <Alert variant='success'>
@@ -43,7 +42,9 @@ class ResetableErrorBoundaryWrapper extends Component<
         <Button
           variant='warning'
           className='mb-3'
-          onClick={() => this.setState((s) => ({ key: s.key + 1 }))}
+          onClick={() => {
+            this.setState((s) => ({ key: s.key + 1 }));
+          }}
         >
           Reset ErrorBoundary
         </Button>
@@ -62,7 +63,7 @@ const meta = preview.meta({
 
 export const NoError = meta.story({
   render: () => (
-    <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+    <ErrorBoundary appInsights={ai.reactPlugin}>
       <WorkingComponent />
     </ErrorBoundary>
   ),
@@ -95,7 +96,9 @@ export const RecoveredAfterReset = meta.story({
           <Button
             variant='danger'
             className='mb-3 me-2'
-            onClick={() => setShouldThrow(true)}
+            onClick={() => {
+              setShouldThrow(true);
+            }}
           >
             Simulate render error
           </Button>

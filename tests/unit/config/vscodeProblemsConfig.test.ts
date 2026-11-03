@@ -114,7 +114,7 @@ describe('vS Code Problems configuration', () => {
     expect(result.status).not.toBeNull();
 
     const report = JSON.parse(result.stdout) as {
-      results: Array<{ where: string; cited: number | null }>;
+      results: { where: string; cited: number | null }[];
     };
 
     expect(
@@ -130,7 +130,7 @@ describe('vS Code Problems configuration', () => {
 
     const tasks = readJson<{
       version: string;
-      tasks: Array<{
+      tasks: {
         label: string;
         type?: string;
         script?: string;
@@ -139,7 +139,7 @@ describe('vS Code Problems configuration', () => {
         dependsOn?: string[];
         dependsOrder?: string;
         problemMatcher?: unknown;
-      }>;
+      }[];
     }>('.vscode/tasks.json');
 
     const byLabel = new Map(tasks.tasks.map((task) => [task.label, task]));
@@ -172,11 +172,11 @@ describe('vS Code Problems configuration', () => {
     expect.hasAssertions();
 
     const tasks = readJson<{
-      tasks: Array<{
+      tasks: {
         label: string;
         dependsOn?: string[];
         dependsOrder?: string;
-      }>;
+      }[];
     }>('.vscode/tasks.json');
 
     const allDiagnostics = tasks.tasks.find(
@@ -195,7 +195,7 @@ describe('vS Code Problems configuration', () => {
   it('gREEN: exposes every repository diagnostic source as a runnable VS Code task', () => {
     expect.hasAssertions();
 
-    const tasks = readJson<{ tasks: Array<{ label: string }> }>(
+    const tasks = readJson<{ tasks: { label: string }[] }>(
       '.vscode/tasks.json',
     );
     const labels = tasks.tasks.map((task) => task.label);
@@ -215,7 +215,7 @@ describe('vS Code Problems configuration', () => {
     expect.hasAssertions();
 
     const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
-    const tasks = readJson<{ tasks: Array<{ label: string }> }>(
+    const tasks = readJson<{ tasks: { label: string }[] }>(
       '.vscode/tasks.json',
     );
 

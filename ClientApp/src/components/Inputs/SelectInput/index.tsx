@@ -115,11 +115,11 @@ const SelectInput = <T extends string | number>(
         {...omitUndefined({ disabled, 'aria-describedby': describedBy })}
         className={`form-field form-select ${className}`}
         {...field}
-        onChange={(event) =>
+        onChange={(event) => {
           onSelectChange(
             event as ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-          )
-        }
+          );
+        }}
         isInvalid={!!(meta.touched && meta.error)}
       >
         {addBlank && defaultUIOption}

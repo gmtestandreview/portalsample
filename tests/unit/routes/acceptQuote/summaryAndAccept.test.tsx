@@ -147,7 +147,7 @@ vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
@@ -242,7 +242,7 @@ vi.mock(
 
 function renderComponent() {
   return render(
-    <Formik initialValues={{}} onSubmit={() => {}}>
+    <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
       <Form>
         <SummaryAndAccept />
       </Form>
@@ -293,7 +293,7 @@ describe(SummaryAndAccept, () => {
 
     mocks.route.id = 'quote-2';
     rerender(
-      <Formik initialValues={{}} onSubmit={() => {}}>
+      <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
         <Form>
           <SummaryAndAccept />
         </Form>

@@ -226,9 +226,9 @@ describe('accountProvider — errored state', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('protected-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+    });
 
     expect(mockSignIn).toHaveBeenCalledWith({});
   });
@@ -281,11 +281,11 @@ describe('accountProvider — errored state', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
         account: null,
-      }),
-    );
+      });
+    });
 
     expect(
       screen.getByText(/Unable to load account details/i),
@@ -308,11 +308,11 @@ describe('accountProvider — errored state', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
         account: null,
-      }),
-    );
+      });
+    });
 
     expect(
       screen.getByText(/Unable to load account details/i),

@@ -10,10 +10,9 @@ const RouteAccessibleNavigation = () => {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | number | undefined;
     if (path.slice(1)) {
-      timeoutId = setTimeout(
-        () => setMessage(`Navigated to ${document.title} page.`),
-        100,
-      );
+      timeoutId = setTimeout(() => {
+        setMessage(`Navigated to ${document.title} page.`);
+      }, 100);
     } else {
       setMessage(`Navigated to ${document.title || ''} page.`);
     }

@@ -279,7 +279,7 @@ describe(RequestForQuoteSummary, () => {
 
     expect(editButtons).toHaveLength(2);
 
-    fireEvent.click(editButtons.at(index) as HTMLElement);
+    fireEvent.click(editButtons.at(index)!);
 
     expect(
       screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`),

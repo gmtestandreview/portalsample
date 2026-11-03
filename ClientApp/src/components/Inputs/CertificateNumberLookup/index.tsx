@@ -127,8 +127,10 @@ const CertificateNumberLookup = (
                 .slice(0, maxResults)
                 .map((item) => item)
                 .sort((left, right) =>
-                  getLookupFieldValue(left, optionsFieldName)!.localeCompare(
-                    getLookupFieldValue(right, optionsFieldName)!,
+                  (
+                    getLookupFieldValue(left, optionsFieldName) ?? ''
+                  ).localeCompare(
+                    getLookupFieldValue(right, optionsFieldName) ?? '',
                   ),
                 ),
             ),
@@ -149,8 +151,10 @@ const CertificateNumberLookup = (
                 .slice(0, maxResults)
                 .map((item) => item)
                 .sort((left, right) =>
-                  getLookupFieldValue(left, optionsFieldName)!.localeCompare(
-                    getLookupFieldValue(right, optionsFieldName)!,
+                  (
+                    getLookupFieldValue(left, optionsFieldName) ?? ''
+                  ).localeCompare(
+                    getLookupFieldValue(right, optionsFieldName) ?? '',
                   ),
                 ),
             ),
@@ -163,7 +167,9 @@ const CertificateNumberLookup = (
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounce);
+    return () => {
+      clearTimeout(delayDebounce);
+    };
   }, [
     _certNumOptions.value,
     _parentField.value,
@@ -199,7 +205,9 @@ const CertificateNumberLookup = (
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleSelect = (
@@ -233,7 +241,10 @@ const CertificateNumberLookup = (
       const activeSuggestion =
         activeIndex >= 0 ? filteredSuggestions.at(activeIndex) : undefined;
       if (activeIndex >= 0 && activeSuggestion) {
-        handleSelect(activeSuggestion.lookupName!, activeSuggestion.id!);
+        handleSelect(
+          activeSuggestion.lookupName ?? '',
+          activeSuggestion.id ?? '',
+        );
       } else {
         handleSelect(inputValue, inputValue);
       }
@@ -285,9 +296,9 @@ const CertificateNumberLookup = (
             placeholder={placeholder ?? ''}
             inlineHelpTitle={inlineHelpTitle ?? ''}
             inlineHelp={inlineHelp ?? ''}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setInputValue(e.target.value)
-            }
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setInputValue(e.target.value);
+            }}
             onKeyDown={handleKeyDown}
             autoComplete='off'
             aria-autocomplete='both'
@@ -344,9 +355,9 @@ const CertificateNumberLookup = (
                     // active={index === activeIndex}
                     className={`suggestion-option auto-suggestions mt-0 border-0 ${index === activeIndex ? 'highlighted' : ''}`}
                     onClick={() => {
-                      handleSelect(item.lookupName!, item.id!, () =>
-                        setActiveIndex(index),
-                      );
+                      handleSelect(item.lookupName ?? '', item.id ?? '', () => {
+                        setActiveIndex(index);
+                      });
                     }}
                     // onMouseEnter={() => setActiveIndex(index)}
                     ref={(el: HTMLLIElement | null) => {

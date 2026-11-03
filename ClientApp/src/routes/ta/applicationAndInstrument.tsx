@@ -86,12 +86,12 @@ const ApplicationAndInstrument = (
     if (parentId !== undefined && parentId !== '') {
       for (const l of values) {
         if (l.parentId === parentId) {
-          options.push({ displayText: l.label!, value: l.id! });
+          options.push({ displayText: l.label ?? '', value: l.id ?? '' });
         }
       }
     } else if (isSummary) {
       for (const l of values) {
-        options.push({ displayText: l.label!, value: l.id! });
+        options.push({ displayText: l.label ?? '', value: l.id ?? '' });
       }
     }
     const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
@@ -118,8 +118,8 @@ const ApplicationAndInstrument = (
     const loadInstrumentCategories = () => {
       try {
         if (!instrumentCategories) {
-          const result = _categoryLookupField.value as LookupResponse[];
-          const artefactTypeResult = _typeLookupField.value as LookupResponse[];
+          const result = _categoryLookupField.value!;
+          const artefactTypeResult = _typeLookupField.value!;
           if (result && artefactTypeResult) {
             const [sorted, lastId] = sortList(
               result,
@@ -137,13 +137,12 @@ const ApplicationAndInstrument = (
               setInstrumentTypesSelected(
                 getInstrumentTypes(
                   artefactTypeResult,
-                  _instrumentCatField.value as string,
+                  _instrumentCatField.value!,
                 ),
               );
               if (
                 !isSummary &&
-                (_instrumentCatField.value as string) ===
-                  noInstrumentCategoriestId.current
+                _instrumentCatField.value === noInstrumentCategoriestId.current
               )
                 setIsInstrumentTypeDisabled(true);
             } else {
@@ -173,7 +172,7 @@ const ApplicationAndInstrument = (
   const getInstrumentCategories = () => {
     const options: SelectInputOption<string>[] = [];
     for (const l of instrumentCategories ?? []) {
-      options.push({ displayText: l.label!, value: l.id! });
+      options.push({ displayText: l.label ?? '', value: l.id ?? '' });
     }
     return options;
   };

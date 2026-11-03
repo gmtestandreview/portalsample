@@ -56,7 +56,7 @@ const AutoSuggestContainer = <T,>(
   } = props;
 
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
-  const controlId = `${id || name}`;
+  const controlId = id || name;
   const [_field, _meta, { setTouched }] = useField<string>(name);
   const errorId = `${id || name}-validation-msg`;
 

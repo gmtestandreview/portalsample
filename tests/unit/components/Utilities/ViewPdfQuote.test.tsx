@@ -55,19 +55,19 @@ const mockMsalState = vi.hoisted(() => {
 const { acquireTokenSilentMock } = mockMsalState;
 
 const mockAppLogger = vi.hoisted(() => {
-  class MockAppLogger {
-    static info = vi.fn<typeof AppLogger.info>();
-    static warning = vi.fn<typeof AppLogger.warning>();
-    static verbose = vi.fn<typeof AppLogger.verbose>();
-    static critical = vi.fn<typeof AppLogger.critical>();
-    static trace = vi.fn<typeof AppLogger.trace>();
-    static error = vi.fn<typeof AppLogger.error>();
-    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
-    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
-    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
-    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
-    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
-  }
+  const MockAppLogger = {
+    info: vi.fn<typeof AppLogger.info>(),
+    warning: vi.fn<typeof AppLogger.warning>(),
+    verbose: vi.fn<typeof AppLogger.verbose>(),
+    critical: vi.fn<typeof AppLogger.critical>(),
+    trace: vi.fn<typeof AppLogger.trace>(),
+    error: vi.fn<typeof AppLogger.error>(),
+    trackEvent: vi.fn<typeof AppLogger.trackEvent>(),
+    startTrackPage: vi.fn<typeof AppLogger.startTrackPage>(),
+    stopTrackPage: vi.fn<typeof AppLogger.stopTrackPage>(),
+    startTrackEvent: vi.fn<typeof AppLogger.startTrackEvent>(),
+    stopTrackEvent: vi.fn<typeof AppLogger.stopTrackEvent>(),
+  };
 
   return MockAppLogger;
 });
@@ -214,7 +214,11 @@ describe('view pdf quote', () => {
 
     resetViewPdfQuoteMocks();
 
-    acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
+    acquireTokenSilentMock.mockReturnValue(
+      new Promise(() => {
+        // Never resolves — simulates an in-flight request for loading-state assertions.
+      }),
+    );
 
     render(<ViewPdfQuote {...defaultProps} />);
 

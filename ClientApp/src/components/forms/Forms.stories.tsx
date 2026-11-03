@@ -1,7 +1,7 @@
 import preview from '../../../../.storybook/preview';
 import type { ReactNode } from 'react';
 import { Formik, Form } from 'formik';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import TextInput from '../Inputs/TextInput';
 import SelectInput from '../Inputs/SelectInput';
 import RadioButtonGroup from '../Inputs/RadioButtonGroup';
@@ -32,7 +32,7 @@ const FormikWrapper = ({
   children: ReactNode;
   initialValues?: Record<string, unknown>;
 }) => (
-  <Formik initialValues={initialValues} onSubmit={() => {}}>
+  <Formik initialValues={initialValues} onSubmit={fn()}>
     <Form>{children}</Form>
   </Formik>
 );

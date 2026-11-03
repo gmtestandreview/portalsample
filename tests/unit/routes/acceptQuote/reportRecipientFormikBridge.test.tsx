@@ -91,9 +91,9 @@ function Harness({
         status ?? (withHiddenRules ? { hidden: hidingFields } : undefined)
       }
       validate={validateForm(reportRecipientSubmitValidation, hidingFields)}
-      onSubmit={(submitted) =>
-        onSubmit(removeHidden(submitted, submitted, hidingFields))
-      }
+      onSubmit={(submitted) => {
+        onSubmit(removeHidden(submitted, submitted, hidingFields));
+      }}
     >
       <Form noValidate>
         <ReportRecipientFormikBridge />
@@ -133,7 +133,9 @@ describe(ReportRecipientFormikBridge, () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       reportAddressType: ReportAddressTypeValues.Other,
@@ -181,7 +183,9 @@ describe(ReportRecipientFormikBridge, () => {
     await user.type(organisationName, 'Edited report organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       organisationName: 'Edited report organisation',
@@ -220,7 +224,9 @@ describe(ReportRecipientFormikBridge, () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       businessStreetAddress: {

@@ -12,10 +12,10 @@ export const SASS_PREPROCESSOR_OPTIONS = {
   silenceDeprecations: [...SASS_DEPRECATIONS_TO_SILENCE],
 };
 
-type VendorChunkGroup = {
+interface VendorChunkGroup {
   name: string;
   test: RegExp;
-};
+}
 
 export const APPLICATION_VENDOR_CHUNK_GROUPS = [
   {

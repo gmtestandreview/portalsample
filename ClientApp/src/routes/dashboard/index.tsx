@@ -184,9 +184,10 @@ const checkAcceptedQuoteStatus = (
     );
     if (requestResponse?.status === DashboardItemStatus.QuoteAvailable) {
       requestResponse.status = DashboardItemStatus.QuoteAccepted;
-      // Non-null assertion required: property is typed nullable but guaranteed non-null here
-      requestResponse.quote!.artefactName =
-        requestResponse.requestForQuote?.artefactName;
+      if (requestResponse.quote) {
+        requestResponse.quote.artefactName =
+          requestResponse.requestForQuote?.artefactName;
+      }
       requestResponse.lastUpdated = new Date();
 
       const index = items.findIndex(
@@ -196,7 +197,7 @@ const checkAcceptedQuoteStatus = (
 
       // Non-null assertion required: property is typed nullable but guaranteed non-null here
       SessionStorageCache().setItem(
-        requestResponse.referenceId!,
+        requestResponse.referenceId ?? '',
         'view-quote-id',
       );
     }
@@ -220,7 +221,7 @@ const handleDashboardLoadError = (
     // Non-null assertion required: property is typed nullable but guaranteed non-null here
     setErrorStatus((prevState) => ({
       ...prevState,
-      status: problemDetails.status!,
+      status: problemDetails.status ?? 0,
     }));
   }
   if (
@@ -324,9 +325,7 @@ const Dashboard = () => {
     [activeTab],
   );
 
-  const onShowBranchSelectorClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-  ) => {
+  const onShowBranchSelectorClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     modalDispatch?.setShowBranchSelector(true);
   };
@@ -529,7 +528,9 @@ const Dashboard = () => {
     };
     void loadDataForDisplay();
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+    };
   }, [
     accounts,
     accountHomeAccountId,
@@ -574,7 +575,9 @@ const Dashboard = () => {
               data-testid='new-request-button'
               to='/request-for-quote-create'
               className='btn btn-primary text-nowrap'
-              onClick={() => trackGAEvent('New request')}
+              onClick={() => {
+                trackGAEvent('New request');
+              }}
             >
               <i className='icon-plus me-md-2' aria-hidden='true' />
               <span className='d-none d-md-inline-block'>New request</span>
@@ -799,16 +802,16 @@ const Dashboard = () => {
                   </span>
                   <span className='d-block text-break'>
                     {!!accountState?.details?.trading &&
-                      `${accountState?.details?.trading}`}
+                      accountState?.details?.trading}
                     {!!accountState?.details?.trading &&
                       !!accountState?.details?.branch &&
                       ' - '}
                     {!!accountState?.details?.branch &&
-                      `${accountState?.details?.branch}`}
+                      accountState?.details?.branch}
                   </span>
                   <span className='d-block text-break'>
                     {!!accountState?.details?.organisation &&
-                      `${accountState?.details?.organisation}`}
+                      accountState?.details?.organisation}
                   </span>
                 </h2>
                 {!!accountState?.details?.abn && (

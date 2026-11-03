@@ -29,9 +29,9 @@ const ServicesWeOffer = () => {
   const [selectedService, setSelectedService] = useState<
     ServiceType | undefined
   >(undefined);
-  const [checkedServices, setCheckedServices] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [checkedServices, setCheckedServices] = useState<
+    Record<string, boolean>
+  >({});
   const [defaultService, setDefaultService] = useState<ServiceType | undefined>(
     undefined,
   );
@@ -103,7 +103,7 @@ const ServicesWeOffer = () => {
               if (dbService) {
                 setCheckedServices((prev) => ({
                   ...prev,
-                  [service.serviceType!]: dbService.isActive!,
+                  [service.serviceType ?? '']: dbService.isActive ?? false,
                 }));
                 if (dbService.isDefault) {
                   setDefaultService(service.serviceType);
@@ -146,7 +146,7 @@ const ServicesWeOffer = () => {
         setDefaultService(undefined);
       }
     }
-    setCheckedServices((prev) => ({ ...prev, [serviceType!]: checked }));
+    setCheckedServices((prev) => ({ ...prev, [serviceType ?? '']: checked }));
   }
 
   function setDefaultServiceFn(serviceType?: ServiceType) {
@@ -192,7 +192,7 @@ const ServicesWeOffer = () => {
     setShowSaveError(false);
 
     const updatedServices = services.map((service) => {
-      const serviceType = service.serviceType!;
+      const serviceType = service.serviceType ?? '';
       return {
         service: serviceType, // or serviceType.toString() if needed
         isActive:
@@ -358,9 +358,9 @@ const ServicesWeOffer = () => {
                           id={`radio-${service.serviceType}`}
                           name='service-radio'
                           checked={defaultService === service.serviceType}
-                          onChange={() =>
-                            setDefaultServiceFn(service.serviceType)
-                          }
+                          onChange={() => {
+                            setDefaultServiceFn(service.serviceType);
+                          }}
                           className='form-field me-2'
                         />
                         <label
@@ -392,13 +392,13 @@ const ServicesWeOffer = () => {
                           type='checkbox'
                           id={`checkbox-${service.serviceType}`}
                           name='service-checkbox'
-                          checked={!!checkedServices[service.serviceType!]}
-                          onChange={(e) =>
+                          checked={!!checkedServices[service.serviceType ?? '']}
+                          onChange={(e) => {
                             setCheckedServicesFn(
                               e.target.checked,
                               service.serviceType,
-                            )
-                          }
+                            );
+                          }}
                           className='me-2'
                         />
                         <label htmlFor={`checkbox-${service.serviceType}`}>
@@ -424,7 +424,9 @@ const ServicesWeOffer = () => {
                   hidden={!originalDefaultService}
                   data-testid='go-to-dashboard-button'
                   variant='tertiary'
-                  onClick={() => routeToDefaultDashboard()}
+                  onClick={() => {
+                    routeToDefaultDashboard();
+                  }}
                 >
                   <i className='icon-close me-1' aria-hidden='true' />
                   {'Cancel'}

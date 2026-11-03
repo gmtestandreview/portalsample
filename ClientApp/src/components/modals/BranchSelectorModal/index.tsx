@@ -175,7 +175,10 @@ const finaliseAccountCreation = (
   if (accountCreationIncomplete) {
     accountDispatch?.setCompleted();
     accountDispatch?.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
-    accountDispatch?.setTargetOrganisation(selectedOrganisation!, selectedABN!);
+    accountDispatch?.setTargetOrganisation(
+      selectedOrganisation ?? '',
+      selectedABN ?? '',
+    );
   }
 };
 
@@ -517,7 +520,9 @@ const BranchSelectorModal = () => {
                         <Button
                           variant='flat'
                           data-column-index='0'
-                          onClick={() => sortData('businessListName')}
+                          onClick={() => {
+                            sortData('businessListName');
+                          }}
                           className='ms-2 p-0 px-2 body-text fs-6 fw-bold'
                           title='Change sort order'
                         >
@@ -570,7 +575,7 @@ const BranchSelectorModal = () => {
                                       checked={
                                         branch.organisationId === selectedBranch
                                       }
-                                      onChange={(e) =>
+                                      onChange={(e) => {
                                         handleChange(
                                           e,
                                           branch.organisationId,
@@ -579,8 +584,8 @@ const BranchSelectorModal = () => {
                                           branch.branchOrLocationName,
                                           branch.abn,
                                           branch.crmGuid,
-                                        )
-                                      }
+                                        );
+                                      }}
                                     />
                                     <label
                                       htmlFor={`branch${index}`}

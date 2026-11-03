@@ -26,11 +26,11 @@ import RhfAttachment from '../../components/Inputs/RhfAttachment';
 import InstrumentInfoPanel from './instrumentInfoPanel';
 import { getIn } from '../../components/forms/formPath';
 
-type UploadProblemDetails = {
+interface UploadProblemDetails {
   status?: number;
   title?: string;
   errors?: Record<string, string[]>;
-};
+}
 
 const ALLOWED_FILE_TYPES =
   '.pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .rtf, .odt, .gif, .csv';

@@ -445,13 +445,13 @@ describe('storybook documentation architecture', () => {
       strictExecutionOrder: true,
     });
 
-    type CodeSplittingGroup = {
+    interface CodeSplittingGroup {
       name?: string;
       test?: unknown;
-    };
-    type CodeSplittingConfig = {
+    }
+    interface CodeSplittingConfig {
       groups?: CodeSplittingGroup[];
-    };
+    }
     const output = viteConfig.build?.rolldownOptions?.output;
     const codeSplitting =
       output && !Array.isArray(output)

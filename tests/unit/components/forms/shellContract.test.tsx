@@ -15,19 +15,19 @@ import { renderWithRouter } from '../../helpers/renderWithRouter';
 import type AppLogger from '../../../../ClientApp/src/instrumentation/AppLogger';
 
 vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => {
-  class MockAppLogger {
-    static info = vi.fn<typeof AppLogger.info>();
-    static warning = vi.fn<typeof AppLogger.warning>();
-    static verbose = vi.fn<typeof AppLogger.verbose>();
-    static critical = vi.fn<typeof AppLogger.critical>();
-    static trace = vi.fn<typeof AppLogger.trace>();
-    static error = vi.fn<typeof AppLogger.error>();
-    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
-    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
-    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
-    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
-    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
-  }
+  const MockAppLogger = {
+    info: vi.fn<typeof AppLogger.info>(),
+    warning: vi.fn<typeof AppLogger.warning>(),
+    verbose: vi.fn<typeof AppLogger.verbose>(),
+    critical: vi.fn<typeof AppLogger.critical>(),
+    trace: vi.fn<typeof AppLogger.trace>(),
+    error: vi.fn<typeof AppLogger.error>(),
+    trackEvent: vi.fn<typeof AppLogger.trackEvent>(),
+    startTrackPage: vi.fn<typeof AppLogger.startTrackPage>(),
+    stopTrackPage: vi.fn<typeof AppLogger.stopTrackPage>(),
+    startTrackEvent: vi.fn<typeof AppLogger.startTrackEvent>(),
+    stopTrackEvent: vi.fn<typeof AppLogger.stopTrackEvent>(),
+  };
 
   return {
     default: MockAppLogger,
@@ -47,7 +47,7 @@ interface Values {
 type ShellSubmit = (
   values: Values,
   formikHelpers?: FormikHelpers<Values>,
-) => void | Promise<unknown>;
+) => undefined | Promise<unknown>;
 
 const hard = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -162,7 +162,9 @@ const renderShell = async (
     });
 
   // Let RHF's mount-time validation settle inside act before the test starts.
-  await act(async () => {});
+  await act(async () => {
+    // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+  });
 
   return { ...view, onSubmit, onSaveAndExit, leave, user: userEvent.setup() };
 };
@@ -211,9 +213,9 @@ describe.each(['formik', 'rhf'] as const)(
 
         await user.click(screen.getByTestId('submit-button'));
 
-        await waitFor(() =>
-          expect(screen.getByTestId('form-error-summary')).toHaveFocus(),
-        );
+        await waitFor(() => {
+          expect(screen.getByTestId('form-error-summary')).toHaveFocus();
+        });
 
         expect(screen.getByLabelText('name')).not.toHaveFocus();
       });
@@ -228,7 +230,9 @@ describe.each(['formik', 'rhf'] as const)(
         await user.type(screen.getByLabelText('name'), 'Alex');
         await user.click(screen.getByTestId('submit-button'));
 
-        await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenCalledTimes(1);
+        });
 
         expect(payloadOf(onSubmit)).toStrictEqual({ name: 'Alex' });
         expect(
@@ -251,7 +255,9 @@ describe.each(['formik', 'rhf'] as const)(
         await user.type(screen.getByLabelText('name'), 'Alex');
         await user.click(screen.getByTestId('submit-button'));
 
-        await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenCalledTimes(1);
+        });
 
         expect(onSaveAndExit).not.toHaveBeenCalled();
       });
@@ -263,7 +269,9 @@ describe.each(['formik', 'rhf'] as const)(
 
         await user.click(screen.getByTestId('save-and-exit-button'));
 
-        await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+        await waitFor(() => {
+          expect(onSaveAndExit).toHaveBeenCalledTimes(1);
+        });
 
         expect(onSubmit).not.toHaveBeenCalled();
 
@@ -310,7 +318,9 @@ describe.each(['formik', 'rhf'] as const)(
         // Blur now, inside user-event's act: the modal would otherwise take
         // focus later and the blur validation would land outside act.
         await user.tab();
-        await act(async () => {});
+        await act(async () => {
+          // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+        });
 
         await leave();
 
@@ -320,22 +330,28 @@ describe.each(['formik', 'rhf'] as const)(
         expect(currentPath()).toBe('/form');
 
         // The modal takes focus from the input: the blur validates asynchronously.
-        await act(async () => {});
+        await act(async () => {
+          // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+        });
 
         await user.click(screen.getByTestId('prompt-cancel-button'));
-        await waitFor(() =>
+        await waitFor(() => {
           expect(
             screen.queryByTestId('prompt-save-modal'),
-          ).not.toBeInTheDocument(),
-        );
+          ).not.toBeInTheDocument();
+        });
 
         expect(currentPath()).toBe('/form');
 
         await leave();
         const leaveButton = await screen.findByTestId('prompt-leave-button');
-        await act(async () => {});
+        await act(async () => {
+          // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
+        });
         await user.click(leaveButton);
-        await waitFor(() => expect(currentPath()).toBe('/other'));
+        await waitFor(() => {
+          expect(currentPath()).toBe('/other');
+        });
       });
 
       it('lets a dirty form leave once a valid submit has succeeded', async () => {
@@ -344,7 +360,9 @@ describe.each(['formik', 'rhf'] as const)(
         const { user, onSubmit, leave, currentPath } = await renderShell(kind);
         await user.type(screen.getByLabelText('name'), 'Alex');
         await user.click(screen.getByTestId('submit-button'));
-        await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+        await waitFor(() => {
+          expect(onSubmit).toHaveBeenCalledTimes(1);
+        });
 
         await leave();
 
@@ -390,7 +408,9 @@ describe.each(['formik', 'rhf'] as const)(
 
         await user.click(screen.getByTestId('save-and-exit-button'));
 
-        await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+        await waitFor(() => {
+          expect(onSaveAndExit).toHaveBeenCalledTimes(1);
+        });
       });
 
       it('renders a caller-supplied banner instead of the standard one', async () => {
@@ -420,7 +440,9 @@ describe.each(['formik', 'rhf'] as const)(
 
         await user.click(screen.getByTestId('discard-changes-button'));
 
-        await waitFor(() => expect(currentPath()).toBe('/other'));
+        await waitFor(() => {
+          expect(currentPath()).toBe('/other');
+        });
       });
     });
   },

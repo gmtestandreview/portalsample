@@ -108,9 +108,9 @@ function Harness({
             hidingFields,
           )(formValues)
         }
-        onSubmit={(submitted) =>
-          onSubmit(removeHidden(submitted, submitted, hidingFields))
-        }
+        onSubmit={(submitted) => {
+          onSubmit(removeHidden(submitted, submitted, hidingFields));
+        }}
       >
         <Form noValidate>
           {withErrorSummary && <ErrorSummary />}
@@ -156,7 +156,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnAddressType: ReturnAddressTypeValues.Other,
@@ -204,7 +206,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.type(organisationName, 'Edited return organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnOrganisationName: 'Edited return organisation',
@@ -246,7 +250,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnAddress: {
@@ -358,7 +364,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
@@ -434,6 +442,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
 
-    keys.forEach((key) => expect(document.getElementById(key)).not.toBeNull());
+    keys.forEach((key) => {
+      expect(document.getElementById(key)).not.toBeNull();
+    });
   });
 });

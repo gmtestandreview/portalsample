@@ -1,5 +1,5 @@
 import { useController } from 'react-hook-form';
-import type { FieldValues, UseControllerProps } from 'react-hook-form';
+import type { UseControllerProps } from 'react-hook-form';
 import type { ReactNode } from 'react';
 import { omitUndefined } from '../../utils/omitUndefined';
 
@@ -7,7 +7,7 @@ import { omitUndefined } from '../../utils/omitUndefined';
 // callbacks receive `any`. Tightening that to `unknown` breaks typed consumer
 // callbacks under strictFunctionTypes, and making the hook generic touches
 // every input.
-export type RhfRules = UseControllerProps<FieldValues>['rules'];
+export type RhfRules = UseControllerProps['rules'];
 
 interface UseRhfFieldA11yOptions {
   name: string;

@@ -80,7 +80,7 @@ export const nullableDate = (label: string) =>
     .nullable();
 
 export const oneOfEnum = <T extends NonNullable<unknown>>(
-  enumObject: { [s: string]: T } | ArrayLike<T>,
+  enumObject: Record<string, T> | ArrayLike<T>,
 ) => yup.mixed<T>().oneOf(Object.values(enumObject));
 
 export const isFutureDate =

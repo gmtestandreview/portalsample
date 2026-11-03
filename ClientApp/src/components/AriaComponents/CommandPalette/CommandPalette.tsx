@@ -23,7 +23,9 @@ export function CommandPalette<T>(props: Readonly<CommandPaletteProps<T>>) {
   const { contains } = useFilter({ sensitivity: 'base' });
   const focusSearchInput = useCallback((input: HTMLInputElement | null) => {
     if (input) {
-      queueMicrotask(() => input.focus());
+      queueMicrotask(() => {
+        input.focus();
+      });
     }
   }, []);
 
@@ -40,7 +42,9 @@ export function CommandPalette<T>(props: Readonly<CommandPaletteProps<T>>) {
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [onOpenChange]);
 
   return (

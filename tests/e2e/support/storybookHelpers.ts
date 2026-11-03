@@ -39,16 +39,16 @@ export const MCP_HEADERS = {
 };
 const MCP_TRANSPORT_RETRY_DELAYS_MS = [1_000, 2_000] as const;
 
-export type McpEnvelope = {
+export interface McpEnvelope {
   id?: number | string;
   error?: unknown;
   result?: {
     serverInfo?: { name?: string };
-    tools?: Array<{ name: string }>;
+    tools?: { name: string }[];
     structuredContent?: unknown;
-    content?: Array<{ type?: string; text?: string }>;
+    content?: { type?: string; text?: string }[];
   };
-};
+}
 
 const isTransientMcpTransportError = (error: unknown): boolean =>
   /ECONNRESET|ECONNREFUSED|socket hang up/i.test(

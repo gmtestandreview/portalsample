@@ -12,12 +12,12 @@ import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import { readTextFile } from './safe-file-io.mjs';
 
-export type CoverageReportAudit = {
+export interface CoverageReportAudit {
   nonExecutableEntries: string[];
   ineligibleExecutableEntries: string[];
   executableEntryCount: number;
   verdict: 'clean' | 'dirty';
-};
+}
 
 const EXECUTABLE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts'];
 

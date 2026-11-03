@@ -3,9 +3,9 @@ import Ajv, { type AnySchema, type ErrorObject } from 'ajv';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-type ContractValidationOptions = {
+interface ContractValidationOptions {
   name?: string;
-};
+}
 
 const draft7Validator = addFormats(
   new Ajv({

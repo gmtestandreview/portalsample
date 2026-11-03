@@ -39,7 +39,7 @@ export default defineMain({
       shouldExtractLiteralValuesFromEnum: true,
       exclude: ['**/*.stories.tsx', '**/.storybook/**'],
       propFilter: (prop) =>
-        prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
+        prop.parent ? !prop.parent.fileName.includes('node_modules') : true,
     },
   },
 

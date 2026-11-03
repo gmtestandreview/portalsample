@@ -8,16 +8,12 @@ const RouteChangeScrollTop = () => {
     window.scrollTo(0, 0);
     setTimeout(() => {
       if (document.querySelector('#page-title')) {
-        const el: HTMLElement = document.querySelector(
-          '#page-title',
-        ) as HTMLElement;
+        const el: HTMLElement = document.querySelector('#page-title')!;
         setTimeout(() => {
           el?.focus();
         }, 500);
       } else {
-        const el: HTMLElement = document.querySelector(
-          '#page-top',
-        ) as HTMLElement;
+        const el: HTMLElement = document.querySelector('#page-top')!;
         el?.focus();
       }
     }, 100);

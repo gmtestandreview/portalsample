@@ -162,7 +162,7 @@ const renderPaymentDetails = (
             }
       }
       initialStatus={{ hidden: {} }}
-      onSubmit={() => {}}
+      onSubmit={vi.fn<() => void>()}
     >
       <PaymentDetails {...props} />
     </Formik>,
@@ -185,7 +185,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      );
       renderPaymentDetails();
 
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
@@ -197,7 +201,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      );
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.queryByTestId('info-summary')).not.toBeInTheDocument();
@@ -249,7 +257,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      ); // never resolves
 
       renderPaymentDetails();
 
@@ -262,7 +274,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      );
 
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
@@ -346,7 +362,7 @@ describe('payment details', () => {
       renderPaymentDetails();
 
       await waitFor(() => {
-        expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
+        expect(vi.mocked(AppLogger).error).toHaveBeenCalledWith(
           'Failed to load Payment details',
           expect.any(Error),
           { Id: 'TEST-001' },

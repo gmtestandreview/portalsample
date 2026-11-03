@@ -31,7 +31,7 @@ const CheckboxGroup = <T,>(
   } = props;
 
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
-  const legendId = `${id || name}`;
+  const legendId = id || name;
   const [_field, _meta] = useField<T>(name);
 
   if (isSummary) {

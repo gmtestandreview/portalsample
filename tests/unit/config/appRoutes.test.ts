@@ -78,10 +78,10 @@ type LazyComponent = () => ReactElement<{
   displayHeaderAndFooter?: boolean;
 }>;
 
-type RouteWrapperProps = {
+interface RouteWrapperProps {
   children?: ReactElement<{ name?: string }>;
   displayHeaderAndFooter?: boolean;
-};
+}
 
 const loadComponent = async (path: (typeof lazyFeaturePaths)[number]) => {
   const route = App.routes.find((candidate) => candidate.path === path);

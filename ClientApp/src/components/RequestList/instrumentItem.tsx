@@ -269,7 +269,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
   const requestForQuoteId = request.quote?.quotationId;
   const modalDispatch = useModalDispatch();
 
-  const onDelete = () => (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onDelete = () => (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     onShowRFQDeleteModalClick();
   };
@@ -290,7 +290,9 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
             action: 'Edit',
             text: 'Edit request',
             route: `/request-for-quote/${referenceId}`,
-            onClick: () => trackGAEvent('Edit request'),
+            onClick: () => {
+              trackGAEvent('Edit request');
+            },
           },
           {
             action: 'Delete',
@@ -308,13 +310,17 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
             action: 'View',
             text: 'View latest report',
             route: `/report/${requestForQuoteId}`,
-            onClick: () => trackGAEvent('View latest report'),
+            onClick: () => {
+              trackGAEvent('View latest report');
+            },
           },
           {
             action: 'View',
             text: 'Request recalibration',
             route: `/request-for-quote-copy/${referenceId}`,
-            onClick: () => trackGAEvent('Request recalibration'),
+            onClick: () => {
+              trackGAEvent('Request recalibration');
+            },
           },
         );
         break;
@@ -328,7 +334,9 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           action: 'View',
           text: 'Request recalibration',
           route: `/request-for-quote-copy/${referenceId}`,
-          onClick: () => trackGAEvent('Request recalibration'),
+          onClick: () => {
+            trackGAEvent('Request recalibration');
+          },
         });
         break;
       case DashboardItemStatus.QuoteAvailable:
@@ -336,7 +344,9 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           action: 'View',
           text: 'View/accept quotation',
           route: `/quotation/${referenceId}`,
-          onClick: () => trackGAEvent('View/accept quotation'),
+          onClick: () => {
+            trackGAEvent('View/accept quotation');
+          },
         });
         break;
       default:
@@ -363,7 +373,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           <Row>
             <Col lg={8}>
               <h3 id={cardSummaryId} className='mb-1'>
-                {heading ? `${heading}` : 'Draft request for Quote'}
+                {heading ? heading : 'Draft request for Quote'}
               </h3>
               <p>
                 <span className='d-block small mb-2'>

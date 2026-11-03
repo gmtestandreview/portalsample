@@ -34,8 +34,13 @@ const NextStepButton = ({
     }
   };
 
-  const closeModal = () => setShowModal(false);
-  const onModalNo = () => {};
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const onModalNo = () => {
+    // Deliberately distinct from closeModal: declining the confirmation
+    // keeps the dialog open rather than dismissing it.
+  };
 
   return (
     <SubmitFormButton>

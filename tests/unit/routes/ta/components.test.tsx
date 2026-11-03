@@ -164,11 +164,11 @@ vi.mock(
         name: string;
         isSummary?: boolean;
         inlineHelp?: ReactNode;
-        options: Array<{
+        options: {
           label: string;
           descriptor?: ReactNode;
           value: string;
-        }>;
+        }[];
       }) => (
         <section data-testid={`radio-${name}`} data-summary={String(isSummary)}>
           <h3>{legend}</h3>
@@ -300,7 +300,7 @@ const renderWithFormik = (children: ReactNode) =>
     <Formik
       initialValues={formValues}
       initialStatus={{ hidden: {} }}
-      onSubmit={() => {}}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>{children}</Form>
     </Formik>,
@@ -315,7 +315,7 @@ const renderSummary = (
       <Formik
         initialValues={formValues}
         initialStatus={initialStatus}
-        onSubmit={() => {}}
+        onSubmit={vi.fn<() => void>()}
       >
         <Form>
           <Routes>
@@ -453,7 +453,7 @@ describe(SummaryAndSubmit, () => {
 
     render(
       <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
-        <Formik initialValues={formValues} onSubmit={() => {}}>
+        <Formik initialValues={formValues} onSubmit={vi.fn<() => void>()}>
           <Form>
             <Routes>
               <Route
