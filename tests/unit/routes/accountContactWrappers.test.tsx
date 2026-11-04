@@ -22,7 +22,6 @@ const mocks = vi.hoisted(() => ({
   updateContactProps: vi.fn<typeof UpdateContactPropsModule.default>(),
 }));
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -53,7 +52,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule27>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm',
   () =>
@@ -78,7 +76,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule60>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>

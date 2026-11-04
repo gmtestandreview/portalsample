@@ -48,14 +48,11 @@ const MailingLabel = ({
       .writeText(textToCopy)
       .then(() => {
         setIsCopyClipboard(true);
-        // eslint-disable-next-line no-console
         console.log('Copied to clipboard:');
-        // eslint-disable-next-line no-console
         console.log(textToCopy);
       })
       .catch((err) => {
         setIsCopyClipboard(false);
-        // eslint-disable-next-line no-console
         console.log('Failed to copy: ', err);
       });
   };

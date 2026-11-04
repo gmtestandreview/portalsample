@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import SessionStorageCache from '../../../ClientApp/src/storage/sessionStorageCache';
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(SessionStorageCache, () => {
   const clearSessionStorage = () => {
     globalThis.sessionStorage.clear();

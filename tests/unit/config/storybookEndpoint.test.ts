@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { resolveStorybookTestTarget } from '../../../.storybook/storybook-test-target';
 import { resolveStorybookTestTargetImplementation } from '../../../.storybook/storybook-test-target.mjs';
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(resolveStorybookTestTarget, () => {
   it('derives the managed default target on port 6006', () => {
     expect.assertions(1);

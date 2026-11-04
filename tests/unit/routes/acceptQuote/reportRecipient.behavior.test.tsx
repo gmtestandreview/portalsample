@@ -27,7 +27,6 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -41,7 +40,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/authentication/hooks',
   () =>
@@ -53,7 +51,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
@@ -65,7 +62,6 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
@@ -80,7 +76,6 @@ vi.mock(
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
 // The edit form renders the RHF twin; the summary branch keeps the Formik one.
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/AddressLookup',
   () =>
@@ -90,7 +85,6 @@ vi.mock(
       ),
     }) satisfies __ExactMockModule<__TestMockModule31>,
 );
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/RhfAddressLookup',
   () =>

@@ -129,7 +129,7 @@ const resetRequestForQuoteSummary = () => {
   mockSummaryLookups(clients.lookup.methods.getLookup);
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(RequestForQuoteSummary, () => {
   it('shows both sections with the values held by Formik', async () => {
     expect.hasAssertions();

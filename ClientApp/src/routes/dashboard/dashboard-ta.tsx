@@ -441,8 +441,6 @@ const DashboardTA = () => {
     };
     setDeleteSuccess(false);
     void loadDataForDisplay();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     accountContext?.details?.organisationCRMGuid,
     instance,

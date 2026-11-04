@@ -92,7 +92,6 @@ const {
 
 let mockAccountDetails: AccountDetails | null;
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   () =>
@@ -111,7 +110,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -120,7 +118,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-browser',
   () =>
@@ -129,7 +126,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/authentication/hooks',
   () =>
@@ -173,7 +169,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
@@ -208,7 +203,6 @@ vi.mock(
       default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/tiles/StandardPathway',
   () =>
@@ -339,7 +333,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule99>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
@@ -352,7 +345,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/routes/common/errorRoutes',
   () =>
@@ -361,7 +353,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule100>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
@@ -396,7 +387,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/storage/sessionStorageCache',
   () =>
@@ -416,7 +406,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   'react-number-format',
   () =>

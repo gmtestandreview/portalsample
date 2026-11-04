@@ -121,7 +121,6 @@ const ServicesWeOffer = () => {
       }
     };
     void loadServices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts, instance, accountDetails, accountDetails?.userProfile]);
 
   useEffect(() => {

@@ -112,7 +112,6 @@ export const msalInstance = {
  * `@azure/msal-react` rather than chosen. `no-unnecessary-use-prefix` fires because the stubs hold
  * no hook calls of their own - renaming them would simply break the mock.
  */
-/* eslint-disable @eslint-react/no-unnecessary-use-prefix */
 export const msalReactModuleMock = () => ({
   useMsal: () => ({
     accounts: msalState.accounts,

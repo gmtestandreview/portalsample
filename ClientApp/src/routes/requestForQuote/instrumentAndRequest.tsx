@@ -127,7 +127,6 @@ export const useInstrumentAndRequestLookups = () => {
     return () => {
       isLoadingMeasurementCategories.current = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     accounts,
     instance,
@@ -383,7 +382,7 @@ const RequestDetailsSection = () => (
       label='Preferred Instrument/artefact availability date (optional)'
       containerClassName='col-md-12'
       id='q-preferredInstrumentOrArtefactAvailabilityDate'
-      // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
+      // "today" semantics; owned by Child Plan B
       minDate={new Date()}
       inlineHelp={
         <>

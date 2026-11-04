@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import './yupExtensions';
 import * as yup from 'yup';
 import { isAfter, startOfDay } from 'date-fns';

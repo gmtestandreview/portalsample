@@ -17,7 +17,7 @@ const manualAddress = {
 const arrayContainingStrings = (values: string[]): unknown =>
   expect.arrayContaining<string>(values);
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(addressSchema, () => {
   it('accepts a manually entered address with required fields', async () => {
     expect.hasAssertions();

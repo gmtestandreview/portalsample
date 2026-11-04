@@ -158,7 +158,6 @@ const expectAddressLookupValues = () => {
 describe('complex input behavior slice', () => {
   // This helper intentionally registers Vitest lifecycle hooks for the console guard.
   // The helper owns that hook contract; moving the call into a test would be too late.
-  // eslint-disable-next-line vitest/require-hook
   installUnexpectedConsoleGuard();
 
   // Registered after the guard so it runs first: Vitest runs `afterEach` in
@@ -166,12 +165,10 @@ describe('complex input behavior slice', () => {
   // cleanup and leak the previous test's DOM into the next one.
   // Register cleanup after the guard so Vitest's reverse afterEach order runs
   // cleanup first, even when the guard reports unexpected console output.
-  // eslint-disable-next-line vitest/no-hooks
   afterEach(cleanup);
 
   // This suite shares a large fixture graph; reset it before each test to keep
   // mock implementations and account state isolated.
-  // eslint-disable-next-line vitest/no-hooks, vitest/prefer-hooks-in-order
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.account = { homeAccountId: 'account-1' };
@@ -193,7 +190,6 @@ describe('complex input behavior slice', () => {
     });
   });
 
-  // eslint-disable-next-line vitest/no-hooks, vitest/no-duplicate-hooks
   afterEach(() => {
     vi.useRealTimers();
   });

@@ -55,7 +55,6 @@ const mocks = vi.hoisted(() => ({
   openPdfPageInSecureNewTab: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
@@ -97,7 +96,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule91>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   'react-ga4',
   () =>

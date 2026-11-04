@@ -96,7 +96,7 @@ const resetCreateRequestForTypeApprovalMocks = () => {
   mocks.createApplication.mockResolvedValue({ referenceId: 'PA-100' });
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(CreateRequestForTypeApproval, () => {
   it('creates a pattern approval application and redirects to organisation details', async () => {
     expect.hasAssertions();

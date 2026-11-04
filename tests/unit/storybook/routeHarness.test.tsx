@@ -28,7 +28,7 @@ const InitialRequest = () => {
   return <p>Initial request: {requestId}</p>;
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(PortalStoryRouter, () => {
   it('keeps the default story route available without route parameters', () => {
     expect.hasAssertions();

@@ -74,7 +74,6 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
       setIsLoading(false);
     };
     void loadDataForDisplay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

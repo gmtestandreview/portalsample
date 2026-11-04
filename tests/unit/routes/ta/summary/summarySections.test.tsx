@@ -26,7 +26,7 @@ const renderApplication = (
   hidden: Hidden = noRules,
 ) => render(<ApplicationSummary values={values} hidden={hidden} />).container;
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(ContactSummary, () => {
   it('prints a dash for every field of a missing contact', () => {
     expect.hasAssertions();
@@ -102,7 +102,7 @@ describe(ContactSummary, () => {
   });
 });
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(OrganisationSummary, () => {
   it('renders nothing for answers that were never given', () => {
     expect.hasAssertions();
@@ -161,7 +161,7 @@ describe(OrganisationSummary, () => {
   });
 });
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(ApplicationSummary, () => {
   it('reports no type and no sub-options for an empty application', () => {
     expect.hasAssertions();

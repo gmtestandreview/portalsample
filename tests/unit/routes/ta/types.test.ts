@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/types';
 import { PatternApprovalDashboard } from '../../../../ClientApp/src/routes/ta/types';
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(PatternApprovalDashboard, () => {
   it('uses default dashboard filters when no initial values are supplied', () => {
     expect.hasAssertions();

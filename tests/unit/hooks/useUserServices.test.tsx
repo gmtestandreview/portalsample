@@ -32,7 +32,7 @@ const ServicesProbe = () => {
   );
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(useUserServices, () => {
   it('returns an empty service list when no account context is available', () => {
     expect.hasAssertions();

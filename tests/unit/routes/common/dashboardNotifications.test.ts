@@ -9,7 +9,7 @@ const defaultError = {
   severity: NotificationSeverity.Error,
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(DashBoardNotifications, () => {
   it.each([
     ['forbidden', DashBoardNotifications.getForbiddenNotification],

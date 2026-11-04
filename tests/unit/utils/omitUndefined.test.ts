@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { omitUndefined } from '../../../ClientApp/src/utils/omitUndefined';
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(omitUndefined, () => {
   it('removes undefined values while preserving other values', () => {
     expect.hasAssertions();

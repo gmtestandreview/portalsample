@@ -101,7 +101,7 @@ describe('unexpected console guard suite', () => {
     });
   };
 
-  // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+  // function suite titles are required by vitest/prefer-describe-function-title.
   describe(installUnexpectedConsoleGuard, () => {
     it('registers exactly one beforeEach and one afterEach so failures attach to the emitting test', () => {
       expect.hasAssertions();
@@ -278,7 +278,7 @@ describe('unexpected console guard suite', () => {
     });
   });
 
-  // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+  // function suite titles are required by vitest/prefer-describe-function-title.
   describe(expectConsoleMessage, () => {
     it('consumes a matching message so teardown passes', async () => {
       expect.hasAssertions();

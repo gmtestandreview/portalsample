@@ -1,5 +1,3 @@
-/* eslint-disable no-useless-escape */
-
 import * as Yup from 'yup';
 import { NotEmpty } from '../stringPredicates';
 

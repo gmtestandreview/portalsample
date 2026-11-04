@@ -4,7 +4,7 @@ import {
   isWafError,
 } from '../../../ClientApp/src/types/wafError';
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(isWafError, () => {
   it('returns true for Azure WAF server headers', () => {
     expect.hasAssertions();

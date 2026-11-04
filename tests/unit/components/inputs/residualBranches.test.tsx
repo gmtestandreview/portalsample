@@ -45,7 +45,6 @@ function Harness({
 
 describe('residual input branches', () => {
   // This helper intentionally registers Vitest lifecycle hooks for the console guard.
-  // eslint-disable-next-line vitest/require-hook
   installUnexpectedConsoleGuard();
 
   it('renders SelectInput horizontal plain help without validation', () => {

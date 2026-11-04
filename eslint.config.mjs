@@ -69,6 +69,7 @@ const nodeFiles = [
   'test-import.mjs',
   '.storybook/main.{js,mjs,ts,mts}',
   '.storybook/*.config.{js,mjs,ts,mts}',
+  '.storybook/storybook-test-target.mjs',
   'tests/**/*.{js,jsx,mjs,ts,tsx,mts}',
 ];
 
@@ -89,6 +90,7 @@ const nodeToolFiles = [
   'test-import.mjs',
   '.storybook/main.{js,mjs,ts,mts}',
   '.storybook/*.config.{js,mjs,ts,mts}',
+  '.storybook/storybook-test-target.mjs',
 ];
 
 const browserFiles = [
@@ -228,6 +230,17 @@ export default defineConfig(
           varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_',
         },
+      ],
+    },
+  },
+
+  {
+    // Ambient global-script registry: `import type` would make it a module.
+    files: ['tests/unit/helpers/typedPartialMockTypes.d.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        { prefer: 'type-imports', disallowTypeAnnotations: false },
       ],
     },
   },

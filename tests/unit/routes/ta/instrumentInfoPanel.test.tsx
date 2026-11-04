@@ -60,7 +60,7 @@ const resetInstrumentInfoPanelMocks = () => {
   ]);
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(InstrumentInfoPanel, () => {
   it('renders the hidden empty state and does not fetch lookup data when no instrument is selected', () => {
     expect.hasAssertions();

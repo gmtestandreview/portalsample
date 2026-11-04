@@ -160,7 +160,6 @@ const ApplicationAndInstrument = (
     loadInstrumentCategories();
     // }
     // return () => { isLoadingInstrumentCategories.current = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     _categoryLookupField.value,
     _typeLookupField.value,

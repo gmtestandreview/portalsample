@@ -113,17 +113,17 @@ const storyBlocksWithRequests = (source: string) => {
 };
 
 describe('storybook MSW handlers', () => {
-  // eslint-disable-next-line vitest/no-hooks -- MSW server lifecycle spans the suite.
+  // MSW server lifecycle spans the suite.
   beforeAll(() => {
     server.listen({ onUnhandledFrame: 'error' });
   });
 
-  // eslint-disable-next-line vitest/no-hooks -- each test starts with clean handlers.
+  // each test starts with clean handlers.
   afterEach(() => {
     server.resetHandlers();
   });
 
-  // eslint-disable-next-line vitest/no-hooks -- close the shared MSW server after the suite.
+  // close the shared MSW server after the suite.
   afterAll(() => {
     server.close();
   });

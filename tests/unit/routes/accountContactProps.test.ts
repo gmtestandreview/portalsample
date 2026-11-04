@@ -51,7 +51,6 @@ interface ContactHidingFields {
 const expectStringContaining = (value: string): unknown =>
   expect.stringContaining(value);
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal();
   if (typeof actual !== 'object' || actual === null) {

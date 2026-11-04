@@ -55,7 +55,6 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       setIsLoading(false);
     };
     void loadDataForDisplay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

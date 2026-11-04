@@ -22,7 +22,6 @@ const GoogleAnalytics = ({
         },
       ]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <>{children}</>;
@@ -50,7 +49,6 @@ const trackGAPii = () => {
   const redactedData = Object.fromEntries(redactedEntries);
 
   if (globalThis.location.hostname === 'localhost') {
-    // eslint-disable-next-line no-console
     console.table({ originalData });
   }
 

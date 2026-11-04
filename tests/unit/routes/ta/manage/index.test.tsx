@@ -10,7 +10,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule144>) as unknown as __DynamicPartialMockFactory<__TestMockModule144>,
 );
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(TAApplicationManage, () => {
   it('renders the application details route content', () => {
     expect.hasAssertions();

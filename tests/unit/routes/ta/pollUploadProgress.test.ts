@@ -31,7 +31,7 @@ const makeClient = () => {
   return { client, getProgress, deleteProgressStatistics };
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(pollUploadProgress, () => {
   const resetPollUploadProgressState = () => {
     vi.useRealTimers();

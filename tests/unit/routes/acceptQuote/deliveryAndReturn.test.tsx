@@ -166,7 +166,7 @@ const resetDeliveryAndReturnMocks = () => {
   mocks.getDeliveryAndReturn.mockReset();
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(DeliveryAndReturn, () => {
   // 1. receiptAndDispatchNA = true ───────────────────────────────────────────
   describe('receiptAndDispatchNA=true', () => {

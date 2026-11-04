@@ -340,7 +340,7 @@ const resetTaComponentsMocks = () => {
   mocks.supportingDocumentsUploadFiles.mockClear();
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(OrganisationAndContact, () => {
   it('renders the editable organisation and contact fields with prefixed field names', () => {
     expect.hasAssertions();
@@ -444,7 +444,7 @@ describe(OrganisationAndContact, () => {
   });
 });
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(SummaryAndSubmit, () => {
   it('renders the summaries when the form carries no hiding rules', () => {
     expect.hasAssertions();

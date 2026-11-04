@@ -121,7 +121,7 @@ const resetRfqInstrumentSummaryMocks = () => {
   mockSummaryLookups(clients.lookup.methods.getLookup);
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(RfqInstrumentSummary, () => {
   it('shows a loading spinner until the lookups arrive, then the sections', async () => {
     expect.hasAssertions();
@@ -480,7 +480,7 @@ describe(RfqInstrumentSummary, () => {
   });
 });
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(useRfqInstrumentLookups, () => {
   it('sorts alphabetically with the No measurement and No instrument choices last', async () => {
     expect.hasAssertions();

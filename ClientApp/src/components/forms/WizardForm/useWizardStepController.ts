@@ -134,7 +134,7 @@ export const useWizardStepController = (
         setIsLoading(false);
       }
     },
-    [loadStepValues], // eslint-disable-line react-hooks/exhaustive-deps
+    [loadStepValues],
   );
 
   useEffect(() => {
@@ -164,7 +164,6 @@ export const useWizardStepController = (
         );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorState.kind]);
 
   useEffect(() => {
