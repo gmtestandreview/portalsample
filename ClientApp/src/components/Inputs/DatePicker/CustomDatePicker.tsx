@@ -94,7 +94,7 @@ const CustomDatePicker = (
     setShowCalendar(false);
     handleEnsureCalendarClosed();
 
-    customInputControlRef?.current?.focus();
+    customInputControlRef.current?.focus();
   };
 
   const handleOnChange = (date: Date | null) => {
@@ -102,7 +102,7 @@ const CustomDatePicker = (
     setSelectedDate(date);
     handleCloseCalendar();
 
-    setIsInvalid(!customInputControlRef?.current?.checkValidity());
+    setIsInvalid(!customInputControlRef.current?.checkValidity());
   };
 
   const handleSelectToday = () => {
@@ -148,10 +148,10 @@ const CustomDatePicker = (
 
           if (offsetArgs.placement.includes('bottom')) {
             const invalidInputRef =
-              customInputControlRef?.current?.classList.contains('is-invalid');
+              customInputControlRef.current?.classList.contains('is-invalid');
             if (invalidInputRef) {
               const inputErrorClientHeight =
-                customInputFeedbackRef?.current?.clientHeight || 0;
+                customInputFeedbackRef.current?.clientHeight || 0;
 
               distanceOffset = bottomOffset - inputErrorClientHeight;
             } else {
@@ -159,7 +159,7 @@ const CustomDatePicker = (
             }
           } else if (offsetArgs.placement.includes('top')) {
             const inlineHelpClientHeight =
-              customInputInlineHelpRef?.current?.clientHeight || 0;
+              customInputInlineHelpRef.current?.clientHeight || 0;
 
             distanceOffset = topOffset - inlineHelpClientHeight;
           }

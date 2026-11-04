@@ -58,7 +58,7 @@ import { BranchSelectionModalMode } from '../../components/modals/BranchSelector
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 const DEFAULT_SEARCH_PLACEHOLDER = 'Search by manufacturer, model, serial...';
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -402,7 +402,7 @@ const Dashboard = () => {
       branchResetKeyRef.current !== branchResetKey
     ) {
       branchResetKeyRef.current = branchResetKey;
-      const tcDash = savedUserProfile?.testingCalibrationDashboard;
+      const tcDash = savedUserProfile.testingCalibrationDashboard;
       const profile = {
         filterYearType: tcDash?.filterYearType,
         filterStatusType: tcDash?.filterStatusType,
@@ -605,7 +605,7 @@ const Dashboard = () => {
   ) => (
     <>
       {requests !== undefined &&
-      requests?.length > 0 &&
+      requests.length > 0 &&
       userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
@@ -624,7 +624,7 @@ const Dashboard = () => {
   ) => (
     <>
       {requests !== undefined &&
-      requests?.length > 0 &&
+      requests.length > 0 &&
       userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
@@ -801,25 +801,25 @@ const Dashboard = () => {
                     {'Currently managing '}
                   </span>
                   <span className='d-block text-break'>
-                    {!!accountState?.details?.trading &&
-                      accountState?.details?.trading}
-                    {!!accountState?.details?.trading &&
-                      !!accountState?.details?.branch &&
+                    {!!accountState.details.trading &&
+                      accountState.details.trading}
+                    {!!accountState.details.trading &&
+                      !!accountState.details.branch &&
                       ' - '}
-                    {!!accountState?.details?.branch &&
-                      accountState?.details?.branch}
+                    {!!accountState.details.branch &&
+                      accountState.details.branch}
                   </span>
                   <span className='d-block text-break'>
-                    {!!accountState?.details?.organisation &&
-                      accountState?.details?.organisation}
+                    {!!accountState.details.organisation &&
+                      accountState.details.organisation}
                   </span>
                 </h2>
-                {!!accountState?.details?.abn && (
+                {!!accountState.details.abn && (
                   <>
                     <span id='orgABN' className='d-inline-block me-3 fw-normal'>
                       {'ABN: '}
                       <PatternFormat
-                        value={accountState?.details?.abn}
+                        value={accountState.details.abn}
                         displayType='text'
                         format='## ### ### ###'
                         aria-hidden='true'
@@ -828,7 +828,7 @@ const Dashboard = () => {
                       />
                     </span>
                     <span className='visually-hidden'>
-                      {accountState?.details?.abn?.split('').join(' ')}
+                      {accountState.details.abn.split('').join(' ')}
                     </span>
                   </>
                 )}

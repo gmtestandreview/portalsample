@@ -121,7 +121,6 @@ export const msalReactModuleMock = () => ({
   useIsAuthenticated: () => msalState.accounts.length > 0,
   useAccount: () => msalState.accounts[0] ?? null,
 });
-/* eslint-enable @eslint-react/no-unnecessary-use-prefix */
 
 export const msalBrowserModuleMock = () => ({
   InteractionStatus: interactionStatus,

@@ -91,7 +91,7 @@ export const isFutureDate =
     const dateValue = parseDate(value as Date | string);
     const startOfDayValue = startOfDay(new Date());
 
-    return isAfter(dateValue!, startOfDayValue);
+    return dateValue !== undefined && isAfter(dateValue, startOfDayValue);
   };
 
 const URL_HOST_PREFIX = /^[-a-zA-Z0-9@:%._+~#=]{2,256}$/;

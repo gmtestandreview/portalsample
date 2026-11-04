@@ -35,7 +35,7 @@ const CheckboxGroup = <T,>(
   const [_field, _meta] = useField<T>(name);
 
   if (isSummary) {
-    if (_field?.value) {
+    if (_field.value) {
       const selectedOption = options.find((x) => x.value === _field.value);
 
       if (!selectedOption) {

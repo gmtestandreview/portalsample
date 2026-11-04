@@ -174,15 +174,15 @@ const summaryAndSubmitProps = (
       isApplNewHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.NewCertificate ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        x.applicationAndInstrument.patternApprovalType === undefined,
       isApplVariationHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.Variation ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        x.applicationAndInstrument.patternApprovalType === undefined,
       isApplOtherHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.OtherApproval ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        x.applicationAndInstrument.patternApprovalType === undefined,
       isApplOIMLHide: (x: SummaryDisplayValues) => DisplayRules.isOIMLHidden(x),
     },
   },

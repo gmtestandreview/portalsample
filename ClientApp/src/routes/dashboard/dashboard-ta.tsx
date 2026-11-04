@@ -52,7 +52,7 @@ import SessionStorageCache from '../../storage/sessionStorageCache';
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 const TAB_SAVE_DEBOUNCE_MS = 300;
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -305,7 +305,7 @@ const DashboardTA = () => {
       return;
     }
     if (accountDetails?.userProfile) {
-      if (accountDetails?.userProfile?.patternApprovalDashboard) {
+      if (accountDetails.userProfile.patternApprovalDashboard) {
         const tabToSet: string | null | undefined =
           SessionStorageCache().getItem('set-tabop-after-save');
         const p = accountDetails.userProfile.patternApprovalDashboard;
@@ -402,8 +402,8 @@ const DashboardTA = () => {
         setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
         setIsModalOpen(
           // List and check all Actionable modals across portal app
-          !!accountDetails?.showBranchSelector ||
-            !accountDetails?.userAcceptedTermsOfUse,
+          !!accountDetails.showBranchSelector ||
+            !accountDetails.userAcceptedTermsOfUse,
         );
         setIsDataLoading(true);
         const { actualYear, actualStatus } = resolveFilterParams(
@@ -416,7 +416,7 @@ const DashboardTA = () => {
           sortOrder: 'descending', // TS whats up here are we changing this?
           currentPage: initialFilters.filterCurrentPage ?? 1,
           pageSize: DEFAULT_DASHBOARD_PAGESIZE, // TS should we add a pagesize dropdown in the future?
-          accountDetailsCrmGuid: accountDetails?.organisationCRMGuid,
+          accountDetailsCrmGuid: accountDetails.organisationCRMGuid,
           filterSearchText: initialFilters.filterSearchText,
           actualYear,
           actualStatus,
@@ -506,7 +506,7 @@ const DashboardTA = () => {
   ) => (
     <>
       {requests !== undefined &&
-      requests?.length > 0 &&
+      requests.length > 0 &&
       userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: PatternApprovalDashboardDetailsDto) => (
@@ -697,25 +697,25 @@ const DashboardTA = () => {
                     {'Currently managing '}
                   </span>
                   <span className='d-none d-block text-break'>
-                    {!!accountContext?.details?.trading &&
-                      accountContext?.details?.trading}
-                    {!!accountContext?.details?.trading &&
-                      !!accountContext?.details?.branch &&
+                    {!!accountContext.details.trading &&
+                      accountContext.details.trading}
+                    {!!accountContext.details.trading &&
+                      !!accountContext.details.branch &&
                       ' - '}
-                    {!!accountContext?.details?.branch &&
-                      accountContext?.details?.branch}
+                    {!!accountContext.details.branch &&
+                      accountContext.details.branch}
                   </span>
                   <span className='d-block text-break'>
-                    {!!accountContext?.details?.organisation &&
-                      accountContext?.details?.organisation}
+                    {!!accountContext.details.organisation &&
+                      accountContext.details.organisation}
                   </span>
                 </h2>
-                {!!accountContext?.details?.abn && (
+                {!!accountContext.details.abn && (
                   <>
                     <span id='orgABN' className='d-inline-block me-3 fw-normal'>
                       {'ABN: '}
                       <PatternFormat
-                        value={accountContext?.details?.abn}
+                        value={accountContext.details.abn}
                         displayType='text'
                         format='## ### ### ###'
                         aria-hidden='true'
@@ -724,7 +724,7 @@ const DashboardTA = () => {
                       />
                     </span>
                     <span className='visually-hidden'>
-                      {accountContext?.details?.abn?.split('').join(' ')}
+                      {accountContext.details.abn.split('').join(' ')}
                     </span>
                   </>
                 )}

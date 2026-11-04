@@ -80,7 +80,7 @@ const ApplicationAndInstrument = (
 
   const getInstrumentTypes = (
     values: LookupResponse[],
-    parentId: string,
+    parentId: string | undefined,
   ): SelectInputOption<string>[] => {
     const options: SelectInputOption<string>[] = [];
     if (parentId !== undefined && parentId !== '') {
@@ -118,8 +118,8 @@ const ApplicationAndInstrument = (
     const loadInstrumentCategories = () => {
       try {
         if (!instrumentCategories) {
-          const result = _categoryLookupField.value!;
-          const artefactTypeResult = _typeLookupField.value!;
+          const result = _categoryLookupField.value;
+          const artefactTypeResult = _typeLookupField.value;
           if (result && artefactTypeResult) {
             const [sorted, lastId] = sortList(
               result,
@@ -137,7 +137,7 @@ const ApplicationAndInstrument = (
               setInstrumentTypesSelected(
                 getInstrumentTypes(
                   artefactTypeResult,
-                  _instrumentCatField.value!,
+                  _instrumentCatField.value,
                 ),
               );
               if (

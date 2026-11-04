@@ -201,7 +201,7 @@ export const openPdfPageInNewTab = (fileUrl: string, pageNumber: string) => {
 export const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el: HTMLElement = document.querySelector('[id^="#notif-"]')!;
+    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
@@ -240,7 +240,9 @@ export const mapToUserProfile = (profile: UserProfileDto): UserProfile => ({
 /**
  * Returns a formatted banner title string
  */
-export const formatBannerTitle = (accountDetails: AccountDetails): string => {
+export const formatBannerTitle = (
+  accountDetails: AccountDetails | null | undefined,
+): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
 
@@ -312,7 +314,9 @@ export const formatOrganisationTitle = (
   return organisationName ?? '';
 };
 
-export const formatTradingBranch = (accountDetails: AccountDetails): string => {
+export const formatTradingBranch = (
+  accountDetails: AccountDetails | null | undefined,
+): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
 
@@ -389,7 +393,7 @@ export const contentLoaded = (sendPageView: boolean) => {
   const redactedData: Record<string, string> = {};
 
   piiFields.forEach((field) => {
-    const key = field.dataset['pii']!;
+    const key = field.dataset['pii'] ?? '';
     Object.defineProperty(redactedData, key, {
       configurable: true,
       enumerable: true,

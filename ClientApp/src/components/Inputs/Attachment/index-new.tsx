@@ -186,7 +186,7 @@ const AttachmentNew = (
   };
 
   const renderAttachments = () => {
-    return attachments?.map((attachment, i) => {
+    return attachments.map((attachment, i) => {
       let attachmentKey =
         attachment.id ?? unidentifiedAttachmentKeys.current.get(attachment);
       if (attachmentKey === undefined) {

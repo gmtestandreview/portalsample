@@ -55,7 +55,7 @@ const DateColumn = (props: Readonly<{ date: Date | string | undefined }>) => {
 
 const renderMultiLinkTooltip = (
   refIds: string[],
-  isClonedFromRef: string,
+  isClonedFromRef: string | undefined,
 ): React.ReactNode => (
   <>
     {/* Note: Keep tooltips content formatting basic, consider the parent DOM node for tooltip - avoid UL, LI */}
@@ -423,7 +423,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     [status],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
-    ? `${requestForQuote?.manufacturer} ${requestForQuote?.model || ''}` // If Model null display empty string
+    ? `${requestForQuote.manufacturer} ${requestForQuote.model || ''}` // If Model null display empty string
     : 'Draft Request For Quote';
   const heading = showArtefactHeading ? quote?.artefactName : headingNoArtefact;
   const requestForQuoteId = request.quote?.quotationId;
@@ -574,7 +574,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                 <h3 id={cardSummaryId} className='mb-1'>
                   {heading ? `${heading} ` : 'Draft request for Quote '}
                   {requestForQuote?.clonedReferenceIds &&
-                    requestForQuote?.isClone && (
+                    requestForQuote.isClone && (
                       <>
                         <i
                           className='icon-link text-primary ms-1 me-1'
@@ -586,7 +586,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                         >
                           {renderMultiLinkTooltip(
                             requestForQuote.clonedReferenceIds,
-                            requestForQuote.isClonedFromRef!,
+                            requestForQuote.isClonedFromRef,
                           )}
                         </span>
                       </>

@@ -362,7 +362,7 @@ const PaRequestItem = ({
         }
         onModalNo={closeModal}
         onModalYes={() => {
-          void onRemoveItem?.();
+          void onRemoveItem();
         }}
         noButtonTitle='Cancel'
         yesButtonTitle='Yes, delete application'

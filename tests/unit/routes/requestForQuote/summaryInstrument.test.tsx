@@ -260,16 +260,16 @@ describe(RfqInstrumentSummary, () => {
     const container = await renderLoaded(populated);
 
     expect({
-      hasSerialPrompt: container.textContent?.includes(
+      hasSerialPrompt: container.textContent.includes(
         'Does this instrument/artefact have a serial number available?',
       ),
-      hasSerialNumber: container.textContent?.includes('SN-0042'),
-      hasManufacturer: container.textContent?.includes('Mettler'),
-      hasCategory: container.textContent?.includes('Mass'),
-      hasType: container.textContent?.includes('Balance'),
-      omitsCategoryId: !container.textContent?.includes('cat-mass'),
-      hasDate: container.textContent?.includes('15 Mar 2031'),
-      hasRegulation: container.textContent?.includes(
+      hasSerialNumber: container.textContent.includes('SN-0042'),
+      hasManufacturer: container.textContent.includes('Mettler'),
+      hasCategory: container.textContent.includes('Mass'),
+      hasType: container.textContent.includes('Balance'),
+      omitsCategoryId: !container.textContent.includes('cat-mass'),
+      hasDate: container.textContent.includes('15 Mar 2031'),
+      hasRegulation: container.textContent.includes(
         'Regulation 13 with measurement report',
       ),
     }).toStrictEqual({

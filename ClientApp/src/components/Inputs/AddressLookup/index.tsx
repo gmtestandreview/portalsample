@@ -53,7 +53,9 @@ const AddressLookup = (
     inlineHelp,
   } = props;
 
-  const [_field, _meta, _helpers] = useField<AddressDetailsDto>(name);
+  const [_field, _meta, _helpers] = useField<AddressDetailsDto | undefined>(
+    name,
+  );
   const [_fieldSearch, _metaSearch, { setTouched }] = useField<string>(
     `${name}.searchText`,
   );
@@ -168,9 +170,9 @@ const AddressLookup = (
         setText('');
         void setValue({
           ...omitUndefined({
-            id: _field.value.id,
-            type: _field.value.type,
-            timeStamp: _field.value.timeStamp,
+            id: _field.value?.id,
+            type: _field.value?.type,
+            timeStamp: _field.value?.timeStamp,
           }),
           line1: '',
           line2: '',
@@ -185,9 +187,9 @@ const AddressLookup = (
         setText(option.displayText);
         void setValue({
           ...omitUndefined({
-            id: _field.value.id,
-            type: _field.value.type,
-            timeStamp: _field.value.timeStamp,
+            id: _field.value?.id,
+            type: _field.value?.type,
+            timeStamp: _field.value?.timeStamp,
             state: option.value.state,
           }),
           line1: option.value.addressLine1 || '',
@@ -203,9 +205,9 @@ const AddressLookup = (
       setText('');
       void setValue({
         ...omitUndefined({
-          id: _field.value.id,
-          type: _field.value.type,
-          timeStamp: _field.value.timeStamp,
+          id: _field.value?.id,
+          type: _field.value?.type,
+          timeStamp: _field.value?.timeStamp,
         }),
         line1: '',
         line2: '',

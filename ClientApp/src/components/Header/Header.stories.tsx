@@ -25,7 +25,7 @@ export const Authenticated = meta.story({
     // NMI logo link is present and has accessible text
     const logoLink = canvas
       .getAllByRole('link')
-      .find((l) => l.getAttribute('aria-label') || l.textContent?.trim());
+      .find((l) => l.getAttribute('aria-label') || l.textContent.trim());
 
     await expect(logoLink).toBeTruthy();
 

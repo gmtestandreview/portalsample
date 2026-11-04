@@ -6,7 +6,7 @@ import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 
 export interface ViewPdfButtonProps {
   text?: string;
-  fileSize: string;
+  fileSize?: string | undefined;
   isLoaded: boolean;
   getPdf(): void;
   gaLabel: string;

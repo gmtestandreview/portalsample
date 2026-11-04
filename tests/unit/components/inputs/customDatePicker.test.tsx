@@ -171,7 +171,7 @@ vi.mock(import('react-datepicker'), (() => {
             <button
               type='button'
               onClick={() => {
-                props.onClickOutside?.();
+                props.onClickOutside();
               }}
             >
               Click outside

@@ -100,7 +100,7 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
   return (
     <ViewPdfButton
       text={text}
-      fileSize={fileSize!}
+      fileSize={fileSize}
       isLoaded={pdfSizeLoaded}
       getPdf={() => {
         void viewOfferedQuotePdf();

@@ -54,19 +54,19 @@ const {
     (p) =>
       ({
         filterYearType:
-          (p as Record<string, unknown>)?.['filterYearType'] ?? 'allYears',
+          (p as Record<string, unknown>)['filterYearType'] ?? 'allYears',
         filterStatusType:
-          (p as Record<string, unknown>)?.['filterStatusType'] ?? 'allStatuses',
+          (p as Record<string, unknown>)['filterStatusType'] ?? 'allStatuses',
         filterCurrentPage:
-          (p as Record<string, unknown>)?.['filterCurrentPage'] ?? 1,
+          (p as Record<string, unknown>)['filterCurrentPage'] ?? 1,
         filterActiveTab:
-          (p as Record<string, unknown>)?.['filterActiveTab'] ?? 'drafts',
+          (p as Record<string, unknown>)['filterActiveTab'] ?? 'drafts',
         filterSearchText:
-          (p as Record<string, unknown>)?.['filterSearchText'] ?? '',
+          (p as Record<string, unknown>)['filterSearchText'] ?? '',
         filterSortOrder:
-          (p as Record<string, unknown>)?.['filterSortOrder'] ?? 'descending',
+          (p as Record<string, unknown>)['filterSortOrder'] ?? 'descending',
         filtersChanged:
-          (p as Record<string, unknown>)?.['filtersChanged'] ?? false,
+          (p as Record<string, unknown>)['filtersChanged'] ?? false,
       }) as ReturnType<typeof HelperFunctionsModule.mapToUserProfile>,
   ),
   mockAccountDispatchState: {
@@ -299,7 +299,7 @@ vi.mock(
           data-current={currentPage}
           data-total={totalPages}
           onClick={() => {
-            onPageChange?.((currentPage ?? 1) + 1);
+            onPageChange((currentPage ?? 1) + 1);
           }}
         >
           Next

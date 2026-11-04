@@ -96,7 +96,7 @@ const ServicesWeOffer = () => {
             const serviceLower = service.serviceType
               ?.toString()
               .toLocaleLowerCase();
-            if (accountDetails?.userProfile?.services) {
+            if (accountDetails.userProfile?.services) {
               const dbService = accountDetails.userProfile.services.find(
                 (s) => s.service?.toLocaleLowerCase() === serviceLower,
               );
@@ -337,7 +337,7 @@ const ServicesWeOffer = () => {
                 Set your default view and/or add more NMI services to your
                 account
               </legend>
-              {services?.map((service) => (
+              {services.map((service) => (
                 <Card
                   key={service.serviceType}
                   className={`mb-4 border border-3 border-light ${

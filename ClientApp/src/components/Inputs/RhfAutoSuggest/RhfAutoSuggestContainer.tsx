@@ -26,7 +26,7 @@ const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
 
   useEffect(() => {
     if (hasOptions && state?.isFocused && !previousHasOptions.current) {
-      state?.open(null, 'input');
+      state.open(null, 'input');
     } else if (!hasOptions && previousHasOptions.current) {
       state?.close();
     }

@@ -361,7 +361,7 @@ describe('pa request item', () => {
     expect({
       resumeHref: resumeAction.getAttribute('href'),
       editEvent,
-      hasReference: confirmationDialog.textContent?.includes('PA-2024-0001'),
+      hasReference: confirmationDialog.textContent.includes('PA-2024-0001'),
     }).toStrictEqual({
       resumeHref: '/ta/PA-2024-0001',
       editEvent: 'Editapplication',

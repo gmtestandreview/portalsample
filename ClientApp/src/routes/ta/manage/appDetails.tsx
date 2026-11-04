@@ -58,7 +58,7 @@ const ApplicationDetails = () => {
   const { id } = useParams();
   const { accounts, instance } = useMsal();
   const options = useMemo(
-    () => appDetailsProps(id!, accounts, instance),
+    () => appDetailsProps(id, accounts, instance),
     [accounts, id, instance],
   );
   const { loadStepValues, hidingFields } = options;
@@ -193,7 +193,7 @@ const ApplicationDetails = () => {
         // The loader returns the DTO itself; `InitialValue` only widens it with the
         // empty-string form default that this page never produces.
         setAppDetails(result.formValues as RequestForPatternApprovalAppDetails);
-        const appType = result.formValues?.applicationDetails as
+        const appType = result.formValues.applicationDetails as
           ApplicationDetailsDto | undefined;
         setApplicationType(appType?.patternApprovalType || null);
         setMessageCount(appType?.messageCount || 0);
@@ -552,7 +552,7 @@ const ApplicationDetails = () => {
         <Col md={12} lg={9}>
           <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
             <span className='visually-hidden'>Pattern/type approval:</span>
-            {data?.applicationDetails?.title || 'Application details'}
+            {data.applicationDetails?.title || 'Application details'}
             <span className='visually-hidden'> manage</span>
           </h1>
           {/* <HeaderIntroText className='mb-4'>

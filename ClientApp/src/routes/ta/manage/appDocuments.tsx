@@ -68,7 +68,7 @@ const ApplicationDocuments = () => {
           const response = await client.getAppDocuments(id);
           setFilesUploaded(response);
           setFilesToCommit(
-            response?.form?.documents?.some((doc) => !doc.documentLocked) ??
+            response.form?.documents?.some((doc) => !doc.documentLocked) ??
               false,
           );
         }
@@ -155,7 +155,7 @@ const ApplicationDocuments = () => {
         null,
       );
       const { documents } = result.form || {};
-      uploadIdRef.current = result.uploadId!;
+      uploadIdRef.current = result.uploadId ?? null;
 
       attachments =
         documents?.map(
@@ -184,6 +184,7 @@ const ApplicationDocuments = () => {
   };
 
   const onSubmit = async (values: AppDocumentsFormValues) => {
+    if (id === undefined) return;
     try {
       setIsDataLoading(true);
       const client = new RequestForPatternApprovalClient();
@@ -202,7 +203,7 @@ const ApplicationDocuments = () => {
           })),
         },
       };
-      await client.commitAppDocuments(id!, payload);
+      await client.commitAppDocuments(id, payload);
       setCommitSuccess(true);
     } catch (e: unknown) {
       const status = (e as { status?: number } | undefined)?.status;

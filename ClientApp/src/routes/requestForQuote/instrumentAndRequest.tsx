@@ -137,7 +137,9 @@ export const useInstrumentAndRequestLookups = () => {
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];
     for (const l of measurementCategories ?? []) {
-      options.push({ displayText: l.label!, value: l.id! });
+      if (l.label !== undefined && l.id !== undefined) {
+        options.push({ displayText: l.label, value: l.id });
+      }
     }
     return options;
   };
@@ -451,7 +453,7 @@ const InstrumentAndRequest = () => {
     onMeasurementCategoryChange,
   } = useInstrumentAndRequestLookups();
 
-  return isLoading ? (
+  return isLoading || artefactTypesSelected === undefined ? (
     <BlockUISpinner>
       <p>Loading...</p>
     </BlockUISpinner>
@@ -461,7 +463,7 @@ const InstrumentAndRequest = () => {
       <InstrumentDetailsSection
         measurementCategoryOptions={getMeasurementCategories()}
         onMeasurementCategoryChange={onMeasurementCategoryChange}
-        artefactTypesSelected={artefactTypesSelected!}
+        artefactTypesSelected={artefactTypesSelected}
         isInstrumentOrArtefactTypeDisabled={isInstrumentOrArtefactTypeDisabled}
       />
       <RequestDetailsSection />

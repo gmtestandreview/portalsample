@@ -40,7 +40,7 @@ export const pollUploadProgress = async ({
   onProgress,
   onFinished,
 }: PollUploadProgressOptions): Promise<void> => {
-  const poll = async (lastPercent: number): Promise<void> => {
+  const poll = async (lastPercent: number | undefined): Promise<void> => {
     if (signal.aborted) return;
 
     let data: UploadProgress;
@@ -66,7 +66,7 @@ export const pollUploadProgress = async ({
       return;
     }
 
-    return poll(data.percent!);
+    return poll(data.percent);
   };
 
   await poll(INITIAL_PERCENT);

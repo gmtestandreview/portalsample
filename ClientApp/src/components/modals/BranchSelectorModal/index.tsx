@@ -312,7 +312,7 @@ const BranchSelectorModal = () => {
         try {
           setIsModalDataLoading(true); // Modal data
           const result = await client.getOrganisationsByABN(
-            accountState.details?.abn,
+            accountState.details.abn,
             true,
           );
           if (!isActive) return;
@@ -323,14 +323,12 @@ const BranchSelectorModal = () => {
             throw new Error('No branches returned for organisation');
           }
           if (
-            hasDefaultOrganisationId(
-              accountState.details?.defaultOrganisationId,
-            )
+            hasDefaultOrganisationId(accountState.details.defaultOrganisationId)
           ) {
-            setSelectedBranch(accountState.details?.defaultOrganisationId);
-            setSelectedCRMGuid(accountState.details?.organisationCRMGuid);
-            setSelectedTradingName(accountState.details?.trading);
-            setSelectedBranchName(accountState.details?.branch);
+            setSelectedBranch(accountState.details.defaultOrganisationId);
+            setSelectedCRMGuid(accountState.details.organisationCRMGuid);
+            setSelectedTradingName(accountState.details.trading);
+            setSelectedBranchName(accountState.details.branch);
           } else {
             setSelectedBranch(firstBranch.organisationId);
             setSelectedTradingName(firstBranch.businessOrTradingName);
@@ -556,7 +554,7 @@ const BranchSelectorModal = () => {
                     </tbody>
                   ) : (
                     <>
-                      {branches !== undefined && branches?.length > 0 ? (
+                      {branches !== undefined && branches.length > 0 ? (
                         <tbody key='tBodyKey'>
                           {branches.map((branch, index) => (
                             <tr key={branch.organisationId}>

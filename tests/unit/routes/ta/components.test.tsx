@@ -378,14 +378,14 @@ describe(OrganisationAndContact, () => {
       heading: screen.getByRole('heading', { name: 'Contact information' })
         .textContent,
       principalContact: [
-        principalContact.textContent?.includes('Use my contact details'),
-        principalContact.textContent?.includes('Dr Ada Lovelace'),
-        principalContact.textContent?.includes('ada@example.gov.au'),
-        principalContact.textContent?.includes('A different contact person'),
+        principalContact.textContent.includes('Use my contact details'),
+        principalContact.textContent.includes('Dr Ada Lovelace'),
+        principalContact.textContent.includes('ada@example.gov.au'),
+        principalContact.textContent.includes('A different contact person'),
       ],
       help: screen
         .getByTestId('help-organisationAndContact.isPrincipalContact')
-        .textContent?.replace(/\s+/g, ' ')
+        .textContent.replace(/\s+/g, ' ')
         .includes('Dashboard > Settings menu > My contact details'),
     }).toStrictEqual({
       manufacturerSummary: 'false',

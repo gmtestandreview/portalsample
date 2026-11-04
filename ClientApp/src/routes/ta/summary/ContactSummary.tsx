@@ -49,7 +49,7 @@ const ContactSummary = ({
           label='Title, if "Other"'
           id={`${name}.titleOther`}
           as='p'
-          value={contact?.titleOther ?? ''}
+          value={contact.titleOther ?? ''}
         />
       )}
       <SummaryDisplay

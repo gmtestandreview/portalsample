@@ -2,9 +2,9 @@ import { FileStatus, type TASupportingDocumentsProps } from './types';
 
 export const handleAlertScroll = () => {
   setTimeout(() => {
-    const summaryRef: HTMLElement = document.querySelector(
+    const summaryRef = document.querySelector<HTMLElement>(
       '#form-error-summary-custom',
-    )!;
+    );
     summaryRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     summaryRef?.focus();
   }, 100);

@@ -24,9 +24,9 @@ const isValidationProblemDetails = (
 
 const handleAlertScroll = (): ReturnType<typeof setTimeout> =>
   setTimeout(() => {
-    const summaryRef: HTMLElement = document.querySelector(
+    const summaryRef = document.querySelector<HTMLElement>(
       '#form-error-summary',
-    )!;
+    );
     if (summaryRef && typeof summaryRef.scrollIntoView === 'function') {
       summaryRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }

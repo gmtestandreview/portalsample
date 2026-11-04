@@ -190,7 +190,7 @@ describe('accept quote wizard prop factories', () => {
       props.hidingFields as unknown as DeliveryAndReturnHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -285,7 +285,7 @@ describe('accept quote wizard prop factories', () => {
       props.hidingFields as unknown as PaymentDetailsHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -354,7 +354,7 @@ describe('accept quote wizard prop factories', () => {
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('load failed'));
 
     const loadError = await captureError(() =>
-      props.loadStepValues?.(abortSignal),
+      props.loadStepValues(abortSignal),
     );
 
     expect({
@@ -396,7 +396,7 @@ describe('accept quote wizard prop factories', () => {
       props.hidingFields as unknown as ReportRecipientHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -514,7 +514,7 @@ describe('accept quote wizard prop factories', () => {
       },
     } satisfies SummaryAndAcceptStep;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -646,13 +646,13 @@ describe('accept quote wizard prop factories', () => {
 
     await expect(
       Promise.all([
-        rejectionMessage(() => deliveryProps.loadStepValues?.()),
+        rejectionMessage(() => deliveryProps.loadStepValues()),
         rejectionMessage(() => deliveryProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => paymentProps.loadStepValues?.()),
+        rejectionMessage(() => paymentProps.loadStepValues()),
         rejectionMessage(() => paymentProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => recipientProps.loadStepValues?.()),
+        rejectionMessage(() => recipientProps.loadStepValues()),
         rejectionMessage(() => recipientProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => summaryProps.loadStepValues?.()),
+        rejectionMessage(() => summaryProps.loadStepValues()),
         rejectionMessage(() => summaryProps.onSaveAndExit?.({}, false)),
       ]),
     ).resolves.toStrictEqual([

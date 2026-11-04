@@ -14,9 +14,9 @@ const DisplayUserAndOrgName = () => {
         <span className='visually-hidden'>,</span>
       </span>
       <span className='d-block org-name text-break'>
-        {!!account?.details?.trading && account?.details?.trading}
-        {!!account?.details?.trading && !!account?.details?.branch && ' - '}
-        {!!account?.details?.branch && account?.details?.branch}
+        {!!account?.details?.trading && account.details.trading}
+        {!!account?.details?.trading && !!account.details.branch && ' - '}
+        {!!account?.details?.branch && account.details.branch}
       </span>
       <span className='d-block org-name text-break'>
         {account?.details?.organisation}
@@ -57,7 +57,7 @@ const AuthenticatedNavbarItems = () => {
         </Dropdown.ItemText>
         <Dropdown.Item
           as={Link}
-          to={`/update-organisation/${accountState?.details?.defaultOrganisationId ?? ''}`}
+          to={`/update-organisation/${accountState.details.defaultOrganisationId ?? ''}`}
           onClick={() => {
             trackGAEvent('Manage organisation');
           }}

@@ -4,7 +4,6 @@ import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import useAccountContext from '../../../authentication/hooks';
 import FormBanner from '../../../components/forms/FormBanner';
-import type { AccountDetails } from '../../../authentication/accountContext';
 import { formatBannerTitle } from '../../common/helperFunctions';
 import SessionStorageCache from '../../../storage/sessionStorageCache';
 import { DashboardTab } from '../../../components/SearchFilter/types';
@@ -19,7 +18,7 @@ const RequestForPatternApprovalCreated = () => {
   );
   useBodyClass('application-created');
 
-  const accountDetails: AccountDetails = account!.details!;
+  const accountDetails = account?.details;
   function goToDashboard() {
     SessionStorageCache().setItem(
       DashboardTab.Requests,

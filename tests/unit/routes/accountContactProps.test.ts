@@ -164,7 +164,7 @@ describe('account and contact wizard prop factories', () => {
       contact: { title: 'Dr' },
     } as AccountDto;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -227,7 +227,7 @@ describe('account and contact wizard prop factories', () => {
       contact: { title: Title.Other },
     };
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -329,7 +329,7 @@ describe('account and contact wizard prop factories', () => {
       contact: { title: 'Other' },
     } as AccountDto;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -441,8 +441,8 @@ describe('account and contact wizard prop factories', () => {
     const abortSignal = new AbortController().signal;
     const values = { contact: { title: 'Dr' } } as ContactFormStep;
 
-    const createLoaded = await createProps.loadStepValues?.(abortSignal);
-    const updateLoaded = await updateProps.loadStepValues?.(abortSignal);
+    const createLoaded = await createProps.loadStepValues(abortSignal);
+    const updateLoaded = await updateProps.loadStepValues(abortSignal);
 
     expect({
       loaded: [createLoaded, updateLoaded],
@@ -613,15 +613,15 @@ describe('account and contact wizard prop factories', () => {
 
     await expect(
       Promise.all([
-        rejectionMessage(() => createAccount.loadStepValues?.()),
+        rejectionMessage(() => createAccount.loadStepValues()),
         rejectionMessage(() => createAccount.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => updateAccount.loadStepValues?.()),
+        rejectionMessage(() => updateAccount.loadStepValues()),
         rejectionMessage(() => updateAccount.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => branch.loadStepValues?.()),
+        rejectionMessage(() => branch.loadStepValues()),
         rejectionMessage(() => branch.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => createContact.loadStepValues?.()),
+        rejectionMessage(() => createContact.loadStepValues()),
         rejectionMessage(() => createContact.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => updateContact.loadStepValues?.()),
+        rejectionMessage(() => updateContact.loadStepValues()),
         rejectionMessage(() => updateContact.onSaveAndNext?.({}, false)),
       ]),
     ).resolves.toStrictEqual([

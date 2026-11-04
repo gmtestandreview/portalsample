@@ -16,7 +16,7 @@ const CopyRequestForQuote = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    const copyApplication = async () => {
+    const copyApplication = async (sourceId: string) => {
       isSaving.current = true;
       try {
         const client = new ApplicationClient();
@@ -24,7 +24,7 @@ const CopyRequestForQuote = () => {
           silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
-        const application = await client.copyApplication(id!, {
+        const application = await client.copyApplication(sourceId, {
           applicationType: ApplicationType.QuoteRequest,
         });
         setApplicationId(application.referenceId);
@@ -33,8 +33,8 @@ const CopyRequestForQuote = () => {
         AppLogger.error('Failed to copy application', e as Error);
       }
     };
-    if (accounts.length > 0 && !isSaving.current) {
-      void copyApplication();
+    if (id !== undefined && accounts.length > 0 && !isSaving.current) {
+      void copyApplication(id);
     }
   }, [accounts, id, instance, isSaving]);
 

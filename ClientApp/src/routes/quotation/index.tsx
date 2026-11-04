@@ -73,7 +73,7 @@ const setInfoNotification = () => {
 const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el: HTMLElement = document.querySelector('[id^="#notif-"]')!;
+    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
@@ -128,7 +128,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
       client.setAuthToken(tokenResult.accessToken);
       if (quotationData?.crmQuoteRequestId) {
         await client.declineQuote(
-          quotationData?.crmQuoteRequestId,
+          quotationData.crmQuoteRequestId,
           accountState?.details?.givenName,
           accountState?.details?.familyName,
         );
@@ -188,8 +188,8 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
           SessionStorageCache().getItem('view-quote-id');
         if (newlyAcceptedQuoteId) {
           if (
-            quoteData?.quoteRequestIdNum === newlyAcceptedQuoteId &&
-            quoteData?.quoteRequestStatus === QuoteStatus.QuoteAvailable
+            quoteData.quoteRequestIdNum === newlyAcceptedQuoteId &&
+            quoteData.quoteRequestStatus === QuoteStatus.QuoteAvailable
           ) {
             quoteData.quoteRequestStatus = QuoteStatus.QuoteAccepted;
             quoteData.outcomeDate = new Date();
@@ -253,7 +253,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         fileError={fileError}
       />
       {!!quotationData?.quoteRequestStatus &&
-        quotationData?.quoteRequestStatus !==
+        quotationData.quoteRequestStatus !==
           String(QuoteStatus.QuoteExpired) && (
           <Row className='mb-3'>
             <Col md={12}>

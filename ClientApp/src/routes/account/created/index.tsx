@@ -22,7 +22,7 @@ const AccountCreated = () => {
               <h1 id='page-title' tabIndex={-1}>
                 {'Your portal account is ready, '}
                 {account?.details?.givenName !== undefined &&
-                  account?.details?.givenName}
+                  account.details.givenName}
               </h1>
 
               <HeaderIntroText>

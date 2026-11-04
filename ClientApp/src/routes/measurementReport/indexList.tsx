@@ -67,7 +67,7 @@ const InstrMeasurementReport = () => {
       if (accountContext?.details?.organisationCRMGuid) {
         if (inProgress === InteractionStatus.None && accounts.length > 0) {
           setIsLoading(true);
-          await getReportList(accountContext.details?.organisationCRMGuid);
+          await getReportList(accountContext.details.organisationCRMGuid);
           setIsLoading(false);
           setReload(false);
         }

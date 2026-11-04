@@ -58,7 +58,7 @@ const QuoteDetails = (
   );
 
   const dashboardMessage = setNotification();
-  const showDashboardMessage = (message: JSX.Element | null) => (
+  const showDashboardMessage = (message: React.JSX.Element | null) => (
     <>
       {message && (
         <Container>
@@ -158,7 +158,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation ID</div>
             <p className='mb-0 text-break'>
               {/* TO DO - insert correct Quotation ID */}
-              {!!quotationData?.quotationIdNum && quotationData?.quotationIdNum}
+              {!!quotationData?.quotationIdNum && quotationData.quotationIdNum}
             </p>
           </div>
         </Col>
@@ -175,12 +175,12 @@ const QuoteDetails = (
                                         {getPillText(quotationData!.quoteRequestStatus)}
                                     </Badge> */}
                   <QuoteStatusPill
-                    status={quotationData!.quoteRequestStatus as QuoteStatus}
+                    status={quotationData?.quoteRequestStatus as QuoteStatus}
                   />
                 </Col>
                 <p className='mb-0 text-break'>
                   {!!quotationData?.outcomeDate &&
-                    formatDateToString(new Date(quotationData?.outcomeDate))}
+                    formatDateToString(new Date(quotationData.outcomeDate))}
                 </p>
               </>
             )}
@@ -196,7 +196,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation offer date</div>
             <p className='mb-0 text-break'>
               {!!quotationData?.quotationOfferDate &&
-                formatDateToString(new Date(quotationData?.quotationOfferDate))}
+                formatDateToString(new Date(quotationData.quotationOfferDate))}
             </p>
           </div>
         </Col>
@@ -205,9 +205,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation valid until</div>
             <p className='mb-0 text-break'>
               {!!quotationData?.quotationValidUntil &&
-                formatDateToString(
-                  new Date(quotationData?.quotationValidUntil),
-                )}
+                formatDateToString(new Date(quotationData.quotationValidUntil))}
             </p>
           </div>
         </Col>
@@ -221,7 +219,7 @@ const QuoteDetails = (
             <p className='mb-0 text-break'>
               {!!quotationData?.dateInstrumentRequiredNMI &&
                 formatDateToString(
-                  new Date(quotationData?.dateInstrumentRequiredNMI),
+                  new Date(quotationData.dateInstrumentRequiredNMI),
                 )}
             </p>
           </div>
@@ -234,7 +232,7 @@ const QuoteDetails = (
             <p className='mb-0 text-break'>
               {!!quotationData?.targetDateMesurementReport &&
                 formatDateToString(
-                  new Date(quotationData?.targetDateMesurementReport),
+                  new Date(quotationData.targetDateMesurementReport),
                 )}
             </p>
           </div>
@@ -253,7 +251,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.serialNumber && quotationData?.serialNumber}
+                {!!quotationData?.serialNumber && quotationData.serialNumber}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -261,7 +259,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.manufacturer && quotationData?.manufacturer}
+                {!!quotationData?.manufacturer && quotationData.manufacturer}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -269,7 +267,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.model && quotationData?.model}
+                {!!quotationData?.model && quotationData.model}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -277,7 +275,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='text-break'>
-                {!!quotationData?.description && quotationData?.description}
+                {!!quotationData?.description && quotationData.description}
               </p>
               <p className='mb-0'>
                 <InTextLink
@@ -321,7 +319,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.servicesOffered &&
-                  quotationData?.servicesOffered}
+                  quotationData.servicesOffered}
               </p>
             </Col>
           </Row>
@@ -332,7 +330,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.measurementReportCertificateRequired &&
-                  quotationData?.measurementReportCertificateRequired}
+                  quotationData.measurementReportCertificateRequired}
               </p>
             </Col>
           </Row>
@@ -343,7 +341,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.specialConditions &&
-                  quotationData?.specialConditions}
+                  quotationData.specialConditions}
               </p>
             </Col>
           </Row>
@@ -351,7 +349,7 @@ const QuoteDetails = (
       </Row>
       {quotationData && (
         <>
-          {quotationData?.receiptandDispatchNA ? (
+          {quotationData.receiptandDispatchNA ? (
             <Row>
               <Col md={12}>
                 <h3 className='h5 mb-0 py-2'>
@@ -369,7 +367,7 @@ const QuoteDetails = (
               <MailingLabel {...mailingLabelProps} />
               <DeliveryInstructions
                 deliveryInstructions={
-                  quotationData?.nmiFacilityDeliveryInstructions
+                  quotationData.nmiFacilityDeliveryInstructions
                 }
               />
             </Row>
@@ -390,8 +388,8 @@ const QuoteDetails = (
                 </h3>
                 <p className='mb-0 text-break'>
                   {'AUD '}
-                  {!!quotationData?.feePayableAmount &&
-                    formatCurrencyAmount(quotationData?.feePayableAmount)}
+                  {!!quotationData.feePayableAmount &&
+                    formatCurrencyAmount(quotationData.feePayableAmount)}
                   {' (inc. GST)'}
                 </p>
               </div>

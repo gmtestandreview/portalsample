@@ -11,7 +11,6 @@ import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
 import { formatBannerTitle } from '../common/helperFunctions';
-import type { AccountDetails } from '../../authentication/accountContext';
 
 const SubmittedSuccess = () => {
   const { id } = useParams<{ id?: string }>();
@@ -33,7 +32,9 @@ const SubmittedSuccess = () => {
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
-        const paymentDetails = await acceptQuoteClient.getPaymentDetails(id!);
+        if (id === undefined) return;
+
+        const paymentDetails = await acceptQuoteClient.getPaymentDetails(id);
         setAcceptQuotePreInfo(paymentDetails.acceptQuotePreInfo);
       } catch (e) {
         AppLogger.error('Failed to retrieve AcceptQuotePreInfo', e as Error, {
@@ -55,7 +56,7 @@ const SubmittedSuccess = () => {
     ' - An invoice will be forwarded following the receipt of this accepted quotation. Payment of the invoice is required and calibration may only commence once payment has been received.';
   const postpaidText =
     ' Clients not meeting this condition may have this option withdrawn on future occasions.';
-  const accountDetails: AccountDetails = account!.details!;
+  const accountDetails = account?.details;
 
   useBodyClass('summary');
   return (

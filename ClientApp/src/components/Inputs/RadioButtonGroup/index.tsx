@@ -33,7 +33,7 @@ const RadioButtonGroup = <T,>(
   const [field, meta] = useField(name);
 
   if (isSummary) {
-    if (field?.value) {
+    if (field.value) {
       const selectedOption = options.find(
         (option) => option.value === field.value,
       );

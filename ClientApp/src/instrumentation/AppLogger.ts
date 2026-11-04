@@ -61,28 +61,28 @@ const AppLogger = {
   startTrackPage(name: string) {
     const insights = getAppInsights();
     if (insights) {
-      insights?.startTrackPage(name);
+      insights.startTrackPage(name);
     }
   },
 
   stopTrackPage(name: string) {
     const insights = getAppInsights();
     if (insights) {
-      insights?.stopTrackPage(name);
+      insights.stopTrackPage(name);
     }
   },
 
   startTrackEvent(name: string) {
     const insights = getAppInsights();
     if (insights) {
-      insights?.startTrackEvent(name);
+      insights.startTrackEvent(name);
     }
   },
 
   stopTrackEvent(name: string) {
     const insights = getAppInsights();
     if (insights) {
-      insights?.stopTrackEvent(name);
+      insights.stopTrackEvent(name);
     }
   },
 };

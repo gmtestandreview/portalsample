@@ -219,8 +219,8 @@ export const useWizardStepController = (
         AppLogger.trace('Could not submit form step.', SeverityLevel.Error, {
           stepIndex: currentStepIndex,
           problemDetails: {
-            status: saveServerError?.status,
-            title: saveServerError?.title,
+            status: saveServerError.status,
+            title: saveServerError.title,
           },
         });
         setErrorState(
@@ -251,8 +251,8 @@ export const useWizardStepController = (
         AppLogger.trace('Could not save form step.', SeverityLevel.Error, {
           stepIndex: currentStepIndex,
           problemDetails: {
-            status: saveServerError?.status,
-            title: saveServerError?.title,
+            status: saveServerError.status,
+            title: saveServerError.title,
           },
         });
         setErrorState(
