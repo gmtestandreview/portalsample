@@ -46,11 +46,11 @@ describe('eSLint editor integration', () => {
 
       expect(
         result.error,
-        `ESLint could not be spawned: ${result.error?.message}`,
+        `ESLint could not be spawned: ${result.error?.message ?? ''}`,
       ).toBeUndefined();
       expect(
         result.status,
-        `ESLint exited ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
+        `ESLint exited ${result.status ?? 'null'}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
       ).toBe(0);
     },
     TEST_TIMEOUT_MS,

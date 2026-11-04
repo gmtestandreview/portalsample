@@ -28,6 +28,7 @@ import InTextLink from '../../components/InTextLink';
 import { useAccountState } from '../../authentication/hooks';
 import QuotationSummary from './quotationSummary';
 import { silentRequestFor } from '../../authentication/silentRequest';
+import { joinNameParts } from '../../utils';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
   getDashboardNotification,
@@ -73,7 +74,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
     ) : null;
   };
   const dashboardMessage = setNotification();
-  const showDashboardMessage = (message: JSX.Element | null) => (
+  const showDashboardMessage = (message: React.JSX.Element | null) => (
     <>
       {message && (
         <Container>
@@ -205,7 +206,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             className='mb-4 py-2'
           >
             <ReportRecipient isSummary name='reportRecipient' id={id} />
-            {isSubmitted ? null : (
+            {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/report-recipient`} />
             )}
           </CustomAccordionBody>
@@ -217,7 +218,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             className='mb-4 py-2'
           >
             <DeliveryAndReturn isSummary name='deliveryAndReturn' id={id} />
-            {isSubmitted ? null : (
+            {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/delivery-and-return`} />
             )}
           </CustomAccordionBody>
@@ -229,7 +230,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             className='mb-4 py-2'
           >
             <PaymentDetails isSummary name='paymentDetails' id={id} />
-            {isSubmitted ? null : (
+            {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/payment-details`} />
             )}
           </CustomAccordionBody>
@@ -261,7 +262,10 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                     <br />
                     {account?.details && (
                       <span className='text-break'>
-                        {`${account?.details?.givenName} ${account?.details?.familyName}`}
+                        {joinNameParts(
+                          account.details.givenName,
+                          account.details.familyName,
+                        )}
                         <br />
                       </span>
                     )}
@@ -422,7 +426,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
           </CustomAccordionBody>
         </CustomAccordion>
       </Row>
-      {isSubmitted && (
+      {isSubmitted && id !== undefined && (
         <Row className='mb-4'>
           <div className='d-grid d-md-block'>
             <Link

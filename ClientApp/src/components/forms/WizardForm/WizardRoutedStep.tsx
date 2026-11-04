@@ -50,7 +50,7 @@ const WizardRoutedStep = (
 
   const stepPrefix =
     allSteps.length > 1 ? `Step ${currentStepIndex + 1}: ` : '';
-  useHtmlTitle(`${stepPrefix}${bannerTitle} | NMI Services portal`);
+  useHtmlTitle(`${stepPrefix}${bannerTitle ?? ''} | NMI Services portal`);
   useBodyClass('wizard');
   const {
     isLoading,

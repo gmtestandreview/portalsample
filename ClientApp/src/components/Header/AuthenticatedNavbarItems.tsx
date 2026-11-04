@@ -57,7 +57,7 @@ const AuthenticatedNavbarItems = () => {
         </Dropdown.ItemText>
         <Dropdown.Item
           as={Link}
-          to={`/update-organisation/${accountState?.details?.defaultOrganisationId}`}
+          to={`/update-organisation/${accountState?.details?.defaultOrganisationId ?? ''}`}
           onClick={() => {
             trackGAEvent('Manage organisation');
           }}

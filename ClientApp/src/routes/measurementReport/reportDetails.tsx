@@ -101,7 +101,7 @@ const ReportDetails = (
           <div className='form-label mb-0'>Report date</div>
           <p className='mb-0 text-break'>
             {!!reportData?.report?.dateIssued &&
-              `${formatDateToString(new Date(reportData?.report?.dateIssued))}`}
+              formatDateToString(new Date(reportData?.report?.dateIssued))}
           </p>
         </Col>
         <Col xs={6} className='text-end'>
@@ -233,7 +233,9 @@ const ReportDetails = (
             <Col xs={7} lg={8}>
               <p className='mb-0 text-break'>
                 {!!reportData?.report?.dateDispatched &&
-                  `${formatDateToString(new Date(reportData?.report?.dateDispatched))}`}
+                  formatDateToString(
+                    new Date(reportData?.report?.dateDispatched),
+                  )}
               </p>
             </Col>
           </Row>

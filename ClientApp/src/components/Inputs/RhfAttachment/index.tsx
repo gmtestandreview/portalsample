@@ -62,7 +62,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
     ariaLabel,
     buttonTitle,
     containerClassName,
-    className,
+    className = '',
     onUploadFiles,
     onDeleteFile,
     progress,
@@ -202,7 +202,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           name={name}
           index={i}
           canRemove={!isSummary && !attachment.documentLocked}
-          cancelButtonId={`cancel-button-${attachment.id}`}
+          cancelButtonId={`cancel-button-${attachment.id ?? ''}`}
           onRemoveItem={onConfirmDeleteFile}
           isSummary={isSummary || !!attachment.documentLocked}
         />

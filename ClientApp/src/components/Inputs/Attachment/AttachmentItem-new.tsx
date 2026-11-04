@@ -126,7 +126,7 @@ const AttachmentItemNew = ({
               onClick={showModal}
             >
               <i className='icon-close' aria-hidden='true' />
-              <span className='visually-hidden'>{`Delete ${contentField.value.attachmentName}`}</span>
+              <span className='visually-hidden'>{`Delete ${contentField.value.attachmentName ?? ''}`}</span>
             </Button>
           </div>
         )}

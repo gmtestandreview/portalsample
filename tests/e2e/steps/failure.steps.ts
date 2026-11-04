@@ -8,7 +8,7 @@ Given(
     scenarioState.failures.set(
       failureKey(
         'PUT',
-        `/api/request-for-quote/${scenarioState.activeReferenceId}/instrument-and-request`,
+        `/api/request-for-quote/${scenarioState.activeReferenceId ?? ''}/instrument-and-request`,
       ),
       { status },
     );
@@ -58,7 +58,7 @@ Given(
     scenarioState.failures.set(
       failureKey(
         'PUT',
-        `/api/accept-quote/QA-${scenarioState.activeReferenceId}/report-recipient`,
+        `/api/accept-quote/QA-${scenarioState.activeReferenceId ?? ''}/report-recipient`,
       ),
       { status },
     );

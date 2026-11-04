@@ -68,7 +68,7 @@ const SubmittedSuccess = () => {
       <FormBanner
         title='Testing and calibration service - Quotation'
         showSaveAndExitButton={false}
-        refTitle={`Quotation ID: ${id}`}
+        refTitle={`Quotation ID: ${id ?? ''}`}
         subTitle={formatBannerTitle(accountDetails)}
         showGoToDashboardButton
       />

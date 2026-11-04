@@ -154,7 +154,7 @@ export const useWizardStepController = (
       setDashboardNotification({
         message:
           'You no longer have access to the records for' +
-          ` ${accountState?.details?.targetOrganisation?.targetOrganisationName}. Your changes have not been saved.`,
+          ` ${accountState?.details?.targetOrganisation?.targetOrganisationName ?? ''}. Your changes have not been saved.`,
         severity: NotificationSeverity.Error,
       });
       if (accountDispatch) {
@@ -346,7 +346,7 @@ const resolveView = ({
     ) {
       return {
         kind: 'navigate',
-        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location}`,
+        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location ?? ''}`,
       };
     }
   }

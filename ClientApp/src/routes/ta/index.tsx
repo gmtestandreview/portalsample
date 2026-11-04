@@ -46,7 +46,7 @@ const ApplicationForTypeApproval = () => {
   useBodyClass('wizard');
 
   const applicationForTypeApprovalProps: WizardFormProps = {
-    locationOnCompletion: `/ta/type-approval-success/${id}`,
+    locationOnCompletion: `/ta/type-approval-success/${id ?? ''}`,
     lastStepNextButtonTitle: 'Submit',
     nextButtonTitle: 'Save and next',
     previousButtonTitle: 'Back',

@@ -424,7 +424,7 @@ describe('vite config', () => {
     ]);
 
     for (const viteName of viteEnvironmentNames) {
-      expect(envSource).toContain(`import.meta.env.${viteName}`);
+      expect(envSource).toContain(`import.meta.env.${viteName ?? ''}`);
     }
   });
 

@@ -60,7 +60,7 @@ describe('footer accessibility', () => {
         const labelId = section.getAttribute('aria-labelledby');
 
         expect(labelId).not.toBeNull();
-        expect(container.querySelectorAll(`#${labelId}`)).toHaveLength(1);
+        expect(container.querySelectorAll(`#${labelId ?? ''}`)).toHaveLength(1);
       }
     },
   );

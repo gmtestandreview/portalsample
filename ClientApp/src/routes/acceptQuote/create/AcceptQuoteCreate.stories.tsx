@@ -27,7 +27,7 @@ const state: {
 
 const ReportRecipientDestination = () => {
   const { id } = useParams();
-  return <h1>{`Report recipient for acceptance ${id}`}</h1>;
+  return <h1>{`Report recipient for acceptance ${id ?? ''}`}</h1>;
 };
 
 const lookupHandler = (response: () => Response) =>

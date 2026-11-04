@@ -115,7 +115,7 @@ const ReportList = (
                       <div>
                         {artefact.tmasStatus !== ReportStatus.Withdrawn && (
                           <Link
-                            to={`/report/${artefact.tmasTcQuoteName}`}
+                            to={`/report/${artefact.tmasTcQuoteName ?? ''}`}
                             className='d-block mb-2'
                           >
                             View report
@@ -123,7 +123,7 @@ const ReportList = (
                         )}
                         <span className='visually-hidden'>{' or '}</span>
                         <Link
-                          to={`/request-for-quote-copy/${artefact.tmasPortalRequestId}`}
+                          to={`/request-for-quote-copy/${artefact.tmasPortalRequestId ?? ''}`}
                           aria-label='Request recalibration for this instrument/artefact'
                           className='d-block mb-2 text-nowrap'
                         >

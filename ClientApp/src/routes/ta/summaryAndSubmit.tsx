@@ -55,7 +55,7 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
           >
             <OrganisationSummary values={values} hidden={hidden} />
             {!isSubmitted ? (
-              <EditButton link={`/ta/${id}/organisation-details`} />
+              <EditButton link={`/ta/${id ?? ''}/organisation-details`} />
             ) : null}
           </CustomAccordionBody>
         </CustomAccordion>
@@ -67,7 +67,7 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
           >
             <ApplicationSummary values={values} hidden={hidden} />
             {!isSubmitted ? (
-              <EditButton link={`/ta/${id}/application-details`} />
+              <EditButton link={`/ta/${id ?? ''}/application-details`} />
             ) : null}
           </CustomAccordionBody>
         </CustomAccordion>
@@ -86,7 +86,7 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
               }}
             />
             {!isSubmitted ? (
-              <EditButton link={`/ta/${id}/supporting-documents`} />
+              <EditButton link={`/ta/${id ?? ''}/supporting-documents`} />
             ) : null}
           </CustomAccordionBody>
         </CustomAccordion>

@@ -345,11 +345,11 @@ const CertificateNumberLookup = (
                 </ListGroup.Item>
                 {filteredSuggestions.map((item, index) => (
                   <ListGroup.Item
-                    id={`${item.id}`}
+                    id={item.id}
                     key={item.lookupName}
                     as='li'
                     role='option'
-                    aria-label={`${item.lookupName} (${index + 1} of ${filteredSuggestions.length})`}
+                    aria-label={`${item.lookupName ?? ''} (${index + 1} of ${filteredSuggestions.length})`}
                     aria-selected={index === activeIndex}
                     action
                     // active={index === activeIndex}

@@ -180,7 +180,7 @@ const QuoteDetails = (
                 </Col>
                 <p className='mb-0 text-break'>
                   {!!quotationData?.outcomeDate &&
-                    `${formatDateToString(new Date(quotationData?.outcomeDate))}`}
+                    formatDateToString(new Date(quotationData?.outcomeDate))}
                 </p>
               </>
             )}
@@ -196,7 +196,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation offer date</div>
             <p className='mb-0 text-break'>
               {!!quotationData?.quotationOfferDate &&
-                `${formatDateToString(new Date(quotationData?.quotationOfferDate))}`}
+                formatDateToString(new Date(quotationData?.quotationOfferDate))}
             </p>
           </div>
         </Col>
@@ -205,7 +205,9 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation valid until</div>
             <p className='mb-0 text-break'>
               {!!quotationData?.quotationValidUntil &&
-                `${formatDateToString(new Date(quotationData?.quotationValidUntil))}`}
+                formatDateToString(
+                  new Date(quotationData?.quotationValidUntil),
+                )}
             </p>
           </div>
         </Col>
@@ -218,7 +220,9 @@ const QuoteDetails = (
             </div>
             <p className='mb-0 text-break'>
               {!!quotationData?.dateInstrumentRequiredNMI &&
-                `${formatDateToString(new Date(quotationData?.dateInstrumentRequiredNMI))}`}
+                formatDateToString(
+                  new Date(quotationData?.dateInstrumentRequiredNMI),
+                )}
             </p>
           </div>
         </Col>
@@ -229,7 +233,9 @@ const QuoteDetails = (
             </div>
             <p className='mb-0 text-break'>
               {!!quotationData?.targetDateMesurementReport &&
-                `${formatDateToString(new Date(quotationData?.targetDateMesurementReport))}`}
+                formatDateToString(
+                  new Date(quotationData?.targetDateMesurementReport),
+                )}
             </p>
           </div>
         </Col>
@@ -385,7 +391,7 @@ const QuoteDetails = (
                 <p className='mb-0 text-break'>
                   {'AUD '}
                   {!!quotationData?.feePayableAmount &&
-                    `${formatCurrencyAmount(quotationData?.feePayableAmount)}`}
+                    formatCurrencyAmount(quotationData?.feePayableAmount)}
                   {' (inc. GST)'}
                 </p>
               </div>

@@ -21,7 +21,7 @@ const RequestForQuoteCreated = () => {
       <FormBanner
         title='Testing and calibration service - Request for quote'
         showSaveAndExitButton={false}
-        refTitle={`Ref ID: ${id}`}
+        refTitle={`Ref ID: ${id ?? ''}`}
         subTitle={formatBannerTitle(accountDetails)}
         showGoToDashboardButton
       />

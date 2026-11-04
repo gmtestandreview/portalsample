@@ -14,6 +14,7 @@ import TermsOfUse from '../../Footer/termsOfUse';
 import { UsersClient } from '../../../api/web-api-client';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import termsData from '../../../terms-config.json';
+import { joinNameParts } from '../../../utils';
 
 interface DefaultTermsAndConditionModalHeaderProps {
   userName?: string;
@@ -24,7 +25,7 @@ const DefaultTermsAndConditionModalHeader = (
 ): ReactElement => {
   const { userName } = props;
 
-  return <>{`Welcome, ${userName}`}</>;
+  return <>{userName ? `Welcome, ${userName}` : 'Welcome'}</>;
 };
 
 // Any change to the text, update TermsVersion in terms-config.json
@@ -166,11 +167,10 @@ const TermsAndConditionModal = () => {
         />
         <Modal.Title id='modal-prompt-terms' as='h2'>
           <DefaultTermsAndConditionModalHeader
-            userName={
-              accountState?.details?.givenName
-                ? `${accountState?.details?.givenName} ${accountState?.details?.familyName}`
-                : `${accountState?.details?.familyName}`
-            }
+            userName={joinNameParts(
+              accountState?.details?.givenName,
+              accountState?.details?.familyName,
+            )}
           />
           <span className='visually-hidden'> (modal dialog)</span>
         </Modal.Title>

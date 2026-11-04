@@ -37,6 +37,7 @@ import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import ApplicationDocuments from './appDocuments';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
+import { joinNameParts } from '../../../utils';
 
 const ApplicationMessages = lazy(() => import('./appMessages'));
 
@@ -95,12 +96,19 @@ const ApplicationDetails = () => {
     }
   }, [accounts, id, instance]);
 
+  // The application type loads asynchronously and the id is a route param, so
+  // either may be absent; show only what is known.
+  const applicationLabel = joinNameParts(
+    applicationType,
+    id === undefined ? undefined : `(${id})`,
+  );
+
   const breadcrumbs: CustomBreadcrumbItem[] = [
     { to: '/', text: 'Dashboard' },
-    { to: '', text: `${applicationType} (${id})` },
+    { to: '', text: applicationLabel },
   ];
 
-  useHtmlTitle(`${applicationType} (${id}) manage | NMI Services portal`);
+  useHtmlTitle(`${applicationLabel} manage | NMI Services portal`);
   useBodyClass('pa-application-manage');
 
   const formattedDate = (dateToFormat: Date | string | undefined) =>
@@ -238,7 +246,7 @@ const ApplicationDetails = () => {
                     containerClassName='mb-3'
                   >
                     <CustomAccordionBody
-                      name={`${title}`}
+                      name={title ?? 'Application details'}
                       eventKey='0'
                       className='mb-4 py-2'
                       nameRHS={

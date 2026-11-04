@@ -124,14 +124,28 @@ const PaRequestItem = ({
 
   const navigate = useNavigate();
   const messageCount = request.unreadMessageCount ?? 0;
-  const messagesRoute = `/ta/${portalReferenceId}/manage?tab=messages`;
-  const appDetailsRoute = `/ta/${portalReferenceId}/manage`;
-  const editApplicationRoute = `/ta/${portalReferenceId}`;
+
+  // Routes and element ids are built from the portal reference id; without one
+  // the card still renders, but nothing links anywhere or carries a bogus id.
+  const portalId = isNonEmptyReferenceId(portalReferenceId)
+    ? portalReferenceId
+    : undefined;
+  const portalRoute = (suffix: string) =>
+    portalId === undefined ? undefined : `/ta/${portalId}${suffix}`;
+  const portalElementId = (prefix: string, suffix = '') =>
+    portalId === undefined ? undefined : `${prefix}${portalId}${suffix}`;
+  const messagesRoute = portalRoute('/manage?tab=messages');
+  const appDetailsRoute = portalRoute('/manage');
+  const editApplicationRoute = portalRoute('');
   const editRoute =
     tab === DashboardTab.Drafts ? editApplicationRoute : appDetailsRoute;
 
+  function navigateTo(route: string | undefined) {
+    if (route !== undefined) void navigate(route);
+  }
+
   function routeToMessages() {
-    void navigate(messagesRoute);
+    navigateTo(messagesRoute);
     trackGAEvent('Application item/view messages');
   }
 
@@ -186,15 +200,14 @@ const PaRequestItem = ({
   };
 
   // Card aria-labelledby
-  const cardSummaryId = `card-summary-${portalReferenceId}`;
+  const cardSummaryId = portalElementId('card-summary-');
   const labelledBy = isFocused ? '' : cardSummaryId;
 
   return (
     <>
       <Card
         ref={cardRef}
-        id={`RefId-${portalReferenceId}`}
-        key={`RefId-${portalReferenceId}`}
+        id={portalElementId('RefId-')}
         className='mb-4 p-2 shadow'
         tabIndex={0}
         aria-labelledby={labelledBy}
@@ -219,7 +232,7 @@ const PaRequestItem = ({
             </Col>
             <Col lg={1} className='text-end'>
               <Actions
-                id={`actions-${portalReferenceId}`}
+                id={portalElementId('actions-')}
                 as='icon'
                 variant='Blue'
                 dropDownActions={getActions()}
@@ -279,11 +292,14 @@ const PaRequestItem = ({
               {isViewApplicationVisible ? (
                 <Button
                   variant='secondary'
-                  data-testid={`RefId-${portalReferenceId}-view-details-button`}
+                  data-testid={portalElementId(
+                    'RefId-',
+                    '-view-details-button',
+                  )}
                   className='ms-md-auto'
                   onClick={() => {
                     trackGAEvent('Application item/view details');
-                    void navigate(appDetailsRoute);
+                    navigateTo(appDetailsRoute);
                   }}
                 >
                   View application details
@@ -291,11 +307,11 @@ const PaRequestItem = ({
               ) : (
                 <Button
                   variant='secondary'
-                  data-testid={`RefId-${portalReferenceId}-resume-appl-button`}
+                  data-testid={portalElementId('RefId-', '-resume-appl-button')}
                   className='ms-md-auto'
                   onClick={() => {
                     trackGAEvent('Application item/resume application');
-                    void navigate(editRoute);
+                    navigateTo(editRoute);
                   }}
                 >
                   Resume application

@@ -27,6 +27,7 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
   return (
     <ul className='unstyled-list mt-2 p-0'>
       {files.map((f) => {
+        const { fileName } = f;
         const hasProgress =
           f.bytesUploaded !== undefined && f.totalBytes !== undefined;
         const progressPercent = hasProgress
@@ -54,19 +55,20 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
               <div className='d-flex align-items-top ms-3'>
                 {isCancellable &&
                   onCancelFile &&
-                  (cancelling[f.fileName ?? ''] ? (
+                  fileName !== undefined &&
+                  (cancelling[fileName] ? (
                     <span className='text-danger ms-2'>Cancelling...</span>
                   ) : (
                     <button
                       type='button'
-                      data-testid={`cancel-button-${f.fileName}`}
-                      id={`cancel-button-${f.fileName}`}
-                      name={`cancel-button-${f.fileName}`}
+                      data-testid={`cancel-button-${fileName}`}
+                      id={`cancel-button-${fileName}`}
+                      name={`cancel-button-${fileName}`}
                       title='Cancel uploading'
-                      aria-label={`Cancel uploading ${f.fileName}`}
+                      aria-label={`Cancel uploading ${fileName}`}
                       className='d-flex align-self-top mt-1 p-0 btn btn-flat fs-7'
                       onClick={() => {
-                        handleCancel(f.fileName ?? '', onCancelFile);
+                        handleCancel(fileName, onCancelFile);
                       }}
                     >
                       <i className='icon-close' aria-hidden='true' />
@@ -86,7 +88,11 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
               <div
                 role='progressbar'
                 className='mt-1'
-                aria-label={`Uploading ${f.fileName}`}
+                aria-label={
+                  fileName === undefined
+                    ? 'Uploading file'
+                    : `Uploading ${fileName}`
+                }
                 aria-valuenow={progressPercent}
                 aria-valuemin={0}
                 aria-valuemax={100}

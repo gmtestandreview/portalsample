@@ -15,6 +15,7 @@ import { DashboardItemStatus, ReportStatus } from '../../routes/common/enums';
 import { viewArtefactHeadingStatus } from '../../routes/common/quoteStatus';
 import ContactDetails from '../Utilities/contactDetails';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
+import { formatFullName } from '../../utils';
 
 // TS Move this to a common location
 const formattedDate = (dateToFormat: Date | string | undefined) =>
@@ -124,7 +125,7 @@ const renderRequestContent = (
         )}
         <ContactDetails
           label='Request main contact'
-          name={`${contactDetails?.firstName} ${contactDetails?.lastName}`}
+          name={formatFullName(contactDetails)}
           businessPhone={contactDetails?.businessPhone}
           mobilePhone={contactDetails?.mobilePhone}
           email={contactDetails?.email}
@@ -138,7 +139,7 @@ const renderInstrumentReportsContent = (
   requestForQuoteId: string | undefined,
   artefact: InstrumentArtefactDto,
   navigate: NavigateFunction,
-  referenceId: string | undefined,
+  referenceId: string,
 ) => (
   <>
     <Table
@@ -190,24 +191,27 @@ const renderInstrumentReportsContent = (
                     </td> */}
           <td data-header='Action' className='col-md-2'>
             <div>
-              {artefact.tmasStatus !== ReportStatus.Withdrawn && (
-                <Link
-                  to={`/report/${requestForQuoteId}`}
-                  aria-label='View latest report'
-                  className='d-block mb-2'
-                >
-                  View report
-                </Link>
-              )}
+              {artefact.tmasStatus !== ReportStatus.Withdrawn &&
+                requestForQuoteId !== undefined && (
+                  <Link
+                    to={`/report/${requestForQuoteId}`}
+                    aria-label='View latest report'
+                    className='d-block mb-2'
+                  >
+                    View report
+                  </Link>
+                )}
               <span className='visually-hidden'>{' or '}</span>
 
-              <Link
-                to={`/instrument-reports/${encodeURIComponent(artefact.tmasArtefactName!)}`}
-                aria-label='View all reports for this instrument/artefact'
-                className='d-block mb-2'
-              >
-                View all reports
-              </Link>
+              {artefact.tmasArtefactName !== undefined && (
+                <Link
+                  to={`/instrument-reports/${encodeURIComponent(artefact.tmasArtefactName)}`}
+                  aria-label='View all reports for this instrument/artefact'
+                  className='d-block mb-2'
+                >
+                  View all reports
+                </Link>
+              )}
             </div>
           </td>
         </tr>
@@ -216,18 +220,23 @@ const renderInstrumentReportsContent = (
     <Row>
       <Col />
       <Col md className='text-center'>
-        {artefact.tmasStatus !== ReportStatus.Withdrawn && (
-          <Button
-            variant='secondary'
-            data-testid={`RefId-${artefact.tmasTcReportName}-view-latest-ReportDto-button`}
-            className='ms-md-auto mb-3'
-            onClick={() => {
-              void navigate(`/report/${requestForQuoteId}`);
-            }}
-          >
-            View latest report
-          </Button>
-        )}
+        {artefact.tmasStatus !== ReportStatus.Withdrawn &&
+          requestForQuoteId !== undefined && (
+            <Button
+              variant='secondary'
+              data-testid={
+                artefact.tmasTcReportName === undefined
+                  ? undefined
+                  : `RefId-${artefact.tmasTcReportName}-view-latest-ReportDto-button`
+              }
+              className='ms-md-auto mb-3'
+              onClick={() => {
+                void navigate(`/report/${requestForQuoteId}`);
+              }}
+            >
+              View latest report
+            </Button>
+          )}
       </Col>
       <Col md>
         <Link
@@ -276,8 +285,11 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
 
   const navigate = useNavigate();
 
+  // Every route, id and test-id below is built from the reference id.
+  if (referenceId === undefined) return null;
+
   const onShowRFQDeleteModalClick = () => {
-    modalDispatch?.setShowRFQDeleteModal(true, referenceId!);
+    modalDispatch?.setShowRFQDeleteModal(true, referenceId);
   };
 
   const getActions = (): DropdownActionItem[] => {
@@ -305,24 +317,24 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
         );
         break;
       case DashboardItemStatus.ReportIssued:
-        actions.push(
-          {
+        if (requestForQuoteId !== undefined) {
+          actions.push({
             action: 'View',
             text: 'View latest report',
             route: `/report/${requestForQuoteId}`,
             onClick: () => {
               trackGAEvent('View latest report');
             },
+          });
+        }
+        actions.push({
+          action: 'View',
+          text: 'Request recalibration',
+          route: `/request-for-quote-copy/${referenceId}`,
+          onClick: () => {
+            trackGAEvent('Request recalibration');
           },
-          {
-            action: 'View',
-            text: 'Request recalibration',
-            route: `/request-for-quote-copy/${referenceId}`,
-            onClick: () => {
-              trackGAEvent('Request recalibration');
-            },
-          },
-        );
+        });
         break;
       // RULE-015: BA confirmation pending — OPEN-ITEMS-BACKLOG P2 item 21.
       // 'Request recalibration' is offered while a report is still in progress. Recommendation

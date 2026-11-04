@@ -604,20 +604,27 @@ const BranchSelectorModal = () => {
                               </td>
                               <td data-header='Location' className='text-break'>
                                 <span>
-                                  {`${branch.streetAddress?.suburb}, ${branch.streetAddress?.state}`}
+                                  {[
+                                    branch.streetAddress?.suburb,
+                                    branch.streetAddress?.state,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(', ')}
                                 </span>
                               </td>
                               {branchSelectionModalMode ===
                                 BranchSelectionModalMode.SelectAndEditOrg && (
                                 <td>
                                   <span>
-                                    <Link
-                                      to={`/update-organisation/${branch.organisationId}`}
-                                      onClick={handleClose}
-                                      aria-label='Edit details for this branch/location'
-                                    >
-                                      Edit
-                                    </Link>
+                                    {branch.organisationId !== undefined && (
+                                      <Link
+                                        to={`/update-organisation/${branch.organisationId}`}
+                                        onClick={handleClose}
+                                        aria-label='Edit details for this branch/location'
+                                      >
+                                        Edit
+                                      </Link>
+                                    )}
                                   </span>
                                 </td>
                               )}

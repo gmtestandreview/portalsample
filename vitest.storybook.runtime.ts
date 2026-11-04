@@ -11,7 +11,7 @@ type StorybookVitest = Pick<Vitest, 'standalone'> & {
 };
 
 type StorybookVitestPlugin = Plugin & {
-  configureVitest: (context: { vitest: StorybookVitest }) => void;
+  configureVitest: (_context: { vitest: StorybookVitest }) => void;
 };
 
 export const jsonCoverageExclusion = 'ClientApp/src/**/*.json';
@@ -30,6 +30,10 @@ export const storybookVitestRuntimePlugin: StorybookVitestPlugin = {
     if (!vitest.config.coverage.exclude.includes(jsonCoverageExclusion)) {
       vitest.config.coverage.exclude.push(jsonCoverageExclusion);
     }
-    vitest.init = vitest.standalone.bind(vitest);
+    Object.defineProperty(vitest, 'init', {
+      value: vitest.standalone.bind(vitest),
+      configurable: true,
+      writable: true,
+    });
   },
 };

@@ -22,7 +22,7 @@ const CustomDateInput = React.forwardRef<
     calendarButtonTitle,
     calendarOnKeyDown,
     className,
-    containerClassName,
+    containerClassName = '',
     disabled,
     errorMessage,
     forwardedFeedbackRef,

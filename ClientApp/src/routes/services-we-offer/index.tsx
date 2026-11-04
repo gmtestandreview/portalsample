@@ -354,7 +354,7 @@ const ServicesWeOffer = () => {
                       <div className='radio-button p-4'>
                         <input
                           type='radio'
-                          id={`radio-${service.serviceType}`}
+                          id={`radio-${service.serviceType ?? ''}`}
                           name='service-radio'
                           checked={defaultService === service.serviceType}
                           onChange={() => {
@@ -363,7 +363,7 @@ const ServicesWeOffer = () => {
                           className='form-field me-2'
                         />
                         <label
-                          htmlFor={`radio-${service.serviceType}`}
+                          htmlFor={`radio-${service.serviceType ?? ''}`}
                           className='border-0'
                           aria-label={service.title}
                         >
@@ -389,7 +389,7 @@ const ServicesWeOffer = () => {
                       <div className='checkbox p-4'>
                         <input
                           type='checkbox'
-                          id={`checkbox-${service.serviceType}`}
+                          id={`checkbox-${service.serviceType ?? ''}`}
                           name='service-checkbox'
                           checked={!!checkedServices[service.serviceType ?? '']}
                           onChange={(e) => {
@@ -400,7 +400,9 @@ const ServicesWeOffer = () => {
                           }}
                           className='me-2'
                         />
-                        <label htmlFor={`checkbox-${service.serviceType}`}>
+                        <label
+                          htmlFor={`checkbox-${service.serviceType ?? ''}`}
+                        >
                           <i className='icon-tick me-1' aria-hidden='true' />
                           <span className='text-nowrap'>
                             {'Add '}

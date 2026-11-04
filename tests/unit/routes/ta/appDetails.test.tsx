@@ -367,9 +367,7 @@ describe('application details', () => {
       await renderDetails();
 
       await waitFor(() => {
-        expect(screen.getByTestId('breadcrumb')).toHaveTextContent(
-          'null (APP-1)',
-        );
+        expect(screen.getByTestId('breadcrumb')).toHaveTextContent('(APP-1)');
       });
     });
   });
@@ -778,9 +776,7 @@ describe('application details', () => {
       // No type recorded, and the details panel renders from an empty set rather than
       // throwing on the way in.
       await waitFor(() => {
-        expect(screen.getByTestId('breadcrumb')).toHaveTextContent(
-          'null (APP-1)',
-        );
+        expect(screen.getByTestId('breadcrumb')).toHaveTextContent('(APP-1)');
       });
 
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();

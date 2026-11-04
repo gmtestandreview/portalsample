@@ -382,7 +382,7 @@ describe('route common helper functions', () => {
         'Trading - Branch - NMI',
         'Branch - NMI',
         'NMI',
-        'Trading - Branch - undefined',
+        'Trading - Branch',
         '',
       ],
       tradingBranches: ['Trading - Branch', 'Branch', ''],

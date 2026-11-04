@@ -122,7 +122,7 @@ const RhfAttachmentItem = ({
       // The error is left out of the message: it can carry tokens or PII.
       revertCategory(token);
       onCategoryError?.(
-        `Could not save the category for ${attachment.attachmentName}.`,
+        `Could not save the category for ${attachment.attachmentName ?? ''}.`,
       );
     }
   };
@@ -186,12 +186,12 @@ const RhfAttachmentItem = ({
               id={cancelButtonId}
               name={cancelButtonId}
               title='Delete'
-              aria-label={`Delete ${attachment.attachmentName}`}
+              aria-label={`Delete ${attachment.attachmentName ?? ''}`}
               className='p-0 fs-7 d-flex align-self-center'
               onClick={showModal}
             >
               <i className='icon-close' aria-hidden='true' />
-              <span className='visually-hidden'>{`Delete ${attachment.attachmentName}`}</span>
+              <span className='visually-hidden'>{`Delete ${attachment.attachmentName ?? ''}`}</span>
             </Button>
           </div>
         )}

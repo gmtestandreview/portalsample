@@ -980,7 +980,7 @@ When(
       await page.evaluate(
         ([stepSelector, postpaidSelector]) => {
           for (const frame of document.querySelectorAll(
-            `${stepSelector}, ${postpaidSelector}`,
+            `${stepSelector ?? ''}, ${postpaidSelector ?? ''}`,
           )) {
             frame.remove();
           }

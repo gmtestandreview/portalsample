@@ -276,7 +276,7 @@ const ApplicationMessages = () => {
                               </span>
                               <span className='text-end small text-muted'>
                                 {!!msg.messageSent &&
-                                  `${formatDateTimeToString(msg.messageSent)}`}
+                                  formatDateTimeToString(msg.messageSent)}
                               </span>
                             </p>
                             {typeof msg.body === 'string' ? (

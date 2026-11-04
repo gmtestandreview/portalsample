@@ -31,7 +31,7 @@ const AcceptQuote = () => {
   useBodyClass('wizard');
 
   const acceptQuoteWizardProps: WizardFormProps = {
-    locationOnCompletion: `/submitted-success/${id}`,
+    locationOnCompletion: `/submitted-success/${id ?? ''}`,
     lastStepNextButtonTitle: 'Submit and accept',
     nextButtonTitle: 'Save and next',
     previousButtonTitle: 'Back',

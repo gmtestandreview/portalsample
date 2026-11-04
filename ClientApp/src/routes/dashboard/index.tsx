@@ -394,7 +394,7 @@ const Dashboard = () => {
   const branchResetKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const branchResetKey = `${branchSelectionModalMode}:${accountDetails?.defaultOrganisationId ?? ''}`;
+    const branchResetKey = `${branchSelectionModalMode ?? ''}:${accountDetails?.defaultOrganisationId ?? ''}`;
 
     if (
       savedUserProfile &&

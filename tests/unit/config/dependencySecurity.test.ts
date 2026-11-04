@@ -278,7 +278,7 @@ describe('transitive security dependency floors', () => {
       ).toBeDefined();
       expect(
         gte(version, floor!),
-        `brace-expansion@${version} must be at least ${floor}`,
+        `brace-expansion@${version} must be at least ${floor ?? ''}`,
       ).toBe(true);
     }
   });

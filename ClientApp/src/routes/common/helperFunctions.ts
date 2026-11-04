@@ -277,36 +277,39 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
 };
 
 export const formatOrganisationTitle = (
-  organisationName: string | undefined,
-  tradingName: string | undefined,
-  branchName: string | undefined,
+  organisationName: string | null | undefined,
+  tradingNameInput: string | null | undefined,
+  branchNameInput: string | null | undefined,
 ): string => {
   if (
-    organisationName !== null &&
-    tradingName !== null &&
-    branchName !== null
+    organisationName === null ||
+    tradingNameInput === null ||
+    branchNameInput === null
   ) {
-    let result = '';
-
-    if (tradingName !== '') {
-      result = `${tradingName}`;
-    }
-
-    if (branchName !== '' && tradingName !== '') {
-      result = `${result} - ${branchName}`;
-    } else if (branchName !== '') {
-      result = `${branchName}`;
-    }
-
-    if (branchName !== '' || tradingName !== '') {
-      result = `${result} - ${organisationName}`;
-    } else {
-      result = `${organisationName}`;
-    }
-
-    return result;
+    return '';
   }
-  return '';
+  // A missing (undefined) trading or branch name is the same as an empty one.
+  const tradingName = tradingNameInput ?? '';
+  const branchName = branchNameInput ?? '';
+  let result = '';
+
+  if (tradingName !== '') {
+    result = tradingName;
+  }
+
+  if (branchName !== '' && tradingName !== '') {
+    result = `${result} - ${branchName}`;
+  } else if (branchName !== '') {
+    result = branchName;
+  }
+
+  if (branchName !== '' || tradingName !== '') {
+    // No organisation name to append when it is missing.
+    return organisationName === undefined
+      ? result
+      : `${result} - ${organisationName}`;
+  }
+  return organisationName ?? '';
 };
 
 export const formatTradingBranch = (accountDetails: AccountDetails): string => {
@@ -465,24 +468,19 @@ export const isValidGUID = (value: string | null | undefined): boolean =>
 
 export const getFormattedAddress = (address: AddressDetailsDto | undefined) => {
   let formattedAddress = '';
+  // Server JSON can carry null as well as a missing value; neither is printable.
+  const isSet = (value: unknown) => value !== undefined && value !== null;
 
   if (
     address !== undefined &&
-    address !== null &&
-    address.suburb !== null &&
-    address.state !== null &&
-    address.postcode !== null &&
-    address.suburb !== undefined &&
-    address.suburb !== null
+    isSet(address.suburb) &&
+    isSet(address.state) &&
+    isSet(address.postcode)
   ) {
-    if (address.line1 !== null && address.line1 !== '') {
-      formattedAddress = `${formattedAddress}${address.line1}, `;
-    }
-    if (address.line2 !== null && address.line2 !== '') {
-      formattedAddress = `${formattedAddress}${address.line2}, `;
-    }
-    if (address.line3 !== null && address.line3 !== '') {
-      formattedAddress = `${formattedAddress}${address.line3}, `;
+    for (const line of [address.line1, address.line2, address.line3]) {
+      if (line) {
+        formattedAddress = `${formattedAddress}${line}, `;
+      }
     }
     formattedAddress = `${formattedAddress} ${address.suburb} ${address.state} ${address.postcode}`;
   }

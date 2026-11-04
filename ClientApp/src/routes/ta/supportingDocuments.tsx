@@ -190,7 +190,7 @@ const SupportingDocuments = (
   if (noThirdPartyAccess) {
     setDashboardNotification({
       message: `You no longer have access to the records
-          for ${accountContext?.details?.targetOrganisation?.targetOrganisationName}
+          for ${accountContext?.details?.targetOrganisation?.targetOrganisationName ?? ''}
           . Your changes have not been saved.`,
       severity: NotificationSeverity.Error,
     });

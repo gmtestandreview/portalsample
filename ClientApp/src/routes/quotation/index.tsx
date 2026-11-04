@@ -351,7 +351,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
                     </Button>
                     <Link
                       data-testid='new-request-button'
-                      to={`/accept-quote-create/${id}`}
+                      to={`/accept-quote-create/${id ?? ''}`}
                       className='btn btn-primary'
                     >
                       Proceed with quote

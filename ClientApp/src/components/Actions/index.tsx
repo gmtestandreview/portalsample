@@ -38,12 +38,12 @@ import { Link } from 'react-router';
 export interface DropdownActionItem {
   action: string;
   text: string;
-  route?: string;
+  route?: string | undefined;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 interface ActionsProps {
-  id?: string;
+  id?: string | undefined;
   as?: 'icon';
   dropDownActions: DropdownActionItem[];
   onItemClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -100,7 +100,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
     if (itemAction.route) {
       return (
         <Dropdown.Item
-          key={`actions-dd-${id}-${index}`}
+          key={`actions-dd-${index}`}
           as={ActionMenuLink}
           eventKey={index}
           to={itemAction.route}
@@ -114,7 +114,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
 
     return (
       <Dropdown.Item
-        key={`actions-dd-${id}-${index}`}
+        key={`actions-dd-${index}`}
         as={ActionMenuButton}
         eventKey={index}
         onClick={itemAction.onClick || onItemClick}
@@ -131,7 +131,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
       className={`actions-menu ${containerClassName}`}
     >
       <Dropdown.Toggle
-        id={`actions-dropdown-button-${id}`}
+        id={id === undefined ? undefined : `actions-dropdown-button-${id}`}
         variant={variant}
         className={`${as === 'icon' ? 'dropdown-toggle-none actions-icon' : ''} ${className}`}
         aria-label={triggerAccessibleName}

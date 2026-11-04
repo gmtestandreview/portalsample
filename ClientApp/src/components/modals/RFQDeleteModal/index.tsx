@@ -70,7 +70,7 @@ const RFQDeleteModal = () => {
       handleClose();
     } catch (e) {
       AppLogger.error(
-        `Failed to delete application: ${modalState?.rfqId}`,
+        `Failed to delete application: ${modalState?.rfqId ?? ''}`,
         e as Error,
       );
     } finally {

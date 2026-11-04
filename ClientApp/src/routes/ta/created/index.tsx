@@ -32,7 +32,7 @@ const RequestForPatternApprovalCreated = () => {
       <FormBanner
         title='Pattern/type approval - Application'
         showSaveAndExitButton={false}
-        refTitle={`Ref ID: ${id}`}
+        refTitle={`Ref ID: ${id ?? ''}`}
         subTitle={formatBannerTitle(accountDetails)}
         showGoToDashboardButton
       />
@@ -59,7 +59,7 @@ const RequestForPatternApprovalCreated = () => {
                   <h2 className='h4 mb-1'>Application submitted</h2>
                   <p>
                     {'Your application reference number is: '}
-                    <strong>{`${id}`}</strong>
+                    <strong>{id}</strong>
                   </p>
                   <p>
                     This is a temporary number used to track your application

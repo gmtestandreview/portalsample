@@ -43,7 +43,7 @@ const formatError = (error: ErrorObject) => {
   const detail =
     error.params['missingProperty'] === undefined
       ? error.message
-      : `${error.message}: ${error.params['missingProperty']}`;
+      : `${error.message ?? ''}: ${String(error.params['missingProperty'])}`;
 
   return `${path} ${detail ?? 'failed schema validation'}`;
 };

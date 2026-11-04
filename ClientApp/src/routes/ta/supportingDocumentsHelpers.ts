@@ -22,7 +22,7 @@ export const getFailedFileErrors = (
     )
     .map((f) =>
       f.status === FileStatus.Cancelled
-        ? `Upload cancelled for ${f.fileName}`
-        : `Error uploading ${f.fileName}`,
+        ? `Upload cancelled for ${f.fileName ?? ''}`
+        : `Error uploading ${f.fileName ?? ''}`,
     );
 };

@@ -67,7 +67,7 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
             />
             {isEditable ? (
               <EditButton
-                link={`/request-for-quote/${id}/organisation-and-contact`}
+                link={`/request-for-quote/${id ?? ''}/organisation-and-contact`}
               />
             ) : null}
           </CustomAccordionBody>
@@ -81,7 +81,7 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
             <RfqInstrumentSummary values={values} />
             {isEditable ? (
               <EditButton
-                link={`/request-for-quote/${id}/instrument-and-request`}
+                link={`/request-for-quote/${id ?? ''}/instrument-and-request`}
               />
             ) : null}
           </CustomAccordionBody>

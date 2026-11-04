@@ -101,7 +101,7 @@ describe('normalizeMcpReceipt', () => {
         content: [
           {
             type: 'text',
-            text: `## Passing Stories\n\n- ${requestedStoryIds[0]}\n- ${requestedStoryIds[1]}`,
+            text: `## Passing Stories\n\n- ${requestedStoryIds[0] ?? ''}\n- ${requestedStoryIds[1] ?? ''}`,
           },
         ],
       },

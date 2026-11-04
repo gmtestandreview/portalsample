@@ -37,7 +37,7 @@ const ApplicationDocuments = () => {
   const { id } = useParams();
   const [isDataLoading, setIsDataLoading] = useState(false);
 
-  useHtmlTitle(`[New certificate] (${id}) manage | NMI Services portal`);
+  useHtmlTitle(`[New certificate] (${id ?? ''}) manage | NMI Services portal`);
   useBodyClass('pa-application-manage');
 
   // SupportingDocuments upload state and handlers (from ta/index.tsx)
