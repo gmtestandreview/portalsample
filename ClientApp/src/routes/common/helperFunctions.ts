@@ -237,11 +237,17 @@ export const mapToUserProfile = (profile: UserProfileDto): UserProfile => ({
   filterSearchText: profile.testingCalibrationDashboard?.filterSearchText,
 });
 
+/** Account names as the formatters accept them: trading and branch may be absent. */
+type NamedAccountDetails = Pick<AccountDetails, 'organisation'> & {
+  trading?: string | undefined;
+  branch?: string | undefined;
+};
+
 /**
  * Returns a formatted banner title string
  */
 export const formatBannerTitle = (
-  accountDetails: AccountDetails | null | undefined,
+  accountDetails: NamedAccountDetails | null | undefined,
 ): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
@@ -315,7 +321,7 @@ export const formatOrganisationTitle = (
 };
 
 export const formatTradingBranch = (
-  accountDetails: AccountDetails | null | undefined,
+  accountDetails: NamedAccountDetails | null | undefined,
 ): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
@@ -444,7 +450,7 @@ export function sortList<T>(
     removeId = (item as LookupResponse | undefined)?.id ?? '';
   }
 
-  lastId = removeId ?? '';
+  lastId = removeId;
 
   if (indexOfItemToRemove >= 0) {
     removedItems = list.splice(indexOfItemToRemove, 1);

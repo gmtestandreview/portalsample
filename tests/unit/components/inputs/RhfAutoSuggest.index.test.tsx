@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import RhfAutoSuggest from '@/components/Inputs/RhfAutoSuggest';
+import { defined } from '../../helpers/defined';
 
 type SelectedOption = AutoSuggestProps<string>['onSelectedOption'];
 import type {
@@ -216,7 +217,7 @@ describe('rhfAutoSuggest parent state', () => {
     let selectionPromise: Promise<void> | undefined;
     act(() => {
       selectionPromise = containerState.props?.onSelectedOption(
-        selectedOption!,
+        defined(selectedOption, 'first auto-suggest option'),
       );
     });
 

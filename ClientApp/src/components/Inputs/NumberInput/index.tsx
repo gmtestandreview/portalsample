@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useEffect, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import { InputGroup } from 'react-bootstrap';
@@ -8,6 +9,7 @@ import { getPhoneNumberFormat } from './phoneFormat';
 import { NumericFormatFixed, PatternFormatFixed } from './types';
 import type { NumberInputProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 type NumberInputFieldValue = string | number | Date | null | undefined;
 
@@ -46,9 +48,10 @@ const NumberInput = ({
   defaultValue,
 }: Readonly<NumberInputProps>) => {
   const [field, meta, helpers] = useField<NumberInputFieldValue>(name);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
-  const inputPrependId = prepend ? `input-prepend-${id || name}` : undefined;
-  const inputAppendId = append ? `input-append-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
+  const inputPrependId = prepend ? `input-prepend-${controlId}` : undefined;
+  const inputAppendId = append ? `input-append-${controlId}` : undefined;
   const getDate = (date: Date | string) =>
     typeof date === 'string' ? parseISO(date) : date;
   const formattedValue =
@@ -57,6 +60,7 @@ const NumberInput = ({
     (typeof meta.value === 'string' || meta.value instanceof Date)
       ? formatDate(getDate(meta.value), 'yyyy-MM-dd')
       : meta.value;
+  const displayValue = formattedValue ?? '';
   const phoneFormatValue =
     typeof formattedValue === 'string' ? formattedValue : undefined;
   const { setValue } = helpers;
@@ -90,9 +94,7 @@ const NumberInput = ({
         disabled,
         readOnly: readonly,
         'aria-describedby':
-          meta.touched && meta.error
-            ? `${id || name}-validation-msg`
-            : helpId || undefined,
+          meta.touched && meta.error ? `${controlId}-validation-msg` : helpId,
         autoComplete,
         placeholder,
         format:
@@ -108,7 +110,7 @@ const NumberInput = ({
         allowemptyformatting,
         renderText,
       })}
-      value={formattedValue || ''}
+      value={displayValue}
       displayType={displayType}
     />
   );
@@ -124,9 +126,7 @@ const NumberInput = ({
         disabled,
         readOnly: readonly,
         'aria-describedby':
-          meta.touched && meta.error
-            ? `${id || name}-validation-msg`
-            : helpId || undefined,
+          meta.touched && meta.error ? `${controlId}-validation-msg` : helpId,
         autoComplete,
         placeholder,
         mask,
@@ -143,7 +143,7 @@ const NumberInput = ({
         allowedDecimalSeparators,
         decimalScale,
       })}
-      value={formattedValue || ''}
+      value={displayValue}
       displayType={displayType}
       allowLeadingZeros={allowLeadingZeros}
     />
@@ -155,7 +155,7 @@ const NumberInput = ({
         label={label}
         value={field.value == null ? undefined : String(field.value)}
         as={as}
-        id={id || name}
+        id={controlId}
         format={
           format === 'checkPhoneFormat'
             ? getPhoneNumberFormat(phoneFormatValue)
@@ -164,8 +164,8 @@ const NumberInput = ({
         mask={mask}
         prepend={prepend}
         append={append}
-        prefix={prefix || prepend}
-        suffix={suffix || append}
+        prefix={orIfEmpty(prefix, prepend)}
+        suffix={orIfEmpty(suffix, append)}
         thousandSeparator={thousandSeparator}
         valueIsNumericString={valueIsNumericString}
         allowNegative={allowNegative}
@@ -179,7 +179,7 @@ const NumberInput = ({
   return (
     <Form.Group
       className={`form-field-container ${containerClassName}`}
-      controlId={id || name}
+      controlId={controlId}
     >
       {label && <Form.Label>{label}</Form.Label>}
       {inlineHelp && (
@@ -187,7 +187,7 @@ const NumberInput = ({
           {inlineHelp}
         </Form.Text>
       )}
-      {(prepend || append) && (
+      {(!!prepend || !!append) && (
         <InputGroup>
           {prepend && (
             <InputGroup.Text id={inputPrependId}>{prepend}</InputGroup.Text>
@@ -205,7 +205,7 @@ const NumberInput = ({
       {meta.touched && meta.error ? (
         <Form.Control.Feedback
           type='invalid'
-          id={`${id || name}-validation-msg`}
+          id={`${controlId}-validation-msg`}
           className='form-validation-message'
         >
           {meta.error}

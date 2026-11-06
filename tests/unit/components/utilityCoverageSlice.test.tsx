@@ -34,6 +34,7 @@ import type * as ApiModule from '../../../ClientApp/src/api/web-api-client';
 import type { IMsalContext } from '@azure/msal-react';
 import type * as MsalReactModule from '@azure/msal-react';
 import type * as NotificationModule from '../../../ClientApp/src/storage/notification';
+import { defined } from '../helpers/defined';
 
 type BooleanSetter = (value: boolean) => void;
 
@@ -276,9 +277,18 @@ describe('utility component coverage slice', () => {
                 </div>
             </div>
         `;
-    const target = document.querySelector('#inside-accordion')!;
-    const collapse = document.querySelector('.accordion-collapse')!;
-    const button = document.querySelector('button')!;
+    const target = defined(
+      document.querySelector('#inside-accordion'),
+      'accordion target heading',
+    );
+    const collapse = defined(
+      document.querySelector('.accordion-collapse'),
+      'accordion collapse panel',
+    );
+    const button = defined(
+      document.querySelector('button'),
+      'accordion toggle button',
+    );
     const buttonClick = vi.spyOn(button, 'click');
     const scrollIntoView = vi.spyOn(target, 'scrollIntoView');
 
@@ -307,7 +317,7 @@ describe('utility component coverage slice', () => {
 
     vi.useFakeTimers();
     render(<RouteHarness showTitle />);
-    const title = document.querySelector('#page-title')!;
+    const title = defined(document.querySelector('#page-title'), 'page title');
     const focus = vi.spyOn(title, 'focus');
 
     fireEvent.click(screen.getByRole('link', { name: 'Second page' }));
@@ -324,7 +334,10 @@ describe('utility component coverage slice', () => {
 
     vi.useFakeTimers();
     render(<RouteHarness showTitle={false} />);
-    const pageTop = document.querySelector('#page-top')!;
+    const pageTop = defined(
+      document.querySelector('#page-top'),
+      'page top anchor',
+    );
     const focus = vi.spyOn(pageTop, 'focus');
 
     fireEvent.click(screen.getByRole('link', { name: 'Second page' }));

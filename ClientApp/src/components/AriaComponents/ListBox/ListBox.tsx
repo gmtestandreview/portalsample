@@ -1,4 +1,5 @@
 'use client';
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
@@ -21,9 +22,10 @@ export function ListBox<T>({ children, ...props }: Readonly<ListBoxProps<T>>) {
 }
 
 export function ListBoxItem(props: Readonly<ListBoxItemProps>) {
-  const textValue =
-    props.textValue ||
-    (typeof props.children === 'string' ? props.children : undefined);
+  const textValue = orIfEmpty(
+    props.textValue,
+    typeof props.children === 'string' ? props.children : undefined,
+  );
   return (
     <AriaListBoxItem {...props} {...omitUndefined({ textValue })}>
       {composeRenderProps(props.children, (children) =>
@@ -54,9 +56,10 @@ export function DropdownListBox<T>(props: Readonly<ListBoxProps<T>>) {
 }
 
 export function DropdownItem(props: Readonly<ListBoxItemProps>) {
-  const textValue =
-    props.textValue ||
-    (typeof props.children === 'string' ? props.children : undefined);
+  const textValue = orIfEmpty(
+    props.textValue,
+    typeof props.children === 'string' ? props.children : undefined,
+  );
   return (
     <ListBoxItem
       {...props}

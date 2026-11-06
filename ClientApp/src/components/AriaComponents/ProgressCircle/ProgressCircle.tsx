@@ -17,8 +17,8 @@ export function ProgressCircle(props: Readonly<ProgressCircleProps>) {
       {...props}
       style={composeRenderProps(props.style, (style) => ({
         ...style,
-        width: props.size || 16,
-        height: props.size || 16,
+        width: props.size ?? 16,
+        height: props.size ?? 16,
       }))}
     >
       {({ percentage, isIndeterminate }) => (

@@ -6,6 +6,7 @@ import TextInput from '../TextInput';
 import type { OrgNameOption } from '../../../api/web-api-client';
 import { getFilteredSuggestions } from './suggestionUtils';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 export interface OrganisationNameLookupProps {
   id?: string;
@@ -49,7 +50,8 @@ const OrganisationNameLookup = (
 
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
   // Debounced filtering
   useEffect(() => {
@@ -219,8 +221,8 @@ const OrganisationNameLookup = (
                 activeIndex >= 0 ? `${name}-option-${activeIndex}` : undefined,
               'aria-describedby':
                 _meta.touched && _meta.error
-                  ? `${id || name}-validation-msg`
-                  : helpId || undefined,
+                  ? `${controlId}-validation-msg`
+                  : helpId,
             })}
             aria-autocomplete='both'
             containerClassName='mb-0'

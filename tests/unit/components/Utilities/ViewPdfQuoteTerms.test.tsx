@@ -17,6 +17,7 @@ import type {
 } from '@/routes/common/helperFunctions';
 import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import type AppLogger from '@/instrumentation/AppLogger';
+import { defined } from '../../helpers/defined';
 import ViewPdfQuoteTerms from '@/components/Utilities/ViewPdfQuoteTerms';
 import type { ViewPdfQuoteTermsProps } from '@/components/Utilities/ViewPdfQuoteTerms';
 
@@ -182,7 +183,7 @@ const mockTokenResult = {
 // InTextLink renders <a> without href when only onClick is supplied.
 // An <a> without href has no ARIA "link" role, so queries use the element directly.
 const getTermsAnchor = (container: HTMLElement) =>
-  container.querySelector('a.nmi-in-text-link')!;
+  defined(container.querySelector('a.nmi-in-text-link'), 'terms anchor');
 
 const resetViewPdfQuoteTermsMocks = () => {
   vi.clearAllMocks();

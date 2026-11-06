@@ -458,18 +458,16 @@ const DashboardTA = () => {
           <h2 id='dash-type-title' className='mb-0 me-3' tabIndex={-1}>
             Manage Pattern/type approval
             {/* TO DO - Do we componentise this? */}
-            {services &&
-              services.filter((x: ServicesOffered) => x.isActive).length >
-                1 && (
-                <span className='text-start ms-3 me-3'>
-                  <Link
-                    to='/services-we-offer?mode=manage'
-                    className='fw-normal fs-6'
-                  >
-                    Change
-                  </Link>
-                </span>
-              )}
+            {services.filter((x: ServicesOffered) => x.isActive).length > 1 && (
+              <span className='text-start ms-3 me-3'>
+                <Link
+                  to='/services-we-offer?mode=manage'
+                  className='fw-normal fs-6'
+                >
+                  Change
+                </Link>
+              </span>
+            )}
           </h2>
 
           <span className='text-end'>
@@ -505,9 +503,7 @@ const DashboardTA = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: PatternApprovalDashboardDetailsDto) => (
             <li key={r.referenceId}>
@@ -515,7 +511,8 @@ const DashboardTA = () => {
                 setDeleteSuccess={setDeleteSuccess}
                 request={r}
                 tab={
-                  (initialFilters?.filterActiveTab as DashboardTab) ?? activeTab
+                  (initialFilters?.filterActiveTab as
+                    DashboardTab | undefined) ?? activeTab
                 }
               />
             </li>

@@ -2,6 +2,7 @@ import { useController } from 'react-hook-form';
 import type { UseControllerProps } from 'react-hook-form';
 import type { ReactNode } from 'react';
 import { omitUndefined } from '../../utils/omitUndefined';
+import { getControlId } from './getControlId';
 
 // Deliberately non-generic: `FieldValues` is `Record<string, any>`, so `validate`
 // callbacks receive `any`. Tightening that to `unknown` breaks typed consumer
@@ -34,7 +35,7 @@ export const useRhfFieldA11y = ({
     name,
     ...omitUndefined({ rules }),
   });
-  const controlId = id || name;
+  const controlId = getControlId(id, name);
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
   const validationMessageId = `${controlId}-validation-msg`;
   const errorMessage =

@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useField, useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
 import { useEffect, useRef, useState } from 'react';
@@ -50,7 +51,7 @@ const ApplicationAndInstrument = (
   const initialKey = context.getFieldMeta('patternApprovalType')
     .initialValue as string | null;
   const [selectedApplication, setSelectedApplication] = useState<string | null>(
-    () => initialKey || 'new',
+    () => orIfEmpty(initialKey, 'new'),
   );
   const [instrumentCategories, setInstrumentCategories] =
     useState<LookupResponse[]>();
@@ -129,11 +130,7 @@ const ApplicationAndInstrument = (
             noInstrumentCategoriestId.current = lastId;
             setInstrumentCategories(sorted);
             setInstrumentTypes(artefactTypeResult);
-            if (
-              (artefactTypeResult !== undefined &&
-                _instrumentTypeField.value !== undefined) ||
-              isSummary
-            ) {
+            if (_instrumentTypeField.value !== undefined || isSummary) {
               setInstrumentTypesSelected(
                 getInstrumentTypes(
                   artefactTypeResult,
@@ -203,7 +200,7 @@ const ApplicationAndInstrument = (
     setIsInstrumentTypeDisabled(false);
     void context.setFieldValue('instrumentType', '');
     void context.setFieldTouched('instrumentType', false);
-    if (event.target.value !== null && instrumentTypes !== undefined) {
+    if (instrumentTypes !== undefined) {
       setInstrumentTypesSelected(
         getInstrumentTypes(instrumentTypes, event.target.value),
       );
@@ -242,7 +239,10 @@ const ApplicationAndInstrument = (
               .join(', ') || 'Not selected'
           );
         }
-        return options.find((o) => o.value === value)?.label || 'Not selected';
+        return orIfEmpty(
+          options.find((o) => o.value === value)?.label,
+          'Not selected',
+        );
       };
       return (
         <Container>
@@ -253,8 +253,11 @@ const ApplicationAndInstrument = (
               as='p'
               value={
                 _field.value
-                  ? applicationTypes.find((a) => a.value === _field.value)
-                      ?.label || 'Not selected'
+                  ? orIfEmpty(
+                      applicationTypes.find((a) => a.value === _field.value)
+                        ?.label,
+                      'Not selected',
+                    )
                   : 'Not selected'
               }
             />

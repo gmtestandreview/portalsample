@@ -23,6 +23,7 @@ import type {
 import { ApplicationType } from '../../../ClientApp/src/api/web-api-client';
 import { QuoteStatus } from '../../../ClientApp/src/routes/common/enums';
 import { NotificationSeverity } from '../../../ClientApp/src/storage/types';
+import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
@@ -597,7 +598,10 @@ describe('quotation and measurement report routes', () => {
 
     fireEvent.click(screen.getByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
+      defined(
+        screen.getAllByRole('button', { name: 'Decline quote' }).at(-1),
+        'confirm Decline quote button',
+      ),
     );
 
     await waitFor(() => {
@@ -627,7 +631,10 @@ describe('quotation and measurement report routes', () => {
     });
     fireEvent.click(screen.getByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
+      defined(
+        screen.getAllByRole('button', { name: 'Decline quote' }).at(-1),
+        'confirm Decline quote button',
+      ),
     );
 
     await waitFor(() => {
@@ -1166,7 +1173,10 @@ describe('quotation and measurement report routes', () => {
 
     fireEvent.click(await screen.findByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
+      defined(
+        screen.getAllByRole('button', { name: 'Decline quote' }).at(-1),
+        'confirm Decline quote button',
+      ),
     );
 
     await waitFor(() => {

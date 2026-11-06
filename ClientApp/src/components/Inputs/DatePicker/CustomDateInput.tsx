@@ -129,16 +129,14 @@ const CustomDateInput = React.forwardRef<
         <Form.Control
           {...theRest}
           {...omitUndefined({
-            'aria-describedby': hasError
-              ? `${name}-validation-msg`
-              : helpId || undefined,
+            'aria-describedby': hasError ? `${name}-validation-msg` : helpId,
             disabled,
             placeholder,
             readOnly,
             onChange,
             onKeyDown,
           })}
-          className={`form-field form-text-input ${className || ''}`}
+          className={`form-field form-text-input ${className ?? ''}`}
           isInvalid={!!(_meta.touched && _meta.error)}
           onBlur={handleCustomBlur}
           onFocus={handleCustomFocus}
@@ -150,7 +148,7 @@ const CustomDateInput = React.forwardRef<
           aria-label={`Choose your ${calendarButtonTitle.toLowerCase()}`}
           aria-describedby={helpId}
           className='custom-input-button'
-          disabled={disabled || readOnly}
+          disabled={disabled === true || readOnly}
           onBlur={handleCustomBlur}
           onClick={handleCustomOnClick}
           onFocus={handleCustomFocus}

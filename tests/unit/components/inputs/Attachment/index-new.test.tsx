@@ -213,18 +213,12 @@ describe('attachment upload behavior', () => {
     expect(preventDefault).toHaveBeenCalledWith();
   });
 
-  it('ignores null-valued and null-file input changes', () => {
+  it('ignores null-file input changes', () => {
     expect.hasAssertions();
 
     const onUploadFiles = vi.fn<UploadFiles>();
     renderAttachment([], { onUploadFiles });
     const input = screen.getByTestId('drag-upload-supporting-documents');
-
-    Object.defineProperty(input, 'value', {
-      configurable: true,
-      get: () => null,
-    });
-    fireEvent.change(input);
 
     Object.defineProperty(input, 'value', {
       configurable: true,

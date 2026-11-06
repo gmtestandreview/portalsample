@@ -182,7 +182,7 @@ const RhfAutoSuggestContainer = <T,>(
               <AutoSuggestOptions<T> id={`${name}-options`} options={options} />
             </Popover>
           )}
-          {loading && <p>{loadingMessage || 'Loading options'}</p>}
+          {loading && <p>{loadingMessage ?? 'Loading options'}</p>}
           {errorMessage ? (
             <div className='invalid-feedback' id={validationMessageId}>
               {errorMessage}
@@ -190,8 +190,8 @@ const RhfAutoSuggestContainer = <T,>(
           ) : null}
         </ComboBox>
       </div>
-      {!loading && noResult && <p>{noResultMessage || 'No matches found'}</p>}
-      {error && <p>{searchErrorMessage || 'Results could not be fetched'}</p>}
+      {!loading && noResult && <p>{noResultMessage ?? 'No matches found'}</p>}
+      {error && <p>{searchErrorMessage ?? 'Results could not be fetched'}</p>}
     </>
   );
 };

@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import React, { useMemo } from 'react';
 import { createEditor, type BaseEditor, Editor, type Descendant } from 'slate';
 import parse from 'html-react-parser';
@@ -19,10 +20,9 @@ export const serializeToHtml = (value: CustomElement[]): string =>
         })
         .join('');
 
-      if (element.type === 'paragraph') {
-        return `<p>${children}</p>`;
-      }
-      return children;
+      // CustomElement only models paragraphs; widen it to a discriminated union
+      // (with exhaustive serialization) before adding other block types.
+      return `<p>${children}</p>`;
     })
     .join('');
 export interface CustomElement {
@@ -242,8 +242,8 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
             // Slate renders a contenteditable div with role="textbox", which gets
             // no accessible name from the placeholder the way a native input
             // would. Name it explicitly with the same text a sighted user sees.
-            aria-label={placeholder || 'Message NMI'}
-            placeholder={placeholder || 'Message NMI'}
+            aria-label={orIfEmpty(placeholder, 'Message NMI')}
+            placeholder={orIfEmpty(placeholder, 'Message NMI')}
             className='form-control mb-0 border border-bottom-0'
             style={{ minHeight: '4rem' }}
             spellCheck

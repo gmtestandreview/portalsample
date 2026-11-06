@@ -25,7 +25,7 @@ const OrganisationAndContact = () => {
   const modalDispatch = useModalDispatch();
   const location = useLocation();
   const { id } = useParams();
-  const rFQId = id || '';
+  const rFQId = id ?? '';
 
   const isCorrectBranchOrLocation = values.isCorrectBranchOrLocation;
 

@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useMsal } from '@azure/msal-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -207,7 +208,9 @@ const ApplicationMessages = () => {
       className='d-flex align-items-center justify-content-center rounded-circle bg-primary mb-3 mb-sm-0 me-3'
       style={{ width: 36, height: 36 }}
     >
-      <span className='fs-6 capitalized text-white'>{avatar || '?'}</span>
+      <span className='fs-6 capitalized text-white'>
+        {orIfEmpty(avatar, '?')}
+      </span>
     </div>
   );
 

@@ -94,7 +94,7 @@ const RhfSelectInput = <T extends string | number = string>(
         >
           {addBlank && (
             <option value={defaultValue}>
-              {defaultDisplayText || 'Please select'}
+              {defaultDisplayText ?? 'Please select'}
             </option>
           )}
           {options?.map((option) => (

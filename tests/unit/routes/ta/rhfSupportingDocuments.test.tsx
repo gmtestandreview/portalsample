@@ -232,7 +232,7 @@ const renderDocs = async ({
 
   const result = renderWithRouter(
     <FormHarness values={values}>
-      <SupportingDocuments {...(componentProps as any)} />
+      <SupportingDocuments {...componentProps} />
     </FormHarness>,
     { path: '/ta/:id', initialPath: '/ta/APP-1' },
   );
@@ -338,7 +338,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockResolvedValue([]);
       await renderDocs({ props: { onUploadAttachment } });
       setFieldError('Documents are invalid');
@@ -525,7 +525,9 @@ describe('rHF supporting documents', () => {
       await renderDocs({
         props: {
           onUploadAttachment:
-            vi.fn<TASupportingDocumentsProps['onUploadAttachment']>(),
+            vi.fn<
+              NonNullable<TASupportingDocumentsProps['onUploadAttachment']>
+            >(),
         },
       });
 
@@ -540,7 +542,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockResolvedValue([{ id: 'doc-1' }]);
       const setExternalErrors =
         vi.fn<NonNullable<TASupportingDocumentsProps['setExternalErrors']>>();
@@ -598,7 +600,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           errors: {
             file: ['File type not allowed', 'File too large'],
@@ -624,7 +626,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({ title: 'Upload rejected' });
       await renderDocs({ props: { onUploadAttachment } });
 
@@ -641,7 +643,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({});
       await renderDocs({ props: { onUploadAttachment } });
 
@@ -658,7 +660,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           status: 403,
           title: 'No third-party access remains for this organisation',
@@ -699,7 +701,7 @@ describe('rHF supporting documents', () => {
         details: null,
       });
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           status: 403,
           title: 'No third-party access remains for this organisation',
@@ -721,7 +723,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           status: 403,
           title: 'Forbidden',

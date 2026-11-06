@@ -318,7 +318,7 @@ export const formatFullName = (
 ): string => joinNameParts(person?.firstName, person?.lastName);
 
 export const formatCurrencyAmount = (
-  amount: number | undefined,
+  amount: number | null | undefined,
 ): string | null => {
   if (amount === null || amount === undefined) {
     return null;

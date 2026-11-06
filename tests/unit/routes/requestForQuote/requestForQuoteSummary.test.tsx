@@ -15,6 +15,7 @@ import type { AccountDetails } from '../../../../ClientApp/src/authentication/ac
 import { AccountStateCtx } from '../../../../ClientApp/src/authentication/accountContext';
 import RequestForQuoteSummary from '../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary';
 import { resetMsalMock } from '../../helpers/mockMsal';
+import { defined } from '../../helpers/defined';
 import type { ClientMockOf } from '../../helpers/mockApiClient';
 import {
   mockSummaryLookups,
@@ -279,7 +280,7 @@ describe(RequestForQuoteSummary, () => {
 
     expect(editButtons).toHaveLength(2);
 
-    fireEvent.click(editButtons.at(index)!);
+    fireEvent.click(defined(editButtons.at(index), `Edit button ${index}`));
 
     expect(
       screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`),

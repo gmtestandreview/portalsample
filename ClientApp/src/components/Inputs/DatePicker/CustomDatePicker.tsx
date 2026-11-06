@@ -60,7 +60,7 @@ const CustomDatePicker = (
   const [showCalendar, setShowCalendar] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    currentDate || startDate || null,
+    currentDate ?? startDate ?? null,
   );
 
   // Impure during render: the argument is re-evaluated every render even though
@@ -78,7 +78,7 @@ const CustomDatePicker = (
     setSelectedDate(currentDate ?? null);
   }, [currentDate]);
 
-  const showCalendarInvalid = hasError || isInvalid;
+  const showCalendarInvalid = hasError === true || isInvalid;
 
   const handleOpenCalendar = () => {
     setShowCalendar(true);
@@ -151,7 +151,7 @@ const CustomDatePicker = (
               customInputControlRef.current?.classList.contains('is-invalid');
             if (invalidInputRef) {
               const inputErrorClientHeight =
-                customInputFeedbackRef.current?.clientHeight || 0;
+                customInputFeedbackRef.current?.clientHeight ?? 0;
 
               distanceOffset = bottomOffset - inputErrorClientHeight;
             } else {
@@ -159,7 +159,7 @@ const CustomDatePicker = (
             }
           } else if (offsetArgs.placement.includes('top')) {
             const inlineHelpClientHeight =
-              customInputInlineHelpRef.current?.clientHeight || 0;
+              customInputInlineHelpRef.current?.clientHeight ?? 0;
 
             distanceOffset = topOffset - inlineHelpClientHeight;
           }
@@ -217,7 +217,7 @@ const CustomDatePicker = (
         onKeyDown={handleKeyDown}
         open={showCalendar}
         // "today" semantics; owned by Child Plan B
-        openToDate={selectedDate || new Date()}
+        openToDate={selectedDate ?? new Date()}
         placeholderText={placeholder ?? ''}
         popperModifiers={[offSetModifier as never]}
         preventOpenOnFocus

@@ -7,6 +7,7 @@ import RhfAddressLookup from '@/components/Inputs/RhfAddressLookup';
 import { State } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import AppLogger from '@/instrumentation/AppLogger';
+import { defined } from '../../helpers/defined';
 import { FieldHarness } from './rhfTestHarness';
 
 type AcquireTokenSilent = IPublicClientApplication['acquireTokenSilent'];
@@ -191,7 +192,12 @@ describe('rhfAddressLookup selection', () => {
       screen.getByRole('combobox', { name: 'Address' }),
       'sparse',
     );
-    await userEvent.click((await screen.findAllByRole('option'))[0]!);
+    await userEvent.click(
+      defined(
+        (await screen.findAllByRole('option'))[0],
+        'first address option',
+      ),
+    );
 
     await waitFor(() => {
       expect(formValue()).toMatchObject({

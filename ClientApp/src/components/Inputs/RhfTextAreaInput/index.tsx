@@ -84,7 +84,7 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
       <Form.Control
         className={`form-field form-text-area ${className}`}
         as='textarea'
-        rows={rows || DEFAULT_ROWS}
+        rows={rows ?? DEFAULT_ROWS}
         name={field.name}
         ref={field.ref}
         isInvalid={!!errorMessage}

@@ -92,7 +92,7 @@ const AttachmentNew = (
   };
 
   const clearFileInput = () => {
-    if (inputRef.current && inputRef.current.value !== null) {
+    if (inputRef.current) {
       inputRef.current.value = '';
       inputRef.current.files = null;
     }
@@ -124,10 +124,6 @@ const AttachmentNew = (
   };
 
   const onInputFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value === null) {
-      return;
-    }
-
     setErrors([]);
     setIsUploading(true);
     if (event.currentTarget.files !== null) {
@@ -171,10 +167,7 @@ const AttachmentNew = (
             (item: AttachmentDto) => item.id !== attachment.id,
           ),
         );
-        if (inputRef.current && inputRef.current.value !== null) {
-          inputRef.current.value = '';
-          inputRef.current.files = null;
-        }
+        clearFileInput();
       }
     } catch (error_) {
       setErrors((newErrors) => [
@@ -206,7 +199,7 @@ const AttachmentNew = (
           canRemove={!isSummary && !attachment.documentLocked}
           cancelButtonId={`cancel-button-${attachment.id ?? ''}`}
           onRemoveItem={onConfirmDeleteFile}
-          isSummary={isSummary || (attachment.documentLocked ?? false)}
+          isSummary={isSummary === true || (attachment.documentLocked ?? false)}
         />
       );
     });
@@ -228,7 +221,7 @@ const AttachmentNew = (
   return (
     <>
       <div
-        className={`form-field-container position-relative ${containerClassName || ''}`}
+        className={`form-field-container position-relative ${containerClassName ?? ''}`}
       >
         {/*   {isUploading && (
                     <BlockUISpinner>
@@ -286,7 +279,7 @@ const AttachmentNew = (
                 title={
                   disableUpload
                     ? 'Drag files disabled'
-                    : buttonTitle || 'Drag files here'
+                    : (buttonTitle ?? 'Drag files here')
                 }
                 // TO DO: Move the inline style into own class
                 className='position-absolute top-0 start-0 w-100 h-100 opacity-0'
@@ -304,7 +297,7 @@ const AttachmentNew = (
                 id={id ?? name}
                 name={name}
                 data-testid={id ?? name}
-                value={buttonTitle || 'Browse files'}
+                value={buttonTitle ?? 'Browse files'}
                 // TO DO: Move the inline style into own class
                 className='d-flex d-md-inline-block gap-2 position-relative btn btn-nmi-secondary flex-grow-1 mx-auto mb-2'
                 style={{ zIndex: 3 }}

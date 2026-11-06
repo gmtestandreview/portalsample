@@ -604,9 +604,7 @@ const Dashboard = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
             <RequestItem request={r} key={r.referenceId} />
@@ -623,9 +621,7 @@ const Dashboard = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
             <InstrumentItem request={r} key={r.referenceId} />

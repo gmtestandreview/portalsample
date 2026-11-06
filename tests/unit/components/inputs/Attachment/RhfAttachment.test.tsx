@@ -21,6 +21,7 @@ type DeleteFile = NonNullable<AttachmentProps['onDeleteFile']>;
 type CancelFile = NonNullable<AttachmentProps['handleCancelFile']>;
 type CategoryUpdate = NonNullable<AttachmentProps['onCategoryUpdate']>;
 import { FileStatus } from '@/routes/ta/types';
+import { defined } from '../../../helpers/defined';
 
 interface AttachmentHarnessProps {
   readonly initialAttachmentValue: AttachmentDto[] | AttachmentDto | null;
@@ -903,7 +904,10 @@ describe('rhfAttachment', () => {
         attachmentCategory: '',
       }) satisfies AttachmentDto;
     const rowOf = (fileName: string) =>
-      screen.getByText(fileName).closest('.attachment')!;
+      defined(
+        screen.getByText(fileName).closest<HTMLElement>('.attachment'),
+        `attachment row for ${fileName}`,
+      );
     const touchCategory = async (
       user: ReturnType<typeof userEvent.setup>,
       fileName: string,
@@ -1039,9 +1043,12 @@ describe('rhfAttachment', () => {
       .mockReturnValue(savePromise);
     renderAttachment([uploadedAttachment, second], { onCategoryUpdate });
 
-    const secondRow = screen.getByText('second.pdf').closest('.attachment')!;
+    const secondRow = defined(
+      screen.getByText('second.pdf').closest<HTMLElement>('.attachment'),
+      'attachment row for second.pdf',
+    );
     await user.selectOptions(
-      within(secondRow as HTMLElement).getByRole('combobox', {
+      within(secondRow).getByRole('combobox', {
         name: 'Category',
       }),
       'Other',

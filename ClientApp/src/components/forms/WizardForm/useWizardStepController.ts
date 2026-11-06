@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { ReactElement } from 'react';
@@ -241,7 +242,7 @@ export const useWizardStepController = (
       try {
         const isDirty = !areFormValuesEqual(stepValues, values);
         await onSaveAndExit(values, isDirty, controllerRef.current?.signal);
-        void navigate(locationAfterExit || '/');
+        void navigate(orIfEmpty(locationAfterExit, '/'));
       } catch (error) {
         const err = error as Error;
         AppLogger.error('Could not save form step.', err, {
@@ -264,7 +265,7 @@ export const useWizardStepController = (
         );
       }
     } else {
-      void navigate(locationAfterExit || '/');
+      void navigate(orIfEmpty(locationAfterExit, '/'));
     }
   };
 
@@ -281,7 +282,9 @@ export const useWizardStepController = (
       globalThis.location.replace(env.VITE_EXTERNAL_REDIRECT_URL);
       return;
     }
-    void navigate(discard?.locationOnCancel || discardLocation || '/');
+    void navigate(
+      orIfEmpty(discard?.locationOnCancel, orIfEmpty(discardLocation, '/')),
+    );
   };
 
   return {

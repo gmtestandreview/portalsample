@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import {
@@ -195,8 +196,8 @@ const ApplicationDetails = () => {
         setAppDetails(result.formValues as RequestForPatternApprovalAppDetails);
         const appType = result.formValues.applicationDetails as
           ApplicationDetailsDto | undefined;
-        setApplicationType(appType?.patternApprovalType || null);
-        setMessageCount(appType?.messageCount || 0);
+        setApplicationType(orIfEmpty(appType?.patternApprovalType, null));
+        setMessageCount(appType?.messageCount ?? 0);
       } catch (error) {
         // Previously unguarded: a rejected load became an unhandled rejection, and because
         // setIsDataLoading(false) sat only on the success path the page stayed on its
@@ -225,7 +226,7 @@ const ApplicationDetails = () => {
       statusDetail,
       title,
       submittedDate,
-    } = details.applicationDetails || {};
+    } = details.applicationDetails ?? {};
     return (
       <Row className='mb-4'>
         <Col aria-busy={isDataLoading} aria-live='polite'>
@@ -552,7 +553,7 @@ const ApplicationDetails = () => {
         <Col md={12} lg={9}>
           <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
             <span className='visually-hidden'>Pattern/type approval:</span>
-            {data.applicationDetails?.title || 'Application details'}
+            {orIfEmpty(data.applicationDetails?.title, 'Application details')}
             <span className='visually-hidden'> manage</span>
           </h1>
           {/* <HeaderIntroText className='mb-4'>

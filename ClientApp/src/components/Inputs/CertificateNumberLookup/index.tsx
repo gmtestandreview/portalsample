@@ -6,6 +6,7 @@ import TextInput from '../TextInput';
 import type { LookupResponse } from '../../../api/web-api-client';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 export interface CertificateNumberLookupProps {
   id?: string;
@@ -90,7 +91,8 @@ const CertificateNumberLookup = (
 
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
   // Debounced filtering
   useEffect(() => {
@@ -311,8 +313,8 @@ const CertificateNumberLookup = (
                 : undefined,
               'aria-describedby':
                 _meta.touched && _meta.error
-                  ? `${id || name}-validation-msg`
-                  : helpId || undefined,
+                  ? `${controlId}-validation-msg`
+                  : helpId,
             })}
           />
 

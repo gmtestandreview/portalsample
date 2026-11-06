@@ -158,7 +158,7 @@ const ApplicationForTypeApproval = () => {
         null,
         null,
       );
-      const { documents } = result.form || {};
+      const { documents } = result.form ?? {};
       uploadIdRef.current = result.uploadId ?? '';
 
       attachments =

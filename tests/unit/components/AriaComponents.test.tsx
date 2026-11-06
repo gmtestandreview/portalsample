@@ -5,6 +5,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ResizableTableContainer } from 'react-aria-components/Table';
+import { defined } from '../helpers/defined';
 import { DialogTrigger } from '@/components/AriaComponents/Dialog/Dialog';
 import { Button } from '@/components/AriaComponents/Button/Button';
 import { Heading, Text } from '@/components/AriaComponents/Content/Content';
@@ -333,7 +334,10 @@ describe('react Aria evaluation wrappers', () => {
         screen.getByRole('meter', { name: 'Storage used' }),
       ).toHaveTextContent(`${value}%`);
 
-      const fill = container.querySelector('.fill')!;
+      const fill = defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      );
 
       expect(fill.style.width).toBe(`${value}%`);
       expect(fill.style.getPropertyValue('--fill-color')).toBe(fillColor);
@@ -356,13 +360,19 @@ describe('react Aria evaluation wrappers', () => {
       screen.getByRole('progressbar', { name: 'Upload progress' }),
     ).toHaveTextContent('30%');
     expect(
-      container.querySelector('.fill')!.style.getPropertyValue('--percent'),
+      defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      ).style.getPropertyValue('--percent'),
     ).toBe('30%');
 
     rerender(<ProgressBar label='Upload progress' isIndeterminate />);
 
     expect(
-      container.querySelector('.fill')!.style.getPropertyValue('--percent'),
+      defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      ).style.getPropertyValue('--percent'),
     ).toBe('100%');
   });
 

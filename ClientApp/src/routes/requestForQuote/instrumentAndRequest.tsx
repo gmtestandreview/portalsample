@@ -44,7 +44,7 @@ const measurementReportInlineHelp = (
 
 const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   const options: SelectInputOption<string>[] = [];
-  if (parentId !== undefined && parentId !== '') {
+  if (parentId !== '') {
     for (const l of values) {
       if (l.parentId === parentId) {
         options.push({ displayText: l.label ?? '', value: l.id ?? '' });
@@ -150,7 +150,7 @@ export const useInstrumentAndRequestLookups = () => {
     setIsInstrumentOrArtefactTypeDisabled(false);
     void context.setFieldValue('instrumentOrArtefactType', '');
     void context.setFieldTouched('instrumentOrArtefactType', false);
-    if (event.target.value !== null && artefactTypes !== undefined) {
+    if (artefactTypes !== undefined) {
       const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
         artefactTypes,
         event.target.value,

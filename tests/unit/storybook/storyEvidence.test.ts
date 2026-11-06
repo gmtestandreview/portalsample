@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
+import { defined } from '../helpers/defined';
 
 interface EvidenceResult {
   ok: boolean;
@@ -72,8 +73,11 @@ const manifest = {
   ],
 };
 
-const manifestRecord = manifest.records[0]!;
-const manifestState = manifestRecord.states[0]!;
+const manifestRecord = defined(manifest.records[0], 'the manifest record');
+const manifestState = defined(
+  manifestRecord.states[0],
+  'the manifest record state',
+);
 
 const index = {
   entries: {

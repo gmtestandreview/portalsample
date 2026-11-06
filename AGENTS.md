@@ -388,6 +388,14 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 - `verification-before-completion`: Before claiming any objectively verifiable
   work succeeded — edits, fixes, tests, builds, generated artifacts. Evidence
   before assertions.
+- `vitest`: Creating, modifying, diagnosing, reviewing, configuring, or
+  migrating Vitest unit tests, mocks, coverage, or Vitest-powered Storybook
+  `play()` tests — project test ownership, lanes, and coverage policy. Not for
+  standalone Playwright E2E/BDD/API-contract or Jest-only work.
+- `vitest-api-snapshot`: Supplemental raw Vitest 5 API syntax lookup
+  (quarantined upstream snapshot, deletable at the online transition) when
+  installed types or official docs are unreachable; defers all project policy to
+  `vitest`.
 - `writing-plans`: Turn a chosen or approved engineering direction into a
   repository-grounded implementation plan before coding.
 - `writing-skills`: Creating, editing, optimizing, testing, validating, or

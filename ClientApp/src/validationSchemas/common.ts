@@ -166,7 +166,8 @@ export const isValidAbn = (value: string) => {
   return sum % 89 === 0;
 };
 
-const DIGIT_WORDS: Readonly<Record<number, string>> = {
+// Partial: only 1-10 are spelled out, so any other number has no entry.
+const DIGIT_WORDS: Readonly<Partial<Record<number, string>>> = {
   1: 'one',
   2: 'two',
   3: 'three',

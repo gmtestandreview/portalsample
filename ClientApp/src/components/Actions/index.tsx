@@ -104,7 +104,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
           as={ActionMenuLink}
           eventKey={index}
           to={itemAction.route}
-          onClick={itemAction.onClick || onItemClick}
+          onClick={itemAction.onClick ?? onItemClick}
           role='menuitem'
         >
           {itemAction.text}
@@ -117,7 +117,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
         key={`actions-dd-${index}`}
         as={ActionMenuButton}
         eventKey={index}
-        onClick={itemAction.onClick || onItemClick}
+        onClick={itemAction.onClick ?? onItemClick}
         role='menuitem'
       >
         {itemAction.text}

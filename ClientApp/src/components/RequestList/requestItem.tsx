@@ -423,7 +423,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     [status],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
-    ? `${requestForQuote.manufacturer} ${requestForQuote.model || ''}` // If Model null display empty string
+    ? `${requestForQuote.manufacturer} ${requestForQuote.model ?? ''}` // If Model null display empty string
     : 'Draft Request For Quote';
   const heading = showArtefactHeading ? quote?.artefactName : headingNoArtefact;
   const requestForQuoteId = request.quote?.quotationId;

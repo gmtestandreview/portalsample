@@ -91,7 +91,7 @@ describe('form shell behavior slice', () => {
         >
           {({ errors, handleSubmit, setFieldValue }) => (
             <Form onSubmit={handleSubmit}>
-              <div>{errors.firstName!}</div>
+              <div>{errors.firstName}</div>
               <button
                 type='button'
                 onClick={() => void setFieldValue('firstName', 'Alex')}

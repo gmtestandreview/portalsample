@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { defined } from '../../helpers/defined';
 import type { FileProgress } from '@/api/web-api-client';
 import ProgressFileList from '@/components/Progress/ProgressFileList';
 import { FileStatus } from '@/routes/ta/types';
@@ -103,10 +104,12 @@ describe('progress file list', () => {
       },
     ]);
 
-    const item = screen.getByText('queued.pdf').closest('li');
+    const item = defined(
+      screen.getByText('queued.pdf').closest('li'),
+      'queued file list item',
+    );
 
-    expect(item).not.toBeNull();
-    expect(within(item!).queryByRole('progressbar')).not.toBeInTheDocument();
-    expect(within(item!).queryByRole('button')).not.toBeInTheDocument();
+    expect(within(item).queryByRole('progressbar')).not.toBeInTheDocument();
+    expect(within(item).queryByRole('button')).not.toBeInTheDocument();
   });
 });

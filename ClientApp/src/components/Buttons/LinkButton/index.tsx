@@ -41,7 +41,7 @@ const LinkButton = (props: Readonly<LinkButtonProps>) => {
 
   const hrefValue = as === 'a' ? href : to;
   const resolvedClassName = getButtonClassName(
-    variant || 'nmi-primary',
+    variant ?? 'nmi-primary',
     className,
   );
   const linkProps = rest as ComponentProps<typeof AriaLink>;

@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
 import { useEffect, useRef, useState } from 'react';
@@ -76,7 +77,7 @@ const AddressLookup = (
   const [manual, setManual] = useState(address?.isManuallyEntered);
 
   const { instance, accounts, inProgress } = useMsal();
-  const account = useAccount(accounts[0] || {});
+  const account = useAccount(accounts[0] ?? {});
 
   useEffect(() => {
     const { value, setValue: setVal } = fieldSyncRef.current;
@@ -115,8 +116,8 @@ const AddressLookup = (
 
     const options: AutoSuggestOption<MatchedAddress>[] = addresses.matches.map(
       (a, i) => ({
-        displayText: a.displayText || '',
-        id: a.unqiueId || i.toString(),
+        displayText: a.displayText ?? '',
+        id: orIfEmpty(a.unqiueId, i.toString()),
         value: a,
       }),
     );
@@ -192,11 +193,11 @@ const AddressLookup = (
             timeStamp: _field.value?.timeStamp,
             state: option.value.state,
           }),
-          line1: option.value.addressLine1 || '',
-          line2: option.value.addressLine2 || '',
-          line3: option.value.addressLine3 || '',
-          suburb: option.value.suburb || '',
-          postcode: option.value.postCode || '',
+          line1: option.value.addressLine1 ?? '',
+          line2: option.value.addressLine2 ?? '',
+          line3: option.value.addressLine3 ?? '',
+          suburb: option.value.suburb ?? '',
+          postcode: option.value.postCode ?? '',
           isManuallyEntered: false,
           searchText: option.displayText,
         });

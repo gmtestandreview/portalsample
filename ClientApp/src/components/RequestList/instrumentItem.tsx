@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router';
 import type { NavigateFunction } from 'react-router';
@@ -270,7 +271,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     [status],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
-    ? `${requestForQuote.manufacturer} ${requestForQuote.model || ''}` // If Model null display empty string
+    ? `${requestForQuote.manufacturer} ${requestForQuote.model ?? ''}` // If Model null display empty string
     : 'Draft Request For Quote';
   const heading = showArtefactHeading
     ? artefact?.tmasArtefactName
@@ -385,7 +386,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
           <Row>
             <Col lg={8}>
               <h3 id={cardSummaryId} className='mb-1'>
-                {heading ? heading : 'Draft request for Quote'}
+                {orIfEmpty(heading, 'Draft request for Quote')}
               </h3>
               <p>
                 <span className='d-block small mb-2'>

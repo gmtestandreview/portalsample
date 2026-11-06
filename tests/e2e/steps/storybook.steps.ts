@@ -230,15 +230,14 @@ When(
 
     expect(envelope.error).toBeUndefined();
 
-    const contentText = envelope.result?.content
-      ?.filter((block) => block.type === 'text' && block.text !== undefined)
-      .map((block) => block.text!)
-      .join('\n');
-    const contentStructured = envelope.result?.content
-      ?.filter((block) => block.type === 'text' && block.text !== undefined)
-      .map((block) => {
+    const textBlocks = envelope.result?.content?.flatMap((block) =>
+      block.type === 'text' && block.text !== undefined ? [block.text] : [],
+    );
+    const contentText = textBlocks?.join('\n');
+    const contentStructured = textBlocks
+      ?.map((text) => {
         try {
-          return JSON.parse(block.text!) as unknown;
+          return JSON.parse(text) as unknown;
         } catch {
           return undefined;
         }

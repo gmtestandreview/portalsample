@@ -204,7 +204,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           canRemove={!isSummary && !attachment.documentLocked}
           cancelButtonId={`cancel-button-${attachment.id ?? ''}`}
           onRemoveItem={onConfirmDeleteFile}
-          isSummary={isSummary || !!attachment.documentLocked}
+          isSummary={isSummary === true || !!attachment.documentLocked}
         />
       );
     });
@@ -222,7 +222,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   return (
     <>
       <div
-        className={`form-field-container position-relative ${containerClassName || ''}`}
+        className={`form-field-container position-relative ${containerClassName ?? ''}`}
       >
         {isDeleting && (
           <BlockUISpinner>
@@ -267,7 +267,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                 title={
                   disableUpload
                     ? 'Drag files disabled'
-                    : buttonTitle || 'Drag files here'
+                    : (buttonTitle ?? 'Drag files here')
                 }
                 // TO DO: Move the inline style into own class
                 className='position-absolute top-0 start-0 w-100 h-100 opacity-0'
@@ -285,7 +285,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                 id={controlId}
                 name={name}
                 data-testid={controlId}
-                value={buttonTitle || 'Browse files'}
+                value={buttonTitle ?? 'Browse files'}
                 // TO DO: Move the inline style into own class
                 className='d-flex d-md-inline-block gap-2 position-relative btn btn-nmi-secondary flex-grow-1 mx-auto mb-2'
                 style={{ zIndex: 3 }}

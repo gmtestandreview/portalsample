@@ -351,19 +351,19 @@ describe('route common helper functions', () => {
         ),
         formatBannerTitle(details({ branch: 'Sydney' })),
         formatBannerTitle(details({})),
-        formatBannerTitle(null as unknown as AccountDetails),
+        formatBannerTitle(null),
       ],
       organisations: [
         formatOrganisationTitle('NMI', 'Trading', 'Branch'),
         formatOrganisationTitle('NMI', '', 'Branch'),
         formatOrganisationTitle('NMI', '', ''),
         formatOrganisationTitle(undefined, 'Trading', 'Branch'),
-        formatOrganisationTitle(null as unknown as string, 'Trading', 'Branch'),
+        formatOrganisationTitle(null, 'Trading', 'Branch'),
       ],
       tradingBranches: [
         formatTradingBranch(details({ trading: 'Trading', branch: 'Branch' })),
         formatTradingBranch(details({ branch: 'Branch' })),
-        formatTradingBranch(null as unknown as AccountDetails),
+        formatTradingBranch(null),
       ],
       strings: [
         formatTradingBranchFromStrings('Trading', 'Branch'),
@@ -636,7 +636,7 @@ describe('route common helper functions', () => {
         organisation: 'National Measurement Institute',
         trading: '',
         branch: '',
-      } as AccountDetails),
+      }),
     ).toBe('National Measurement Institute');
 
     expect(
@@ -644,7 +644,7 @@ describe('route common helper functions', () => {
         organisation: 'National Measurement Institute',
         trading: 'Trading',
         branch: '',
-      } as AccountDetails),
+      }),
     ).toBe('Trading');
   });
 

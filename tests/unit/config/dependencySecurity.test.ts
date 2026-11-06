@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { gte, major, prerelease, valid } from 'semver';
 import { describe, expect, it } from 'vitest';
+import { defined } from '../helpers/defined';
 
 interface LockPackage {
   version?: string;
@@ -137,13 +138,12 @@ const recordValue = <Value>(
 };
 
 const installedVersions = (packageName: string): string[] =>
-  Object.entries(lock.packages)
-    .filter(
-      ([packagePath, metadata]) =>
-        packagePath.split('node_modules/').at(-1) === packageName &&
-        metadata.version !== undefined,
-    )
-    .map(([, metadata]) => metadata.version!);
+  Object.entries(lock.packages).flatMap(([packagePath, metadata]) =>
+    packagePath.split('node_modules/').at(-1) === packageName &&
+    metadata.version !== undefined
+      ? [metadata.version]
+      : [],
+  );
 
 const exactDevDependency = (packageName: string): string => {
   const declaredVersion = recordValue(rootPackage.devDependencies, packageName);
@@ -270,15 +270,14 @@ describe('transitive security dependency floors', () => {
     expect(versions).not.toHaveLength(0);
 
     for (const version of versions) {
-      const floor = floors.get(major(version));
+      const floor = defined(
+        floors.get(major(version)),
+        `a known brace-expansion major for ${version}`,
+      );
 
       expect(
-        floor,
-        `unexpected brace-expansion major in ${version}`,
-      ).toBeDefined();
-      expect(
-        gte(version, floor!),
-        `brace-expansion@${version} must be at least ${floor ?? ''}`,
+        gte(version, floor),
+        `brace-expansion@${version} must be at least ${floor}`,
       ).toBe(true);
     }
   });

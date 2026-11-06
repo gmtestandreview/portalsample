@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useMsal } from '@azure/msal-react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
@@ -154,7 +155,7 @@ const ApplicationDocuments = () => {
         null,
         null,
       );
-      const { documents } = result.form || {};
+      const { documents } = result.form ?? {};
       uploadIdRef.current = result.uploadId ?? null;
 
       attachments =
@@ -232,10 +233,15 @@ const ApplicationDocuments = () => {
   const methods = useForm<AppDocumentsFormValues>({
     values: {
       form: {
-        documents: filesUploaded?.form?.documents || [],
-        instrumentCategory:
-          filesUploaded?.form?.instrumentCategory || undefined,
-        instrumentType: filesUploaded?.form?.instrumentType || undefined,
+        documents: filesUploaded?.form?.documents ?? [],
+        instrumentCategory: orIfEmpty(
+          filesUploaded?.form?.instrumentCategory,
+          undefined,
+        ),
+        instrumentType: orIfEmpty(
+          filesUploaded?.form?.instrumentType,
+          undefined,
+        ),
       },
     },
     resolver: createSaveAwareYupResolver<AppDocumentsFormValues>(
@@ -276,7 +282,7 @@ const ApplicationDocuments = () => {
               />
               <Row>
                 <Col md={12} className='text-end'>
-                  {!isDataLoading && filesToCommit && (
+                  {filesToCommit && (
                     <Button
                       variant='primary'
                       onClick={(e) => {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { defined } from '../helpers/defined';
 import {
   dateOnlyToApiDate,
   dateOnlyToPickerDate,
@@ -46,16 +47,18 @@ describe('date-only utilities', () => {
   it('serializes picker and API dates from the same calendar value', () => {
     expect.hasAssertions();
 
-    const dateOnlyValue = parseDateOnlyValue('2026-06-11');
+    const dateOnlyValue = defined(
+      parseDateOnlyValue('2026-06-11'),
+      'a valid date-only value',
+    );
 
-    expect(dateOnlyValue).toBeDefined();
-    expect(dateOnlyToStoredDateTimeString(dateOnlyValue!)).toBe(
+    expect(dateOnlyToStoredDateTimeString(dateOnlyValue)).toBe(
       '2026-06-11T00:00:00+00:00',
     );
-    expect(dateOnlyToApiDate(dateOnlyValue!).toISOString()).toBe(
+    expect(dateOnlyToApiDate(dateOnlyValue).toISOString()).toBe(
       '2026-06-11T00:00:00.000Z',
     );
-    expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue!))).toBe(
+    expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue))).toBe(
       '2026-06-11',
     );
   });
@@ -80,13 +83,15 @@ describe('date-only utilities', () => {
     // dateOnlyToApiDate, so UTC getters round-trip them. Reading either one
     // with the other parser shifts the stored calendar date by a day for
     // any host east or west of UTC.
-    const dateOnlyValue = parseDateOnlyValue('2026-06-11');
+    const dateOnlyValue = defined(
+      parseDateOnlyValue('2026-06-11'),
+      'a valid date-only value',
+    );
 
-    expect(dateOnlyValue).toBeDefined();
-    expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue!))).toBe(
+    expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue))).toBe(
       '2026-06-11',
     );
-    expect(parseApiDateOnlyInput(dateOnlyToApiDate(dateOnlyValue!))).toBe(
+    expect(parseApiDateOnlyInput(dateOnlyToApiDate(dateOnlyValue))).toBe(
       '2026-06-11',
     );
   });
@@ -109,9 +114,11 @@ describe('date-only utilities', () => {
   it('formats display text from the calendar date rather than the host timezone instant', () => {
     expect.hasAssertions();
 
-    const dateOnlyValue = parseDateOnlyInput('2026-06-11T00:00:00+10:00');
+    const dateOnlyValue = defined(
+      parseDateOnlyInput('2026-06-11T00:00:00+10:00'),
+      'a date-only value parsed from an offset timestamp',
+    );
 
-    expect(dateOnlyValue).toBeDefined();
-    expect(formatDateOnlyForDisplay(dateOnlyValue!)).toBe('11 Jun 2026');
+    expect(formatDateOnlyForDisplay(dateOnlyValue)).toBe('11 Jun 2026');
   });
 });

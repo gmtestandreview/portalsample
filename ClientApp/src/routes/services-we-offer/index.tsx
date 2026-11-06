@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useEffect, useState } from 'react';
 import { Col, Row, Container, Card, Alert, Button } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -341,7 +342,8 @@ const ServicesWeOffer = () => {
                 <Card
                   key={service.serviceType}
                   className={`mb-4 border border-3 border-light ${
-                    (selectedService || defaultService) === service.serviceType
+                    orIfEmpty(selectedService, defaultService) ===
+                    service.serviceType
                       ? 'selected-service'
                       : ''
                   }`}
@@ -369,7 +371,7 @@ const ServicesWeOffer = () => {
                         >
                           <span className='ms-5 pt-1'>
                             <i
-                              className={`${service.icon || 'icon-file'} me-3 p-2 fs-2 text-placeholder`}
+                              className={`${orIfEmpty(service.icon, 'icon-file')} me-3 p-2 fs-2 text-placeholder`}
                               aria-hidden='true'
                             />
                           </span>

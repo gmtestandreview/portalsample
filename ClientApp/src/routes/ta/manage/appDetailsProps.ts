@@ -95,16 +95,13 @@ const appDetailsProps = (
     applicationAndInstrument: {
       isApplNewHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.NewCertificate ||
-        x.applicationAndInstrument.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.NewCertificate,
       isApplVariationHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.Variation ||
-        x.applicationAndInstrument.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.Variation,
       isApplOtherHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.OtherApproval ||
-        x.applicationAndInstrument.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.OtherApproval,
       isApplOIMLHide: (x: AppDetailsHidingValues) =>
         DisplayRules.isOIMLHidden(x.applicationAndInstrument ?? {}),
     },

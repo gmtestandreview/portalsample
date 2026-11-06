@@ -37,7 +37,7 @@ export function ColorPicker({
           placement='bottom start'
           className='color-picker-dialog'
         >
-          {children || (
+          {children ?? (
             <>
               <ColorArea
                 colorSpace='hsb'

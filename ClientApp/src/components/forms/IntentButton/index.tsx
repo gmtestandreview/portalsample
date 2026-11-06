@@ -1,4 +1,5 @@
 import type { MouseEventHandler, ReactNode } from 'react';
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import PrimaryButton from '../../Buttons/PrimaryButton';
 
 export type IntentButtonChildren =
@@ -37,7 +38,7 @@ const IntentButton = ({
         className={className}
         {...(mode === undefined ? {} : { mode })}
       >
-        {children || label}
+        {orIfEmpty(children, label)}
       </PrimaryButton>
     );
   }

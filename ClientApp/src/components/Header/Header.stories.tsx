@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import Header from './index';
@@ -25,7 +26,9 @@ export const Authenticated = meta.story({
     // NMI logo link is present and has accessible text
     const logoLink = canvas
       .getAllByRole('link')
-      .find((l) => l.getAttribute('aria-label') || l.textContent.trim());
+      .find((l) =>
+        orIfEmpty(l.getAttribute('aria-label'), l.textContent.trim()),
+      );
 
     await expect(logoLink).toBeTruthy();
 

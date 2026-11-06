@@ -1,7 +1,7 @@
 import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
 import { getIn, setIn } from '../formPath';
-import { isHidden } from '../utils';
+import { getInnerErrors, isHidden } from '../utils';
 import type { Hideable, ValidationSchema } from '../types';
 
 /** Which schema validates: `saveAndExit` is the soft one, `next` the hard one. */
@@ -23,7 +23,7 @@ const toFieldErrors = <TFieldValues extends FieldValues>(
 ): FieldErrors<TFieldValues> => {
   let fieldErrors = {};
   const isVisible = (path: string) => !isHidden(path, hidden, values);
-  const inner = error.inner ?? [];
+  const inner = getInnerErrors(error) ?? [];
 
   if (inner.length > 0) {
     inner.forEach((innerError) => {

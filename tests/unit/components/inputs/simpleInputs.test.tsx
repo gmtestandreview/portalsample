@@ -874,4 +874,16 @@ describe('simple Formik input components', () => {
 
     expect(screen.getByRole('textbox', { name: 'Reference' })).toHaveValue('');
   });
+
+  it('does not leak a falsey inline help value into the DOM', () => {
+    expect.hasAssertions();
+
+    render(
+      <FormikHarness initialValues={{ reference: 'FORMIK-REF' }}>
+        <TextReadOnly name='reference' label='Reference' inlineHelp={0} />
+      </FormikHarness>,
+    );
+
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
+  });
 });
