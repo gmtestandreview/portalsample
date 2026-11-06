@@ -119,7 +119,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   const autoShowBranchSelector = !!(
     isAuthenticated &&
     account?.details?.userAcceptedTermsOfUse === true &&
-    account.details.defaultOrganisationId === null &&
+    account.details.defaultOrganisationId == null &&
     account.details.accountContactCompleted &&
     !path.includes('success-creating-account')
   );

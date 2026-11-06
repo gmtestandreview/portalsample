@@ -422,7 +422,18 @@ export function sortList<T>(
   list: T[],
   lastItem: string,
   displayFieldName: keyof T,
-): [T[], string] {
+): [T[], string];
+// Lookups can be absent before they load; an absent list is returned unchanged.
+export function sortList<T>(
+  list: T[] | undefined,
+  lastItem: string,
+  displayFieldName: keyof T,
+): [T[] | undefined, string];
+export function sortList<T>(
+  list: T[] | undefined,
+  lastItem: string,
+  displayFieldName: keyof T,
+): [T[] | undefined, string] {
   let removedItems;
   let lastId = '';
   let removeId: string | undefined;

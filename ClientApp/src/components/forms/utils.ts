@@ -16,14 +16,11 @@ export const getInnerErrors = (error: {
   inner?: ValidationError[] | undefined;
 }): ValidationError[] | undefined => error.inner;
 
-export const isFieldPathHidden = <TValues>(
-  hidden: unknown,
-  values: TValues,
-): boolean =>
+export const isFieldPathHidden = (hidden: unknown, values: unknown): boolean =>
   hidden !== undefined &&
   (hidden === true ||
     (typeof hidden === 'function' &&
-      (hidden as (currentValues: TValues) => boolean)(values)));
+      (hidden as (currentValues: unknown) => boolean)(values)));
 
 const parentPath = (path: string): string =>
   path.replace(/(?:\.[^.[]+|\[[^\]]+\])$/, '');

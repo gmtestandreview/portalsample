@@ -69,13 +69,9 @@ const AutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
   };
 
   useEffect(() => {
-    let mounted = true;
-    if (mounted && selectedOption && selectedOption !== '') {
+    if (selectedOption) {
       setSearchTerm(selectedOption);
     }
-    return () => {
-      mounted = false;
-    };
   }, [selectedOption]);
 
   const onCancel = () => {

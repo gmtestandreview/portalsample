@@ -28,7 +28,7 @@ thresholds, Storybook contract) is **out of scope here** — those belong to the
 | S09 snapshots | "How do inline/file snapshots work?" | `references/features-snapshots.md` | Snapshot reference selected |
 | S10 coverage | "How do I configure Vitest coverage in a Vite project?" | `references/features-coverage.md` (+ `references/core-config.md` if the question is config-shaped) | Coverage reference selected; `coverage.all` not suggested |
 | S11 context/fixtures | "How do scoped fixtures override a suite default?" | `references/features-context.md` | Context/fixture reference selected |
-| S12 concurrency | "How do I shard Vitest tests across CI jobs?" | `references/features-concurrency.md` | Concurrency reference discovered from intent, filename unspoken |
+| S12 concurrency | "How do I shard Vitest tests across CI jobs?" | `references/features-concurrency.md` (primary: concept + CI matrix + `--merge-reports`); `references/core-cli.md` acceptable as a co-reference for the `--shard` flag alone | Concurrency reference discovered from intent, filename unspoken; selecting `core-cli` for the flag syntax is not a FAIL |
 | S13 filtering | "Run only tests tagged `db`." | `references/features-filtering.md` | Filtering reference selected; `--tags-filter` (not bare `--tags`) |
 | S14 environments | "Run browser-like Vitest tests in a jsdom/browser environment." | `references/advanced-environments.md` | Environments reference selected |
 | S15 type-testing | "Which reference covers type-level Vitest assertions?" | `references/advanced-type-testing.md` | Type-testing reference selected |

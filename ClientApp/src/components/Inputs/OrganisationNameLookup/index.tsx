@@ -40,7 +40,9 @@ const OrganisationNameLookup = (
   } = props;
 
   const [_field, _meta, _fieldHelper] = useField<string>(name);
-  const [_orgNameOptions] = useField<OrgNameOption[]>('orgNameOptions');
+  const [_orgNameOptions] = useField<OrgNameOption[] | undefined>(
+    'orgNameOptions',
+  );
   const [_parentField] = useField<string | undefined>(parentName ?? name);
 
   const [inputValue, setInputValue] = useState('');

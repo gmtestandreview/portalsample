@@ -601,11 +601,7 @@ describe('route common helper functions', () => {
       ],
       lookups: [sortedLookups.map((lookup) => lookup.name), lastLookupId],
       empty: sortList([], 'anything', 'name'),
-      undefined: sortList(
-        undefined as unknown as { name: string }[],
-        'anything',
-        'name',
-      ),
+      undefined: sortList<{ name: string }>(undefined, 'anything', 'name'),
     }).toStrictEqual({
       options: [['Alpha', 'Beta', 'Zed'], 'z'],
       displayText: [['Alpha', 'Beta', 'Zed'], ''],

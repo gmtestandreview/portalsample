@@ -60,6 +60,21 @@ not runtime proof.
 | Context / concurrency / filtering | [features-context](references/features-context.md), [features-concurrency](references/features-concurrency.md), [features-filtering](references/features-filtering.md) |
 | Environments / type tests / projects | [advanced-environments](references/advanced-environments.md), [advanced-type-testing](references/advanced-type-testing.md), [advanced-projects](references/advanced-projects.md) |
 
+### Routing notes
+
+- **Sharding** (`--shard`, CI split across jobs/machines) resolves to
+  [features-concurrency](references/features-concurrency.md) — it holds the
+  concept, the CI matrix, and `--merge-reports`. [core-cli](references/core-cli.md)
+  is an acceptable co-reference for the `--shard` flag's syntax alone.
+- **Undocumented / unsupported flag or option:** consult
+  [core-cli](references/core-cli.md) then [core-config](references/core-config.md)
+  before answering. If neither documents it, report the evidence gap — do not
+  invent syntax.
+- **"Does X exist / is X valid in 5.0.5" (version-validity):** not answerable
+  from this snapshot. Defer to the **`vitest`** skill's `vitest-5-compatibility.md`
+  and the installed types; a page existing here is not proof the feature exists
+  in the installed version.
+
 For version-sensitive migration guidance (removed APIs and supported
 replacements), the **`vitest`** skill's `vitest-5-compatibility.md` is
 authoritative; this snapshot's examples defer to it.

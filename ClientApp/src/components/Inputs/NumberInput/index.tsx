@@ -13,6 +13,47 @@ import { getControlId } from '../getControlId';
 
 type NumberInputFieldValue = string | number | Date | null | undefined;
 
+const formatInputValue = (
+  type: string | undefined,
+  value: NumberInputFieldValue,
+): NumberInputFieldValue => {
+  if (
+    type !== 'date' ||
+    !value ||
+    !(typeof value === 'string' || value instanceof Date)
+  ) {
+    return value;
+  }
+
+  return formatDate(
+    typeof value === 'string' ? parseISO(value) : value,
+    'yyyy-MM-dd',
+  );
+};
+
+const getDisplayFormat = (
+  format: NumberInputProps['format'],
+  phoneFormatValue: string | undefined,
+): NumberInputProps['format'] =>
+  format === 'checkPhoneFormat'
+    ? getPhoneNumberFormat(phoneFormatValue)
+    : format;
+
+const renderInlineHelp = (
+  inlineHelp: NumberInputProps['inlineHelp'],
+  helpId: string | undefined,
+) => {
+  if (!inlineHelp) {
+    return null;
+  }
+
+  return (
+    <Form.Text as='p' id={helpId} className='contextual-help'>
+      {inlineHelp}
+    </Form.Text>
+  );
+};
+
 const NumberInput = ({
   label,
   inlineHelp,
@@ -29,7 +70,7 @@ const NumberInput = ({
   append,
   as = 'span', // default props
   displayType = 'input', // default props
-  format = undefined, // default props
+  format,
   mask,
   minLength,
   maxLength,
@@ -52,17 +93,11 @@ const NumberInput = ({
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
   const inputPrependId = prepend ? `input-prepend-${controlId}` : undefined;
   const inputAppendId = append ? `input-append-${controlId}` : undefined;
-  const getDate = (date: Date | string) =>
-    typeof date === 'string' ? parseISO(date) : date;
-  const formattedValue =
-    type === 'date' &&
-    meta.value &&
-    (typeof meta.value === 'string' || meta.value instanceof Date)
-      ? formatDate(getDate(meta.value), 'yyyy-MM-dd')
-      : meta.value;
+  const formattedValue = formatInputValue(type, meta.value);
   const displayValue = formattedValue ?? '';
   const phoneFormatValue =
     typeof formattedValue === 'string' ? formattedValue : undefined;
+  const displayFormat = getDisplayFormat(format, phoneFormatValue);
   const { setValue } = helpers;
   const lastAppliedDefaultValue =
     useRef<NumberInputProps['defaultValue']>(undefined);
@@ -97,10 +132,7 @@ const NumberInput = ({
           meta.touched && meta.error ? `${controlId}-validation-msg` : helpId,
         autoComplete,
         placeholder,
-        format:
-          format === 'checkPhoneFormat'
-            ? getPhoneNumberFormat(phoneFormatValue)
-            : format,
+        format: displayFormat,
         mask,
         minLength,
         maxLength,
@@ -156,11 +188,7 @@ const NumberInput = ({
         value={field.value == null ? undefined : String(field.value)}
         as={as}
         id={controlId}
-        format={
-          format === 'checkPhoneFormat'
-            ? getPhoneNumberFormat(phoneFormatValue)
-            : format
-        }
+        format={displayFormat}
         mask={mask}
         prepend={prepend}
         append={append}
@@ -182,11 +210,7 @@ const NumberInput = ({
       controlId={controlId}
     >
       {label && <Form.Label>{label}</Form.Label>}
-      {inlineHelp && (
-        <Form.Text as='p' id={helpId} className='contextual-help'>
-          {inlineHelp}
-        </Form.Text>
-      )}
+      {renderInlineHelp(inlineHelp, helpId)}
       {(!!prepend || !!append) && (
         <InputGroup>
           {prepend && (
