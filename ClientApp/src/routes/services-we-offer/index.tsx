@@ -192,13 +192,15 @@ const ServicesWeOffer = () => {
     setShowSaveError(false);
 
     const updatedServices = services.map((service) => {
-      const serviceType = service.serviceType ?? '';
+      const serviceKey = service.serviceType ?? '';
       return {
-        service: serviceType, // or serviceType.toString() if needed
+        ...(service.serviceType !== undefined
+          ? { service: service.serviceType }
+          : {}),
         isActive:
-          Object.hasOwn(checkedServices, serviceType) &&
-          Boolean(Reflect.get(checkedServices, serviceType)),
-        isDefault: defaultService === serviceType,
+          Object.hasOwn(checkedServices, serviceKey) &&
+          Boolean(Reflect.get(checkedServices, serviceKey)),
+        isDefault: defaultService === serviceKey,
       };
     });
 

@@ -112,6 +112,31 @@ Node `>=24.21.0`, Vitest and `@vitest/*` relevant direct packages `5.0.5`,
 Storybook packages `10.6.5`, Playwright `1.64.1`, and Vite `^8.3.5` in the
 provided manifest. A manifest is not proof of installed/resolved versions.
 
+## Strict-TS test authoring
+
+Test files type-check under the repo's strict `tsconfig` (notably
+`exactOptionalPropertyTypes: true` and no implicit index signatures). `vitest run`
+strips types and will not catch these; `npm run type-check` will. Common Vitest-5
+patterns that pass at runtime but fail strict type-check, with the fix:
+
+- **Mock arity** — `vi.fn(() => x)` infers a **zero-argument** signature; calling
+  it with arguments is a type error. Type the implementation's parameters even on
+  throwaway mocks: `vi.fn((_props: unknown) => null)`.
+- **`vi.spyOn` key must exist on the target's static type** — spying a DOM method
+  on an `Element` (e.g. `focus`) fails because `focus` lives on `HTMLElement`.
+  Narrow the query first: `document.querySelector<HTMLElement>('#id')`.
+- **`describe` title and `vitest/prefer-describe-function-title`** — the rule
+  wants a **function/class reference**; passing an object namespace (e.g. a
+  record of factory functions) is a type error. Use a **string** title for
+  non-function groupings.
+- **Exact-optional properties** — do not assign `undefined` to an optional field
+  (`service?: ServiceType`); **omit** the key instead
+  (`...(v !== undefined ? { service: v } : {})`).
+- **Index-signature-less types** — a named type/interface without an index
+  signature (e.g. `EnvType`) is not assignable to `Record<string, unknown>`;
+  when a helper needs that shape, cast through `unknown`
+  (`env as unknown as Record<string, unknown>`), not directly.
+
 ## Narrowest feasible validation by changed owner
 
 1. Unit-test change: existing unit script with an actual known test filter/path

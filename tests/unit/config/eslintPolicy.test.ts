@@ -138,7 +138,7 @@ describe('runner-specific lint boundaries', () => {
     expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
     expect(
       severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
-    ).toBe(0);
+    ).toBe('absent');
   });
 
   it(

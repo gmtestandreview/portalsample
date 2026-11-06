@@ -131,7 +131,9 @@ describe('vite environment contract', () => {
         expect(consoleError).toHaveBeenCalledWith(
           `[env] Missing required environment variable: ${key}`,
         );
-        expect(valueFor(module.env, key)).toBe('');
+        expect(
+          valueFor(module.env as unknown as Record<string, unknown>, key),
+        ).toBe('');
       });
 
     consoleError.mockRestore();
@@ -202,7 +204,9 @@ describe('vite environment contract', () => {
     const module = await import('../../../ClientApp/src/env');
 
     for (const key of envKeys) {
-      expect(valueFor(module.env, key)).toBe('');
+      expect(
+        valueFor(module.env as unknown as Record<string, unknown>, key),
+      ).toBe('');
     }
 
     expect(consoleError).toHaveBeenCalledWith(

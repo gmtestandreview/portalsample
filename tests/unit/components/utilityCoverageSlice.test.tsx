@@ -317,7 +317,10 @@ describe('utility component coverage slice', () => {
 
     vi.useFakeTimers();
     render(<RouteHarness showTitle />);
-    const title = defined(document.querySelector('#page-title'), 'page title');
+    const title = defined(
+      document.querySelector<HTMLElement>('#page-title'),
+      'page title',
+    );
     const focus = vi.spyOn(title, 'focus');
 
     fireEvent.click(screen.getByRole('link', { name: 'Second page' }));
@@ -335,7 +338,7 @@ describe('utility component coverage slice', () => {
     vi.useFakeTimers();
     render(<RouteHarness showTitle={false} />);
     const pageTop = defined(
-      document.querySelector('#page-top'),
+      document.querySelector<HTMLElement>('#page-top'),
       'page top anchor',
     );
     const focus = vi.spyOn(pageTop, 'focus');

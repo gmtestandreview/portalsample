@@ -90,3 +90,14 @@ R01-R04 were not executed this run -> NHR.
 Behaviorally validated (activation + governance + snapshot routing all PASS).
 Final `deploy` for runtime correctness stays gated on the NHR runtime-execution
 evals.
+
+## Lesson — behavioral PASS does not substitute for the type-check gate
+
+When the runtime-execution NHR was cleared later this session, `npm run type-check`
+surfaced 8 pre-existing `tsc` errors (in `tests/` and `ClientApp/src`) while the
+unit suite ran green — because Vitest transpiles via esbuild and does **not**
+type-check. A fully-GREEN behavioral/agent eval therefore does **not** imply the
+unit lane's definition-of-done is met. The skill now encodes this as an
+independent required gate (see `SKILL.md` "Vitest does not type-check" and the
+strict-TS test-authoring note in `references/project-nmi-portal.md`). Future
+runs: treat `vitest run` green and `tsc --noEmit` green as separate evidence.

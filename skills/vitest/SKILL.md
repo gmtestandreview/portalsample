@@ -137,6 +137,14 @@ does not make the test a standalone Playwright E2E suite.
   to coverage or related suites as justified. Distinguish static review, actual
   CLI output, and project CI evidence. Never claim tests, coverage, or a browser
   run passed without execution evidence.
+- **Vitest does not type-check.** `vitest run` transpiles via esbuild and strips
+  types, so a green run does **not** imply `tsc --noEmit` passes — a suite can
+  pass at runtime while `npm run type-check` reports errors in the same test
+  files. Treat type-check as an **independent required gate**: the unit lane's
+  definition-of-done is tests green **and** `npm run type-check` green (`test:ci`
+  runs both, type-check first). When adding or editing tests, keep them
+  compiling under the repo's strict config; see the strict-TS test-authoring
+  note in [project-nmi-portal.md](references/project-nmi-portal.md).
 
 ## Coverage policy and the exclusion list as monitored debt
 
