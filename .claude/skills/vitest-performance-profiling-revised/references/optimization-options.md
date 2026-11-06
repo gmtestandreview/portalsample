@@ -221,9 +221,12 @@ Use repeated `vitest run` measurements for test-run performance. Vitest's
 `bench` fixture measures function-level benchmarks and should not replace a
 runner baseline.
 
-Benchmark files are selected by `benchmark.include` (normally `*.bench.*` or
-`*.benchmark.*`) and are separate from regular test files. They are ignored by
-the normal `vitest` command unless `benchmark.enabled: true` is configured.
+Benchmark files are selected by `benchmark.include` (default
+`**/*.{bench,benchmark}.?(c|m)[jt]s?(x)`) and run in their own project, separate
+from regular test files. The `vitest` command ignores them unless
+`benchmark.enabled: true` is set; `vitest bench` runs only benchmarks and enables
+that option implicitly. The `bench` fixture comes from the test context and is
+available only inside those files, so using it in a regular test file throws.
 Use `bench.compare()` for alternatives, `writeResult`/`bench.from()` for stored
 baselines, and `toBeFasterThan`/`toBeSlowerThan` with a `delta` when assertions
 need tolerance.
