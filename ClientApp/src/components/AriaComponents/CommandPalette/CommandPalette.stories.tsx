@@ -25,13 +25,19 @@ export const Example = meta.story({
 
     return (
       <>
-        <Button onPress={() => setIsOpen(true)}>
+        <Button
+          onPress={() => {
+            setIsOpen(true);
+          }}
+        >
           Open Command Palette <kbd>⌘ J</kbd>
         </Button>
         <CommandPalette
           {...args}
           isOpen={isOpen}
-          onOpenChange={(nextIsOpen = false) => setIsOpen(nextIsOpen)}
+          onOpenChange={(nextIsOpen = false) => {
+            setIsOpen(nextIsOpen);
+          }}
         >
           <MenuItem>Create new file...</MenuItem>
           <MenuItem>Create new folder...</MenuItem>

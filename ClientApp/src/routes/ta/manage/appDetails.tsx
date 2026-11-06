@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import {
@@ -37,6 +38,7 @@ import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import ApplicationDocuments from './appDocuments';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
+import { joinNameParts } from '../../../utils';
 
 const ApplicationMessages = lazy(() => import('./appMessages'));
 
@@ -57,7 +59,7 @@ const ApplicationDetails = () => {
   const { id } = useParams();
   const { accounts, instance } = useMsal();
   const options = useMemo(
-    () => appDetailsProps(id!, accounts, instance),
+    () => appDetailsProps(id, accounts, instance),
     [accounts, id, instance],
   );
   const { loadStepValues, hidingFields } = options;
@@ -95,12 +97,19 @@ const ApplicationDetails = () => {
     }
   }, [accounts, id, instance]);
 
+  // The application type loads asynchronously and the id is a route param, so
+  // either may be absent; show only what is known.
+  const applicationLabel = joinNameParts(
+    applicationType,
+    id === undefined ? undefined : `(${id})`,
+  );
+
   const breadcrumbs: CustomBreadcrumbItem[] = [
     { to: '/', text: 'Dashboard' },
-    { to: '', text: `${applicationType} (${id})` },
+    { to: '', text: applicationLabel },
   ];
 
-  useHtmlTitle(`${applicationType} (${id}) manage | NMI Services portal`);
+  useHtmlTitle(`${applicationLabel} manage | NMI Services portal`);
   useBodyClass('pa-application-manage');
 
   const formattedDate = (dateToFormat: Date | string | undefined) =>
@@ -123,7 +132,9 @@ const ApplicationDetails = () => {
       setActiveTab(getTabFromQuery());
     };
     globalThis.addEventListener('popstate', onPopState);
-    return () => globalThis.removeEventListener('popstate', onPopState);
+    return () => {
+      globalThis.removeEventListener('popstate', onPopState);
+    };
   }, []);
 
   useEffect(() => {
@@ -135,7 +146,6 @@ const ApplicationDetails = () => {
         // The rule cannot trace the clear through clearPollTimeout(),
         // which this effect's cleanup calls and which does invoke
         // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
-        // eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
         pollTimeoutRef.current = setTimeout(() => {
           void poll();
         }, POLL_MS);
@@ -184,10 +194,10 @@ const ApplicationDetails = () => {
         // The loader returns the DTO itself; `InitialValue` only widens it with the
         // empty-string form default that this page never produces.
         setAppDetails(result.formValues as RequestForPatternApprovalAppDetails);
-        const appType = result.formValues?.applicationDetails as
+        const appType = result.formValues.applicationDetails as
           ApplicationDetailsDto | undefined;
-        setApplicationType(appType?.patternApprovalType || null);
-        setMessageCount(appType?.messageCount || 0);
+        setApplicationType(orIfEmpty(appType?.patternApprovalType, null));
+        setMessageCount(appType?.messageCount ?? 0);
       } catch (error) {
         // Previously unguarded: a rejected load became an unhandled rejection, and because
         // setIsDataLoading(false) sat only on the success path the page stayed on its
@@ -216,7 +226,7 @@ const ApplicationDetails = () => {
       statusDetail,
       title,
       submittedDate,
-    } = details.applicationDetails || {};
+    } = details.applicationDetails ?? {};
     return (
       <Row className='mb-4'>
         <Col aria-busy={isDataLoading} aria-live='polite'>
@@ -237,7 +247,7 @@ const ApplicationDetails = () => {
                     containerClassName='mb-3'
                   >
                     <CustomAccordionBody
-                      name={`${title}`}
+                      name={title ?? 'Application details'}
                       eventKey='0'
                       className='mb-4 py-2'
                       nameRHS={
@@ -288,7 +298,9 @@ const ApplicationDetails = () => {
                       <Row>
                         <Col md={12}>
                           <Button
-                            onClick={() => routeToMessages()}
+                            onClick={() => {
+                              routeToMessages();
+                            }}
                             type='button'
                             className='btn btn-secondary'
                             title={`${messageCount} unread messages`}
@@ -541,7 +553,7 @@ const ApplicationDetails = () => {
         <Col md={12} lg={9}>
           <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
             <span className='visually-hidden'>Pattern/type approval:</span>
-            {data?.applicationDetails?.title || 'Application details'}
+            {orIfEmpty(data.applicationDetails?.title, 'Application details')}
             <span className='visually-hidden'> manage</span>
           </h1>
           {/* <HeaderIntroText className='mb-4'>

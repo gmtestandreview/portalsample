@@ -30,18 +30,19 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
   const [pdfSizeLoaded, setPdfSizeLoaded] = useState(false);
 
   const viewOfferedQuotePdf = async () => {
+    if (!quotationData) return;
     try {
       setIsLoading(true);
       setFileError(false);
       AppLogger.verbose('ViewPdfQuote.viewOfferedQuotePdf', {
-        crmQuoteRequestId: quotationData?.crmQuoteRequestId,
+        crmQuoteRequestId: quotationData.crmQuoteRequestId,
       });
       const tokenResult = await instance.acquireTokenSilent(
         silentRequestFor(accounts[0]),
       );
       const fileResponse = await getQuotationFileDetails(
         tokenResult.accessToken,
-        quotationData!,
+        quotationData,
         true,
       );
       if (
@@ -63,9 +64,10 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
 
   useEffect(() => {
     const getPdfFileSize = async () => {
+      if (!quotationData) return;
       try {
         AppLogger.verbose('ViewPdfQuote.getPdfFileSize', {
-          crmQuoteRequestId: quotationData?.crmQuoteRequestId,
+          crmQuoteRequestId: quotationData.crmQuoteRequestId,
         });
         setPdfSizeLoaded(false);
         const tokenResult = await instance.acquireTokenSilent(
@@ -73,7 +75,7 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
         );
         const fileResponse = await getQuotationFileDetails(
           tokenResult.accessToken,
-          quotationData!,
+          quotationData,
           false,
         );
         if (fileResponse?.fileSizeBytes) {
@@ -98,7 +100,7 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
   return (
     <ViewPdfButton
       text={text}
-      fileSize={fileSize as string}
+      fileSize={fileSize}
       isLoaded={pdfSizeLoaded}
       getPdf={() => {
         void viewOfferedQuotePdf();

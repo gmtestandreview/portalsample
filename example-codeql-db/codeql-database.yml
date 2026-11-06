@@ -1,0 +1,13 @@
+---
+sourceLocationPrefix: C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au
+baselineLinesOfCode: 32703
+unicodeNewlines: false
+columnKind: utf32
+primaryLanguage: python
+creationMetadata:
+  sha: 5b5cf87ac374e135e533995ce3f791ef41a46ffc
+  cliVersion: 2.27.4
+  creationTime: 2026-11-04T13:03:25.483616200Z
+overlayDatabase: false
+overlayBaseDatabase: false
+finalised: true

@@ -40,9 +40,9 @@ describe('renderWithRouter harness', () => {
       initialPath: '/type-approval/APP-1',
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId('param-id')).toHaveTextContent('APP-1'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('param-id')).toHaveTextContent('APP-1');
+    });
   });
 
   it('runs a route loader', async () => {
@@ -54,9 +54,9 @@ describe('renderWithRouter harness', () => {
       loader: () => ({ label: 'loaded' }),
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId('loader-label')).toHaveTextContent('loaded'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('loader-label')).toHaveTextContent('loaded');
+    });
   });
 
   it('exposes the real navigation rather than a mocked navigate', async () => {
@@ -72,7 +72,9 @@ describe('renderWithRouter harness', () => {
 
     await user.click(screen.getByRole('button', { name: 'leave' }));
 
-    await waitFor(() => expect(currentPath()).toBe('/not-found'));
+    await waitFor(() => {
+      expect(currentPath()).toBe('/not-found');
+    });
 
     expect(screen.getByTestId(NOT_FOUND_TEST_ID)).toBeInTheDocument();
   });
@@ -85,9 +87,9 @@ describe('renderWithRouter harness', () => {
       initialPath: '/somewhere-else',
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument();
+    });
 
     expect(screen.queryByTestId(NOT_FOUND_TEST_ID)).not.toBeInTheDocument();
     expect(currentPath()).toBe('/somewhere-else');
@@ -104,8 +106,8 @@ describe('renderWithRouter harness', () => {
       ],
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId('dashboard')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('dashboard')).toBeInTheDocument();
+    });
   });
 });

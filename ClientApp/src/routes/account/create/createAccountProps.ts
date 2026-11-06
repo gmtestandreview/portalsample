@@ -70,7 +70,7 @@ const completeAccountDetails =
         abortSignal,
       );
       accountContext?.setOrganisationAndBranch(
-        values.name!,
+        values.name ?? '',
         values.businessOrTradingName ?? '',
         values.branchOrLocationName ?? '',
       );

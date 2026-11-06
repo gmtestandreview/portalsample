@@ -310,7 +310,9 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
     expect(screen.getByTestId(MODAL)).toBeInTheDocument();
 
     await user.click(screen.getByTestId('prompt-cancel-button'));
-    await waitFor(() => expect(screen.queryByTestId(MODAL)).toBeNull());
+    await waitFor(() => {
+      expect(screen.queryByTestId(MODAL)).toBeNull();
+    });
 
     expect(screen.getByLabelText('Name one')).toBeInTheDocument();
   });

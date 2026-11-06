@@ -177,7 +177,7 @@ function isRepoPath(candidate) {
  */
 function resolveCitedPath(cited) {
   const direct = resolve(REPO_ROOT, cited);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- the candidate is constrained to REPO_ROOT below
+  // the candidate is constrained to REPO_ROOT below
   if (isRepoPath(direct) && existsSync(direct)) return direct;
 
   const suffix = cited.startsWith('/') ? cited : `/${cited}`;
@@ -187,7 +187,7 @@ function resolveCitedPath(cited) {
   const unique = [...new Set(matches)];
   if (unique.length === 1) {
     const viaKnown = resolve(REPO_ROOT, unique[0]);
-    // eslint-disable-next-line security/detect-non-literal-fs-filename -- the candidate is constrained to REPO_ROOT below
+    // the candidate is constrained to REPO_ROOT below
     if (isRepoPath(viaKnown) && existsSync(viaKnown)) return viaKnown;
   }
   return null;
@@ -349,7 +349,7 @@ for (const site of citationSites) {
       continue;
     }
 
-    // eslint-disable-next-line security/detect-non-literal-fs-filename -- abs is returned only for an existing path under REPO_ROOT
+    // abs is returned only for an existing path under REPO_ROOT
     const srcLines = readFileSync(abs, 'utf8').split(/\r?\n/u);
     entry.fileLines = srcLines.length;
 

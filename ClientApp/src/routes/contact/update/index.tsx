@@ -39,7 +39,7 @@ const UpdateContact = () => {
       ? { ...accountState, ...accountDispatch }
       : null;
 
-  const contactId: number = Number(id ?? 0);
+  const contactId = Number(id ?? 0);
   useHtmlTitle('Update contact | NMI Services portal');
   useBodyClass('wizard');
   return (

@@ -48,14 +48,11 @@ const MailingLabel = ({
       .writeText(textToCopy)
       .then(() => {
         setIsCopyClipboard(true);
-        // eslint-disable-next-line no-console
         console.log('Copied to clipboard:');
-        // eslint-disable-next-line no-console
         console.log(textToCopy);
       })
       .catch((err) => {
         setIsCopyClipboard(false);
-        // eslint-disable-next-line no-console
         console.log('Failed to copy: ', err);
       });
   };
@@ -75,16 +72,16 @@ const MailingLabel = ({
               <p>Deliver to:</p>
               <p>
                 {'Quotation ID: '}
-                {!!quotationIdNum && `${quotationIdNum}`}
+                {!!quotationIdNum && quotationIdNum}
               </p>
               <p className='fs-4'>
                 <strong>
                   {'ATTN: '}
-                  {!!nmiTestOfficerName && `${nmiTestOfficerName}`}
+                  {!!nmiTestOfficerName && nmiTestOfficerName}
                   <br />
-                  {!!nmiFacilityName && `${nmiFacilityName}`}
+                  {!!nmiFacilityName && nmiFacilityName}
                   <br />
-                  {!!nmiFacilityAddress && `${nmiFacilityAddress}`}
+                  {!!nmiFacilityAddress && nmiFacilityAddress}
                 </strong>
               </p>
             </Col>

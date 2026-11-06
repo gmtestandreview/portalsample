@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-type FreezeModule = {
+interface FreezeModule {
   validateFreezeRecord(input: {
     freeze: Record<string, unknown>;
     expectedInputDigest: string;
     selectedPaths: string[];
-  }): { ok: boolean; errors: Array<{ code: string; message: string }> };
-};
+  }): { ok: boolean; errors: { code: string; message: string }[] };
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.
@@ -38,11 +38,11 @@ describe('validateFreezeRecord', () => {
     ).toStrictEqual({ ok: true, errors: [] });
   });
 
-  type Overrides = {
+  interface Overrides {
     freeze?: Record<string, unknown>;
     expectedInputDigest?: string;
     selectedPaths?: string[];
-  };
+  }
 
   it.each<[string, Overrides]>([
     ['stale input digest', { expectedInputDigest: 'sha256:other' }],

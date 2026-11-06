@@ -37,8 +37,12 @@ const AttachmentItemNew = ({
     name: `${name}[${index}].attachmentCategory`,
   });
   const [contentField] = useField<AttachmentDto>({ name: `${name}[${index}]` });
-  const closeModal = () => setDeleteDialogOpen(false);
-  const showModal = () => setDeleteDialogOpen(true);
+  const closeModal = () => {
+    setDeleteDialogOpen(false);
+  };
+  const showModal = () => {
+    setDeleteDialogOpen(true);
+  };
   const fileUrl = fileBytes && getFileUrlFromBase64(fileBytes);
 
   /* TO DO - Add in Category select input */
@@ -122,7 +126,7 @@ const AttachmentItemNew = ({
               onClick={showModal}
             >
               <i className='icon-close' aria-hidden='true' />
-              <span className='visually-hidden'>{`Delete ${contentField.value.attachmentName}`}</span>
+              <span className='visually-hidden'>{`Delete ${contentField.value.attachmentName ?? ''}`}</span>
             </Button>
           </div>
         )}

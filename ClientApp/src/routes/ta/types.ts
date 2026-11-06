@@ -36,10 +36,10 @@ export interface TASupportingDocumentsProps {
   isSummary: boolean;
   name: string;
   attachment: AttachmentFunction;
-  onUploadAttachment: (
-    token: string,
-    fileData: FileParameter[],
-  ) => Promise<AttachmentDto[]>;
+  /** When omitted, uploads go through `attachment.onUploadFiles`. */
+  onUploadAttachment?:
+    | ((token: string, fileData: FileParameter[]) => Promise<AttachmentDto[]>)
+    | undefined;
   progress?: UploadProgress | undefined;
   setProgress?: React.Dispatch<
     React.SetStateAction<UploadProgress | undefined>

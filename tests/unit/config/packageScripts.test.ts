@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-type PackageManifest = {
+interface PackageManifest {
   scripts: Record<string, string>;
-};
+}
 
 const scripts = (
   JSON.parse(readFileSync('package.json', 'utf8')) as PackageManifest

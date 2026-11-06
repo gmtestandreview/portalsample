@@ -201,9 +201,7 @@ export const openPdfPageInNewTab = (fileUrl: string, pageNumber: string) => {
 export const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el: HTMLElement = document.querySelector(
-      '[id^="#notif-"]',
-    ) as HTMLElement;
+    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
@@ -222,7 +220,7 @@ export const handleUnexpectedError = (details: ProblemDetails) => {
   handleAlertScroll();
   setDashboardNotification(
     DashBoardNotifications.getDashboardErrorNotification(
-      details.status! ?? 0,
+      details.status ?? 0,
       '',
     ),
   );
@@ -239,15 +237,23 @@ export const mapToUserProfile = (profile: UserProfileDto): UserProfile => ({
   filterSearchText: profile.testingCalibrationDashboard?.filterSearchText,
 });
 
+/** Account names as the formatters accept them: trading and branch may be absent. */
+type NamedAccountDetails = Pick<AccountDetails, 'organisation'> & {
+  trading?: string | undefined;
+  branch?: string | undefined;
+};
+
 /**
  * Returns a formatted banner title string
  */
-export const formatBannerTitle = (accountDetails: AccountDetails): string => {
+export const formatBannerTitle = (
+  accountDetails: NamedAccountDetails | null | undefined,
+): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
 
     if (accountDetails.trading !== undefined && accountDetails.trading !== '') {
-      result = `${accountDetails.trading}`;
+      result = accountDetails.trading;
     }
 
     if (
@@ -261,7 +267,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
       accountDetails.branch !== undefined &&
       accountDetails.branch !== ''
     ) {
-      result = `${accountDetails.branch}`;
+      result = accountDetails.branch;
     }
 
     if (
@@ -270,7 +276,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
     ) {
       result = `${result} - ${accountDetails.organisation}`;
     } else {
-      result = `${accountDetails.organisation}`;
+      result = accountDetails.organisation;
     }
 
     return result;
@@ -279,44 +285,49 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
 };
 
 export const formatOrganisationTitle = (
-  organisationName: string | undefined,
-  tradingName: string | undefined,
-  branchName: string | undefined,
+  organisationName: string | null | undefined,
+  tradingNameInput: string | null | undefined,
+  branchNameInput: string | null | undefined,
 ): string => {
   if (
-    organisationName !== null &&
-    tradingName !== null &&
-    branchName !== null
+    organisationName === null ||
+    tradingNameInput === null ||
+    branchNameInput === null
   ) {
-    let result = '';
-
-    if (tradingName !== '') {
-      result = `${tradingName}`;
-    }
-
-    if (branchName !== '' && tradingName !== '') {
-      result = `${result} - ${branchName}`;
-    } else if (branchName !== '') {
-      result = `${branchName}`;
-    }
-
-    if (branchName !== '' || tradingName !== '') {
-      result = `${result} - ${organisationName}`;
-    } else {
-      result = `${organisationName}`;
-    }
-
-    return result;
+    return '';
   }
-  return '';
+  // A missing (undefined) trading or branch name is the same as an empty one.
+  const tradingName = tradingNameInput ?? '';
+  const branchName = branchNameInput ?? '';
+  let result = '';
+
+  if (tradingName !== '') {
+    result = tradingName;
+  }
+
+  if (branchName !== '' && tradingName !== '') {
+    result = `${result} - ${branchName}`;
+  } else if (branchName !== '') {
+    result = branchName;
+  }
+
+  if (branchName !== '' || tradingName !== '') {
+    // No organisation name to append when it is missing.
+    return organisationName === undefined
+      ? result
+      : `${result} - ${organisationName}`;
+  }
+  return organisationName ?? '';
 };
 
-export const formatTradingBranch = (accountDetails: AccountDetails): string => {
+export const formatTradingBranch = (
+  accountDetails: NamedAccountDetails | null | undefined,
+): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
 
     if (accountDetails.trading !== undefined && accountDetails.trading !== '') {
-      result = `${accountDetails.trading}`;
+      result = accountDetails.trading;
     }
 
     if (
@@ -330,7 +341,7 @@ export const formatTradingBranch = (accountDetails: AccountDetails): string => {
       accountDetails.branch !== undefined &&
       accountDetails.branch !== ''
     ) {
-      result = `${accountDetails.branch}`;
+      result = accountDetails.branch;
     }
 
     return result;
@@ -349,13 +360,13 @@ export const formatTradingBranchFromStrings = (
     let result = '';
 
     if (tradingName !== '') {
-      result = `${tradingName}`;
+      result = tradingName;
     }
 
     if (branchName !== '' && tradingName !== '') {
       result = `${result} - ${branchName}`;
     } else if (branchName !== '') {
-      result = `${branchName}`;
+      result = branchName;
     }
 
     return result;
@@ -388,7 +399,7 @@ export const contentLoaded = (sendPageView: boolean) => {
   const redactedData: Record<string, string> = {};
 
   piiFields.forEach((field) => {
-    const key = field.dataset['pii'] as string;
+    const key = field.dataset['pii'] ?? '';
     Object.defineProperty(redactedData, key, {
       configurable: true,
       enumerable: true,
@@ -411,7 +422,18 @@ export function sortList<T>(
   list: T[],
   lastItem: string,
   displayFieldName: keyof T,
-): [T[], string] {
+): [T[], string];
+// Lookups can be absent before they load; an absent list is returned unchanged.
+export function sortList<T>(
+  list: T[] | undefined,
+  lastItem: string,
+  displayFieldName: keyof T,
+): [T[] | undefined, string];
+export function sortList<T>(
+  list: T[] | undefined,
+  lastItem: string,
+  displayFieldName: keyof T,
+): [T[] | undefined, string] {
   let removedItems;
   let lastId = '';
   let removeId: string | undefined;
@@ -439,7 +461,7 @@ export function sortList<T>(
     removeId = (item as LookupResponse | undefined)?.id ?? '';
   }
 
-  lastId = removeId!;
+  lastId = removeId;
 
   if (indexOfItemToRemove >= 0) {
     removedItems = list.splice(indexOfItemToRemove, 1);
@@ -467,24 +489,19 @@ export const isValidGUID = (value: string | null | undefined): boolean =>
 
 export const getFormattedAddress = (address: AddressDetailsDto | undefined) => {
   let formattedAddress = '';
+  // Server JSON can carry null as well as a missing value; neither is printable.
+  const isSet = (value: unknown) => value !== undefined && value !== null;
 
   if (
     address !== undefined &&
-    address !== null &&
-    address.suburb !== null &&
-    address.state !== null &&
-    address.postcode !== null &&
-    address.suburb !== undefined &&
-    address.suburb !== null
+    isSet(address.suburb) &&
+    isSet(address.state) &&
+    isSet(address.postcode)
   ) {
-    if (address.line1 !== null && address.line1 !== '') {
-      formattedAddress = `${formattedAddress}${address.line1}, `;
-    }
-    if (address.line2 !== null && address.line2 !== '') {
-      formattedAddress = `${formattedAddress}${address.line2}, `;
-    }
-    if (address.line3 !== null && address.line3 !== '') {
-      formattedAddress = `${formattedAddress}${address.line3}, `;
+    for (const line of [address.line1, address.line2, address.line3]) {
+      if (line) {
+        formattedAddress = `${formattedAddress}${line}, `;
+      }
     }
     formattedAddress = `${formattedAddress} ${address.suburb} ${address.state} ${address.postcode}`;
   }

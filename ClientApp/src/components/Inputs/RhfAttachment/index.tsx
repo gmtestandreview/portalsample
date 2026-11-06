@@ -16,7 +16,7 @@ import { omitUndefined } from '../../../utils/omitUndefined';
 
 const isAllowedFile = (file: File, allowedTypes: string[]) =>
   file.name.includes('.') &&
-  allowedTypes.includes(`.${file.name.split('.').pop()!}`);
+  allowedTypes.includes(`.${file.name.split('.').pop() ?? ''}`);
 
 /** Returns one message per disallowed file, plus one if too many files were chosen. */
 const getUploadValidationErrors = (
@@ -62,7 +62,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
     ariaLabel,
     buttonTitle,
     containerClassName,
-    className,
+    className = '',
     onUploadFiles,
     onDeleteFile,
     progress,
@@ -88,14 +88,16 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
-  const addErrors = (messages: string[]) =>
+  const addErrors = (messages: string[]) => {
     setErrors((newErrors) => [...newErrors, ...messages]);
+  };
 
   // Repeated failures for one document would otherwise list the same line twice.
-  const onCategoryError = (message: string) =>
+  const onCategoryError = (message: string) => {
     setErrors((current) =>
       current.includes(message) ? current : [...current, message],
     );
+  };
 
   const clearFileInput = () => {
     if (inputRef.current) {
@@ -200,9 +202,9 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           name={name}
           index={i}
           canRemove={!isSummary && !attachment.documentLocked}
-          cancelButtonId={`cancel-button-${attachment.id}`}
+          cancelButtonId={`cancel-button-${attachment.id ?? ''}`}
           onRemoveItem={onConfirmDeleteFile}
-          isSummary={isSummary || !!attachment.documentLocked}
+          isSummary={isSummary === true || !!attachment.documentLocked}
         />
       );
     });
@@ -220,7 +222,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   return (
     <>
       <div
-        className={`form-field-container position-relative ${containerClassName || ''}`}
+        className={`form-field-container position-relative ${containerClassName ?? ''}`}
       >
         {isDeleting && (
           <BlockUISpinner>
@@ -239,9 +241,9 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
               <Form.Label
                 htmlFor={`drag-upload-${controlId}`}
                 className='mb-0 text-center'
-                onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) =>
-                  e.preventDefault()
-                }
+                onClick={(e: React.MouseEvent<HTMLElement>) => {
+                  e.preventDefault();
+                }}
                 aria-label={ariaLabel}
               >
                 {label}
@@ -265,7 +267,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                 title={
                   disableUpload
                     ? 'Drag files disabled'
-                    : buttonTitle || 'Drag files here'
+                    : (buttonTitle ?? 'Drag files here')
                 }
                 // TO DO: Move the inline style into own class
                 className='position-absolute top-0 start-0 w-100 h-100 opacity-0'
@@ -283,7 +285,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                 id={controlId}
                 name={name}
                 data-testid={controlId}
-                value={buttonTitle || 'Browse files'}
+                value={buttonTitle ?? 'Browse files'}
                 // TO DO: Move the inline style into own class
                 className='d-flex d-md-inline-block gap-2 position-relative btn btn-nmi-secondary flex-grow-1 mx-auto mb-2'
                 style={{ zIndex: 3 }}
@@ -329,7 +331,10 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
       progress.status !== 'Completed' &&
       progress.status !== 'CompletedWithErrors' ? (
         <Col role='status' aria-live='polite'>
-          <ProgressBar percent={progress.percent!} status={progress.status!} />
+          <ProgressBar
+            percent={progress.percent ?? 0}
+            status={progress.status ?? ''}
+          />
           <p className='mt-2 mb-4 ms-1 text-muted small'>
             {progress.completedFiles}
             {' / '}
@@ -337,7 +342,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
             {' files processed'}
           </p>
           <ProgressFileList
-            files={progress.files!}
+            files={progress.files ?? []}
             {...omitUndefined({ onCancelFile: handleCancelFile })}
           />
         </Col>

@@ -15,9 +15,7 @@ const formatBytes = (bytes: number): string => {
 };
 
 const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
-  const [cancelling, setCancelling] = useState<{ [fileName: string]: boolean }>(
-    {},
-  );
+  const [cancelling, setCancelling] = useState<Record<string, boolean>>({});
 
   // The cancel control only renders when onCancelFile is supplied, so the handler takes it as an
   // argument rather than re-checking it. Guarding here again was a branch nothing could reach.
@@ -29,10 +27,11 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
   return (
     <ul className='unstyled-list mt-2 p-0'>
       {files.map((f) => {
+        const { fileName } = f;
         const hasProgress =
           f.bytesUploaded !== undefined && f.totalBytes !== undefined;
         const progressPercent = hasProgress
-          ? Math.round((f.bytesUploaded! / f.totalBytes!) * 100)
+          ? Math.round(((f.bytesUploaded ?? 0) / (f.totalBytes ?? 1)) * 100)
           : 0;
         const isCancellable =
           f.status === FileStatus.Uploading || f.status === FileStatus.Pending;
@@ -50,24 +49,27 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                   {f.fileName}
                 </span>
                 <span className='attachment-size mt-1 fs-8 fw-normal text-left'>
-                  {hasProgress ? formatBytes(f.totalBytes!) : ''}
+                  {hasProgress ? formatBytes(f.totalBytes ?? 0) : ''}
                 </span>
               </div>
               <div className='d-flex align-items-top ms-3'>
                 {isCancellable &&
                   onCancelFile &&
-                  (cancelling[f.fileName!] ? (
+                  fileName !== undefined &&
+                  (cancelling[fileName] ? (
                     <span className='text-danger ms-2'>Cancelling...</span>
                   ) : (
                     <button
                       type='button'
-                      data-testid={`cancel-button-${f.fileName}`}
-                      id={`cancel-button-${f.fileName}`}
-                      name={`cancel-button-${f.fileName}`}
+                      data-testid={`cancel-button-${fileName}`}
+                      id={`cancel-button-${fileName}`}
+                      name={`cancel-button-${fileName}`}
                       title='Cancel uploading'
-                      aria-label={`Cancel uploading ${f.fileName}`}
+                      aria-label={`Cancel uploading ${fileName}`}
                       className='d-flex align-self-top mt-1 p-0 btn btn-flat fs-7'
-                      onClick={() => handleCancel(f.fileName!, onCancelFile)}
+                      onClick={() => {
+                        handleCancel(fileName, onCancelFile);
+                      }}
                     >
                       <i className='icon-close' aria-hidden='true' />
                       <span className='visually-hidden'>
@@ -86,16 +88,20 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
               <div
                 role='progressbar'
                 className='mt-1'
-                aria-label={`Uploading ${f.fileName}`}
+                aria-label={
+                  fileName === undefined
+                    ? 'Uploading file'
+                    : `Uploading ${fileName}`
+                }
                 aria-valuenow={progressPercent}
                 aria-valuemin={0}
                 aria-valuemax={100}
               >
                 <div className='d-flex justify-content-between ms-1 mb-1'>
                   <span className='fs-8 text-muted'>
-                    {formatBytes(f.bytesUploaded!)}
+                    {formatBytes(f.bytesUploaded ?? 0)}
                     {' / '}
-                    {formatBytes(f.totalBytes!)}
+                    {formatBytes(f.totalBytes ?? 0)}
                   </span>
                   <span className='fs-8 text-muted'>
                     {` ${progressPercent}%`}

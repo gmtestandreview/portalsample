@@ -22,6 +22,7 @@ import {
 import StatusPill from '../Pill/StatusPill';
 import ContactDetails from '../Utilities/contactDetails';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
+import { formatFullName } from '../../utils';
 
 enum RequestAction {
   Delete = 'Delete',
@@ -54,7 +55,7 @@ const DateColumn = (props: Readonly<{ date: Date | string | undefined }>) => {
 
 const renderMultiLinkTooltip = (
   refIds: string[],
-  isClonedFromRef: string,
+  isClonedFromRef: string | undefined,
 ): React.ReactNode => (
   <>
     {/* Note: Keep tooltips content formatting basic, consider the parent DOM node for tooltip - avoid UL, LI */}
@@ -169,7 +170,7 @@ const renderRequestContent = (
         )}
         <ContactDetails
           label='Request main contact'
-          name={`${contactDetails?.firstName} ${contactDetails?.lastName}`}
+          name={formatFullName(contactDetails)}
           businessPhone={contactDetails?.businessPhone}
           mobilePhone={contactDetails?.mobilePhone}
           email={contactDetails?.email}
@@ -182,7 +183,7 @@ const renderRequestContent = (
 const renderQuotationContent = (
   dashboardQuoteDto: DashboardQuoteDto,
   quoteStatus: string | undefined,
-  referenceId: string | undefined,
+  referenceId: string,
   navigate: NavigateFunction,
 ) => {
   // Quotation tab content placeholder (3 col pairs)
@@ -190,6 +191,9 @@ const renderQuotationContent = (
   const useQuoteId = validQuoteIdStatus.includes(
     quoteStatus as DashboardItemStatus,
   );
+  const quotationRouteId = useQuoteId
+    ? dashboardQuoteDto.quotationId
+    : referenceId;
   return (
     <>
       <Row className='mb-3'>
@@ -229,7 +233,7 @@ const renderQuotationContent = (
           {/*  Column 3 */}
           <ContactDetails
             label='NMI test officer'
-            name={`${nmiOfficer?.firstName} ${nmiOfficer?.lastName}`}
+            name={formatFullName(nmiOfficer)}
             businessPhone={nmiOfficer?.businessPhone}
             mobilePhone={nmiOfficer?.mobilePhone}
             email={nmiOfficer?.email}
@@ -245,30 +249,24 @@ const renderQuotationContent = (
                     </Row> */}
         </Col>
       </Row>
-      <Row>
-        <Col md className='text-center'>
-          <Button
-            variant='secondary'
-            data-testid={
-              useQuoteId
-                ? `RefId-${dashboardQuoteDto.quotationId}-view-quotation-button`
-                : `RefId-${referenceId}-view-quotation-button`
-            }
-            className='ms-md-auto'
-            onClick={() => {
-              trackGAEvent('Request item/quotation tab');
+      {quotationRouteId !== undefined && (
+        <Row>
+          <Col md className='text-center'>
+            <Button
+              variant='secondary'
+              data-testid={`RefId-${quotationRouteId}-view-quotation-button`}
+              className='ms-md-auto'
+              onClick={() => {
+                trackGAEvent('Request item/quotation tab');
 
-              void navigate(
-                useQuoteId
-                  ? `/quotation/${dashboardQuoteDto.quotationId}`
-                  : `/quotation/${referenceId}`,
-              );
-            }}
-          >
-            View quotation
-          </Button>
-        </Col>
-      </Row>
+                void navigate(`/quotation/${quotationRouteId}`);
+              }}
+            >
+              View quotation
+            </Button>
+          </Col>
+        </Row>
+      )}
     </>
   );
 };
@@ -278,7 +276,7 @@ const renderReportDtoContent = (
   requestForQuoteId: string | undefined,
   navigate: NavigateFunction,
   status: string | undefined,
-  referenceId: string | undefined,
+  referenceId: string,
 ) => (
   // ReportDto tab content placeholder (3 col pairs)
   <>
@@ -359,17 +357,23 @@ const renderReportDtoContent = (
       <Row>
         <Col />
         <Col md className='text-center'>
-          <Button
-            variant='secondary'
-            data-testid={`RefId-${reportDto.reportId}-view-ReportDto-button`}
-            className='ms-md-auto mb-3'
-            onClick={() => {
-              trackGAEvent('Request item/report tab');
-              void navigate(`/report/${requestForQuoteId}`);
-            }}
-          >
-            View report
-          </Button>
+          {requestForQuoteId !== undefined && (
+            <Button
+              variant='secondary'
+              data-testid={
+                reportDto.reportId === undefined
+                  ? undefined
+                  : `RefId-${reportDto.reportId}-view-ReportDto-button`
+              }
+              className='ms-md-auto mb-3'
+              onClick={() => {
+                trackGAEvent('Request item/report tab');
+                void navigate(`/report/${requestForQuoteId}`);
+              }}
+            >
+              View report
+            </Button>
+          )}
         </Col>
         <Col md>
           <Link
@@ -419,21 +423,24 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     [status],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
-    ? `${requestForQuote?.manufacturer} ${requestForQuote?.model || ''}` // If Model null display empty string
+    ? `${requestForQuote.manufacturer} ${requestForQuote.model ?? ''}` // If Model null display empty string
     : 'Draft Request For Quote';
   const heading = showArtefactHeading ? quote?.artefactName : headingNoArtefact;
   const requestForQuoteId = request.quote?.quotationId;
   const modalDispatch = useModalDispatch();
 
-  const onDelete = () => (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onDelete = () => (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     onShowRFQDeleteModalClick();
   };
 
   const navigate = useNavigate();
 
+  // Every route, id and test-id below is built from the reference id.
+  if (referenceId === undefined) return null;
+
   const onShowRFQDeleteModalClick = () => {
-    modalDispatch?.setShowRFQDeleteModal(true, referenceId!);
+    modalDispatch?.setShowRFQDeleteModal(true, referenceId);
   };
 
   const getActions = (): DropdownActionItem[] => {
@@ -446,7 +453,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
             action: RequestAction.Edit,
             text: 'Edit request',
             route: `/request-for-quote/${referenceId}/instrument-and-request`,
-            onClick: () => trackGAEvent('Editrequest'),
+            onClick: () => {
+              trackGAEvent('Editrequest');
+            },
           },
           {
             action: RequestAction.Delete,
@@ -459,31 +468,42 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
         );
         break;
       case DashboardItemStatus.ReportIssued:
-        actions.push({
-          action: RequestAction.View,
-          text: 'View report',
-          route: `/report/${requestForQuoteId}`,
-          onClick: () => trackGAEvent('Viewreport'),
-        });
+        if (requestForQuoteId !== undefined) {
+          actions.push({
+            action: RequestAction.View,
+            text: 'View report',
+            route: `/report/${requestForQuoteId}`,
+            onClick: () => {
+              trackGAEvent('Viewreport');
+            },
+          });
+        }
         break;
       case DashboardItemStatus.QuoteAvailable:
         actions.push({
           action: RequestAction.View,
           text: 'View/accept quotation',
           route: `/quotation/${referenceId}`,
-          onClick: () => trackGAEvent('View/acceptquotation'),
+          onClick: () => {
+            trackGAEvent('View/acceptquotation');
+          },
         });
         break;
       default:
         break;
     }
 
-    if (viewQuotationAcceptMenu.includes(status as DashboardItemStatus)) {
+    if (
+      requestForQuoteId !== undefined &&
+      viewQuotationAcceptMenu.includes(status as DashboardItemStatus)
+    ) {
       actions.push({
         action: RequestAction.View,
         text: 'View quotation',
         route: `/quotation/${requestForQuoteId}`,
-        onClick: () => trackGAEvent('Viewquotation'),
+        onClick: () => {
+          trackGAEvent('Viewquotation');
+        },
       });
     }
 
@@ -493,7 +513,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
         action: RequestAction.View,
         text: 'View request',
         route: `/request-for-quote/${referenceId}/view-summary`,
-        onClick: () => trackGAEvent('Viewrequest'),
+        onClick: () => {
+          trackGAEvent('Viewrequest');
+        },
       });
     }
 
@@ -502,25 +524,31 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
         action: RequestAction.View,
         text: 'Request recalibration',
         route: `/request-for-quote-copy/${referenceId}`,
-        onClick: () => trackGAEvent('Requestrecalibration'),
+        onClick: () => {
+          trackGAEvent('Requestrecalibration');
+        },
       });
     }
 
     if (status === DashboardItemStatus.ReportWithdrawn) {
-      actions.push(
-        {
-          action: RequestAction.View,
-          text: 'Request recalibration',
-          route: `/request-for-quote-copy/${referenceId}`,
-          onClick: () => trackGAEvent('Requestrecalibration'),
+      actions.push({
+        action: RequestAction.View,
+        text: 'Request recalibration',
+        route: `/request-for-quote-copy/${referenceId}`,
+        onClick: () => {
+          trackGAEvent('Requestrecalibration');
         },
-        {
+      });
+      if (requestForQuoteId !== undefined) {
+        actions.push({
           action: RequestAction.View,
           text: 'View quotation',
           route: `/quotation/${requestForQuoteId}`,
-          onClick: () => trackGAEvent('Viewquotation'),
-        },
-      );
+          onClick: () => {
+            trackGAEvent('Viewquotation');
+          },
+        });
+      }
     }
 
     return actions;
@@ -546,7 +574,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                 <h3 id={cardSummaryId} className='mb-1'>
                   {heading ? `${heading} ` : 'Draft request for Quote '}
                   {requestForQuote?.clonedReferenceIds &&
-                    requestForQuote?.isClone && (
+                    requestForQuote.isClone && (
                       <>
                         <i
                           className='icon-link text-primary ms-1 me-1'
@@ -558,7 +586,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                         >
                           {renderMultiLinkTooltip(
                             requestForQuote.clonedReferenceIds,
-                            requestForQuote.isClonedFromRef!,
+                            requestForQuote.isClonedFromRef,
                           )}
                         </span>
                       </>

@@ -45,6 +45,8 @@ export const renderRhfShell = <T extends FormValues>(
   const result = render(tree(props));
   return {
     ...result,
-    rerenderShell: (next: ShellProps<T>) => result.rerender(tree(next)),
+    rerenderShell: (next: ShellProps<T>) => {
+      result.rerender(tree(next));
+    },
   };
 };

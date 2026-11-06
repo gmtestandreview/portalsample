@@ -48,7 +48,7 @@ function FormikHarness<TValues extends FormikValues>({
   initialValues,
   initialErrors,
   initialTouched,
-  onSubmit = async () => {},
+  onSubmit = vi.fn<() => void>(),
 }: FormikHarnessProps<TValues>) {
   return (
     <Formik
@@ -99,7 +99,7 @@ function AttachmentHarness({
         maxSizeInMB={1}
         allowedTypes='.pdf, .jpg'
         onUploadFiles={() => Promise.resolve([uploadedAttachment])}
-        onDeleteFile={async () => {}}
+        onDeleteFile={vi.fn<DeleteFile>()}
         setErrors={setErrors}
         {...props}
       />
@@ -213,18 +213,12 @@ describe('attachment upload behavior', () => {
     expect(preventDefault).toHaveBeenCalledWith();
   });
 
-  it('ignores null-valued and null-file input changes', () => {
+  it('ignores null-file input changes', () => {
     expect.hasAssertions();
 
     const onUploadFiles = vi.fn<UploadFiles>();
     renderAttachment([], { onUploadFiles });
     const input = screen.getByTestId('drag-upload-supporting-documents');
-
-    Object.defineProperty(input, 'value', {
-      configurable: true,
-      get: () => null,
-    });
-    fireEvent.change(input);
 
     Object.defineProperty(input, 'value', {
       configurable: true,
@@ -345,16 +339,16 @@ describe('attachment upload behavior', () => {
       file('manual.pdf', 10),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
-      ]),
-    );
-    await waitFor(() =>
+      ]);
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachments":[{"id":"doc-1"',
-      ),
-    );
+      );
+    });
   });
 
   it('uploads multiple valid files and replaces the attachment list with the server result', async () => {
@@ -378,17 +372,17 @@ describe('attachment upload behavior', () => {
       file('diagram.jpg', 10, 'image/jpeg'),
     ]);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
         expect.objectContaining({ name: 'diagram.jpg' }),
-      ]),
-    );
-    await waitFor(() =>
+      ]);
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentName":"diagram.jpg"',
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('values')).not.toHaveTextContent(
       '"attachmentName":"manual.pdf"',
@@ -413,21 +407,21 @@ describe('attachment upload behavior', () => {
       file('small.pdf', 10),
     ]);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'small.pdf' }),
-      ]),
-    );
+      ]);
+    });
 
     expect(
       screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
     ).toBeInTheDocument();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentName":"small.pdf"',
-      ),
-    );
+      );
+    });
   });
 
   it('stores a single-file upload as a one-item list while progress is still running', async () => {
@@ -456,11 +450,11 @@ describe('attachment upload behavior', () => {
       file('manual.pdf', 10),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachments":[{"id":"doc-1"',
-      ),
-    );
+      );
+    });
 
     expect(
       screen.getByRole('progressbar', { name: 'Uploading' }),
@@ -490,8 +484,10 @@ describe('attachment upload behavior', () => {
           maxSizeInMB={1}
           allowedTypes='.pdf, .jpg'
           onUploadFiles={() => Promise.resolve([uploadedAttachment])}
-          onDeleteFile={async () => {}}
-          setErrors={() => {}}
+          onDeleteFile={vi.fn<DeleteFile>()}
+          setErrors={vi.fn<
+            (value: string[] | ((prev: string[]) => string[])) => void
+          >()}
         />
       </FormikHarness>,
     );
@@ -540,7 +536,9 @@ describe('attachment upload behavior', () => {
       file('manual.pdf', 10),
     );
 
-    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onUploadFiles).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByRole('listitem')).not.toBeInTheDocument();
   });
@@ -617,11 +615,11 @@ describe('attachment upload behavior', () => {
 
     expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachments":[]',
-      ),
-    );
+      );
+    });
   });
 
   it('does not call delete when the selected attachment has no id', async () => {

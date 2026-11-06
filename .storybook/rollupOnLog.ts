@@ -1,4 +1,7 @@
-export type RollupLog = { code?: string; message?: string };
+export interface RollupLog {
+  code?: string;
+  message?: string;
+}
 export type RollupLogHandler = (level: string, log: RollupLog) => void;
 
 /**

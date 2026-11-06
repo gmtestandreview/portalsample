@@ -58,8 +58,12 @@ function runScript(
     child.stderr.on('data', (chunk: Buffer) => {
       stderr += chunk.toString();
     });
-    child.on('error', (error) => finish(null, error.message));
-    child.on('close', (status) => finish(status));
+    child.on('error', (error) => {
+      finish(null, error.message);
+    });
+    child.on('close', (status) => {
+      finish(status);
+    });
   });
 }
 
@@ -79,7 +83,13 @@ async function withSonarServer(
     await callback(`http://127.0.0.1:${address.port}`);
   } finally {
     await new Promise<void>((resolve, reject) =>
-      server.close((error) => (error ? reject(error) : resolve())),
+      server.close((error) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      }),
     );
   }
 }
@@ -310,8 +320,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       let requestCount = 0;
 
       await withSonarServer(
-        (request, response) => {
-          void request;
+        (_request, response) => {
           requestCount += 1;
           response.setHeader('content-type', 'application/json');
           if (requestCount === 1) {
@@ -373,8 +382,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       let requestCount = 0;
 
       await withSonarServer(
-        (request, response) => {
-          void request;
+        (_request, response) => {
           requestCount += 1;
           response.setHeader('content-type', 'application/json');
           response.end(
@@ -431,8 +439,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       expect.hasAssertions();
 
       await withSonarServer(
-        (request, response) => {
-          void request;
+        (_request, response) => {
           setTimeout(() => {
             response.setHeader('content-type', 'application/json');
             response.end(JSON.stringify({ paging: { total: 0 }, issues: [] }));
@@ -475,8 +482,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       let requestCount = 0;
 
       await withSonarServer(
-        (request, response) => {
-          void request;
+        (_request, response) => {
           requestCount += 1;
           response.setHeader('content-type', 'application/json');
           response.end(
@@ -520,8 +526,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       let requestCount = 0;
 
       await withSonarServer(
-        (request, response) => {
-          void request;
+        (_request, response) => {
           requestCount += 1;
           response.setHeader('content-type', 'application/json');
           response.end(

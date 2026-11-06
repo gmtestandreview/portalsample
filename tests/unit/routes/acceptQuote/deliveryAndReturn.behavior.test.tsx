@@ -145,9 +145,9 @@ function StepHarness({
             hidingFields,
           )(formValues)
         }
-        onSubmit={(submitted) =>
-          onSubmit(removeHidden(submitted, submitted, hidingFields))
-        }
+        onSubmit={(submitted) => {
+          onSubmit(removeHidden(submitted, submitted, hidingFields));
+        }}
       >
         <Form noValidate>
           <DeliveryAndReturn id='RFQ-1' />
@@ -299,13 +299,13 @@ describe('deliveryAndReturn behavior: visibility', () => {
     mocks.getDeliveryAndReturn.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.error).toHaveBeenCalledWith(
         'Failed to load AcceptQuotePreInfo',
         expect.any(Error),
         { Id: 'RFQ-1' },
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('info-summary')).toBeInTheDocument();
   });
@@ -354,7 +354,9 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submittedValues(onSubmit)).toStrictEqual({
       returnContactType: 'SamePerson',
@@ -399,7 +401,9 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submittedValues(onSubmit)).toStrictEqual({
       returnContactType: 'SamePerson',
@@ -433,7 +437,9 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     await user.type(screen.getByLabelText('Email address'), 'jane@example.com');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submittedValues(onSubmit)).toMatchObject({
       contact: {
@@ -550,7 +556,9 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
@@ -591,10 +599,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
     rerender(<StepHarness values={{ returnOrganisationName: 'Loaded' }} />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByLabelText(/Return organisation name/)).toHaveValue(
         'Loaded',
-      ),
-    );
+      );
+    });
   });
 });

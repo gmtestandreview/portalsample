@@ -10,10 +10,10 @@ const CRM_QUOTE_REQUEST_ID = 'CRM-QR-77';
 const ACCEPT_REFERENCE = 'QA-2024-000900';
 
 interface AcceptQuoteRequests {
-  lookups: Array<{
+  lookups: {
     applicationType: string | null;
     quoteReference: string | null;
-  }>;
+  }[];
   creates: unknown[];
 }
 
@@ -27,7 +27,7 @@ const state: {
 
 const ReportRecipientDestination = () => {
   const { id } = useParams();
-  return <h1>{`Report recipient for acceptance ${id}`}</h1>;
+  return <h1>{`Report recipient for acceptance ${id ?? ''}`}</h1>;
 };
 
 const lookupHandler = (response: () => Response) =>

@@ -12,7 +12,7 @@ const DeliveryInstructions = ({ deliveryInstructions }: Readonly<Props>) => (
         <Row>
           <Col>
             <p className='mb-0 text-break'>
-              {!!deliveryInstructions && `${deliveryInstructions}`}
+              {!!deliveryInstructions && deliveryInstructions}
             </p>
           </Col>
         </Row>

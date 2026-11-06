@@ -51,7 +51,9 @@ const useMirrorToFormik = <TValues extends BridgedValues>(
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [isBridgedName, setFieldValue, watch]);
 };
 

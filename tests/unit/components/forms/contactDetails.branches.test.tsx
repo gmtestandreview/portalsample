@@ -13,7 +13,7 @@ const customLabels = {
   emailAddressLabel: 'Work email',
 };
 
-type ContactFormValues = {
+interface ContactFormValues {
   contact: {
     title: string;
     titleOther: string;
@@ -25,7 +25,7 @@ type ContactFormValues = {
     email: string;
   };
   organisationAndContact: { contact: { title: string } };
-};
+}
 
 type ContactSubmit = (values: ContactFormValues) => void | Promise<void>;
 

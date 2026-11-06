@@ -57,11 +57,11 @@ function Harness({
           summaryAndAcceptOwnHidingFields,
         )(formValues)
       }
-      onSubmit={(submitted) =>
+      onSubmit={(submitted) => {
         onSubmit(
           removeHidden(submitted, submitted, summaryAndAcceptOwnHidingFields),
-        )
-      }
+        );
+      }}
     >
       <Form noValidate>
         <SummaryAndAcceptFormikBridge>
@@ -92,7 +92,7 @@ const probe = () =>
     dirty: boolean;
   };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(SummaryAndAcceptFormikBridge, () => {
   it('renders its children between the bridged fields', () => {
     expect.hasAssertions();
@@ -117,7 +117,9 @@ describe(SummaryAndAcceptFormikBridge, () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toStrictEqual({
       associatedDisputes: 'Yes',
@@ -152,7 +154,9 @@ describe(SummaryAndAcceptFormikBridge, () => {
     await user.type(dispute, 'Edited dispute');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toStrictEqual({
       associatedDisputes: YesNo.Yes,
@@ -223,7 +227,9 @@ describe(SummaryAndAcceptFormikBridge, () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
     expect(screen.queryByText(/is a required field/)).not.toBeInTheDocument();

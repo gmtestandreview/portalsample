@@ -15,7 +15,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/FormBanner',
   () =>
@@ -40,14 +39,14 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 

@@ -110,7 +110,9 @@ const RhfInvoiceContactChoice = () => {
               id={option.id}
               value={option.value}
               checked={field.value === option.value}
-              onChange={() => field.onChange(option.value)}
+              onChange={() => {
+                field.onChange(option.value);
+              }}
               onBlur={field.onBlur}
             />
             <label

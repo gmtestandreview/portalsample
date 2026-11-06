@@ -27,7 +27,6 @@ const mocks = vi.hoisted(() => ({
   account: { homeAccountId: 'mock-id' },
 }));
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -41,7 +40,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
@@ -53,7 +51,6 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
@@ -108,9 +105,9 @@ function Harness({
             hidingFields,
           )(formValues)
         }
-        onSubmit={(submitted) =>
-          onSubmit(removeHidden(submitted, submitted, hidingFields))
-        }
+        onSubmit={(submitted) => {
+          onSubmit(removeHidden(submitted, submitted, hidingFields));
+        }}
       >
         <Form noValidate>
           {withErrorSummary && <ErrorSummary />}
@@ -133,7 +130,7 @@ const resetDeliveryAndReturnMocks = () => {
   mocks.search.mockResolvedValue({ matches: [] });
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(DeliveryAndReturnFormikBridge, () => {
   it('mirrors a manually entered return address into the submit payload', async () => {
     expect.hasAssertions();
@@ -156,7 +153,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnAddressType: ReturnAddressTypeValues.Other,
@@ -204,7 +203,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.type(organisationName, 'Edited return organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnOrganisationName: 'Edited return organisation',
@@ -246,7 +247,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnAddress: {
@@ -358,7 +361,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
@@ -434,6 +439,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
 
-    keys.forEach((key) => expect(document.getElementById(key)).not.toBeNull());
+    keys.forEach((key) => {
+      expect(document.getElementById(key)).not.toBeNull();
+    });
   });
 });

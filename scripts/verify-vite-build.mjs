@@ -32,7 +32,6 @@ async function exists(filePath) {
   const safePath = distPath(filePath);
   try {
     // safePath is rooted under the build output directory by distPath().
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     await stat(safePath);
     return true;
   } catch {
@@ -45,7 +44,6 @@ async function filesIn(directory) {
   if (!(await exists(safeDirectory))) return [];
 
   // safeDirectory is produced from distPath() and is therefore confined to dist.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
   const entries = await readdir(safeDirectory, { withFileTypes: true });
   const nested = await Promise.all(
     entries.map(async (entry) => {
@@ -86,7 +84,6 @@ const escapeHtmlAttributeValue = (value) =>
 async function readDistFile(filePath) {
   const safePath = distPath(filePath);
   // safePath is rooted under dist after validation above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
   return readFile(safePath, 'utf8');
 }
 

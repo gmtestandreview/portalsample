@@ -55,7 +55,6 @@ const mocks = vi.hoisted(() => ({
   openPdfPageInSecureNewTab: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
@@ -97,7 +96,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule91>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   'react-ga4',
   () =>
@@ -353,19 +351,19 @@ describe('route common helper functions', () => {
         ),
         formatBannerTitle(details({ branch: 'Sydney' })),
         formatBannerTitle(details({})),
-        formatBannerTitle(null as unknown as AccountDetails),
+        formatBannerTitle(null),
       ],
       organisations: [
         formatOrganisationTitle('NMI', 'Trading', 'Branch'),
         formatOrganisationTitle('NMI', '', 'Branch'),
         formatOrganisationTitle('NMI', '', ''),
         formatOrganisationTitle(undefined, 'Trading', 'Branch'),
-        formatOrganisationTitle(null as unknown as string, 'Trading', 'Branch'),
+        formatOrganisationTitle(null, 'Trading', 'Branch'),
       ],
       tradingBranches: [
         formatTradingBranch(details({ trading: 'Trading', branch: 'Branch' })),
         formatTradingBranch(details({ branch: 'Branch' })),
-        formatTradingBranch(null as unknown as AccountDetails),
+        formatTradingBranch(null),
       ],
       strings: [
         formatTradingBranchFromStrings('Trading', 'Branch'),
@@ -384,7 +382,7 @@ describe('route common helper functions', () => {
         'Trading - Branch - NMI',
         'Branch - NMI',
         'NMI',
-        'Trading - Branch - undefined',
+        'Trading - Branch',
         '',
       ],
       tradingBranches: ['Trading - Branch', 'Branch', ''],
@@ -459,10 +457,12 @@ describe('route common helper functions', () => {
     notification.id = '#notif-test';
     const scrollIntoView = vi
       .spyOn(notification, 'scrollIntoView')
-      .mockImplementation(() => {});
-    const focus = vi.spyOn(notification, 'focus').mockImplementation(() => {});
+      .mockImplementation(() => undefined);
+    const focus = vi
+      .spyOn(notification, 'focus')
+      .mockImplementation(() => undefined);
     document.body.append(notification);
-    vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => {});
+    vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => undefined);
 
     handleReportFileError();
     vi.runAllTimers();
@@ -601,11 +601,7 @@ describe('route common helper functions', () => {
       ],
       lookups: [sortedLookups.map((lookup) => lookup.name), lastLookupId],
       empty: sortList([], 'anything', 'name'),
-      undefined: sortList(
-        undefined as unknown as Array<{ name: string }>,
-        'anything',
-        'name',
-      ),
+      undefined: sortList<{ name: string }>(undefined, 'anything', 'name'),
     }).toStrictEqual({
       options: [['Alpha', 'Beta', 'Zed'], 'z'],
       displayText: [['Alpha', 'Beta', 'Zed'], ''],
@@ -636,7 +632,7 @@ describe('route common helper functions', () => {
         organisation: 'National Measurement Institute',
         trading: '',
         branch: '',
-      } as AccountDetails),
+      }),
     ).toBe('National Measurement Institute');
 
     expect(
@@ -644,7 +640,7 @@ describe('route common helper functions', () => {
         organisation: 'National Measurement Institute',
         trading: 'Trading',
         branch: '',
-      } as AccountDetails),
+      }),
     ).toBe('Trading');
   });
 

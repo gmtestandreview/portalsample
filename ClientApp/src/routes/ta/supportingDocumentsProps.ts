@@ -85,7 +85,7 @@ const saveStep =
 
         // Save for later
         let formStepValues: SupportingDocumentsStep | undefined;
-        if (values.form!.documents) {
+        if (values.form?.documents) {
           const updatedValues: SupportingDocumentsStep = {
             ...values,
           };

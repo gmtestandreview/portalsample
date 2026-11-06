@@ -60,7 +60,7 @@ const resetInstrumentInfoPanelMocks = () => {
   ]);
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(InstrumentInfoPanel, () => {
   it('renders the hidden empty state and does not fetch lookup data when no instrument is selected', () => {
     expect.hasAssertions();
@@ -112,10 +112,12 @@ describe(InstrumentInfoPanel, () => {
     resetInstrumentInfoPanelMocks();
 
     let resolveInfoPanelContent: (
-      value: Array<{ requirements: string; requirementsLink: string }>,
-    ) => void;
+      value: { requirements: string; requirementsLink: string }[],
+    ) => void = () => {
+      throw new Error('The info panel promise executor has not run');
+    };
     const infoPanelContent = new Promise<
-      Array<{ requirements: string; requirementsLink: string }>
+      { requirements: string; requirementsLink: string }[]
     >((resolve) => {
       resolveInfoPanelContent = resolve;
     });
@@ -135,7 +137,7 @@ describe(InstrumentInfoPanel, () => {
     ).resolves.toBeInTheDocument();
 
     await act(async () => {
-      resolveInfoPanelContent!([
+      resolveInfoPanelContent([
         {
           requirements: 'Pattern approval evidence checklist',
           requirementsLink:
@@ -161,9 +163,9 @@ describe(InstrumentInfoPanel, () => {
       creditCheckLink: null,
     });
 
-    await waitFor(() =>
-      expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token'),
-    );
+    await waitFor(() => {
+      expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token');
+    });
 
     expect(mocks.getInfoPanelContent).toHaveBeenCalledWith(typeId, categoryId);
   });

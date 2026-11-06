@@ -54,19 +54,19 @@ const {
     (p) =>
       ({
         filterYearType:
-          (p as Record<string, unknown>)?.['filterYearType'] ?? 'allYears',
+          (p as Record<string, unknown>)['filterYearType'] ?? 'allYears',
         filterStatusType:
-          (p as Record<string, unknown>)?.['filterStatusType'] ?? 'allStatuses',
+          (p as Record<string, unknown>)['filterStatusType'] ?? 'allStatuses',
         filterCurrentPage:
-          (p as Record<string, unknown>)?.['filterCurrentPage'] ?? 1,
+          (p as Record<string, unknown>)['filterCurrentPage'] ?? 1,
         filterActiveTab:
-          (p as Record<string, unknown>)?.['filterActiveTab'] ?? 'drafts',
+          (p as Record<string, unknown>)['filterActiveTab'] ?? 'drafts',
         filterSearchText:
-          (p as Record<string, unknown>)?.['filterSearchText'] ?? '',
+          (p as Record<string, unknown>)['filterSearchText'] ?? '',
         filterSortOrder:
-          (p as Record<string, unknown>)?.['filterSortOrder'] ?? 'descending',
+          (p as Record<string, unknown>)['filterSortOrder'] ?? 'descending',
         filtersChanged:
-          (p as Record<string, unknown>)?.['filtersChanged'] ?? false,
+          (p as Record<string, unknown>)['filtersChanged'] ?? false,
       }) as ReturnType<typeof HelperFunctionsModule.mapToUserProfile>,
   ),
   mockAccountDispatchState: {
@@ -110,7 +110,6 @@ let mockAccountDetails: AccountDetails | null = null;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/api/web-api-client',
   () =>
@@ -127,7 +126,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -136,7 +134,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-browser',
   () =>
@@ -145,7 +142,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/authentication/hooks',
   () =>
@@ -163,7 +159,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/modals/ModalContext',
   () =>
@@ -229,7 +224,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 
@@ -237,7 +232,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
@@ -303,7 +298,9 @@ vi.mock(
           data-testid='pagination'
           data-current={currentPage}
           data-total={totalPages}
-          onClick={() => onPageChange?.((currentPage ?? 1) + 1)}
+          onClick={() => {
+            onPageChange((currentPage ?? 1) + 1);
+          }}
         >
           Next
         </button>
@@ -319,7 +316,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule99>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
@@ -335,7 +331,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/routes/common/errorRoutes',
   () =>
@@ -344,7 +339,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule100>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
@@ -378,7 +372,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule101>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/storage/notification',
   () =>
@@ -392,7 +385,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/storage/sessionStorageCache',
   () =>
@@ -414,7 +406,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/routes/common/enums',
   () =>
@@ -428,7 +419,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule108>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
   () =>
@@ -609,9 +599,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
@@ -690,9 +680,9 @@ describe('dashboard', () => {
 
     // Wait for the component to mount and render. Welcome renders unconditionally;
     // if it appears without the API being called, the org-GUID guard is working.
-    await waitFor(() =>
-      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('welcome')).toBeInTheDocument();
+    });
 
     expect(mockGetDrafts).not.toHaveBeenCalled();
     expect(mockGetQuotes).not.toHaveBeenCalled();
@@ -785,7 +775,9 @@ describe('dashboard', () => {
 
       fireEvent.click(await screen.findByRole('tab', { name: accessibleName }));
 
-      await waitFor(() => expect(apiMock.mock.calls.length).toBeGreaterThan(0));
+      await waitFor(() => {
+        expect(apiMock.mock.calls.length).toBeGreaterThan(0);
+      });
 
       expect(mockTrackGAEvent).toHaveBeenCalledWith(tabValue);
       expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -806,13 +798,15 @@ describe('dashboard', () => {
     renderDashboard(Dashboard);
 
     fireEvent.click(await screen.findByRole('tab', { name: 'Requests' }));
-    await waitFor(() =>
-      expect(mockGetQuotes.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetQuotes.mock.calls.length).toBeGreaterThan(0);
+    });
 
     fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledTimes(2));
+    await waitFor(() => {
+      expect(mockGetDrafts).toHaveBeenCalledTimes(2);
+    });
 
     expect(mockTrackGAEvent).toHaveBeenCalledWith('drafts');
     expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -845,12 +839,12 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSessionSetItem).toHaveBeenCalledWith(
         'RFQ-accepted',
         'view-quote-id',
-      ),
-    );
+      );
+    });
 
     expect(acceptedItem.status).toBe('Quote offer is accepted');
     expect(acceptedItem.quote).toStrictEqual({ artefactName: 'Mass standard' });
@@ -875,9 +869,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id'),
-    );
+    await waitFor(() => {
+      expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
+    });
 
     expect(mockSessionSetItem).not.toHaveBeenCalled();
   });
@@ -896,21 +890,21 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     const { unmount } = renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetDashboardNotification).toHaveBeenCalledWith({
         message: 'forbidden',
         severity: 'error',
-      }),
-    );
+      });
+    });
     unmount();
 
     renderDashboard(Dashboard);
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetDashboardNotification).toHaveBeenCalledWith({
         message: 'no-third-party',
         severity: 'error',
-      }),
-    );
+      });
+    });
 
     expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', 'Acme');
   });
@@ -925,9 +919,9 @@ describe('dashboard', () => {
 
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
     expect(screen.queryByTestId('error-page')).not.toBeInTheDocument();
@@ -952,9 +946,9 @@ describe('dashboard', () => {
     expect(mockSetShowBranchSelector).toHaveBeenCalledWith(true);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Instrument/artefacts' }));
-    await waitFor(() =>
-      expect(mockGetArtefacts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetArtefacts.mock.calls.length).toBeGreaterThan(0);
+    });
     fireEvent.click(defined(screen.getAllByTestId('pagination')[2]));
 
     expect(mockTrackGAEvent).toHaveBeenCalledWith('Instrument/pagechange');
@@ -978,14 +972,14 @@ describe('dashboard', () => {
 
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetUserProfile).toHaveBeenCalledWith({
         testingCalibrationDashboard: expectObjectContaining({
           filterCurrentPage: 1,
           filterActiveTab: 'drafts',
         }),
-      }),
-    );
+      });
+    });
   });
 
   it('falls back to drafts when the saved profile records no active tab', async () => {
@@ -1011,13 +1005,13 @@ describe('dashboard', () => {
 
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetUserProfile).toHaveBeenCalledWith({
         testingCalibrationDashboard: expectObjectContaining({
           filterCurrentPage: 1,
         }),
-      }),
-    );
+      });
+    });
   });
 
   it('renders dashboard notifications and complete organisation labels', async () => {
@@ -1044,9 +1038,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(screen.getAllByTestId('notification-message')).toHaveLength(2);
     expect(screen.getByText(/Trading name/)).toBeInTheDocument();
@@ -1064,9 +1058,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('error-page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('error-page')).toBeInTheDocument();
+    });
   });
 
   it('leaves an accepted-quote marker item unchanged when its status is not available', async () => {
@@ -1091,9 +1085,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id'),
-    );
+    await waitFor(() => {
+      expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
+    });
 
     expect(acceptedItem.status).toBe('Draft');
     expect(mockSessionSetItem).not.toHaveBeenCalled();
@@ -1134,9 +1128,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBe('2025');
     expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBe('Open');
@@ -1160,9 +1154,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('welcome')).toBeInTheDocument();
+    });
 
     expect(mockGetDrafts).not.toHaveBeenCalled();
   });
@@ -1181,12 +1175,12 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
         'aria-selected',
         'true',
-      ),
-    );
+      );
+    });
 
     expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
       'data-current',
@@ -1205,9 +1199,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('welcome')).toBeInTheDocument();
+    });
 
     expect(mockGetDrafts).not.toHaveBeenCalled();
   });
@@ -1226,12 +1220,12 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetDashboardNotification).toHaveBeenCalledWith({
         message: 'no-third-party',
         severity: 'error',
-      }),
-    );
+      });
+    });
 
     expect(mockSetTargetOrganisation).not.toHaveBeenCalled();
   });
@@ -1253,9 +1247,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', ''),
-    );
+    await waitFor(() => {
+      expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', '');
+    });
   });
 
   it('allows tab and page interactions before profile filters are initialised', async () => {
@@ -1280,9 +1274,9 @@ describe('dashboard', () => {
 
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
     mockMapToUserProfile.mockClear();
 
     mockAccountDetails = {
@@ -1302,9 +1296,9 @@ describe('dashboard', () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() =>
-      expect(mockMapToUserProfile.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockMapToUserProfile.mock.calls.length).toBeGreaterThan(0);
+    });
   });
 
   it('seeds initial filters when the saved profile arrives after mount', async () => {
@@ -1317,9 +1311,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('welcome')).toBeInTheDocument();
+    });
 
     expect(mockGetDrafts).not.toHaveBeenCalled();
 
@@ -1347,9 +1341,9 @@ describe('dashboard', () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
@@ -1363,7 +1357,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
+    });
 
     // A fresh userProfile object with identical contents is what
     // accountDispatch.setUserProfile produces in the real app; the reset
@@ -1380,12 +1376,12 @@ describe('dashboard', () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
         'data-current',
         '1',
-      ),
-    );
+      );
+    });
 
     expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
   });
@@ -1404,9 +1400,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockSetUserProfile.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockSetUserProfile.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
       'aria-selected',
@@ -1432,9 +1428,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBeUndefined();
     expect(mockGetDrafts.mock.calls.at(-1)?.[5]).toBe(1);
@@ -1449,14 +1445,14 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
-    await waitFor(() =>
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('welcome').parentElement).not.toHaveAttribute(
         'aria-live',
-      ),
-    );
+      );
+    });
 
     expect(document.querySelectorAll('[inert]')).toHaveLength(3);
   });

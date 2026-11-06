@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
-type PackageManifest = {
+interface PackageManifest {
   engines?: { node?: string };
   devDependencies?: { storybook?: string };
-};
+}
 
 const repositoryRoot = process.cwd();
 

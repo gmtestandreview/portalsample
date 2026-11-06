@@ -38,7 +38,7 @@ const touchEveryField = <TValues extends Record<string, unknown>>(
 
 export function FormikWrapper<TValues extends Record<string, unknown>>({
   initialValues,
-  onSubmit = async () => {},
+  onSubmit = vi.fn<(values: TValues) => void>(),
   children,
   validationSchema,
   initialTouched = false,

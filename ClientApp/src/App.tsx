@@ -13,9 +13,9 @@ import ErrorDisplay from './components/ErrorBoundary/ErrorDisplay';
 import { HttpStatusCode } from './types';
 import PreConditions from './routes/preConditions/PreConditions';
 
-type RouteModule<Props extends object = Record<string, never>> = {
+interface RouteModule<Props extends object = Record<string, never>> {
   default: ComponentType<Props>;
-};
+}
 
 const RouteHydrateFallback = () => (
   <BlockUISpinner>

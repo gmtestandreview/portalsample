@@ -244,9 +244,9 @@ describe('static route pages', () => {
 
     expect(screen.getByText('Logging out...')).toBeInTheDocument();
 
-    await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith(),
-    );
+    await waitFor(() => {
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith();
+    });
 
     expect(clearTargetOrganisation).toHaveBeenCalledWith();
     expect(mocks.logoutRedirect).toHaveBeenCalledWith({
@@ -275,9 +275,9 @@ describe('static route pages', () => {
 
     render(<Signout />);
 
-    await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith(),
-    );
+    await waitFor(() => {
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith();
+    });
 
     expect(mocks.logoutRedirect).not.toHaveBeenCalled();
     expect(clearTargetOrganisation).toHaveBeenCalledWith();
@@ -289,9 +289,9 @@ describe('static route pages', () => {
     resetStaticPagesState();
 
     const { rerender } = render(<Signout />);
-    await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1),
-    );
+    await waitFor(() => {
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1);
+    });
 
     vi.mocked(useMsal).mockReturnValue({
       instance: {
@@ -303,9 +303,9 @@ describe('static route pages', () => {
     } as unknown as ReturnType<typeof useMsal>);
     rerender(<Signout />);
 
-    await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1),
-    );
+    await waitFor(() => {
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1);
+    });
 
     expect(clearTargetOrganisation).toHaveBeenCalledTimes(1);
   });

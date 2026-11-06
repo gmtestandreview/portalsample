@@ -12,6 +12,7 @@ import { Group } from 'react-aria-components/Group';
 import AutoSuggestOptions from './AutoSuggestOptions';
 import type { AutoSuggestOption, AutoSuggestContainerProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 const keys = {
   ESC: 'Escape',
@@ -23,7 +24,7 @@ const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
 
   useEffect(() => {
     if (hasOptions && state?.isFocused && !previousHasOptions.current) {
-      state?.open(null, 'input');
+      state.open(null, 'input');
     } else if (!hasOptions && previousHasOptions.current) {
       state?.close();
     }
@@ -55,10 +56,10 @@ const AutoSuggestContainer = <T,>(
     placeholder,
   } = props;
 
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
-  const controlId = `${id || name}`;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
   const [_field, _meta, { setTouched }] = useField<string>(name);
-  const errorId = `${id || name}-validation-msg`;
+  const errorId = `${controlId}-validation-msg`;
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -173,7 +174,7 @@ const AutoSuggestContainer = <T,>(
               <AutoSuggestOptions<T> id={`${name}-options`} options={options} />
             </Popover>
           )}
-          {loading && <p>{loadingMessage || 'Loading options'}</p>}
+          {loading && <p>{loadingMessage ?? 'Loading options'}</p>}
           {_meta.touched && _meta.error ? (
             <div className='invalid-feedback' id={errorId}>
               {_meta.error}
@@ -181,8 +182,8 @@ const AutoSuggestContainer = <T,>(
           ) : null}
         </ComboBox>
       </div>
-      {!loading && noResult && <p>{noResultMessage || 'No matches found'}</p>}
-      {error && <p>{errorMessage || 'Results could not be fetched'}</p>}
+      {!loading && noResult && <p>{noResultMessage ?? 'No matches found'}</p>}
+      {error && <p>{errorMessage ?? 'Results could not be fetched'}</p>}
     </>
   );
 };

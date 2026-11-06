@@ -525,7 +525,7 @@ is complete.
 ### RULE-016: Dashboard Item Suppression
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:535` **Plain English:** An
+`ClientApp/src/components/RequestList/requestItem.tsx:403` **Plain English:** An
 RFQ record with `hideFromDashboard = true` is completely hidden from the
 customer's view, even if it exists in CRM. **Specification:**
 

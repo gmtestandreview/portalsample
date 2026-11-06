@@ -100,7 +100,6 @@ const expectCancelledCombobox = (combobox: HTMLElement) => {
 
 describe('combobox accessibility', () => {
   // This helper intentionally registers Vitest lifecycle hooks for the console guard.
-  // eslint-disable-next-line vitest/require-hook
   installUnexpectedConsoleGuard();
 
   it('exposes AutoSuggest as a labelled input with keyboard navigation and listbox options', async () => {

@@ -40,10 +40,10 @@ describe('vS Code formatting configuration', () => {
         unknown
       >;
 
-      expect(languageSettings?.['editor.defaultFormatter']).toBe(
+      expect(languageSettings['editor.defaultFormatter']).toBe(
         'esbenp.prettier-vscode',
       );
-      expect(languageSettings?.['editor.formatOnSave']).toBe(true);
+      expect(languageSettings['editor.formatOnSave']).toBe(true);
     }
   });
 
@@ -61,7 +61,7 @@ describe('vS Code formatting configuration', () => {
         unknown
       >;
 
-      expect(languageSettings?.['editor.codeActionsOnSave']).toStrictEqual({
+      expect(languageSettings['editor.codeActionsOnSave']).toStrictEqual({
         'source.fixAll.eslint': 'explicit',
       });
     }

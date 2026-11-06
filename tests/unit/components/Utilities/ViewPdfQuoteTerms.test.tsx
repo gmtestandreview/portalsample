@@ -17,6 +17,7 @@ import type {
 } from '@/routes/common/helperFunctions';
 import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import type AppLogger from '@/instrumentation/AppLogger';
+import { defined } from '../../helpers/defined';
 import ViewPdfQuoteTerms from '@/components/Utilities/ViewPdfQuoteTerms';
 import type { ViewPdfQuoteTermsProps } from '@/components/Utilities/ViewPdfQuoteTerms';
 
@@ -54,19 +55,19 @@ const mockMsalState = vi.hoisted(() => {
 const { acquireTokenSilentMock } = mockMsalState;
 
 const mockAppLogger = vi.hoisted(() => {
-  class MockAppLogger {
-    static info = vi.fn<typeof AppLogger.info>();
-    static warning = vi.fn<typeof AppLogger.warning>();
-    static verbose = vi.fn<typeof AppLogger.verbose>();
-    static critical = vi.fn<typeof AppLogger.critical>();
-    static trace = vi.fn<typeof AppLogger.trace>();
-    static error = vi.fn<typeof AppLogger.error>();
-    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
-    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
-    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
-    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
-    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
-  }
+  const MockAppLogger = {
+    info: vi.fn<typeof AppLogger.info>(),
+    warning: vi.fn<typeof AppLogger.warning>(),
+    verbose: vi.fn<typeof AppLogger.verbose>(),
+    critical: vi.fn<typeof AppLogger.critical>(),
+    trace: vi.fn<typeof AppLogger.trace>(),
+    error: vi.fn<typeof AppLogger.error>(),
+    trackEvent: vi.fn<typeof AppLogger.trackEvent>(),
+    startTrackPage: vi.fn<typeof AppLogger.startTrackPage>(),
+    stopTrackPage: vi.fn<typeof AppLogger.stopTrackPage>(),
+    startTrackEvent: vi.fn<typeof AppLogger.startTrackEvent>(),
+    stopTrackEvent: vi.fn<typeof AppLogger.stopTrackEvent>(),
+  };
 
   return MockAppLogger;
 });
@@ -182,7 +183,7 @@ const mockTokenResult = {
 // InTextLink renders <a> without href when only onClick is supplied.
 // An <a> without href has no ARIA "link" role, so queries use the element directly.
 const getTermsAnchor = (container: HTMLElement) =>
-  container.querySelector('a.nmi-in-text-link') as HTMLElement;
+  defined(container.querySelector('a.nmi-in-text-link'), 'terms anchor');
 
 const resetViewPdfQuoteTermsMocks = () => {
   vi.clearAllMocks();

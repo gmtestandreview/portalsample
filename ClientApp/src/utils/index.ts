@@ -193,9 +193,14 @@ export const formatBytes = (bytes: number, decimalPoints = 2) => {
   const k = 1024;
   const decimals = Math.max(decimalPoints, 0);
   const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'];
-  const index = Math.floor(Math.log(bytes) / Math.log(k));
+  // Clamp so fractional or enormous inputs still map to a real unit.
+  const index = Math.min(
+    Math.max(Math.floor(Math.log(bytes) / Math.log(k)), 0),
+    sizes.length - 1,
+  );
+  const unit = sizes.at(index) ?? 'bytes';
 
-  return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes.at(index)}`;
+  return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${unit}`;
 };
 
 export const formatDate = (
@@ -298,8 +303,22 @@ export const base64toBlob = (
   return blob;
 };
 
+/** Joins whichever name parts are present; never renders "undefined". */
+export const joinNameParts = (
+  ...parts: readonly (string | null | undefined)[]
+): string => parts.filter(Boolean).join(' ');
+
+export const formatFullName = (
+  person:
+    | Readonly<{
+        firstName?: string | undefined;
+        lastName?: string | undefined;
+      }>
+    | undefined,
+): string => joinNameParts(person?.firstName, person?.lastName);
+
 export const formatCurrencyAmount = (
-  amount: number | undefined,
+  amount: number | null | undefined,
 ): string | null => {
   if (amount === null || amount === undefined) {
     return null;

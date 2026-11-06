@@ -1,20 +1,21 @@
 import { readFileSync } from 'node:fs';
 import { gte, major, prerelease, valid } from 'semver';
 import { describe, expect, it } from 'vitest';
+import { defined } from '../helpers/defined';
 
-type LockPackage = {
+interface LockPackage {
   version?: string;
-};
+}
 
-type PackageLock = {
+interface PackageLock {
   lockfileVersion: number;
   packages: Record<string, LockPackage & { deprecated?: string }>;
-};
+}
 
-type RootPackage = {
+interface RootPackage {
   devDependencies?: Record<string, string>;
   overrides?: Record<string, string | Record<string, string>>;
-};
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -29,7 +30,7 @@ const parseStringRecord = (
     throw new Error(`${fieldName} must be an object`);
   }
 
-  const entries: Array<[string, string]> = [];
+  const entries: [string, string][] = [];
   for (const [key, entry] of Object.entries(value)) {
     if (typeof entry !== 'string') {
       throw new Error(`${fieldName}.${key} must be a string`);
@@ -48,8 +49,7 @@ const parsePackageLock = (value: unknown): PackageLock => {
     throw new Error('package-lock.json has an unexpected shape');
   }
 
-  const packageEntries: Array<[string, LockPackage & { deprecated?: string }]> =
-    [];
+  const packageEntries: [string, LockPackage & { deprecated?: string }][] = [];
   for (const [packagePath, metadata] of Object.entries(value['packages'])) {
     if (!isRecord(metadata)) {
       throw new Error(`package-lock.json entry ${packagePath} is invalid`);
@@ -94,7 +94,7 @@ const parseRootPackage = (value: unknown): RootPackage => {
           if (!isRecord(overrides)) {
             throw new Error('package.json overrides must be an object');
           }
-          const entries: Array<[string, string | Record<string, string>]> = [];
+          const entries: [string, string | Record<string, string>][] = [];
           for (const [key, entry] of Object.entries(overrides)) {
             entries.push([
               key,
@@ -138,13 +138,12 @@ const recordValue = <Value>(
 };
 
 const installedVersions = (packageName: string): string[] =>
-  Object.entries(lock.packages)
-    .filter(
-      ([packagePath, metadata]) =>
-        packagePath.split('node_modules/').at(-1) === packageName &&
-        metadata.version !== undefined,
-    )
-    .map(([, metadata]) => metadata.version!);
+  Object.entries(lock.packages).flatMap(([packagePath, metadata]) =>
+    packagePath.split('node_modules/').at(-1) === packageName &&
+    metadata.version !== undefined
+      ? [metadata.version]
+      : [],
+  );
 
 const exactDevDependency = (packageName: string): string => {
   const declaredVersion = recordValue(rootPackage.devDependencies, packageName);
@@ -271,14 +270,13 @@ describe('transitive security dependency floors', () => {
     expect(versions).not.toHaveLength(0);
 
     for (const version of versions) {
-      const floor = floors.get(major(version));
+      const floor = defined(
+        floors.get(major(version)),
+        `a known brace-expansion major for ${version}`,
+      );
 
       expect(
-        floor,
-        `unexpected brace-expansion major in ${version}`,
-      ).toBeDefined();
-      expect(
-        gte(version, floor as string),
+        gte(version, floor),
         `brace-expansion@${version} must be at least ${floor}`,
       ).toBe(true);
     }
@@ -331,7 +329,7 @@ describe('lint cohort', () => {
     ['@eslint-react/eslint-plugin', '5.28.8'],
     ['eslint-plugin-react-hooks', '7.1.1'],
     ['@stylistic/eslint-plugin', '5.10.0'],
-    ['globals', '17.13.0'],
+    ['globals', '17.14.0'],
   ]);
 
   it.each([...cohort])(

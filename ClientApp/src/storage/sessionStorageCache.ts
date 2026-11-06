@@ -4,7 +4,7 @@ const getItemFromSessionStore = <T>(key: string) => {
   const localStore = globalThis.sessionStorage;
   const item = localStore.getItem(key);
 
-  if (item && item !== null && item !== '') {
+  if (item && item !== '') {
     try {
       return JSON.parse(item) as T;
     } catch {

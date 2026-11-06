@@ -14,9 +14,9 @@ const preview = readRepositoryFile('.storybook/preview.tsx');
 const storybookMain = readRepositoryFile('.storybook/main.ts');
 const pullRequestWorkflow = readRepositoryFile('.github/workflows/pr.yml');
 
-type StorybookMswPolicy = {
+interface StorybookMswPolicy {
   isStorybookMswDebugEnabled?: (query: string) => boolean;
-};
+}
 
 describe('storybook runtime fixtures', () => {
   it('uses the shared Storybook fixture in both browser entry paths', () => {

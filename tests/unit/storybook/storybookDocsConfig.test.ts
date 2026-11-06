@@ -295,7 +295,7 @@ describe('storybook documentation architecture', () => {
           return false;
         }
 
-        const sectionStart = contracts.indexOf(`## ${owner}`);
+        const sectionStart = contracts.indexOf(`## ${owner ?? ''}`);
         const nextSection = contracts.indexOf('\n## ', sectionStart + 1);
         const section = contracts.slice(
           sectionStart,
@@ -303,7 +303,7 @@ describe('storybook documentation architecture', () => {
         );
 
         return (
-          section.includes(`## ${owner}`) &&
+          section.includes(`## ${owner ?? ''}`) &&
           section.includes(identity) &&
           section.includes('Approved API table') &&
           section.includes('Inherited-prop scope') &&
@@ -445,13 +445,13 @@ describe('storybook documentation architecture', () => {
       strictExecutionOrder: true,
     });
 
-    type CodeSplittingGroup = {
+    interface CodeSplittingGroup {
       name?: string;
       test?: unknown;
-    };
-    type CodeSplittingConfig = {
+    }
+    interface CodeSplittingConfig {
       groups?: CodeSplittingGroup[];
-    };
+    }
     const output = viteConfig.build?.rolldownOptions?.output;
     const codeSplitting =
       output && !Array.isArray(output)

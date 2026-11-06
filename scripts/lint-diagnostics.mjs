@@ -147,9 +147,7 @@ export async function main(args = process.argv.slice(2)) {
   if (outputPath) {
     const resolvedOutput = path.resolve(projectRoot, outputPath);
     // The CLI output path is resolved from the project root before writing.
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     mkdirSync(path.dirname(resolvedOutput), { recursive: true });
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     writeFileSync(resolvedOutput, serialized, 'utf8');
     process.stdout.write(`ESLint diagnostics written to ${outputPath}\n`);
   } else {

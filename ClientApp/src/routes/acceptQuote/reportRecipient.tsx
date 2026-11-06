@@ -50,13 +50,15 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
-        const reportRecipient = await acceptQuoteClient.getReportRecipient(id!);
+        if (id === undefined) return;
+
+        const reportRecipient = await acceptQuoteClient.getReportRecipient(id);
         setReportRecipientStep(reportRecipient);
 
         setStreetAddress(reportRecipient.rfqOrganisation?.streetAddress);
 
         if (reportRecipient.rfqOrganisation?.postalAddressSameAsStreetAddress) {
-          setPostalAddress(reportRecipient.rfqOrganisation?.streetAddress);
+          setPostalAddress(reportRecipient.rfqOrganisation.streetAddress);
           return;
         }
 
@@ -74,7 +76,6 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
       setIsLoading(false);
     };
     void loadDataForDisplay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

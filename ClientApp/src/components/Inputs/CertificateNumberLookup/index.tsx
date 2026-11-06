@@ -6,6 +6,7 @@ import TextInput from '../TextInput';
 import type { LookupResponse } from '../../../api/web-api-client';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 export interface CertificateNumberLookupProps {
   id?: string;
@@ -90,7 +91,8 @@ const CertificateNumberLookup = (
 
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
   // Debounced filtering
   useEffect(() => {
@@ -127,8 +129,10 @@ const CertificateNumberLookup = (
                 .slice(0, maxResults)
                 .map((item) => item)
                 .sort((left, right) =>
-                  getLookupFieldValue(left, optionsFieldName)!.localeCompare(
-                    getLookupFieldValue(right, optionsFieldName)!,
+                  (
+                    getLookupFieldValue(left, optionsFieldName) ?? ''
+                  ).localeCompare(
+                    getLookupFieldValue(right, optionsFieldName) ?? '',
                   ),
                 ),
             ),
@@ -149,8 +153,10 @@ const CertificateNumberLookup = (
                 .slice(0, maxResults)
                 .map((item) => item)
                 .sort((left, right) =>
-                  getLookupFieldValue(left, optionsFieldName)!.localeCompare(
-                    getLookupFieldValue(right, optionsFieldName)!,
+                  (
+                    getLookupFieldValue(left, optionsFieldName) ?? ''
+                  ).localeCompare(
+                    getLookupFieldValue(right, optionsFieldName) ?? '',
                   ),
                 ),
             ),
@@ -163,7 +169,9 @@ const CertificateNumberLookup = (
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounce);
+    return () => {
+      clearTimeout(delayDebounce);
+    };
   }, [
     _certNumOptions.value,
     _parentField.value,
@@ -199,7 +207,9 @@ const CertificateNumberLookup = (
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleSelect = (
@@ -233,7 +243,10 @@ const CertificateNumberLookup = (
       const activeSuggestion =
         activeIndex >= 0 ? filteredSuggestions.at(activeIndex) : undefined;
       if (activeIndex >= 0 && activeSuggestion) {
-        handleSelect(activeSuggestion.lookupName!, activeSuggestion.id!);
+        handleSelect(
+          activeSuggestion.lookupName ?? '',
+          activeSuggestion.id ?? '',
+        );
       } else {
         handleSelect(inputValue, inputValue);
       }
@@ -285,9 +298,9 @@ const CertificateNumberLookup = (
             placeholder={placeholder ?? ''}
             inlineHelpTitle={inlineHelpTitle ?? ''}
             inlineHelp={inlineHelp ?? ''}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setInputValue(e.target.value)
-            }
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setInputValue(e.target.value);
+            }}
             onKeyDown={handleKeyDown}
             autoComplete='off'
             aria-autocomplete='both'
@@ -300,8 +313,8 @@ const CertificateNumberLookup = (
                 : undefined,
               'aria-describedby':
                 _meta.touched && _meta.error
-                  ? `${id || name}-validation-msg`
-                  : helpId || undefined,
+                  ? `${controlId}-validation-msg`
+                  : helpId,
             })}
           />
 
@@ -334,19 +347,19 @@ const CertificateNumberLookup = (
                 </ListGroup.Item>
                 {filteredSuggestions.map((item, index) => (
                   <ListGroup.Item
-                    id={`${item.id}`}
+                    id={item.id}
                     key={item.lookupName}
                     as='li'
                     role='option'
-                    aria-label={`${item.lookupName} (${index + 1} of ${filteredSuggestions.length})`}
+                    aria-label={`${item.lookupName ?? ''} (${index + 1} of ${filteredSuggestions.length})`}
                     aria-selected={index === activeIndex}
                     action
                     // active={index === activeIndex}
                     className={`suggestion-option auto-suggestions mt-0 border-0 ${index === activeIndex ? 'highlighted' : ''}`}
                     onClick={() => {
-                      handleSelect(item.lookupName!, item.id!, () =>
-                        setActiveIndex(index),
-                      );
+                      handleSelect(item.lookupName ?? '', item.id ?? '', () => {
+                        setActiveIndex(index);
+                      });
                     }}
                     // onMouseEnter={() => setActiveIndex(index)}
                     ref={(el: HTMLLIElement | null) => {

@@ -17,8 +17,15 @@ import { DisplayRules } from '../displayRules';
 type AppDetailsHidingValues = Partial<RequestForPatternApprovalAppDetails>;
 
 const loadAppDetails =
-  (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
+  (
+    id: string | undefined,
+    accounts: AccountInfo[],
+    instance: IPublicClientApplication,
+  ) =>
   async (abortSignal?: AbortSignal) => {
+    if (id === undefined) {
+      throw new Error('No application id is available to load app details.');
+    }
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
@@ -56,7 +63,7 @@ const loadAppDetails =
   };
 
 const appDetailsProps = (
-  id: string,
+  id: string | undefined,
   accounts: AccountInfo[],
   instance: IPublicClientApplication,
 ): SinglePageFormProps<RequestForPatternApprovalAppDetails> => ({
@@ -88,16 +95,13 @@ const appDetailsProps = (
     applicationAndInstrument: {
       isApplNewHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.NewCertificate ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.NewCertificate,
       isApplVariationHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.Variation ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.Variation,
       isApplOtherHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.OtherApproval ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.OtherApproval,
       isApplOIMLHide: (x: AppDetailsHidingValues) =>
         DisplayRules.isOIMLHidden(x.applicationAndInstrument ?? {}),
     },

@@ -11,7 +11,6 @@ import type { WizardFormProps } from '../../components/forms/WizardForm/types';
 import { useAccountState } from '../../authentication/hooks';
 import { RequestForQuoteClient } from '../../api/web-api-client';
 import type { FormStepStatusDto } from '../../api/web-api-client';
-import type { AccountDetails } from '../../authentication/accountContext';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
@@ -42,13 +41,13 @@ const ViewRequestForQuoteSummary = ({
   useEffect(() => {
     const loadApplicationSteps = async () => {
       try {
-        if (accounts.length > 0) {
+        if (accounts.length > 0 && id !== undefined) {
           const client = new RequestForQuoteClient();
           const tokenResult = await instance.acquireTokenSilent(
             silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
-          const result = await client.getStepStatuses(id!);
+          const result = await client.getStepStatuses(id);
           setStatuses(result);
         }
       } catch (e) {
@@ -65,13 +64,12 @@ const ViewRequestForQuoteSummary = ({
     };
   }, [accounts, id, instance, isLoading]);
 
-  const accountDetails: AccountDetails = account!.details!;
-  const hasStatuses = statuses !== undefined;
-  return hasStatuses ? (
+  const accountDetails = account?.details;
+  return statuses !== undefined && id !== undefined && accountDetails ? (
     <WizardForm {...requestForQuoteWizardProps}>
       <WizardStep
         {...viewRequestForQuoteSummaryProps(
-          id!,
+          id,
           accounts,
           instance,
           accountDetails,

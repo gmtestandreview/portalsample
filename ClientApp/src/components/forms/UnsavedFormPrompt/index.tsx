@@ -10,7 +10,9 @@ const UnsavedFormPrompt = ({ path }: Readonly<{ path?: string }>) => {
       isDirty={formik.dirty}
       isValid={formik.isValid}
       submitCount={formik.submitCount}
-      onProceed={() => formik.setErrors({})}
+      onProceed={() => {
+        formik.setErrors({});
+      }}
     />
   );
 };

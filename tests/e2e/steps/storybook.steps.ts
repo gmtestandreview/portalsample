@@ -46,36 +46,36 @@ const ACCEPT_QUOTE_DOCS_ID = 'routes-acceptquote--documentation';
 const ROUTE_LEAVING_GUARD_DOCS_ID =
   'components-routeleavingguard--documentation';
 
-type StorybookPageIssueMonitor = {
+interface StorybookPageIssueMonitor {
   pageErrorHandler: (error: Error) => void;
   consoleErrorHandler: (message: ConsoleMessage) => void;
   messages: string[];
-};
+}
 
 const storybookPageIssueMonitors = new WeakMap<
   Page,
   StorybookPageIssueMonitor
 >();
-type DocsIsolationProbe = {
+interface DocsIsolationProbe {
   endpointRequests: string[];
   mockedResponses: string[];
   liveSends: string[];
   unmatchedRequests: string[];
   failedRequests: string[];
-};
+}
 
-type ProviderLifecycleEvent = {
+interface ProviderLifecycleEvent {
   type: 'storybook-portal-provider';
   phase: 'mounted' | 'cleaned';
   sentinel: string;
-};
+}
 
-type AccountContextLifecycleEvent = {
+interface AccountContextLifecycleEvent {
   type: 'storybook-account-context';
   phase: 'active' | 'cleaned';
   sentinel: string;
   targetOrganisationName: string | null;
-};
+}
 
 const docsIsolationResults = new WeakMap<Page, { completed: boolean }>();
 const LATE_UNMOUNT_SIGNAL =
@@ -196,19 +196,22 @@ Then(
   },
 );
 
-type NormalizedReceipt = {
+interface NormalizedReceipt {
   ok: boolean;
-  errors: Array<{ code: string; message: string }>;
+  errors: { code: string; message: string }[];
   report?: StorybookMcpMarkdownReport;
   receipt?: {
     requestedStoryIds: string[];
     executedStoryIds: string[];
-    componentTestStatuses: Array<{ storyId: string; status: string }>;
-    a11yStatuses: Array<{ storyId: string; status: string }>;
+    componentTestStatuses: { storyId: string; status: string }[];
+    a11yStatuses: { storyId: string; status: string }[];
   };
-};
+}
 
-type McpStatus = { storyId: string; status: string };
+interface McpStatus {
+  storyId: string;
+  status: string;
+}
 
 let latestMcpExecution: NormalizedReceipt | undefined;
 
@@ -227,15 +230,14 @@ When(
 
     expect(envelope.error).toBeUndefined();
 
-    const contentText = envelope.result?.content
-      ?.filter((block) => block.type === 'text' && block.text !== undefined)
-      .map((block) => block.text as string)
-      .join('\n');
-    const contentStructured = envelope.result?.content
-      ?.filter((block) => block.type === 'text' && block.text !== undefined)
-      .map((block) => {
+    const textBlocks = envelope.result?.content?.flatMap((block) =>
+      block.type === 'text' && block.text !== undefined ? [block.text] : [],
+    );
+    const contentText = textBlocks?.join('\n');
+    const contentStructured = textBlocks
+      ?.map((text) => {
         try {
-          return JSON.parse(block.text as string) as unknown;
+          return JSON.parse(text) as unknown;
         } catch {
           return undefined;
         }
@@ -388,25 +390,57 @@ Given('I am viewing Storybook stories for alerts', async () => {
   // Intentionally empty — navigation happens in the When step
 });
 
-Given('I am viewing Storybook stories for the accordion', async () => {});
-Given('I am viewing Storybook stories for body text', async () => {});
-Given('I am viewing Storybook stories for breadcrumbs', async () => {});
-Given('I am viewing Storybook stories for buttons', async () => {});
-Given('I am viewing Storybook stories for header intro text', async () => {});
-Given('I am viewing Storybook stories for stepped navigation', async () => {});
-Given('I am viewing Storybook stories for summary display', async () => {});
-Given('I am viewing Storybook stories for pill status badges', async () => {});
-Given('I am viewing Storybook stories for pagination', async () => {});
-Given('I am viewing Storybook stories for the site header', async () => {});
-Given('I am viewing Storybook stories for the site footer', async () => {});
-Given('I am viewing Storybook stories for search filter', async () => {});
+Given('I am viewing Storybook stories for the accordion', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for body text', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for breadcrumbs', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for buttons', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for header intro text', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for stepped navigation', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for summary display', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for pill status badges', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for pagination', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for the site header', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for the site footer', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for search filter', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
 Given(
   'I am viewing Storybook stories for dashboard request items',
-  async () => {},
+  async () => {
+    // Intentionally empty — navigation happens in the When step
+  },
 );
-Given('I am viewing Storybook stories for form inputs', async () => {});
-Given('I am viewing Storybook stories for the wizard form', async () => {});
-Given('I am viewing Storybook stories for modals', async () => {});
+Given('I am viewing Storybook stories for form inputs', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for the wizard form', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
+Given('I am viewing Storybook stories for modals', async () => {
+  // Intentionally empty — navigation happens in the When step
+});
 
 Given(
   'the Storybook sequence is monitored for late unmount updates',
@@ -570,7 +604,9 @@ When(
       await page
         .locator(selector)
         .first()
-        .evaluate((element) => element.remove());
+        .evaluate((element) => {
+          element.remove();
+        });
       await expect(page.locator(selector)).toHaveCount(0);
     };
 
@@ -943,7 +979,7 @@ When(
       await page.evaluate(
         ([stepSelector, postpaidSelector]) => {
           for (const frame of document.querySelectorAll(
-            `${stepSelector}, ${postpaidSelector}`,
+            `${stepSelector ?? ''}, ${postpaidSelector ?? ''}`,
           )) {
             frame.remove();
           }

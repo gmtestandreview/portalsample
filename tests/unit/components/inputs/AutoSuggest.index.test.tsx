@@ -8,7 +8,7 @@ import type {
 } from '@/components/Inputs/AutoSuggest/types';
 
 type SelectedOption = AutoSuggestProps<string>['onSelectedOption'];
-type CapturedContainerProps = {
+interface CapturedContainerProps {
   searchTerm: string | null | undefined;
   loading: boolean | undefined;
   error: boolean | undefined;
@@ -16,7 +16,7 @@ type CapturedContainerProps = {
   optionCount: number;
   onSearchTermChange: AutoSuggestContainerProps<string>['onSearchTermChange'];
   onCancel: AutoSuggestContainerProps<string>['onCancel'];
-};
+}
 
 const containerState = vi.hoisted(() => ({
   props: undefined as CapturedContainerProps | undefined,
@@ -131,9 +131,9 @@ describe('autoSuggest parent state', () => {
   it('ignores a stale successful search response after cancel resets the field', async () => {
     expect.hasAssertions();
 
-    let resolveSearch: (
-      options: AutoSuggestOption<string>[],
-    ) => void = () => {};
+    let resolveSearch: (options: AutoSuggestOption<string>[]) => void = () => {
+      // Placeholder until the search promise executor assigns the real resolve function.
+    };
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
     >(
@@ -183,7 +183,9 @@ describe('autoSuggest parent state', () => {
   it('ignores a stale failed search response after cancel resets the field', async () => {
     expect.hasAssertions();
 
-    let rejectSearch: (error: Error) => void = () => {};
+    let rejectSearch: (error: Error) => void = () => {
+      // Placeholder until the search promise executor assigns the real reject function.
+    };
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
     >(

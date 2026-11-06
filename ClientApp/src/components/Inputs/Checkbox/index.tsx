@@ -3,6 +3,7 @@ import type { FieldHookConfig } from 'formik';
 import Form from 'react-bootstrap/Form';
 import SummaryDisplay from '../../SummaryDisplay';
 import type { CheckboxProps } from './types';
+import { getControlId } from '../getControlId';
 
 const Checkbox = <T,>(
   props: Readonly<CheckboxProps<T> & Omit<FieldHookConfig<T>, 'value'>>,
@@ -22,7 +23,8 @@ const Checkbox = <T,>(
     isSummary,
     onChange,
   } = props;
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
   const [_field, _meta] = useField<T>(name);
 
@@ -30,7 +32,7 @@ const Checkbox = <T,>(
     return (
       <SummaryDisplay
         label={label}
-        id={id || name}
+        id={controlId}
         as='span'
         value={_field.value ? 'Yes' : 'No'}
       />
@@ -42,7 +44,7 @@ const Checkbox = <T,>(
       <div className={`checkbox ${className}`}>
         <Field
           {..._field}
-          id={id || name}
+          id={controlId}
           type='checkbox'
           name={name}
           value={value}
@@ -50,8 +52,8 @@ const Checkbox = <T,>(
           onChange={onChange ?? _field.onChange}
           aria-describedby={
             !supressFieldLevelMessages && _meta.touched && _meta.error
-              ? `${id || name}-validation-msg`
-              : helpId || undefined
+              ? `${controlId}-validation-msg`
+              : helpId
           }
         />
         {inlineHelp && (
@@ -59,7 +61,7 @@ const Checkbox = <T,>(
             {inlineHelp}
           </Form.Text>
         )}
-        <label htmlFor={id || name}>
+        <label htmlFor={controlId}>
           <i className='icon-tick' aria-hidden='true' />
           <span className='d-flex flex-column'>
             {label}
@@ -77,7 +79,7 @@ const Checkbox = <T,>(
         {!supressFieldLevelMessages && _meta.touched && _meta.error ? (
           <Form.Control.Feedback
             type='invalid'
-            id={`${id || name}-validation-msg`}
+            id={`${controlId}-validation-msg`}
             className='form-validation-message'
           >
             {_meta.error}

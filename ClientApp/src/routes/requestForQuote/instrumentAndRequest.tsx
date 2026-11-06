@@ -44,7 +44,7 @@ const measurementReportInlineHelp = (
 
 const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   const options: SelectInputOption<string>[] = [];
-  if (parentId !== undefined && parentId !== '') {
+  if (parentId !== '') {
     for (const l of values) {
       if (l.parentId === parentId) {
         options.push({ displayText: l.label ?? '', value: l.id ?? '' });
@@ -127,7 +127,6 @@ export const useInstrumentAndRequestLookups = () => {
     return () => {
       isLoadingMeasurementCategories.current = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     accounts,
     instance,
@@ -138,7 +137,9 @@ export const useInstrumentAndRequestLookups = () => {
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];
     for (const l of measurementCategories ?? []) {
-      options.push({ displayText: l.label!, value: l.id! });
+      if (l.label !== undefined && l.id !== undefined) {
+        options.push({ displayText: l.label, value: l.id });
+      }
     }
     return options;
   };
@@ -149,7 +150,7 @@ export const useInstrumentAndRequestLookups = () => {
     setIsInstrumentOrArtefactTypeDisabled(false);
     void context.setFieldValue('instrumentOrArtefactType', '');
     void context.setFieldTouched('instrumentOrArtefactType', false);
-    if (event.target.value !== null && artefactTypes !== undefined) {
+    if (artefactTypes !== undefined) {
       const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
         artefactTypes,
         event.target.value,
@@ -383,7 +384,7 @@ const RequestDetailsSection = () => (
       label='Preferred Instrument/artefact availability date (optional)'
       containerClassName='col-md-12'
       id='q-preferredInstrumentOrArtefactAvailabilityDate'
-      // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
+      // "today" semantics; owned by Child Plan B
       minDate={new Date()}
       inlineHelp={
         <>
@@ -452,7 +453,7 @@ const InstrumentAndRequest = () => {
     onMeasurementCategoryChange,
   } = useInstrumentAndRequestLookups();
 
-  return isLoading ? (
+  return isLoading || artefactTypesSelected === undefined ? (
     <BlockUISpinner>
       <p>Loading...</p>
     </BlockUISpinner>
@@ -462,7 +463,7 @@ const InstrumentAndRequest = () => {
       <InstrumentDetailsSection
         measurementCategoryOptions={getMeasurementCategories()}
         onMeasurementCategoryChange={onMeasurementCategoryChange}
-        artefactTypesSelected={artefactTypesSelected!}
+        artefactTypesSelected={artefactTypesSelected}
         isInstrumentOrArtefactTypeDisabled={isInstrumentOrArtefactTypeDisabled}
       />
       <RequestDetailsSection />

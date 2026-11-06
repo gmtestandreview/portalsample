@@ -13,6 +13,7 @@ import { format, parseISO } from 'date-fns';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 export interface TextInputProps {
   label: string;
@@ -63,7 +64,8 @@ const TextInput = ({
   ...rest
 }: Readonly<TextInputProps>) => {
   const [_field, _meta, _fieldHelper] = useField<string | undefined>(name);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
   const getDate = (date: Date | string) =>
     typeof date === 'string' ? parseISO(date) : date;
@@ -84,7 +86,7 @@ const TextInput = ({
         label={label}
         value={displayValue}
         as='p'
-        id={id || name}
+        id={controlId}
       />
     );
   }
@@ -130,7 +132,7 @@ const TextInput = ({
   return (
     <Form.Group
       className={`form-field-container ${containerClassName}`}
-      controlId={id || name}
+      controlId={controlId}
     >
       <Form.Label>{label}</Form.Label>
       {inlineHelp && !inlineHelpTitle && (
@@ -147,7 +149,7 @@ const TextInput = ({
       )}
       <Form.Control
         className={`form-field form-text-input ${className}`}
-        type={type || 'text'}
+        type={type ?? 'text'}
         {..._field}
         isInvalid={!!(_meta.touched && _meta.error)}
         {...omitUndefined({
@@ -155,12 +157,12 @@ const TextInput = ({
           readOnly: readonly,
           'aria-describedby':
             _meta.touched && _meta.error
-              ? `${id || name}-validation-msg`
-              : helpId || undefined,
+              ? `${controlId}-validation-msg`
+              : helpId,
           autoComplete,
           placeholder: type === 'date' ? 'dd/mm/yyyy' : placeholder,
         })}
-        value={formattedValue || ''}
+        value={formattedValue ?? ''}
         onBlur={handleOnBlur}
         onChange={handleOnChange}
         onKeyDown={handleOnKeyDown}
@@ -171,7 +173,7 @@ const TextInput = ({
       {_meta.touched && _meta.error ? (
         <Form.Control.Feedback
           type='invalid'
-          id={`${id || name}-validation-msg`}
+          id={`${controlId}-validation-msg`}
           className='form-validation-message'
         >
           {_meta.error}

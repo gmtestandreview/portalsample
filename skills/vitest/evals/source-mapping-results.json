@@ -1,0 +1,73 @@
+{
+  "checks": {
+    "skill_frontmatter": "PASS",
+    "links": "PASS",
+    "seven_sources_present": "PASS",
+    "green_source_mappings": "7/7 PASS",
+    "red_source_mappings": "7/7 PASS",
+    "amber_runtime": "7/7 NHR",
+    "agent_behavior": "21/21 NHR",
+    "vitest_suite_execution": "NHR",
+    "skill_body_lines": 57,
+    "reference_links": 13,
+    "files_in_package": 15
+  },
+  "cases": [
+    {
+      "file": "mcpMarkdownReport.test.ts",
+      "green_source_mapping": "PASS",
+      "red_source_mapping": "PASS",
+      "amber_runtime": "NHR",
+      "missing_green": [],
+      "missing_red": []
+    },
+    {
+      "file": "moduleCoverage.test.ts",
+      "green_source_mapping": "PASS",
+      "red_source_mapping": "PASS",
+      "amber_runtime": "NHR",
+      "missing_green": [],
+      "missing_red": []
+    },
+    {
+      "file": "mswHandlers.test.ts",
+      "green_source_mapping": "PASS",
+      "red_source_mapping": "PASS",
+      "amber_runtime": "NHR",
+      "missing_green": [],
+      "missing_red": []
+    },
+    {
+      "file": "previewEnvStubs.test.ts",
+      "green_source_mapping": "PASS",
+      "red_source_mapping": "PASS",
+      "amber_runtime": "NHR",
+      "missing_green": [],
+      "missing_red": []
+    },
+    {
+      "file": "producerIdentity.test.ts",
+      "green_source_mapping": "PASS",
+      "red_source_mapping": "PASS",
+      "amber_runtime": "NHR",
+      "missing_green": [],
+      "missing_red": []
+    },
+    {
+      "file": "reactAriaEvaluationContract.test.ts",
+      "green_source_mapping": "PASS",
+      "red_source_mapping": "PASS",
+      "amber_runtime": "NHR",
+      "missing_green": [],
+      "missing_red": []
+    },
+    {
+      "file": "rollupOnLog.test.ts",
+      "green_source_mapping": "PASS",
+      "red_source_mapping": "PASS",
+      "amber_runtime": "NHR",
+      "missing_green": [],
+      "missing_red": []
+    }
+  ]
+}

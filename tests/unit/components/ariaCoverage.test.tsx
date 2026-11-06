@@ -98,15 +98,21 @@ class TestIntersectionObserver implements IntersectionObserver {
   readonly scrollMargin = '';
   readonly thresholds = [];
 
-  disconnect() {}
+  disconnect() {
+    // Test double — no observation to tear down.
+  }
 
-  observe() {}
+  observe() {
+    // Test double — no observation to start.
+  }
 
   takeRecords() {
     return [];
   }
 
-  unobserve() {}
+  unobserve() {
+    // Test double — no observation to stop.
+  }
 }
 
 globalThis.IntersectionObserver ??= TestIntersectionObserver;

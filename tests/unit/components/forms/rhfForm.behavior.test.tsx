@@ -97,9 +97,9 @@ describe('rhfForm shell behavior', () => {
     expect(screen.queryByText('Other is required')).toBeNull();
 
     await user.type(screen.getByLabelText('Name'), 'a');
-    await waitFor(() =>
-      expect(screen.queryByText('Name is required')).toBeNull(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText('Name is required')).toBeNull();
+    });
   });
 
   it('shows every error after an invalid submit without moving focus or submitting', async () => {
@@ -126,7 +126,9 @@ describe('rhfForm shell behavior', () => {
     await user.type(screen.getByLabelText('Name'), 'abc');
     await user.type(screen.getByLabelText('Other'), 'xyz{Enter}');
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(onSubmit).toHaveBeenCalledWith({ name: 'abc', other: 'xyz' });
   });
@@ -142,7 +144,9 @@ describe('rhfForm shell behavior', () => {
     await user.type(screen.getByLabelText('Name'), 'abc');
     await user.click(screen.getByTestId('next'));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(onSubmit).toHaveBeenCalledWith({ name: 'abc' });
   });
@@ -156,7 +160,9 @@ describe('rhfForm shell behavior', () => {
 
     await user.click(screen.getByTestId('save-and-exit'));
 
-    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
+    });
 
     expect(onSaveAndExit).toHaveBeenCalledWith({ name: 'kept' });
     expect(onSubmit).not.toHaveBeenCalled();
@@ -171,7 +177,9 @@ describe('rhfForm shell behavior', () => {
     const { user } = setup({ onSaveAndExit });
 
     await user.click(screen.getByTestId('save-and-exit'));
-    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
+    });
     await settle();
 
     // Formik kept the soft schema here (quirk Q1); the shell does not.
@@ -193,7 +201,9 @@ describe('rhfForm shell behavior', () => {
 
     await user.click(screen.getByTestId('save-and-exit'));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('resets on a new initialValues object, not on a re-render with the same one', async () => {
@@ -214,11 +224,11 @@ describe('rhfForm shell behavior', () => {
       ...baseProps,
       initialValues: { name: 'from server', other: '' },
     });
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByLabelText<HTMLInputElement>('Name').value).toBe(
         'from server',
-      ),
-    );
+      );
+    });
 
     expect(screen.queryByText('Other is required')).toBeNull();
   });
@@ -233,7 +243,9 @@ describe('rhfForm shell behavior', () => {
 
     await user.click(screen.getByTestId('next'));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(onSubmit).toHaveBeenCalledWith({});
   });

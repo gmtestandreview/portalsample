@@ -202,7 +202,9 @@ describe('googleAnalytics', () => {
     resetAnalyticsState();
 
     document.body.innerHTML = '<span data-pii="name">Alice</span>';
-    const consoleSpy = vi.spyOn(console, 'table').mockImplementation(() => {});
+    const consoleSpy = vi
+      .spyOn(console, 'table')
+      .mockImplementation(() => undefined);
     const origLocation = globalThis.location;
     Object.defineProperty(globalThis, 'location', {
       configurable: true,
@@ -235,7 +237,9 @@ describe('googleAnalytics', () => {
     resetAnalyticsState();
 
     document.body.innerHTML = '<span data-pii="name">Bob</span>';
-    const consoleSpy = vi.spyOn(console, 'table').mockImplementation(() => {});
+    const consoleSpy = vi
+      .spyOn(console, 'table')
+      .mockImplementation(() => undefined);
     const origLocation = globalThis.location;
     Object.defineProperty(globalThis, 'location', {
       configurable: true,

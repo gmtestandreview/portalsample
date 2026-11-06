@@ -19,7 +19,6 @@ const mocks = vi.hoisted(() => ({
   account: { homeAccountId: 'mock-id' },
 }));
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -33,7 +32,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
@@ -45,7 +43,6 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
@@ -91,9 +88,9 @@ function Harness({
         status ?? (withHiddenRules ? { hidden: hidingFields } : undefined)
       }
       validate={validateForm(reportRecipientSubmitValidation, hidingFields)}
-      onSubmit={(submitted) =>
-        onSubmit(removeHidden(submitted, submitted, hidingFields))
-      }
+      onSubmit={(submitted) => {
+        onSubmit(removeHidden(submitted, submitted, hidingFields));
+      }}
     >
       <Form noValidate>
         <ReportRecipientFormikBridge />
@@ -110,7 +107,7 @@ const resetReportRecipientFormikBridgeMocks = () => {
   mocks.search.mockResolvedValue({ matches: [] });
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(ReportRecipientFormikBridge, () => {
   it('mirrors a manually entered address into the outer submit payload', async () => {
     expect.hasAssertions();
@@ -133,7 +130,9 @@ describe(ReportRecipientFormikBridge, () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       reportAddressType: ReportAddressTypeValues.Other,
@@ -181,7 +180,9 @@ describe(ReportRecipientFormikBridge, () => {
     await user.type(organisationName, 'Edited report organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       organisationName: 'Edited report organisation',
@@ -220,7 +221,9 @@ describe(ReportRecipientFormikBridge, () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       businessStreetAddress: {

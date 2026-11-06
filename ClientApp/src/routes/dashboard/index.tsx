@@ -58,7 +58,7 @@ import { BranchSelectionModalMode } from '../../components/modals/BranchSelector
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 const DEFAULT_SEARCH_PLACEHOLDER = 'Search by manufacturer, model, serial...';
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -184,9 +184,10 @@ const checkAcceptedQuoteStatus = (
     );
     if (requestResponse?.status === DashboardItemStatus.QuoteAvailable) {
       requestResponse.status = DashboardItemStatus.QuoteAccepted;
-      // Non-null assertion required: property is typed nullable but guaranteed non-null here
-      requestResponse.quote!.artefactName =
-        requestResponse.requestForQuote?.artefactName;
+      if (requestResponse.quote) {
+        requestResponse.quote.artefactName =
+          requestResponse.requestForQuote?.artefactName;
+      }
       requestResponse.lastUpdated = new Date();
 
       const index = items.findIndex(
@@ -196,7 +197,7 @@ const checkAcceptedQuoteStatus = (
 
       // Non-null assertion required: property is typed nullable but guaranteed non-null here
       SessionStorageCache().setItem(
-        requestResponse.referenceId!,
+        requestResponse.referenceId ?? '',
         'view-quote-id',
       );
     }
@@ -220,7 +221,7 @@ const handleDashboardLoadError = (
     // Non-null assertion required: property is typed nullable but guaranteed non-null here
     setErrorStatus((prevState) => ({
       ...prevState,
-      status: problemDetails.status!,
+      status: problemDetails.status ?? 0,
     }));
   }
   if (
@@ -324,9 +325,7 @@ const Dashboard = () => {
     [activeTab],
   );
 
-  const onShowBranchSelectorClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-  ) => {
+  const onShowBranchSelectorClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     modalDispatch?.setShowBranchSelector(true);
   };
@@ -395,7 +394,7 @@ const Dashboard = () => {
   const branchResetKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const branchResetKey = `${branchSelectionModalMode}:${accountDetails?.defaultOrganisationId ?? ''}`;
+    const branchResetKey = `${branchSelectionModalMode ?? ''}:${accountDetails?.defaultOrganisationId ?? ''}`;
 
     if (
       savedUserProfile &&
@@ -403,7 +402,7 @@ const Dashboard = () => {
       branchResetKeyRef.current !== branchResetKey
     ) {
       branchResetKeyRef.current = branchResetKey;
-      const tcDash = savedUserProfile?.testingCalibrationDashboard;
+      const tcDash = savedUserProfile.testingCalibrationDashboard;
       const profile = {
         filterYearType: tcDash?.filterYearType,
         filterStatusType: tcDash?.filterStatusType,
@@ -529,7 +528,9 @@ const Dashboard = () => {
     };
     void loadDataForDisplay();
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+    };
   }, [
     accounts,
     accountHomeAccountId,
@@ -574,7 +575,9 @@ const Dashboard = () => {
               data-testid='new-request-button'
               to='/request-for-quote-create'
               className='btn btn-primary text-nowrap'
-              onClick={() => trackGAEvent('New request')}
+              onClick={() => {
+                trackGAEvent('New request');
+              }}
             >
               <i className='icon-plus me-md-2' aria-hidden='true' />
               <span className='d-none d-md-inline-block'>New request</span>
@@ -601,9 +604,7 @@ const Dashboard = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests?.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
             <RequestItem request={r} key={r.referenceId} />
@@ -620,9 +621,7 @@ const Dashboard = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests?.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
             <InstrumentItem request={r} key={r.referenceId} />
@@ -798,25 +797,25 @@ const Dashboard = () => {
                     {'Currently managing '}
                   </span>
                   <span className='d-block text-break'>
-                    {!!accountState?.details?.trading &&
-                      `${accountState?.details?.trading}`}
-                    {!!accountState?.details?.trading &&
-                      !!accountState?.details?.branch &&
+                    {!!accountState.details.trading &&
+                      accountState.details.trading}
+                    {!!accountState.details.trading &&
+                      !!accountState.details.branch &&
                       ' - '}
-                    {!!accountState?.details?.branch &&
-                      `${accountState?.details?.branch}`}
+                    {!!accountState.details.branch &&
+                      accountState.details.branch}
                   </span>
                   <span className='d-block text-break'>
-                    {!!accountState?.details?.organisation &&
-                      `${accountState?.details?.organisation}`}
+                    {!!accountState.details.organisation &&
+                      accountState.details.organisation}
                   </span>
                 </h2>
-                {!!accountState?.details?.abn && (
+                {!!accountState.details.abn && (
                   <>
                     <span id='orgABN' className='d-inline-block me-3 fw-normal'>
                       {'ABN: '}
                       <PatternFormat
-                        value={accountState?.details?.abn}
+                        value={accountState.details.abn}
                         displayType='text'
                         format='## ### ### ###'
                         aria-hidden='true'
@@ -825,7 +824,7 @@ const Dashboard = () => {
                       />
                     </span>
                     <span className='visually-hidden'>
-                      {accountState?.details?.abn?.split('').join(' ')}
+                      {accountState.details.abn.split('').join(' ')}
                     </span>
                   </>
                 )}

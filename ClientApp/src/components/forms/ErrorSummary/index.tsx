@@ -24,9 +24,9 @@ const isValidationProblemDetails = (
 
 const handleAlertScroll = (): ReturnType<typeof setTimeout> =>
   setTimeout(() => {
-    const summaryRef: HTMLElement = document.querySelector(
+    const summaryRef = document.querySelector<HTMLElement>(
       '#form-error-summary',
-    ) as HTMLElement;
+    );
     if (summaryRef && typeof summaryRef.scrollIntoView === 'function') {
       summaryRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -211,7 +211,12 @@ const useFocusSummaryOnFailedSubmit = ({
     focusTimeout.current = handleAlertScroll();
   }, [hasErrors, isSubmitting, isValidating, submitCount]);
 
-  useEffect(() => () => clearTimeout(focusTimeout.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(focusTimeout.current);
+    },
+    [],
+  );
 };
 
 const FormikErrorsSummary = ({
@@ -279,7 +284,9 @@ const ErrorSummary = ({
   useEffect(() => {
     if (serverErrors) {
       const timeoutId = handleAlertScroll();
-      return () => clearTimeout(timeoutId);
+      return () => {
+        clearTimeout(timeoutId);
+      };
     }
     return undefined;
   }, [serverErrors]);

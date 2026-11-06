@@ -7,11 +7,11 @@ import '../../../ClientApp/src/validationSchemas/yupExtensions';
 const valid = (schema: Yup.StringSchema, value: string | null | undefined) =>
   schema.isValidSync(value);
 
-type ValidityCase = {
+interface ValidityCase {
   description: string;
   value: string | undefined;
   expected: boolean;
-};
+}
 
 // ---------------------------------------------------------------------------
 // fixedDigits

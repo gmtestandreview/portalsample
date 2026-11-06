@@ -45,24 +45,24 @@ const mocks = vi.hoisted(() => ({
 
 type HideRule<T> = (values: Partial<T>) => boolean;
 
-type DeliveryAndReturnHidingFields = {
+interface DeliveryAndReturnHidingFields {
   contactHide: HideRule<DeliveryAndReturnStep>;
   contact: { titleOther: HideRule<DeliveryAndReturnStep> };
   returnAddress: HideRule<DeliveryAndReturnStep>;
   carrierHide: HideRule<DeliveryAndReturnStep>;
-};
+}
 
-type PaymentDetailsHidingFields = {
+interface PaymentDetailsHidingFields {
   contactHide: HideRule<PaymentDetailsStep>;
   contact: { titleOther: HideRule<PaymentDetailsStep> };
-};
+}
 
-type ReportRecipientHidingFields = {
+interface ReportRecipientHidingFields {
   contact: { titleOther: HideRule<ReportRecipientStep> };
   businessStreetAddress: HideRule<ReportRecipientStep>;
-};
+}
 
-type SummaryAndAcceptHidingFields = {
+interface SummaryAndAcceptHidingFields {
   associatedDispute: HideRule<SummaryAndAcceptStep>;
   reportRecipient: {
     rfqHide: HideRule<SummaryAndAcceptStep>;
@@ -83,12 +83,11 @@ type SummaryAndAcceptHidingFields = {
   requestForQuote: {
     contact: { titleOther: HideRule<SummaryAndAcceptStep> };
   };
-};
+}
 
 const expectStringContaining = (value: string): unknown =>
   expect.stringContaining(value);
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
@@ -130,7 +129,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
@@ -141,7 +139,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/storage/sessionStorageCache',
   () =>
@@ -193,7 +190,7 @@ describe('accept quote wizard prop factories', () => {
       props.hidingFields as unknown as DeliveryAndReturnHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -288,7 +285,7 @@ describe('accept quote wizard prop factories', () => {
       props.hidingFields as unknown as PaymentDetailsHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -357,7 +354,7 @@ describe('accept quote wizard prop factories', () => {
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('load failed'));
 
     const loadError = await captureError(() =>
-      props.loadStepValues?.(abortSignal),
+      props.loadStepValues(abortSignal),
     );
 
     expect({
@@ -399,7 +396,7 @@ describe('accept quote wizard prop factories', () => {
       props.hidingFields as unknown as ReportRecipientHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -517,7 +514,7 @@ describe('accept quote wizard prop factories', () => {
       },
     } satisfies SummaryAndAcceptStep;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -649,13 +646,13 @@ describe('accept quote wizard prop factories', () => {
 
     await expect(
       Promise.all([
-        rejectionMessage(() => deliveryProps.loadStepValues?.()),
+        rejectionMessage(() => deliveryProps.loadStepValues()),
         rejectionMessage(() => deliveryProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => paymentProps.loadStepValues?.()),
+        rejectionMessage(() => paymentProps.loadStepValues()),
         rejectionMessage(() => paymentProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => recipientProps.loadStepValues?.()),
+        rejectionMessage(() => recipientProps.loadStepValues()),
         rejectionMessage(() => recipientProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => summaryProps.loadStepValues?.()),
+        rejectionMessage(() => summaryProps.loadStepValues()),
         rejectionMessage(() => summaryProps.onSaveAndExit?.({}, false)),
       ]),
     ).resolves.toStrictEqual([

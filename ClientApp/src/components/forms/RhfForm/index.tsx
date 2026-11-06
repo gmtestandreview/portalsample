@@ -48,8 +48,8 @@ export interface RhfFormProps<T extends FormValues> {
   validateSoft?: ValidationSchema | undefined;
   validateHard?: ValidationSchema | undefined;
   hidingFields?: Hideable | undefined;
-  onSubmit: (values: T) => void | Promise<unknown>;
-  onSaveAndExit?: ((values: T) => void | Promise<unknown>) | undefined;
+  onSubmit: (values: T) => undefined | Promise<unknown>;
+  onSaveAndExit?: ((values: T) => undefined | Promise<unknown>) | undefined;
   children?: ReactNode | ((api: RhfFormApi) => ReactNode);
 }
 

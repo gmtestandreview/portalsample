@@ -17,7 +17,7 @@ import { omitUndefined } from '../../../utils/omitUndefined';
 
 const isAllowedFile = (file: File, allowedTypes: string[]) =>
   file.name.includes('.') &&
-  allowedTypes.includes(`.${file.name.split('.').pop()!}`);
+  allowedTypes.includes(`.${file.name.split('.').pop() ?? ''}`);
 
 /** Returns one message per disallowed file, plus one if too many files were chosen. */
 const getUploadValidationErrors = (
@@ -57,7 +57,7 @@ const AttachmentNew = (
     ariaLabel,
     buttonTitle,
     containerClassName,
-    className,
+    className = '',
     onUploadFiles,
     onDeleteFile,
     progress,
@@ -87,11 +87,12 @@ const AttachmentNew = (
   // console.log('SD: ', value);
   const maxSizeInKb = maxSizeInMB * 1024 * 1024;
 
-  const addErrors = (messages: string[]) =>
+  const addErrors = (messages: string[]) => {
     setErrors((newErrors) => [...newErrors, ...messages]);
+  };
 
   const clearFileInput = () => {
-    if (inputRef.current && inputRef.current.value !== null) {
+    if (inputRef.current) {
       inputRef.current.value = '';
       inputRef.current.files = null;
     }
@@ -123,10 +124,6 @@ const AttachmentNew = (
   };
 
   const onInputFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value === null) {
-      return;
-    }
-
     setErrors([]);
     setIsUploading(true);
     if (event.currentTarget.files !== null) {
@@ -170,10 +167,7 @@ const AttachmentNew = (
             (item: AttachmentDto) => item.id !== attachment.id,
           ),
         );
-        if (inputRef.current && inputRef.current.value !== null) {
-          inputRef.current.value = '';
-          inputRef.current.files = null;
-        }
+        clearFileInput();
       }
     } catch (error_) {
       setErrors((newErrors) => [
@@ -185,7 +179,7 @@ const AttachmentNew = (
   };
 
   const renderAttachments = () => {
-    return attachments?.map((attachment, i) => {
+    return attachments.map((attachment, i) => {
       let attachmentKey =
         attachment.id ?? unidentifiedAttachmentKeys.current.get(attachment);
       if (attachmentKey === undefined) {
@@ -202,10 +196,10 @@ const AttachmentNew = (
           })}
           name={name}
           index={i}
-          canRemove={!isSummary && !attachment.documentLocked!}
-          cancelButtonId={`cancel-button-${attachment.id}`}
+          canRemove={!isSummary && !attachment.documentLocked}
+          cancelButtonId={`cancel-button-${attachment.id ?? ''}`}
           onRemoveItem={onConfirmDeleteFile}
-          isSummary={isSummary || attachment.documentLocked!}
+          isSummary={isSummary === true || (attachment.documentLocked ?? false)}
         />
       );
     });
@@ -227,7 +221,7 @@ const AttachmentNew = (
   return (
     <>
       <div
-        className={`form-field-container position-relative ${containerClassName || ''}`}
+        className={`form-field-container position-relative ${containerClassName ?? ''}`}
       >
         {/*   {isUploading && (
                     <BlockUISpinner>
@@ -251,9 +245,9 @@ const AttachmentNew = (
               <Form.Label
                 htmlFor={`drag-upload-${id ?? name}`}
                 className='mb-0 text-center'
-                onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) =>
-                  e.preventDefault()
-                }
+                onClick={(e: React.MouseEvent<HTMLElement>) => {
+                  e.preventDefault();
+                }}
                 aria-label={ariaLabel}
               >
                 {label}
@@ -285,7 +279,7 @@ const AttachmentNew = (
                 title={
                   disableUpload
                     ? 'Drag files disabled'
-                    : buttonTitle || 'Drag files here'
+                    : (buttonTitle ?? 'Drag files here')
                 }
                 // TO DO: Move the inline style into own class
                 className='position-absolute top-0 start-0 w-100 h-100 opacity-0'
@@ -303,7 +297,7 @@ const AttachmentNew = (
                 id={id ?? name}
                 name={name}
                 data-testid={id ?? name}
-                value={buttonTitle || 'Browse files'}
+                value={buttonTitle ?? 'Browse files'}
                 // TO DO: Move the inline style into own class
                 className='d-flex d-md-inline-block gap-2 position-relative btn btn-nmi-secondary flex-grow-1 mx-auto mb-2'
                 style={{ zIndex: 3 }}
@@ -351,7 +345,10 @@ const AttachmentNew = (
       progress.status !== 'Completed' &&
       progress.status !== 'CompletedWithErrors' ? (
         <Col role='status' aria-live='polite'>
-          <ProgressBar percent={progress.percent!} status={progress.status!} />
+          <ProgressBar
+            percent={progress.percent ?? 0}
+            status={progress.status ?? ''}
+          />
           <p className='mt-2 mb-4 ms-1 text-muted small'>
             {progress.completedFiles}
             {' / '}
@@ -359,7 +356,7 @@ const AttachmentNew = (
             {' files processed'}
           </p>
           <ProgressFileList
-            files={progress.files!}
+            files={progress.files ?? []}
             {...omitUndefined({ onCancelFile: handleCancelFile })}
           />
         </Col>

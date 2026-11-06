@@ -17,9 +17,9 @@ import type {
 } from './summary/types';
 import { useAccountState } from '../../authentication/hooks';
 
-type RfqFormikStatus = {
+interface RfqFormikStatus {
   hidden?: RfqSummarySectionProps['hidden'];
-};
+}
 
 const isRfqFormikStatus = (status: unknown): status is RfqFormikStatus =>
   typeof status === 'object' && status !== null && 'hidden' in status;
@@ -31,8 +31,9 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const { values } = formikContext;
   const status: unknown = formikContext.status as unknown;
   // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
-  const hidden: RfqSummarySectionProps['hidden'] =
-    (isRfqFormikStatus(status) && status.hidden) || {};
+  const hidden: RfqSummarySectionProps['hidden'] = isRfqFormikStatus(status)
+    ? (status.hidden ?? {})
+    : {};
   const details = useAccountState()?.details;
   const accountName = [details?.givenName, details?.familyName]
     .filter(Boolean)
@@ -67,7 +68,7 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
             />
             {isEditable ? (
               <EditButton
-                link={`/request-for-quote/${id}/organisation-and-contact`}
+                link={`/request-for-quote/${id ?? ''}/organisation-and-contact`}
               />
             ) : null}
           </CustomAccordionBody>
@@ -81,7 +82,7 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
             <RfqInstrumentSummary values={values} />
             {isEditable ? (
               <EditButton
-                link={`/request-for-quote/${id}/instrument-and-request`}
+                link={`/request-for-quote/${id ?? ''}/instrument-and-request`}
               />
             ) : null}
           </CustomAccordionBody>

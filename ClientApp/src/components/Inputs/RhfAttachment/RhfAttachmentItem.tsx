@@ -66,8 +66,12 @@ const RhfAttachmentItem = ({
       isMounted.current = false;
     };
   }, []);
-  const closeModal = () => setDeleteDialogOpen(false);
-  const showModal = () => setDeleteDialogOpen(true);
+  const closeModal = () => {
+    setDeleteDialogOpen(false);
+  };
+  const showModal = () => {
+    setDeleteDialogOpen(true);
+  };
   const { documentBytes } = attachment;
   // One object URL per document, not per render, released when it changes or the row goes.
   const fileUrl = useMemo(
@@ -118,7 +122,7 @@ const RhfAttachmentItem = ({
       // The error is left out of the message: it can carry tokens or PII.
       revertCategory(token);
       onCategoryError?.(
-        `Could not save the category for ${attachment.attachmentName}.`,
+        `Could not save the category for ${attachment.attachmentName ?? ''}.`,
       );
     }
   };
@@ -156,9 +160,11 @@ const RhfAttachmentItem = ({
         <div
           className='ms-3'
           style={{ width: '260px' }}
-          onBlur={() => setCategoryTouched(true)}
+          onBlur={() => {
+            setCategoryTouched(true);
+          }}
         >
-          <RhfSelectInput<string>
+          <RhfSelectInput
             id={categoryName}
             key={categoryName}
             name={categoryName}
@@ -180,12 +186,12 @@ const RhfAttachmentItem = ({
               id={cancelButtonId}
               name={cancelButtonId}
               title='Delete'
-              aria-label={`Delete ${attachment.attachmentName}`}
+              aria-label={`Delete ${attachment.attachmentName ?? ''}`}
               className='p-0 fs-7 d-flex align-self-center'
               onClick={showModal}
             >
               <i className='icon-close' aria-hidden='true' />
-              <span className='visually-hidden'>{`Delete ${attachment.attachmentName}`}</span>
+              <span className='visually-hidden'>{`Delete ${attachment.attachmentName ?? ''}`}</span>
             </Button>
           </div>
         )}

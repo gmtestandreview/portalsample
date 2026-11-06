@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { ReactElement } from 'react';
@@ -134,7 +135,7 @@ export const useWizardStepController = (
         setIsLoading(false);
       }
     },
-    [loadStepValues], // eslint-disable-line react-hooks/exhaustive-deps
+    [loadStepValues],
   );
 
   useEffect(() => {
@@ -154,7 +155,7 @@ export const useWizardStepController = (
       setDashboardNotification({
         message:
           'You no longer have access to the records for' +
-          ` ${accountState?.details?.targetOrganisation?.targetOrganisationName}. Your changes have not been saved.`,
+          ` ${accountState?.details?.targetOrganisation?.targetOrganisationName ?? ''}. Your changes have not been saved.`,
         severity: NotificationSeverity.Error,
       });
       if (accountDispatch) {
@@ -164,7 +165,6 @@ export const useWizardStepController = (
         );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorState.kind]);
 
   useEffect(() => {
@@ -220,8 +220,8 @@ export const useWizardStepController = (
         AppLogger.trace('Could not submit form step.', SeverityLevel.Error, {
           stepIndex: currentStepIndex,
           problemDetails: {
-            status: saveServerError?.status,
-            title: saveServerError?.title,
+            status: saveServerError.status,
+            title: saveServerError.title,
           },
         });
         setErrorState(
@@ -242,7 +242,7 @@ export const useWizardStepController = (
       try {
         const isDirty = !areFormValuesEqual(stepValues, values);
         await onSaveAndExit(values, isDirty, controllerRef.current?.signal);
-        void navigate(locationAfterExit || '/');
+        void navigate(orIfEmpty(locationAfterExit, '/'));
       } catch (error) {
         const err = error as Error;
         AppLogger.error('Could not save form step.', err, {
@@ -252,8 +252,8 @@ export const useWizardStepController = (
         AppLogger.trace('Could not save form step.', SeverityLevel.Error, {
           stepIndex: currentStepIndex,
           problemDetails: {
-            status: saveServerError?.status,
-            title: saveServerError?.title,
+            status: saveServerError.status,
+            title: saveServerError.title,
           },
         });
         setErrorState(
@@ -265,7 +265,7 @@ export const useWizardStepController = (
         );
       }
     } else {
-      void navigate(locationAfterExit || '/');
+      void navigate(orIfEmpty(locationAfterExit, '/'));
     }
   };
 
@@ -282,7 +282,9 @@ export const useWizardStepController = (
       globalThis.location.replace(env.VITE_EXTERNAL_REDIRECT_URL);
       return;
     }
-    void navigate(discard?.locationOnCancel || discardLocation || '/');
+    void navigate(
+      orIfEmpty(discard?.locationOnCancel, orIfEmpty(discardLocation, '/')),
+    );
   };
 
   return {
@@ -347,7 +349,7 @@ const resolveView = ({
     ) {
       return {
         kind: 'navigate',
-        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location}`,
+        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location ?? ''}`,
       };
     }
   }

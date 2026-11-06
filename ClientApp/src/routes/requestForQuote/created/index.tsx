@@ -5,7 +5,6 @@ import useBodyClass from '../../../components/Utilities/useBodyClass';
 import { useAccountState } from '../../../authentication/hooks';
 import HeaderIntroText from '../../../components/HeaderIntroText';
 import FormBanner from '../../../components/forms/FormBanner';
-import type { AccountDetails } from '../../../authentication/accountContext';
 import { formatBannerTitle } from '../../common/helperFunctions';
 
 const RequestForQuoteCreated = () => {
@@ -15,13 +14,13 @@ const RequestForQuoteCreated = () => {
   useHtmlTitle('Request for quote created successfully | NMI Services portal');
   useBodyClass('account-created');
 
-  const accountDetails: AccountDetails = account!.details!;
+  const accountDetails = account?.details;
   return (
     <>
       <FormBanner
         title='Testing and calibration service - Request for quote'
         showSaveAndExitButton={false}
-        refTitle={`Ref ID: ${id}`}
+        refTitle={`Ref ID: ${id ?? ''}`}
         subTitle={formatBannerTitle(accountDetails)}
         showGoToDashboardButton
       />

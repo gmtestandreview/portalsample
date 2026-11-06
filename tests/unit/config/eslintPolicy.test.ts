@@ -24,10 +24,10 @@ const LOAD_TIMEOUT_MS = 60_000;
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
 type Severity = 0 | 1 | 2 | 'absent';
 
-type ResolvedLintConfig = {
+interface ResolvedLintConfig {
   rules?: Record<string, unknown>;
   plugins?: Record<string, unknown>;
-};
+}
 
 const calculateConfig = async (
   filePath: string,
@@ -138,7 +138,7 @@ describe('runner-specific lint boundaries', () => {
     expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
     expect(
       severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
-    ).toBe(0);
+    ).toBe('absent');
   });
 
   it(

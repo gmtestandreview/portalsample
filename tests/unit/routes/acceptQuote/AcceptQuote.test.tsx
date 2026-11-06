@@ -121,7 +121,7 @@ vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useBodyClass') as unknown as string,
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
@@ -243,7 +243,11 @@ describe('acceptQuote container', () => {
 
     resetAcceptQuoteMocks();
 
-    mocks.getStepStatuses.mockReturnValue(new Promise(() => {})); // never resolves
+    mocks.getStepStatuses.mockReturnValue(
+      new Promise(() => {
+        // Never resolves — simulates an in-flight request for loading-state assertions.
+      }),
+    );
     await renderAcceptQuote();
 
     expect(screen.getByTestId('block-spinner')).toBeInTheDocument();
@@ -258,9 +262,9 @@ describe('acceptQuote container', () => {
 
     await renderAcceptQuote();
 
-    await waitFor(() =>
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    });
 
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
     expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
@@ -279,9 +283,9 @@ describe('acceptQuote container', () => {
 
     await renderAcceptQuote();
 
-    await waitFor(() =>
-      expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-Q-42'),
-    );
+    await waitFor(() => {
+      expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-Q-42');
+    });
 
     expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
   });
@@ -294,9 +298,9 @@ describe('acceptQuote container', () => {
     mocks.getStepStatuses.mockRejectedValue(new Error('network error'));
     await renderAcceptQuote();
 
-    await waitFor(() =>
-      expect(mocks.navigate).toHaveBeenCalledWith('/not-found'),
-    );
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith('/not-found');
+    });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
@@ -313,9 +317,9 @@ describe('acceptQuote container', () => {
     mocks.getStepStatuses.mockResolvedValue([]);
     await renderAcceptQuote();
 
-    await waitFor(() =>
-      expect(mocks.navigate).toHaveBeenCalledWith('/not-found'),
-    );
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith('/not-found');
+    });
 
     expect(mocks.getQuoteRequestDetails).not.toHaveBeenCalled();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
@@ -337,9 +341,9 @@ describe('acceptQuote container', () => {
     );
     await renderAcceptQuote();
 
-    await waitFor(() =>
-      expect(mocks.navigate).toHaveBeenCalledWith('/not-found'),
-    );
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith('/not-found');
+    });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',

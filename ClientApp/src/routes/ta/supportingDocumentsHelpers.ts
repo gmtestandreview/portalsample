@@ -2,9 +2,9 @@ import { FileStatus, type TASupportingDocumentsProps } from './types';
 
 export const handleAlertScroll = () => {
   setTimeout(() => {
-    const summaryRef: HTMLElement = document.querySelector(
+    const summaryRef = document.querySelector<HTMLElement>(
       '#form-error-summary-custom',
-    ) as HTMLElement;
+    );
     summaryRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     summaryRef?.focus();
   }, 100);
@@ -22,7 +22,7 @@ export const getFailedFileErrors = (
     )
     .map((f) =>
       f.status === FileStatus.Cancelled
-        ? `Upload cancelled for ${f.fileName}`
-        : `Error uploading ${f.fileName}`,
+        ? `Upload cancelled for ${f.fileName ?? ''}`
+        : `Error uploading ${f.fileName ?? ''}`,
     );
 };

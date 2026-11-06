@@ -94,8 +94,8 @@ test('BUG-004: pristine valid create-account forms do not trigger route-leave co
 
 test('BUG-005: trackGAPii reads visible DOM content before redaction in localhost diagnostics', async () => {
   const send = vi.fn();
-  const table = vi.spyOn(console, 'table').mockImplementation(() => {});
-  const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+  const table = vi.spyOn(console, 'table').mockImplementation(() => undefined);
+  const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
   vi.stubGlobal('location', { hostname: 'localhost', pathname: '/dashboard' });
   vi.doMock('react-ga4', () => ({

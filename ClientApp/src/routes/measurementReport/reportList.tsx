@@ -109,13 +109,15 @@ const ReportList = (
                       {artefact.tmasMeasurementCategoryName}
                     </td>
                     <td data-header='ReportStatus' className='col-md-2'>
-                      <StatusPill status={artefact.tmasStatus!} />
+                      {artefact.tmasStatus !== undefined && (
+                        <StatusPill status={artefact.tmasStatus} />
+                      )}
                     </td>
                     <td data-header='Action' className='col-md-2'>
                       <div>
                         {artefact.tmasStatus !== ReportStatus.Withdrawn && (
                           <Link
-                            to={`/report/${artefact.tmasTcQuoteName}`}
+                            to={`/report/${artefact.tmasTcQuoteName ?? ''}`}
                             className='d-block mb-2'
                           >
                             View report
@@ -123,7 +125,7 @@ const ReportList = (
                         )}
                         <span className='visually-hidden'>{' or '}</span>
                         <Link
-                          to={`/request-for-quote-copy/${artefact.tmasPortalRequestId}`}
+                          to={`/request-for-quote-copy/${artefact.tmasPortalRequestId ?? ''}`}
                           aria-label='Request recalibration for this instrument/artefact'
                           className='d-block mb-2 text-nowrap'
                         >
@@ -136,14 +138,17 @@ const ReportList = (
               )}
             </tbody>
           </Table>
-          <CustomPagination
-            currentPage={pagedListArtefactData.currentPage!}
-            totalPages={pagedListArtefactData.totalPages!}
-            onPageChange={(page: number) => {
-              setCurrentPage(page);
-            }}
-            containerClassName='d-flex justify-content-center'
-          />
+          {pagedListArtefactData.currentPage !== undefined &&
+            pagedListArtefactData.totalPages !== undefined && (
+              <CustomPagination
+                currentPage={pagedListArtefactData.currentPage}
+                totalPages={pagedListArtefactData.totalPages}
+                onPageChange={(page: number) => {
+                  setCurrentPage(page);
+                }}
+                containerClassName='d-flex justify-content-center'
+              />
+            )}
         </Col>
       </Row>
     </>

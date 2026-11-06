@@ -70,7 +70,7 @@ describe('auth configuration', () => {
 
     const consoleError = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {});
+      .mockImplementation(() => undefined);
     const { configuration } = await import('@/authentication/authConfig');
 
     configuration.system?.loggerOptions?.loggerCallback?.(
@@ -89,7 +89,7 @@ describe('auth configuration', () => {
 
     const consoleError = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {});
+      .mockImplementation(() => undefined);
     const { configuration } = await import('@/authentication/authConfig');
 
     configuration.system?.loggerOptions?.loggerCallback?.(
@@ -108,7 +108,7 @@ describe('auth configuration', () => {
 
     const consoleError = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {});
+      .mockImplementation(() => undefined);
     const { configuration } = await import('@/authentication/authConfig');
 
     configuration.system?.loggerOptions?.loggerCallback?.(

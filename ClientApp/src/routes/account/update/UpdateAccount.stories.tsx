@@ -29,7 +29,7 @@ const accountStepValues = {
 };
 
 interface UpdateAccountObservations {
-  loadedOrganisationIds: Array<string | readonly string[] | undefined>;
+  loadedOrganisationIds: (string | readonly string[] | undefined)[];
   savedBodies: unknown[];
 }
 

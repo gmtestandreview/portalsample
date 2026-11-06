@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => ({
     vi.fn<
       (
         type: CRMLookupTypes,
-      ) => Promise<Array<{ id: CRMLookupTypes; name: CRMLookupTypes }>>
+      ) => Promise<{ id: CRMLookupTypes; name: CRMLookupTypes }[]>
     >(),
   getAllInfoPanelContent: vi.fn<(...args: unknown[]) => unknown>(),
   getNmiApplication: vi.fn<(...args: unknown[]) => unknown>(),
@@ -111,7 +111,7 @@ const accountDetails = {
   branch: 'Branch',
 } as AccountDetails;
 
-type ApplicationHidingFields = {
+interface ApplicationHidingFields {
   isApplNewHide: (values: Partial<ApplicationAndInstrumentStepDto>) => boolean;
   isApplNewInstrumentHide: (
     values: Partial<ApplicationAndInstrumentStepDto>,
@@ -123,9 +123,9 @@ type ApplicationHidingFields = {
     values: Partial<ApplicationAndInstrumentStepDto>,
   ) => boolean;
   isApplOIMLHide: (values: Partial<ApplicationAndInstrumentStepDto>) => boolean;
-};
+}
 
-type OrganisationHidingFields = {
+interface OrganisationHidingFields {
   isManufacturerHide: (
     values: Partial<PatternApprovalOrgAndContact>,
   ) => boolean;
@@ -144,14 +144,14 @@ type OrganisationHidingFields = {
   invoiceContact: {
     titleOther: (values: Partial<PatternApprovalOrgAndContact>) => boolean;
   };
-};
+}
 
-type SummaryDisplayValues = {
+interface SummaryDisplayValues {
   applicationAndInstrument?: Partial<ApplicationAndInstrumentStepDto>;
   organisationAndContact?: Partial<PatternApprovalOrgAndContact>;
-};
+}
 
-type SummaryHidingFields = {
+interface SummaryHidingFields {
   organisationAndContact: {
     branchOrLocationName: (values: SummaryDisplayValues) => boolean;
     isManufacturerHide: (values: SummaryDisplayValues) => boolean;
@@ -172,7 +172,7 @@ type SummaryHidingFields = {
       values: Partial<ApplicationAndInstrumentStepDto>,
     ) => boolean;
   };
-};
+}
 
 const resetTaPropsMocks = () => {
   vi.clearAllMocks();
@@ -217,7 +217,7 @@ describe('pattern approval wizard prop factories', () => {
     const hidingFields =
       props.hidingFields as unknown as ApplicationHidingFields;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
+    await expect(props.loadStepValues(abortSignal)).resolves.toStrictEqual({
       stepValues: {
         patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
         instrumentCategoryLookup: [
@@ -242,19 +242,19 @@ describe('pattern approval wizard prop factories', () => {
       bannerRefTitle: props.bannerRefTitle,
       bannerSubTitle: props.bannerSubTitle,
       hidingFields: [
-        hidingFields.isApplNewHide?.({
+        hidingFields.isApplNewHide({
           patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
         }),
-        hidingFields.isApplNewInstrumentHide?.({
+        hidingFields.isApplNewInstrumentHide({
           patternApprovalType: PatternApprovalRequiredValues.Variation,
         }),
-        hidingFields.isApplVariationHide?.({
+        hidingFields.isApplVariationHide({
           patternApprovalType: PatternApprovalRequiredValues.Variation,
         }),
-        hidingFields.isApplOtherHide?.({
+        hidingFields.isApplOtherHide({
           patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         }),
-        hidingFields.isApplOIMLHide?.({
+        hidingFields.isApplOIMLHide({
           newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
           instrumentCategory: 'category-1',
           instrumentType: 'type-1',
@@ -342,49 +342,49 @@ describe('pattern approval wizard prop factories', () => {
     const hidingFields =
       props.hidingFields as unknown as OrganisationHidingFields;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
+    await expect(props.loadStepValues(abortSignal)).resolves.toStrictEqual({
       stepValues: { isManufacturer: YesNo.No },
     });
     expect({
       organisationAndContactCall:
         mocks.getOrganisationAndContact.mock.calls.at(-1),
       hidingFields: [
-        hidingFields.isManufacturerHide?.({
+        hidingFields.isManufacturerHide({
           isManufacturer: YesNo.Yes,
         }),
-        hidingFields.isManufacturerHide?.({
+        hidingFields.isManufacturerHide({
           isManufacturer: YesNo.No,
         }),
-        hidingFields.isManufacturerHide?.({
+        hidingFields.isManufacturerHide({
           isManufacturer: undefined,
         }),
-        hidingFields.isCurrentOrganisationHide?.({}),
-        hidingFields.principalContactHide?.({
+        hidingFields.isCurrentOrganisationHide({}),
+        hidingFields.principalContactHide({
           isPrincipalContact: YesNo.Yes,
         }),
-        hidingFields.principalContactHide?.({
+        hidingFields.principalContactHide({
           isPrincipalContact: YesNo.No,
         }),
-        hidingFields.principalContactHide?.({
+        hidingFields.principalContactHide({
           isPrincipalContact: undefined,
         }),
-        hidingFields.principalInvoiceContactHide?.({
+        hidingFields.principalInvoiceContactHide({
           isPrincipalInvoiceContact: YesNo.Yes,
         }),
-        hidingFields.principalInvoiceContactHide?.({
+        hidingFields.principalInvoiceContactHide({
           isPrincipalInvoiceContact: YesNo.No,
         }),
-        hidingFields.principalInvoiceContactHide?.({
+        hidingFields.principalInvoiceContactHide({
           isPrincipalInvoiceContact: undefined,
         }),
-        hidingFields.contact.titleOther?.({
+        hidingFields.contact.titleOther({
           contact: { title: Title.Other },
         }),
-        hidingFields.contact.titleOther?.({ contact: { title: Title.Dr } }),
-        hidingFields.invoiceContact.titleOther?.({
+        hidingFields.contact.titleOther({ contact: { title: Title.Dr } }),
+        hidingFields.invoiceContact.titleOther({
           invoiceContact: { title: Title.Other },
         }),
-        hidingFields.invoiceContact.titleOther?.({
+        hidingFields.invoiceContact.titleOther({
           invoiceContact: { title: Title.Dr },
         }),
       ],
@@ -462,7 +462,7 @@ describe('pattern approval wizard prop factories', () => {
       suppressErrorSummaryPath: boolean;
     };
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
+    await expect(props.loadStepValues(abortSignal)).resolves.toStrictEqual({
       stepValues: { form: { documents: [] } },
     });
     expect({
@@ -534,7 +534,7 @@ describe('pattern approval wizard prop factories', () => {
       suppressErrorSummaryPath: boolean;
     };
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
+    await expect(props.loadStepValues(abortSignal)).resolves.toStrictEqual({
       stepValues: {
         referenceId: 'PA-1',
         applicationAndInstrument: {
@@ -557,79 +557,79 @@ describe('pattern approval wizard prop factories', () => {
     expect({
       summaryCall: mocks.getSummary.mock.calls.at(-1),
       organisationAndContact: [
-        hidingFields.organisationAndContact.branchOrLocationName?.({
+        hidingFields.organisationAndContact.branchOrLocationName({
           organisationAndContact: {},
         }),
-        hidingFields.organisationAndContact.branchOrLocationName?.({
+        hidingFields.organisationAndContact.branchOrLocationName({
           organisationAndContact: { branchOrLocationName: 'Branch' },
         }),
-        hidingFields.organisationAndContact.isManufacturerHide?.({
+        hidingFields.organisationAndContact.isManufacturerHide({
           organisationAndContact: { isManufacturer: YesNo.Yes },
         }),
-        hidingFields.organisationAndContact.isManufacturerHide?.({
+        hidingFields.organisationAndContact.isManufacturerHide({
           organisationAndContact: { isManufacturer: YesNo.No },
         }),
-        hidingFields.organisationAndContact.isManufacturerHide?.({
+        hidingFields.organisationAndContact.isManufacturerHide({
           organisationAndContact: { isManufacturer: undefined },
         }),
-        hidingFields.organisationAndContact.principalInvoiceContactHide?.({
+        hidingFields.organisationAndContact.principalInvoiceContactHide({
           organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes },
         }),
-        hidingFields.organisationAndContact.principalInvoiceContactHide?.({
+        hidingFields.organisationAndContact.principalInvoiceContactHide({
           organisationAndContact: { isPrincipalInvoiceContact: YesNo.No },
         }),
-        hidingFields.organisationAndContact.principalInvoiceContactHide?.({
+        hidingFields.organisationAndContact.principalInvoiceContactHide({
           organisationAndContact: { isPrincipalInvoiceContact: undefined },
         }),
-        hidingFields.organisationAndContact.isCurrentOrganisationHide?.({
+        hidingFields.organisationAndContact.isCurrentOrganisationHide({
           organisationAndContact: { isManufacturer: YesNo.No },
         }),
-        hidingFields.organisationAndContact.isCurrentOrganisationHide?.({
+        hidingFields.organisationAndContact.isCurrentOrganisationHide({
           organisationAndContact: { isManufacturer: YesNo.Yes },
         }),
-        hidingFields.organisationAndContact.contact.titleOther?.({
+        hidingFields.organisationAndContact.contact.titleOther({
           organisationAndContact: { contact: { title: Title.Other } },
         }),
-        hidingFields.organisationAndContact.contact.titleOther?.({
+        hidingFields.organisationAndContact.contact.titleOther({
           organisationAndContact: { contact: { title: Title.Dr } },
         }),
-        hidingFields.organisationAndContact.invoiceContact.titleOther?.({
+        hidingFields.organisationAndContact.invoiceContact.titleOther({
           organisationAndContact: { invoiceContact: { title: Title.Other } },
         }),
-        hidingFields.organisationAndContact.invoiceContact.titleOther?.({
+        hidingFields.organisationAndContact.invoiceContact.titleOther({
           organisationAndContact: { invoiceContact: { title: Title.Dr } },
         }),
       ],
       applicationAndInstrument: [
-        hidingFields.applicationAndInstrument.isApplNewHide?.({
+        hidingFields.applicationAndInstrument.isApplNewHide({
           applicationAndInstrument: {
             patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
           },
         }),
-        hidingFields.applicationAndInstrument.isApplNewHide?.({
+        hidingFields.applicationAndInstrument.isApplNewHide({
           applicationAndInstrument: {
             patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
           },
         }),
-        hidingFields.applicationAndInstrument.isApplVariationHide?.({
+        hidingFields.applicationAndInstrument.isApplVariationHide({
           applicationAndInstrument: {
             patternApprovalType: PatternApprovalRequiredValues.Variation,
           },
         }),
-        hidingFields.applicationAndInstrument.isApplVariationHide?.({
+        hidingFields.applicationAndInstrument.isApplVariationHide({
           applicationAndInstrument: { patternApprovalType: undefined },
         }),
-        hidingFields.applicationAndInstrument.isApplOtherHide?.({
+        hidingFields.applicationAndInstrument.isApplOtherHide({
           applicationAndInstrument: {
             patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
           },
         }),
-        hidingFields.applicationAndInstrument.isApplOtherHide?.({
+        hidingFields.applicationAndInstrument.isApplOtherHide({
           applicationAndInstrument: {
             patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
           },
         }),
-        hidingFields.applicationAndInstrument.isApplOIMLHide?.({
+        hidingFields.applicationAndInstrument.isApplOIMLHide({
           newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
         }),
       ],
@@ -698,7 +698,7 @@ describe('pattern approval wizard prop factories', () => {
             accountDetails,
             stepStatuses,
             'Type approval',
-          ).loadStepValues?.(abortSignal);
+          ).loadStepValues(abortSignal);
         },
         message:
           'Failed to load PA application and instrument details. Id: PA-5',
@@ -736,7 +736,7 @@ describe('pattern approval wizard prop factories', () => {
             accountDetails,
             stepStatuses,
             'Type approval',
-          ).loadStepValues?.(abortSignal);
+          ).loadStepValues(abortSignal);
         },
         message: 'Failed to load PA org and contact details. Id: PA-7',
         logger: 'Failed to load PA org and contact details',
@@ -772,7 +772,7 @@ describe('pattern approval wizard prop factories', () => {
             accountDetails,
             stepStatuses,
             'Type approval',
-          ).loadStepValues?.(abortSignal);
+          ).loadStepValues(abortSignal);
         },
         message: 'Failed to load PA supporting documents. Id: PA-9',
         logger: 'Failed to load PA supporting documents',
@@ -808,7 +808,7 @@ describe('pattern approval wizard prop factories', () => {
             accountDetails,
             stepStatuses,
             'Type approval',
-          ).loadStepValues?.(abortSignal);
+          ).loadStepValues(abortSignal);
         },
         message: 'Failed to load PA summary. Id: PA-11',
         logger: 'Failed to load PA summary',
@@ -884,13 +884,13 @@ describe('pattern approval wizard prop factories', () => {
 
     const failureMessages = await Promise.all(
       [
-        appProps.loadStepValues?.(),
+        appProps.loadStepValues(),
         appProps.onSaveAndExit?.({}, false),
-        orgProps.loadStepValues?.(),
+        orgProps.loadStepValues(),
         orgProps.onSaveAndExit?.({}, false),
-        docsProps.loadStepValues?.(),
+        docsProps.loadStepValues(),
         docsProps.onSaveAndExit?.({ form: {} }, false),
-        summaryProps.loadStepValues?.(),
+        summaryProps.loadStepValues(),
         summaryProps.onSaveAndNext?.({}, false),
       ].map((operation) =>
         Promise.resolve(operation).then(

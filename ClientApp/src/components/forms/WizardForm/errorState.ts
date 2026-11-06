@@ -38,7 +38,7 @@ export function resolveErrorState(
 
   // Custom redirect is checked FIRST using the local return value — not the
   // React state variable (which would be stale at this point in the event loop).
-  if (getRedirectionLocationOnError && serverError?.status) {
+  if (getRedirectionLocationOnError && serverError.status) {
     const location = getRedirectionLocationOnError(
       serverError.status,
       errorType,
@@ -46,20 +46,20 @@ export function resolveErrorState(
     if (location) return { kind: 'redirect', location };
   }
 
-  if (serverError?.status === HttpStatusCode.NotFound)
+  if (serverError.status === HttpStatusCode.NotFound)
     return { kind: 'notFound' };
-  if (serverError?.status === 401) return { kind: 'gone' };
-  if (serverError?.status === HttpStatusCode.Gone) return { kind: 'gone' };
-  if (serverError?.status === HttpStatusCode.Forbidden)
+  if (serverError.status === 401) return { kind: 'gone' };
+  if (serverError.status === HttpStatusCode.Gone) return { kind: 'gone' };
+  if (serverError.status === HttpStatusCode.Forbidden)
     return resolveForbiddenState(error, serverError, errorType);
-  if (serverError?.status === HttpStatusCode.Conflict)
+  if (serverError.status === HttpStatusCode.Conflict)
     return { kind: 'concurrency', details: serverError };
 
   // Load path: abort stays silent; every other unhandled error now surfaces as
   // a loading error. This restores the previously commented-out setLoadingError
   // branch that was suppressing all unrecognised network failures silently.
   if (errorType === ErrorType.Load) {
-    if ((error as DOMException)?.name === 'AbortError') return { kind: 'none' };
+    if ((error as DOMException).name === 'AbortError') return { kind: 'none' };
     return { kind: 'loading' };
   }
 

@@ -8,6 +8,7 @@ import type { RadioButtonGroupProps } from './types';
 import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 const RadioButtonGroup = <T,>(
   props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>,
@@ -28,12 +29,12 @@ const RadioButtonGroup = <T,>(
     ...rest
   } = props;
 
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
-  const legendId = `${id || name}`;
+  const legendId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${legendId}` : undefined;
   const [field, meta] = useField(name);
 
   if (isSummary) {
-    if (field?.value) {
+    if (field.value) {
       const selectedOption = options.find(
         (option) => option.value === field.value,
       );
@@ -41,7 +42,7 @@ const RadioButtonGroup = <T,>(
         <SummaryDisplay
           label={legend}
           value={selectedOption?.label ?? 'No details added'}
-          id={id || name}
+          id={legendId}
           as='span'
           containerClassName={containerClassName}
           className={className}
@@ -56,9 +57,7 @@ const RadioButtonGroup = <T,>(
     <fieldset
       data-testid={`fs-${legendId}`}
       aria-describedby={
-        meta.touched && meta.error
-          ? `${id || name}-validation-msg`
-          : helpId || undefined
+        meta.touched && meta.error ? `${legendId}-validation-msg` : helpId
       }
     >
       <legend id={legendId}>{legend}</legend>
@@ -106,7 +105,7 @@ const RadioButtonGroup = <T,>(
         {meta.touched && meta.error ? (
           <Form.Control.Feedback
             type='invalid'
-            id={`${id || name}-validation-msg`}
+            id={`${legendId}-validation-msg`}
             className='form-validation-message'
           >
             {meta.error}

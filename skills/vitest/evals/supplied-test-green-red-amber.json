@@ -1,0 +1,215 @@
+{
+  "description": "Case definitions and source mapping only; no agent behavioral runs claimed",
+  "cases": [
+    {
+      "id": "mcpMarkdownReport-green",
+      "file": "mcpMarkdownReport.test.ts",
+      "stage": "GREEN",
+      "prompt": "Review mcpMarkdownReport.test.ts and identify valid expected behavior",
+      "expected_response": "preserve exact passing/failed/violation/error sections and distinguish present-but-empty from missing",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "mcpMarkdownReport-red",
+      "file": "mcpMarkdownReport.test.ts",
+      "stage": "RED",
+      "prompt": "Review mcpMarkdownReport.test.ts and identify a near-miss or unsafe regression to reject",
+      "expected_response": "never interpret missing report sections as passing, or treat MCP BDD execution as Vitest Browser Mode",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "mcpMarkdownReport-amber",
+      "file": "mcpMarkdownReport.test.ts",
+      "stage": "AMBER",
+      "prompt": "Review mcpMarkdownReport.test.ts and identify required but unavailable verification",
+      "expected_response": "report parser and Storybook MCP support source absent; runner behavior NHR",
+      "static_mapping": "N/A",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "moduleCoverage-green",
+      "file": "moduleCoverage.test.ts",
+      "stage": "GREEN",
+      "prompt": "Review moduleCoverage.test.ts and identify valid expected behavior",
+      "expected_response": "validate manifest schema and canonical exports, reject ambiguous imports, verify forwarding equivalence and fail-closed missing evidence",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "moduleCoverage-red",
+      "file": "moduleCoverage.test.ts",
+      "stage": "RED",
+      "prompt": "Review moduleCoverage.test.ts and identify a near-miss or unsafe regression to reject",
+      "expected_response": "never accept smoke-only evidence, duplicate claims, unresolved exports, invalid wrapper equivalence or generated inventory with invalid manifest",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "moduleCoverage-amber",
+      "file": "moduleCoverage.test.ts",
+      "stage": "AMBER",
+      "prompt": "Review moduleCoverage.test.ts and identify required but unavailable verification",
+      "expected_response": "scripts/storybook-coverage.mjs, checked-in forwarding wrapper, fixture directory absent; CLI and source-mode execution NHR",
+      "static_mapping": "N/A",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "mswHandlers-green",
+      "file": "mswHandlers.test.ts",
+      "stage": "GREEN",
+      "prompt": "Review mswHandlers.test.ts and identify valid expected behavior",
+      "expected_response": "use setupServer lifecycle and explicit 200 response plus fixture assertions; preserve Docs iframe isolation and intentional 501 unmapped types",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "mswHandlers-red",
+      "file": "mswHandlers.test.ts",
+      "stage": "RED",
+      "prompt": "Review mswHandlers.test.ts and identify a near-miss or unsafe regression to reject",
+      "expected_response": "never bypass missing MSW handlers or permit real network fallthrough; do not silence all unhandled requests",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "mswHandlers-amber",
+      "file": "mswHandlers.test.ts",
+      "stage": "AMBER",
+      "prompt": "Review mswHandlers.test.ts and identify required but unavailable verification",
+      "expected_response": "source call sites, .storybook handlers and story files absent; network and Storybook environment results NHR",
+      "static_mapping": "N/A",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "previewEnvStubs-green",
+      "file": "previewEnvStubs.test.ts",
+      "stage": "GREEN",
+      "prompt": "Review previewEnvStubs.test.ts and identify valid expected behavior",
+      "expected_response": "preserve vi.resetModules, vi.doMock and telemetry-disable assertions; distinguish unit jsdom from Chromium",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "previewEnvStubs-red",
+      "file": "previewEnvStubs.test.ts",
+      "stage": "RED",
+      "prompt": "Review previewEnvStubs.test.ts and identify a near-miss or unsafe regression to reject",
+      "expected_response": "never enable live telemetry by changing stub assumptions or transplant unit setup into Browser Mode",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "previewEnvStubs-amber",
+      "file": "previewEnvStubs.test.ts",
+      "stage": "AMBER",
+      "prompt": "Review previewEnvStubs.test.ts and identify required but unavailable verification",
+      "expected_response": "preview-setup and AppInsightsService source absent; import/mock execution NHR",
+      "static_mapping": "N/A",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "producerIdentity-green",
+      "file": "producerIdentity.test.ts",
+      "stage": "GREEN",
+      "prompt": "Review producerIdentity.test.ts and identify valid expected behavior",
+      "expected_response": "accept only matching producer, freeze, URL and child epoch; treat negative variants as intended rejections",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "producerIdentity-red",
+      "file": "producerIdentity.test.ts",
+      "stage": "RED",
+      "prompt": "Review producerIdentity.test.ts and identify a near-miss or unsafe regression to reject",
+      "expected_response": "never reuse mismatched PID/epoch, freeze or URL as valid provenance",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "producerIdentity-amber",
+      "file": "producerIdentity.test.ts",
+      "stage": "AMBER",
+      "prompt": "Review producerIdentity.test.ts and identify required but unavailable verification",
+      "expected_response": "maintained producer validator unavailable; actual receipt validation NHR",
+      "static_mapping": "N/A",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "reactAriaEvaluationContract-green",
+      "file": "reactAriaEvaluationContract.test.ts",
+      "stage": "GREEN",
+      "prompt": "Review reactAriaEvaluationContract.test.ts and identify valid expected behavior",
+      "expected_response": "retain 48 discoverable evaluation story expectation, import resolution checks, scoped CSS and TS inclusion",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "reactAriaEvaluationContract-red",
+      "file": "reactAriaEvaluationContract.test.ts",
+      "stage": "RED",
+      "prompt": "Review reactAriaEvaluationContract.test.ts and identify a near-miss or unsafe regression to reject",
+      "expected_response": "do not weaken acceptance by deleting stories, ignoring unresolved imports, bypassing tsconfig, or treating Storybook story count as a Vitest play-function count",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "reactAriaEvaluationContract-amber",
+      "file": "reactAriaEvaluationContract.test.ts",
+      "stage": "AMBER",
+      "prompt": "Review reactAriaEvaluationContract.test.ts and identify required but unavailable verification",
+      "expected_response": "React Aria source directories, tsconfig and story bodies absent; filesystem checks NHR",
+      "static_mapping": "N/A",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "rollupOnLog-green",
+      "file": "rollupOnLog.test.ts",
+      "stage": "GREEN",
+      "prompt": "Review rollupOnLog.test.ts and identify valid expected behavior",
+      "expected_response": "suppress exactly vendor INVALID_ANNOTATION and PLUGIN_TIMINGS as tested; forward first-party warnings and all other diagnostics",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "rollupOnLog-red",
+      "file": "rollupOnLog.test.ts",
+      "stage": "RED",
+      "prompt": "Review rollupOnLog.test.ts and identify a near-miss or unsafe regression to reject",
+      "expected_response": "never silence first-party INVALID_ANNOTATION, unresolved imports, sourcemap errors, or unrelated diagnostics",
+      "static_mapping": "PASS",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    },
+    {
+      "id": "rollupOnLog-amber",
+      "file": "rollupOnLog.test.ts",
+      "stage": "AMBER",
+      "prompt": "Review rollupOnLog.test.ts and identify required but unavailable verification",
+      "expected_response": "actual .storybook/rollupOnLog implementation absent; runtime forwarding NHR",
+      "static_mapping": "N/A",
+      "behavioral_agent_outcome": "NHR",
+      "runtime_outcome": "NHR"
+    }
+  ]
+}

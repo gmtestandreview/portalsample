@@ -23,12 +23,12 @@ import { ValidationMessages } from '../../../../ClientApp/src/routes/ta/types';
  * Structural schema type: the exported schemas carry different generic context
  * parameters, so only the validate contract is depended upon here.
  */
-type ValidatableSchema = {
+interface ValidatableSchema {
   validate(
     value: unknown,
     options?: { abortEarly?: boolean },
   ): Promise<unknown>;
-};
+}
 
 /** Collects every message so conditional branches are asserted, not just the first. */
 const errorsFor = async (
@@ -407,21 +407,21 @@ describe('application and instrument submit validation', () => {
   it('treats the mutual-exclusion custom test as passing for non-array values', () => {
     expect.hasAssertions();
 
-    type ConditionalArraySchema = {
+    interface ConditionalArraySchema {
       resolve(options: { parent: unknown; value: unknown }): {
-        tests: Array<{
+        tests: {
           OPTIONS?: {
             name?: string;
             test?: (value: unknown) => boolean;
           };
-        }>;
+        }[];
       };
-    };
-    type SchemaWithOtherOptions = {
+    }
+    interface SchemaWithOtherOptions {
       fields: {
         othSubOptions: ConditionalArraySchema;
       };
-    };
+    }
     const schema =
       applicationAndInstrumentSubmitValidation as unknown as SchemaWithOtherOptions;
     const otherOptionsSchema = schema.fields.othSubOptions.resolve({

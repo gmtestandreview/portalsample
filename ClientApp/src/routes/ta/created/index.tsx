@@ -4,7 +4,6 @@ import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import useAccountContext from '../../../authentication/hooks';
 import FormBanner from '../../../components/forms/FormBanner';
-import type { AccountDetails } from '../../../authentication/accountContext';
 import { formatBannerTitle } from '../../common/helperFunctions';
 import SessionStorageCache from '../../../storage/sessionStorageCache';
 import { DashboardTab } from '../../../components/SearchFilter/types';
@@ -19,7 +18,7 @@ const RequestForPatternApprovalCreated = () => {
   );
   useBodyClass('application-created');
 
-  const accountDetails: AccountDetails = account!.details!;
+  const accountDetails = account?.details;
   function goToDashboard() {
     SessionStorageCache().setItem(
       DashboardTab.Requests,
@@ -32,7 +31,7 @@ const RequestForPatternApprovalCreated = () => {
       <FormBanner
         title='Pattern/type approval - Application'
         showSaveAndExitButton={false}
-        refTitle={`Ref ID: ${id}`}
+        refTitle={`Ref ID: ${id ?? ''}`}
         subTitle={formatBannerTitle(accountDetails)}
         showGoToDashboardButton
       />
@@ -59,7 +58,7 @@ const RequestForPatternApprovalCreated = () => {
                   <h2 className='h4 mb-1'>Application submitted</h2>
                   <p>
                     {'Your application reference number is: '}
-                    <strong>{`${id}`}</strong>
+                    <strong>{id}</strong>
                   </p>
                   <p>
                     This is a temporary number used to track your application
@@ -71,7 +70,9 @@ const RequestForPatternApprovalCreated = () => {
                   <div className='d-grid d-md-block mb-2'>
                     <Button
                       data-testid='go-to-dashboard-button'
-                      onClick={() => goToDashboard()}
+                      onClick={() => {
+                        goToDashboard();
+                      }}
                       className='btn btn-secondary'
                     >
                       Go to dashboard

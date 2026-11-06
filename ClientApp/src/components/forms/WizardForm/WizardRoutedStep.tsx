@@ -50,7 +50,7 @@ const WizardRoutedStep = (
 
   const stepPrefix =
     allSteps.length > 1 ? `Step ${currentStepIndex + 1}: ` : '';
-  useHtmlTitle(`${stepPrefix}${bannerTitle} | NMI Services portal`);
+  useHtmlTitle(`${stepPrefix}${bannerTitle ?? ''} | NMI Services portal`);
   useBodyClass('wizard');
   const {
     isLoading,
@@ -94,7 +94,7 @@ const WizardRoutedStep = (
       isLoading={isLoading}
       promptPath={`${url}${location}`}
       onSaveAndExit={saveAndExitStep}
-      showBanner={showBanner || showBanner === undefined}
+      showBanner={showBanner !== false}
       {...omitUndefined({
         validateHard,
         validateSoft,
@@ -174,7 +174,9 @@ const WizardRoutedStep = (
                     {discard?.showCancelButton ? (
                       <Button
                         data-testid='cancel-button'
-                        onClick={() => cancel()}
+                        onClick={() => {
+                          cancel();
+                        }}
                         variant='tertiary'
                         className='me-md-auto order-2 order-md-0'
                       >

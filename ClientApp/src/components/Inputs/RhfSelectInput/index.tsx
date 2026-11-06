@@ -87,12 +87,14 @@ const RhfSelectInput = <T extends string | number = string>(
           ref={field.ref}
           value={fieldValue}
           onBlur={field.onBlur}
-          onChange={(event) => onSelectChange(event.target.value)}
+          onChange={(event) => {
+            onSelectChange(event.target.value);
+          }}
           isInvalid={!!errorMessage}
         >
           {addBlank && (
             <option value={defaultValue}>
-              {defaultDisplayText || 'Please select'}
+              {defaultDisplayText ?? 'Please select'}
             </option>
           )}
           {options?.map((option) => (

@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 
-type TextDirectoryEntries = Dirent<string>[];
+type TextDirectoryEntries = Dirent[];
 
 const resolveWithinRoot = (filePath: string, root: string): string => {
   const resolvedRoot = path.resolve(root);
@@ -30,14 +30,14 @@ export const readTextFile = async (
 ): Promise<string> => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   return readFile(safePath, 'utf8');
 };
 
 export const readTextFileSync = (filePath: string, root: string): string => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   return readFileSync(safePath, 'utf8');
 };
 
@@ -48,7 +48,7 @@ export const writeTextFile = async (
 ): Promise<void> => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   await writeFile(safePath, contents);
 };
 
@@ -59,7 +59,7 @@ export const writeTextFileSync = (
 ): void => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   writeFileSync(safePath, contents);
 };
 
@@ -69,7 +69,7 @@ export const readDirectory = async (
 ): Promise<TextDirectoryEntries> => {
   const safePath = resolveWithinRoot(directory, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   return readdir(safePath, { withFileTypes: true });
 };
 
@@ -79,7 +79,7 @@ export const readDirectorySync = (
 ): TextDirectoryEntries => {
   const safePath = resolveWithinRoot(directory, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   return readdirSync(safePath, { withFileTypes: true });
 };
 
@@ -89,27 +89,27 @@ export const makeDirectory = async (
 ): Promise<void> => {
   const safePath = resolveWithinRoot(directory, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   await mkdir(safePath, { recursive: true });
 };
 
 export const makeDirectorySync = (directory: string, root: string): void => {
   const safePath = resolveWithinRoot(directory, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   mkdirSync(safePath, { recursive: true });
 };
 
 export const pathExists = (filePath: string, root: string): boolean => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   return existsSync(safePath);
 };
 
 export const statPath = (filePath: string, root: string) => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
+  // validated test fixture path
   return statSync(safePath);
 };

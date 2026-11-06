@@ -46,7 +46,9 @@ const SetTypeButton = ({ type }: Readonly<{ type: string }>) => {
   return (
     <button
       type='button'
-      onClick={() => methods.setValue('account.type', type)}
+      onClick={() => {
+        methods.setValue('account.type', type);
+      }}
     >
       set {type}
     </button>

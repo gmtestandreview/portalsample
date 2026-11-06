@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { AuthorizedApiBase } from '../../../ClientApp/src/api/web-api-client';
 
-type TransformOptions = { headers: Record<string, string> };
+interface TransformOptions {
+  headers: Record<string, string>;
+}
 type TransformedOptions = TransformOptions;
 
 class TestClient extends AuthorizedApiBase {

@@ -7,11 +7,11 @@ import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 import type { TextInputProps } from '@/components/Inputs/TextInput';
 
-type LookupValues = {
+interface LookupValues {
   orgName: string;
   orgNameOptions: unknown[];
   parentField: string;
-};
+}
 type SubmitHandler = FormikConfig<LookupValues>['onSubmit'];
 
 vi.mock(

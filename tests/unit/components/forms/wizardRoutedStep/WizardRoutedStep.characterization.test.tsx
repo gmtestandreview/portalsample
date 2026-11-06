@@ -170,7 +170,9 @@ describe('formik wizard shell characterisation', () => {
 
     const summary = await screen.findByTestId('form-error-summary');
     // Decision D-2: the summary takes focus (Formik left it on the button).
-    await waitFor(() => expect(document.activeElement).toBe(summary));
+    await waitFor(() => {
+      expect(document.activeElement).toBe(summary);
+    });
 
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
   });
@@ -183,16 +185,20 @@ describe('formik wizard shell characterisation', () => {
     const user = userEvent.setup();
     const scrollIntoView = vi
       .spyOn(HTMLElement.prototype, 'scrollIntoView')
-      .mockImplementation(() => {});
+      .mockImplementation(() => undefined);
     renderStep({ onSaveAndNext: vi.fn<SaveHandler>() });
     await screen.findByLabelText('Name');
 
     await user.click(await screen.findByTestId(NEXT));
     const summary = await screen.findByTestId('form-error-summary');
-    await waitFor(() => expect(document.activeElement).toBe(summary));
+    await waitFor(() => {
+      expect(document.activeElement).toBe(summary);
+    });
 
     await user.click(screen.getByTestId(NEXT));
-    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(2));
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalledTimes(2);
+    });
 
     expect(document.activeElement).toBe(
       screen.getByTestId('form-error-summary'),
@@ -218,12 +224,14 @@ describe('formik wizard shell characterisation', () => {
     await user.type(await screen.findByLabelText('Name'), 'typed by user');
     await user.click(await screen.findByTestId(NEXT));
 
-    await waitFor(() => expect(loadStepValues).toHaveBeenCalledTimes(2));
-    await waitFor(() =>
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(2);
+    });
+    await waitFor(() => {
       expect(screen.getByLabelText<HTMLInputElement>('Name').value).toBe(
         'from server',
-      ),
-    );
+      );
+    });
 
     // Decision D-1: the banner stays up so the user knows why their edits
     // were replaced (Formik cleared it immediately).
@@ -250,7 +258,9 @@ describe('formik wizard shell characterisation', () => {
 
     await user.click(await screen.findByTestId('save-and-exit-button'));
 
-    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
+    });
 
     expect(onSaveAndExit.mock.calls[0]?.[0]).toStrictEqual({});
     await expect(screen.findByText('Done Page')).resolves.toBeInTheDocument();
@@ -295,7 +305,9 @@ describe('formik wizard shell characterisation', () => {
     const input = await screen.findByLabelText('Name');
 
     await user.click(await screen.findByTestId('save-and-exit-button'));
-    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
+    });
     await screen.findByTestId('form-error-summary');
 
     // Hard schema requires a name; the stale flag keeps live validation soft.

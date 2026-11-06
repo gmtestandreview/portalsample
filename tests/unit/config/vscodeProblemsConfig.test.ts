@@ -6,17 +6,20 @@ import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '../../..');
 
-function readJson<T>(relativePath: string): T {
+function readJson(relativePath: string): unknown {
   return JSON.parse(
     readTextFileSync(path.join(repoRoot, relativePath), repoRoot),
-  ) as T;
+  ) as unknown;
 }
 
 describe('vS Code Problems configuration', () => {
   it('keeps workspace diagnostics aligned with clean-code Problems visibility', () => {
     expect.hasAssertions();
 
-    const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
+    const settings = readJson('.vscode/settings.json') as Record<
+      string,
+      unknown
+    >;
 
     expect({
       focusOnNewCode: settings['sonarlint.focusOnNewCode'],
@@ -43,9 +46,9 @@ describe('vS Code Problems configuration', () => {
   it('recommends extensions that contribute repository diagnostics', () => {
     expect.hasAssertions();
 
-    const extensions = readJson<{ recommendations: string[] }>(
-      '.vscode/extensions.json',
-    );
+    const extensions = readJson('.vscode/extensions.json') as {
+      recommendations: string[];
+    };
 
     expect(extensions.recommendations).toStrictEqual(
       expect.arrayContaining([
@@ -72,8 +75,23 @@ describe('vS Code Problems configuration', () => {
     expect(script).toContain('UNRESOLVED');
   });
 
-  it('the rule-citation adapter emits no false diagnostics for a clean citation report', () => {
+  it('preserves the rule-citation checker diagnostics and exit status', () => {
     expect.hasAssertions();
+
+    const checker = spawnSync(
+      process.execPath,
+      ['scripts/verify-rule-citations.mjs', '--json'],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+      },
+    );
+    const report = JSON.parse(checker.stdout) as {
+      results: { status: string }[];
+    };
+    const expectedDiagnosticCount = report.results.filter(
+      ({ status }) => status !== 'OK',
+    ).length;
 
     const result = spawnSync(
       process.execPath,
@@ -84,9 +102,9 @@ describe('vS Code Problems configuration', () => {
       },
     );
 
-    // The repository citation report is currently clean. The adapter must
-    // preserve that clean status rather than inventing VS Code Problems.
-    expect(result.status).toBe(0);
+    // The repository may contain known citation debt. The adapter must preserve
+    // the checker result and emit exactly one Problems line per non-OK result.
+    expect(result.status).toBe(checker.status);
 
     const diagnosticLines = result.stdout
       .split(/\r?\n/)
@@ -94,7 +112,7 @@ describe('vS Code Problems configuration', () => {
         (line) => line.includes('): warning ') || line.includes('): error '),
       );
 
-    expect(diagnosticLines).toStrictEqual([]);
+    expect(diagnosticLines).toHaveLength(expectedDiagnosticCount);
   });
 
   it('keeps formatted detail citations visible in machine-readable output', () => {
@@ -114,7 +132,7 @@ describe('vS Code Problems configuration', () => {
     expect(result.status).not.toBeNull();
 
     const report = JSON.parse(result.stdout) as {
-      results: Array<{ where: string; cited: number | null }>;
+      results: { where: string; cited: number | null }[];
     };
 
     expect(
@@ -128,9 +146,9 @@ describe('vS Code Problems configuration', () => {
   it('defines VS Code tasks that feed diagnostics into Problems', () => {
     expect.hasAssertions();
 
-    const tasks = readJson<{
+    const tasks = readJson('.vscode/tasks.json') as {
       version: string;
-      tasks: Array<{
+      tasks: {
         label: string;
         type?: string;
         script?: string;
@@ -139,8 +157,8 @@ describe('vS Code Problems configuration', () => {
         dependsOn?: string[];
         dependsOrder?: string;
         problemMatcher?: unknown;
-      }>;
-    }>('.vscode/tasks.json');
+      }[];
+    };
 
     const byLabel = new Map(tasks.tasks.map((task) => [task.label, task]));
 
@@ -171,13 +189,13 @@ describe('vS Code Problems configuration', () => {
   it('rED: the combined diagnostics task does not fail fast before later problem sources run', () => {
     expect.hasAssertions();
 
-    const tasks = readJson<{
-      tasks: Array<{
+    const tasks = readJson('.vscode/tasks.json') as {
+      tasks: {
         label: string;
         dependsOn?: string[];
         dependsOrder?: string;
-      }>;
-    }>('.vscode/tasks.json');
+      }[];
+    };
 
     const allDiagnostics = tasks.tasks.find(
       (task) => task.label === 'diagnostics: all',
@@ -195,9 +213,9 @@ describe('vS Code Problems configuration', () => {
   it('gREEN: exposes every repository diagnostic source as a runnable VS Code task', () => {
     expect.hasAssertions();
 
-    const tasks = readJson<{ tasks: Array<{ label: string }> }>(
-      '.vscode/tasks.json',
-    );
+    const tasks = readJson('.vscode/tasks.json') as {
+      tasks: { label: string }[];
+    };
     const labels = tasks.tasks.map((task) => task.label);
 
     expect(labels).toStrictEqual(
@@ -214,10 +232,13 @@ describe('vS Code Problems configuration', () => {
   it('aMBER: keeps Sonar editor Problems clean-code focused while requiring a full backlog task', () => {
     expect.hasAssertions();
 
-    const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
-    const tasks = readJson<{ tasks: Array<{ label: string }> }>(
-      '.vscode/tasks.json',
-    );
+    const settings = readJson('.vscode/settings.json') as Record<
+      string,
+      unknown
+    >;
+    const tasks = readJson('.vscode/tasks.json') as {
+      tasks: { label: string }[];
+    };
 
     expect(settings['sonarlint.focusOnNewCode']).toBe(true);
     expect(

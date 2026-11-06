@@ -117,7 +117,9 @@ describe('rhf manual address input behavior', () => {
     [
       ...screen.getAllByRole('textbox'),
       screen.getByRole('combobox', { name: 'State' }),
-    ].forEach((field) => expect(field).toBeDisabled());
+    ].forEach((field) => {
+      expect(field).toBeDisabled();
+    });
   });
 
   it('repeats the inline help on every field', () => {

@@ -28,7 +28,7 @@ When(
   'the user opens the submitted RFQ summary',
   async ({ page, scenarioState }) => {
     await page.goto(
-      `/request-for-quote/${scenarioState.activeReferenceId}/view-summary`,
+      `/request-for-quote/${scenarioState.activeReferenceId ?? ''}/view-summary`,
     );
   },
 );
@@ -79,7 +79,7 @@ When('the user opens the draft RFQ', async ({ page, scenarioState }) => {
       name: 'Drafts',
       exact: true,
     })
-    .locator(`#RefId-${scenarioState.activeReferenceId}`);
+    .locator(`#RefId-${scenarioState.activeReferenceId ?? ''}`);
 
   await expect(draft).toBeVisible();
 

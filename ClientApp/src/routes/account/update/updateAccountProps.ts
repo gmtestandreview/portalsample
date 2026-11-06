@@ -91,7 +91,8 @@ const completeAccountDetails =
           severity: NotificationSeverity.Success,
         });
       } catch (error) {
-        const problemDetails = error as ValidationProblemDetails;
+        // A caught value can be anything, including undefined/null.
+        const problemDetails = error as ValidationProblemDetails | undefined;
         if (problemDetails) {
           if (problemDetails.status === HttpStatusCode.PreconditionFailed) {
             setDashboardNotification({

@@ -1,10 +1,9 @@
 import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import { Button, Alert } from 'react-bootstrap';
-import { Component, useState } from 'react';
+import { useState } from 'react';
 import ErrorBoundary from './index';
 import { ai } from '../../instrumentation/AppInsightsService';
-import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 const WorkingComponent = () => (
   <Alert variant='success'>
@@ -26,34 +25,29 @@ const ThrowingComponent = ({ shouldThrow }: { shouldThrow: boolean }) => {
   );
 };
 
-class ResetableErrorBoundaryWrapper extends Component<
-  { children: React.ReactNode },
-  { key: number }
-> {
-  constructor(props: { children: React.ReactNode }) {
-    super(props);
-    this.state = { key: 0 };
-  }
-
-  override render() {
-    const { children } = this.props;
-    const { key } = this.state;
-    return (
-      <div>
-        <Button
-          variant='warning'
-          className='mb-3'
-          onClick={() => this.setState((s) => ({ key: s.key + 1 }))}
-        >
-          Reset ErrorBoundary
-        </Button>
-        <ErrorBoundary key={key} appInsights={ai.reactPlugin}>
-          {children}
-        </ErrorBoundary>
-      </div>
-    );
-  }
-}
+const ResetableErrorBoundaryWrapper = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [key, setKey] = useState(0);
+  return (
+    <div>
+      <Button
+        variant='warning'
+        className='mb-3'
+        onClick={() => {
+          setKey((k) => k + 1);
+        }}
+      >
+        Reset ErrorBoundary
+      </Button>
+      <ErrorBoundary key={key} appInsights={ai.reactPlugin}>
+        {children}
+      </ErrorBoundary>
+    </div>
+  );
+};
 
 const meta = preview.meta({
   title: 'Components/ErrorBoundary',
@@ -62,7 +56,7 @@ const meta = preview.meta({
 
 export const NoError = meta.story({
   render: () => (
-    <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+    <ErrorBoundary appInsights={ai.reactPlugin}>
       <WorkingComponent />
     </ErrorBoundary>
   ),
@@ -95,7 +89,9 @@ export const RecoveredAfterReset = meta.story({
           <Button
             variant='danger'
             className='mb-3 me-2'
-            onClick={() => setShouldThrow(true)}
+            onClick={() => {
+              setShouldThrow(true);
+            }}
           >
             Simulate render error
           </Button>

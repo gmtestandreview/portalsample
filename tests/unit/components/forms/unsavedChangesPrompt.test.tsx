@@ -111,8 +111,8 @@ describe('unsavedFormPrompt (Formik)', () => {
       guardProps.last?.onProceed?.();
     });
 
-    await waitFor(() =>
-      expect(screen.getByTestId('errors')).toHaveTextContent('{}'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('errors')).toHaveTextContent('{}');
+    });
   });
 });

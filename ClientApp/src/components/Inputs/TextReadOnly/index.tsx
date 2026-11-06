@@ -1,9 +1,11 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import Form from 'react-bootstrap/Form';
 import { useField } from 'formik';
 import type { ReactNode } from 'react';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 export interface TextReadOnlyProps {
   label: string;
@@ -24,7 +26,7 @@ export interface TextReadOnlyProps {
   allowemptyformatting?: boolean;
   allowLeadingZeros?: boolean;
   renderText?: (formattedValue: string) => React.ReactNode;
-  allowedDecimalSeparators?: Array<string>;
+  allowedDecimalSeparators?: string[];
   isSummary?: boolean | undefined;
   inlineHelpTitle?: string;
   inlineHelp?: string | ReactNode;
@@ -32,32 +34,36 @@ export interface TextReadOnlyProps {
 
 export type FormatInputValueFunction = (inputValue: string) => string;
 
-const TextReadOnly = ({
-  label,
-  name,
-  id,
-  type,
-  containerClassName = '', // default props
-  className = '', // default props
-  value,
-  as = 'span', // default props
-  format = '', // default props
-  mask,
-  prefix,
-  suffix,
-  thousandSeparator,
-  valueIsNumericString,
-  allowNegative,
-  allowemptyformatting,
-  allowLeadingZeros,
-  renderText,
-  allowedDecimalSeparators,
-  isSummary,
-  inlineHelp,
-  inlineHelpTitle,
-}: Readonly<TextReadOnlyProps>) => {
+const TextReadOnly = (props: Readonly<TextReadOnlyProps>) => {
+  const {
+    label,
+    name,
+    id,
+    type,
+    containerClassName = '', // default props
+    className = '', // default props
+    value,
+    as = 'span', // default props
+    format = '', // default props
+    mask,
+    prefix,
+    suffix,
+    thousandSeparator,
+    valueIsNumericString,
+    allowNegative,
+    allowemptyformatting,
+    allowLeadingZeros,
+    renderText,
+    allowedDecimalSeparators,
+    isSummary,
+    inlineHelp,
+    inlineHelpTitle,
+  } = props;
   const [_field, _meta] = useField(name);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const hasInlineHelp = Boolean(inlineHelp);
+  const hasInlineHelpTitle = Boolean(inlineHelpTitle);
+  const helpId = hasInlineHelp ? `help-${controlId}` : undefined;
   const fieldValue = typeof _field.value === 'string' ? _field.value : '';
 
   if (isSummary) {
@@ -66,7 +72,7 @@ const TextReadOnly = ({
         label={label}
         value={fieldValue}
         as={as}
-        id={id || name}
+        id={controlId}
         format={format}
         mask={mask}
         prefix={prefix}
@@ -84,27 +90,27 @@ const TextReadOnly = ({
   return (
     <Form.Group
       className={`form-field-container ${containerClassName}`}
-      controlId={id || name}
+      controlId={controlId}
     >
-      <Form.Label className={inlineHelp ? 'pb-0' : ''}>{label}</Form.Label>
-      {inlineHelp && !inlineHelpTitle && (
+      <Form.Label className={hasInlineHelp ? 'pb-0' : ''}>{label}</Form.Label>
+      {hasInlineHelp && !hasInlineHelpTitle ? (
         <Form.Text as='p' id={helpId} className='contextual-help text-muted'>
           {inlineHelp}
         </Form.Text>
-      )}
-      {inlineHelp && inlineHelpTitle && (
+      ) : null}
+      {hasInlineHelp && hasInlineHelpTitle ? (
         <Details
           {...omitUndefined({ id: helpId })}
           title={inlineHelpTitle}
           inlineHelp={inlineHelp}
         />
-      )}
+      ) : null}
       <Form.Control
         className={`form-field form-text-input-read ${className}`}
-        type={type || 'text'}
+        type={type ?? 'text'}
         name={name}
         readOnly
-        value={value || fieldValue}
+        value={orIfEmpty(value, fieldValue)}
       />
     </Form.Group>
   );

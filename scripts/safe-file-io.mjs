@@ -31,12 +31,12 @@ export function safePath(candidate, root = process.cwd()) {
 
 export function readTextFile(candidate, root = process.cwd()) {
   // The path has been constrained by safePath immediately before the read.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   return fsReadFileSync(safePath(candidate, root), 'utf8');
 }
 
 export function readBinaryFile(candidate, root = process.cwd()) {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   return fsReadFileSync(safePath(candidate, root));
 }
 
@@ -46,32 +46,32 @@ export function writeTextFile(
   options,
   root = process.cwd(),
 ) {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   return fsWriteFileSync(safePath(candidate, root), contents, options);
 }
 
 export function makeDirectory(candidate, root = process.cwd()) {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   return fsMkdirSync(safePath(candidate, root), { recursive: true });
 }
 
 export function listDirectory(candidate, options, root = process.cwd()) {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   return fsReaddirSync(safePath(candidate, root), options);
 }
 
 export function statPath(candidate, root = process.cwd()) {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   return fsStatSync(safePath(candidate, root));
 }
 
 export function realPath(candidate, root = process.cwd()) {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   const resolved = fsRealpathSync(safePath(candidate, root));
   return safePath(resolved, root);
 }
 
 export function pathExists(candidate, root = process.cwd()) {
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath constrains the path to the declared workspace root.
+  // safePath constrains the path to the declared workspace root.
   return fsExistsSync(safePath(candidate, root));
 }

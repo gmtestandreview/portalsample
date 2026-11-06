@@ -1,5 +1,5 @@
 import preview from '../../../../.storybook/preview';
-import { expect, userEvent, screen, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, screen, waitFor, within } from 'storybook/test';
 import { Routes, Route, Link } from 'react-router';
 import { Formik, Form } from 'formik';
 import RouteLeavingGuard from './index';
@@ -23,7 +23,7 @@ const GuardHarness = ({
     <Route
       path='/form'
       element={
-        <Formik initialValues={{}} onSubmit={() => {}}>
+        <Formik initialValues={{}} onSubmit={fn()}>
           <Form>
             <RouteLeavingGuard
               when={when}

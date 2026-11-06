@@ -114,9 +114,9 @@ describe('object and array helpers', () => {
   it('returns typed property names and prefixed property names', () => {
     expect.hasAssertions();
 
-    type Example = {
+    interface Example {
       child: string;
-    };
+    }
 
     expect(utils.propertyOf<Example>('child')).toBe('child');
     expect(utils.prefixedPropertyOf<Example>('parent')('child')).toBe(
@@ -449,7 +449,7 @@ describe('formatting helpers', () => {
     expect.hasAssertions();
 
     expect(utils.formatCurrencyAmount(undefined)).toBeNull();
-    expect(utils.formatCurrencyAmount(null as unknown as number)).toBeNull();
+    expect(utils.formatCurrencyAmount(null)).toBeNull();
     expect(utils.formatCurrencyAmount(1234.5)).toBe('$1,234.50');
   });
 });

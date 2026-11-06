@@ -27,7 +27,7 @@ const FormikSaveAndExitButton = ({
     }
   }, [saveAndExitClickField, submitForm, saveAndExitClickHelper]);
 
-  const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     void saveAndExitClickHelper.setValue(true);
     void saveAndExitHelper.setValue(true);
@@ -53,7 +53,7 @@ const RhfSaveAndExitButton = ({
 
   // The mode goes to the shell for this one submit; it is never written to the
   // form values, so it cannot stay set after a failed save.
-  const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     void submit('saveAndExit');
   };

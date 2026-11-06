@@ -1,18 +1,19 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
+import { defined } from '../helpers/defined';
 
-type EvidenceResult = {
+interface EvidenceResult {
   ok: boolean;
-  errors: Array<{ code: string; message: string; path?: string }>;
-};
+  errors: { code: string; message: string; path?: string }[];
+}
 
-type EvidenceModule = {
+interface EvidenceModule {
   validateStoryEvidence(input: {
     manifest: unknown;
-    files: Array<{ path: string; content: string | Uint8Array }>;
+    files: { path: string; content: string | Uint8Array }[];
     index: unknown;
   }): EvidenceResult;
-};
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.
@@ -72,8 +73,11 @@ const manifest = {
   ],
 };
 
-const manifestRecord = manifest.records[0]!;
-const manifestState = manifestRecord.states[0]!;
+const manifestRecord = defined(manifest.records[0], 'the manifest record');
+const manifestState = defined(
+  manifestRecord.states[0],
+  'the manifest record state',
+);
 
 const index = {
   entries: {
@@ -286,7 +290,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code }),
       ]) as unknown,
     });
@@ -319,7 +323,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
       ]) as unknown,
     });
@@ -364,7 +368,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
       ]) as unknown,
     });
@@ -385,7 +389,7 @@ describe('reviewed Storybook source and story evidence', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining<unknown>([
+      errors: expect.arrayContaining([
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
       ]) as unknown,
     });

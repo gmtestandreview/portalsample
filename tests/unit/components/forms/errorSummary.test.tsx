@@ -8,6 +8,7 @@ import type {
   ValidationProblemDetails,
 } from '@/api/web-api-client';
 import { HttpStatusCode } from '@/types';
+import { defined } from '../../helpers/defined';
 
 type EmptyFormikSubmit = FormikConfig<Record<string, never>>['onSubmit'];
 type NameFormikSubmit = FormikConfig<{ name: string }>['onSubmit'];
@@ -237,12 +238,11 @@ describe('error summary', () => {
           />
         </TestRouter>,
       );
-      const summaryEl = document.querySelector(
-        '#form-error-summary',
-      ) as HTMLElement;
+      const summaryEl = defined(
+        document.querySelector('#form-error-summary'),
+        'error summary alert',
+      );
       const scrollIntoView = vi.spyOn(summaryEl, 'scrollIntoView');
-
-      expect(summaryEl).not.toBeNull();
 
       act(() => {
         vi.advanceTimersByTime(150);
@@ -321,7 +321,7 @@ describe('error summary', () => {
     );
 
     await act(async () => {
-      await formikInstance!.submitForm();
+      await defined(formikInstance, 'Formik instance').submitForm();
     });
 
     // sanitizeErrorData is called with { name: undefined, extra: 'Shown' }.
@@ -361,7 +361,7 @@ describe('error summary', () => {
 
       // Submit once: sets submitCount=1 and errors → errorSummary state updates → hasErrors=true
       await act(async () => {
-        await formikInstance!.submitForm();
+        await defined(formikInstance, 'Formik instance').submitForm();
       });
 
       expect(document.querySelector('#form-error-summary')).not.toBeNull();

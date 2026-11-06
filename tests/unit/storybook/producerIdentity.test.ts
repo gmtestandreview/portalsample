@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-type ProducerModule = {
+interface ProducerModule {
   validateProducerIdentity(input: {
     producer: Record<string, unknown>;
     receipt: Record<string, unknown>;
     expectedMcpURL: string;
     expectedFreezeId: string;
     expectedChildEpoch: { pid: number; createdAt: string };
-  }): { ok: boolean; errors: Array<{ code: string; message: string }> };
-};
+  }): { ok: boolean; errors: { code: string; message: string }[] };
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.
@@ -52,12 +52,12 @@ describe('validateProducerIdentity', () => {
     ).toStrictEqual({ ok: true, errors: [] });
   });
 
-  type Overrides = {
+  interface Overrides {
     receipt?: Record<string, unknown>;
     expectedMcpURL?: string;
     expectedFreezeId?: string;
     expectedChildEpoch?: { pid: number; createdAt: string };
-  };
+  }
 
   it.each<[string, Overrides]>([
     ['wrong native URL', { expectedMcpURL: 'http://localhost:6006/mcp' }],

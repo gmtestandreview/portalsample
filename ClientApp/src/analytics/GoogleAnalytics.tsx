@@ -11,7 +11,7 @@ const GoogleAnalytics = ({
 }: Readonly<GoogleAnalyticsProps>) => {
   useEffect(() => {
     const trackId = env.VITE_GA_TRACKINGID;
-    if (trackId && ReactGA.isInitialized === false) {
+    if (trackId && !ReactGA.isInitialized) {
       ReactGA.initialize([
         {
           trackingId: trackId,
@@ -22,7 +22,6 @@ const GoogleAnalytics = ({
         },
       ]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <>{children}</>;
@@ -40,9 +39,8 @@ const trackGAPii = () => {
   const redactedEntries: [string, string][] = [];
 
   piiFields.forEach((field) => {
-    const key = field.dataset['pii'] as string; // dataset.pii is always defined — querySelectorAll('[data-pii]') guarantees the attribute exists
-    /* v8 ignore next */
-    originalEntries.push([key, field.textContent ?? '']);
+    const key = field.dataset['pii'] ?? ''; // dataset.pii is always defined — querySelectorAll('[data-pii]') guarantees the attribute exists
+    originalEntries.push([key, field.textContent]);
     redactedEntries.push([key, '[REDACTED]']);
   });
 
@@ -50,7 +48,6 @@ const trackGAPii = () => {
   const redactedData = Object.fromEntries(redactedEntries);
 
   if (globalThis.location.hostname === 'localhost') {
-    // eslint-disable-next-line no-console
     console.table({ originalData });
   }
 

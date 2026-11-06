@@ -91,7 +91,7 @@ describe('form shell behavior slice', () => {
         >
           {({ errors, handleSubmit, setFieldValue }) => (
             <Form onSubmit={handleSubmit}>
-              <div>{errors.firstName as string}</div>
+              <div>{errors.firstName}</div>
               <button
                 type='button'
                 onClick={() => void setFieldValue('firstName', 'Alex')}
@@ -115,7 +115,9 @@ describe('form shell behavior slice', () => {
     await user.click(screen.getByRole('button', { name: 'Fill name' }));
     await user.click(screen.getByRole('button', { name: 'Submit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     const submitCall = (
       onSubmit.mock.calls as unknown as FormikSubmitCall[]
@@ -294,7 +296,11 @@ describe('form shell behavior slice', () => {
       <MemoryRouter>
         <FormikForm
           initialValues={{ value: 'pending' }}
-          onSubmit={() => new Promise(() => {})}
+          onSubmit={() =>
+            new Promise(() => {
+              // Never resolves — simulates a pending submit for the banner assertion.
+            })
+          }
           showBanner
           bannerTitle='Pending form'
         >

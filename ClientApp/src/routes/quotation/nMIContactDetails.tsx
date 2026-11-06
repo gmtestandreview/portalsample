@@ -37,8 +37,8 @@ const NMIContactDetails = (
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
                 {quotationData?.nmiTestOfficerPhone && (
-                  <a href={`tel:${quotationData?.nmiTestOfficerPhone}`}>
-                    {quotationData?.nmiTestOfficerPhone}
+                  <a href={`tel:${quotationData.nmiTestOfficerPhone}`}>
+                    {quotationData.nmiTestOfficerPhone}
                   </a>
                 )}
               </p>
@@ -50,9 +50,9 @@ const NMIContactDetails = (
               <p className='mb-0 text-break'>
                 {quotationData?.nmiTestOfficerEmail && (
                   <a
-                    href={`mailto:${quotationData?.nmiTestOfficerEmail}?subject=${mailtoSubject}`}
+                    href={`mailto:${quotationData.nmiTestOfficerEmail}?subject=${mailtoSubject}`}
                   >
-                    {quotationData?.nmiTestOfficerEmail}
+                    {quotationData.nmiTestOfficerEmail}
                   </a>
                 )}
               </p>

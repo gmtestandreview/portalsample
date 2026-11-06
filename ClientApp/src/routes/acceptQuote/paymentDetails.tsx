@@ -41,7 +41,9 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       );
       acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
-      const paymentDetails = await acceptQuoteClient.getPaymentDetails(id!);
+      if (id === undefined) return;
+
+      const paymentDetails = await acceptQuoteClient.getPaymentDetails(id);
       setAcceptQuotePreInfo(paymentDetails.acceptQuotePreInfo);
     } catch (e) {
       AppLogger.error('Failed to load Payment details', e as Error, { Id: id });
@@ -55,7 +57,6 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       setIsLoading(false);
     };
     void loadDataForDisplay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -119,7 +120,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
                   <span className='d-block pt-1'>
                     Your NMI Quotation ID
                     {acceptQuotePreInfo?.quotationIdNum &&
-                      ` ${acceptQuotePreInfo?.quotationIdNum}`}
+                      ` ${acceptQuotePreInfo.quotationIdNum}`}
                   </span>
                 </>
               }

@@ -9,8 +9,8 @@ const CRM_QUOTE_REQUEST_ID = 'CRM-QR-77';
 const QUOTE_REFERENCE = 'Q-2024-000456';
 
 interface ShellObservations {
-  statusRequestIds: Array<string | readonly string[] | undefined>;
-  detailRequestIds: Array<string | null>;
+  statusRequestIds: (string | readonly string[] | undefined)[];
+  detailRequestIds: (string | null)[];
 }
 
 const state: { observed: ShellObservations } = {

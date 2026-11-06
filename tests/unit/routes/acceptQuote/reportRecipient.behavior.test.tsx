@@ -27,7 +27,6 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -41,7 +40,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/authentication/hooks',
   () =>
@@ -53,7 +51,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
@@ -65,7 +62,6 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
@@ -80,7 +76,6 @@ vi.mock(
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
 // The edit form renders the RHF twin; the summary branch keeps the Formik one.
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/AddressLookup',
   () =>
@@ -90,7 +85,6 @@ vi.mock(
       ),
     }) satisfies __ExactMockModule<__TestMockModule31>,
 );
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/RhfAddressLookup',
   () =>
@@ -144,9 +138,9 @@ function StepHarness({
           hidingFields,
         )(formValues)
       }
-      onSubmit={(submitted) =>
-        onSubmit(removeHidden(submitted, submitted, hidingFields))
-      }
+      onSubmit={(submitted) => {
+        onSubmit(removeHidden(submitted, submitted, hidingFields));
+      }}
     >
       <Form noValidate>
         <ReportRecipient id='RFQ-1' isSummary={isSummary} />
@@ -204,9 +198,9 @@ describe('reportRecipient behavior', () => {
     });
     renderStep({});
 
-    await waitFor(() =>
-      expect(screen.getAllByText(/1 Street Road/)).toHaveLength(2),
-    );
+    await waitFor(() => {
+      expect(screen.getAllByText(/1 Street Road/)).toHaveLength(2);
+    });
 
     expect(screen.queryByText(/PO Box 9/)).not.toBeInTheDocument();
   });
@@ -257,7 +251,9 @@ describe('reportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
     const submitted = defined(onSubmit.mock.calls[0], 'submit call')[0];
 
     expect(submitted).toStrictEqual({
@@ -344,7 +340,9 @@ describe('reportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toStrictEqual({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
@@ -367,7 +365,9 @@ describe('reportRecipient behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(/400/)).not.toBeInTheDocument();
   });
@@ -383,11 +383,11 @@ describe('reportRecipient behavior', () => {
 
     rerender(<StepHarness values={{ organisationName: 'Loaded' }} />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByLabelText('Organisation name for report')).toHaveValue(
         'Loaded',
-      ),
-    );
+      );
+    });
   });
 
   it('shows validation again after reinitializing following an invalid submit', async () => {
@@ -406,9 +406,9 @@ describe('reportRecipient behavior', () => {
     await expect(screen.findByText(/400/)).resolves.toBeInTheDocument();
 
     rerender(<StepHarness values={{ organisationName: 'y'.repeat(402) }} />);
-    await waitFor(() =>
-      expect(screen.queryByText(/400/)).not.toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText(/400/)).not.toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -424,13 +424,13 @@ describe('reportRecipient behavior', () => {
     mocks.getReportRecipient.mockRejectedValue(new Error('boom'));
     renderStep({});
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.error).toHaveBeenCalledWith(
         'Failed to load AcceptQuotePreInfo',
         expect.any(Error),
         { Id: 'RFQ-1' },
-      ),
-    );
+      );
+    });
 
     expect(
       screen.getByLabelText('Organisation name for report'),

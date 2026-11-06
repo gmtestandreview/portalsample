@@ -2,6 +2,7 @@ import { renderHook, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import React from 'react';
 import { vi, describe, it, expect } from 'vitest';
+import { defined } from '../../../tests/unit/helpers/defined';
 import { useRouteAccessibility } from './useRouteAccessibility';
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -79,7 +80,7 @@ describe('route accessibility', () => {
 
     const cleanup = setupRouteAccessibilityTest();
     try {
-      const main = document.getElementById('main')!;
+      const main = defined(document.getElementById('main'), '#main element');
       const focusSpy = vi.spyOn(main, 'focus');
       renderHook(() => useRouteAccessibility(), { wrapper });
       act(() => {

@@ -71,7 +71,7 @@ const resetAppDetailsPropsMocks = () => {
   });
 };
 
-type AppDetailsHidingFields = {
+interface AppDetailsHidingFields {
   organisationAndContact: {
     branchOrLocationName: (
       values: Partial<RequestForPatternApprovalAppDetails>,
@@ -110,9 +110,9 @@ type AppDetailsHidingFields = {
       values: Partial<RequestForPatternApprovalAppDetails>,
     ) => boolean;
   };
-};
+}
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(appDetailsProps, () => {
   it('loads app details and exposes summary hiding rules', async () => {
     expect.hasAssertions();

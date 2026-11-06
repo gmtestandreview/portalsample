@@ -10,7 +10,6 @@ import { AcceptQuoteClient, QuoteClient } from '../../api/web-api-client';
 import type { FormStepStatusDto } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import type { AccountDetails } from '../../authentication/accountContext';
 import ReportRecipient from './reportRecipient';
 import reportRecipientProps from './reportRecipientProps';
 import DeliveryAndReturn from './deliveryAndReturn';
@@ -32,7 +31,7 @@ const AcceptQuote = () => {
   useBodyClass('wizard');
 
   const acceptQuoteWizardProps: WizardFormProps = {
-    locationOnCompletion: `/submitted-success/${id}`,
+    locationOnCompletion: `/submitted-success/${id ?? ''}`,
     lastStepNextButtonTitle: 'Submit and accept',
     nextButtonTitle: 'Save and next',
     previousButtonTitle: 'Back',
@@ -63,14 +62,14 @@ const AcceptQuote = () => {
         client.setAuthToken(tokenResult.accessToken);
         quoteClient.setAuthToken(tokenResult.accessToken);
         try {
-          const result = await client.getStepStatuses(id!);
+          const result = await client.getStepStatuses(id ?? '');
           const crmQuoteRequestId = result[0]?.crmQuoteRequestId;
           if (!crmQuoteRequestId) {
             throw new Error('Quote request has no step statuses');
           }
           const quoteData =
             await quoteClient.getQuoteRequestDetails(crmQuoteRequestId);
-          setReferenceId(quoteData.quoteRequestIdNum!);
+          setReferenceId(quoteData.quoteRequestIdNum ?? '');
           setStatuses(result);
           setCrmQuoteRequestId(crmQuoteRequestId);
         } catch (error) {
@@ -91,12 +90,13 @@ const AcceptQuote = () => {
     };
   }, [accounts, id, instance, isLoading, navigate, statuses]);
 
-  const accountDetails: AccountDetails = account!.details!;
+  if (!account?.details) return null;
+  const accountDetails = account.details;
   return statuses ? (
     <WizardForm {...acceptQuoteWizardProps}>
       <WizardStep
         {...reportRecipientProps(
-          id!,
+          id ?? '',
           referenceId,
           accounts,
           instance,
@@ -109,7 +109,7 @@ const AcceptQuote = () => {
       </WizardStep>
       <WizardStep
         {...deliveryAndReturnProps(
-          id!,
+          id ?? '',
           accounts,
           instance,
           accountDetails,
@@ -121,7 +121,7 @@ const AcceptQuote = () => {
       </WizardStep>
       <WizardStep
         {...paymentDetailsProps(
-          id!,
+          id ?? '',
           accounts,
           instance,
           accountDetails,
@@ -133,7 +133,7 @@ const AcceptQuote = () => {
       </WizardStep>
       <WizardStep
         {...summaryAndAcceptProps(
-          id!,
+          id ?? '',
           accounts,
           instance,
           accountDetails,

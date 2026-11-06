@@ -289,7 +289,7 @@ describe('error boundary', () => {
     const preventError = (event: ErrorEvent) => {
       event.preventDefault();
     };
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
     globalThis.addEventListener('error', preventError);
 
     try {

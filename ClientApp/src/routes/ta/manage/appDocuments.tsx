@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useMsal } from '@azure/msal-react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
@@ -37,7 +38,7 @@ const ApplicationDocuments = () => {
   const { id } = useParams();
   const [isDataLoading, setIsDataLoading] = useState(false);
 
-  useHtmlTitle(`[New certificate] (${id}) manage | NMI Services portal`);
+  useHtmlTitle(`[New certificate] (${id ?? ''}) manage | NMI Services portal`);
   useBodyClass('pa-application-manage');
 
   // SupportingDocuments upload state and handlers (from ta/index.tsx)
@@ -68,7 +69,7 @@ const ApplicationDocuments = () => {
           const response = await client.getAppDocuments(id);
           setFilesUploaded(response);
           setFilesToCommit(
-            response?.form?.documents?.some((doc) => !doc.documentLocked) ??
+            response.form?.documents?.some((doc) => !doc.documentLocked) ??
               false,
           );
         }
@@ -109,7 +110,9 @@ const ApplicationDocuments = () => {
         uploadId,
         signal: controller.signal,
         onProgress: setProgress,
-        onFinished: () => setUploading(false),
+        onFinished: () => {
+          setUploading(false);
+        },
       });
     },
     [accounts, instance],
@@ -152,8 +155,8 @@ const ApplicationDocuments = () => {
         null,
         null,
       );
-      const { documents } = result.form || {};
-      uploadIdRef.current = result.uploadId!;
+      const { documents } = result.form ?? {};
+      uploadIdRef.current = result.uploadId ?? null;
 
       attachments =
         documents?.map(
@@ -182,6 +185,7 @@ const ApplicationDocuments = () => {
   };
 
   const onSubmit = async (values: AppDocumentsFormValues) => {
+    if (id === undefined) return;
     try {
       setIsDataLoading(true);
       const client = new RequestForPatternApprovalClient();
@@ -200,7 +204,7 @@ const ApplicationDocuments = () => {
           })),
         },
       };
-      await client.commitAppDocuments(id!, payload);
+      await client.commitAppDocuments(id, payload);
       setCommitSuccess(true);
     } catch (e: unknown) {
       const status = (e as { status?: number } | undefined)?.status;
@@ -229,10 +233,15 @@ const ApplicationDocuments = () => {
   const methods = useForm<AppDocumentsFormValues>({
     values: {
       form: {
-        documents: filesUploaded?.form?.documents || [],
-        instrumentCategory:
-          filesUploaded?.form?.instrumentCategory || undefined,
-        instrumentType: filesUploaded?.form?.instrumentType || undefined,
+        documents: filesUploaded?.form?.documents ?? [],
+        instrumentCategory: orIfEmpty(
+          filesUploaded?.form?.instrumentCategory,
+          undefined,
+        ),
+        instrumentType: orIfEmpty(
+          filesUploaded?.form?.instrumentType,
+          undefined,
+        ),
       },
     },
     resolver: createSaveAwareYupResolver<AppDocumentsFormValues>(
@@ -273,7 +282,7 @@ const ApplicationDocuments = () => {
               />
               <Row>
                 <Col md={12} className='text-end'>
-                  {!isDataLoading && filesToCommit && (
+                  {filesToCommit && (
                     <Button
                       variant='primary'
                       onClick={(e) => {

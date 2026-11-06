@@ -134,15 +134,15 @@ vi.mock(
   import('../../../ClientApp/src/instrumentation/AppLogger'),
   async (importOriginal) => {
     const original = await importOriginal();
-    class MockAppLogger extends original.default {
-      static override verbose = appLoggerMocks.verbose;
-      static override error = appLoggerMocks.error;
-      static override trace = appLoggerMocks.trace;
-    }
 
     return {
       ...original,
-      default: MockAppLogger,
+      default: {
+        ...original.default,
+        verbose: appLoggerMocks.verbose,
+        error: appLoggerMocks.error,
+        trace: appLoggerMocks.trace,
+      },
     } satisfies Partial<typeof AppLoggerModule>;
   },
 );
@@ -226,9 +226,9 @@ describe('accountProvider — errored state', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('protected-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+    });
 
     expect(mockSignIn).toHaveBeenCalledWith({});
   });
@@ -266,6 +266,30 @@ describe('accountProvider — errored state', () => {
     });
   });
 
+  it('fails closed when account details are absent from a successful response', async () => {
+    expect.hasAssertions();
+
+    resetErroredMocks();
+    mockSignIn.mockResolvedValueOnce(null as never);
+
+    render(
+      <AccountProvider>
+        <div data-testid='protected-content'>Protected content</div>
+      </AccountProvider>,
+    );
+
+    await waitFor(() => {
+      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
+        account: null,
+      });
+    });
+
+    expect(
+      screen.getByText(/Unable to load account details/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
+  });
+
   it('still requests logout when redirect response handling fails', async () => {
     expect.hasAssertions();
 
@@ -281,11 +305,11 @@ describe('accountProvider — errored state', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
         account: null,
-      }),
-    );
+      });
+    });
 
     expect(
       screen.getByText(/Unable to load account details/i),
@@ -308,11 +332,11 @@ describe('accountProvider — errored state', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
         account: null,
-      }),
-    );
+      });
+    });
 
     expect(
       screen.getByText(/Unable to load account details/i),

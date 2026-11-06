@@ -1,77 +1,192 @@
 ---
 name: vitest
-description:
-  Use when answering, implementing, debugging, configuring, or migrating Vitest
-  tests, including test/describe/expect APIs, hooks, mocking/vi, snapshots,
-  coverage, fixtures/context, filtering, concurrency, environments, type tests,
-  CLI, config, or projects. Do not use for Jest-only or other test-runner tasks
-  unless Vitest compatibility or migration is involved.
+description: >-
+  Use when creating, modifying, diagnosing, reviewing, configuring, migrating,
+  or validating Vitest unit tests, mocks, fixtures, assertions, coverage, or
+  Vitest-powered Storybook play-function tests in the nmi-portal project.
+  Includes vitest.config.ts, vitest.unit.config.ts, vitest.storybook.config.ts,
+  @storybook/addon-vitest, Vitest Browser Mode, and Vitest 5 migration. Applies
+  this repository's testing contracts and coverage policy. Do not activate for
+  standalone Playwright Test E2E/BDD/API-contract, Storybook BDD alone, Jest-only,
+  Node node:test, or framework-agnostic testing requests unless Vitest
+  compatibility, migration, or ownership is established.
+license: MIT
 metadata:
   author: Greg Mico
-  version: '2026.1.28'
-  source: https://github.com/vitest-dev/vitest
-  source-revision: 4a7321e10672f00f0bb698823a381c2cc245b8f7
+  version: '2026.11.06'
+  governance-source: merged from vitest + vitest-skill-validated (2026-11-06)
+  api-reference: vitest-api-snapshot skill (separate; see Reference routing)
 ---
 
-# Vitest reference
+# Vitest — project testing governance
 
-Use this skill as a versioned Vitest reference. Load only the smallest relevant
-topic file for the request; combine topic files only when the task crosses those
-boundaries. Apply retrieved guidance to the user's concrete code, configuration,
-debugging, or migration task instead of merely restating the reference.
+## Purpose
 
-## Routing rules
+Apply **this repository's Vitest contracts**, not merely generic Vitest syntax.
+Vitest 5.0.5 owns unit tests and Storybook play-function tests; separate
+Playwright Test configurations own app E2E, API-contract, and Storybook BDD. Do
+not interchange their runners, setup, commands, assertions, or coverage
+policies. Generic Vitest expertise cannot decide which project runner owns a
+test, which coverage exclusions are intentional, or which Storybook integration
+exceptions must survive a change.
 
-- For configuration or command-line behavior, use `core-config.md` or
-  `core-cli.md`.
-- For test structure and assertions, use `core-test-api.md`, `core-describe.md`,
-  `core-expect.md`, and `core-hooks.md` as needed.
-- For mocking questions, start with `features-mocking.md`; load `advanced-vi.md`
-  only when the request needs broader `vi` utilities.
-- For snapshots, coverage, fixtures/context, concurrency, or filtering, load the
-  matching `features-*.md` file.
-- For environments, type-level tests, or multi-project setups, load the matching
-  `advanced-*.md` file.
-- Do not answer Jest-only or other-runner questions from these references unless
-  the user is asking about Vitest compatibility or migration.
-- This snapshot was generated on 2026-01-28 from the source revision recorded in
-  [GENERATION.md](GENERATION.md). For behavior introduced after that revision,
-  state that the bundled reference does not establish the answer rather than
-  guessing.
-- If the bundled references do not establish a material claim, say so. When a
-  newer authoritative source is available and the task permits external
-  research, distinguish that newer evidence from the bundled snapshot.
-- When terminology overlaps with Jest or another runner, resolve the request
-  from explicit Vitest intent or migration context rather than shared API names
-  alone.
+Raw Vitest 5 API syntax (the upstream reference cookbook) lives in the separate
+**`vitest-api-snapshot`** skill. This skill governs project policy; it does not
+restate the API. See [Reference routing](#reference-routing).
 
-## Core
+## Objective and finished state
 
-| Topic         | Reference                                    |
-| ------------- | -------------------------------------------- |
-| Configuration | [core-config](references/core-config.md)     |
-| CLI           | [core-cli](references/core-cli.md)           |
-| Test API      | [core-test-api](references/core-test-api.md) |
-| Describe API  | [core-describe](references/core-describe.md) |
-| Expect API    | [core-expect](references/core-expect.md)     |
-| Hooks         | [core-hooks](references/core-hooks.md)       |
+For each activated request, deliver the smallest correct test, diagnosis,
+configuration change, or review that satisfies the requested behavior **and**
+remains Vitest 5.0.5-compatible and consistent with the relevant project test
+lane. A completed change is **behaviorally correct, minimal, version-compatible,
+and project-consistent**, not merely a followed workflow. Following a workflow
+without a correct outcome is not success.
 
-## Features
+**Acceptance criteria (apply as relevant):**
 
-| Topic        | Reference                                                  |
-| ------------ | ---------------------------------------------------------- |
-| Mocking      | [features-mocking](references/features-mocking.md)         |
-| Snapshots    | [features-snapshots](references/features-snapshots.md)     |
-| Coverage     | [features-coverage](references/features-coverage.md)       |
-| Test Context | [features-context](references/features-context.md)         |
-| Concurrency  | [features-concurrency](references/features-concurrency.md) |
-| Filtering    | [features-filtering](references/features-filtering.md)     |
+- Correct suite/runner/lane selected; no Vitest Browser Mode vs standalone
+  Playwright conflation, and no migration of tests across owners without
+  authorization.
+- Requested behavior covered by meaningful assertions or a supported
+  explanation; no unrelated changes and no **unapproved** weakening of coverage,
+  exclusions, safety, timeouts, worker limits, or CI policy.
+- Proposed APIs/configuration supported by the installed version (5.0.5 in the
+  supplied project); no deprecated/removed API examples.
+- Run the narrowest feasible relevant check, then broader checks if warranted.
+  Report exact commands and outcomes, or state **not run** and why. An
+  unexecuted example or static inspection is not a passing test.
+- Expose missing files, uncertain post-snapshot APIs, unverified behavior, and
+  any remaining acceptance criterion as **Needs Human Review (NHR)** rather than
+  claiming success. A successful local unit run alone does not establish
+  Storybook or Playwright E2E success.
 
-## Advanced
+## Operating mode: offline snapshot vs online repository
 
-| Topic        | Reference                                                    |
-| ------------ | ------------------------------------------------------------ |
-| Vi Utilities | [advanced-vi](references/advanced-vi.md)                     |
-| Environments | [advanced-environments](references/advanced-environments.md) |
-| Type Testing | [advanced-type-testing](references/advanced-type-testing.md) |
-| Projects     | [advanced-projects](references/advanced-projects.md)         |
+This skill began as an offline source-map capture and will transition to an
+online application. Before judging evidence availability, determine the mode:
+
+- **Online-repo mode** — the live repository, `node_modules`, and lockfile are
+  reachable. **Read live files first**, verify installed versions against actual
+  `package.json`/typings, and run the narrowest real checks. Downgrade a
+  would-be `NHR` to an actual check whenever the file or command is genuinely
+  available. Treat the snapshot references below as historical context; report
+  drift from live files.
+- **Offline-snapshot mode** — only uploaded snapshots are present. Uploaded
+  snapshots may omit repository files; mark missing files **unavailable**, never
+  infer their contents, and record unverifiable outcomes as `NHR`. A manifest is
+  not proof of installed/resolved versions.
+
+Do not claim `NHR` for a file or command that is actually reachable in
+online-repo mode; do not fabricate contents or results in offline mode.
+
+## Decide ownership first
+
+1. **Unit test / jsdom / `tests/unit` / mocks:** `vitest.unit.config.ts`; read
+   [project-nmi-portal.md](references/project-nmi-portal.md), then only the
+   relevant API topic in the `vitest-api-snapshot` skill.
+2. **Storybook stories' `play()` functions / `@storybook/addon-vitest` / Vitest
+   Browser Mode:** `vitest.storybook.config.ts`, `.storybook` integration; read
+   [storybook-browser.md](references/storybook-browser.md).
+3. **Supplied Storybook-oriented Vitest contract suites:** read
+   [supplied-test-contracts.md](references/supplied-test-contracts.md) for the
+   seven case-specific GREEN/RED/AMBER boundaries; do not infer the runner from
+   the subject being tested.
+4. **App E2E, Storybook BDD/MCP E2E, or API-contract tests using
+   `@playwright/test`:** Playwright-owned; do **not** apply this skill as the
+   runner. If a request spans both, separate validation and ownership
+   explicitly. Shared `expect`/`describe` syntax or the word *Playwright* alone
+   is not sufficient to activate or to exclude.
+5. **Configuration, coverage, or uncertain Vitest 5 API:** read
+   [vitest-5-compatibility.md](references/vitest-5-compatibility.md), then
+   consult the exact installed version/types and official documentation when
+   accessible. Do not invent undocumented flags or signatures. A newer web page
+   is **not** proof a feature exists in the installed version.
+
+**If ambiguous:** determine ownership from supplied imports, config/script, or
+explicit user context before using Vitest-specific guidance; do not infer Vitest
+solely from matcher names. A Playwright **provider inside Vitest Browser Mode**
+does not make the test a standalone Playwright E2E suite.
+
+## Required execution boundaries
+
+- Inspect the target code, existing tests, applicable config, `package.json`
+  scripts, and any local exception before suggesting a change.
+- Preserve the `watch: false` default, direct leaf configs and explicit watch
+  commands, unit `jsdom`/`forks`/`maxWorkers: 2` settings, the Storybook
+  Chromium provider, and configured coverage inclusion/exclusion/thresholds.
+- Do not weaken the unit 100% threshold, overwrite excluded paths, drop
+  `reportOnFailure`, merge coverage domains, or remove the Storybook addon
+  compatibility bridge without verified upstream compatibility and explicit
+  change scope.
+- Treat `vitest.storybook.runtime.ts` as an **observed project compatibility
+  workaround**, not a general recommendation or evidence the upstream package is
+  fixed. Confirm against installed dependency behavior before removing it.
+- Do not carry forward Vitest-4/earlier snippets such as `coverage.all`,
+  `browser: { provider: 'playwright', name: 'chromium' }`, or
+  `poolOptions.threads`. Avoid deprecated/removed imports and CLI options; check
+  Vitest 5 docs and installed types for any ambiguous API.
+- Keep deterministic tests focused on behavior; use real browser assertions for
+  Browser Mode when DOM/browser fidelity matters. Preserve setup mocks for the
+  appropriate lane; never silently transplant unit jsdom shims into Chromium.
+- If a check fails, distinguish pre-existing failure from regression only with
+  comparative evidence. Do not mask failures with retries, snapshots, relaxed
+  thresholds, `.only`, `allowOnly`, or unsupported API changes. Do not treat
+  historical T1-exemption comments as authorization to ignore current failures.
+- Narrow validation first: changed test/config, then its lane's script; expand
+  to coverage or related suites as justified. Distinguish static review, actual
+  CLI output, and project CI evidence. Never claim tests, coverage, or a browser
+  run passed without execution evidence.
+- **Vitest does not type-check.** `vitest run` transpiles via esbuild and strips
+  types, so a green run does **not** imply `tsc --noEmit` passes — a suite can
+  pass at runtime while `npm run type-check` reports errors in the same test
+  files. Treat type-check as an **independent required gate**: the unit lane's
+  definition-of-done is tests green **and** `npm run type-check` green (`test:ci`
+  runs both, type-check first). When adding or editing tests, keep them
+  compiling under the repo's strict config; see the strict-TS test-authoring
+  note in [project-nmi-portal.md](references/project-nmi-portal.md).
+
+## Coverage policy and the exclusion list as monitored debt
+
+Unit coverage thresholds are **100% statements/branches/functions/lines**, and
+the exclusion arrays are policy, not a suggested default (full detail in
+[project-nmi-portal.md](references/project-nmi-portal.md)). Preserve them — but
+do not treat the exclusion list as a sacred artifact. Every excluded path is an
+invisible coverage hole that a green 100% hides. Therefore:
+
+- When a change **adds to** an exclusion list, or would raise coverage only by
+  excluding source, flag it explicitly as **coverage-policy drift requiring
+  review**, not a routine edit — even though preserving existing exclusions is
+  the default.
+- Never copy unit thresholds, `reportOnFailure`, reporters, or exclusions to the
+  Storybook lane; the Storybook coverage object does **not** define 100%
+  thresholds. Do not generalize one lane's exclusions to the other.
+
+## Reference routing
+
+Load the **smallest sufficient** reference; project policy before API topics.
+
+| Need | Reference |
+| --- | --- |
+| Project test ownership, scripts, unit config, coverage policy | [project-nmi-portal.md](references/project-nmi-portal.md) |
+| Seven supplied contract suites, GREEN/RED/AMBER evidence | [supplied-test-contracts.md](references/supplied-test-contracts.md) |
+| Storybook addon, Browser Mode, Test-panel compatibility, coverage | [storybook-browser.md](references/storybook-browser.md) |
+| Vitest 5 removed APIs, migration, configuration safety | [vitest-5-compatibility.md](references/vitest-5-compatibility.md) |
+| Raw Vitest 5 API syntax (tests, mocks, matchers, hooks, fixtures, config, CLI, environments, type testing) | **`vitest-api-snapshot`** skill (separate, deletable at go-online) |
+
+Project source/configuration controls **local policy**; version-appropriate
+official Vitest documentation controls **API validity**. Neither generic
+examples nor the snapshot overrides applicable user requirements or safety.
+
+## Evidence, provenance, and evals
+
+Use [evals/](evals/) as test **definitions**, not executed evidence:
+`activation-cases.md` and `project-governance-cases.md` (QAQ/RMI activation,
+retrieval, P01–P22 governance, R01–R04 near-misses); `activation-cases.json`,
+`source-mapping-results.json`, and `supplied-test-green-red-amber.json`
+(machine-readable activation and seven-suite GREEN/RED/AMBER definitions). A
+case definition or expected result is not evidence the case passed; required
+behavior-critical `AMBER`/`FAIL`/`NHR` blocks deployment.
+
+See [MAINTENANCE.md](MAINTENANCE.md) and [MERGE.md](MERGE.md) for provenance,
+change history, rollback, and the audit record of this consolidation.

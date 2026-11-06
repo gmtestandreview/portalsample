@@ -22,7 +22,7 @@ const state: {
 
 const OrganisationDetailsDestination = () => {
   const { id } = useParams();
-  return <h1>{`Organisation details for application ${id}`}</h1>;
+  return <h1>{`Organisation details for application ${id ?? ''}`}</h1>;
 };
 
 const observeCreateRequest = async (request: Request) => {

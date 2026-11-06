@@ -6,7 +6,7 @@ import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 interface VitePlugin {
   name: string;
   transformIndexHtml?: (html: string) => string;
-  configureServer?: (server: unknown) => void | (() => void);
+  configureServer?: (server: unknown) => (() => void) | undefined;
   resolveId?: (source: string) => unknown;
 }
 
@@ -45,10 +45,10 @@ interface ViteConfig {
           names?: string[];
         }) => string;
         codeSplitting: {
-          groups: Array<{
+          groups: {
             name: string;
             test: RegExp;
-          }>;
+          }[];
         };
       };
     };
@@ -424,7 +424,7 @@ describe('vite config', () => {
     ]);
 
     for (const viteName of viteEnvironmentNames) {
-      expect(envSource).toContain(`import.meta.env.${viteName}`);
+      expect(envSource).toContain(`import.meta.env.${viteName ?? ''}`);
     }
   });
 

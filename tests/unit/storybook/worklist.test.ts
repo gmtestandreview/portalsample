@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-type WorklistModule = {
+interface WorklistModule {
   buildWorklist(input: {
-    files: Array<{ path: string; content: string }>;
-    candidateFiles?: Array<{ path: string; reason?: string }>;
+    files: { path: string; content: string }[];
+    candidateFiles?: { path: string; reason?: string }[];
   }): {
-    worklist: Array<{
+    worklist: {
       source: string;
       export: string;
       discoveryKind: string;
@@ -14,14 +14,14 @@ type WorklistModule = {
       owner: string;
       batch: string;
       status: string;
-    }>;
+    }[];
     summary: {
       categoryCounts: Record<string, number>;
       diagnosticCount: number;
       discoveredExportsWithDiagnostics: number;
     };
   };
-};
+}
 
 const worklistModule =
   // @ts-expect-error The maintained generator is JavaScript and has no declaration file.

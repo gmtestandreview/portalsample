@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -23,7 +23,7 @@ function FormikHarness<TValues extends FormikValues>({
   initialValues,
   initialTouched,
   initialErrors,
-  onSubmit = async () => {},
+  onSubmit = vi.fn<() => void>(),
   children,
 }: FormikHarnessProps<TValues>) {
   return (
@@ -130,9 +130,9 @@ describe('simple Formik input components', () => {
 
     await user.click(checkbox);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"accepted":true'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent('"accepted":true');
+    });
   });
 
   it('renders Checkbox validation feedback when touched and not suppressed', () => {
@@ -276,11 +276,11 @@ describe('simple Formik input components', () => {
 
     await user.click(screen.getByRole('radio', { name: /Phone\s*Call me/i }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"contactMethod":"phone"',
-      ),
-    );
+      );
+    });
 
     rerender(
       <FormikHarness initialValues={{ contactMethod: 'email' }}>
@@ -401,9 +401,9 @@ describe('simple Formik input components', () => {
 
     expect(onChange).toHaveBeenCalledTimes(1);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"state":"act"'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent('"state":"act"');
+    });
   });
 
   it('renders SelectInput default option, inline help details, disabled state, hidden option, and empty summary branch', async () => {
@@ -628,11 +628,11 @@ describe('simple Formik input components', () => {
     await user.type(textarea, '  abcdef  ');
     await user.tab();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"notes":"abcdef"',
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('touched')).toHaveTextContent('"notes":true');
     expect(screen.getByText('6 of 5 characters used')).toBeInTheDocument();
@@ -734,11 +734,11 @@ describe('simple Formik input components', () => {
 
     expectTextInputEvents(onClick, onFocus, onKeyDown, onChange, onBlur);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"firstName":"Jordan"',
-      ),
-    );
+      );
+    });
 
     rerender(
       <FormikHarness initialValues={{ dueDate: '2026-06-11T00:00:00.000Z' }}>
@@ -806,9 +806,9 @@ describe('simple Formik input components', () => {
     await user.click(input);
     await user.tab();
 
-    await waitFor(() =>
-      expect(screen.getByTestId('touched')).toHaveTextContent('"dueDate":true'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('touched')).toHaveTextContent('"dueDate":true');
+    });
 
     rerender(
       <FormikHarness initialValues={{ dueDate: '' }}>
@@ -873,5 +873,17 @@ describe('simple Formik input components', () => {
     );
 
     expect(screen.getByRole('textbox', { name: 'Reference' })).toHaveValue('');
+  });
+
+  it('does not leak a falsey inline help value into the DOM', () => {
+    expect.hasAssertions();
+
+    render(
+      <FormikHarness initialValues={{ reference: 'FORMIK-REF' }}>
+        <TextReadOnly name='reference' label='Reference' inlineHelp={0} />
+      </FormikHarness>,
+    );
+
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
   });
 });

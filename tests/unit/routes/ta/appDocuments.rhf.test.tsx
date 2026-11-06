@@ -1,7 +1,8 @@
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
+import ApplicationDocuments from '../../../../ClientApp/src/routes/ta/manage/appDocuments';
 
 import { resetMsalMock } from '../../helpers/mockMsal';
 import type { ClientMockOf } from '../../helpers/mockApiClient';
@@ -102,26 +103,22 @@ const appDocuments = (
   },
 });
 
-type CommitAppDocumentsValues = {
+interface CommitAppDocumentsValues {
   form: {
-    documents: Array<{
+    documents: {
       documentBytes?: unknown;
       attachmentName?: string;
       attachmentCategory?: string;
-    }>;
+    }[];
     instrumentCategory?: string;
   };
-};
+}
 type CommitAppDocumentsCall = [string, CommitAppDocumentsValues];
 
 const renderRoute = async (
   path = '/ta/manage/APP-1/documents',
   routePath = '/ta/manage/:id/documents',
 ) => {
-  const ApplicationDocuments = (
-    await import('../../../../ClientApp/src/routes/ta/manage/appDocuments')
-  ).default;
-
   const result = renderWithRouter(<ApplicationDocuments />, {
     path: routePath,
     initialPath: path,
@@ -145,9 +142,8 @@ const renderLoaded = async (documents: unknown[]) => {
 };
 
 describe('application documents with the real RHF form', () => {
-  const resetApplicationDocumentsRHFState = async () => {
-    await import('../../../../ClientApp/src/api/web-api-client');
-
+  const resetApplicationDocumentsRHFState = () => {
+    cleanup();
     resetMsalMock();
     mocks.appLoggerError.mockReset();
 
@@ -166,18 +162,18 @@ describe('application documents with the real RHF form', () => {
   it('commits the documents without their bytes and leaves the form data intact', async () => {
     expect.hasAssertions();
 
-    await resetApplicationDocumentsRHFState();
+    resetApplicationDocumentsRHFState();
 
     const user = userEvent.setup();
     await renderLoaded([document1()]);
 
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         clients.patternApproval.methods.commitAppDocuments,
-      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
-    );
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object));
+    });
     const [applicationId, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock
         .calls[0] as unknown as CommitAppDocumentsCall,
@@ -198,7 +194,7 @@ describe('application documents with the real RHF form', () => {
   it('blocks the commit and asks for a category while a document has none', async () => {
     expect.hasAssertions();
 
-    await resetApplicationDocumentsRHFState();
+    resetApplicationDocumentsRHFState();
 
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
@@ -218,7 +214,7 @@ describe('application documents with the real RHF form', () => {
   it('commits once a category has been chosen', async () => {
     expect.hasAssertions();
 
-    await resetApplicationDocumentsRHFState();
+    resetApplicationDocumentsRHFState();
 
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
@@ -236,11 +232,11 @@ describe('application documents with the real RHF form', () => {
 
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         clients.patternApproval.methods.commitAppDocuments,
-      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
-    );
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object));
+    });
     const [, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock
         .calls[0] as unknown as CommitAppDocumentsCall,
@@ -257,7 +253,7 @@ describe('application documents with the real RHF form', () => {
   it('shows the saved documents as rows with their category', async () => {
     expect.hasAssertions();
 
-    await resetApplicationDocumentsRHFState();
+    resetApplicationDocumentsRHFState();
 
     await renderLoaded([document1({ attachmentCategory: 'Certificate' })]);
 

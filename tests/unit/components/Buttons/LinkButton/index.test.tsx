@@ -59,7 +59,7 @@ describe('linkButton React Aria render fallback', () => {
     resetMockState();
 
     render(
-      // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
+      // LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
       <LinkButton as='Link' to='/dashboard' variant='btn btn-outline-primary'>
         Dashboard
       </LinkButton>,
@@ -83,7 +83,7 @@ describe('linkButton React Aria render fallback', () => {
 
     render(
       <MemoryRouter>
-        {/* eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */}
+        {/* LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */}
         <LinkButton as='Link' to='/dashboard' variant='secondary'>
           Dashboard
         </LinkButton>

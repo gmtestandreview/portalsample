@@ -11,7 +11,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/Inputs/NumberInput',
   () =>
@@ -32,7 +31,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule79>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/Inputs/AddressLookup',
   () =>
@@ -43,7 +41,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule31>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/Inputs/OrganisationNameLookup',
   () =>
@@ -54,7 +51,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule80>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/HidableField',
   () =>
@@ -69,7 +65,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule70>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
   () =>

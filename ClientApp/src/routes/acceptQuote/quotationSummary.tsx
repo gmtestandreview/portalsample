@@ -40,7 +40,7 @@ const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
       } catch (e) {
         setFileError(true);
         AppLogger.error(
-          `Failed to get Quotedetails: ${cRMQuoteRequestId}`,
+          `Failed to get Quotedetails: ${cRMQuoteRequestId ?? ''}`,
           e as Error,
         );
       }

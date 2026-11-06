@@ -6,6 +6,7 @@ import TextInput from '../TextInput';
 import type { OrgNameOption } from '../../../api/web-api-client';
 import { getFilteredSuggestions } from './suggestionUtils';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 export interface OrganisationNameLookupProps {
   id?: string;
@@ -39,7 +40,9 @@ const OrganisationNameLookup = (
   } = props;
 
   const [_field, _meta, _fieldHelper] = useField<string>(name);
-  const [_orgNameOptions] = useField<OrgNameOption[]>('orgNameOptions');
+  const [_orgNameOptions] = useField<OrgNameOption[] | undefined>(
+    'orgNameOptions',
+  );
   const [_parentField] = useField<string | undefined>(parentName ?? name);
 
   const [inputValue, setInputValue] = useState('');
@@ -49,7 +52,8 @@ const OrganisationNameLookup = (
 
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
   // Debounced filtering
   useEffect(() => {
@@ -102,7 +106,9 @@ const OrganisationNameLookup = (
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounce);
+    return () => {
+      clearTimeout(delayDebounce);
+    };
   }, [
     inputValue,
     _orgNameOptions.value,
@@ -138,7 +144,9 @@ const OrganisationNameLookup = (
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleSelect = (value: string, callback?: () => void) => {
@@ -215,8 +223,8 @@ const OrganisationNameLookup = (
                 activeIndex >= 0 ? `${name}-option-${activeIndex}` : undefined,
               'aria-describedby':
                 _meta.touched && _meta.error
-                  ? `${id || name}-validation-msg`
-                  : helpId || undefined,
+                  ? `${controlId}-validation-msg`
+                  : helpId,
             })}
             aria-autocomplete='both'
             containerClassName='mb-0'
@@ -262,7 +270,9 @@ const OrganisationNameLookup = (
                     action
                     className={`suggestion-option auto-suggestions mt-0 border-0 ${index === activeIndex ? 'highlighted' : ''}`}
                     onClick={() => {
-                      handleSelect(item, () => setActiveIndex(index));
+                      handleSelect(item, () => {
+                        setActiveIndex(index);
+                      });
                     }}
                     ref={(el: HTMLLIElement | null) => {
                       itemRefs.current.splice(index, 1, el);

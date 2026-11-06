@@ -60,14 +60,13 @@ const CustomDatePicker = (
   const [showCalendar, setShowCalendar] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    currentDate || startDate || null,
+    currentDate ?? startDate ?? null,
   );
 
   // Impure during render: the argument is re-evaluated every render even though
   // only the first value is kept. Replacing it (useId) changes the generated id,
   // which Child Plan B's DatePicker characterization asserts against, so it is
   // deferred to that plan rather than changed in a lint migration.
-  // eslint-disable-next-line @eslint-react/purity
   const wrapperUUID = useRef(crypto.randomUUID());
 
   const customInputControlRef = useRef<HTMLInputElement>(null);
@@ -79,7 +78,7 @@ const CustomDatePicker = (
     setSelectedDate(currentDate ?? null);
   }, [currentDate]);
 
-  const showCalendarInvalid = hasError || isInvalid;
+  const showCalendarInvalid = hasError === true || isInvalid;
 
   const handleOpenCalendar = () => {
     setShowCalendar(true);
@@ -95,7 +94,7 @@ const CustomDatePicker = (
     setShowCalendar(false);
     handleEnsureCalendarClosed();
 
-    customInputControlRef?.current?.focus();
+    customInputControlRef.current?.focus();
   };
 
   const handleOnChange = (date: Date | null) => {
@@ -103,7 +102,7 @@ const CustomDatePicker = (
     setSelectedDate(date);
     handleCloseCalendar();
 
-    setIsInvalid(!customInputControlRef?.current?.checkValidity());
+    setIsInvalid(!customInputControlRef.current?.checkValidity());
   };
 
   const handleSelectToday = () => {
@@ -149,10 +148,10 @@ const CustomDatePicker = (
 
           if (offsetArgs.placement.includes('bottom')) {
             const invalidInputRef =
-              customInputControlRef?.current?.classList.contains('is-invalid');
+              customInputControlRef.current?.classList.contains('is-invalid');
             if (invalidInputRef) {
               const inputErrorClientHeight =
-                customInputFeedbackRef?.current?.clientHeight || 0;
+                customInputFeedbackRef.current?.clientHeight ?? 0;
 
               distanceOffset = bottomOffset - inputErrorClientHeight;
             } else {
@@ -160,7 +159,7 @@ const CustomDatePicker = (
             }
           } else if (offsetArgs.placement.includes('top')) {
             const inlineHelpClientHeight =
-              customInputInlineHelpRef?.current?.clientHeight || 0;
+              customInputInlineHelpRef.current?.clientHeight ?? 0;
 
             distanceOffset = topOffset - inlineHelpClientHeight;
           }
@@ -208,7 +207,7 @@ const CustomDatePicker = (
           readOnly,
           startDate,
         })}
-        // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
+        // "today" semantics; owned by Child Plan B
         highlightDates={[new Date()]}
         locale={enAU}
         name={name}
@@ -217,8 +216,8 @@ const CustomDatePicker = (
         onClickOutside={handleCloseCalendar}
         onKeyDown={handleKeyDown}
         open={showCalendar}
-        // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
-        openToDate={selectedDate || new Date()}
+        // "today" semantics; owned by Child Plan B
+        openToDate={selectedDate ?? new Date()}
         placeholderText={placeholder ?? ''}
         popperModifiers={[offSetModifier as never]}
         preventOpenOnFocus

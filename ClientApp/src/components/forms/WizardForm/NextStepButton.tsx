@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useState } from 'react';
 import type { MouseEventHandler } from 'react';
 import { useFormikContext } from 'formik';
@@ -34,8 +35,13 @@ const NextStepButton = ({
     }
   };
 
-  const closeModal = () => setShowModal(false);
-  const onModalNo = () => {};
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const onModalNo = () => {
+    // Deliberately distinct from closeModal: declining the confirmation
+    // keeps the dialog open rather than dismissing it.
+  };
 
   return (
     <SubmitFormButton>
@@ -68,7 +74,9 @@ const NextStepButton = ({
             onClick={isDefaultClick ? onClick : () => onButtonClick()}
             className={className}
           >
-            {finalStep ? finalStepTitle || 'Submit' : title || 'Save and next'}
+            {finalStep
+              ? orIfEmpty(finalStepTitle, 'Submit')
+              : orIfEmpty(title, 'Save and next')}
           </PrimaryButton>
         </>
       )}

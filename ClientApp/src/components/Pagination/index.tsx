@@ -39,7 +39,9 @@ const CustomPagination = (props: Readonly<CustomPaginationProps>) => {
         <Pagination.Item
           key={page}
           active={page === currentPage}
-          onClick={() => handlePageChange(page)}
+          onClick={() => {
+            handlePageChange(page);
+          }}
           aria-label={`Page ${page}`}
         >
           {page}
@@ -62,14 +64,18 @@ const CustomPagination = (props: Readonly<CustomPaginationProps>) => {
         <Pagination className={className}>
           <Pagination.First
             linkClassName={`firstpage ${renderPaginationItems().startPage > 1 ? '' : 'd-none'}`}
-            onClick={() => handlePageChange(1)}
+            onClick={() => {
+              handlePageChange(1);
+            }}
             title='Go to first page'
           >
             <i className='icon icon-doublechevron-left fs-7' />
           </Pagination.First>
           <Pagination.Prev
             linkClassName={`prev ${currentPage === 1 ? 'd-none' : ''}`}
-            onClick={() => handlePageChange(currentPage - 1)}
+            onClick={() => {
+              handlePageChange(currentPage - 1);
+            }}
             title='Go back a page'
           >
             <i className='icon icon-chevron-left fs-7' />
@@ -77,7 +83,9 @@ const CustomPagination = (props: Readonly<CustomPaginationProps>) => {
           {renderPaginationItems().items}
           <Pagination.Next
             linkClassName={`next ${currentPage === totalPages ? 'd-none' : ''}`}
-            onClick={() => handlePageChange(currentPage + 1)}
+            onClick={() => {
+              handlePageChange(currentPage + 1);
+            }}
             title='Go forward a page'
           >
             <i className='icon icon-chevron-right fs-7' />
@@ -85,7 +93,9 @@ const CustomPagination = (props: Readonly<CustomPaginationProps>) => {
 
           <Pagination.Last
             linkClassName={`lastpage ${renderPaginationItems().endPage < totalPages ? '' : 'd-none'}`}
-            onClick={() => handlePageChange(totalPages)}
+            onClick={() => {
+              handlePageChange(totalPages);
+            }}
             title='Go to last page'
           >
             <i className='icon icon-doublechevron-right fs-7' />

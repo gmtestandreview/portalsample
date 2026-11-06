@@ -90,7 +90,7 @@ const resetCreatedRequestMocks = () => {
   globalThis.sessionStorage.clear();
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(RequestForPatternApprovalCreated, () => {
   it('renders the submitted reference and page chrome metadata', () => {
     expect.hasAssertions();

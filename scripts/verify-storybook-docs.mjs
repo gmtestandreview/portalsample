@@ -19,14 +19,12 @@ const ownedPath = (parent, candidate) => {
 const readOwnedFile = async (parent, filePath) => {
   const safePath = ownedPath(parent, filePath);
   // safePath is confined to the generated/source tree selected by this verifier.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
   return readFile(safePath, 'utf8');
 };
 
 const readOwnedDirectory = async (parent, directoryPath) => {
   const safePath = ownedPath(parent, directoryPath);
   // safePath is confined to the generated/source tree selected by this verifier.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
   return readdir(safePath, { withFileTypes: true });
 };
 
