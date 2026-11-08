@@ -48,7 +48,11 @@ import type { UserProfile } from '../../components/SearchFilter/types';
 import CustomPagination from '../../components/Pagination';
 import CustomPaginationHeader from '../../components/PaginationHeader';
 import { defaultFilter } from '../common/constants';
-import { mapToUserProfile } from '../common/helperFunctions';
+import {
+  mapToUserProfile,
+  toDashboardTab,
+  toStatusEnumDto,
+} from '../common/helperFunctions';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 import { DashboardItemStatus } from '../common/enums';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
@@ -409,7 +413,7 @@ const Dashboard = () => {
         filtersChanged: tcDash?.filtersChanged,
         filterSortOrder: tcDash?.filterSortOrder,
         filterCurrentPage: defaultFilter.filterCurrentPage,
-        filterActiveTab: tcDash?.filterActiveTab as DashboardTab | undefined,
+        filterActiveTab: toDashboardTab(tcDash?.filterActiveTab),
         filterSearchText: tcDash?.filterSearchText,
       };
       setActiveTab(profile.filterActiveTab ?? DashboardTab.Drafts);
@@ -462,7 +466,7 @@ const Dashboard = () => {
     actualStatus:
       filterStatusType === defaultFilter.filterStatusType
         ? undefined
-        : (filterStatusType as StatusEnumDto),
+        : toStatusEnumDto(filterStatusType),
   });
 
   useEffect(() => {
@@ -710,9 +714,11 @@ const Dashboard = () => {
           id='dashboard-type'
           activeKey={activeTab}
           onSelect={(key) => {
-            const tab = key as DashboardTab;
-            changeTab(tab);
-            trackGAEvent(tab);
+            const tab = toDashboardTab(key);
+            if (tab !== undefined) {
+              changeTab(tab);
+              trackGAEvent(tab);
+            }
           }}
         >
           <Nav

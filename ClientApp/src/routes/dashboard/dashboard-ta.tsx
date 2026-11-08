@@ -47,6 +47,10 @@ import { defaultFilter } from '../common/constants';
 import { BranchSelectionModalMode } from '../../components/modals/BranchSelectorModal/enums';
 import useUserServices from '../../hooks/useUserServices';
 import SessionStorageCache from '../../storage/sessionStorageCache';
+import {
+  toDashboardTab,
+  toPatternApprovalStatusEnumDto,
+} from '../common/helperFunctions';
 
 // TS Move this to a constants file if we need this setting app wide
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
@@ -157,7 +161,7 @@ const resolveFilterParams = (
   actualStatus:
     filterStatusType === defaultFilter.filterStatusType
       ? undefined
-      : (filterStatusType as PatternApprovalStatusEnumDto | undefined),
+      : toPatternApprovalStatusEnumDto(filterStatusType),
 });
 
 const classifyLoadError = (error: ProblemDetails) => {
@@ -315,8 +319,7 @@ const DashboardTA = () => {
           ...p,
           filterActiveTab: tabFromSession,
         };
-        setActiveTab(tabFromSession as DashboardTab);
-        // changePlaceholderForSearchBox(p!.filterActiveTab! as DashboardTab);
+        setActiveTab(toDashboardTab(tabFromSession) ?? DashboardTab.Drafts);
         setCurrentPage(updatedP.filterCurrentPage ?? 1);
         SessionStorageCache().removeItem('set-tabop-after-save');
 
@@ -350,13 +353,14 @@ const DashboardTA = () => {
         filterSortOrder:
           savedUserProfile.patternApprovalDashboard?.filterSortOrder,
         filterCurrentPage: defaultFilter.filterCurrentPage,
-        filterActiveTab: savedUserProfile.patternApprovalDashboard
-          ?.filterActiveTab as DashboardTab,
+        filterActiveTab: toDashboardTab(
+          savedUserProfile.patternApprovalDashboard?.filterActiveTab,
+        ),
         filterSearchText:
           savedUserProfile.patternApprovalDashboard?.filterSearchText,
       };
 
-      setActiveTab(profile.filterActiveTab);
+      setActiveTab(profile.filterActiveTab ?? DashboardTab.Drafts);
       setCurrentPage(profile.filterCurrentPage);
       saveUserProfile(profile);
       setInitialFilters(profile);
@@ -412,7 +416,9 @@ const DashboardTA = () => {
           initialFilters.filterStatusType,
         );
         const requestsResponse = await fetchRequestsByTab({
-          tab: initialFilters.filterActiveTab as DashboardTab,
+          tab:
+            toDashboardTab(initialFilters.filterActiveTab) ??
+            DashboardTab.Drafts,
           client,
           sortOrder: 'descending', // TS whats up here are we changing this?
           currentPage: initialFilters.filterCurrentPage ?? 1,
@@ -443,13 +449,19 @@ const DashboardTA = () => {
     setDeleteSuccess(false);
     void loadDataForDisplay();
   }, [
-    accountContext?.details?.organisationCRMGuid,
+    accountContext,
+    accountDetails?.organisationCRMGuid,
+    accountDetails?.showBranchSelector,
+    accountDetails?.userAcceptedTermsOfUse,
+    accountDetails?.userProfile,
+    accounts,
     instance,
     inProgress,
     reload,
     initialFilters,
     deleteSuccess,
     services,
+    navigate,
   ]);
 
   const renderDashTypeTitle = () => (
@@ -512,9 +524,7 @@ const DashboardTA = () => {
                 setDeleteSuccess={setDeleteSuccess}
                 request={r}
                 tab={
-                  (initialFilters?.filterActiveTab as
-                    | DashboardTab
-                    | undefined) ?? activeTab
+                  toDashboardTab(initialFilters?.filterActiveTab) ?? activeTab
                 }
               />
             </li>
@@ -575,7 +585,10 @@ const DashboardTA = () => {
           id='dashboard-type'
           activeKey={activeTab}
           onSelect={(key) => {
-            changeTab(key as DashboardTab);
+            const tab = toDashboardTab(key);
+            if (tab !== undefined) {
+              changeTab(tab);
+            }
           }}
         >
           <Nav

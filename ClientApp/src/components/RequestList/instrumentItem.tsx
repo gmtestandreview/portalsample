@@ -17,6 +17,10 @@ import { viewArtefactHeadingStatus } from '../../routes/common/quoteStatus';
 import ContactDetails from '../Utilities/contactDetails';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 import { formatFullName } from '../../utils';
+import {
+  toDashboardItemStatus,
+  toReportStatus,
+} from '../../routes/common/helperFunctions';
 
 // TS Move this to a common location
 const formattedDate = (dateToFormat: Date | string | undefined) =>
@@ -141,59 +145,64 @@ const renderInstrumentReportsContent = (
   artefact: InstrumentArtefactDto,
   navigate: NavigateFunction,
   referenceId: string,
-) => (
-  <>
-    <Table
-      id='instReports-table'
-      data-testid='instReports-table'
-      striped
-      className='table-sm table-striped table-responsive-stack small mb-4'
-      aria-live='off'
-    >
-      <caption id='caption-org-select-list' className='visually-hidden'>
-        Measurement reports history for this instrument/artefact
-      </caption>
-      <thead key='instReportsHeadKeyForThead' className='visually-hidden'>
-        <tr className='table-active'>
-          <th scope='col' className='col-md-2 text-nowrap'>
-            Report date
-          </th>
-          <th scope='col' className='col-md-2 text-nowrap'>
-            Report ID
-          </th>
-          <th scope='col' className='col-md-4 text-nowrap'>
-            Measurement report
-          </th>
-          <th scope='col' className='col-md-2 text-nowrap'>
-            Measurement category
-          </th>
-          {/* <th scope='col' className='col-md-2 text-nowrap'>Report Status</th> */}
-          <th scope='col' className='col-md-2 text-nowrap'>
-            <span className='visually-hidden'>Actions</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody key='instReportsTBodyKey'>
-        <tr className='border-top-0'>
-          <td data-header='Report date' className='col-md-2 pe-0'>
-            {formattedDate(artefact.tmasTcReportDate) || 'N/A'}
-          </td>
-          <td data-header='Report ID' className='col-md-2'>
-            {artefact.tmasTcReportName}
-          </td>
-          <td data-header='Measurement report' className='col-md-4'>
-            {artefact.tmasMeasurementReportCertificateRequired}
-          </td>
-          <td data-header='Measurement category' className='col-md-2'>
-            {artefact.tmasMeasurementCategoryName}
-          </td>
-          {/* <td data-header='Report Status' className='col-md-2'>
+) => {
+  const mappedReportStatus = toReportStatus(artefact.tmasStatus);
+  const reportStatus = mappedReportStatus ?? ReportStatus.NotIssued;
+  const canViewLatestReport =
+    mappedReportStatus !== undefined && reportStatus !== ReportStatus.Withdrawn;
+
+  return (
+    <>
+      <Table
+        id='instReports-table'
+        data-testid='instReports-table'
+        striped
+        className='table-sm table-striped table-responsive-stack small mb-4'
+        aria-live='off'
+      >
+        <caption id='caption-org-select-list' className='visually-hidden'>
+          Measurement reports history for this instrument/artefact
+        </caption>
+        <thead key='instReportsHeadKeyForThead' className='visually-hidden'>
+          <tr className='table-active'>
+            <th scope='col' className='col-md-2 text-nowrap'>
+              Report date
+            </th>
+            <th scope='col' className='col-md-2 text-nowrap'>
+              Report ID
+            </th>
+            <th scope='col' className='col-md-4 text-nowrap'>
+              Measurement report
+            </th>
+            <th scope='col' className='col-md-2 text-nowrap'>
+              Measurement category
+            </th>
+            {/* <th scope='col' className='col-md-2 text-nowrap'>Report Status</th> */}
+            <th scope='col' className='col-md-2 text-nowrap'>
+              <span className='visually-hidden'>Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody key='instReportsTBodyKey'>
+          <tr className='border-top-0'>
+            <td data-header='Report date' className='col-md-2 pe-0'>
+              {formattedDate(artefact.tmasTcReportDate) || 'N/A'}
+            </td>
+            <td data-header='Report ID' className='col-md-2'>
+              {artefact.tmasTcReportName}
+            </td>
+            <td data-header='Measurement report' className='col-md-4'>
+              {artefact.tmasMeasurementReportCertificateRequired}
+            </td>
+            <td data-header='Measurement category' className='col-md-2'>
+              {artefact.tmasMeasurementCategoryName}
+            </td>
+            {/* <td data-header='Report Status' className='col-md-2'>
                         <StatusPill status={artefact.tmasStatus!} />
                     </td> */}
-          <td data-header='Action' className='col-md-2'>
-            <div>
-              {artefact.tmasStatus !== ReportStatus.Withdrawn &&
-                requestForQuoteId !== undefined && (
+            <td data-header='Action' className='col-md-2'>
+              <div>
+                {canViewLatestReport && requestForQuoteId !== undefined && (
                   <Link
                     to={`/report/${requestForQuoteId}`}
                     aria-label='View latest report'
@@ -202,27 +211,26 @@ const renderInstrumentReportsContent = (
                     View report
                   </Link>
                 )}
-              <span className='visually-hidden'>{' or '}</span>
+                <span className='visually-hidden'>{' or '}</span>
 
-              {artefact.tmasArtefactName !== undefined && (
-                <Link
-                  to={`/instrument-reports/${encodeURIComponent(artefact.tmasArtefactName)}`}
-                  aria-label='View all reports for this instrument/artefact'
-                  className='d-block mb-2'
-                >
-                  View all reports
-                </Link>
-              )}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </Table>
-    <Row>
-      <Col />
-      <Col md className='text-center'>
-        {artefact.tmasStatus !== ReportStatus.Withdrawn &&
-          requestForQuoteId !== undefined && (
+                {artefact.tmasArtefactName !== undefined && (
+                  <Link
+                    to={`/instrument-reports/${encodeURIComponent(artefact.tmasArtefactName)}`}
+                    aria-label='View all reports for this instrument/artefact'
+                    className='d-block mb-2'
+                  >
+                    View all reports
+                  </Link>
+                )}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </Table>
+      <Row>
+        <Col />
+        <Col md className='text-center'>
+          {canViewLatestReport && requestForQuoteId !== undefined && (
             <Button
               variant='secondary'
               data-testid={
@@ -238,19 +246,20 @@ const renderInstrumentReportsContent = (
               View latest report
             </Button>
           )}
-      </Col>
-      <Col md>
-        <Link
-          data-testid='request-for-quote-copy-button'
-          to={`/request-for-quote-copy/${referenceId}`}
-          className='d-inline-block py-2 text-nowrap'
-        >
-          Request recalibration
-        </Link>
-      </Col>
-    </Row>
-  </>
-);
+        </Col>
+        <Col md>
+          <Link
+            data-testid='request-for-quote-copy-button'
+            to={`/request-for-quote-copy/${referenceId}`}
+            className='d-inline-block py-2 text-nowrap'
+          >
+            Request recalibration
+          </Link>
+        </Col>
+      </Row>
+    </>
+  );
+};
 
 const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
   const { request } = props;
@@ -263,12 +272,13 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     sourceReferenceId,
     artefact,
   } = request;
+  const mappedStatus = toDashboardItemStatus(status);
 
   const showArtefactHeading = useMemo(
     () =>
-      status !== undefined &&
-      (viewArtefactHeadingStatus as string[]).includes(status),
-    [status],
+      mappedStatus !== undefined &&
+      viewArtefactHeadingStatus.includes(mappedStatus),
+    [mappedStatus],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
     ? `${requestForQuote.manufacturer} ${requestForQuote.model ?? ''}` // If Model null display empty string
@@ -296,7 +306,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
   const getActions = (): DropdownActionItem[] => {
     const actions: DropdownActionItem[] = [];
 
-    switch (status) {
+    switch (mappedStatus) {
       case DashboardItemStatus.QuoteDrafted:
         actions.push(
           {

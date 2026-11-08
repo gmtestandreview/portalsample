@@ -174,6 +174,23 @@ describe('rhf checkbox behavior', () => {
     expect(screen.getByText('Extra detail')).toBeInTheDocument();
   });
 
+  it('does not leak numeric descriptor or sub-form values', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness>
+        <RhfCheckbox
+          name='accepted'
+          label='I accept'
+          descriptor={0}
+          subFormField={0}
+        />
+      </Harness>,
+    );
+
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
+  });
+
   it('shows the validation message only after a submit attempt', async () => {
     expect.hasAssertions();
 

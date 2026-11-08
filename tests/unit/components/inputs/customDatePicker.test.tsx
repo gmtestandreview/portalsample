@@ -16,6 +16,7 @@ type MockDatePickerFocusEvent = Pick<React.FocusEvent, 'type'>;
 interface MockDatePickerProps {
   customInput: React.ReactElement;
   disabled?: boolean;
+  highlightDates?: Date[];
   onBlur?: (event: MockDatePickerFocusEvent) => void;
   onChange: (date: Date | null) => void;
   onClickOutside: () => void;
@@ -132,6 +133,9 @@ vi.mock(import('react-datepicker'), (() => {
 
     return (
       <div data-testid='mock-datepicker'>
+        <output data-testid='highlight-date'>
+          {props.highlightDates?.[0]?.toISOString() ?? ''}
+        </output>
         {React.cloneElement(props.customInput, {
           disabled: props.disabled,
           onBlur: props.onBlur,
@@ -301,6 +305,63 @@ describe('custom date picker', () => {
     expect(
       screen.getByRole('button', { name: 'Open calendar' }),
     ).toBeInTheDocument();
+  });
+
+  it('initializes the wrapper id and today values once across rerenders', async () => {
+    expect.hasAssertions();
+
+    const randomUUID = vi
+      .spyOn(globalThis.crypto, 'randomUUID')
+      .mockReturnValue('00000000-0000-4000-8000-000000000000');
+    const user = userEvent.setup();
+
+    try {
+      const { rerender } = render(
+        <CustomDatePicker
+          calendarButtonTitle='Date'
+          dateOnBlur={vi.fn<() => void>()}
+          dateOnChange={vi.fn<() => void>()}
+          name='stableDate'
+        />,
+      );
+
+      const initialWrapper =
+        screen.getByTestId('mock-datepicker').parentElement;
+      if (!initialWrapper) {
+        throw new Error('Expected the date picker wrapper to be rendered');
+      }
+
+      await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+      const initialToday = screen.getByTestId('highlight-date').textContent;
+      const initialOpenDate = screen.getByTestId('open-date').textContent;
+
+      rerender(
+        <CustomDatePicker
+          calendarButtonTitle='Date'
+          dateOnBlur={vi.fn<() => void>()}
+          dateOnChange={vi.fn<() => void>()}
+          name='stableDate'
+        />,
+      );
+
+      expect(randomUUID).toHaveBeenCalledTimes(1);
+      expect(initialWrapper).toHaveAttribute(
+        'id',
+        '00000000-0000-4000-8000-000000000000',
+      );
+      expect(screen.getByTestId('mock-datepicker').parentElement).toBe(
+        initialWrapper,
+      );
+      expect(screen.getByTestId('highlight-date')).toHaveTextContent(
+        initialToday,
+      );
+      expect(screen.getByTestId('open-date')).toHaveTextContent(
+        initialOpenDate,
+      );
+    } finally {
+      randomUUID.mockRestore();
+    }
   });
 
   it('supports the Today action through the current open/close flow', async () => {

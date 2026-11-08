@@ -135,18 +135,18 @@ const TextInput = ({
       controlId={controlId}
     >
       <Form.Label>{label}</Form.Label>
-      {inlineHelp && !inlineHelpTitle && (
+      {inlineHelp && !inlineHelpTitle ? (
         <Form.Text as='p' id={helpId} className='contextual-help'>
           {inlineHelp}
         </Form.Text>
-      )}
-      {inlineHelp && inlineHelpTitle && (
+      ) : null}
+      {inlineHelp && inlineHelpTitle ? (
         <Details
           {...omitUndefined({ id: helpId })}
           title={inlineHelpTitle}
           inlineHelp={inlineHelp}
         />
-      )}
+      ) : null}
       <Form.Control
         className={`form-field form-text-input ${className}`}
         type={type ?? 'text'}

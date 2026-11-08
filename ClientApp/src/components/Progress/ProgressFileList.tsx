@@ -15,30 +15,35 @@ const formatBytes = (bytes: number): string => {
 };
 
 const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
-  const [cancelling, setCancelling] = useState<Record<string, boolean>>({});
+  const [cancelling, setCancelling] = useState<Map<string, boolean>>(
+    () => new Map(),
+  );
 
   // The cancel control only renders when onCancelFile is supplied, so the handler takes it as an
   // argument rather than re-checking it. Guarding here again was a branch nothing could reach.
   const handleCancel = (fileName: string, cancel: (name: string) => void) => {
-    setCancelling((prev) => ({ ...prev, [fileName]: true }));
+    setCancelling((prev) => new Map(prev).set(fileName, true));
     cancel(fileName);
   };
 
   return (
     <ul className='unstyled-list mt-2 p-0'>
-      {files.map((f) => {
-        const { fileName } = f;
+      {files.map((f, index) => {
+        const { fileName, bytesUploaded, totalBytes } = f;
+        // Narrowing `bytesUploaded`/`totalBytes` through this const means the
+        // byte reads below need no `?? 0`/`?? 1` fallbacks (those nullish paths
+        // were unreachable inside the hasProgress guard).
         const hasProgress =
-          f.bytesUploaded !== undefined && f.totalBytes !== undefined;
+          bytesUploaded !== undefined && totalBytes !== undefined;
         const progressPercent = hasProgress
-          ? Math.round(((f.bytesUploaded ?? 0) / (f.totalBytes ?? 1)) * 100)
+          ? Math.round((bytesUploaded / totalBytes) * 100)
           : 0;
         const isCancellable =
           f.status === FileStatus.Uploading || f.status === FileStatus.Pending;
 
         return (
           <li
-            key={f.fileName}
+            key={fileName ?? index}
             className='attachment d-flex flex-column mb-4 p-4 bg-white shadow text-body small'
           >
             <div className='d-flex align-items-top'>
@@ -56,7 +61,7 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                 {isCancellable &&
                   onCancelFile &&
                   fileName !== undefined &&
-                  (cancelling[fileName] ? (
+                  (cancelling.get(fileName) === true ? (
                     <span className='text-danger ms-2'>Cancelling...</span>
                   ) : (
                     <button

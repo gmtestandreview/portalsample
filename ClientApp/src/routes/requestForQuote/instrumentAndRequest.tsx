@@ -66,6 +66,8 @@ const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
 export const useInstrumentAndRequestLookups = () => {
   const { accounts, instance } = useMsal();
   const context = useFormikContext<InstrumentAndRequestStep>();
+  const measurementCategory = context.getFieldMeta('measurementCategory')
+    .value as string | undefined;
   const isLoadingMeasurementCategories = useRef(false);
   const [measurementCategories, setMeasurementCategories] =
     useState<LookupResponse[]>();
@@ -80,59 +82,59 @@ export const useInstrumentAndRequestLookups = () => {
   ] = useState(false);
 
   useEffect(() => {
+    if (
+      measurementCategories !== undefined ||
+      accounts.length === 0 ||
+      isLoadingMeasurementCategories.current
+    ) {
+      return;
+    }
+
+    isLoadingMeasurementCategories.current = true;
     const loadMeasurementCategories = async () => {
       try {
-        if (measurementCategories === undefined && accounts.length > 0) {
-          const client = new LookupClient();
-          const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0]),
-          );
-          client.setAuthToken(tokenResult.accessToken);
-          const [result, artefactTypeResult] = await Promise.all([
-            client.getLookup(CRMLookupTypes.TCPortalMeasurementCategory),
-            client.getLookup(CRMLookupTypes.TCArtefactTypePortalCategory),
-          ]);
-          const [sorted, lastId] = sortList(result, 'No measurement', 'label');
-          noMeasurementId.current = lastId;
-          setMeasurementCategories(sorted);
-          setArtefactTypes(artefactTypeResult);
-          if (
-            context.getFieldMeta('measurementCategory').initialValue !==
-            undefined
-          ) {
-            const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
-              artefactTypeResult,
-              context.getFieldMeta('measurementCategory')
-                .initialValue as string,
-            );
-            noInstrumentId.current = lastId;
-            setArtefactTypesSelected(options);
-            if (
-              (context.getFieldMeta('measurementCategory')
-                .initialValue as string) === noMeasurementId.current
-            ) {
-              setIsInstrumentOrArtefactTypeDisabled(true);
-            }
-          } else {
-            setArtefactTypesSelected([]);
-          }
-        }
+        const client = new LookupClient();
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0]),
+        );
+        client.setAuthToken(tokenResult.accessToken);
+        const [result, artefactTypeResult] = await Promise.all([
+          client.getLookup(CRMLookupTypes.TCPortalMeasurementCategory),
+          client.getLookup(CRMLookupTypes.TCArtefactTypePortalCategory),
+        ]);
+        const [sorted, lastId] = sortList(result, 'No measurement', 'label');
+        noMeasurementId.current = lastId;
+        setMeasurementCategories(sorted);
+        setArtefactTypes(artefactTypeResult);
       } catch (e) {
         AppLogger.error('Failed to retrieve look ups', e as Error);
+        isLoadingMeasurementCategories.current = false;
       }
     };
-    if (!isLoadingMeasurementCategories.current) {
-      void loadMeasurementCategories();
+    void loadMeasurementCategories();
+  }, [accounts, instance, measurementCategories]);
+
+  useEffect(() => {
+    if (measurementCategories === undefined || artefactTypes === undefined) {
+      return;
     }
-    return () => {
-      isLoadingMeasurementCategories.current = true;
-    };
-  }, [
-    accounts,
-    instance,
-    isLoadingMeasurementCategories,
-    measurementCategories,
-  ]);
+
+    if (measurementCategory === undefined) {
+      setArtefactTypesSelected([]);
+      setIsInstrumentOrArtefactTypeDisabled(false);
+      return;
+    }
+
+    const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
+      artefactTypes,
+      measurementCategory,
+    );
+    noInstrumentId.current = lastId;
+    setArtefactTypesSelected(options);
+    setIsInstrumentOrArtefactTypeDisabled(
+      measurementCategory === noMeasurementId.current,
+    );
+  }, [artefactTypes, measurementCategories, measurementCategory]);
 
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];

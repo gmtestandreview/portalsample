@@ -94,6 +94,32 @@ describe('progress file list', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('does not treat inherited object keys as already cancelling', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const onCancelFile = vi.fn<(fileName: string) => void>();
+    renderList(
+      [
+        {
+          fileName: 'constructor',
+          status: FileStatus.Pending,
+          bytesUploaded: 100,
+          totalBytes: 200,
+        },
+      ],
+      onCancelFile,
+    );
+
+    const cancelButton = screen.getByRole('button', {
+      name: 'Cancel uploading constructor',
+    });
+    await user.click(cancelButton);
+
+    expect(onCancelFile).toHaveBeenCalledWith('constructor');
+    expect(screen.getByText('Cancelling...')).toBeInTheDocument();
+  });
+
   it('omits progress and cancellation UI when a row has no byte totals', () => {
     expect.hasAssertions();
 

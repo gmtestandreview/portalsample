@@ -1,5 +1,10 @@
 import ReactGA from 'react-ga4';
-import { DashboardClient } from '../../api/web-api-client';
+import {
+  DashboardClient,
+  FilterMessages,
+  PatternApprovalStatusEnumDto,
+  StatusEnumDto,
+} from '../../api/web-api-client';
 import type {
   AddressDetailsDto,
   DownloadedFileResponse,
@@ -9,18 +14,142 @@ import type {
   UserProfileDto,
 } from '../../api/web-api-client';
 import type { AccountDetails } from '../../authentication/accountContext';
-import type {
-  DashboardTab,
-  UserProfile,
-} from '../../components/SearchFilter/types';
+import { DashboardTab } from '../../components/SearchFilter/types';
+import type { UserProfile } from '../../components/SearchFilter/types';
+import { DashboardItemStatus, PaDashboardItemStatus } from './enums';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import { base64toBlob } from '../../utils';
 import { DashBoardNotifications } from './dashboardNotifications';
-import { Environment, QuoteStatus } from './enums';
+import { Environment, QuoteStatus, ReportStatus } from './enums';
 import type { SelectInputOption } from '../../components/Inputs/SelectInput/types';
 import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from './openWindow';
 import DOMPurify from 'dompurify';
+
+const enumValue = <T extends Record<string, string>>(
+  enumObject: T,
+  value: unknown,
+): T[keyof T] | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  return Object.values(enumObject).find((enumItem) => enumItem === value) as
+    | T[keyof T]
+    | undefined;
+};
+
+export const toDashboardTab = (value: unknown): DashboardTab | undefined =>
+  enumValue(DashboardTab, value);
+
+export const toStatusEnumDto = (value: unknown): StatusEnumDto | undefined =>
+  enumValue(StatusEnumDto, value);
+
+export const toPatternApprovalStatusEnumDto = (
+  value: unknown,
+): PatternApprovalStatusEnumDto | undefined =>
+  enumValue(PatternApprovalStatusEnumDto, value);
+
+export const toFilterMessages = (value: unknown): FilterMessages | undefined =>
+  enumValue(FilterMessages, value);
+
+export const toDashboardItemStatus = (
+  value: unknown,
+): DashboardItemStatus | undefined => {
+  const localStatus = enumValue(DashboardItemStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  const apiStatus = toStatusEnumDto(value);
+  switch (apiStatus) {
+    case StatusEnumDto.Submitted:
+      return DashboardItemStatus.QuoteSubmitted;
+    case StatusEnumDto.QuoteInProgress:
+      return DashboardItemStatus.QuoteInProgress;
+    case StatusEnumDto.QuoteAvailable:
+      return DashboardItemStatus.QuoteAvailable;
+    case StatusEnumDto.QuoteAccepted:
+      return DashboardItemStatus.QuoteAccepted;
+    case StatusEnumDto.ReportInProgress:
+      return DashboardItemStatus.ReportInProgress;
+    case StatusEnumDto.ReportIssued:
+      return DashboardItemStatus.ReportIssued;
+    case StatusEnumDto.QuoteExpired:
+      return DashboardItemStatus.QuoteExpired;
+    case StatusEnumDto.QuoteDeclined:
+      return DashboardItemStatus.QuoteDeclined;
+    case StatusEnumDto.QuoteClosed:
+      return DashboardItemStatus.QuoteClosed;
+    case StatusEnumDto.ArtefactReceived:
+      return DashboardItemStatus.ArtifactReceived;
+    default:
+      return undefined;
+  }
+};
+
+export const toQuoteStatus = (value: unknown): QuoteStatus | undefined => {
+  const localStatus = enumValue(QuoteStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  const apiStatus = toStatusEnumDto(value);
+  switch (apiStatus) {
+    case StatusEnumDto.Submitted:
+      return QuoteStatus.QuoteSubmitted;
+    case StatusEnumDto.QuoteInProgress:
+      return QuoteStatus.QuoteInProgress;
+    case StatusEnumDto.QuoteAvailable:
+      return QuoteStatus.QuoteAvailable;
+    case StatusEnumDto.QuoteAccepted:
+      return QuoteStatus.QuoteAccepted;
+    case StatusEnumDto.ReportInProgress:
+      return QuoteStatus.ReportInProgress;
+    case StatusEnumDto.ReportIssued:
+      return QuoteStatus.ReportIssued;
+    case StatusEnumDto.QuoteExpired:
+      return QuoteStatus.QuoteExpired;
+    case StatusEnumDto.QuoteDeclined:
+      return QuoteStatus.QuoteDeclined;
+    case StatusEnumDto.QuoteClosed:
+      return QuoteStatus.QuoteClosed;
+    case StatusEnumDto.ArtefactReceived:
+      return QuoteStatus.ArtifactReceived;
+    default:
+      return undefined;
+  }
+};
+
+export const toReportStatus = (value: unknown): ReportStatus | undefined =>
+  enumValue(ReportStatus, value);
+
+export const toPaDashboardItemStatus = (
+  value: unknown,
+): PaDashboardItemStatus | undefined => {
+  const localStatus = enumValue(PaDashboardItemStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  const apiStatus = enumValue(PatternApprovalStatusEnumDto, value);
+  if (apiStatus === undefined) {
+    return undefined;
+  }
+
+  switch (apiStatus) {
+    case PatternApprovalStatusEnumDto.Submitted:
+      return PaDashboardItemStatus.PaSubmitted;
+    case PatternApprovalStatusEnumDto.InProgress:
+      return PaDashboardItemStatus.PaInProgress;
+    case PatternApprovalStatusEnumDto.OnHold:
+      return PaDashboardItemStatus.PaOnHold;
+    case PatternApprovalStatusEnumDto.Completed:
+      return PaDashboardItemStatus.PaCompleted;
+    default:
+      return undefined;
+  }
+};
 
 /**
  * Gets downloadable files from CRM depending on status
@@ -232,8 +361,9 @@ export const mapToUserProfile = (profile: UserProfileDto): UserProfile => ({
   filterSortOrder: profile.testingCalibrationDashboard?.filterSortOrder,
   filtersChanged: profile.testingCalibrationDashboard?.filtersChanged,
   filterCurrentPage: profile.testingCalibrationDashboard?.filterCurrentPage,
-  filterActiveTab: profile.testingCalibrationDashboard
-    ?.filterActiveTab as DashboardTab,
+  filterActiveTab: toDashboardTab(
+    profile.testingCalibrationDashboard?.filterActiveTab,
+  ),
   filterSearchText: profile.testingCalibrationDashboard?.filterSearchText,
 });
 

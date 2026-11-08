@@ -7,11 +7,13 @@ import type { Hideable, ValidationSchema } from '../types';
 /** Which schema validates: `saveAndExit` is the soft one, `next` the hard one. */
 export type SubmitMode = 'next' | 'saveAndExit';
 
+export interface WizardYupResolverContext {
+  submitMode: SubmitMode;
+}
+
 interface WizardYupResolverOptions {
   softSchema: ValidationSchema | undefined;
   hardSchema: ValidationSchema | undefined;
-  /** Read at validation time; the mode is not stored in the form values. */
-  getMode: () => SubmitMode;
   /** Read at validation time so rule changes apply without a new resolver. */
   getHidden: () => Hideable;
 }
@@ -53,11 +55,14 @@ export const createWizardYupResolver =
   <TFieldValues extends FieldValues>({
     softSchema,
     hardSchema,
-    getMode,
     getHidden,
   }: WizardYupResolverOptions): Resolver<TFieldValues> =>
-  async (values) => {
-    const schema = getMode() === 'saveAndExit' ? softSchema : hardSchema;
+  async (values, context) => {
+    const schema =
+      (context as WizardYupResolverContext | undefined)?.submitMode ===
+      'saveAndExit'
+        ? softSchema
+        : hardSchema;
     if (!schema) {
       return { values, errors: {} };
     }

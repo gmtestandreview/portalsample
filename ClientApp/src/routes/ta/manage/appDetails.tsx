@@ -1,15 +1,7 @@
 import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { FormProvider, useForm } from 'react-hook-form';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
@@ -30,7 +22,7 @@ import {
   RequestForPatternApprovalClient,
 } from '../../../api/web-api-client';
 import StatusPill from '../../../components/Pill/StatusPill';
-import type { PaDashboardItemStatus } from '../../common/enums';
+import { toPaDashboardItemStatus } from '../../common/helperFunctions';
 import ApplicationSummary from '../summary/ApplicationSummary';
 import appDetailsProps from './appDetailsProps';
 import OrganisationSummary from '../summary/OrganisationSummary';
@@ -69,33 +61,6 @@ const ApplicationDetails = () => {
   });
   const [applicationType, setApplicationType] = useState<string | null>(null);
   const [messageCount, setMessageCount] = useState<number>(0);
-  const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const disposedRef = useRef(false);
-
-  const clearPollTimeout = () => {
-    if (pollTimeoutRef.current) {
-      clearTimeout(pollTimeoutRef.current);
-      pollTimeoutRef.current = null;
-    }
-  };
-
-  const fetchMessageCountData = useCallback(async () => {
-    if (!id || accounts.length === 0) return;
-
-    try {
-      const client = new RequestForPatternApprovalClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      client.setAuthToken(tokenResult.accessToken);
-      const count = await client.getAppMessageCount(id, id);
-
-      if (disposedRef.current) return;
-      setMessageCount(count || 0);
-    } catch {
-      // optional: log
-    }
-  }, [accounts, id, instance]);
 
   // The application type loads asynchronously and the id is a route param, so
   // either may be absent; show only what is known.
@@ -138,15 +103,31 @@ const ApplicationDetails = () => {
   }, []);
 
   useEffect(() => {
-    disposedRef.current = false;
+    let active = true;
+    let pollTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const fetchMessageCountData = async () => {
+      if (!id || accounts.length === 0) return;
+
+      try {
+        const client = new RequestForPatternApprovalClient();
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0]),
+        );
+        client.setAuthToken(tokenResult.accessToken);
+        const count = await client.getAppMessageCount(id, id);
+
+        if (!active) return;
+        setMessageCount(count || 0);
+      } catch {
+        // optional: log
+      }
+    };
 
     const poll = async () => {
       await fetchMessageCountData();
-      if (!disposedRef.current) {
-        // The rule cannot trace the clear through clearPollTimeout(),
-        // which this effect's cleanup calls and which does invoke
-        // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
-        pollTimeoutRef.current = setTimeout(() => {
+      if (active) {
+        pollTimeoutId = setTimeout(() => {
           void poll();
         }, POLL_MS);
       }
@@ -155,17 +136,13 @@ const ApplicationDetails = () => {
     void poll();
 
     return () => {
-      clearPollTimeout();
+      active = false;
+      if (pollTimeoutId !== null) {
+        clearTimeout(pollTimeoutId);
+        pollTimeoutId = null;
+      }
     };
-  }, [fetchMessageCountData]);
-
-  useEffect(
-    () => () => {
-      disposedRef.current = true;
-      clearPollTimeout();
-    },
-    [],
-  );
+  }, [accounts, id, instance]);
 
   const refreshMessagesTab = () => {
     setLoadMessagesTab(true);
@@ -228,6 +205,7 @@ const ApplicationDetails = () => {
       title,
       submittedDate,
     } = details.applicationDetails ?? {};
+    const mappedStatus = toPaDashboardItemStatus(status);
     return (
       <Row className='mb-4'>
         <Col aria-busy={isDataLoading} aria-live='polite'>
@@ -252,7 +230,9 @@ const ApplicationDetails = () => {
                       eventKey='0'
                       className='mb-4 py-2'
                       nameRHS={
-                        <StatusPill status={status as PaDashboardItemStatus} />
+                        <StatusPill
+                          status={mappedStatus ?? status ?? 'Unknown status'}
+                        />
                       }
                     >
                       {/* Application Status content body */}
@@ -289,7 +269,9 @@ const ApplicationDetails = () => {
                           </p>
                           <p className='small'>
                             <StatusPill
-                              status={status as PaDashboardItemStatus}
+                              status={
+                                mappedStatus ?? status ?? 'Unknown status'
+                              }
                               className='visually-hidden -me-2'
                             />
                             {statusDetail}

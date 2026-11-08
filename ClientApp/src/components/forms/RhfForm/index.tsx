@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
 } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -13,10 +12,18 @@ import { RhfHiddenRulesProvider } from '../RhfHidableField/hiddenRulesContext';
 import { normalizeSubmitValues } from '../utils';
 import type { FormValues, Hideable, ValidationSchema } from '../types';
 import { createWizardYupResolver } from './wizardYupResolver';
-import type { SubmitMode } from './wizardYupResolver';
+import type { SubmitMode, WizardYupResolverContext } from './wizardYupResolver';
 import AppLogger from '../../../instrumentation/AppLogger';
 
 const NO_HIDDEN_RULES: Hideable = {};
+
+class SubmitModeContext implements WizardYupResolverContext {
+  submitMode: SubmitMode = 'next';
+
+  setSubmitMode(mode: SubmitMode): void {
+    this.submitMode = mode;
+  }
+}
 
 export interface RhfFormApi {
   /**
@@ -76,24 +83,25 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
   } = props;
   const hidden = hidingFields ?? NO_HIDDEN_RULES;
 
-  const modeRef = useRef<SubmitMode>('next');
-  const hiddenRef = useRef<Hideable>(hidden);
-  hiddenRef.current = hidden;
+  const validationContext = useMemo<SubmitModeContext>(
+    () => new SubmitModeContext(),
+    [],
+  );
 
   const resolver = useMemo(
     () =>
       createWizardYupResolver<T>({
         softSchema: validateSoft,
         hardSchema: validateHard,
-        getMode: () => modeRef.current,
-        getHidden: () => hiddenRef.current,
+        getHidden: () => hidden,
       }),
-    [validateSoft, validateHard],
+    [hidden, validateSoft, validateHard],
   );
 
-  const methods = useForm<T>({
+  const methods = useForm<T, WizardYupResolverContext>({
     defaultValues: initialValues as DefaultValues<T>,
     resolver,
+    context: validationContext,
     // Formik validates on every change and blur, before and after a submit; 'all'
     // does the same ('onTouched' skips blur once the form has been submitted).
     // Errors only show once a field is touched or the form is submitted.
@@ -110,10 +118,10 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
 
   const submit = useCallback(
     async (mode: SubmitMode) => {
-      modeRef.current = mode;
+      validationContext.setSubmitMode(mode);
       try {
         await handleSubmit(async (values) => {
-          const payload = normalizeSubmitValues(values, hiddenRef.current);
+          const payload = normalizeSubmitValues(values, hidden);
           if (mode === 'saveAndExit' && onSaveAndExit) {
             await onSaveAndExit(payload);
           } else {
@@ -123,10 +131,10 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
       } catch (error) {
         AppLogger.error('Form submission failed.', error as Error);
       } finally {
-        modeRef.current = 'next';
+        validationContext.setSubmitMode('next');
       }
     },
-    [handleSubmit, onSaveAndExit, onSubmit],
+    [handleSubmit, hidden, onSaveAndExit, onSubmit, validationContext],
   );
 
   const api = useMemo<RhfFormApi>(

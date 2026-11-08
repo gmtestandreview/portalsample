@@ -1,9 +1,8 @@
 import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useField, useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { useMsal } from '@azure/msal-react';
 import { Alert, Card, Col, Container } from 'react-bootstrap';
 import HidableField from '../../components/forms/HidableField';
 import SelectInput from '../../components/Inputs/SelectInput';
@@ -46,7 +45,6 @@ const ApplicationAndInstrument = (
   const getName = (localName: string) =>
     name ? `${name}.${localName}` : localName;
   const context = useFormikContext<ApplicationAndInstrumentStepDto>();
-  const { accounts, instance } = useMsal();
   const [isDataLoading, setIsDataLoading] = useState(false);
   const initialKey = context.getFieldMeta('patternApprovalType')
     .initialValue as string | null;
@@ -79,27 +77,34 @@ const ApplicationAndInstrument = (
   const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
     useState(false);
 
-  const getInstrumentTypes = (
-    values: LookupResponse[],
-    parentId: string | undefined,
-  ): SelectInputOption<string>[] => {
-    const options: SelectInputOption<string>[] = [];
-    if (parentId !== undefined && parentId !== '') {
-      for (const l of values) {
-        if (l.parentId === parentId) {
+  const getInstrumentTypes = useCallback(
+    (
+      values: LookupResponse[],
+      parentId: string | undefined,
+    ): SelectInputOption<string>[] => {
+      const options: SelectInputOption<string>[] = [];
+      if (parentId !== undefined && parentId !== '') {
+        for (const l of values) {
+          if (l.parentId === parentId) {
+            options.push({ displayText: l.label ?? '', value: l.id ?? '' });
+          }
+        }
+      } else if (isSummary) {
+        for (const l of values) {
           options.push({ displayText: l.label ?? '', value: l.id ?? '' });
         }
       }
-    } else if (isSummary) {
-      for (const l of values) {
-        options.push({ displayText: l.label ?? '', value: l.id ?? '' });
-      }
-    }
-    const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
-    noInstrumentTypeId.current = lastId;
+      const [sorted, lastId] = sortList(
+        options,
+        'No instrument',
+        'displayText',
+      );
+      noInstrumentTypeId.current = lastId;
 
-    return sorted;
-  };
+      return sorted;
+    },
+    [isSummary],
+  );
 
   // Sync selectedApplication with Formik's patternApprovalType value
   useEffect(() => {
@@ -160,9 +165,11 @@ const ApplicationAndInstrument = (
   }, [
     _categoryLookupField.value,
     _typeLookupField.value,
-    accounts,
-    instance,
+    _instrumentCatField.value,
+    _instrumentTypeField.value,
     instrumentCategories,
+    getInstrumentTypes,
+    isSummary,
   ]);
 
   const getInstrumentCategories = () => {

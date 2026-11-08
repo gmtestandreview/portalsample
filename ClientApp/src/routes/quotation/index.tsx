@@ -31,6 +31,7 @@ import { QuoteStatus } from '../common/enums';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { proceedDeclineValidStatuses } from '../common/quoteStatus';
+import { toQuoteStatus } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 
@@ -108,14 +109,13 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
     { to: '', text: 'Testing and calibration service - Quotation' },
   ];
 
-  const backButtonVisible = useMemo(
-    () =>
-      quotationData?.quoteRequestStatus !== undefined &&
-      proceedDeclineValidStatuses.includes(
-        quotationData.quoteRequestStatus as QuoteStatus,
-      ),
-    [quotationData?.quoteRequestStatus],
-  );
+  const backButtonVisible = useMemo(() => {
+    const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
+    return (
+      quoteStatus !== undefined &&
+      proceedDeclineValidStatuses.includes(quoteStatus)
+    );
+  }, [quotationData?.quoteRequestStatus]);
 
   const declineQuote = async () => {
     setIsLoading(true);
@@ -243,6 +243,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   useEffect(() => {
     clearDashboardInfoNotification();
   }, []);
+  const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
   const renderQuotationSummary = () => (
     <>
       <QuoteDetails
@@ -252,9 +253,8 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         lastName={accountState?.details?.familyName}
         fileError={fileError}
       />
-      {!!quotationData?.quoteRequestStatus &&
-        quotationData.quoteRequestStatus !==
-          String(QuoteStatus.QuoteExpired) && (
+      {quotationData?.quoteRequestStatus !== undefined &&
+        quoteStatus !== QuoteStatus.QuoteExpired && (
           <Row className='mb-3'>
             <Col md={12}>
               <div>

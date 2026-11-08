@@ -117,8 +117,14 @@ export function statPath(candidate, root = process.cwd()) {
 
 export function realPath(candidate, root = process.cwd()) {
   // safePath constrains the path to the declared workspace root.
-  const resolved = fsRealpathSync(safePath(candidate, root));
-  return safePath(resolved, root);
+  const resolvedRoot = path.resolve(root);
+  const resolvedCandidate = safePath(candidate, root);
+  const realRoot = fsRealpathSync(resolvedRoot);
+  const realCandidate = fsRealpathSync(resolvedCandidate);
+  if (outsideRoot(path.relative(realRoot, realCandidate))) {
+    throw new Error(`Refusing path outside workspace root: ${candidate}`);
+  }
+  return realCandidate;
 }
 
 export function pathExists(candidate, root = process.cwd()) {

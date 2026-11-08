@@ -18,6 +18,7 @@ import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
+import { toPaDashboardItemStatus } from '../../routes/common/helperFunctions';
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
   dateToFormat
@@ -72,9 +73,10 @@ const PaRequestItem = ({
     PaDashboardItemStatus.PaOnHold,
     PaDashboardItemStatus.PaCompleted,
   ];
-  const isViewApplicationVisible = viewApplicationVisibleStatuses.includes(
-    status as PaDashboardItemStatus,
-  );
+  const mappedStatus = toPaDashboardItemStatus(status);
+  const isViewApplicationVisible =
+    mappedStatus !== undefined &&
+    viewApplicationVisibleStatuses.includes(mappedStatus);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -152,7 +154,7 @@ const PaRequestItem = ({
   const getActions = (): DropdownActionItem[] => {
     const actions: DropdownActionItem[] = [];
 
-    switch (status) {
+    switch (mappedStatus) {
       case PaDashboardItemStatus.PaDraft:
         actions.push(
           {
@@ -227,7 +229,9 @@ const PaRequestItem = ({
             </Col>
             <Col lg={2} className='py-1' aria-hidden={!isFocused}>
               <Col className='small d-flex justify-content-end'>
-                <StatusPill status={status as PaDashboardItemStatus} />
+                <StatusPill
+                  status={mappedStatus ?? status ?? 'Unknown status'}
+                />
               </Col>
             </Col>
             <Col lg={1} className='text-end'>
@@ -280,7 +284,9 @@ const PaRequestItem = ({
                 <Col md={12}>
                   <p className='fw-bold small pb-0 mb-0 lh-sm'>Status detail</p>
                   <p className='small'>
-                    <StatusPill status={status as PaDashboardItemStatus} />
+                    <StatusPill
+                      status={mappedStatus ?? status ?? 'Unknown status'}
+                    />
                     {statusDetail}
                   </p>
                 </Col>

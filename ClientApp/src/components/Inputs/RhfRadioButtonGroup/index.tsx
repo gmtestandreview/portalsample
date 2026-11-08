@@ -34,7 +34,11 @@ const RhfRadioButtonGroup = <T,>(
   } = props;
 
   const {
-    field,
+    fieldValue,
+    fieldRef,
+    fieldName,
+    onFieldChange,
+    onFieldBlur,
     controlId: baseId,
     helpId,
     validationMessageId,
@@ -43,9 +47,9 @@ const RhfRadioButtonGroup = <T,>(
   } = useRhfFieldA11y({ name, id, inlineHelp, rules });
 
   if (isSummary) {
-    if (!field.value) return null;
+    if (!fieldValue) return null;
     const selectedOption = options.find(
-      (option) => option.value === field.value,
+      (option) => option.value === fieldValue,
     );
     return (
       <SummaryDisplay
@@ -65,18 +69,18 @@ const RhfRadioButtonGroup = <T,>(
     return (
       <div className='radio-button'>
         <input
-          ref={index === 0 ? field.ref : null}
-          name={field.name}
+          ref={index === 0 ? fieldRef : null}
+          name={fieldName}
           type='radio'
           id={option.id}
           value={String(option.value)}
-          checked={String(option.value) === String(field.value ?? '')}
+          checked={option.value === fieldValue}
           disabled={disabled ?? option.disabled}
           onChange={() => {
-            field.onChange(option.value);
+            onFieldChange(option.value);
             onChange?.(option.value);
           }}
-          onBlur={field.onBlur}
+          onBlur={onFieldBlur}
           aria-controls={subFormField ? subFieldId : undefined}
         />
         <label
@@ -85,21 +89,21 @@ const RhfRadioButtonGroup = <T,>(
           className={`form-field ${descriptor ? 'flex-column' : ''}`}
         >
           {option.label}
-          {!!descriptor && (
+          {descriptor ? (
             <>
               <br />{' '}
               <span className='d-block mt-3 fw-normal text-body'>
                 {descriptor}
               </span>
             </>
-          )}
+          ) : null}
         </label>
-        {subFormField && (
+        {subFormField ? (
           <div id={subFieldId} className='subform-field-container'>
             <div className='checklist-line' />
             {subFormField}
           </div>
-        )}
+        ) : null}
       </div>
     );
   };
@@ -117,18 +121,18 @@ const RhfRadioButtonGroup = <T,>(
         className={`form-field-container ${containerClassName}`}
         tabIndex={-1}
       >
-        {inlineHelp && !inlineHelpTitle && (
+        {inlineHelp && !inlineHelpTitle ? (
           <Form.Text as='p' id={helpId} className='contextual-help'>
             {inlineHelp}
           </Form.Text>
-        )}
-        {inlineHelp && inlineHelpTitle && (
+        ) : null}
+        {inlineHelp && inlineHelpTitle ? (
           <Details
             {...omitUndefined({ id: helpId })}
             title={inlineHelpTitle}
             inlineHelp={inlineHelp}
           />
-        )}
+        ) : null}
         {displayHorizontally ? (
           <Row>
             {options.map((option, index) => (

@@ -21,7 +21,7 @@ import { formatDateTimeToString } from '../../../utils';
 import CustomPagination from '../../../components/Pagination';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import CustomPaginationHeader from '../../../components/PaginationHeader';
-import { sanitiseHtml } from '../../common/helperFunctions';
+import { sanitiseHtml, toFilterMessages } from '../../common/helperFunctions';
 
 const SlateEditor = lazy(
   () => import('../../../components/SlateEditor/SlateEditor'),
@@ -168,7 +168,10 @@ const ApplicationMessages = () => {
           value={messageView}
           disabled={isDataLoading}
           onChange={(e) => {
-            setMessageView(e.target.value as FilterMessages);
+            const nextMessageView = toFilterMessages(e.target.value);
+            if (nextMessageView !== undefined) {
+              setMessageView(nextMessageView);
+            }
             setCurrentPage(1); // reset paging when filter changes
             setRefreshTick((prev) => prev + 1); // force refetch if already on page 1
           }}

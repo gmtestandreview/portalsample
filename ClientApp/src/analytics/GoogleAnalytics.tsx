@@ -22,7 +22,7 @@ const GoogleAnalytics = ({
         },
       ]);
     }
-  }, []);
+  }, [anonymiseIp, testMode]);
 
   return <>{children}</>;
 };
@@ -35,21 +35,14 @@ const trackGAPii = () => {
   const piiFields = document.querySelectorAll<HTMLElement>('[data-pii]');
   if (piiFields.length === 0) return;
 
-  const originalEntries: [string, string][] = [];
   const redactedEntries: [string, string][] = [];
 
   piiFields.forEach((field) => {
     const key = field.dataset['pii'] ?? ''; // dataset.pii is always defined — querySelectorAll('[data-pii]') guarantees the attribute exists
-    originalEntries.push([key, field.textContent]);
     redactedEntries.push([key, '[REDACTED]']);
   });
 
-  const originalData = Object.fromEntries(originalEntries);
   const redactedData = Object.fromEntries(redactedEntries);
-
-  if (globalThis.location.hostname === 'localhost') {
-    console.table({ originalData });
-  }
 
   ReactGA.send({
     hitType: 'event',

@@ -83,6 +83,22 @@ describe('rhf text input behavior', () => {
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
+  it('does not leak a numeric inline-help value into the page', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness>
+        <RhfTextInput
+          name='organisationName'
+          label='Organisation'
+          inlineHelp={0}
+        />
+      </Harness>,
+    );
+
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
+  });
+
   it('applies id, class names and optional attributes', () => {
     expect.hasAssertions();
 

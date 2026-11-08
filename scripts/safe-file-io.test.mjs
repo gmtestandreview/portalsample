@@ -38,29 +38,66 @@ it('constrains reads, writes, and traversal to the declared workspace', () => {
 });
 
 it('does not make an existing outside path safe', () => {
-  const root = mkdtempSync(path.join(tmpdir(), 'safe-file-io-'));
-  const outside = path.join(root, '..', 'outside.txt');
-  writeTextFile(outside, 'outside', undefined, path.dirname(root));
+  const tempParent = mkdtempSync(path.join(tmpdir(), 'safe-file-io-parent-'));
   try {
+    const root = mkdtempSync(path.join(tempParent, 'root-'));
+    const outside = path.join(tempParent, 'outside.txt');
+    writeTextFile(outside, 'outside', undefined, tempParent);
     assert.throws(
       () => readTextFile('../outside.txt', root),
       /outside workspace root/u,
     );
   } finally {
-    rmSync(root, { recursive: true, force: true });
-    rmSync(outside, { force: true });
+    rmSync(tempParent, { recursive: true, force: true });
   }
 });
 
-it('keeps absolute output paths inside the declared output root', () => {
+it('accepts nested paths when the declared root is a symlink', () => {
+  const tempParent = mkdtempSync(path.join(tmpdir(), 'safe-file-io-root-'));
+  try {
+    const actualRoot = mkdtempSync(path.join(tempParent, 'actual-'));
+    const linkedRoot = path.join(tempParent, 'linked-root');
+    symlinkSync(
+      actualRoot,
+      linkedRoot,
+      process.platform === 'win32' ? 'junction' : 'dir',
+    );
+    makeDirectory('nested', linkedRoot);
+    writeTextFile('nested/value.txt', 'safe', undefined, linkedRoot);
+    assert.equal(readTextFile('nested/value.txt', linkedRoot), 'safe');
+    assert.equal(
+      realPath('nested/value.txt', linkedRoot),
+      path.join(actualRoot, 'nested', 'value.txt'),
+    );
+  } finally {
+    rmSync(tempParent, { recursive: true, force: true });
+  }
+});
+
+it('uses the output root as the declared filesystem boundary', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'safe-file-io-'));
   const outputRoot = path.join(root, 'output');
   try {
     makeDirectory(outputRoot, root);
-    const outputFile = path.join(outputRoot, 'result.txt');
-    writeTextFile(outputFile, 'output', undefined, root);
-    assert.equal(readTextFile(outputFile, root), 'output');
-    assert.equal(realPath(outputFile, root), outputFile);
+    makeDirectory('nested', outputRoot);
+    const outputFile = path.join(outputRoot, 'nested', 'result.txt');
+    writeTextFile('nested/result.txt', 'output', undefined, outputRoot);
+    assert.equal(readTextFile('nested/result.txt', outputRoot), 'output');
+    assert.equal(realPath('nested/result.txt', outputRoot), outputFile);
+    assert.throws(
+      () => writeTextFile('../parent.txt', 'outside', undefined, outputRoot),
+      /outside workspace root/u,
+    );
+    assert.throws(
+      () =>
+        writeTextFile(
+          path.join(root, 'sibling.txt'),
+          'outside',
+          undefined,
+          outputRoot,
+        ),
+      /outside workspace root/u,
+    );
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

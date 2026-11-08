@@ -129,8 +129,8 @@ test('reconciles a freshly generated lint report and scratch evidence', async ()
   });
 
   assert.deepEqual(result.counts, {
-    total: 296,
-    actionable: 295,
+    total: 235,
+    actionable: 234,
     stale: 1,
     accepted: 0,
     generatedVendor: 0,
@@ -158,7 +158,7 @@ test('reconciles a freshly generated lint report and scratch evidence', async ()
     categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
   }
   assert.deepEqual(Object.fromEntries(categoryCounts), {
-    actionable: 295,
+    actionable: 234,
     stale: 1,
   });
 });

@@ -5,7 +5,10 @@ import RhfForm, {
   useRhfFormApi,
 } from '../../../../ClientApp/src/components/forms/RhfForm';
 import { createWizardYupResolver } from '../../../../ClientApp/src/components/forms/RhfForm/wizardYupResolver';
-import type { SubmitMode } from '../../../../ClientApp/src/components/forms/RhfForm/wizardYupResolver';
+import type {
+  SubmitMode,
+  WizardYupResolverContext,
+} from '../../../../ClientApp/src/components/forms/RhfForm/wizardYupResolver';
 import type { Hideable } from '../../../../ClientApp/src/components/forms/types';
 
 const resolve = async (
@@ -18,13 +21,16 @@ const resolve = async (
   const resolver = createWizardYupResolver({
     softSchema: schemas.soft,
     hardSchema: schemas.hard,
-    getMode: () => options.mode ?? 'next',
     getHidden: () => options.hidden ?? {},
   });
-  return resolver(options.values ?? { name: '' }, undefined, {
-    fields: {},
-    shouldUseNativeValidation: false,
-  });
+  return resolver(
+    options.values ?? { name: '' },
+    { submitMode: options.mode ?? 'next' } satisfies WizardYupResolverContext,
+    {
+      fields: {},
+      shouldUseNativeValidation: false,
+    },
+  );
 };
 
 const required = Yup.object({

@@ -228,6 +228,14 @@ describe('rhf auto suggest container behavior', () => {
     }).toStrictEqual({ closeCalls: [[]], comboBoxRendered: true });
   });
 
+  it('does not leak a numeric inline-help value into the page', () => {
+    expect.hasAssertions();
+
+    renderContainer({ inlineHelp: 0 });
+
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
+  });
+
   it('renders no-result and lookup-error messages with defaults and overrides', () => {
     expect.hasAssertions();
 

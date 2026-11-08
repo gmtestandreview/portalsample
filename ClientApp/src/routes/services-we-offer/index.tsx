@@ -122,7 +122,13 @@ const ServicesWeOffer = () => {
       }
     };
     void loadServices();
-  }, [accounts, instance, accountDetails, accountDetails?.userProfile]);
+  }, [
+    accounts,
+    instance,
+    accountDetails,
+    accountDetails?.userProfile,
+    services.length,
+  ]);
 
   useEffect(() => {
     if (shouldRedirect) {

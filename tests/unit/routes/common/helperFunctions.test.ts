@@ -28,6 +28,14 @@ import {
   handleReportFileError,
   handleUnexpectedError,
   mapToUserProfile,
+  toDashboardItemStatus,
+  toDashboardTab,
+  toFilterMessages,
+  toPaDashboardItemStatus,
+  toPatternApprovalStatusEnumDto,
+  toQuoteStatus,
+  toReportStatus,
+  toStatusEnumDto,
   openInNewTab,
   openPdfPageInNewTab,
   sanitiseHtml,
@@ -37,8 +45,17 @@ import {
 } from '../../../../ClientApp/src/routes/common/helperFunctions';
 import {
   Environment,
+  DashboardItemStatus,
+  PaDashboardItemStatus,
   QuoteStatus,
+  ReportStatus,
 } from '../../../../ClientApp/src/routes/common/enums';
+import { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/types';
+import {
+  FilterMessages,
+  PatternApprovalStatusEnumDto,
+  StatusEnumDto,
+} from '../../../../ClientApp/src/api/web-api-client';
 import {
   openPdfPageInSecureNewTab,
   openUrlInSecureNewTab,
@@ -127,6 +144,44 @@ const resetHelperFunctionsState = () => {
 };
 
 describe('route common helper functions', () => {
+  it('maps known API enum values and rejects unknown values', () => {
+    expect(toStatusEnumDto(StatusEnumDto.QuoteAvailable)).toBe(
+      StatusEnumDto.QuoteAvailable,
+    );
+    expect(toStatusEnumDto('server-added-status')).toBeUndefined();
+    expect(
+      toPatternApprovalStatusEnumDto(PatternApprovalStatusEnumDto.Completed),
+    ).toBe(PatternApprovalStatusEnumDto.Completed);
+    expect(
+      toPatternApprovalStatusEnumDto('server-added-status'),
+    ).toBeUndefined();
+    expect(toFilterMessages(FilterMessages.ShowNmiMessages)).toBe(
+      FilterMessages.ShowNmiMessages,
+    );
+    expect(toFilterMessages('server-added-filter')).toBeUndefined();
+  });
+
+  it('maps dashboard and workflow statuses without asserting unknown values', () => {
+    expect(toDashboardTab('instruments')).toBe(DashboardTab.Instruments);
+    expect(toDashboardTab('server-added-tab')).toBeUndefined();
+    expect(toQuoteStatus(QuoteStatus.QuoteAccepted)).toBe(
+      QuoteStatus.QuoteAccepted,
+    );
+    expect(toQuoteStatus('server-added-quote-status')).toBeUndefined();
+    expect(toDashboardItemStatus('QuoteAvailable')).toBe(
+      DashboardItemStatus.QuoteAvailable,
+    );
+    expect(
+      toDashboardItemStatus('server-added-dashboard-status'),
+    ).toBeUndefined();
+    expect(toPaDashboardItemStatus('Completed')).toBe(
+      PaDashboardItemStatus.PaCompleted,
+    );
+    expect(
+      toPaDashboardItemStatus('server-added-application-status'),
+    ).toBeUndefined();
+  });
+
   it.each([
     [
       QuoteStatus.QuoteAccepted,
@@ -254,6 +309,15 @@ describe('route common helper functions', () => {
     );
   });
 
+  it('maps known report statuses and rejects unknown values', () => {
+    expect.hasAssertions();
+
+    expect(toReportStatus(ReportStatus.Issued)).toBe(ReportStatus.Issued);
+    expect(toReportStatus(ReportStatus.NotIssued)).toBe(ReportStatus.NotIssued);
+    expect(toReportStatus('server-added-report-status')).toBeUndefined();
+    expect(toReportStatus(undefined)).toBeUndefined();
+  });
+
   it('formats make/model, file sizes, quote pages, addresses, and user profiles', () => {
     expect.hasAssertions();
 
@@ -325,7 +389,7 @@ describe('route common helper functions', () => {
         filterSortOrder: 'Newest',
         filtersChanged: true,
         filterCurrentPage: 2,
-        filterActiveTab: 'Quotation',
+        filterActiveTab: undefined,
         filterSearchText: 'NMI',
       },
     });

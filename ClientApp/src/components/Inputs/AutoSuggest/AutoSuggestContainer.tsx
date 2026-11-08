@@ -134,11 +134,11 @@ const AutoSuggestContainer = <T,>(
           >
             {label}
           </Label>
-          {inlineHelp && (
+          {inlineHelp ? (
             <p id={helpId} className='contextual-help'>
               {inlineHelp}
             </p>
-          )}
+          ) : null}
           {/*
            * React Aria's `Group`, not a bare wrapper: `ComboBox`
            * exposes its group ref through `GroupContext`, and once a

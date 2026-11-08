@@ -10,7 +10,7 @@ import {
 import NotificationMessage from '../../components/Alert/NotificationMessage';
 import ExternalLinkIcon from '../../components/Icons/ExternalLinkIcon';
 import { QuoteStatus } from '../common/enums';
-import { getMakeModelDetails } from '../common/helperFunctions';
+import { getMakeModelDetails, toQuoteStatus } from '../common/helperFunctions';
 import { validPillStatuses } from '../common/quoteStatus';
 import QuoteStatusPill from '../../components/Pill/QuoteStatusPill';
 import MailingLabel from '../../components/Utilities/mailingLabel';
@@ -48,13 +48,10 @@ const QuoteDetails = (
     }
   };
 
+  const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
   const showStatusPill = useMemo(
-    () =>
-      quotationData?.quoteRequestStatus &&
-      validPillStatuses.includes(
-        quotationData.quoteRequestStatus as QuoteStatus,
-      ),
-    [quotationData?.quoteRequestStatus],
+    () => quoteStatus !== undefined && validPillStatuses.includes(quoteStatus),
+    [quoteStatus],
   );
 
   const dashboardMessage = setNotification();
@@ -119,8 +116,7 @@ const QuoteDetails = (
           </Row>
           <Row className='mb-3'>
             {fileError && showDashboardMessage(dashboardMessage)}
-            {quotationData?.quoteRequestStatus ===
-              QuoteStatus.QuoteAvailable && (
+            {quoteStatus === QuoteStatus.QuoteAvailable && (
               <Col>
                 <Alert
                   variant='info'
@@ -174,9 +170,9 @@ const QuoteDetails = (
                                     >
                                         {getPillText(quotationData!.quoteRequestStatus)}
                                     </Badge> */}
-                  <QuoteStatusPill
-                    status={quotationData?.quoteRequestStatus as QuoteStatus}
-                  />
+                  {quoteStatus !== undefined && (
+                    <QuoteStatusPill status={quoteStatus} />
+                  )}
                 </Col>
                 <p className='mb-0 text-break'>
                   {!!quotationData?.outcomeDate &&
@@ -374,9 +370,8 @@ const QuoteDetails = (
           )}
         </>
       )}
-      {!!quotationData?.quoteRequestStatus &&
-        quotationData.quoteRequestStatus !==
-          String(QuoteStatus.QuoteExpired) && (
+      {quotationData?.quoteRequestStatus !== undefined &&
+        quoteStatus !== QuoteStatus.QuoteExpired && (
           <Row className='mb-3'>
             <Col md={12}>
               {/* Render field label + values

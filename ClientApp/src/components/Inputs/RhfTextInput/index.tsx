@@ -31,7 +31,11 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
   } = props;
 
   const {
-    field,
+    fieldName,
+    fieldValue: controlledValue,
+    fieldRef,
+    onFieldChange,
+    onFieldBlur,
     controlId,
     helpId,
     validationMessageId,
@@ -39,7 +43,9 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
 
-  const fieldValue = typeof field.value === 'string' ? field.value : '';
+  const fieldValue = typeof controlledValue === 'string' ? controlledValue : '';
+  const hasInlineHelp = Boolean(inlineHelp);
+  const hasInlineHelpTitle = Boolean(inlineHelpTitle);
 
   if (isSummary) {
     return (
@@ -49,13 +55,13 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
 
   const handleBlur = () => {
     onBlur?.();
-    if (typeof field.value === 'string') {
-      const trimmed = field.value.trim();
-      if (trimmed !== field.value) {
-        field.onChange(trimmed);
+    if (typeof controlledValue === 'string') {
+      const trimmed = controlledValue.trim();
+      if (trimmed !== controlledValue) {
+        onFieldChange(trimmed);
       }
     }
-    field.onBlur();
+    onFieldBlur();
   };
 
   return (
@@ -64,23 +70,23 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
       controlId={controlId}
     >
       <Form.Label>{label}</Form.Label>
-      {inlineHelp && !inlineHelpTitle && (
+      {hasInlineHelp && !hasInlineHelpTitle ? (
         <Form.Text as='p' id={helpId} className='contextual-help'>
           {inlineHelp}
         </Form.Text>
-      )}
-      {inlineHelp && inlineHelpTitle && (
+      ) : null}
+      {hasInlineHelp && hasInlineHelpTitle ? (
         <Details
           {...omitUndefined({ id: helpId })}
           title={inlineHelpTitle}
           inlineHelp={inlineHelp}
         />
-      )}
+      ) : null}
       <Form.Control
         className={`form-field form-text-input ${className}`}
         type='text'
-        name={field.name}
-        ref={field.ref}
+        name={fieldName}
+        ref={fieldRef}
         isInvalid={!!errorMessage}
         {...omitUndefined({
           disabled,
@@ -93,7 +99,7 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
         value={fieldValue}
         onBlur={handleBlur}
         onChange={(event) => {
-          field.onChange(event.target.value);
+          onFieldChange(event.target.value);
           onChange?.(event.target.value);
         }}
       />

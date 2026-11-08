@@ -160,6 +160,62 @@ const renderInstrumentQuoteAvailableAndAssert = async (
 };
 
 describe('requestList behavior', () => {
+  it('maps generated statuses for valid branches and keeps unknown statuses explicit', () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    renderInDashboardList(
+      <>
+        <RequestItem
+          request={{
+            ...baseRequest,
+            referenceId: 'RFQ-generated-status',
+            status: 'QuoteAvailable',
+          }}
+        />
+        <RequestItem
+          request={{
+            ...baseRequest,
+            referenceId: 'RFQ-unknown-status',
+            status: 'ServerAddedStatus',
+          }}
+        />
+      </>,
+    );
+
+    expect(
+      screen.getByTestId('RefId-RFQ-generated-status-view-quotation-button'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('ServerAddedStatus')).toBeInTheDocument();
+  });
+
+  it('hides latest report actions for an unknown instrument report status', () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    renderInDashboardList(
+      <InstrumentItem
+        request={{
+          ...instrumentRequest,
+          artefact: {
+            ...instrumentRequest.artefact,
+            tmasStatus: 'ServerAddedReportStatus',
+          },
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole('link', { name: 'View latest report' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'View latest report' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Request recalibration' }),
+    ).toBeInTheDocument();
+  });
+
   it('renders the no requests empty state with a create request link', () => {
     expect.hasAssertions();
 

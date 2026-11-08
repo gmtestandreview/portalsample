@@ -169,98 +169,27 @@ describe('googleAnalytics', () => {
             <input data-pii="email" value="user@example.test" />
             <input data-pii="phone" value="0400000000" />
         `;
-    // JSDOM defaults hostname to 'localhost'; override to avoid triggering the console.table branch
-    const origLocation = globalThis.location;
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: { ...origLocation, hostname: 'portal.measurement.gov.au' },
-    });
-
-    const { trackGAPii } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
-
-    trackGAPii();
-
-    expect(reactGaMock.send).toHaveBeenCalledWith({
-      hitType: 'event',
-      category: 'form_viewed_sanitized',
-      data: {
-        email: '[REDACTED]',
-        phone: '[REDACTED]',
-      },
-    });
-
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: origLocation,
-    });
-  });
-
-  it('logs original PII data to console.table when running on localhost', async () => {
-    expect.hasAssertions();
-
-    resetAnalyticsState();
-
-    document.body.innerHTML = '<span data-pii="name">Alice</span>';
     const consoleSpy = vi
       .spyOn(console, 'table')
       .mockImplementation(() => undefined);
-    const origLocation = globalThis.location;
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: { ...origLocation, hostname: 'localhost' },
-    });
 
-    const { trackGAPii } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
-    trackGAPii();
+    try {
+      const { trackGAPii } =
+        await import('../../../ClientApp/src/analytics/GoogleAnalytics');
 
-    expect(consoleSpy).toHaveBeenCalledWith({
-      originalData: { name: 'Alice' },
-    });
-    expect(reactGaMock.send).toHaveBeenCalledWith({
-      hitType: 'event',
-      category: 'form_viewed_sanitized',
-      data: { name: '[REDACTED]' },
-    });
+      trackGAPii();
 
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: origLocation,
-    });
-    consoleSpy.mockRestore();
-  });
-
-  it('does not call console.table when hostname is not localhost', async () => {
-    expect.hasAssertions();
-
-    resetAnalyticsState();
-
-    document.body.innerHTML = '<span data-pii="name">Bob</span>';
-    const consoleSpy = vi
-      .spyOn(console, 'table')
-      .mockImplementation(() => undefined);
-    const origLocation = globalThis.location;
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: { ...origLocation, hostname: 'portal.measurement.gov.au' },
-    });
-
-    const { trackGAPii } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
-    trackGAPii();
-
-    expect(consoleSpy).not.toHaveBeenCalled();
-    expect(reactGaMock.send).toHaveBeenCalledWith({
-      hitType: 'event',
-      category: 'form_viewed_sanitized',
-      data: { name: '[REDACTED]' },
-    });
-
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: origLocation,
-    });
-    consoleSpy.mockRestore();
+      expect(consoleSpy).not.toHaveBeenCalled();
+      expect(reactGaMock.send).toHaveBeenCalledWith({
+        hitType: 'event',
+        category: 'form_viewed_sanitized',
+        data: {
+          email: '[REDACTED]',
+          phone: '[REDACTED]',
+        },
+      });
+    } finally {
+      consoleSpy.mockRestore();
+    }
   });
 });

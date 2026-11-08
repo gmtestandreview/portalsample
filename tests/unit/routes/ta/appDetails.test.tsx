@@ -449,6 +449,104 @@ describe('application details', () => {
       }
     });
 
+    it('clears a scheduled poll when the page unmounts', async () => {
+      expect.hasAssertions();
+
+      vi.useFakeTimers();
+      try {
+        await resetApplicationDetailsState();
+        const { unmount } = await renderDetails();
+
+        await act(async () => {
+          await Promise.resolve();
+          await Promise.resolve();
+          await Promise.resolve();
+        });
+
+        expect(
+          clients.patternApproval.methods.getAppMessageCount,
+        ).toHaveBeenCalledTimes(1);
+
+        unmount();
+
+        await act(async () => {
+          vi.advanceTimersByTime(5000);
+          await Promise.resolve();
+          await Promise.resolve();
+        });
+
+        expect(
+          clients.patternApproval.methods.getAppMessageCount,
+        ).toHaveBeenCalledTimes(1);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('ignores an old poll after the application id changes mid-request', async () => {
+      expect.hasAssertions();
+
+      vi.useFakeTimers();
+      try {
+        await resetApplicationDetailsState();
+
+        let releaseOldPoll: (value: number) => void = () => undefined;
+        clients.patternApproval.methods.getAppMessageCount.mockImplementation(
+          (applicationId: unknown) => {
+            if (applicationId === 'APP-1') {
+              return new Promise<number>((resolve) => {
+                releaseOldPoll = resolve;
+              });
+            }
+            return Promise.resolve(9);
+          },
+        );
+
+        const { router } = await renderDetails();
+
+        await act(async () => {
+          await Promise.resolve();
+          await Promise.resolve();
+          await Promise.resolve();
+        });
+
+        expect(
+          clients.patternApproval.methods.getAppMessageCount,
+        ).toHaveBeenCalledWith('APP-1', 'APP-1');
+
+        await act(async () => {
+          await router.navigate('/ta/manage/APP-2');
+          await Promise.resolve();
+          await Promise.resolve();
+          await Promise.resolve();
+        });
+
+        expect(
+          clients.patternApproval.methods.getAppMessageCount,
+        ).toHaveBeenCalledWith('APP-2', 'APP-2');
+
+        act(() => {
+          releaseOldPoll(4);
+        });
+        await act(async () => {
+          await Promise.resolve();
+          await Promise.resolve();
+          await Promise.resolve();
+          vi.advanceTimersByTime(5000);
+          await Promise.resolve();
+          await Promise.resolve();
+        });
+
+        expect(
+          clients.patternApproval.methods.getAppMessageCount,
+        ).toHaveBeenCalledTimes(3);
+        expect(screen.getByText('9')).toBeInTheDocument();
+        expect(screen.queryByText('4')).not.toBeInTheDocument();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     it('treats a missing count as zero', async () => {
       expect.hasAssertions();
 

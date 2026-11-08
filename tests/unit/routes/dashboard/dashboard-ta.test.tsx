@@ -107,6 +107,31 @@ vi.mock(
         TestingCalibration: 'TestingCalibration',
         PatternApproval: 'PatternApproval',
       },
+      StatusEnumDto: {
+        Submitted: 'Submitted',
+        AwaitingClientInformation: 'AwaitingClientInformation',
+        QuoteNotRequired: 'QuoteNotRequired',
+        QuoteInProgress: 'QuoteInProgress',
+        QuoteAvailable: 'QuoteAvailable',
+        QuoteAccepted: 'QuoteAccepted',
+        ReportInProgress: 'ReportInProgress',
+        ReportIssued: 'ReportIssued',
+        QuoteExpired: 'QuoteExpired',
+        QuoteDeclined: 'QuoteDeclined',
+        QuoteClosed: 'QuoteClosed',
+        ArtefactReceived: 'ArtefactReceived',
+      },
+      PatternApprovalStatusEnumDto: {
+        Submitted: 'Submitted',
+        InProgress: 'InProgress',
+        OnHold: 'OnHold',
+        Completed: 'Completed',
+      },
+      FilterMessages: {
+        ShowAllMessages: 'ShowAllMessages',
+        ShowNmiMessages: 'ShowNmiMessages',
+        ShowPortalMessages: 'ShowPortalMessages',
+      },
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
@@ -1193,8 +1218,11 @@ describe('pattern/type approval dashboard', () => {
     await expect(
       screen.findByTestId('error-page'),
     ).resolves.toBeInTheDocument();
-    expect(mockAppLoggerError).toHaveBeenCalledWith('Failed to load dashboard.', {
-      title: 'Mystery failure',
-    });
+    expect(mockAppLoggerError).toHaveBeenCalledWith(
+      'Failed to load dashboard.',
+      {
+        title: 'Mystery failure',
+      },
+    );
   });
 });

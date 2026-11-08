@@ -188,10 +188,13 @@ vi.mock(
 
 vi.mock(
   import('../../../ClientApp/src/routes/common/helperFunctions'),
-  () =>
-    ({
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof HelperFunctionsModule>();
+    return {
+      ...actual,
       mapToUserProfile: mockMapToUserProfile,
-    }) satisfies __ExactMockModule<__TestMockModule9>,
+    } satisfies __ExactMockModule<__TestMockModule9>;
+  },
 );
 
 vi.mock(
@@ -1142,7 +1145,7 @@ describe('dashboard', () => {
     });
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBe('2025');
-    expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBe('Open');
+    expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBeUndefined();
     expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
       'data-current',
       '1',

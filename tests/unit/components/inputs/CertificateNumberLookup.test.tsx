@@ -213,9 +213,12 @@ describe('certificateNumberLookup debounce', () => {
       // suggestion while its lookupName and id are absent, which is the only
       // way to reach the `lookupName ?? ''` / `id ?? ''` fallbacks in the
       // rendered aria-label and the click handler.
-      renderLookup([{ parent: 'Alpha', lookupName: undefined, id: undefined }], {
-        optionsFieldName: 'parent',
-      });
+      renderLookup(
+        [{ parent: 'Alpha', lookupName: undefined, id: undefined }],
+        {
+          optionsFieldName: 'parent',
+        },
+      );
 
       await act(async () => {
         fireEvent.change(screen.getByRole('textbox'), {
@@ -246,9 +249,12 @@ describe('certificateNumberLookup debounce', () => {
 
     vi.useFakeTimers();
     try {
-      renderLookup([{ parent: 'Alpha', lookupName: undefined, id: undefined }], {
-        optionsFieldName: 'parent',
-      });
+      renderLookup(
+        [{ parent: 'Alpha', lookupName: undefined, id: undefined }],
+        {
+          optionsFieldName: 'parent',
+        },
+      );
 
       const input = screen.getByRole('textbox');
 
@@ -258,7 +264,9 @@ describe('certificateNumberLookup debounce', () => {
         await Promise.resolve();
       });
 
-      expect(screen.getByRole('option', { name: /\(1 of 1\)/ })).toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: /\(1 of 1\)/ }),
+      ).toBeInTheDocument();
 
       // ArrowDown makes the sole suggestion active, so Enter takes the
       // active-suggestion arm (`lookupName ?? ''` / `id ?? ''`) rather than the
