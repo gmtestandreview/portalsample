@@ -332,8 +332,7 @@ Each shape entry contains:
 - `aspect`: `"fixed"` to lock ratio
 - `title`: Name shown in panel
 
-  } ]
-  </mxlibrary>
+  } ] </mxlibrary>
 
 ```
 

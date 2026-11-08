@@ -108,7 +108,7 @@ Defines how the app appears when installed. Must be linked from `<head>` via
 ## Step 2: HTML Shell (`index.html`)
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />

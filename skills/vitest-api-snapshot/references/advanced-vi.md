@@ -5,11 +5,14 @@ description: vi helper for mocking, timers, utilities
 
 # Vi Utilities
 
-**Load when:** Use vi utilities beyond ordinary module or function mocking. **Boundary:** Do not choose this whole API inventory for a narrow basic vi.fn question.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Use vi utilities beyond ordinary module or function mocking.
+**Boundary:** Do not choose this whole API inventory for a narrow basic vi.fn
+question. These are generic Vitest examples; inspect the installed version and
+applicable project config before applying them.
 
-**Expected outcome:** Mocks and spies are correctly scoped and restored without unsupported hoisting. **Acceptance check:** Check mock type, module-top-level rules, and reset/restore semantics.
+**Expected outcome:** Mocks and spies are correctly scoped and restored without
+unsupported hoisting. **Acceptance check:** Check mock type, module-top-level
+rules, and reset/restore semantics.
 
 The `vi` helper provides mocking and utility functions.
 
@@ -55,7 +58,11 @@ expect(spy).toHaveBeenCalled();
 spy.mockReturnValue('mocked');
 
 // Spy on an existing getter
-const measured = { get prop() { return 'original'; } };
+const measured = {
+  get prop() {
+    return 'original';
+  },
+};
 vi.spyOn(measured, 'prop', 'get').mockReturnValue('value');
 ```
 
@@ -159,9 +166,9 @@ vi.unstubAllEnvs();
 
 ## Hoisted Code
 
-In Vitest 5, `vi.mock`, `vi.unmock`, and `vi.hoisted` must be called at
-module top level. Use `vi.doMock`/`vi.doUnmock` for dynamic scope-specific
-behavior; do not place a hoisted mock inside `test` or `describe`.
+In Vitest 5, `vi.mock`, `vi.unmock`, and `vi.hoisted` must be called at module
+top level. Use `vi.doMock`/`vi.doUnmock` for dynamic scope-specific behavior; do
+not place a hoisted mock inside `test` or `describe`.
 
 Run code before imports:
 

@@ -5,11 +5,14 @@ description: Mock functions, modules, timers, and dates with vi utilities
 
 # Mocking
 
-**Load when:** Mock Vitest functions, modules, timers, environments or globals. **Boundary:** Do not place vi.mock in a callback on Vitest 5 or confuse mocks with actual requests.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Mock Vitest functions, modules, timers, environments or globals.
+**Boundary:** Do not place vi.mock in a callback on Vitest 5 or confuse mocks
+with actual requests. These are generic Vitest examples; inspect the installed
+version and applicable project config before applying them.
 
-**Expected outcome:** The mock controls the intended dependency without leaking across tests. **Acceptance check:** Check import timing, hoisting, cleanup, and Browser Mode automock differences.
+**Expected outcome:** The mock controls the intended dependency without leaking
+across tests. **Acceptance check:** Check import timing, hoisting, cleanup, and
+Browser Mode automock differences.
 
 ## Mock Functions
 
@@ -120,10 +123,10 @@ vi.mock('./api/client');
 
 ## Dynamic Mocking (vi.doMock)
 
-`vi.doMock` is non-hoisted; `vi.mock`, `vi.unmock`, and `vi.hoisted`
-**must be at the module top level in Vitest 5**. In Browser Mode,
-auto-mocks without factories now return stubbed values; `{ spy: true }`
-retains actual implementation while tracking calls.
+`vi.doMock` is non-hoisted; `vi.mock`, `vi.unmock`, and `vi.hoisted` **must be
+at the module top level in Vitest 5**. In Browser Mode, auto-mocks without
+factories now return stubbed values; `{ spy: true }` retains actual
+implementation while tracking calls.
 
 Not hoisted - use for dynamic imports:
 

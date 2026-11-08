@@ -5,11 +5,14 @@ description: describe/suite for grouping tests into logical blocks
 
 # Describe API
 
-**Load when:** Choose describe suite modifiers, nested suites, and suite options. **Boundary:** Do not suggest removed describe.sequential on Vitest 5.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Choose describe suite modifiers, nested suites, and suite
+options. **Boundary:** Do not suggest removed describe.sequential on Vitest 5.
+These are generic Vitest examples; inspect the installed version and applicable
+project config before applying them.
 
-**Expected outcome:** Suite modifiers yield the intended run/skip/concurrency behavior. **Acceptance check:** Check suite option inheritance and avoid removed sequential modifiers.
+**Expected outcome:** Suite modifiers yield the intended run/skip/concurrency
+behavior. **Acceptance check:** Check suite option inheritance and avoid removed
+sequential modifiers.
 
 Group related tests into suites for organization and shared setup.
 

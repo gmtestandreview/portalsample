@@ -85,7 +85,11 @@ type MutableNested = Assert<
   Equal<DeepMutable<Nested>, { name: string; address: { postcode: string } }>
 >;
 
-interface Person { name: string; age: number; active: boolean }
+interface Person {
+  name: string;
+  age: number;
+  active: boolean;
+}
 type StringKeys = Assert<Equal<KeysOfType<Person, string>, 'name'>>;
 type StringProperties = Assert<
   Equal<PickByType<Person, string>, { name: string }>

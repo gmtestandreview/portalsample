@@ -32,20 +32,20 @@ retired rather than merged.
 
 ## What moved where
 
-| From | To | Treatment |
-| --- | --- | --- |
-| A `SKILL.md` + B `SKILL.md` | `vitest/SKILL.md` | Merged (governance only; routes API syntax to `vitest-api-snapshot`) |
-| A `references/project-nmi-portal.md` | kept in `vitest/references/` | Preserved; + B's snapshot-format note appended |
-| B `references/supplied-test-contracts.md` | `vitest/references/` | Salvaged (unique) |
-| B `references/storybook-browser.md` | `vitest/references/` | Salvaged (unique; carries 10.5.10/10.6.5 caveat) |
-| A `references/vitest-5-compatibility.md` | kept in `vitest/references/` | Preserved (version guard; deeper than B's) |
-| A `evals/*.md` | kept in `vitest/evals/` | Preserved |
-| B `evals/*.json` (3) | `vitest/evals/` | Salvaged (machine-readable) |
-| A 16 `references/{core,features,advanced}-*.md` | `vitest-api-snapshot/references/` | Relocated (quarantined) |
-| A `GENERATION.md` | `vitest-api-snapshot/` | Relocated (upstream provenance) |
-| A `MAINTENANCE.md` | kept in `vitest/` | Preserved |
-| B `OPTIMIZATION-REPORT.md`, `GREEN-RED-AMBER-VALIDATION.md` | `vitest/B-*.md` | Salvaged as provenance |
-| B `references/{test-api,mocking,utilities,advanced,config}.md` | **not carried** | Retired (A's clean set supersedes; B's had 2 removed-API defects) |
+| From                                                           | To                                | Treatment                                                            |
+| -------------------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------- |
+| A `SKILL.md` + B `SKILL.md`                                    | `vitest/SKILL.md`                 | Merged (governance only; routes API syntax to `vitest-api-snapshot`) |
+| A `references/project-nmi-portal.md`                           | kept in `vitest/references/`      | Preserved; + B's snapshot-format note appended                       |
+| B `references/supplied-test-contracts.md`                      | `vitest/references/`              | Salvaged (unique)                                                    |
+| B `references/storybook-browser.md`                            | `vitest/references/`              | Salvaged (unique; carries 10.5.10/10.6.5 caveat)                     |
+| A `references/vitest-5-compatibility.md`                       | kept in `vitest/references/`      | Preserved (version guard; deeper than B's)                           |
+| A `evals/*.md`                                                 | kept in `vitest/evals/`           | Preserved                                                            |
+| B `evals/*.json` (3)                                           | `vitest/evals/`                   | Salvaged (machine-readable)                                          |
+| A 16 `references/{core,features,advanced}-*.md`                | `vitest-api-snapshot/references/` | Relocated (quarantined)                                              |
+| A `GENERATION.md`                                              | `vitest-api-snapshot/`            | Relocated (upstream provenance)                                      |
+| A `MAINTENANCE.md`                                             | kept in `vitest/`                 | Preserved                                                            |
+| B `OPTIMIZATION-REPORT.md`, `GREEN-RED-AMBER-VALIDATION.md`    | `vitest/B-*.md`                   | Salvaged as provenance                                               |
+| B `references/{test-api,mocking,utilities,advanced,config}.md` | **not carried**                   | Retired (A's clean set supersedes; B's had 2 removed-API defects)    |
 
 ## New governance behavior added at merge
 

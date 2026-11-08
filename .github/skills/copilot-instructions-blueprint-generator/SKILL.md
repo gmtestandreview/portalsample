@@ -13,12 +13,16 @@ description:
 
 ${PROJECT_TYPE="Auto-detect|.NET|Java|JavaScript|TypeScript|React|Angular|Python|Multiple|Other"}
 <!-- Primary technology -->
+
 ${ARCHITECTURE_STYLE="Layered|Microservices|Monolithic|Domain-Driven|Event-Driven|Serverless|Mixed"}
 <!-- Architectural approach -->
+
 ${CODE_QUALITY_FOCUS="Maintainability|Performance|Security|Accessibility|Testability|All"}
 <!-- Quality priorities -->
+
 ${DOCUMENTATION_LEVEL="Minimal|Standard|Comprehensive"}
 <!-- Documentation requirements -->
+
 ${TESTING_REQUIREMENTS="Unit|Integration|E2E|TDD|BDD|All"}
 <!-- Testing approach --> ${VERSIONING="Semantic|CalVer|Custom"}
 <!-- Versioning approach -->
@@ -233,9 +237,9 @@ ${PROJECT_TYPE == "Java" || PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE ==
 - Use the same collection types and approaches found in the codebase
 - Apply the dependency injection patterns evident in existing code` : ""}
 
-${PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "TypeScript" || PROJECT_TYPE
-== "Auto-detect" || PROJECT_TYPE == "Multiple" ? `### JavaScript/TypeScript
-Guidelines
+${PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "TypeScript" ||
+PROJECT_TYPE == "Auto-detect" || PROJECT_TYPE == "Multiple" ? `###
+JavaScript/TypeScript Guidelines
 
 - Detect and adhere to the specific ECMAScript/TypeScript version in use
 - Follow the same module import/export patterns found in the codebase

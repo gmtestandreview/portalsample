@@ -86,21 +86,6 @@
     ".tokensave",
     "ClientApp/media",
     "ClientApp/src/api/web-api-client.ts",
-    "vendor",
-    ".github/migration-verifier",
-    ".github/skills",
-    ".claude",
-    ".agents",
-    ".codex",
-    ".superpowers",
-    ".tours",
-    "evals",
-    "hooks",
-    "plugins",
-    "skills",
-    "templates",
-    "eslint-actual-results.json",
-    "eslint-configs.-policy.json",
-    "package-lock.json"
+    "vendor"
   ]
 }

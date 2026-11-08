@@ -41,10 +41,10 @@ Skipping a mandatory skill to save time is not allowed.
 
 ## Testing (Vitest)
 
-| Situation                                                                                                                                      | Required Skill                                                                                                              |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Creating, modifying, diagnosing, reviewing, configuring, or migrating Vitest unit tests, mocks, coverage, or Vitest-powered Storybook `play()` tests — project test ownership, lanes, coverage policy | **vitest** skill (project test governance)                                                                                 |
-| Needing raw Vitest 5 API syntax (test/expect/vi/hooks/snapshots/config/CLI) when installed types or official docs are unreachable               | **vitest-api-snapshot** skill (supplemental, quarantined, deletable at online transition; defers all project policy to **vitest**) |
+| Situation                                                                                                                                                                                             | Required Skill                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Creating, modifying, diagnosing, reviewing, configuring, or migrating Vitest unit tests, mocks, coverage, or Vitest-powered Storybook `play()` tests — project test ownership, lanes, coverage policy | **vitest** skill (project test governance)                                                                                         |
+| Needing raw Vitest 5 API syntax (test/expect/vi/hooks/snapshots/config/CLI) when installed types or official docs are unreachable                                                                     | **vitest-api-snapshot** skill (supplemental, quarantined, deletable at online transition; defers all project policy to **vitest**) |
 
 Not for standalone Playwright Test E2E/BDD/API-contract, Storybook BDD alone, or
 Jest-only work unless Vitest compatibility, migration, or ownership is

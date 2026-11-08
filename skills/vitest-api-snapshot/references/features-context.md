@@ -5,11 +5,14 @@ description: Test context, custom fixtures with test.extend
 
 # Test Context & Fixtures
 
-**Load when:** Build or use Vitest test fixtures, scopes and context hooks. **Boundary:** Do not use deprecated test.scoped where test.override is available.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Build or use Vitest test fixtures, scopes and context hooks.
+**Boundary:** Do not use deprecated test.scoped where test.override is
+available. These are generic Vitest examples; inspect the installed version and
+applicable project config before applying them.
 
-**Expected outcome:** Fixtures provide scoped values and guaranteed teardown. **Acceptance check:** Check lazy/auto behavior, scope hierarchy and `test.override` only where supported.
+**Expected outcome:** Fixtures provide scoped values and guaranteed teardown.
+**Acceptance check:** Check lazy/auto behavior, scope hierarchy and
+`test.override` only where supported.
 
 ## Built-in Context
 
@@ -169,8 +172,8 @@ defineConfig({
 ## Scoped Values per Suite
 
 In Vitest 5 use `test.override()` for suite-local fixture values;
-`test.scoped()` is deprecated. Scope applies within the enclosing suite,
-not globally.
+`test.scoped()` is deprecated. Scope applies within the enclosing suite, not
+globally.
 
 Override fixture for specific suite:
 
@@ -242,8 +245,8 @@ export const test = dbTest.extend<{ admin: User }>({
 
 - Use `{ }` destructuring to access fixtures
 - Ordinary fixtures are lazy; `{ auto: true }` opts out of lazy initialization
-- In object-syntax fixtures, put teardown **after** `await use(value)`;
-  for builder-style fixtures, register cleanup using `onCleanup`
+- In object-syntax fixtures, put teardown **after** `await use(value)`; for
+  builder-style fixtures, register cleanup using `onCleanup`
 - Use `{ auto: true }` for setup fixtures
 - Use `{ scope: 'file' }` for expensive shared resources
 - Fixtures compose - extend from extended tests

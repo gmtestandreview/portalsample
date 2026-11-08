@@ -12,6 +12,12 @@ import path from 'node:path';
 
 type DirectoryEntries = Dirent[];
 
+// security/detect-non-literal-fs-filename fires on every fs call below because
+// the path argument is a variable. The rule stays a reviewable warning by repo
+// policy (eslint.config.mjs: noInlineConfig forbids inline suppression), so the
+// mitigation is structural: every public helper routes its path through
+// resolveWithinRoot, which rejects anything outside the caller-provided test
+// root before the fs call runs. Triage verdict: accepted hotspots, mitigated.
 const resolveWithinRoot = (filePath: string, root: string): string => {
   const resolvedRoot = path.resolve(root);
   const resolvedPath = path.resolve(filePath);
@@ -29,13 +35,11 @@ export const readTextFile = async (
   root: string,
 ): Promise<string> => {
   const safePath = resolveWithinRoot(filePath, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   return readFile(safePath, 'utf8');
 };
 
 export const readTextFileSync = (filePath: string, root: string): string => {
   const safePath = resolveWithinRoot(filePath, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   return readFileSync(safePath, 'utf8');
 };
 
@@ -45,7 +49,6 @@ export const writeTextFile = async (
   root: string,
 ): Promise<void> => {
   const safePath = resolveWithinRoot(filePath, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   await writeFile(safePath, contents);
 };
 
@@ -55,7 +58,6 @@ export const writeTextFileSync = (
   root: string,
 ): void => {
   const safePath = resolveWithinRoot(filePath, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   writeFileSync(safePath, contents);
 };
 
@@ -64,7 +66,6 @@ export const readDirectory = async (
   root: string,
 ): Promise<DirectoryEntries> => {
   const safePath = resolveWithinRoot(directory, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   return readdir(safePath, { withFileTypes: true });
 };
 
@@ -73,7 +74,6 @@ export const readDirectorySync = (
   root: string,
 ): DirectoryEntries => {
   const safePath = resolveWithinRoot(directory, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   return readdirSync(safePath, { withFileTypes: true });
 };
 
@@ -82,24 +82,20 @@ export const makeDirectory = async (
   root: string,
 ): Promise<void> => {
   const safePath = resolveWithinRoot(directory, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   await mkdir(safePath, { recursive: true });
 };
 
 export const makeDirectorySync = (directory: string, root: string): void => {
   const safePath = resolveWithinRoot(directory, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   mkdirSync(safePath, { recursive: true });
 };
 
 export const pathExists = (filePath: string, root: string): boolean => {
   const safePath = resolveWithinRoot(filePath, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   return existsSync(safePath);
 };
 
 export const statPath = (filePath: string, root: string): Stats => {
   const safePath = resolveWithinRoot(filePath, root);
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- safePath is confined to the caller-provided test root by resolveWithinRoot above
   return statSync(safePath);
 };

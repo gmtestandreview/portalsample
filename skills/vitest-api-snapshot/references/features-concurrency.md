@@ -5,11 +5,14 @@ description: Concurrent tests, parallel execution, and sharding
 
 # Concurrency & Parallelism
 
-**Load when:** Configure worker/file/test concurrency, isolation or sharding. **Boundary:** Do not replace repo-specific worker budgets with generic optimization examples.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Configure worker/file/test concurrency, isolation or sharding.
+**Boundary:** Do not replace repo-specific worker budgets with generic
+optimization examples. These are generic Vitest examples; inspect the installed
+version and applicable project config before applying them.
 
-**Expected outcome:** File and test parallelism match resource constraints and test independence. **Acceptance check:** Check worker/timeout limits, shared state, and non-flaky results.
+**Expected outcome:** File and test parallelism match resource constraints and
+test independence. **Acceptance check:** Check worker/timeout limits, shared
+state, and non-flaky results.
 
 ## File Parallelism
 
@@ -55,7 +58,8 @@ describe.concurrent('parallel suite', () => {
 
 ## Opt Out of Concurrency (Vitest 5)
 
-Use `{ concurrent: false }` to override parent-scope or project-wide concurrency:
+Use `{ concurrent: false }` to override parent-scope or project-wide
+concurrency:
 
 ```ts
 describe.concurrent('mostly parallel', () => {
@@ -210,8 +214,8 @@ defineConfig({
 });
 ```
 
-The supplied nmi-portal **unit** project uses `forks` and `maxWorkers: 2`;
-do not replace that local contract with a generic example.
+The supplied nmi-portal **unit** project uses `forks` and `maxWorkers: 2`; do
+not replace that local contract with a generic example.
 
 ### VM Threads
 

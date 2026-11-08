@@ -7,9 +7,9 @@ description: >-
   Includes vitest.config.ts, vitest.unit.config.ts, vitest.storybook.config.ts,
   @storybook/addon-vitest, Vitest Browser Mode, and Vitest 5 migration. Applies
   this repository's testing contracts and coverage policy. Do not activate for
-  standalone Playwright Test E2E/BDD/API-contract, Storybook BDD alone, Jest-only,
-  Node node:test, or framework-agnostic testing requests unless Vitest
-  compatibility, migration, or ownership is established.
+  standalone Playwright Test E2E/BDD/API-contract, Storybook BDD alone,
+  Jest-only, Node node:test, or framework-agnostic testing requests unless
+  Vitest compatibility, migration, or ownership is established.
 license: MIT
 metadata:
   author: Greg Mico
@@ -95,7 +95,7 @@ online-repo mode; do not fabricate contents or results in offline mode.
 4. **App E2E, Storybook BDD/MCP E2E, or API-contract tests using
    `@playwright/test`:** Playwright-owned; do **not** apply this skill as the
    runner. If a request spans both, separate validation and ownership
-   explicitly. Shared `expect`/`describe` syntax or the word *Playwright* alone
+   explicitly. Shared `expect`/`describe` syntax or the word _Playwright_ alone
    is not sufficient to activate or to exclude.
 5. **Configuration, coverage, or uncertain Vitest 5 API:** read
    [vitest-5-compatibility.md](references/vitest-5-compatibility.md), then
@@ -141,10 +141,11 @@ does not make the test a standalone Playwright E2E suite.
   types, so a green run does **not** imply `tsc --noEmit` passes — a suite can
   pass at runtime while `npm run type-check` reports errors in the same test
   files. Treat type-check as an **independent required gate**: the unit lane's
-  definition-of-done is tests green **and** `npm run type-check` green (`test:ci`
-  runs both, type-check first). When adding or editing tests, keep them
-  compiling under the repo's strict config; see the strict-TS test-authoring
-  note in [project-nmi-portal.md](references/project-nmi-portal.md).
+  definition-of-done is tests green **and** `npm run type-check` green
+  (`test:ci` runs both, type-check first). When adding or editing tests, keep
+  them compiling under the repo's strict config; see the strict-TS
+  test-authoring note in
+  [project-nmi-portal.md](references/project-nmi-portal.md).
 
 ## Coverage policy and the exclusion list as monitored debt
 
@@ -166,13 +167,13 @@ invisible coverage hole that a green 100% hides. Therefore:
 
 Load the **smallest sufficient** reference; project policy before API topics.
 
-| Need | Reference |
-| --- | --- |
-| Project test ownership, scripts, unit config, coverage policy | [project-nmi-portal.md](references/project-nmi-portal.md) |
-| Seven supplied contract suites, GREEN/RED/AMBER evidence | [supplied-test-contracts.md](references/supplied-test-contracts.md) |
-| Storybook addon, Browser Mode, Test-panel compatibility, coverage | [storybook-browser.md](references/storybook-browser.md) |
-| Vitest 5 removed APIs, migration, configuration safety | [vitest-5-compatibility.md](references/vitest-5-compatibility.md) |
-| Raw Vitest 5 API syntax (tests, mocks, matchers, hooks, fixtures, config, CLI, environments, type testing) | **`vitest-api-snapshot`** skill (separate, deletable at go-online) |
+| Need                                                                                                       | Reference                                                           |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Project test ownership, scripts, unit config, coverage policy                                              | [project-nmi-portal.md](references/project-nmi-portal.md)           |
+| Seven supplied contract suites, GREEN/RED/AMBER evidence                                                   | [supplied-test-contracts.md](references/supplied-test-contracts.md) |
+| Storybook addon, Browser Mode, Test-panel compatibility, coverage                                          | [storybook-browser.md](references/storybook-browser.md)             |
+| Vitest 5 removed APIs, migration, configuration safety                                                     | [vitest-5-compatibility.md](references/vitest-5-compatibility.md)   |
+| Raw Vitest 5 API syntax (tests, mocks, matchers, hooks, fixtures, config, CLI, environments, type testing) | **`vitest-api-snapshot`** skill (separate, deletable at go-online)  |
 
 Project source/configuration controls **local policy**; version-appropriate
 official Vitest documentation controls **API validity**. Neither generic

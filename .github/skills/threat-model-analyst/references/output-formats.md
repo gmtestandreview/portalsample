@@ -753,8 +753,8 @@ source file or document from which the information was inferred.** Example:
 
 | Deployment Model | Air-gapped, single-admin workstation
 ([daemon.json](src/Container/Moby/daemon.json),
-[InstallAzureEdgeDiagnosticTool.ps1](src/Setup/InstallArtifacts/InstallAzureEdgeDiagnosticTool.ps1))
-| All findings — no Tier 1 | | Network Exposure | All services bind to
+[InstallAzureEdgeDiagnosticTool.ps1](src/Setup/InstallArtifacts/InstallAzureEdgeDiagnosticTool.ps1)) |
+All findings — no Tier 1 | | Network Exposure | All services bind to
 localhost:80 only
 ([KustoContainerHelper.psm1](src/Container/Kusto/KustoContainerHelper.psm1)) |
 FIND-01, FIND-03 |
@@ -1357,8 +1357,8 @@ invent alternatives.
 multiple prerequisites)
 
 **STRIDE + Abuse Categories:** `S` Spoofing | `T` Tampering | `R` Repudiation |
-`I` Information Disclosure | `D` Denial of Service | `E` Elevation of Privilege
-| `A` Abuse
+`I` Information Disclosure | `D` Denial of Service | `E` Elevation of
+Privilege | `A` Abuse
 
 **SDL Bugbar Severity:** `Critical` | `Important` | `Moderate` | `Low`
 

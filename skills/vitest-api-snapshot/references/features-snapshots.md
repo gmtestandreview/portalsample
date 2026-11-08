@@ -5,11 +5,14 @@ description: Snapshot testing with file, inline, and file snapshots
 
 # Snapshot Testing
 
-**Load when:** Create, update, or investigate Vitest snapshots. **Boundary:** Do not update snapshots without inspecting intended behavioral changes.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Create, update, or investigate Vitest snapshots. **Boundary:** Do
+not update snapshots without inspecting intended behavioral changes. These are
+generic Vitest examples; inspect the installed version and applicable project
+config before applying them.
 
-**Expected outcome:** Snapshots represent deliberately accepted outputs and regressions remain visible. **Acceptance check:** Review changed snapshot diffs and confirm expected behavior independently.
+**Expected outcome:** Snapshots represent deliberately accepted outputs and
+regressions remain visible. **Acceptance check:** Review changed snapshot diffs
+and confirm expected behavior independently.
 
 Snapshot tests capture output and compare against stored references.
 
