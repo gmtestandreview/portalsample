@@ -128,7 +128,10 @@ const submitForm =
     } else {
       AppLogger.verbose(
         'There are no accounts available to submit PA summary',
-        { Id: id, Accounts: accounts },
+        {
+          Id: id,
+          Accounts: accounts,
+        },
       );
       throw new Error(
         `There are no accounts available to submit PA summary. Id: ${id}`,

@@ -222,7 +222,9 @@ describe('combobox accessibility', () => {
 
       renderWithFormik(
         <AutoSuggestContainer<string> {...baseSuburbProps} {...overrides} />,
-        { suburb: 'Syd' },
+        {
+          suburb: 'Syd',
+        },
       );
 
       expect(screen.getByText(visibleMarker)).toBeInTheDocument();

@@ -1534,7 +1534,9 @@ Then(
     try {
       await expect(storybookPreviewFrame(page).locator('body')).toHaveClass(
         /\bsb-show-main\b/u,
-        { timeout: STORY_RENDER_TIMEOUT_MS },
+        {
+          timeout: STORY_RENDER_TIMEOUT_MS,
+        },
       );
       expect(monitor.messages).toEqual([]);
     } finally {

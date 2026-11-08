@@ -195,7 +195,8 @@ const ApplicationDetails = () => {
         // empty-string form default that this page never produces.
         setAppDetails(result.formValues as RequestForPatternApprovalAppDetails);
         const appType = result.formValues.applicationDetails as
-          ApplicationDetailsDto | undefined;
+          | ApplicationDetailsDto
+          | undefined;
         setApplicationType(orIfEmpty(appType?.patternApprovalType, null));
         setMessageCount(appType?.messageCount ?? 0);
       } catch (error) {

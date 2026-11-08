@@ -112,10 +112,7 @@
     .bgCircle,
     [class^='bgCircle-'],
     [class*=' bgCircle-'] {
-      background-color: rgba(
-        $nmi-primary,
-        0.85
-      ); //$nmi-site-coastline-bay-primary;
+      background-color: rgba($nmi-primary, 0.85); //$nmi-site-coastline-bay-primary;
       color: $white;
     }
 

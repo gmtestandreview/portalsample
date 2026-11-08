@@ -209,7 +209,8 @@ function useModernSSRSafeId(defaultId?: string): string {
 // Use React.useId in React 18 if available, otherwise fall back to our old implementation.
 /** @private */
 export const useSSRSafeId:
-  typeof useModernSSRSafeId | typeof useLegacySSRSafeId =
+  | typeof useModernSSRSafeId
+  | typeof useLegacySSRSafeId =
   typeof React.useId === 'function' ? useModernSSRSafeId : useLegacySSRSafeId;
 
 function getSnapshot() {

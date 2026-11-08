@@ -1476,7 +1476,8 @@ git commit -m "feat(router): register six Type Approval routes (35→41 contract
         <p>
           Execute now, before Batch B B1 resumes. The 41-route parity above
           unblocks every downstream batch from drifting against a stale 35-route
-          baseline. <strong>No dependency.</strong>
+          baseline.
+          <strong>No dependency.</strong>
         </p>
         <h3 id="1-batch-b-b1-home-page-setup-state">
           1. Batch B B1 — Home page setup state ⏸→▶<a
@@ -1489,8 +1490,9 @@ git commit -m "feat(router): register six Type Approval routes (35→41 contract
         <p>
           B1 was marked in progress during setup only; no implementation writes
           exist. Resume B1 after B0 is committed, and patch the B1 dispatch to
-          include <code>HomePage.stories.tsx</code> update/staging plus the 41 /
-          32 / 9 route baseline.
+          include
+          <code>HomePage.stories.tsx</code> update/staging plus the 41 / 32 / 9
+          route baseline.
         </p>
         <h3 id="2-batch-b-slice-1-public-pages-contact-form">
           2. Batch B (slice 1) — public pages + contact form ▶<a
@@ -1576,7 +1578,8 @@ git commit -m "feat(router): register six Type Approval routes (35→41 contract
               author):</strong
             >
             the source ships a Slate-based rich-text editor for TA messages.
-            Decide <strong>port Slate</strong> vs
+            Decide
+            <strong>port Slate</strong> vs
             <strong>rebuild on a design-system/react-aria primitive</strong>.
             This is the single largest reinterpretation in the TA surface —
             resolve it in this plan's brainstorming, not at execution time.
@@ -1604,7 +1607,8 @@ git commit -m "feat(router): register six Type Approval routes (35→41 contract
         </h3>
         <p>
           Unchanged scope (AppInsights singleton before render per PF-06; GA
-          from <code>config</code>; complete the two deferred
+          from
+          <code>config</code>; complete the two deferred
           <code>AccountProvider</code> effects via the API-client seam; audit
           session storage for bypass state).
           <strong>Replan addition:</strong> register any Type Approval
@@ -1626,8 +1630,9 @@ git commit -m "feat(router): register six Type Approval routes (35→41 contract
         </h3>
         <p>
           Port the 19 custom validators (as zod refinements per the form
-          decision) <strong>plus the Type Approval schemas</strong>; the Yup
-          side-effect import chain equivalent (PF-04); Playwright-BDD features +
+          decision)
+          <strong>plus the Type Approval schemas</strong>; the Yup side-effect
+          import chain equivalent (PF-04); Playwright-BDD features +
           <code>bddgen</code> (PF-15); the 8 quality regression tests (PF-11);
           align import aliases. <strong>Replan additions:</strong>
         </p>
@@ -1672,13 +1677,13 @@ git commit -m "feat(router): register six Type Approval routes (35→41 contract
         </h3>
         <p>
           Unchanged scope (drop Bootstrap; CSS Grid/Flexbox + tokens; retire
-          icon font for <code>packages/icons</code> SVGs;
-          <code>print.css</code>; finalise Storybook decorator/chunking/jsdom
-          shims — PF-08/09/10). <strong>Replan addition:</strong> port the Type
-          Approval-specific SCSS partials (attachment, step-navigation,
-          progress) to token-based modules.
-          <strong>Dependency:</strong> BATCH-E-PREREQ-001–003 (complete) + Item
-          22 (DevOps).
+          icon font for
+          <code>packages/icons</code> SVGs; <code>print.css</code>; finalise
+          Storybook decorator/chunking/jsdom shims — PF-08/09/10).
+          <strong>Replan addition:</strong> port the Type Approval-specific SCSS
+          partials (attachment, step-navigation, progress) to token-based
+          modules. <strong>Dependency:</strong> BATCH-E-PREREQ-001–003
+          (complete) + Item 22 (DevOps).
         </p>
         <h3 id="8-batch-f-type-approval-feature-port-new">
           8. Batch F — Type Approval feature port (NEW) ⏳<a

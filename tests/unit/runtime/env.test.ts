@@ -80,7 +80,9 @@ describe('vite environment contract', () => {
     const module = await importEnv(
       { VITE_B2C_CLIENTID: 'build-client-id' },
       true,
-      { VITE_B2C_CLIENTID: 'runtime-client-id' },
+      {
+        VITE_B2C_CLIENTID: 'runtime-client-id',
+      },
     );
 
     expect(module.env.VITE_B2C_CLIENTID).toBe('runtime-client-id');

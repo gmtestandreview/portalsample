@@ -14,10 +14,8 @@ describe('package formatting scripts', () => {
   it('defines repo-wide formatting commands', () => {
     expect.assertions(2);
 
-    expect(scripts['format']).toBe('node scripts/format-contract.mjs --write');
-    expect(scripts['format:check']).toBe(
-      'node scripts/format-contract.mjs --check',
-    );
+    expect(scripts['format']).toBe('oxfmt');
+    expect(scripts['format:check']).toBe('oxfmt --check');
   });
 
   it('runs ESLint before formatting in the quality scripts', () => {

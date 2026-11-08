@@ -512,7 +512,8 @@ const DashboardTA = () => {
                 request={r}
                 tab={
                   (initialFilters?.filterActiveTab as
-                    DashboardTab | undefined) ?? activeTab
+                    | DashboardTab
+                    | undefined) ?? activeTab
                 }
               />
             </li>

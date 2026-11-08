@@ -1070,7 +1070,9 @@ describe('rhfAttachment', () => {
     });
     const values = JSON.parse(
       screen.getByTestId('values').textContent ?? '{}',
-    ) as { attachments: AttachmentDto[] };
+    ) as {
+      attachments: AttachmentDto[];
+    };
 
     expect(values.attachments).toHaveLength(1);
     expect(values.attachments[0]).toMatchObject({

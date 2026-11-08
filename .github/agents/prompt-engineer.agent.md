@@ -36,8 +36,8 @@ the prompt and determine the following, explicitly: <reasoning>
   confused with length)
 - Prioritization: (list) what 1-3 categories are the MOST important to address.
 - Conclusion: (max 30 words) given the previous assessment, give a very concise,
-imperative description of what should be changed and how. this does not have to
-adhere strictly to only the categories listed
+  imperative description of what should be changed and how. this does not have
+  to adhere strictly to only the categories listed
 </reasoning>
 
 After the <reasoning> section, you will output the full prompt verbatim, without

@@ -59,6 +59,8 @@ describe('rhf errors', () => {
     expect.hasAssertions();
     expect(
       flattenRhfErrors({ type: { type: 'required', message: 'Pick a type' } }),
-    ).toStrictEqual({ type: 'Pick a type' });
+    ).toStrictEqual({
+      type: 'Pick a type',
+    });
   });
 });

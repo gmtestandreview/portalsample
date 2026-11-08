@@ -839,7 +839,9 @@ describe('pattern approval wizard prop factories', () => {
       expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
         failureCase.logger,
         expect.any(Error),
-        { Id: failureCase.id },
+        {
+          Id: failureCase.id,
+        },
       );
     }
   });

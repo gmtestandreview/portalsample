@@ -17,21 +17,27 @@ describe('wizard routed step error state', () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(makeError(404), undefined, ErrorType.Load),
-      ).toStrictEqual({ kind: 'notFound' });
+      ).toStrictEqual({
+        kind: 'notFound',
+      });
     });
 
     it('returns gone for 410', () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(makeError(410), undefined, ErrorType.Load),
-      ).toStrictEqual({ kind: 'gone' });
+      ).toStrictEqual({
+        kind: 'gone',
+      });
     });
 
     it('returns gone for 401', () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(makeError(401), undefined, ErrorType.Load),
-      ).toStrictEqual({ kind: 'gone' });
+      ).toStrictEqual({
+        kind: 'gone',
+      });
     });
 
     it('returns noThirdPartyAccess for 403 with third-party title', () => {

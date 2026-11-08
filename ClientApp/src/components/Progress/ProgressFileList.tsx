@@ -103,9 +103,7 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                     {' / '}
                     {formatBytes(f.totalBytes ?? 0)}
                   </span>
-                  <span className='fs-8 text-muted'>
-                    {` ${progressPercent}%`}
-                  </span>
+                  <span className='fs-8 text-muted'>{` ${progressPercent}%`}</span>
                 </div>
                 <div
                   className='progress w-100 bg-light rounded overflow-hidden'

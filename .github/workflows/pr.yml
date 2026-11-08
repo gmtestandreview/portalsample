@@ -110,6 +110,12 @@ jobs:
         id: binding
         uses: ./.github/actions/verify-rolldown-binding
 
+      - name: Check Oxfmt formatting
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
+        run: npm run format:check 2>&1 | tee reports/ci/quality/format.log
+
       - name: Type-check
         if:
           ${{ !cancelled() && steps.install.outcome == 'success' &&
@@ -417,6 +423,9 @@ jobs:
       - name:
           Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
+
+      - name: Check Oxfmt formatting
+        run: npm run format:check 2>&1 | tee reports/ci/lower-bound/format.log
 
       - name: Run dependency security policy tests
         run: >-

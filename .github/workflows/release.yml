@@ -57,6 +57,9 @@ jobs:
           Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
+      - name: Check Oxfmt formatting
+        run: npm run format:check
+
       - name:
           Install Playwright Chromium (required by Storybook Browser Mode tests)
         run: ./node_modules/.bin/playwright install --with-deps chromium

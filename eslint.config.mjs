@@ -17,14 +17,14 @@
 // browser/Service Worker global via a broad base or accessibility config.
 // Register serviceworker globals ONLY in actual workers. Keep this list
 // narrow; amend to match real worker filenames if the project adds any.
-// Prettier must be last to disable conflicting formatting rules.
+// Oxfmt owns formatting; the conflict-disabling config must be last.
 // ***
 
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import eslintReact from '@eslint-react/eslint-plugin';
 import { defineConfig, globalIgnores } from 'eslint/config';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import reactHooks from 'eslint-plugin-react-hooks';
 import pluginSecurity from 'eslint-plugin-security';
 import storybook from 'eslint-plugin-storybook';
@@ -501,6 +501,6 @@ export default defineConfig(
     },
   },
 
-  // Prettier must be last to disable conflicting formatting rules.
-  eslintPluginPrettierRecommended,
+  // Oxfmt owns formatting; disable conflicting ESLint stylistic rules last.
+  eslintConfigPrettier,
 );

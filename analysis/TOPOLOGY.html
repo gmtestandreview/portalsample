@@ -19,10 +19,7 @@
       body {
         background: #1e1e1e;
         color: #d4d4d4;
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
+        font-family: system-ui, -apple-system, sans-serif;
         line-height: 1.6;
         padding: 2rem;
       }
@@ -520,9 +517,9 @@ flowchart TD
           >
           (signIn → getDashboard ×3 → getAccountDetails → getApplicationOptions
           → then step 2 adds more). None of these calls are parallelised within
-          the wizard steps — each <code>loadStep</code> closure fires
-          sequentially. This is the most likely source of perceived slowness on
-          first use.
+          the wizard steps — each
+          <code>loadStep</code> closure fires sequentially. This is the most
+          likely source of perceived slowness on first use.
         </li>
         <li>
           <strong
@@ -541,7 +538,8 @@ flowchart TD
             navigation between steps.</strong
           >
           A browser crash between Step 2 and Step 3 loses all unsaved progress.
-          The <code>UnsavedFormPrompt</code> blocks React Router navigation but
+          The
+          <code>UnsavedFormPrompt</code> blocks React Router navigation but
           cannot block browser close or refresh.
         </li>
         <li>
@@ -561,9 +559,10 @@ flowchart TD
             observations.</strong
           >
           The Azure Application Insights workspace for this environment should
-          be queried for <code>customEvents</code> and
-          <code>requests</code> telemetry to validate which steps have the
-          highest p99 variance before prioritising performance work.
+          be queried for
+          <code>customEvents</code> and <code>requests</code> telemetry to
+          validate which steps have the highest p99 variance before prioritising
+          performance work.
         </li>
       </ul>
     </div>

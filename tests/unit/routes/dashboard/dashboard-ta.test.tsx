@@ -881,7 +881,10 @@ describe('pattern/type approval dashboard', () => {
     ).resolves.toBeInTheDocument();
     expect(mockAppLoggerError).toHaveBeenCalledWith(
       'Failed to load dashboard.',
-      { status: 500, title: 'Server Error' },
+      {
+        status: 500,
+        title: 'Server Error',
+      },
     );
   });
 

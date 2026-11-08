@@ -42,7 +42,9 @@ describe('trustedTypes', () => {
     >();
     (
       globalThis as { trustedTypes?: { createPolicy: typeof createPolicy } }
-    ).trustedTypes = { createPolicy };
+    ).trustedTypes = {
+      createPolicy,
+    };
     const { TrustedTypes } =
       await import('../../../ClientApp/src/trustedtypes');
 

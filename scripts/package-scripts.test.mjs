@@ -25,7 +25,6 @@ test('canonical commands do not retain redundant aliases', () => {
     'start',
     'format:source',
     'format:source:check',
-    'lint:prettier',
     'test:unit-and-storybook',
     'build-storybook-docs',
     'storybook-docs',

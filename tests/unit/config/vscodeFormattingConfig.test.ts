@@ -8,12 +8,13 @@ const settings = JSON.parse(
   readFileSync('.vscode/settings.json', 'utf8'),
 ) as VscodeSettings;
 
-const prettierLanguageIds = [
+const oxfmtLanguageIds = [
   'typescript',
   'typescriptreact',
   'javascript',
   'javascriptreact',
   'json',
+  'jsonc',
   'scss',
   'markdown',
   'mdx',
@@ -30,25 +31,50 @@ const eslintLanguageIds = [
   'javascriptreact',
 ];
 
-describe('vS Code formatting configuration', () => {
-  it('uses Prettier on save for every repository Prettier language', () => {
-    expect.assertions(24);
+const formatOnSaveLanguageIds = [
+  'json',
+  'jsonc',
+  'scss',
+  'markdown',
+  'mdx',
+  'yaml',
+  'css',
+  'html',
+  'graphql',
+];
 
-    for (const languageId of prettierLanguageIds) {
+describe('vS Code formatting configuration', () => {
+  it('uses Oxfmt on save for every repository formatter language', () => {
+    expect.assertions(oxfmtLanguageIds.length);
+
+    for (const languageId of oxfmtLanguageIds) {
       const languageSettings = settings[`[${languageId}]`] as Record<
         string,
         unknown
       >;
 
       expect(languageSettings['editor.defaultFormatter']).toBe(
-        'esbenp.prettier-vscode',
+        'oxc.oxc-vscode',
       );
+    }
+  });
+
+  it('formats non-ESLint languages on save', () => {
+    expect.assertions(formatOnSaveLanguageIds.length * 2);
+
+    for (const languageId of formatOnSaveLanguageIds) {
+      const languageSettings = settings[`[${languageId}]`] as Record<
+        string,
+        unknown
+      >;
+
       expect(languageSettings['editor.formatOnSave']).toBe(true);
+      expect(languageSettings['editor.formatOnSaveMode']).toBe('file');
     }
   });
 
   it('keeps workspace settings portable and enables explicit ESLint fixes', () => {
-    expect.assertions(8);
+    expect.assertions(12);
 
     expect(settings['python.defaultInterpreterPath']).toBeUndefined();
     expect(settings['codeQL.createQuery.qlPackLocation']).toBeUndefined();
@@ -61,7 +87,9 @@ describe('vS Code formatting configuration', () => {
         unknown
       >;
 
+      expect(languageSettings['editor.formatOnSave']).toBe(false);
       expect(languageSettings['editor.codeActionsOnSave']).toStrictEqual({
+        'source.format.oxc': 'always',
         'source.fixAll.eslint': 'explicit',
       });
     }

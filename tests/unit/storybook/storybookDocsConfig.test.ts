@@ -57,7 +57,11 @@ const declaredVersion = (packageName: string) =>
 
 const rawStoryFiles = import.meta.glob<string>(
   '../../../ClientApp/src/**/*.stories.tsx',
-  { eager: true, import: 'default', query: '?raw' },
+  {
+    eager: true,
+    import: 'default',
+    query: '?raw',
+  },
 );
 
 const rawStandingGuidanceDocuments = {

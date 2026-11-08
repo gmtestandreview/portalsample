@@ -57,7 +57,9 @@ type StepProps = Pick<
 
 /** What the step component should do with the current controller state. */
 export type WizardStepView =
-  { kind: 'form' } | { kind: 'navigate'; to: string } | { kind: 'blank' };
+  | { kind: 'form' }
+  | { kind: 'navigate'; to: string }
+  | { kind: 'blank' };
 
 export interface WizardStepController {
   isLoading: boolean;
@@ -121,7 +123,10 @@ export const useWizardStepController = (
         AppLogger.trace(
           'Could not load data for form step.',
           SeverityLevel.Error,
-          { problemDetails: loadServerError, err },
+          {
+            problemDetails: loadServerError,
+            err,
+          },
         );
         setErrorState(
           resolveErrorState(

@@ -30,5 +30,6 @@ export interface AttachmentProps {
   onDeleteFile: (docId: string) => Promise<void>;
   handleCancelFile?: ((fileName: string) => Promise<void>) | undefined;
   onCategoryUpdate?:
-    ((docId: string, category: string) => Promise<void>) | undefined;
+    | ((docId: string, category: string) => Promise<void>)
+    | undefined;
 }

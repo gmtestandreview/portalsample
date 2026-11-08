@@ -127,8 +127,7 @@ ENTRY_CANDIDATES = [
 LINT_FILES = [
     ".eslintrc", ".eslintrc.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.yml", ".eslintrc.yaml",
     "eslint.config.js", "eslint.config.mjs", "eslint.config.cjs",
-    ".prettierrc", ".prettierrc.json", ".prettierrc.js", ".prettierrc.yml",
-    "prettier.config.js", "prettier.config.mjs",
+    ".oxfmtrc.json", ".oxfmtrc.jsonc", "oxfmt.config.ts", "oxfmt.config.mts",
     ".editorconfig",
     "tsconfig.json", "tsconfig.base.json", "tsconfig.build.json",
     ".golangci.yml", ".golangci.yaml",

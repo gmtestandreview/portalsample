@@ -185,7 +185,9 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
 
       await expect(
         new AddressClient('', http).search(keyword),
-      ).resolves.toStrictEqual({ matches: [] });
+      ).resolves.toStrictEqual({
+        matches: [],
+      });
       expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
         '/api/address/search',
         {

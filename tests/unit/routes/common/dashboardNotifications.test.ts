@@ -12,7 +12,7 @@ const defaultError = {
 // DashBoardNotifications is an object namespace, not a function, so a string
 // suite title is used here (vitest/prefer-describe-function-title applies only
 // to function/class references).
-describe('DashBoardNotifications', () => {
+describe(DashBoardNotifications, () => {
   it.each([
     ['forbidden', DashBoardNotifications.getForbiddenNotification],
     ['conflict', DashBoardNotifications.getConflictNotification],

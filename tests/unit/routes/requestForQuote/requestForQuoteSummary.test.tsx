@@ -224,7 +224,9 @@ describe(RequestForQuoteSummary, () => {
 
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
-      { account: { givenName: 'Margaret' } },
+      {
+        account: { givenName: 'Margaret' },
+      },
     );
 
     expect(document.querySelector('#q-currentContact')).toBeNull();

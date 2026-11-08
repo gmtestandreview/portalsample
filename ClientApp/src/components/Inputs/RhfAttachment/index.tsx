@@ -157,7 +157,8 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           addErrors(
             Object.values(
               (problemDetails['errors'] as
-                Record<string, string[]> | undefined) ?? {},
+                | Record<string, string[]>
+                | undefined) ?? {},
             ).flat(),
           );
         }

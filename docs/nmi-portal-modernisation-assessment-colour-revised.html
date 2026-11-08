@@ -431,7 +431,8 @@
                 <td>
                   31 top-level component families, including attachment/upload,
                   certificate lookup, checkbox groups, progress display, Type
-                  Approval request/filter controls, and <code>SlateEditor</code>
+                  Approval request/filter controls, and
+                  <code>SlateEditor</code>
                 </td>
                 <td>
                   Batch B and Batch E must include the Type Approval-specific
@@ -1280,10 +1281,11 @@ class ENTRA,PORTAL_API,D365,AZURE_APPINSIGHTS,GOOGLE_ANALYTICS external;</code><
             calibration service customers. It now includes account onboarding,
             request-for-quote submission, quote acceptance, measurement reports,
             and pattern/type approval workflows. The original assessment
-            recommended <strong>Refactor</strong>, not rebuild. Its auth-bypass
-            and Trusted Types blockers were subsequently remediated; current
-            migration decisions and residual risks are governed by CRD-041 and
-            the Open Items Backlog.
+            recommended
+            <strong>Refactor</strong>, not rebuild. Its auth-bypass and Trusted
+            Types blockers were subsequently remediated; current migration
+            decisions and residual risks are governed by CRD-041 and the Open
+            Items Backlog.
           </p>
           <hr />
           <h2 id="system-inventory">System Inventory</h2>
@@ -1526,7 +1528,8 @@ PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
                 <td><strong>App Bootstrap</strong></td>
                 <td>
                   <code>index.tsx</code>, <code>App.tsx</code>,
-                  <code>env.ts</code>, <code>trustedtypes.ts</code>
+                  <code>env.ts</code>,
+                  <code>trustedtypes.ts</code>
                 </td>
                 <td>Auth, Layout/Shell, all Route modules</td>
               </tr>
@@ -1536,7 +1539,8 @@ PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
                   <code>authentication/authConfig.ts</code>,
                   <code>accountContext.tsx</code>,
                   <code>AccountProvider.tsx</code>,
-                  <code>AuthenticatedElement.tsx</code>, <code>hooks.tsx</code>
+                  <code>AuthenticatedElement.tsx</code>,
+                  <code>hooks.tsx</code>
                   <em>(devAuth.ts deleted 2026-05-29 — SEC-001/002)</em>
                 </td>
                 <td>API Client, Storage, Instrumentation</td>
@@ -1626,7 +1630,8 @@ PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
                   <code
                     >validationSchemas/yupExtensions/stringExtensions.ts</code
                   >, <code>contactValidation.ts</code>,
-                  <code>addressValidation.ts</code>, <code>common.ts</code>
+                  <code>addressValidation.ts</code>,
+                  <code>common.ts</code>
                 </td>
                 <td>(no first-party deps)</td>
               </tr>
@@ -1718,7 +1723,8 @@ PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
                 <td><code>analytics/GoogleAnalytics.tsx:35</code></td>
                 <td>
                   <code>trackGAPii()</code> exported; only call site is
-                  commented out in <code>dashboard/index.tsx:392</code>
+                  commented out in
+                  <code>dashboard/index.tsx:392</code>
                 </td>
               </tr>
             </tbody>
@@ -1805,7 +1811,8 @@ PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
                 </td>
                 <td>
                   <code>routes/contact/create/createContactProps.ts:1-146</code
-                  >, <code>update/updateContactProps.ts:1-147</code>
+                  >,
+                  <code>update/updateContactProps.ts:1-147</code>
                 </td>
                 <td><strong>High</strong></td>
                 <td>2h</td>
@@ -1916,7 +1923,8 @@ PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
                     <code>[key: string]: any</code></strong
                   >
                   — Escape-hatch index signature means misspelled props silently
-                  resolve to <code>undefined</code>. <code>validateHard</code>,
+                  resolve to
+                  <code>undefined</code>. <code>validateHard</code>,
                   <code>validateSoft</code>, <code>hidingFields</code> typed
                   <code>any</code>.
                 </td>
@@ -1963,7 +1971,8 @@ PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
             </li>
             <li>
               No route-level code splitting — all 20+ routes are eager imports
-              in <code>App.tsx</code>. — Low, 4h
+              in
+              <code>App.tsx</code>. — Low, 4h
             </li>
           </ul>
           <hr />
