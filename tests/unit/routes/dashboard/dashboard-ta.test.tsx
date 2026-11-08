@@ -1175,7 +1175,8 @@ describe('pattern/type approval dashboard', () => {
     // the restore (updatedP) and the fetch (initialFilters).
     // Omit `filterCurrentPage` entirely (exactOptionalPropertyTypes forbids an
     // explicit `undefined`); an absent key drives the same `?? 1` fallback.
-    const { filterCurrentPage: _omitPage, ...filtersWithoutPage } = BASE_FILTERS;
+    const { filterCurrentPage: _omitPage, ...filtersWithoutPage } =
+      BASE_FILTERS;
     mockAccountDetails = {
       ...BASE_ACCOUNT,
       userProfile: {

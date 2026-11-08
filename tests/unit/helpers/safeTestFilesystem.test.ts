@@ -53,18 +53,29 @@ describe('safe test filesystem helpers', () => {
       await makeDirectory(nestedDirectory, root);
       await writeTextFile(nestedFile, 'fixture', root);
 
-      await expect(readTextFile('nested/fixture.txt', root)).resolves.toBe(
-        'fixture',
-      );
-      expect(readTextFileSync('nested/fixture.txt', root)).toBe('fixture');
-      await expect(readDirectory('nested', root)).resolves.toHaveLength(1);
-      expect(readDirectorySync('nested', root)).toHaveLength(1);
+      const asyncContents = await readTextFile('nested/fixture.txt', root);
+      const syncContents = readTextFileSync('nested/fixture.txt', root);
+      const asyncEntries = await readDirectory('nested', root);
+      const syncEntries = readDirectorySync('nested', root);
 
       await writeTextFile('nested/async-output.txt', 'async', root);
       writeTextFileSync('nested/sync-output.txt', 'sync', root);
 
-      expect(pathExists('nested/async-output.txt', root)).toBe(true);
-      expect(statPath('nested/sync-output.txt', root).isFile()).toBe(true);
+      expect({
+        asyncContents,
+        syncContents,
+        asyncEntryCount: asyncEntries.length,
+        syncEntryCount: syncEntries.length,
+        asyncOutputExists: pathExists('nested/async-output.txt', root),
+        syncOutputIsFile: statPath('nested/sync-output.txt', root).isFile(),
+      }).toEqual({
+        asyncContents: 'fixture',
+        syncContents: 'fixture',
+        asyncEntryCount: 1,
+        syncEntryCount: 1,
+        asyncOutputExists: true,
+        syncOutputIsFile: true,
+      });
     } finally {
       await rm(root, { recursive: true, force: true });
     }
