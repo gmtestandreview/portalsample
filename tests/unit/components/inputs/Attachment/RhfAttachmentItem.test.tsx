@@ -28,6 +28,12 @@ const methodsRef: {
   current: UseFormReturn<Record<string, unknown>> | undefined;
 } = { current: undefined };
 
+const getMethods = (): UseFormReturn<Record<string, unknown>> => {
+  const methods = methodsRef.current;
+  if (!methods) throw new Error('Form methods were not captured');
+  return methods;
+};
+
 interface Deferred {
   readonly promise: Promise<void>;
   readonly resolve: () => void;
@@ -387,9 +393,16 @@ describe('rhf attachment item behavior', () => {
       unmount();
       await settle(pending, 'reject');
 
-      expect(
-        methodsRef.current?.getValues('attachments.0.attachmentCategory'),
-      ).toBe('Certificate');
+      const methods = getMethods();
+      const getAttachmentCategory = methods.getValues.bind(methods) as (
+        name: 'attachments.0.attachmentCategory',
+      ) => string | undefined;
+
+      const attachmentCategory = getAttachmentCategory(
+        'attachments.0.attachmentCategory',
+      );
+
+      expect(attachmentCategory).toBe('Certificate');
     });
   });
 

@@ -310,4 +310,60 @@ describe(RequestForQuoteSummary, () => {
     expect(within(back).getByText(/back to dashboard/i)).toBeInTheDocument();
     expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();
   });
+
+  it('treats a status that declares hidden as undefined as no hiding rules', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
+    await renderPage(
+      fixtureValues('fully populated with the principal contact'),
+      { status: { hidden: undefined } },
+    );
+
+    expect(screen.getByText('Lovelace', { exact: false })).toBeInTheDocument();
+  });
+
+  it('uses an empty id in the edit links when the route carries no id', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
+    render(
+      <MemoryRouter initialEntries={['/request-for-quote/summary']}>
+        <Routes>
+          <Route
+            path='/request-for-quote/summary'
+            element={
+              <Formik
+                initialValues={fixtureValues(
+                  'fully populated with the principal contact',
+                )}
+                initialStatus={{ hidden: summaryHidden }}
+                onSubmit={() => undefined}
+              >
+                <RequestForQuoteSummary name='' isSubmitted={false} />
+              </Formik>
+            }
+          />
+          <Route path='*' element={<LocationProbe />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await screen.findByText('Request details');
+
+    const editButtons = screen.getAllByRole('button', {
+      name: 'Edit this section',
+    });
+
+    expect(editButtons).toHaveLength(2);
+
+    fireEvent.click(defined(editButtons.at(0), 'first edit button'));
+
+    // Empty id collapses the segment: no id sits between the base and the step.
+    expect(
+      screen.getByText(/^\/request-for-quote\/+organisation-and-contact$/),
+    ).toBeInTheDocument();
+  });
 });

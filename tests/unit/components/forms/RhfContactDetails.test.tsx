@@ -146,6 +146,9 @@ describe('rhfContactDetails edit mode', () => {
       .map((option) => [option.textContent, option.getAttribute('value')]);
 
     expect(options[0]).toStrictEqual(['Please select', '']);
+    expect(options.slice(1).map(([, value]) => value)).toStrictEqual(
+      Object.values(Title),
+    );
     expect(options).toContainEqual([
       'Associate Professor',
       'AssociateProfessor',

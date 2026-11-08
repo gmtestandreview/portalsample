@@ -94,6 +94,19 @@ export const useWizardStepController = (
   const accountState = useAccountState();
   const accountDispatch = useAccountDispatch();
   const controllerRef = useRef<AbortController | null>();
+  const loadStepValuesRef = useRef(loadStepValues);
+  const getRedirectionLocationOnErrorRef = useRef(
+    getRedirectionLocationOnError,
+  );
+
+  useEffect(() => {
+    loadStepValuesRef.current = loadStepValues;
+  }, [loadStepValues]);
+
+  useEffect(() => {
+    getRedirectionLocationOnErrorRef.current = getRedirectionLocationOnError;
+  }, [getRedirectionLocationOnError]);
+
   const abortSignal = () => {
     const controller = new AbortController();
     controllerRef.current = controller;
@@ -114,7 +127,9 @@ export const useWizardStepController = (
       }
       try {
         abortSignal();
-        const currentStep = await loadStepValues(controllerRef.current?.signal);
+        const currentStep = await loadStepValuesRef.current(
+          controllerRef.current?.signal,
+        );
         setStepValues(nullOrUndefinedToEmpty(currentStep.stepValues));
       } catch (error) {
         const err = error as Error;
@@ -131,7 +146,7 @@ export const useWizardStepController = (
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Load,
           ),
         );
@@ -140,7 +155,7 @@ export const useWizardStepController = (
         setIsLoading(false);
       }
     },
-    [loadStepValues],
+    [],
   );
 
   useEffect(() => {
@@ -170,7 +185,13 @@ export const useWizardStepController = (
         );
       }
     }
-  }, [errorState.kind]);
+  }, [
+    accountDispatch,
+    accountState?.details?.abn,
+    accountState?.details?.organisation,
+    accountState?.details?.targetOrganisation?.targetOrganisationName,
+    errorState.kind,
+  ]);
 
   useEffect(() => {
     if (errorState.kind === 'gone') {
@@ -232,7 +253,7 @@ export const useWizardStepController = (
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Update,
           ),
         );
@@ -264,7 +285,7 @@ export const useWizardStepController = (
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Update,
           ),
         );

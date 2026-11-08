@@ -7,9 +7,10 @@ import {
   ReturnAddressTypeValues,
   ReturnContactTypeValues,
   ReturnMethodValues,
-  type AddressDetailsDto,
+  State,
   type DeliveryAndReturnStep,
 } from '@/api/web-api-client';
+import { toState } from '@/utils/apiEnumMappings';
 import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import { MemoryRouter } from 'react-router';
@@ -185,7 +186,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
             line1: '9 Test Street',
             suburb: 'Lindfield',
             postcode: '2070',
-            state: 'NSW' as AddressDetailsDto['state'],
+            state: toState('NSW') ?? State.NSW,
           },
           returnOrganisationName: 'Loaded return organisation',
         }}

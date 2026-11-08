@@ -9,6 +9,7 @@ import addBranchProps from '../../../ClientApp/src/routes/account/addBranch/addB
 import createContactProps from '../../../ClientApp/src/routes/contact/create/createContactProps';
 import updateContactProps from '../../../ClientApp/src/routes/contact/update/updateContactProps';
 import { HttpStatusCode } from '../../../ClientApp/src/types';
+import { toTitle } from '../../../ClientApp/src/utils/apiEnumMappings';
 import { ErrorType } from '../../../ClientApp/src/components/forms/WizardForm/types';
 import type { AccountContextState } from '../../../ClientApp/src/authentication/accountContext';
 import {
@@ -161,7 +162,7 @@ describe('account and contact wizard prop factories', () => {
       branchOrLocationName: 'Branch',
       isDefaultOrganisation: true,
       postalAddressSameAsStreetAddress: true,
-      contact: { title: 'Dr' },
+      contact: { title: toTitle('Dr') },
     } as AccountDto;
 
     const loaded = await props.loadStepValues(abortSignal);
@@ -326,7 +327,7 @@ describe('account and contact wizard prop factories', () => {
       businessOrTradingName: 'Trading',
       branchOrLocationName: 'Branch',
       postalAddressSameAsStreetAddress: false,
-      contact: { title: 'Other' },
+      contact: { title: toTitle('Other') },
     } as AccountDto;
 
     const loaded = await props.loadStepValues(abortSignal);
@@ -439,7 +440,7 @@ describe('account and contact wizard prop factories', () => {
     const updateHidingFields =
       updateProps.hidingFields as unknown as ContactHidingFields;
     const abortSignal = new AbortController().signal;
-    const values = { contact: { title: 'Dr' } } as ContactFormStep;
+    const values = { contact: { title: toTitle('Dr') } } as ContactFormStep;
 
     const createLoaded = await createProps.loadStepValues(abortSignal);
     const updateLoaded = await updateProps.loadStepValues(abortSignal);

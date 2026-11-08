@@ -17,6 +17,7 @@ import {
   type RequestForQuoteSummary,
 } from '../../../../ClientApp/src/api/web-api-client';
 import { stepStatuses } from '../testFixtures';
+import { toTitle } from '../../../../ClientApp/src/utils/apiEnumMappings';
 
 const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
@@ -322,7 +323,7 @@ describe('request for quote wizard prop factories', () => {
     const abortSignal = new AbortController().signal;
     const summary = {
       organisationAndContact: {
-        contact: { title: 'Dr' },
+        contact: { title: toTitle('Dr') },
       },
     } as RequestForQuoteSummary;
 
@@ -420,7 +421,7 @@ describe('request for quote wizard prop factories', () => {
     const summary = {
       organisationAndContact: {
         branchOrLocationName: 'Branch',
-        contact: { title: 'Other' },
+        contact: { title: toTitle('Other') },
       },
     } as RequestForQuoteSummary;
 

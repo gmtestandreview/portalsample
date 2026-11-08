@@ -120,15 +120,17 @@ describe('progress file list', () => {
     expect(screen.getByText('Cancelling...')).toBeInTheDocument();
   });
 
-  it('omits progress and cancellation UI when a row has no byte totals', () => {
+  it('omits the progress bar but retains cancellation for an upload without byte totals', async () => {
     expect.hasAssertions();
 
+    const user = userEvent.setup();
+    const onCancelFile = vi.fn<(fileName: string) => void>();
     renderList([
       {
         fileName: 'queued.pdf',
         status: FileStatus.Uploading,
       },
-    ]);
+    ], onCancelFile);
 
     const item = defined(
       screen.getByText('queued.pdf').closest('li'),
@@ -136,15 +138,19 @@ describe('progress file list', () => {
     );
 
     expect(within(item).queryByRole('progressbar')).not.toBeInTheDocument();
-    expect(within(item).queryByRole('button')).not.toBeInTheDocument();
+
+    const cancelButton = within(item).getByRole('button', {
+      name: 'Cancel uploading queued.pdf',
+    });
+    await user.click(cancelButton);
+
+    expect(onCancelFile).toHaveBeenCalledWith('queued.pdf');
+    expect(screen.getByText('Cancelling...')).toBeInTheDocument();
   });
 
-  it('labels the progress row generically and falls back to the index key when a file has no name', () => {
+  it('labels the progress row generically when a file has no name', () => {
     expect.hasAssertions();
 
-    // A FileProgress with no fileName still has byte totals, so hasProgress is
-    // true: the progressbar renders with the generic 'Uploading file' label and
-    // the list item keys on its array index instead of the missing name.
     renderList([
       {
         status: FileStatus.Uploading,

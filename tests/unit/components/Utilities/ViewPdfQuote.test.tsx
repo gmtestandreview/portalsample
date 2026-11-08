@@ -364,6 +364,55 @@ describe('view pdf quote', () => {
     });
   });
 
+  it('skips the mount size fetch entirely when quotationData is undefined', async () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteMocks();
+
+    render(<ViewPdfQuote {...defaultProps} quotationData={undefined} />);
+
+    // The size-fetch effect returns before any token/file work.
+    await waitFor(() => {
+      expect(acquireTokenSilentMock).not.toHaveBeenCalled();
+    });
+    expect(helperMocks.getQuotationFileDetails).not.toHaveBeenCalled();
+  });
+
+  it('returns early from the view handler when quotationData has been cleared', async () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteMocks();
+
+    const user = userEvent.setup();
+    const setIsLoading = vi.fn<ViewPdfQuoteProps['setIsLoading']>();
+
+    // Mount with data so the size fetch completes and the button renders.
+    const { rerender } = render(
+      <ViewPdfQuote {...defaultProps} setIsLoading={setIsLoading} />,
+    );
+    await waitFor(() =>
+      screen.getByRole('button', { name: /Download Quote/i }),
+    );
+
+    // Clear the data while the button stays rendered; clicking now hits the
+    // `if (!quotationData) return;` guard before any loading/fetch work.
+    rerender(
+      <ViewPdfQuote
+        {...defaultProps}
+        quotationData={undefined}
+        setIsLoading={setIsLoading}
+      />,
+    );
+    helperMocks.getQuotationFileDetails.mockClear();
+    setIsLoading.mockClear();
+
+    await user.click(screen.getByRole('button', { name: /Download Quote/i }));
+
+    expect(setIsLoading).not.toHaveBeenCalled();
+    expect(helperMocks.getQuotationFileDetails).not.toHaveBeenCalled();
+    expect(helperMocks.openInNewTab).not.toHaveBeenCalled();
+  });
+
   it('calls the latest setFileError when quotationData changes and the setter reference has changed', async () => {
     expect.hasAssertions();
 

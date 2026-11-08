@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import Row from 'react-bootstrap/Row';
 import { Alert } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import TextInput from '../../components/Inputs/TextInput';
 import type { ReportRecipientProps } from './types';
 import {
@@ -23,6 +23,10 @@ import BlockUISpinner from '../../components/BlockUISpinner';
 
 const getName = prefixedPropertyOf<ReportRecipientStep>('reportRecipient');
 
+type ReportRecipientLoadResult =
+  | { kind: 'loaded'; step: ReportRecipientStep }
+  | { kind: 'inactive' };
+
 const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
@@ -37,46 +41,66 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
     AddressDetailsDto | undefined
   >();
   const account = useAccountState();
+  const homeAccountId = account?.details?.homeAccountId;
+  const requestGeneration = useRef(0);
+
+  const getAcceptQuotePreInfo = useCallback(
+    async (): Promise<ReportRecipientLoadResult> => {
+    try {
+      AppLogger.verbose('ReportRecipient.getAcceptQuotePreInfo', {
+        homeAccountId,
+      });
+      const acceptQuoteClient = new AcceptQuoteClient();
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0]),
+      );
+      acceptQuoteClient.setAuthToken(tokenResult.accessToken);
+
+      if (id === undefined) return { kind: 'inactive' };
+
+      const reportRecipient = await acceptQuoteClient.getReportRecipient(id);
+      return { kind: 'loaded', step: reportRecipient };
+    } catch (error) {
+      AppLogger.error('Failed to load AcceptQuotePreInfo', error as Error, {
+        Id: id,
+      });
+      return { kind: 'inactive' };
+    }
+    },
+    [accounts, homeAccountId, id, instance],
+  );
 
   useEffect(() => {
-    const getAcceptQuotePreInfo = async () => {
-      try {
-        AppLogger.verbose('ReportRecipient.getAcceptQuotePreInfo', {
-          homeAccountId: account?.details?.homeAccountId,
-        });
-        const acceptQuoteClient = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
-        );
-        acceptQuoteClient.setAuthToken(tokenResult.accessToken);
-
-        if (id === undefined) return;
-
-        const reportRecipient = await acceptQuoteClient.getReportRecipient(id);
-        setReportRecipientStep(reportRecipient);
-
-        setStreetAddress(reportRecipient.rfqOrganisation?.streetAddress);
-
-        if (reportRecipient.rfqOrganisation?.postalAddressSameAsStreetAddress) {
-          setPostalAddress(reportRecipient.rfqOrganisation.streetAddress);
-          return;
-        }
-
-        setPostalAddress(reportRecipient.rfqOrganisation?.postalAddress);
-      } catch (error) {
-        AppLogger.error('Failed to load AcceptQuotePreInfo', error as Error, {
-          Id: id,
-        });
-      }
-    };
+    const currentGeneration = ++requestGeneration.current;
+    let isActive = true;
 
     const loadDataForDisplay = async () => {
       setIsLoading(true);
-      await getAcceptQuotePreInfo();
+      const result = await getAcceptQuotePreInfo();
+      if (
+        !isActive ||
+        requestGeneration.current !== currentGeneration
+      ) {
+        return;
+      }
+      if (result.kind === 'loaded') {
+        const { step } = result;
+        setReportRecipientStep(step);
+        setStreetAddress(step.rfqOrganisation?.streetAddress);
+        setPostalAddress(
+          step.rfqOrganisation?.postalAddressSameAsStreetAddress
+            ? step.rfqOrganisation.streetAddress
+            : step.rfqOrganisation?.postalAddress,
+        );
+      }
       setIsLoading(false);
     };
     void loadDataForDisplay();
-  }, []);
+
+    return () => {
+      isActive = false;
+    };
+  }, [getAcceptQuotePreInfo]);
 
   return (
     <>

@@ -56,7 +56,7 @@ const TextAreaInput = ({
   if (maxCharacters && maxCharacters > 0) {
     const currCharacters = _field.value ? _field.value.trim().length : 0;
     counterText = `${currCharacters} of ${maxCharacters} characters used`;
-    hasExceededMaximum = currCharacters > Number(maxCharacters);
+    hasExceededMaximum = currCharacters > maxCharacters;
   }
 
   return (

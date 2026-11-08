@@ -86,7 +86,7 @@ const OrganisationNameLookup = (
             options,
             optionsFieldName,
             parentOptionsName,
-            parentValue: String(_parentField.value),
+            parentValue: _parentField.value,
           });
           setFilteredSuggestions(filteredParentOptions);
           setShowSuggestions(filteredParentOptions.length > 0);

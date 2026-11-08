@@ -8,7 +8,6 @@ import type { QuotationSummaryProps } from './types';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import QuoteDetails from '../quotation/quoteDetails';
 import NMIContactDetails from '../quotation/nMIContactDetails';
-import { useAccountState } from '../../authentication/hooks';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { silentRequestFor } from '../../authentication/silentRequest';
@@ -17,7 +16,6 @@ import AppLogger from '../../instrumentation/AppLogger';
 const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
   const { isSummary, cRMQuoteRequestId } = props;
   const { accounts, instance } = useMsal();
-  const accountContext = useAccountState();
   const [isLoading, setIsLoading] = useState(false);
   const [quotationData, setQuotationData] = useState<
     RequestForQuoteDetails | undefined
@@ -59,8 +57,6 @@ const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
       <QuoteDetails
         quotationData={quotationData}
         isSummary={isSummary}
-        firstName={accountContext?.details?.givenName}
-        lastName={accountContext?.details?.familyName}
         fileError={fileError}
       />
       <Row className='mb-3'>

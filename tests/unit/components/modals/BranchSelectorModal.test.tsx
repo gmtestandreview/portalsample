@@ -630,9 +630,14 @@ describe('branch selector modal', () => {
 
     const origLocation = globalThis.location;
     const reloadMock = vi.fn<() => void>();
+    const locationMock = Object.create(origLocation) as Location;
+    Object.defineProperty(locationMock, 'reload', {
+      configurable: true,
+      value: reloadMock,
+    });
     Object.defineProperty(globalThis, 'location', {
       configurable: true,
-      value: { ...origLocation, reload: reloadMock },
+      value: locationMock,
     });
 
     renderModal({

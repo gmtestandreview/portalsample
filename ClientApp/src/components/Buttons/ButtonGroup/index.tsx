@@ -5,15 +5,17 @@
  * This allows for dynamic rendering of buttons based on the current state or props of the parent component.
  *
  * @param {ButtonGroupProps} props - Component props
- * @param {() => JSX.Element} props.left - Function that returns the JSX for the left button.
- * @param {() => JSX.Element} props.right - Function that returns the JSX for the right button.
- * @returns {JSX.Element} Rendered button group element
+ * @param {() => React.JSX.Element} props.left - Function that returns the JSX for the left button.
+ * @param {() => React.JSX.Element} props.right - Function that returns the JSX for the right button.
+ * @returns {React.JSX.Element} Rendered button group element
  *
  */
 
+import type React from 'react';
+
 export interface ButtonGroupProps {
-  left: () => JSX.Element;
-  right: () => JSX.Element;
+  left: () => React.JSX.Element;
+  right: () => React.JSX.Element;
 }
 
 const ButtonGroup = (props: Readonly<ButtonGroupProps>) => {

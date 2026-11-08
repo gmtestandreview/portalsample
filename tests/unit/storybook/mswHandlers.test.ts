@@ -292,11 +292,12 @@ describe('storybook MSW handlers', () => {
 
       const lookupType =
         CRMLookupTypes[lookupTypeName as keyof typeof CRMLookupTypes];
+      const lookupTypeValue = lookupType as string;
       const lookupResponse = Object.entries(lookupResponsesByType)
-        .find(([name]) => name === String(lookupType))
+        .find(([name]) => name === lookupTypeValue)
         ?.at(1);
       const url = apiUrl('/api/lookup');
-      url.searchParams.set('LookupType', String(lookupType));
+      url.searchParams.set('LookupType', lookupTypeValue);
 
       const response = await fetch(url);
 

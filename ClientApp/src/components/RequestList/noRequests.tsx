@@ -3,7 +3,6 @@ import { Link } from 'react-router';
 import HeaderIntroText from '../HeaderIntroText';
 
 interface NoRequestsProps {
-  serviceType?: string;
   serviceName?: string;
   serviceNameLinkTitle?: string;
   serviceNameLinkUrl?: string;

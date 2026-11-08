@@ -137,7 +137,7 @@ describe('computeInputDigest', () => {
     const byteFiles = files.map((file) => ({
       ...file,
       content: file.path.endsWith('coverageManifest.json')
-        ? Buffer.from(String(file.content))
+        ? Buffer.from(file.content)
         : file.content,
     }));
 

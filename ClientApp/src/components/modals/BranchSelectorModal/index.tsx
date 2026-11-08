@@ -3,6 +3,7 @@ import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, ReactElement } from 'react';
+import type React from 'react';
 import { Alert, Button, Modal, Row, Col, Table } from 'react-bootstrap';
 import {
   useAccountState,
@@ -27,7 +28,7 @@ interface SavingBranchSelectorErrorProps {
   showError: boolean;
 }
 
-const showBranchModalMessage = (message: JSX.Element | null) => (
+const showBranchModalMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Row className='mb-4'>
@@ -85,7 +86,7 @@ interface SaveButtonProps {
   onClick: () => void;
 }
 
-const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
+const SaveButton = (props: Readonly<SaveButtonProps>): React.JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton
@@ -114,7 +115,7 @@ type SortableBranchKey =
 
 const BranchSelectorButtons = (
   props: Readonly<BranchSelectorButtonsProps>,
-): JSX.Element => {
+): React.JSX.Element => {
   const { showCloseButton, onClose, onSave } = props;
   return (
     <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>

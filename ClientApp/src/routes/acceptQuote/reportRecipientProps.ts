@@ -29,6 +29,9 @@ import type { DiscardProps } from '../../components/forms/types';
 import { formatBannerTitle } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
+const preconditionFailedStatus: number = HttpStatusCode.PreconditionFailed;
+const notFoundStatus: number = HttpStatusCode.NotFound;
+
 const loadReportRecipient =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
   async (abortSignal?: AbortSignal) => {
@@ -101,14 +104,14 @@ const discardChanges = (id: string): DiscardProps => ({
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) => {
     if (
-      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
+      errorCode === preconditionFailedStatus &&
       errorType === ErrorType.Load
     ) {
       return `/accept-quote/${id}/view-summary`;
     }
 
     if (
-      errorCode === Number(HttpStatusCode.NotFound) &&
+      errorCode === notFoundStatus &&
       errorType === ErrorType.Update
     ) {
       setDashboardNotification({

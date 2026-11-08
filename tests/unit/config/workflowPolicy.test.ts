@@ -71,8 +71,7 @@ const stepBlocks = (contents: string): string[] => {
 
     return line.slice(0, stepIndent).trim() === '' &&
       step.startsWith('-') &&
-      characterAfterDash !== undefined &&
-      characterAfterDash.trim() === ''
+      characterAfterDash?.trim() === ''
       ? [index]
       : [];
   });

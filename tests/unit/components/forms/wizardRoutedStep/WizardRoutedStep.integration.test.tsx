@@ -1,6 +1,7 @@
 import type React from 'react';
+import { useState } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import {
@@ -247,6 +248,133 @@ describe('wizardRoutedStep — error navigation', () => {
     });
   });
 
+  it('does not reload step values when the redirection callback identity changes', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
+
+    const loadStepValues = vi
+      .fn<LoadStepHandler>()
+      .mockResolvedValue({ stepValues: {} });
+
+    const ChangingCallbackStep = () => {
+      const [callbackVersion, setCallbackVersion] = useState(0);
+
+      return (
+        <AccountStateCtx.Provider value={mockStateValue}>
+          <AccountDispatchCtx.Provider value={mockDispatch}>
+            <button
+              type='button'
+              onClick={() => {
+                setCallbackVersion((currentVersion) => currentVersion + 1);
+              }}
+            >
+              Change redirect callback
+            </button>
+            <WizardRoutedStep
+              title='Test Step'
+              location='/step-1'
+              url=''
+              initialValues={{}}
+              stepStatuses={[{ status: FormStepStatus.NotStarted }]}
+              loadStepValues={loadStepValues}
+              allSteps={[makeStepElement()]}
+              currentStepIndex={0}
+              locationOnCompletion='/done'
+              bannerTitle='Test Wizard'
+              getRedirectionLocationOnError={() =>
+                callbackVersion === 0 ? '/custom-a' : '/custom-b'
+              }
+            />
+          </AccountDispatchCtx.Provider>
+        </AccountStateCtx.Provider>
+      );
+    };
+
+    const router = createMemoryRouter(
+      [
+        { path: '/step-1', element: <ChangingCallbackStep /> },
+        { path: '/custom-a', element: <div>Custom A</div> },
+        { path: '/custom-b', element: <div>Custom B</div> },
+      ],
+      { initialEntries: ['/step-1'] },
+    );
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Change redirect callback' }),
+    );
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('does not reload step values when the load callback identity changes', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
+
+    const loadStepValues = vi
+      .fn<LoadStepHandler>()
+      .mockResolvedValue({ stepValues: {} });
+
+    const ChangingLoadCallbackStep = () => {
+      const [, setCallbackVersion] = useState(0);
+
+      return (
+        <AccountStateCtx.Provider value={mockStateValue}>
+          <AccountDispatchCtx.Provider value={mockDispatch}>
+            <button
+              type='button'
+              onClick={() => {
+                setCallbackVersion((currentVersion) => currentVersion + 1);
+              }}
+            >
+              Change load callback
+            </button>
+            <WizardRoutedStep
+              title='Test Step'
+              location='/step-1'
+              url=''
+              initialValues={{}}
+              stepStatuses={[{ status: FormStepStatus.NotStarted }]}
+              loadStepValues={() => {
+                return loadStepValues();
+              }}
+              allSteps={[makeStepElement()]}
+              currentStepIndex={0}
+              locationOnCompletion='/done'
+              bannerTitle='Test Wizard'
+            />
+          </AccountDispatchCtx.Provider>
+        </AccountStateCtx.Provider>
+      );
+    };
+
+    const router = createMemoryRouter(
+      [{ path: '/step-1', element: <ChangingLoadCallbackStep /> }],
+      { initialEntries: ['/step-1'] },
+    );
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Change load callback' }));
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('automatically retries loadStepValues after a 409 concurrency error', async () => {
     expect.hasAssertions();
 
@@ -275,10 +403,12 @@ describe('wizardRoutedStep — error navigation', () => {
     resetWizardRoutedStepIntegration();
 
     const replace = vi.fn<Location['replace']>();
-    vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
-      ...globalThis.location,
-      replace,
+    const locationMock = Object.create(globalThis.location) as Location;
+    Object.defineProperty(locationMock, 'replace', {
+      configurable: true,
+      value: replace,
     });
+    vi.spyOn(globalThis, 'location', 'get').mockReturnValue(locationMock);
     const router = makeRouter({
       loadStepValues: vi
         .fn<LoadStepHandler>()

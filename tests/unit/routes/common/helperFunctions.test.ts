@@ -663,10 +663,12 @@ describe('route common helper functions', () => {
 
     resetHelperFunctionsState();
 
-    vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
-      ...globalThis.location,
-      hostname,
+    const locationMock = Object.create(globalThis.location) as Location;
+    Object.defineProperty(locationMock, 'hostname', {
+      configurable: true,
+      value: hostname,
     });
+    vi.spyOn(globalThis, 'location', 'get').mockReturnValue(locationMock);
 
     expect(getEnvironment()).toBe(expected);
   });

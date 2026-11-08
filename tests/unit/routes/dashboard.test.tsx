@@ -5,6 +5,7 @@ import { afterEach, vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
+import { toDashboardTab } from '../../../ClientApp/src/routes/common/helperFunctions';
 import type { DashboardClient } from '../../../ClientApp/src/api/web-api-client';
 import { DashboardTab } from '../../../ClientApp/src/components/SearchFilter/types';
 import type { CustomPaginationProps } from '../../../ClientApp/src/components/Pagination/types';
@@ -547,7 +548,7 @@ const resetDashboardMocks = () => {
       p.testingCalibrationDashboard?.filterStatusType ?? 'allStatuses',
     filterCurrentPage: p.testingCalibrationDashboard?.filterCurrentPage ?? 1,
     filterActiveTab:
-      (p.testingCalibrationDashboard?.filterActiveTab as DashboardTab) ??
+      toDashboardTab(p.testingCalibrationDashboard?.filterActiveTab) ??
       DashboardTab.Drafts,
     filterSearchText: p.testingCalibrationDashboard?.filterSearchText ?? '',
     filterSortOrder:

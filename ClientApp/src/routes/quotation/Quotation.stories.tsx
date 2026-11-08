@@ -17,8 +17,6 @@ export const QuoteSummary = meta.story({
   args: {
     quotationData: requestForQuoteDetailsFixture,
     isSummary: false,
-    firstName: 'Taylor',
-    lastName: 'Nguyen',
     fileError: false,
   },
   render: () => (
@@ -26,8 +24,6 @@ export const QuoteSummary = meta.story({
       <QuoteDetails
         quotationData={requestForQuoteDetailsFixture}
         isSummary={false}
-        firstName='Taylor'
-        lastName='Nguyen'
         fileError={false}
       />
       <NMIContactDetails quotationData={requestForQuoteDetailsFixture} />
@@ -43,8 +39,6 @@ export const ExpiredNoDelivery = meta.story({
       receiptandDispatchNA: true,
     },
     isSummary: false,
-    firstName: 'Taylor',
-    lastName: 'Nguyen',
     fileError: false,
   },
   render: (args) => (

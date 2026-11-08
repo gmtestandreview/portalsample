@@ -229,7 +229,7 @@ const DashboardTA = () => {
       };
       accountDispatch
         ?.setUserProfile({ patternApprovalDashboard: omitUndefined(profile) })
-        .catch((error) => {
+        .catch((error: unknown) => {
           AppLogger.error(
             'T & C Dashboard failed to save user profile.',
             error as Error,
@@ -407,7 +407,7 @@ const DashboardTA = () => {
         setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
         setIsModalOpen(
           // List and check all Actionable modals across portal app
-          !!accountDetails.showBranchSelector ||
+          accountDetails.showBranchSelector ||
             !accountDetails.userAcceptedTermsOfUse,
         );
         setIsDataLoading(true);
@@ -533,7 +533,6 @@ const DashboardTA = () => {
       ) : (
         !isDataLoading && (
           <NoRequests
-            serviceType='Pattern/type approval'
             serviceName='application'
             serviceNameLinkTitle='new application'
             serviceNameLinkUrl='/ta/type-approval-create-pre'

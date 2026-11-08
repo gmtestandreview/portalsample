@@ -60,10 +60,10 @@ export const pollUploadProgress = async ({
 
     if (isFinished(data)) {
       onFinished();
-      client.deleteProgressStatistics(uploadId).catch((error) => {
+      client.deleteProgressStatistics(uploadId).catch((error: unknown) => {
         AppLogger.error(
           'Failed to delete progress statistics',
-          error as Error,
+          error instanceof Error ? error : new Error(String(error)),
           { uploadId },
         );
       });

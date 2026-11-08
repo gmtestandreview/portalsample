@@ -7,6 +7,7 @@ import type {
   ServicesOffered,
 } from '../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClient from '../../../ClientApp/src/api/web-api-client';
+import { toServiceType } from '../../../ClientApp/src/utils/apiEnumMappings';
 
 import {
   DEFAULT_ACCESS_TOKEN,
@@ -20,6 +21,10 @@ import {
 import type { ClientMockOf } from '../helpers/mockApiClient';
 import { renderWithRouter } from '../helpers/renderWithRouter';
 import { defined } from '../helpers/defined';
+
+type ServiceFixture = Omit<ServicesOffered, 'service'> & {
+  service?: ServiceType | string;
+};
 
 const mocks = vi.hoisted(() => ({
   accountContext: vi.fn<(...args: unknown[]) => unknown>(),
@@ -98,7 +103,7 @@ const serviceDtos: ServiceDto[] = [
   },
 ];
 
-const accountWith = (services?: ServicesOffered[]) => ({
+const accountWith = (services?: ServiceFixture[]) => ({
   details: { userProfile: { email: 'tester@example.gov.au', services } },
 });
 
@@ -450,12 +455,14 @@ describe('services we offer', () => {
 
       resetServicesWeOfferMocks();
 
+      expect(toServiceType('Unknown')).toBeUndefined();
+
       // The API can return a service the client build predates. The switch has a default arm
       // for exactly that, and without it the user would be stranded on a blank page.
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
-            service: 'Unknown' as ServiceType,
+            service: 'Unknown',
             isActive: true,
             isDefault: true,
           },
@@ -747,7 +754,7 @@ describe('services we offer', () => {
       // `service.icon || 'icon-file'` default - are on this one path.
       clients.lookup.methods.getServices.mockResolvedValue([
         {
-          serviceType: 'Unknown' as ServiceType,
+          serviceType: 'Unknown',
           title: 'Future service',
           description: 'Something this build predates',
           meta: 'New',
@@ -756,7 +763,7 @@ describe('services we offer', () => {
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
-            service: 'Unknown' as ServiceType,
+            service: 'Unknown',
             isActive: true,
             isDefault: true,
           },

@@ -5,9 +5,10 @@ import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import {
   ReportAddressTypeValues,
-  type AddressDetailsDto,
+  State,
   type ReportRecipientStep,
 } from '@/api/web-api-client';
+import { toState } from '@/utils/apiEnumMappings';
 import ReportRecipientFormikBridge from '@/routes/acceptQuote/reportRecipientFormikBridge';
 import { reportRecipientSubmitValidation } from '@/routes/acceptQuote/validation';
 import { removeHidden, validateForm } from '@/components/forms/utils';
@@ -162,7 +163,7 @@ describe(ReportRecipientFormikBridge, () => {
             line1: '9 Test Street',
             suburb: 'Lindfield',
             postcode: '2070',
-            state: 'NSW' as AddressDetailsDto['state'],
+            state: toState('NSW') ?? State.NSW,
           },
           organisationName: 'Loaded report organisation',
         }}

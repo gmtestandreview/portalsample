@@ -205,7 +205,7 @@ const ServicesWeOffer = () => {
           : {}),
         isActive:
           Object.hasOwn(checkedServices, serviceKey) &&
-          Boolean(Reflect.get(checkedServices, serviceKey)),
+          Reflect.get(checkedServices, serviceKey),
         isDefault: defaultService === serviceKey,
       };
     });

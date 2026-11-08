@@ -57,6 +57,37 @@ const realPathForContainment = (candidate) => {
   }
 };
 
+const validateSafePath = (candidate, root) => {
+  const resolvedRoot = path.resolve(root);
+  const resolvedCandidate = path.resolve(resolvedRoot, candidate);
+  if (outsideRoot(path.relative(resolvedRoot, resolvedCandidate))) {
+    throw new Error(`Refusing path outside workspace root: ${candidate}`);
+  }
+
+  const realRoot = realPathForContainment(resolvedRoot);
+  const realCandidate = realPathForContainment(resolvedCandidate);
+  if (outsideRoot(path.relative(realRoot, realCandidate))) {
+    throw new Error(`Refusing path outside workspace root: ${candidate}`);
+  }
+
+  return { realCandidate, resolvedCandidate };
+};
+
+/**
+ * Return the canonical path produced by the same containment validation that
+ * guards the filesystem operation. This reduces ancestor-reparse-point races
+ * without changing the exported safePath result.
+ *
+ * Node's generic path-based fs APIs cannot provide race-free containment here:
+ * O_NOFOLLOW is POSIX-only, Windows fs.openSync follows reparse points, and
+ * these wrappers do not have a portable directory-descriptor API. A concurrent
+ * replacement or creation of a final component can still race the operation.
+ * Keep this validation immediately adjacent to each fs call and treat the
+ * residual TOCTOU risk as a security-boundary limitation, not as a guarantee.
+ */
+const safeOperationPath = (candidate, root) =>
+  validateSafePath(candidate, root).realCandidate;
+
 /**
  * Resolve a caller-supplied path while keeping file-system operations inside
  * the caller's declared workspace. Callers still need to choose an
@@ -64,30 +95,15 @@ const realPathForContainment = (candidate) => {
  * of that root and centralises the narrow ESLint security boundary.
  */
 export function safePath(candidate, root = process.cwd()) {
-  const resolvedRoot = path.resolve(root);
-  const resolvedCandidate = path.resolve(resolvedRoot, candidate);
-  if (outsideRoot(path.relative(resolvedRoot, resolvedCandidate))) {
-    throw new Error(`Refusing path outside workspace root: ${candidate}`);
-  }
-
-  const realRoot = fsRealpathSync(resolvedRoot);
-  const realCandidate = realPathForContainment(resolvedCandidate);
-  if (outsideRoot(path.relative(realRoot, realCandidate))) {
-    throw new Error(`Refusing path outside workspace root: ${candidate}`);
-  }
-
-  return resolvedCandidate;
+  return validateSafePath(candidate, root).resolvedCandidate;
 }
 
 export function readTextFile(candidate, root = process.cwd()) {
-  // The path has been constrained by safePath immediately before the read.
-  // safePath constrains the path to the declared workspace root.
-  return fsReadFileSync(safePath(candidate, root), 'utf8');
+  return fsReadFileSync(safeOperationPath(candidate, root), 'utf8');
 }
 
 export function readBinaryFile(candidate, root = process.cwd()) {
-  // safePath constrains the path to the declared workspace root.
-  return fsReadFileSync(safePath(candidate, root));
+  return fsReadFileSync(safeOperationPath(candidate, root));
 }
 
 export function writeTextFile(
@@ -96,30 +112,30 @@ export function writeTextFile(
   options,
   root = process.cwd(),
 ) {
-  // safePath constrains the path to the declared workspace root.
-  return fsWriteFileSync(safePath(candidate, root), contents, options);
+  return fsWriteFileSync(
+    safeOperationPath(candidate, root),
+    contents,
+    options,
+  );
 }
 
 export function makeDirectory(candidate, root = process.cwd()) {
-  // safePath constrains the path to the declared workspace root.
-  return fsMkdirSync(safePath(candidate, root), { recursive: true });
+  return fsMkdirSync(safeOperationPath(candidate, root), { recursive: true });
 }
 
 export function listDirectory(candidate, options, root = process.cwd()) {
-  // safePath constrains the path to the declared workspace root.
-  return fsReaddirSync(safePath(candidate, root), options);
+  return fsReaddirSync(safeOperationPath(candidate, root), options);
 }
 
 export function statPath(candidate, root = process.cwd()) {
-  // safePath constrains the path to the declared workspace root.
-  return fsStatSync(safePath(candidate, root));
+  return fsStatSync(safeOperationPath(candidate, root));
 }
 
 export function realPath(candidate, root = process.cwd()) {
   // safePath constrains the path to the declared workspace root.
   const resolvedRoot = path.resolve(root);
   const resolvedCandidate = safePath(candidate, root);
-  const realRoot = fsRealpathSync(resolvedRoot);
+  const realRoot = realPathForContainment(resolvedRoot);
   const realCandidate = fsRealpathSync(resolvedCandidate);
   if (outsideRoot(path.relative(realRoot, realCandidate))) {
     throw new Error(`Refusing path outside workspace root: ${candidate}`);
@@ -128,6 +144,5 @@ export function realPath(candidate, root = process.cwd()) {
 }
 
 export function pathExists(candidate, root = process.cwd()) {
-  // safePath constrains the path to the declared workspace root.
-  return fsExistsSync(safePath(candidate, root));
+  return fsExistsSync(safeOperationPath(candidate, root));
 }

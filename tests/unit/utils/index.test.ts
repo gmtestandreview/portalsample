@@ -108,7 +108,7 @@ describe('object and array helpers', () => {
     expect(utils.tail([1, 2, 3])).toStrictEqual([2, 3]);
     expect(utils.head([1, 2, 3])).toBe(1);
     expect(utils.tail([])).toStrictEqual([]);
-    expect(utils.head([])).toBeUndefined();
+    expect(utils.head([] as unknown[])).toBeUndefined();
   });
 
   it('returns typed property names and prefixed property names', () => {
@@ -119,7 +119,12 @@ describe('object and array helpers', () => {
     }
 
     expect(utils.propertyOf<Example>('child')).toBe('child');
-    expect(utils.prefixedPropertyOf<Example>('parent')('child')).toBe(
+
+    const prefixedChild: `${string}.child` = utils.prefixedPropertyOf<Example>(
+      'parent',
+    )('child');
+
+    expect(prefixedChild).toBe(
       'parent.child',
     );
   });

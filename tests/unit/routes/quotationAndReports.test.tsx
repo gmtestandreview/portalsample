@@ -820,8 +820,6 @@ describe('quotation and measurement report routes', () => {
         <QuoteDetails
           quotationData={{ ...quoteDetails, receiptandDispatchNA: true }}
           isSummary={false}
-          firstName='Alex'
-          lastName='Tester'
           fileError
         />
       </MemoryRouter>,
@@ -1059,8 +1057,6 @@ describe('quotation and measurement report routes', () => {
           }}
           isSummary
           fileError
-          firstName={undefined}
-          lastName={undefined}
         />
       </MemoryRouter>,
     );
@@ -1093,8 +1089,6 @@ describe('quotation and measurement report routes', () => {
             receiptandDispatchNA: true,
           }}
           isSummary
-          firstName='Alex'
-          lastName='Tester'
           fileError={false}
         />
       </MemoryRouter>,
@@ -1118,8 +1112,6 @@ describe('quotation and measurement report routes', () => {
             receiptandDispatchNA: false,
           }}
           isSummary={false}
-          firstName='Alex'
-          lastName='Tester'
           fileError={false}
         />
       </MemoryRouter>,

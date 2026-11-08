@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import type React from 'react';
 import { Col, Row, Container, Button } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
@@ -35,7 +36,7 @@ import { toQuoteStatus } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -249,8 +250,6 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
       <QuoteDetails
         quotationData={quotationData}
         isSummary={isSummary}
-        firstName={accountState?.details?.givenName}
-        lastName={accountState?.details?.familyName}
         fileError={fileError}
       />
       {quotationData?.quoteRequestStatus !== undefined &&

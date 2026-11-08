@@ -2,9 +2,11 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import type { Dirent, Stats } from 'node:fs';
 import {
   existsSync,
+  lstatSync,
   mkdirSync,
   readFileSync,
   readdirSync,
+  realpathSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
@@ -18,17 +20,64 @@ type DirectoryEntries = Dirent[];
 // mitigation is structural: every public helper routes its path through
 // resolveWithinRoot, which rejects anything outside the caller-provided test
 // root before the fs call runs. Triage verdict: accepted hotspots, mitigated.
+const isOutsideRoot = (candidatePath: string, rootPath: string): boolean => {
+  const relativePath = path.relative(rootPath, candidatePath);
+
+  return (
+    relativePath === '..' ||
+    relativePath.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relativePath)
+  );
+};
+
+const isMissingPathError = (error: unknown): boolean =>
+  typeof error === 'object' &&
+  error !== null &&
+  'code' in error &&
+  (error.code === 'ENOENT' || error.code === 'ENOTDIR');
+
+const nearestExistingPath = (candidatePath: string): string => {
+  let currentPath = candidatePath;
+
+  for (;;) {
+    try {
+      lstatSync(currentPath);
+      return currentPath;
+    } catch (error) {
+      if (!isMissingPathError(error)) {
+        throw error;
+      }
+
+      const parentPath = path.dirname(currentPath);
+      if (parentPath === currentPath) {
+        throw error;
+      }
+
+      currentPath = parentPath;
+    }
+  }
+};
+
+const resolveThroughNearestExistingPath = (candidatePath: string): string => {
+  const existingPath = nearestExistingPath(candidatePath);
+  const realExistingPath = realpathSync.native(existingPath);
+  const remainingPath = path.relative(existingPath, candidatePath);
+
+  return path.resolve(realExistingPath, remainingPath);
+};
+
 const resolveWithinRoot = (filePath: string, root: string): string => {
   const resolvedRoot = path.resolve(root);
   const resolvedPath = path.resolve(resolvedRoot, filePath);
-  const relativePath = path.relative(resolvedRoot, resolvedPath);
 
-  const isOutsideRoot =
-    relativePath === '..' ||
-    relativePath.startsWith(`..${path.sep}`) ||
-    path.isAbsolute(relativePath);
+  if (isOutsideRoot(resolvedPath, resolvedRoot)) {
+    throw new Error(`Path is outside the allowed root: ${filePath}`);
+  }
 
-  if (isOutsideRoot) {
+  const realRoot = resolveThroughNearestExistingPath(resolvedRoot);
+  const realPath = resolveThroughNearestExistingPath(resolvedPath);
+
+  if (isOutsideRoot(realPath, realRoot)) {
     throw new Error(`Path is outside the allowed root: ${filePath}`);
   }
 

@@ -14,12 +14,14 @@ import type {
   UserProfileDto,
 } from '../../api/web-api-client';
 import type { AccountDetails } from '../../authentication/accountContext';
+import { HttpStatusCode } from '../../types';
 import { DashboardTab } from '../../components/SearchFilter/types';
 import type { UserProfile } from '../../components/SearchFilter/types';
 import { DashboardItemStatus, PaDashboardItemStatus } from './enums';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import { base64toBlob } from '../../utils';
+import { toHttpStatusCode } from '../../utils/apiEnumMappings';
 import { DashBoardNotifications } from './dashboardNotifications';
 import { Environment, QuoteStatus, ReportStatus } from './enums';
 import type { SelectInputOption } from '../../components/Inputs/SelectInput/types';
@@ -349,7 +351,7 @@ export const handleUnexpectedError = (details: ProblemDetails) => {
   handleAlertScroll();
   setDashboardNotification(
     DashBoardNotifications.getDashboardErrorNotification(
-      details.status ?? 0,
+      toHttpStatusCode(details.status) ?? HttpStatusCode.InternalServerError,
       '',
     ),
   );

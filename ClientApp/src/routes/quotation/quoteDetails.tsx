@@ -22,8 +22,6 @@ const QuoteDetails = (
   props: Readonly<{
     quotationData: RequestForQuoteDetails | undefined;
     isSummary: boolean | undefined;
-    firstName: string | undefined;
-    lastName: string | undefined;
     fileError: boolean | undefined;
   }>,
 ) => {

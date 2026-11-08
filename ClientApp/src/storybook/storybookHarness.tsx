@@ -177,6 +177,9 @@ export interface PortalLocationObservation {
   params: Record<string, string | undefined>;
 }
 
+const defaultInitialEntries = ['/'];
+const emptyDestinationRoutes: PortalDestinationRoute[] = [];
+
 export interface PortalStoryParameters {
   authenticated?: boolean;
   initialEntries?: string[];
@@ -253,9 +256,9 @@ export interface PortalStoryRouterProps {
 
 export const PortalStoryRouter = ({
   Story,
-  initialEntries = ['/'],
+  initialEntries = defaultInitialEntries,
   routePath = '*',
-  destinationRoutes = [],
+  destinationRoutes = emptyDestinationRoutes,
   observeLocation,
 }: PortalStoryRouterProps) => {
   const [router] = useState(() =>

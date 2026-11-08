@@ -17,16 +17,31 @@ vi.mock(import('react-ga4'), (async (
   importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule1>>[0],
 ) => {
   const actual = await importOriginal<typeof ReactGaModule>();
+  const defaultMock = Object.create(actual.default, {
+    event: {
+      configurable: true,
+      value: reactGaMock.event,
+      writable: true,
+    },
+    initialize: {
+      configurable: true,
+      value: reactGaMock.initialize,
+      writable: true,
+    },
+    isInitialized: {
+      configurable: true,
+      get: () => reactGaMock.isInitialized,
+    },
+    send: {
+      configurable: true,
+      value: reactGaMock.send,
+      writable: true,
+    },
+  }) as typeof actual.default;
 
   return {
     ...actual,
-    default: {
-      ...actual.default,
-      ...reactGaMock,
-      get isInitialized() {
-        return reactGaMock.isInitialized;
-      },
-    },
+    default: defaultMock,
   } satisfies __ExactMockModule<__TestMockModule1>;
 }) as unknown as __DynamicPartialMockFactory<__TestMockModule1>);
 

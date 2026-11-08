@@ -1111,6 +1111,31 @@ describe('workflow route wrappers', () => {
     });
   });
 
+  it('skips the payment lookup and shows an empty quotation id when no id is in the route', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    const SubmittedSuccess = (
+      await import('../../../ClientApp/src/routes/acceptQuote/submittedSuccess')
+    ).default;
+
+    renderAt('/submitted-success', <SubmittedSuccess />, '/submitted-success');
+
+    expect(screen.getByTestId('form-banner')).toHaveAttribute(
+      'data-ref-title',
+      'Quotation ID: ',
+    );
+
+    // The effect still authenticates, then bails at the missing-id guard
+    // before requesting payment details.
+    await waitFor(() => {
+      expect(mocks.setAuthToken).toHaveBeenCalled();
+    });
+
+    expect(mocks.getPaymentDetails).not.toHaveBeenCalled();
+  });
+
   it('loads quotation summary details and exposes quote actions', async () => {
     expect.hasAssertions();
 

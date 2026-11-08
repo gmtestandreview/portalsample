@@ -518,6 +518,74 @@ describe('application and instrument step', () => {
       );
     });
 
+    it('keeps empty option fields when a category has no id and a matching type row has no id or label', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        values: baseValues({
+          instrumentCategory: 'cat-weighing',
+          instrumentType: 'type-beam',
+          // The category keeps a defined label (the raw category list is sorted
+          // by label, which throws on undefined) but drops its id.
+          instrumentCategoryLookup: [
+            ...categoryLookup(),
+            { id: undefined, label: 'Edge category', parentId: undefined },
+          ],
+          // The type list is mapped before it is sorted by displayText, so an
+          // id/label-less row flows through safely.
+          instrumentTypeLookup: [
+            ...typeLookup(),
+            { id: undefined, label: undefined, parentId: 'cat-weighing' },
+          ],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0);
+      });
+
+      // getInstrumentCategories maps the id-less row to an empty value.
+      expect(selectNamed('instrumentCategory').options).toContainEqual({
+        displayText: 'Edge category',
+        value: '',
+      });
+      // getInstrumentTypes' parent-id branch maps the id/label-less type row.
+      expect(selectNamed('instrumentType').options).toContainEqual({
+        displayText: '',
+        value: '',
+      });
+    });
+
+    it('keeps empty option fields in summary mode when a type row has no id or label', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        isSummary: true,
+        values: baseValues({
+          instrumentCategory: '',
+          instrumentType: '',
+          instrumentTypeLookup: [
+            ...typeLookup(),
+            { id: undefined, label: undefined, parentId: 'cat-weighing' },
+          ],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentType')).toBeDefined();
+      });
+
+      // Summary mode maps every type row, including the id/label-less one.
+      expect(selectNamed('instrumentType').options).toContainEqual({
+        displayText: '',
+        value: '',
+      });
+    });
+
     it('offers nothing when the lookups have not arrived', async () => {
       expect.hasAssertions();
 

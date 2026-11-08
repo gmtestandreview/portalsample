@@ -1,5 +1,5 @@
 import preview from '../../../../.storybook/preview';
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import { within, expect, fn, userEvent } from 'storybook/test';
 import SlateEditor, { type CustomElement } from './SlateEditor';
 
@@ -17,6 +17,21 @@ const initialValue: CustomElement[] = [
   },
 ];
 
+const SlateEditorStory = (args: ComponentProps<typeof SlateEditor>) => {
+  const [value, setValue] = useState<CustomElement[]>(args.value);
+
+  return (
+    <SlateEditor
+      {...args}
+      value={value}
+      setValue={(next) => {
+        setValue(next);
+        args.setValue(next);
+      }}
+    />
+  );
+};
+
 const meta = preview.meta({
   title: 'Components/SlateEditor',
   component: SlateEditor,
@@ -30,19 +45,7 @@ const meta = preview.meta({
     placeholder: 'Type your message…',
     maxCharacters: 500,
   },
-  render: (args) => {
-    const [value, setValue] = useState<CustomElement[]>(args.value);
-    return (
-      <SlateEditor
-        {...args}
-        value={value}
-        setValue={(next) => {
-          setValue(next);
-          args.setValue(next);
-        }}
-      />
-    );
-  },
+  render: SlateEditorStory,
 });
 
 export const Default = meta.story({

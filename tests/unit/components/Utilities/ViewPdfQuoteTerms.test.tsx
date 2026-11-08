@@ -294,4 +294,32 @@ describe('view pdf quote terms', () => {
       expect(helperMocks.openPdfPageInNewTab).not.toHaveBeenCalled();
     });
   });
+
+  it('returns from the handler before any work when quotationData is undefined', async () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteTermsMocks();
+
+    const user = userEvent.setup();
+    const setIsLoading = vi.fn<ViewPdfQuoteTermsProps['setIsLoading']>();
+    const { container } = render(
+      <ViewPdfQuoteTerms
+        {...defaultProps}
+        quotationData={undefined}
+        setIsLoading={setIsLoading}
+      />,
+    );
+
+    // The Terms link always renders, so the click reaches the handler, which
+    // hits `if (!quotationData) return;` before any loading/token/fetch work.
+    await user.click(getTermsAnchor(container));
+
+    // The GA event still fires (it runs after the early-returning handler).
+    await waitFor(() => {
+      expect(trackGAEventMock).toHaveBeenCalledWith('Terms', 'download');
+    });
+    expect(setIsLoading).not.toHaveBeenCalled();
+    expect(acquireTokenSilentMock).not.toHaveBeenCalled();
+    expect(helperMocks.getQuotationFileDetails).not.toHaveBeenCalled();
+  });
 });

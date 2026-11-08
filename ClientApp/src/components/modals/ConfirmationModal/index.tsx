@@ -9,7 +9,7 @@ export interface ConfirmationModalProps {
   onModalYes: (e: React.MouseEvent<HTMLButtonElement>) => void;
   onModalNo: () => void;
   titleText: string;
-  bodyText: string | JSX.Element;
+  bodyText: string | React.JSX.Element;
   noButtonTitle: string;
   yesButtonTitle: string;
 }

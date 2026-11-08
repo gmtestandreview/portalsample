@@ -55,8 +55,14 @@ export const head = <T>([first]: T[]) => first;
 
 export const propertyOf = <T>(name: keyof T) => name;
 
-export function prefixedPropertyOf<T>(prefix: string) {
-  return (name: keyof T) => `${prefix}.${String(propertyOf<T>(name))}`;
+export function prefixedPropertyOf<T>(
+  prefix: string,
+): (name: keyof T) => `${string}.${Extract<keyof T, string>}` {
+  return (name: keyof T) =>
+    `${prefix}.${String(propertyOf<T>(name))}` as `${string}.${Extract<
+      keyof T,
+      string
+    >}`;
 }
 
 export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(

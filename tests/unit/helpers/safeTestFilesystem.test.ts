@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, symlink } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -68,7 +68,7 @@ describe('safe test filesystem helpers', () => {
         syncEntryCount: syncEntries.length,
         asyncOutputExists: pathExists('nested/async-output.txt', root),
         syncOutputIsFile: statPath('nested/sync-output.txt', root).isFile(),
-      }).toEqual({
+      }).toStrictEqual({
         asyncContents: 'fixture',
         syncContents: 'fixture',
         asyncEntryCount: 1,
@@ -78,6 +78,64 @@ describe('safe test filesystem helpers', () => {
       });
     } finally {
       await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects symlinked paths for every filesystem operation', async () => {
+    expect.hasAssertions();
+
+    const root = await mkdtemp(path.join(os.tmpdir(), 'safe-test-filesystem-'));
+    const outsideRoot = await mkdtemp(
+      path.join(os.tmpdir(), 'safe-test-filesystem-outside-'),
+    );
+    const linkedDirectory = path.join(root, 'linked');
+
+    try {
+      await writeTextFile(path.join(outsideRoot, 'fixture.txt'), 'outside', outsideRoot);
+      await symlink(outsideRoot, linkedDirectory, 'junction');
+
+      const operations: (() => Promise<unknown>)[] = [
+        () => readTextFile('linked/fixture.txt', root),
+        () => Promise.resolve(readTextFileSync('linked/fixture.txt', root)),
+        () => writeTextFile('linked/async-output.txt', 'unsafe', root),
+        () => Promise.resolve().then(() => {
+          writeTextFileSync('linked/sync-output.txt', 'unsafe', root);
+        }),
+        () => readDirectory('linked', root),
+        () => Promise.resolve(readDirectorySync('linked', root)),
+        () => makeDirectory('linked/async-created/nested', root),
+        () => Promise.resolve().then(() => {
+          makeDirectorySync('linked/sync-created/nested', root);
+        }),
+        () => Promise.resolve(pathExists('linked/fixture.txt', root)),
+        () => Promise.resolve(statPath('linked/fixture.txt', root)),
+      ];
+
+      const blockedOperations = await Promise.all(
+        operations.map(async (operation) => {
+          try {
+            await operation();
+            return false;
+          } catch (error) {
+            return (
+              error instanceof Error &&
+              error.message.includes('outside the allowed root')
+            );
+          }
+        }),
+      );
+      const outsideEntries = await readDirectory('', outsideRoot);
+
+      expect({
+        blockedOperations,
+        outsideEntryNames: outsideEntries.map((entry) => entry.name).sort(),
+      }).toStrictEqual({
+        blockedOperations: new Array(operations.length).fill(true),
+        outsideEntryNames: ['fixture.txt'],
+      });
+    } finally {
+      await rm(root, { recursive: true, force: true });
+      await rm(outsideRoot, { recursive: true, force: true });
     }
   });
 

@@ -15,6 +15,33 @@ import {
   writeTextFile,
 } from './safe-file-io.mjs';
 
+const unsafePathCases = [
+  ['parent traversal', (root) => path.join(root, '..', 'outside.txt')],
+  [
+    'absolute outside path',
+    (root) => path.join(path.dirname(root), 'outside.txt'),
+  ],
+  ['sibling prefix', (root) => `${root}-sibling`],
+];
+
+it('keeps filesystem operations behind immediate canonical path validation', () => {
+  const canonicalPathWrappers = [
+    readTextFile,
+    readBinaryFile,
+    writeTextFile,
+    makeDirectory,
+    listDirectory,
+    statPath,
+    pathExists,
+  ];
+
+  for (const wrapper of canonicalPathWrappers) {
+    assert.match(wrapper.toString(), /safeOperationPath\(candidate, root\)/u);
+  }
+  assert.match(realPath.toString(), /safePath\(candidate, root\)/u);
+  assert.match(realPath.toString(), /outsideRoot/u);
+});
+
 it('constrains reads, writes, and traversal to the declared workspace', () => {
   const root = mkdtempSync(path.join(tmpdir(), 'safe-file-io-'));
   try {
@@ -36,6 +63,62 @@ it('constrains reads, writes, and traversal to the declared workspace', () => {
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+it('creates nested paths when the declared root does not exist yet', () => {
+  const tempParent = mkdtempSync(path.join(tmpdir(), 'safe-file-io-parent-'));
+  const root = path.join(tempParent, 'new-root');
+  try {
+    makeDirectory('nested', root);
+    writeTextFile('nested/value.txt', 'safe', undefined, root);
+    assert.equal(readTextFile('nested/value.txt', root), 'safe');
+  } finally {
+    rmSync(tempParent, { recursive: true, force: true });
+  }
+});
+
+it('permits absolute nested paths, including names beginning with two dots', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'safe-file-io-'));
+  const nestedDirectory = path.join(root, '..allowed', 'nested');
+  const nestedFile = path.join(nestedDirectory, 'value.txt');
+  try {
+    makeDirectory(nestedDirectory, root);
+    writeTextFile(nestedFile, 'nested', undefined, root);
+
+    assert.equal(readTextFile(nestedFile, root), 'nested');
+    assert.equal(readBinaryFile(nestedFile, root).toString(), 'nested');
+    assert.equal(pathExists(nestedFile, root), true);
+    assert.equal(statPath(nestedFile, root).isFile(), true);
+    assert.equal(listDirectory(nestedDirectory, undefined, root).length, 1);
+    assert.equal(realPath(nestedFile, root), nestedFile);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+for (const [label, getUnsafePath] of unsafePathCases) {
+  it(`rejects ${label} for every filesystem wrapper`, () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'safe-file-io-'));
+    const unsafePath = getUnsafePath(root);
+    try {
+      const rejectedOperations = [
+        () => readTextFile(unsafePath, root),
+        () => readBinaryFile(unsafePath, root),
+        () => writeTextFile(unsafePath, 'outside', undefined, root),
+        () => makeDirectory(unsafePath, root),
+        () => listDirectory(unsafePath, undefined, root),
+        () => statPath(unsafePath, root),
+        () => realPath(unsafePath, root),
+        () => pathExists(unsafePath, root),
+      ];
+
+      for (const operation of rejectedOperations) {
+        assert.throws(operation, /outside workspace root/u);
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+}
 
 it('does not make an existing outside path safe', () => {
   const tempParent = mkdtempSync(path.join(tmpdir(), 'safe-file-io-parent-'));
@@ -64,6 +147,10 @@ it('accepts nested paths when the declared root is a symlink', () => {
     );
     makeDirectory('nested', linkedRoot);
     writeTextFile('nested/value.txt', 'safe', undefined, linkedRoot);
+    assert.equal(
+      safePath('nested/value.txt', linkedRoot),
+      path.join(linkedRoot, 'nested', 'value.txt'),
+    );
     assert.equal(readTextFile('nested/value.txt', linkedRoot), 'safe');
     assert.equal(
       realPath('nested/value.txt', linkedRoot),
@@ -84,20 +171,27 @@ it('uses the output root as the declared filesystem boundary', () => {
     writeTextFile('nested/result.txt', 'output', undefined, outputRoot);
     assert.equal(readTextFile('nested/result.txt', outputRoot), 'output');
     assert.equal(realPath('nested/result.txt', outputRoot), outputFile);
-    assert.throws(
-      () => writeTextFile('../parent.txt', 'outside', undefined, outputRoot),
-      /outside workspace root/u,
-    );
-    assert.throws(
-      () =>
-        writeTextFile(
-          path.join(root, 'sibling.txt'),
-          'outside',
-          undefined,
-          outputRoot,
-        ),
-      /outside workspace root/u,
-    );
+
+    const rejectedPaths = [
+      '../parent.txt',
+      path.join(root, 'sibling.txt'),
+    ];
+    for (const rejectedPath of rejectedPaths) {
+      const rejectedOperations = [
+        () => readTextFile(rejectedPath, outputRoot),
+        () => readBinaryFile(rejectedPath, outputRoot),
+        () => writeTextFile(rejectedPath, 'outside', undefined, outputRoot),
+        () => makeDirectory(rejectedPath, outputRoot),
+        () => listDirectory(rejectedPath, undefined, outputRoot),
+        () => statPath(rejectedPath, outputRoot),
+        () => realPath(rejectedPath, outputRoot),
+        () => pathExists(rejectedPath, outputRoot),
+      ];
+
+      for (const operation of rejectedOperations) {
+        assert.throws(operation, /outside workspace root/u);
+      }
+    }
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -152,6 +246,10 @@ it('rejects symlink escapes for reads, writes, and path inspection', () => {
       assert.throws(operation, /outside workspace root/u);
     }
     assert.equal(pathExists(path.join(outside, 'new.txt'), outside), false);
+    assert.equal(
+      pathExists(path.join(outside, 'new-directory'), outside),
+      false,
+    );
   } finally {
     rmSync(root, { recursive: true, force: true });
     rmSync(outside, { recursive: true, force: true });

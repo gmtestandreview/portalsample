@@ -3,9 +3,10 @@ import type {
   DashboardItemStatus,
   QuoteStatus,
 } from '../../routes/common/enums';
+import { toQuoteStatus } from '../../routes/common/helperFunctions';
 
 export interface StatusPillProps {
-  status: DashboardItemStatus | QuoteStatus;
+  status: DashboardItemStatus | QuoteStatus | string;
 }
 
 /**
@@ -14,8 +15,10 @@ export interface StatusPillProps {
  * @returns jsx
  */
 const QuoteStatusPill = ({ status }: Readonly<StatusPillProps>) => {
-  const getPillProps = (itemStatus: DashboardItemStatus | QuoteStatus) => {
-    switch (String(itemStatus)) {
+  const getPillProps = (
+    itemStatus: DashboardItemStatus | QuoteStatus | string,
+  ) => {
+    switch (itemStatus) {
       case 'Report - In progress':
       case 'Report - Issued':
       case 'Report - Withdrawn':
@@ -48,12 +51,12 @@ const QuoteStatusPill = ({ status }: Readonly<StatusPillProps>) => {
         return {
           bgColour: 'info',
           textColour: 'light',
-          text: String(itemStatus),
+          text: itemStatus,
         };
     }
   };
 
-  const pillProps = getPillProps(status);
+  const pillProps = getPillProps(toQuoteStatus(status) ?? status);
 
   return (
     <Badge pill bg={pillProps.bgColour} text={pillProps.textColour}>

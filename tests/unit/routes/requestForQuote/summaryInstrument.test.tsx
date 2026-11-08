@@ -157,10 +157,10 @@ describe(RfqInstrumentSummary, () => {
     const result = renderInstrument(populated);
 
     await waitFor(() => {
-      expect(vi.mocked(AppLogger).error).toHaveBeenCalledWith(
+      expect(vi.mocked(AppLogger).error.mock.calls).toContainEqual([
         'Failed to retrieve look ups',
         failure,
-      );
+      ]);
     });
 
     expect(result.getByText('Loading...')).toBeInTheDocument();
@@ -180,10 +180,10 @@ describe(RfqInstrumentSummary, () => {
     renderInstrument(populated);
 
     await waitFor(() => {
-      expect(vi.mocked(AppLogger).error).toHaveBeenCalledWith(
+      expect(vi.mocked(AppLogger).error.mock.calls).toContainEqual([
         'Failed to retrieve look ups',
         new Error('boom'),
-      );
+      ]);
     });
   });
 

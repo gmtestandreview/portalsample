@@ -1,5 +1,5 @@
 import { useMsal } from '@azure/msal-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Row from 'react-bootstrap/Row';
 import { Alert } from 'react-bootstrap';
 import { prefixedPropertyOf } from '../../utils';
@@ -20,6 +20,10 @@ import PaymentDetailsFormikBridge from './paymentDetailsFormikBridge';
 
 const getName = prefixedPropertyOf<PaymentDetailsStep>('paymentDetails');
 
+type PaymentDetailsLoadResult =
+  | { kind: 'loaded'; preInfo: AcceptQuotePreInfoDto | undefined }
+  | { kind: 'inactive' };
+
 function getNameForUse(name: keyof PaymentDetailsStep): string {
   return getName(name);
 }
@@ -31,8 +35,10 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   const [acceptQuotePreInfo, setAcceptQuotePreInfo] = useState<
     AcceptQuotePreInfoDto | undefined
   >();
+  const requestGeneration = useRef(0);
 
-  const getAcceptQuotePreInfo = async () => {
+  const getAcceptQuotePreInfo = useCallback(
+    async (): Promise<PaymentDetailsLoadResult> => {
     try {
       AppLogger.verbose('PaymentDetails.getAcceptQuotePreInfo', { Id: id });
       const acceptQuoteClient = new AcceptQuoteClient();
@@ -41,23 +47,42 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       );
       acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
-      if (id === undefined) return;
+      if (id === undefined) return { kind: 'inactive' };
 
       const paymentDetails = await acceptQuoteClient.getPaymentDetails(id);
-      setAcceptQuotePreInfo(paymentDetails.acceptQuotePreInfo);
+      return { kind: 'loaded', preInfo: paymentDetails.acceptQuotePreInfo };
     } catch (e) {
       AppLogger.error('Failed to load Payment details', e as Error, { Id: id });
+      return { kind: 'inactive' };
     }
-  };
+    },
+    [accounts, id, instance],
+  );
 
   useEffect(() => {
+    const currentGeneration = ++requestGeneration.current;
+    let isActive = true;
+
     const loadDataForDisplay = async () => {
       setIsLoading(true);
-      await getAcceptQuotePreInfo();
+      const result = await getAcceptQuotePreInfo();
+      if (
+        !isActive ||
+        requestGeneration.current !== currentGeneration
+      ) {
+        return;
+      }
+      if (result.kind === 'loaded') {
+        setAcceptQuotePreInfo(result.preInfo);
+      }
       setIsLoading(false);
     };
     void loadDataForDisplay();
-  }, []);
+
+    return () => {
+      isActive = false;
+    };
+  }, [getAcceptQuotePreInfo]);
 
   return (
     <>

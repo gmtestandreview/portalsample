@@ -1,10 +1,13 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
-import { ReportAddressTypeValues } from '@/api/web-api-client';
-import type { ReportRecipientStep } from '@/api/web-api-client';
+import { ReportAddressTypeValues, State } from '@/api/web-api-client';
+import type {
+  AddressDetailsDto,
+  ReportRecipientStep,
+} from '@/api/web-api-client';
 import ReportRecipient from '@/routes/acceptQuote/reportRecipient';
 import {
   reportRecipientSaveValidation,
@@ -100,20 +103,29 @@ const hidingFields = {
     x.reportAddressType !== ReportAddressTypeValues.Other,
 };
 
-const streetAddress = {
+const streetAddress: AddressDetailsDto = {
   line1: '1 Street Road',
   suburb: 'Lindfield',
-  state: 'NSW',
+  state: State.NSW,
   postcode: '2070',
 };
-const postalAddress = {
+const postalAddress: AddressDetailsDto = {
   line1: 'PO Box 9',
   suburb: 'Sydney',
-  state: 'NSW',
+  state: State.NSW,
   postcode: '2000',
 };
 
+function deferred<T>() {
+  let resolve: (value: T | PromiseLike<T>) => void = () => undefined;
+  const promise = new Promise<T>((promiseResolve) => {
+    resolve = promiseResolve;
+  });
+  return { promise, resolve };
+}
+
 interface StepHarnessProps {
+  id?: string;
   values?: ReportRecipientStep;
   isSummary?: boolean;
   onSubmit?: (values: ReportRecipientStep) => void;
@@ -121,6 +133,7 @@ interface StepHarnessProps {
 
 // Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
 function StepHarness({
+  id = 'RFQ-1',
   values = {},
   isSummary,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
@@ -143,7 +156,7 @@ function StepHarness({
       }}
     >
       <Form noValidate>
-        <ReportRecipient id='RFQ-1' isSummary={isSummary} />
+        <ReportRecipient id={id} isSummary={isSummary} />
         <button type='submit'>Continue</button>
         <SaveAndExitButton />
       </Form>
@@ -464,6 +477,93 @@ describe('reportRecipient behavior', () => {
     await expect(
       screen.findByTestId('address-lookup'),
     ).resolves.toBeInTheDocument();
+  });
+
+  it('reloads the recipient when the quotation id changes', async () => {
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
+
+    const view = renderStep({});
+
+    await waitFor(() => {
+      expect(mocks.getReportRecipient).toHaveBeenCalledWith('RFQ-1');
+    });
+
+    mocks.getReportRecipient.mockResolvedValue({
+      reportAddressType: ReportAddressTypeValues.Other,
+      rfqOrganisation: {
+        streetAddress: { ...streetAddress, line1: '2 New Street' },
+        postalAddress,
+        postalAddressSameAsStreetAddress: false,
+      },
+    });
+    view.rerender(<StepHarness id='RFQ-2' />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/2 New Street/)).toBeInTheDocument();
+    });
+
+    expect(mocks.getReportRecipient.mock.calls).toStrictEqual([
+      ['RFQ-1'],
+      ['RFQ-2'],
+    ]);
+    expect(screen.queryByText(/1 Street Road/)).not.toBeInTheDocument();
+  });
+
+  it('keeps the latest recipient request authoritative when responses resolve out of order', async () => {
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
+
+    const firstResponse = deferred<ReportRecipientStep>();
+    const secondResponse = deferred<ReportRecipientStep>();
+    mocks.getReportRecipient.mockImplementation((requestedId: unknown) =>
+      requestedId === 'RFQ-1' ? firstResponse.promise : secondResponse.promise,
+    );
+
+    const view = renderStep({});
+
+    view.rerender(<StepHarness id='RFQ-2' />);
+
+    await waitFor(() => {
+      expect(mocks.getReportRecipient.mock.calls).toStrictEqual([
+        ['RFQ-1'],
+        ['RFQ-2'],
+      ]);
+    });
+
+    await act(async () => {
+      firstResponse.resolve({
+        reportAddressType: ReportAddressTypeValues.Other,
+        rfqOrganisation: {
+          streetAddress,
+          postalAddress,
+          postalAddressSameAsStreetAddress: false,
+        },
+      });
+      await firstResponse.promise;
+    });
+
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.queryByText(/1 Street Road/)).not.toBeInTheDocument();
+
+    await act(async () => {
+      secondResponse.resolve({
+        reportAddressType: ReportAddressTypeValues.Other,
+        rfqOrganisation: {
+          streetAddress: { ...streetAddress, line1: '2 New Street' },
+          postalAddress: { ...postalAddress, line1: 'PO Box 20' },
+          postalAddressSameAsStreetAddress: false,
+        },
+      });
+      await secondResponse.promise;
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+      expect(screen.getByText(/2 New Street/)).toBeInTheDocument();
+    });
   });
 
   it('shows the formatted business address read-only in summary mode', async () => {
