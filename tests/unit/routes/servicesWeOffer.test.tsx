@@ -799,4 +799,81 @@ describe('services we offer', () => {
       expect(screen.getByTestId('form-error-summary')).toBeInTheDocument();
     });
   });
+
+  describe('a service whose type is undefined', () => {
+    it('hydrates, toggles and saves it through every typeless fallback', async () => {
+      expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
+
+      const user = userEvent.setup();
+      // A lookup row with no serviceType drives every `serviceType ?? ''`
+      // fallback on one path: the hydrate keyed-write (and its `isActive ??
+      // false`), the rendered radio/checkbox ids and the checked lookup, the
+      // toggle handler, and the `: {}` arm of the save mapper. A matching
+      // profile row (also typeless) is what makes the hydrate find a dbService.
+      clients.lookup.methods.getServices.mockResolvedValue([
+        {
+          serviceType: ServiceType.TestingCalibration,
+          title: 'Testing and calibration',
+          description: 'Calibration of measuring instruments',
+          icon: 'icon-calibration',
+          meta: 'Most common',
+        },
+        {
+          serviceType: undefined,
+          title: 'Service without a type',
+          description: 'A lookup row the build cannot key',
+          meta: 'Edge',
+        },
+      ]);
+      mocks.accountContext.mockReturnValue(
+        accountWith([
+          {
+            service: ServiceType.TestingCalibration,
+            isActive: true,
+            isDefault: false,
+          },
+          { service: undefined, isActive: undefined, isDefault: false },
+        ]),
+      );
+
+      const { currentPath } = await renderRoute();
+
+      await waitFor(() => {
+        expect(screen.getByText('Service without a type')).toBeInTheDocument();
+      });
+
+      // Toggle the typeless row's checkbox -> setCheckedServicesFn(_, undefined).
+      const [, typelessCheckbox] = screen.getAllByRole('checkbox', {
+        hidden: true,
+      });
+      await user.click(defined(typelessCheckbox));
+
+      // A real default lets the save guard pass so the mapper runs over both
+      // rows, including the typeless one.
+      const [testingRadio] = screen.getAllByRole('radio', { hidden: true });
+      await user.click(defined(testingRadio));
+      await user.click(screen.getByTestId('save-button'));
+
+      await waitFor(() => {
+        expect(mocks.setUserProfile).toHaveBeenCalledWith({
+          email: 'tester@example.gov.au',
+          services: [
+            {
+              service: ServiceType.TestingCalibration,
+              isActive: true,
+              isDefault: true,
+            },
+            // No `service` key: the typeless row took the `: {}` arm.
+            { isActive: true, isDefault: false },
+          ],
+        });
+      });
+
+      await waitFor(() => {
+        expect(currentPath()).toBe('/dashboard');
+      });
+    });
+  });
 });

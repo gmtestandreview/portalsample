@@ -1,9 +1,10 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, globSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ESLint } from 'eslint';
 
 export const LINT_PATTERNS = [
+  'ClientApp/env.js',
   'ClientApp/src/**/*.{ts,tsx}',
   '.storybook/**/*.{ts,tsx,js,jsx,mjs}',
   'tests/**/*.{ts,tsx}',
@@ -20,6 +21,75 @@ export const LINT_PATTERNS = [
 ];
 
 const severityNames = ['off', 'warning', 'error'];
+
+const comparePaths = (left, right) => {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+};
+
+function isWithinDirectory(directory, candidate) {
+  const relative = path.relative(directory, candidate);
+  return (
+    relative === '' ||
+    (relative !== '..' &&
+      !relative.startsWith(`..${path.sep}`) &&
+      !path.isAbsolute(relative))
+  );
+}
+
+function relativeFilePath(projectRoot, filePath) {
+  return path.relative(projectRoot, filePath).replaceAll(path.sep, '/');
+}
+
+function fileExists(filePath) {
+  return existsSync(filePath);
+}
+
+export function collectLintTargets({ projectRoot, patterns = LINT_PATTERNS }) {
+  const resolvedRoot = path.resolve(projectRoot);
+  const matchesByPattern = patterns.map((pattern) => {
+    const files = globSync(pattern, {
+      cwd: resolvedRoot,
+      dot: true,
+      nodir: true,
+    })
+      .map((file) => path.resolve(resolvedRoot, file))
+      .sort(comparePaths);
+
+    const outsideRoot = files.find(
+      (file) => !isWithinDirectory(resolvedRoot, file),
+    );
+    if (outsideRoot) {
+      throw new Error(
+        `Lint pattern ${pattern} matched a file outside the project root: ${outsideRoot}`,
+      );
+    }
+
+    return { pattern, files };
+  });
+  const files = [
+    ...new Set(matchesByPattern.flatMap(({ files: matches }) => matches)),
+  ].sort(comparePaths);
+
+  return { matchesByPattern, files };
+}
+
+export function createLintFileAudit({
+  projectRoot,
+  matchesByPattern,
+  targetFiles,
+}) {
+  const resolvedRoot = path.resolve(projectRoot);
+  const missingPatterns = matchesByPattern
+    .filter(({ files }) => files.length === 0)
+    .map(({ pattern }) => pattern);
+  const transientFiles = targetFiles
+    .filter((file) => !fileExists(file))
+    .map((file) => relativeFilePath(resolvedRoot, file));
+
+  return { missingPatterns, transientFiles };
+}
 
 function compareKeys(left, right) {
   if (left < right) return -1;
@@ -45,6 +115,10 @@ export function createLintReport({
   projectRoot,
   results,
   patterns = LINT_PATTERNS,
+  fileAudit = {
+    missingPatterns: [],
+    transientFiles: [],
+  },
   generatedAt = new Date().toISOString(),
 }) {
   const diagnostics = results.flatMap(({ filePath, messages }) =>
@@ -64,6 +138,7 @@ export function createLintReport({
   );
   const errors = diagnostics.filter(({ severity }) => severity === 'error');
   const warnings = diagnostics.filter(({ severity }) => severity === 'warning');
+  const fatalErrors = diagnostics.filter(({ fatal }) => fatal);
   const fixable = diagnostics.filter(({ fixable }) => fixable);
   const fixableErrors = fixable.filter(({ severity }) => severity === 'error');
   const fixableWarnings = fixable.filter(
@@ -96,6 +171,7 @@ export function createLintReport({
       total: diagnostics.length,
       errors: errors.length,
       warnings: warnings.length,
+      fatalErrors: fatalErrors.length,
       byRuleId,
       withoutRuleId,
       withoutFile,
@@ -106,6 +182,7 @@ export function createLintReport({
       fixableWarningsByFile,
       byFile,
     },
+    fileAudit,
     diagnostics,
   };
 }
@@ -115,8 +192,46 @@ export async function runLintDiagnostics({
   patterns = LINT_PATTERNS,
 } = {}) {
   const eslint = new ESLint({ cwd: projectRoot });
-  const results = await eslint.lintFiles(patterns);
-  return createLintReport({ projectRoot, results, patterns });
+  const { matchesByPattern, files: targetFiles } = collectLintTargets({
+    projectRoot,
+    patterns,
+  });
+  const matchedPatterns = matchesByPattern
+    .filter(({ files }) => files.length > 0)
+    .map(({ pattern }) => pattern);
+  let results = [];
+
+  if (matchedPatterns.length > 0) {
+    try {
+      results = await eslint.lintFiles(matchedPatterns);
+    } catch (error) {
+      const isMissingFilesError =
+        error?.name === 'NoFilesFoundError' ||
+        error?.message?.startsWith('No files matching ');
+      if (!isMissingFilesError) throw error;
+    }
+  }
+
+  return createLintReport({
+    projectRoot,
+    results,
+    patterns,
+    fileAudit: createLintFileAudit({
+      projectRoot,
+      matchesByPattern,
+      targetFiles,
+    }),
+  });
+}
+
+export function resolveOutputPath(projectRoot, outputPath) {
+  const resolvedRoot = path.resolve(projectRoot);
+  const resolvedOutput = path.resolve(resolvedRoot, outputPath);
+  if (!isWithinDirectory(resolvedRoot, resolvedOutput)) {
+    throw new Error('The output path must be inside the project root.');
+  }
+
+  return resolvedOutput;
 }
 
 function parseOutputPath(args) {
@@ -130,31 +245,38 @@ function parseOutputPath(args) {
   return outputPath;
 }
 
-export async function main(args = process.argv.slice(2)) {
+export async function main(
+  args = process.argv.slice(2),
+  { projectRoot = process.cwd(), runDiagnostics = runLintDiagnostics } = {},
+) {
   let outputPath;
   const failOnWarnings = args.includes('--fail-on-warnings');
   try {
     outputPath = parseOutputPath(args);
+    if (outputPath) {
+      outputPath = resolveOutputPath(projectRoot, outputPath);
+    }
   } catch (error) {
     process.stderr.write(`${error.message}\n`);
     return 2;
   }
 
-  const projectRoot = process.cwd();
-  const report = await runLintDiagnostics({ projectRoot });
+  const report = await runDiagnostics({ projectRoot });
   const serialized = `${JSON.stringify(report, null, 2)}\n`;
 
   if (outputPath) {
-    const resolvedOutput = path.resolve(projectRoot, outputPath);
-    // The CLI output path is resolved from the project root before writing.
-    mkdirSync(path.dirname(resolvedOutput), { recursive: true });
-    writeFileSync(resolvedOutput, serialized, 'utf8');
+    mkdirSync(path.dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, serialized, 'utf8');
     process.stdout.write(`ESLint diagnostics written to ${outputPath}\n`);
   } else {
     process.stdout.write(serialized);
   }
 
+  const fileAuditHasIssues = Object.values(report.fileAudit).some(
+    (entries) => entries.length > 0,
+  );
   return report.counts.errors > 0 ||
+    fileAuditHasIssues ||
     (failOnWarnings && report.counts.warnings > 0)
     ? 1
     : 0;

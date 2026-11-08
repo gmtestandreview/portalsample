@@ -323,6 +323,59 @@ describe('application for type approval', () => {
         clients.patternApproval.methods.getStepStatuses,
       ).not.toHaveBeenCalled();
     });
+
+    it('renders with a blank id when the route carries no id param', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
+
+      const ApplicationForTypeApproval = (
+        await import('../../../../ClientApp/src/routes/ta')
+      ).default;
+      // No `:id` segment -> useParams().id is undefined, so every `id ?? ''`
+      // fallback (completion location, getStepStatuses, each WizardStep prop)
+      // takes its empty-string path.
+      renderWithRouter(<ApplicationForTypeApproval />, {
+        path: '/ta',
+        initialPath: '/ta',
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+      });
+
+      expect(
+        clients.patternApproval.methods.getStepStatuses,
+      ).toHaveBeenCalledWith('');
+      expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
+    });
+
+    it('renders nothing until the account context has details', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
+
+      // No account details yet -> the `!account?.details` guard returns null, so
+      // neither the spinner nor the wizard mounts.
+      mocks.accountContext.mockReset().mockReturnValue(null);
+
+      const { container } = await renderRoute();
+
+      // The guard returns null, but the load effect still settles its state
+      // after render; flushing inside act owns those updates.
+      await act(async () => {
+        await new Promise<void>((r) => {
+          setTimeout(r, 0);
+        });
+      });
+
+      expect(container).toBeEmptyDOMElement();
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('wizard-form')).not.toBeInTheDocument();
+    });
   });
 
   describe('uploading attachments', () => {
@@ -511,6 +564,30 @@ describe('application for type approval', () => {
       });
 
       expect(clients.progress.methods.getProgress).not.toHaveBeenCalled();
+    });
+
+    it('resets the upload id to blank when the response carries none', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
+
+      await renderLoadedWizard();
+      // No uploadId on the response -> `result.uploadId ?? ''` stores ''.
+      clients.patternApproval.methods.addDocuments.mockResolvedValue({
+        form: { documents: [] },
+      });
+
+      await act(async () => {
+        await documentsStep.props.onUploadAttachment('token', []);
+      });
+
+      // The blank id is falsy, so a follow-up cancel is a no-op (the guard in
+      // handleCancelFile returns before calling the API).
+      await act(async () => {
+        await documentsStep.props.handleCancelFile('spec.pdf');
+      });
+
+      expect(clients.progress.methods.cancelFile).not.toHaveBeenCalled();
     });
   });
 

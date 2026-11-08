@@ -161,7 +161,8 @@ const resolveFilterParams = (
 });
 
 const classifyLoadError = (error: ProblemDetails) => {
-  const status = (error.status ?? 0) > 0 ? { status: error.status ?? 0 } : {};
+  const statusCode = error.status ?? 0;
+  const status = statusCode > 0 ? { status: statusCode } : {};
   if (error.status !== HttpStatusCode.Forbidden) {
     return { ...status, hasError: true };
   }

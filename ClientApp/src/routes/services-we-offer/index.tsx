@@ -342,7 +342,7 @@ const ServicesWeOffer = () => {
               </legend>
               {services.map((service) => (
                 <Card
-                  key={service.serviceType}
+                  key={service.serviceType ?? ''}
                   className={`mb-4 border border-3 border-light ${
                     orIfEmpty(selectedService, defaultService) ===
                     service.serviceType

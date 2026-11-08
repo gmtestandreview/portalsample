@@ -1140,4 +1140,61 @@ describe('pattern/type approval dashboard', () => {
       expect.objectContaining({ message: 'Unsupported tab: instruments' }),
     );
   });
+
+  it('falls back to default page and totals when the profile page and response fields are absent', async () => {
+    expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
+
+    // Profile without a saved page -> `filterCurrentPage ?? 1` fallbacks on both
+    // the restore (updatedP) and the fetch (initialFilters).
+    mockAccountDetails = {
+      ...BASE_ACCOUNT,
+      userProfile: {
+        ...BASE_ACCOUNT.userProfile,
+        patternApprovalDashboard: {
+          ...BASE_FILTERS,
+          filterCurrentPage: undefined,
+        },
+      },
+    };
+    mockAccountContextState.value = {
+      details: mockAccountDetails,
+      ...mockAccountDispatchState.value,
+    };
+    // A response with no items/currentPage/totalPages/totalCount exercises each
+    // `?? []` / `?? 1` / `?? 0` fallback in the response mapping.
+    mockGetDrafts.mockResolvedValue({});
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
+
+    const pagination = screen.getAllByTestId('pagination')[0];
+    expect(pagination).toHaveAttribute('data-current', '1');
+    expect(pagination).toHaveAttribute('data-total', '0');
+  });
+
+  it('classifies a load failure that carries no status', async () => {
+    expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
+
+    // No `status` on the error -> `(error.status ?? 0) > 0` takes its nullish
+    // fallback in classifyLoadError.
+    mockGetDrafts.mockRejectedValueOnce({ title: 'Mystery failure' });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await expect(
+      screen.findByTestId('error-page'),
+    ).resolves.toBeInTheDocument();
+    expect(mockAppLoggerError).toHaveBeenCalledWith('Failed to load dashboard.', {
+      title: 'Mystery failure',
+    });
+  });
 });

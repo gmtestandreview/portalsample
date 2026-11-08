@@ -23,7 +23,12 @@ const resolveWithinRoot = (filePath: string, root: string): string => {
   const resolvedPath = path.resolve(filePath);
   const relativePath = path.relative(resolvedRoot, resolvedPath);
 
-  if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+  const isOutsideRoot =
+    relativePath === '..' ||
+    relativePath.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relativePath);
+
+  if (isOutsideRoot) {
     throw new Error(`Path is outside the allowed root: ${filePath}`);
   }
 

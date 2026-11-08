@@ -1,5 +1,6 @@
 import {
   existsSync as fsExistsSync,
+  lstatSync as fsLstatSync,
   mkdirSync as fsMkdirSync,
   readdirSync as fsReaddirSync,
   readFileSync as fsReadFileSync,
@@ -14,6 +15,48 @@ const outsideRoot = (relative) =>
   relative.startsWith(`..${path.sep}`) ||
   path.isAbsolute(relative);
 
+const missingPathError = (error) =>
+  error?.code === 'ENOENT' || error?.code === 'ENOTDIR';
+
+const realPathForContainment = (candidate) => {
+  let current = candidate;
+  const suffix = [];
+
+  while (true) {
+    try {
+      const resolved = fsRealpathSync(current);
+      return path.resolve(resolved, ...suffix);
+    } catch (error) {
+      if (!missingPathError(error)) {
+        throw error;
+      }
+
+      let currentStat;
+      try {
+        currentStat = fsLstatSync(current);
+      } catch (lstatError) {
+        if (!missingPathError(lstatError)) {
+          throw lstatError;
+        }
+      }
+      if (currentStat?.isSymbolicLink()) {
+        throw new Error(`Refusing path outside workspace root: ${candidate}`, {
+          cause: error,
+        });
+      }
+
+      const parent = path.dirname(current);
+      if (parent === current) {
+        throw new Error(`Unable to resolve workspace root: ${candidate}`, {
+          cause: error,
+        });
+      }
+      suffix.unshift(path.basename(current));
+      current = parent;
+    }
+  }
+};
+
 /**
  * Resolve a caller-supplied path while keeping file-system operations inside
  * the caller's declared workspace. Callers still need to choose an
@@ -26,6 +69,13 @@ export function safePath(candidate, root = process.cwd()) {
   if (outsideRoot(path.relative(resolvedRoot, resolvedCandidate))) {
     throw new Error(`Refusing path outside workspace root: ${candidate}`);
   }
+
+  const realRoot = fsRealpathSync(resolvedRoot);
+  const realCandidate = realPathForContainment(resolvedCandidate);
+  if (outsideRoot(path.relative(realRoot, realCandidate))) {
+    throw new Error(`Refusing path outside workspace root: ${candidate}`);
+  }
+
   return resolvedCandidate;
 }
 

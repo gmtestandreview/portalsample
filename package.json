@@ -17,6 +17,7 @@
     "lint:remediation:manifest": "node scripts/lint-remediation-gate.mjs --write-manifest",
     "lint:remediation:gate": "node scripts/lint-remediation-gate.mjs --phase phase-1",
     "test:lint:diagnostics": "node --test scripts/lint-diagnostics.test.mjs",
+    "test:lint:baseline": "node --test scripts/lint-baseline-reconciliation.test.mjs",
     "test:lint:remediation": "node --test scripts/lint-remediation-gate.test.mjs",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
