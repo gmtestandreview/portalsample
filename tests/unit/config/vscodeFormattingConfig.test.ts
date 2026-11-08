@@ -45,7 +45,9 @@ const formatOnSaveLanguageIds = [
 
 describe('vS Code formatting configuration', () => {
   it('uses Oxfmt on save for every repository formatter language', () => {
-    expect.assertions(oxfmtLanguageIds.length);
+    // Literal count required by vitest/prefer-expect-assertions; must equal
+    // oxfmtLanguageIds.length (one assertion per language).
+    expect.assertions(13);
 
     for (const languageId of oxfmtLanguageIds) {
       const languageSettings = settings[`[${languageId}]`] as Record<
@@ -60,7 +62,9 @@ describe('vS Code formatting configuration', () => {
   });
 
   it('formats non-ESLint languages on save', () => {
-    expect.assertions(formatOnSaveLanguageIds.length * 2);
+    // Literal count required by vitest/prefer-expect-assertions; must equal
+    // formatOnSaveLanguageIds.length * 2 (two assertions per language).
+    expect.assertions(18);
 
     for (const languageId of formatOnSaveLanguageIds) {
       const languageSettings = settings[`[${languageId}]`] as Record<
@@ -73,13 +77,19 @@ describe('vS Code formatting configuration', () => {
     }
   });
 
-  it('keeps workspace settings portable and enables explicit ESLint fixes', () => {
-    expect.assertions(12);
+  it('keeps workspace settings portable', () => {
+    expect.assertions(4);
 
     expect(settings['python.defaultInterpreterPath']).toBeUndefined();
     expect(settings['codeQL.createQuery.qlPackLocation']).toBeUndefined();
     expect(settings['vitest.workspaceConfig']).toBeUndefined();
     expect(settings['vitest.vitestPackagePath']).toBeUndefined();
+  });
+
+  it('enables explicit ESLint fixes for every ESLint language', () => {
+    // Literal count required by vitest/prefer-expect-assertions; must equal
+    // eslintLanguageIds.length * 2 (two assertions per language).
+    expect.assertions(8);
 
     for (const languageId of eslintLanguageIds) {
       const languageSettings = settings[`[${languageId}]`] as Record<

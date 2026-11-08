@@ -188,9 +188,6 @@
     "msw": true
   },
   "msw": {
-    "workerDirectory": [
-      "ClientApp/public",
-      "storybook-static"
-    ]
+    "workerDirectory": ["ClientApp/public", "storybook-static"]
   }
 }

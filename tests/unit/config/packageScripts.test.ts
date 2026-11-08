@@ -22,9 +22,11 @@ describe('package formatting scripts', () => {
     expect.assertions(3);
 
     expect(scripts['lint:eslint']).toContain('eslint ');
-    expect(scripts['lint']).toBe('npm run lint:eslint && npm run format:check');
+    expect(scripts['lint']).toBe(
+      'npm run lint:eslint && npm run format:check && npm run lint:mdx && npm run lint:rules && npm run type-check && npm run validate:json',
+    );
     expect(scripts['lint:fix']).toBe(
-      'npm run lint:eslint -- --fix && npm run format',
+      'npm run lint:eslint -- --fix && npm run format && npm run lint:rules:fix && npm run lint:mdx',
     );
   });
 
