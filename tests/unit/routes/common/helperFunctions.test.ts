@@ -183,6 +183,87 @@ describe('route common helper functions', () => {
   });
 
   it.each([
+    [StatusEnumDto.Submitted, DashboardItemStatus.QuoteSubmitted],
+    [StatusEnumDto.QuoteInProgress, DashboardItemStatus.QuoteInProgress],
+    [StatusEnumDto.QuoteAvailable, DashboardItemStatus.QuoteAvailable],
+    [StatusEnumDto.QuoteAccepted, DashboardItemStatus.QuoteAccepted],
+    [StatusEnumDto.ReportInProgress, DashboardItemStatus.ReportInProgress],
+    [StatusEnumDto.ReportIssued, DashboardItemStatus.ReportIssued],
+    [StatusEnumDto.QuoteExpired, DashboardItemStatus.QuoteExpired],
+    [StatusEnumDto.QuoteDeclined, DashboardItemStatus.QuoteDeclined],
+    [StatusEnumDto.QuoteClosed, DashboardItemStatus.QuoteClosed],
+    [StatusEnumDto.ArtefactReceived, DashboardItemStatus.ArtifactReceived],
+  ])(
+    'maps API status %s to the matching dashboard item status',
+    (apiStatus, expected) => {
+      expect(toDashboardItemStatus(apiStatus)).toBe(expected);
+    },
+  );
+
+  it('returns a local dashboard item status without consulting the API mapping', () => {
+    expect.hasAssertions();
+
+    // QuoteDrafted is a local-only status (no API equivalent), so the early
+    // local-enum return must fire before the API switch is reached.
+    expect(toDashboardItemStatus(DashboardItemStatus.QuoteDrafted)).toBe(
+      DashboardItemStatus.QuoteDrafted,
+    );
+    // An API status with no dashboard mapping falls through to undefined.
+    expect(
+      toDashboardItemStatus(StatusEnumDto.AwaitingClientInformation),
+    ).toBeUndefined();
+  });
+
+  it.each([
+    [StatusEnumDto.QuoteInProgress, QuoteStatus.QuoteInProgress],
+    [StatusEnumDto.QuoteAvailable, QuoteStatus.QuoteAvailable],
+    [StatusEnumDto.QuoteAccepted, QuoteStatus.QuoteAccepted],
+    [StatusEnumDto.ReportInProgress, QuoteStatus.ReportInProgress],
+    [StatusEnumDto.ReportIssued, QuoteStatus.ReportIssued],
+    [StatusEnumDto.QuoteExpired, QuoteStatus.QuoteExpired],
+    [StatusEnumDto.QuoteDeclined, QuoteStatus.QuoteDeclined],
+    [StatusEnumDto.QuoteClosed, QuoteStatus.QuoteClosed],
+    [StatusEnumDto.ArtefactReceived, QuoteStatus.ArtifactReceived],
+  ])(
+    'maps API status %s to the matching quote status',
+    (apiStatus, expected) => {
+      expect(toQuoteStatus(apiStatus)).toBe(expected);
+    },
+  );
+
+  it('returns a local quote status without consulting the API mapping', () => {
+    expect.hasAssertions();
+
+    // 'Quote - In Progress' is a local QuoteStatus value with no identical API
+    // enum string, so the early local-enum return fires before the API switch.
+    expect(toQuoteStatus(QuoteStatus.QuoteInProgress)).toBe(
+      QuoteStatus.QuoteInProgress,
+    );
+    // An API status with no quote mapping falls through to undefined.
+    expect(
+      toQuoteStatus(StatusEnumDto.AwaitingClientInformation),
+    ).toBeUndefined();
+  });
+
+  it('locks the enum coincidences that keep two API status mappings dormant', () => {
+    expect.hasAssertions();
+
+    // toQuoteStatus's `case StatusEnumDto.Submitted` and the entire API switch
+    // in toPaDashboardItemStatus are intentionally retained as defensive
+    // mappings but are currently unreachable: the NSwag-generated API enums
+    // share string values with the hand-maintained local enums, so the local
+    // enum lookup always resolves first. These assertions fail the moment the
+    // generated client diverges from enums.ts — the exact point at which that
+    // dormant mapping code becomes load-bearing and must be exercised directly.
+    expect(QuoteStatus.QuoteSubmitted).toBe(StatusEnumDto.Submitted);
+
+    const localPaStatusValues = Object.values(PaDashboardItemStatus);
+    for (const apiStatusValue of Object.values(PatternApprovalStatusEnumDto)) {
+      expect(localPaStatusValues).toContain(apiStatusValue);
+    }
+  });
+
+  it.each([
     [
       QuoteStatus.QuoteAccepted,
       'getQuoteRequestAcceptedPDFByID',
@@ -464,6 +545,12 @@ describe('route common helper functions', () => {
       'Trading',
     );
     expect(formatTradingBranchFromStrings(undefined, 'Branch')).toBe('Branch');
+
+    // formatOrganisationTitle applies the same `?? ''` normalisation: undefined
+    // trading and branch names collapse to empty, and with no org name either
+    // the whole title is empty.
+    expect(formatOrganisationTitle(undefined, undefined, undefined)).toBe('');
+    expect(formatOrganisationTitle('NMI', undefined, undefined)).toBe('NMI');
   });
 
   it('creates file URLs, delegates secure open helpers, and triggers downloads', () => {
@@ -618,6 +705,34 @@ describe('route common helper functions', () => {
     expect(ReactGA.send).not.toHaveBeenCalledWith(
       expect.objectContaining({ hitType: 'pageview' }),
     );
+  });
+
+  it('defaults the redaction key to empty when a PII field has no dataset value', () => {
+    expect.hasAssertions();
+
+    resetHelperFunctionsState();
+
+    // `DOMStringMap` indexing is typed `string | undefined`, so the source
+    // guards the key with `?? ''`. A real `[data-pii]` element always yields a
+    // string, so drive the guard with a field whose dataset omits the key.
+    const fieldWithoutDatasetValue = { dataset: {} } as unknown as HTMLElement;
+    const querySpy = vi
+      .spyOn(document, 'querySelectorAll')
+      .mockReturnValue([
+        fieldWithoutDatasetValue,
+      ] as unknown as NodeListOf<HTMLElement>);
+
+    try {
+      contentLoaded(false);
+    } finally {
+      querySpy.mockRestore();
+    }
+
+    expect(ReactGA.send).toHaveBeenCalledWith({
+      hitType: 'event',
+      category: 'form_viewed_sanitized',
+      data: { '': '[REDACTED]' },
+    });
   });
 
   it('sorts lists and moves the matching final item to the end', () => {

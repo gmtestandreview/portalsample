@@ -258,6 +258,10 @@ vi.mock(import('formik') as unknown as string, () => {
       setFieldValue: mocks.setFieldValue,
       setFieldTouched: mocks.setFieldTouched,
       getFieldMeta: (name: string) => ({
+        // Real Formik returns both the current `value` and `initialValue`; the
+        // mock's `values` and `initialValues` are the same object here, so both
+        // resolve through `getPath`.
+        value: getPath(name),
         initialValue: getPath(name),
       }),
     }),

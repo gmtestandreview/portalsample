@@ -275,6 +275,7 @@ describe('certificateNumberLookup debounce', () => {
         fireEvent.keyDown(input, { key: 'ArrowDown' });
         await Promise.resolve();
       });
+
       expect(screen.getByRole('option')).toHaveAttribute(
         'aria-selected',
         'true',

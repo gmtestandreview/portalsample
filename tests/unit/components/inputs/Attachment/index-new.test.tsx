@@ -579,6 +579,25 @@ describe('attachment upload behavior', () => {
     expect(screen.getByText('Cancelling...')).toBeInTheDocument();
   });
 
+  it('renders an in-progress upload whose progress fields are all absent', () => {
+    expect.hasAssertions();
+
+    // An in-progress UploadProgress with no status, percent or files still
+    // satisfies the render guard (undefined status is neither 'Completed' nor
+    // 'CompletedWithErrors'), exercising the `?? 0`/`?? ''`/`?? []` fallbacks.
+    renderAttachment([], {
+      progress: {
+        completedFiles: 0,
+        totalFiles: 0,
+      },
+    });
+
+    expect(screen.getByRole('progressbar')).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
+  });
+
   it('shows uploaded attachments once progress is complete', () => {
     expect.hasAssertions();
 

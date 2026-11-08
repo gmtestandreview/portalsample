@@ -742,6 +742,7 @@ describe('dashboard', () => {
       const paginationEls = screen.getAllByTestId('pagination');
 
       expect(paginationEls).toHaveLength(3);
+
       for (const pagination of paginationEls) {
         expect(pagination).toHaveAttribute('data-total', '3');
       }
@@ -1300,7 +1301,9 @@ describe('dashboard', () => {
       expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
     });
     const initialDraftCallCount = mockGetDrafts.mock.calls.length;
+
     expect(defined(mockGetDrafts.mock.calls.at(-1))[4]).toBe('initial');
+
     mockMapToUserProfile.mockClear();
 
     mockAccountDetails = {
@@ -1325,6 +1328,7 @@ describe('dashboard', () => {
     });
 
     expect(mockGetDrafts).toHaveBeenCalledTimes(initialDraftCallCount);
+
     for (const call of mockGetDrafts.mock.calls) {
       expect(call[4]).toBe('initial');
     }

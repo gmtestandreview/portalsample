@@ -480,6 +480,25 @@ describe('rhfAttachment', () => {
     ).toBeInTheDocument();
   });
 
+  it('renders an in-progress upload whose progress fields are all absent', () => {
+    expect.hasAssertions();
+
+    // An in-progress UploadProgress with no status, percent or files still
+    // satisfies the render guard (undefined status is neither 'Completed' nor
+    // 'CompletedWithErrors'), exercising the `?? 0`/`?? ''`/`?? []` fallbacks.
+    renderAttachment(null, {
+      progress: {
+        completedFiles: 0,
+        totalFiles: 0,
+      },
+    });
+
+    expect(screen.getByRole('progressbar')).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
+  });
+
   it('points the control at its validation message once the form is submitted', async () => {
     // Until the form is submitted the control is described by its help text; afterwards the
     // error takes over, so assistive tech announces the problem rather than the hint.

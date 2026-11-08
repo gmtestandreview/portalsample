@@ -704,8 +704,8 @@ Example: "51824753556"
 ### RULE-026: AUD Currency Formatting
 
 **Category:** Calculation **Priority:** P1 **Source:**
-`ClientApp/src/utils/index.ts:301-310` **Plain English:** All monetary amounts
-are displayed in Australian dollars with locale-correct symbol, thousands
+`ClientApp/src/utils/index.ts:328` **Plain English:** All monetary amounts are
+displayed in Australian dollars with locale-correct symbol, thousands
 separators, and two decimal places. **Specification:**
 
 ```text
@@ -844,9 +844,9 @@ Max length: 100 chars (common.ts:131)
 ### RULE-034: Name Field Charset (No Accented Characters)
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:833-876`
-**Plain English:** Person name fields (first name, last name, title) only accept
-ASCII letters, hyphen, space, and apostrophe — accented characters are rejected.
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:94` **Plain
+English:** Person name fields (first name, last name, title) only accept ASCII
+letters, hyphen, space, and apostrophe — accented characters are rejected.
 **Specification:**
 
 ```text

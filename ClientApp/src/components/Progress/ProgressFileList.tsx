@@ -54,7 +54,7 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                   {f.fileName}
                 </span>
                 <span className='attachment-size mt-1 fs-8 fw-normal text-left'>
-                  {hasProgress ? formatBytes(f.totalBytes ?? 0) : ''}
+                  {hasProgress ? formatBytes(totalBytes) : ''}
                 </span>
               </div>
               <div className='d-flex align-items-top ms-3'>
@@ -104,9 +104,9 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
               >
                 <div className='d-flex justify-content-between ms-1 mb-1'>
                   <span className='fs-8 text-muted'>
-                    {formatBytes(f.bytesUploaded ?? 0)}
+                    {formatBytes(bytesUploaded)}
                     {' / '}
-                    {formatBytes(f.totalBytes ?? 0)}
+                    {formatBytes(totalBytes)}
                   </span>
                   <span className='fs-8 text-muted'>{` ${progressPercent}%`}</span>
                 </div>

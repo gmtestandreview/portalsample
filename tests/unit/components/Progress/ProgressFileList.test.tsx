@@ -138,4 +138,23 @@ describe('progress file list', () => {
     expect(within(item).queryByRole('progressbar')).not.toBeInTheDocument();
     expect(within(item).queryByRole('button')).not.toBeInTheDocument();
   });
+
+  it('labels the progress row generically and falls back to the index key when a file has no name', () => {
+    expect.hasAssertions();
+
+    // A FileProgress with no fileName still has byte totals, so hasProgress is
+    // true: the progressbar renders with the generic 'Uploading file' label and
+    // the list item keys on its array index instead of the missing name.
+    renderList([
+      {
+        status: FileStatus.Uploading,
+        bytesUploaded: 100,
+        totalBytes: 200,
+      },
+    ]);
+
+    expect(
+      screen.getByRole('progressbar', { name: 'Uploading file' }),
+    ).toBeInTheDocument();
+  });
 });

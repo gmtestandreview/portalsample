@@ -95,6 +95,10 @@ const verifiedInStorybook = [
 /** Categories the reviewed policy allows to leave the denominator. */
 const allowedExclusionCategories = [
   /\.d\.ts$/,
+  // Untracked `.remember` plugin scratch files (e.g. tmp/last-ndc.ts) land under
+  // ClientApp/src and match the include glob, but are tooling state, not source,
+  // and can never be covered. Mirrored in sonar.coverage.exclusions.
+  /\.remember\/\*\*$/,
   /types\.ts$/,
   /Props\.ts$/,
   /\/api\/web-api-client\.ts$/,

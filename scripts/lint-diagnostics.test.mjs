@@ -221,6 +221,67 @@ test('preserves fatal parser diagnostics as errors', () => {
   });
 });
 
+test('orders diagnostics deterministically by file and source location', () => {
+  const report = createLintReport({
+    projectRoot: 'fixture-root',
+    generatedAt: '2026-01-01T00:00:00.000Z',
+    results: [
+      {
+        filePath: 'fixture-b.ts',
+        messages: [{ line: 2, column: 1, severity: 2, message: 'second' }],
+      },
+      {
+        filePath: 'fixture-a.ts',
+        messages: [
+          { line: 3, column: 1, severity: 2, message: 'third' },
+          { line: 1, column: 1, severity: 2, message: 'first' },
+        ],
+      },
+    ],
+  });
+
+  assert.deepEqual(
+    report.diagnostics.map(({ file, line, message }) => [file, line, message]),
+    [
+      ['fixture-a.ts', 1, 'first'],
+      ['fixture-a.ts', 3, 'third'],
+      ['fixture-b.ts', 2, 'second'],
+    ],
+  );
+});
+
+test('serializes reports identically regardless of diagnostic input ordering', () => {
+  const reportOptions = {
+    projectRoot: 'fixture-root',
+    generatedAt: '2026-01-01T00:00:00.000Z',
+  };
+  const nullRuleDiagnostic = {
+    line: 1,
+    column: 1,
+    severity: 2,
+    ruleId: null,
+    message: 'same diagnostic',
+  };
+  const omittedRuleDiagnostic = {
+    line: 1,
+    column: 1,
+    severity: 2,
+    message: 'same diagnostic',
+  };
+  const serialize = (messages) =>
+    JSON.stringify(
+      createLintReport({
+        ...reportOptions,
+        results: [{ filePath: 'fixture.ts', messages }],
+      }),
+    );
+
+  assert.equal(
+    serialize([nullRuleDiagnostic, omittedRuleDiagnostic]),
+    serialize([omittedRuleDiagnostic, nullRuleDiagnostic]),
+  );
+});
+
 test('keeps output paths inside the repository root', () => {
   const projectRoot = mkdtempSync(path.join(os.tmpdir(), 'lint-output-'));
 

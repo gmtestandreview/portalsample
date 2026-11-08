@@ -42,6 +42,34 @@ describe('safe test filesystem helpers', () => {
     }
   });
 
+  it('resolves relative paths against the declared root consistently', async () => {
+    expect.hasAssertions();
+
+    const root = await mkdtemp(path.join(os.tmpdir(), 'safe-test-filesystem-'));
+    const nestedDirectory = path.join(root, 'nested');
+    const nestedFile = path.join(nestedDirectory, 'fixture.txt');
+
+    try {
+      await makeDirectory(nestedDirectory, root);
+      await writeTextFile(nestedFile, 'fixture', root);
+
+      await expect(readTextFile('nested/fixture.txt', root)).resolves.toBe(
+        'fixture',
+      );
+      expect(readTextFileSync('nested/fixture.txt', root)).toBe('fixture');
+      await expect(readDirectory('nested', root)).resolves.toHaveLength(1);
+      expect(readDirectorySync('nested', root)).toHaveLength(1);
+
+      await writeTextFile('nested/async-output.txt', 'async', root);
+      writeTextFileSync('nested/sync-output.txt', 'sync', root);
+
+      expect(pathExists('nested/async-output.txt', root)).toBe(true);
+      expect(statPath('nested/sync-output.txt', root).isFile()).toBe(true);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
   it('permits allowed nested paths, including names beginning with two dots', async () => {
     expect.hasAssertions();
 

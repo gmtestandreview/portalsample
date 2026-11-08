@@ -834,7 +834,9 @@ describe('services we offer', () => {
             isActive: true,
             isDefault: false,
           },
-          { service: undefined, isActive: undefined, isDefault: false },
+          // Omit `service`/`isActive` (exactOptionalPropertyTypes forbids an
+          // explicit `undefined`); the absent keys drive the same typeless arm.
+          { isDefault: false },
         ]),
       );
 

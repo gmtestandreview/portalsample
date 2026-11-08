@@ -20,7 +20,7 @@ type DirectoryEntries = Dirent[];
 // root before the fs call runs. Triage verdict: accepted hotspots, mitigated.
 const resolveWithinRoot = (filePath: string, root: string): string => {
   const resolvedRoot = path.resolve(root);
-  const resolvedPath = path.resolve(filePath);
+  const resolvedPath = path.resolve(resolvedRoot, filePath);
   const relativePath = path.relative(resolvedRoot, resolvedPath);
 
   const isOutsideRoot =

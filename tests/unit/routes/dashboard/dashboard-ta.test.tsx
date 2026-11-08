@@ -1173,14 +1173,14 @@ describe('pattern/type approval dashboard', () => {
 
     // Profile without a saved page -> `filterCurrentPage ?? 1` fallbacks on both
     // the restore (updatedP) and the fetch (initialFilters).
+    // Omit `filterCurrentPage` entirely (exactOptionalPropertyTypes forbids an
+    // explicit `undefined`); an absent key drives the same `?? 1` fallback.
+    const { filterCurrentPage: _omitPage, ...filtersWithoutPage } = BASE_FILTERS;
     mockAccountDetails = {
       ...BASE_ACCOUNT,
       userProfile: {
         ...BASE_ACCOUNT.userProfile,
-        patternApprovalDashboard: {
-          ...BASE_FILTERS,
-          filterCurrentPage: undefined,
-        },
+        patternApprovalDashboard: filtersWithoutPage,
       },
     };
     mockAccountContextState.value = {
@@ -1199,6 +1199,7 @@ describe('pattern/type approval dashboard', () => {
     });
 
     const pagination = screen.getAllByTestId('pagination')[0];
+
     expect(pagination).toHaveAttribute('data-current', '1');
     expect(pagination).toHaveAttribute('data-total', '0');
   });

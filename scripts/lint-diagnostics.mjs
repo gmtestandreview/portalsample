@@ -111,6 +111,37 @@ function countBy(values) {
   );
 }
 
+function compareDiagnosticValues(left, right) {
+  if (left === right) return 0;
+  if (left === undefined) return -1;
+  if (right === undefined) return 1;
+  if (left === null) return -1;
+  if (right === null) return 1;
+  if (left < right) return -1;
+  if (left > right) return 1;
+
+  return compareKeys(
+    String(JSON.stringify(left)),
+    String(JSON.stringify(right)),
+  );
+}
+
+function compareDiagnostics(left, right) {
+  return (
+    compareDiagnosticValues(left.file, right.file) ||
+    compareDiagnosticValues(left.line, right.line) ||
+    compareDiagnosticValues(left.column, right.column) ||
+    compareDiagnosticValues(left.endLine, right.endLine) ||
+    compareDiagnosticValues(left.endColumn, right.endColumn) ||
+    compareDiagnosticValues(left.ruleId, right.ruleId) ||
+    compareDiagnosticValues(left.message, right.message) ||
+    compareDiagnosticValues(left.nodeType, right.nodeType) ||
+    compareDiagnosticValues(left.severity, right.severity) ||
+    compareDiagnosticValues(left.fatal, right.fatal) ||
+    compareDiagnosticValues(left.fixable, right.fixable)
+  );
+}
+
 export function createLintReport({
   projectRoot,
   results,
@@ -121,21 +152,23 @@ export function createLintReport({
   },
   generatedAt = new Date().toISOString(),
 }) {
-  const diagnostics = results.flatMap(({ filePath, messages }) =>
-    messages.map((message) => ({
-      file: filePath,
-      line: message.line,
-      column: message.column,
-      endLine: message.endLine,
-      endColumn: message.endColumn,
-      severity: severityNames[message.severity] ?? 'unknown',
-      ruleId: message.ruleId,
-      message: message.message,
-      nodeType: message.nodeType,
-      fatal: message.fatal === true,
-      fixable: Boolean(message.fix),
-    })),
-  );
+  const diagnostics = results
+    .flatMap(({ filePath, messages }) =>
+      messages.map((message) => ({
+        file: filePath,
+        line: message.line,
+        column: message.column,
+        endLine: message.endLine,
+        endColumn: message.endColumn,
+        severity: severityNames[message.severity] ?? 'unknown',
+        ruleId: message.ruleId,
+        message: message.message,
+        nodeType: message.nodeType,
+        fatal: message.fatal === true,
+        fixable: Boolean(message.fix),
+      })),
+    )
+    .sort(compareDiagnostics);
   const errors = diagnostics.filter(({ severity }) => severity === 'error');
   const warnings = diagnostics.filter(({ severity }) => severity === 'warning');
   const fatalErrors = diagnostics.filter(({ fatal }) => fatal);
