@@ -120,13 +120,10 @@ describe('object and array helpers', () => {
 
     expect(utils.propertyOf<Example>('child')).toBe('child');
 
-    const prefixedChild: `${string}.child` = utils.prefixedPropertyOf<Example>(
-      'parent',
-    )('child');
+    const prefixedChild: `${string}.child` =
+      utils.prefixedPropertyOf<Example>('parent')('child');
 
-    expect(prefixedChild).toBe(
-      'parent.child',
-    );
+    expect(prefixedChild).toBe('parent.child');
   });
 
   it('converts null and undefined properties to empty strings recursively', () => {

@@ -112,11 +112,7 @@ export function writeTextFile(
   options,
   root = process.cwd(),
 ) {
-  return fsWriteFileSync(
-    safeOperationPath(candidate, root),
-    contents,
-    options,
-  );
+  return fsWriteFileSync(safeOperationPath(candidate, root), contents, options);
 }
 
 export function makeDirectory(candidate, root = process.cwd()) {

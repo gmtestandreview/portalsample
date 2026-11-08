@@ -435,7 +435,9 @@ describe('payment details', () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
-      expect(screen.getByText(/30 days of NMI invoice date/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/30 days of NMI invoice date/),
+      ).toBeInTheDocument();
     });
   });
 

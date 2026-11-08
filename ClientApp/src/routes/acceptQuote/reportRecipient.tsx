@@ -44,31 +44,29 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
   const homeAccountId = account?.details?.homeAccountId;
   const requestGeneration = useRef(0);
 
-  const getAcceptQuotePreInfo = useCallback(
-    async (): Promise<ReportRecipientLoadResult> => {
-    try {
-      AppLogger.verbose('ReportRecipient.getAcceptQuotePreInfo', {
-        homeAccountId,
-      });
-      const acceptQuoteClient = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      acceptQuoteClient.setAuthToken(tokenResult.accessToken);
+  const getAcceptQuotePreInfo =
+    useCallback(async (): Promise<ReportRecipientLoadResult> => {
+      try {
+        AppLogger.verbose('ReportRecipient.getAcceptQuotePreInfo', {
+          homeAccountId,
+        });
+        const acceptQuoteClient = new AcceptQuoteClient();
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0]),
+        );
+        acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
-      if (id === undefined) return { kind: 'inactive' };
+        if (id === undefined) return { kind: 'inactive' };
 
-      const reportRecipient = await acceptQuoteClient.getReportRecipient(id);
-      return { kind: 'loaded', step: reportRecipient };
-    } catch (error) {
-      AppLogger.error('Failed to load AcceptQuotePreInfo', error as Error, {
-        Id: id,
-      });
-      return { kind: 'inactive' };
-    }
-    },
-    [accounts, homeAccountId, id, instance],
-  );
+        const reportRecipient = await acceptQuoteClient.getReportRecipient(id);
+        return { kind: 'loaded', step: reportRecipient };
+      } catch (error) {
+        AppLogger.error('Failed to load AcceptQuotePreInfo', error as Error, {
+          Id: id,
+        });
+        return { kind: 'inactive' };
+      }
+    }, [accounts, homeAccountId, id, instance]);
 
   useEffect(() => {
     const currentGeneration = ++requestGeneration.current;
@@ -77,10 +75,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
     const loadDataForDisplay = async () => {
       setIsLoading(true);
       const result = await getAcceptQuotePreInfo();
-      if (
-        !isActive ||
-        requestGeneration.current !== currentGeneration
-      ) {
+      if (!isActive || requestGeneration.current !== currentGeneration) {
         return;
       }
       if (result.kind === 'loaded') {

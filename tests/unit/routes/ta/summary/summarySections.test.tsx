@@ -86,9 +86,7 @@ describe(ContactSummary, () => {
   it('shows a dash for an Other title with no text', () => {
     expect.hasAssertions();
 
-    render(
-      <ContactSummary name='contact' contact={{ title: Title.Other }} />,
-    );
+    render(<ContactSummary name='contact' contact={{ title: Title.Other }} />);
 
     expect(screen.getByText('Title, if "Other"')).toBeInTheDocument();
   });
@@ -98,7 +96,9 @@ describe(ContactSummary, () => {
     (unknownTitle) => {
       expect.hasAssertions();
 
-      render(<ContactSummary name='contact' contact={{ title: unknownTitle }} />);
+      render(
+        <ContactSummary name='contact' contact={{ title: unknownTitle }} />,
+      );
 
       expect(screen.queryByText('Title (optional)')).not.toBeInTheDocument();
     },
@@ -198,7 +198,9 @@ describe(ApplicationSummary, () => {
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
-        othSubOptions: [toPatternApprovalRequiredValueOptions('Unknown')].filter(
+        othSubOptions: [
+          toPatternApprovalRequiredValueOptions('Unknown'),
+        ].filter(
           (option): option is PatternApprovalRequiredValueOptions =>
             option !== undefined,
         ),

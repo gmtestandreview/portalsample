@@ -368,7 +368,9 @@ describe('wizardRoutedStep — error navigation', () => {
       expect(screen.getByTestId('form')).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Change load callback' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Change load callback' }),
+    );
 
     await waitFor(() => {
       expect(loadStepValues).toHaveBeenCalledTimes(1);

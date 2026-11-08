@@ -91,22 +91,28 @@ describe('safe test filesystem helpers', () => {
     const linkedDirectory = path.join(root, 'linked');
 
     try {
-      await writeTextFile(path.join(outsideRoot, 'fixture.txt'), 'outside', outsideRoot);
+      await writeTextFile(
+        path.join(outsideRoot, 'fixture.txt'),
+        'outside',
+        outsideRoot,
+      );
       await symlink(outsideRoot, linkedDirectory, 'junction');
 
       const operations: (() => Promise<unknown>)[] = [
         () => readTextFile('linked/fixture.txt', root),
         () => Promise.resolve(readTextFileSync('linked/fixture.txt', root)),
         () => writeTextFile('linked/async-output.txt', 'unsafe', root),
-        () => Promise.resolve().then(() => {
-          writeTextFileSync('linked/sync-output.txt', 'unsafe', root);
-        }),
+        () =>
+          Promise.resolve().then(() => {
+            writeTextFileSync('linked/sync-output.txt', 'unsafe', root);
+          }),
         () => readDirectory('linked', root),
         () => Promise.resolve(readDirectorySync('linked', root)),
         () => makeDirectory('linked/async-created/nested', root),
-        () => Promise.resolve().then(() => {
-          makeDirectorySync('linked/sync-created/nested', root);
-        }),
+        () =>
+          Promise.resolve().then(() => {
+            makeDirectorySync('linked/sync-created/nested', root);
+          }),
         () => Promise.resolve(pathExists('linked/fixture.txt', root)),
         () => Promise.resolve(statPath('linked/fixture.txt', root)),
       ];

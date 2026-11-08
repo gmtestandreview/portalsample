@@ -172,10 +172,7 @@ it('uses the output root as the declared filesystem boundary', () => {
     assert.equal(readTextFile('nested/result.txt', outputRoot), 'output');
     assert.equal(realPath('nested/result.txt', outputRoot), outputFile);
 
-    const rejectedPaths = [
-      '../parent.txt',
-      path.join(root, 'sibling.txt'),
-    ];
+    const rejectedPaths = ['../parent.txt', path.join(root, 'sibling.txt')];
     for (const rejectedPath of rejectedPaths) {
       const rejectedOperations = [
         () => readTextFile(rejectedPath, outputRoot),

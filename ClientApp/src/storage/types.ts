@@ -20,11 +20,7 @@ export interface StorageCache {
     key: string,
     deserialize?: (value: unknown) => T,
   ) => T | undefined;
-  setItem: <T>(
-    item: T,
-    key: string,
-    serialize?: (value: T) => string,
-  ) => void;
+  setItem: <T>(item: T, key: string, serialize?: (value: T) => string) => void;
   removeItem: (key: string) => void;
   clear: () => void;
 }

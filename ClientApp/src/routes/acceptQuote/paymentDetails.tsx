@@ -37,27 +37,27 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   >();
   const requestGeneration = useRef(0);
 
-  const getAcceptQuotePreInfo = useCallback(
-    async (): Promise<PaymentDetailsLoadResult> => {
-    try {
-      AppLogger.verbose('PaymentDetails.getAcceptQuotePreInfo', { Id: id });
-      const acceptQuoteClient = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      acceptQuoteClient.setAuthToken(tokenResult.accessToken);
+  const getAcceptQuotePreInfo =
+    useCallback(async (): Promise<PaymentDetailsLoadResult> => {
+      try {
+        AppLogger.verbose('PaymentDetails.getAcceptQuotePreInfo', { Id: id });
+        const acceptQuoteClient = new AcceptQuoteClient();
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0]),
+        );
+        acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
-      if (id === undefined) return { kind: 'inactive' };
+        if (id === undefined) return { kind: 'inactive' };
 
-      const paymentDetails = await acceptQuoteClient.getPaymentDetails(id);
-      return { kind: 'loaded', preInfo: paymentDetails.acceptQuotePreInfo };
-    } catch (e) {
-      AppLogger.error('Failed to load Payment details', e as Error, { Id: id });
-      return { kind: 'inactive' };
-    }
-    },
-    [accounts, id, instance],
-  );
+        const paymentDetails = await acceptQuoteClient.getPaymentDetails(id);
+        return { kind: 'loaded', preInfo: paymentDetails.acceptQuotePreInfo };
+      } catch (e) {
+        AppLogger.error('Failed to load Payment details', e as Error, {
+          Id: id,
+        });
+        return { kind: 'inactive' };
+      }
+    }, [accounts, id, instance]);
 
   useEffect(() => {
     const currentGeneration = ++requestGeneration.current;
@@ -66,10 +66,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
     const loadDataForDisplay = async () => {
       setIsLoading(true);
       const result = await getAcceptQuotePreInfo();
-      if (
-        !isActive ||
-        requestGeneration.current !== currentGeneration
-      ) {
+      if (!isActive || requestGeneration.current !== currentGeneration) {
         return;
       }
       if (result.kind === 'loaded') {

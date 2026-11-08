@@ -144,7 +144,9 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   }, [path]);
 
   useEffect(() => {
-    setIsModalOpen(showBranchSelector || showRFQDelete || showTermsAndConditions);
+    setIsModalOpen(
+      showBranchSelector || showRFQDelete || showTermsAndConditions,
+    );
   }, [showBranchSelector, showRFQDelete, showTermsAndConditions, isModalOpen]);
 
   const renderWithLayout = () => (

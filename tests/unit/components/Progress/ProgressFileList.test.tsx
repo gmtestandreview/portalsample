@@ -125,12 +125,15 @@ describe('progress file list', () => {
 
     const user = userEvent.setup();
     const onCancelFile = vi.fn<(fileName: string) => void>();
-    renderList([
-      {
-        fileName: 'queued.pdf',
-        status: FileStatus.Uploading,
-      },
-    ], onCancelFile);
+    renderList(
+      [
+        {
+          fileName: 'queued.pdf',
+          status: FileStatus.Uploading,
+        },
+      ],
+      onCancelFile,
+    );
 
     const item = defined(
       screen.getByText('queued.pdf').closest('li'),

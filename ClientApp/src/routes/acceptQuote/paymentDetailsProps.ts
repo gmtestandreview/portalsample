@@ -106,10 +106,7 @@ const getRedirectionLocationOnError =
       return `/accept-quote/${id}/view-summary`;
     }
 
-    if (
-      errorCode === notFoundStatus &&
-      errorType === ErrorType.Update
-    ) {
+    if (errorCode === notFoundStatus && errorType === ErrorType.Update) {
       setDashboardNotification({
         message:
           'Another person has deleted this request. Your changes have not been saved.',

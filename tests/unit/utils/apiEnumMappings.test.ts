@@ -34,17 +34,25 @@ describe('generated API enum mappings', () => {
     ],
     ['state', toState, 'NSW', State.NSW],
     ['title', toTitle, 'Dr', Title.Dr],
-    ['service type', toServiceType, 'PatternApproval', ServiceType.PatternApproval],
+    [
+      'service type',
+      toServiceType,
+      'PatternApproval',
+      ServiceType.PatternApproval,
+    ],
     [
       'pattern approval option',
       toPatternApprovalRequiredValueOptions,
       'AmendmenttoanExistingCoA',
       PatternApprovalRequiredValueOptions.AmendmenttoanExistingCoA,
     ],
-  ])('maps a known %s to its generated enum member', (_name, mapValue, value, expected) => {
-    expect.hasAssertions();
-    expect(mapValue(value)).toBe(expected);
-  });
+  ])(
+    'maps a known %s to its generated enum member',
+    (_name, mapValue, value, expected) => {
+      expect.hasAssertions();
+      expect(mapValue(value)).toBe(expected);
+    },
+  );
 
   it('maps a known HTTP status code to its generated enum member', () => {
     expect.hasAssertions();

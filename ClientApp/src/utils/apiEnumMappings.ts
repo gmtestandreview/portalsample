@@ -25,9 +25,8 @@ export const toApplicationType = (
   value: unknown,
 ): ApplicationType | undefined => toStringEnumValue(ApplicationType, value);
 
-export const toCRMLookupTypes = (
-  value: unknown,
-): CRMLookupTypes | undefined => toStringEnumValue(CRMLookupTypes, value);
+export const toCRMLookupTypes = (value: unknown): CRMLookupTypes | undefined =>
+  toStringEnumValue(CRMLookupTypes, value);
 
 export const toState = (value: unknown): State | undefined =>
   toStringEnumValue(State, value);
@@ -35,9 +34,8 @@ export const toState = (value: unknown): State | undefined =>
 export const toTitle = (value: unknown): Title | undefined =>
   toStringEnumValue(Title, value);
 
-export const toServiceType = (
-  value: unknown,
-): ServiceType | undefined => toStringEnumValue(ServiceType, value);
+export const toServiceType = (value: unknown): ServiceType | undefined =>
+  toStringEnumValue(ServiceType, value);
 
 export const toPatternApprovalRequiredValueOptions = (
   value: unknown,

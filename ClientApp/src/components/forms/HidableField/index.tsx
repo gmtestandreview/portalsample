@@ -14,13 +14,11 @@ const HidableField = <T extends FormikValues = FormikValues>(
   const formikContext = useFormikContext<T>();
   const { values } = formikContext;
   const hidden =
-    (formikContext.status as HidableFormikStatus<T> | undefined)
-      ?.hidden ?? {};
+    (formikContext.status as HidableFormikStatus<T> | undefined)?.hidden ?? {};
   const { name, children } = props;
 
   const isVisible = !isHidden(name, hidden, values);
-  const content =
-    typeof children === 'function' ? children(values) : children;
+  const content = typeof children === 'function' ? children(values) : children;
 
   return isVisible ? <>{content}</> : null;
 };

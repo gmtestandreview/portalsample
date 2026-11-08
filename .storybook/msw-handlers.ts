@@ -229,7 +229,8 @@ export const mswHandlers = [
       new URL(request.url).searchParams.get('LookupType'),
     );
     const fixture =
-      lookupType === undefined || !Object.hasOwn(lookupResponsesByType, lookupType)
+      lookupType === undefined ||
+      !Object.hasOwn(lookupResponsesByType, lookupType)
         ? undefined
         : lookupResponsesByType[lookupType];
 

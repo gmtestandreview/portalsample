@@ -81,8 +81,7 @@ const RhfSupportingDocuments = (
 
   // Filter out upload errors that are handled by form validation
   const filteredUploadErrors = uploadErrors.filter(
-    (err) =>
-      err !== requiredDocMessage && err !== requiredTagMessage,
+    (err) => err !== requiredDocMessage && err !== requiredTagMessage,
   );
 
   const fieldError: unknown = getIn(formErrors, name);
@@ -256,10 +255,7 @@ const RhfSupportingDocuments = (
               <ul className='mb-0'>
                 {errors.map((err, idx) => {
                   // Only show the 'documents' error if submitCount is 0
-                  if (
-                    err === requiredTagMessage &&
-                    submitCount === 0
-                  ) {
+                  if (err === requiredTagMessage && submitCount === 0) {
                     return null;
                   }
                   return <li key={`err${idx.toString()}`}>{err}</li>;
