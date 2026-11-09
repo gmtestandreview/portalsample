@@ -22,11 +22,15 @@ const draft2020Validator = addFormats(
 );
 
 const isJsonSchemaObject = (
-  schema: AnySchema,
+  schema: unknown,
 ): schema is Record<string, unknown> => {
-  const value: unknown = schema;
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return (
+    typeof schema === 'object' && schema !== null && !Array.isArray(schema)
+  );
 };
+
+const isJsonSchema = (schema: unknown): schema is AnySchema =>
+  typeof schema === 'boolean' || isJsonSchemaObject(schema);
 
 const validatorForSchema = (schema: AnySchema) => {
   if (
@@ -52,10 +56,17 @@ const formatError = (error: ErrorObject) => {
 
 export const expectValueToMatchSchema = (
   value: unknown,
-  schema: AnySchema,
+  schema: unknown,
   options: ContractValidationOptions = {},
 ): void => {
-  const validate = validatorForSchema(schema).compile(schema);
+  const schemaValue: unknown = schema;
+  if (!isJsonSchema(schemaValue)) {
+    throw new Error(
+      'API response contract schema must be a JSON Schema object or boolean',
+    );
+  }
+
+  const validate = validatorForSchema(schemaValue).compile(schemaValue);
 
   if (validate(value)) {
     return;
@@ -76,7 +87,11 @@ export const expectJsonResponseToMatchSchema = async <T = unknown>(
   options: ContractValidationOptions = {},
 ): Promise<T> => {
   const contentType = response.headers()['content-type'] ?? '';
-  if (!contentType.toLowerCase().includes('application/json')) {
+  const mediaType = contentType.split(';', 1)[0]?.trim().toLowerCase() ?? '';
+  if (
+    mediaType !== 'application/json' &&
+    !(mediaType.startsWith('application/') && mediaType.endsWith('+json'))
+  ) {
     throw new Error(
       `${options.name ?? 'API response'} returned content-type "${contentType}", not JSON`,
     );

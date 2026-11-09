@@ -226,6 +226,11 @@ describe('unexpected console guard suite', () => {
         'An update to ComboBoxInner was not wrapped',
       ],
       ['%d substitution', ['retry %d of %d', 2, 3], 'retry 2 of 3'],
+      [
+        'symbol numeric substitution',
+        ['value %d', Symbol('seven')],
+        'value Symbol(seven)',
+      ],
       ['%o substitution', ['payload %o', { id: 7 }], 'payload {"id":7}'],
       [
         '%% escape',
@@ -254,6 +259,28 @@ describe('unexpected console guard suite', () => {
       },
     );
 
+    it.each([
+      ['returns undefined', { toJSON: () => undefined }],
+      [
+        'throws',
+        {
+          toJSON: () => {
+            throw new Error('cannot serialise');
+          },
+        },
+      ],
+    ])('uses a safe fallback when JSON.stringify %s', async (_label, value) => {
+      expect.hasAssertions();
+
+      prepareConsoleSpies();
+
+      const { teardownError } = await runGuardedTest(() => {
+        (console.warn as (...values: unknown[]) => void)(value);
+      });
+
+      expect(messageOf(teardownError)).toContain('[unserialisable]');
+    });
+
     it('consumes a message whose pattern only matches after interpolation', async () => {
       expect.hasAssertions();
 
@@ -276,6 +303,28 @@ describe('unexpected console guard suite', () => {
       expect(bodyError).toBeUndefined();
       expect(teardownError).toBeUndefined();
     });
+
+    it.each([
+      ['global', /repeated warning/gu],
+      ['sticky', /repeated warning/uy],
+    ])(
+      'resets %s regular expression state between console messages',
+      async (_label, pattern) => {
+        expect.hasAssertions();
+
+        prepareConsoleSpies();
+
+        const { bodyError, teardownError } = await runGuardedTest(async () => {
+          await expectConsoleMessage('warn', pattern, 2, () => {
+            console.warn('repeated warning');
+            console.warn('repeated warning');
+          });
+        });
+
+        expect(bodyError).toBeUndefined();
+        expect(teardownError).toBeUndefined();
+      },
+    );
   });
 
   // function suite titles are required by vitest/prefer-describe-function-title.

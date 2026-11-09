@@ -104,9 +104,9 @@ export const formatConsoleArguments = (args: readonly unknown[]): string => {
     switch (token) {
       case '%d':
       case '%f':
-        return String(Number(value));
+        return formatNumericArgument(value, false);
       case '%i':
-        return String(Number.parseInt(stringify(value), 10));
+        return formatNumericArgument(value, true);
       default:
         return stringify(value);
     }
@@ -131,6 +131,16 @@ const describeUnconsumed = (messages: readonly CapturedMessage[]): string =>
       ({ level, text }, index) => `  ${index + 1}. console.${level}: ${text}`,
     )
     .join('\n');
+
+const formatNumericArgument = (value: unknown, integer: boolean): string => {
+  try {
+    return String(
+      integer ? Number.parseInt(stringify(value), 10) : Number(value),
+    );
+  } catch {
+    return stringify(value);
+  }
+};
 
 /**
  * Assigns by explicit branch rather than `console[level]`. The repository's
@@ -165,12 +175,20 @@ const start = (): void => {
     setConsoleMethod(level, (...args: unknown[]): void => {
       const text = formatConsoleArguments(args);
       const { expectation } = active;
-      const claimed =
-        expectation !== null &&
-        expectation.level === level &&
-        expectation.pattern.test(text);
+      const matchingExpectation =
+        expectation !== null && expectation.level === level
+          ? expectation
+          : null;
+      let claimed = false;
+      if (matchingExpectation !== null) {
+        matchingExpectation.pattern.lastIndex = 0;
+        claimed = matchingExpectation.pattern.test(text);
+        matchingExpectation.pattern.lastIndex = 0;
+      }
 
-      if (claimed) expectation.matched += 1;
+      if (matchingExpectation !== null && claimed) {
+        matchingExpectation.matched += 1;
+      }
 
       active.captured.push({ level, text, consumed: claimed });
 
