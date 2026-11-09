@@ -54,9 +54,18 @@ describe('generated API enum mappings', () => {
     },
   );
 
-  it('maps a known HTTP status code to its generated enum member', () => {
+  it.each([
+    ['Forbidden', HttpStatusCode.Forbidden],
+    ['NotFound', HttpStatusCode.NotFound],
+    ['Conflict', HttpStatusCode.Conflict],
+    ['Gone', HttpStatusCode.Gone],
+    ['PreconditionFailed', HttpStatusCode.PreconditionFailed],
+    ['UnprocessableEntity', HttpStatusCode.UnprocessableEntity],
+    ['InternalServerError', HttpStatusCode.InternalServerError],
+    ['ServiceUnavailable', HttpStatusCode.ServiceUnavailable],
+  ])('maps the %s HTTP status code to its enum member', (_name, code) => {
     expect.hasAssertions();
-    expect(toHttpStatusCode(404)).toBe(HttpStatusCode.NotFound);
+    expect(toHttpStatusCode(code)).toBe(code);
   });
 
   it.each([

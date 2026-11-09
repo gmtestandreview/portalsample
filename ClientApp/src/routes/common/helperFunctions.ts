@@ -96,10 +96,12 @@ export const toQuoteStatus = (value: unknown): QuoteStatus | undefined => {
     return localStatus;
   }
 
+  // Note: StatusEnumDto.Submitted ("Submitted") shares its string value with
+  // QuoteStatus.QuoteSubmitted, so the local enumValue() lookup above always
+  // resolves "Submitted" first; a StatusEnumDto.Submitted arm here is
+  // unreachable and is intentionally omitted.
   const apiStatus = toStatusEnumDto(value);
   switch (apiStatus) {
-    case StatusEnumDto.Submitted:
-      return QuoteStatus.QuoteSubmitted;
     case StatusEnumDto.QuoteInProgress:
       return QuoteStatus.QuoteInProgress;
     case StatusEnumDto.QuoteAvailable:
