@@ -206,82 +206,82 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
   };
 
   return (
-      <form className='mb-4' onSubmit={handleSubmit}>
-        <Slate editor={editor} initialValue={value} onChange={handleChange}>
-          <Editable
-            id='slate-editor'
-            // Slate renders a contenteditable div with role="textbox", which gets
-            // no accessible name from the placeholder the way a native input
-            // would. Name it explicitly with the same text a sighted user sees.
-            aria-label={orIfEmpty(placeholder, 'Message NMI')}
-            placeholder={orIfEmpty(placeholder, 'Message NMI')}
-            className='form-control mb-0 border border-bottom-0'
-            style={{ minHeight: '4rem' }}
-            spellCheck
-            renderLeaf={({ attributes, children, leaf }) => {
-              let rendered: React.ReactNode = <>{children}</>;
-              if (leaf.bold) {
-                rendered = <strong>{rendered}</strong>;
-              }
-              if (leaf.italic) {
-                rendered = <em>{rendered}</em>;
-              }
-              if (leaf.underline) {
-                rendered = <u>{rendered}</u>;
-              }
-              return <span {...attributes}>{rendered}</span>;
-            }}
-          />
-          <div className='d-flex justify-content-between mb-0 py-2 px-3 bg-light border border-top-0'>
-            <div>
-              <ToolbarButton
-                format='bold'
-                icon='<b>B</b>'
-                label='Bold'
-                editor={editor}
-              />
-              <ToolbarButton
-                format='italic'
-                icon='<i>I</i>'
-                label='Italic'
-                editor={editor}
-              />
-              <ToolbarButton
-                format='underline'
-                icon='<u>U</u>'
-                label='Underline'
-                editor={editor}
-              />
-            </div>
-            <div className='text-end'>
-              <PrimaryButton
-                data-testid='send-button'
-                type='submit'
-                size='sm'
-                title='Send message'
-                className='d-flex align-items-center justify-content-center p-2'
-              >
-                <span className='d-flex align-items-center justify-content-center w-100 h-100'>
-                  <i className='icon icon-send' aria-hidden='true' />
-                </span>
-                <span className='visually-hidden'>Send</span>
-              </PrimaryButton>
-            </div>
+    <form className='mb-4' onSubmit={handleSubmit}>
+      <Slate editor={editor} initialValue={value} onChange={handleChange}>
+        <Editable
+          id='slate-editor'
+          // Slate renders a contenteditable div with role="textbox", which gets
+          // no accessible name from the placeholder the way a native input
+          // would. Name it explicitly with the same text a sighted user sees.
+          aria-label={orIfEmpty(placeholder, 'Message NMI')}
+          placeholder={orIfEmpty(placeholder, 'Message NMI')}
+          className='form-control mb-0 border border-bottom-0'
+          style={{ minHeight: '4rem' }}
+          spellCheck
+          renderLeaf={({ attributes, children, leaf }) => {
+            let rendered: React.ReactNode = <>{children}</>;
+            if (leaf.bold) {
+              rendered = <strong>{rendered}</strong>;
+            }
+            if (leaf.italic) {
+              rendered = <em>{rendered}</em>;
+            }
+            if (leaf.underline) {
+              rendered = <u>{rendered}</u>;
+            }
+            return <span {...attributes}>{rendered}</span>;
+          }}
+        />
+        <div className='d-flex justify-content-between mb-0 py-2 px-3 bg-light border border-top-0'>
+          <div>
+            <ToolbarButton
+              format='bold'
+              icon='<b>B</b>'
+              label='Bold'
+              editor={editor}
+            />
+            <ToolbarButton
+              format='italic'
+              icon='<i>I</i>'
+              label='Italic'
+              editor={editor}
+            />
+            <ToolbarButton
+              format='underline'
+              icon='<u>U</u>'
+              label='Underline'
+              editor={editor}
+            />
           </div>
-          <div className='d-flex justify-content-between'>
-            <div className='text-start mt-1'>
-              {errors.length > 0 && (
-                <span className='text-danger ms-2'>{errors.at(-1)}</span>
-              )}
-            </div>
-            <div className='text-end mt-1'>
-              <span className='me-2 small text-muted'>
-                {liveCharCount} /{max}
+          <div className='text-end'>
+            <PrimaryButton
+              data-testid='send-button'
+              type='submit'
+              size='sm'
+              title='Send message'
+              className='d-flex align-items-center justify-content-center p-2'
+            >
+              <span className='d-flex align-items-center justify-content-center w-100 h-100'>
+                <i className='icon icon-send' aria-hidden='true' />
               </span>
-            </div>
+              <span className='visually-hidden'>Send</span>
+            </PrimaryButton>
           </div>
-        </Slate>
-      </form>
+        </div>
+        <div className='d-flex justify-content-between'>
+          <div className='text-start mt-1'>
+            {errors.length > 0 && (
+              <span className='text-danger ms-2'>{errors.at(-1)}</span>
+            )}
+          </div>
+          <div className='text-end mt-1'>
+            <span className='me-2 small text-muted'>
+              {liveCharCount} /{max}
+            </span>
+          </div>
+        </div>
+      </Slate>
+    </form>
   );
 };
 

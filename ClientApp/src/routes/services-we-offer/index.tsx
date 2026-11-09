@@ -473,24 +473,24 @@ const ServicesWeOffer = () => {
 
   return (
     <div aria-busy={isLoading} aria-live='off'>
-        <Container fluid className='default-banner-background mb-5'>
-          <Container>
-            <Row>
-              <Col hidden={!originalDefaultService}>
-                <CustomBreadcrumb breadcrumbs={breadcrumbs} />
-              </Col>
-            </Row>
-            <Row className='gs-wrapper'>
-              <Col md={12} lg={9}>
-                <h1 id='page-title' tabIndex={-1} className='banner-title mb-4'>
-                  Services we offer
-                </h1>
-                {/* <HeaderIntroText>NMI offers a range of services, please choose your services below</HeaderIntroText> */}
-              </Col>
-            </Row>
-          </Container>
+      <Container fluid className='default-banner-background mb-5'>
+        <Container>
+          <Row>
+            <Col hidden={!originalDefaultService}>
+              <CustomBreadcrumb breadcrumbs={breadcrumbs} />
+            </Col>
+          </Row>
+          <Row className='gs-wrapper'>
+            <Col md={12} lg={9}>
+              <h1 id='page-title' tabIndex={-1} className='banner-title mb-4'>
+                Services we offer
+              </h1>
+              {/* <HeaderIntroText>NMI offers a range of services, please choose your services below</HeaderIntroText> */}
+            </Col>
+          </Row>
         </Container>
-        {renderServicesSelector()}
+      </Container>
+      {renderServicesSelector()}
     </div>
   );
 };
