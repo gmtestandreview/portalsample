@@ -9,7 +9,10 @@ import type {
 } from '../../../../ClientApp/src/api/web-api-client';
 import { grantToken, resetMsalMock, signOut } from '../../helpers/mockMsal';
 import type { ClientMockOf } from '../../helpers/mockApiClient';
-import { useInstrumentAndRequestLookups } from '@/routes/requestForQuote/instrumentAndRequest';
+import {
+  useInstrumentAndRequestLookups,
+  useStableToday,
+} from '@/routes/requestForQuote/instrumentAndRequest';
 
 const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
@@ -49,6 +52,33 @@ const wrapper = ({ children }: { readonly children: ReactNode }) => (
 
 // function suite titles are required by vitest/prefer-describe-function-title.
 describe(useInstrumentAndRequestLookups, () => {
+  it('refreshes the current date at local midnight without leaking its timer', () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date(2026, 0, 1, 23, 59, 59, 500));
+      const { result, rerender, unmount } = renderHook(() => useStableToday());
+      const initialDate = result.current;
+
+      rerender();
+
+      expect(result.current).toBe(initialDate);
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      expect(result.current).toStrictEqual(new Date(2026, 0, 2));
+
+      unmount();
+
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('returns no measurement category options before the lookups resolve', () => {
     expect.hasAssertions();
 

@@ -1087,9 +1087,7 @@ describe('rhfAttachment', () => {
         'Certificate',
       );
     });
-    const values = JSON.parse(
-      screen.getByTestId('values').textContent ?? '{}',
-    ) as {
+    const values = JSON.parse(screen.getByTestId('values').textContent) as {
       attachments: AttachmentDto[];
     };
 

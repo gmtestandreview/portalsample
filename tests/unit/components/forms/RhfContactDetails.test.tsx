@@ -88,7 +88,7 @@ const Harness = ({ contact, children, rules = {} }: HarnessProps) => {
 };
 
 const contactValue = (): ContactValues =>
-  (JSON.parse(screen.getByTestId('values').textContent ?? '') as FormValues)
+  (JSON.parse(screen.getByTestId('values').textContent) as FormValues)
     .organisationAndContact.contact;
 
 const renderDetails = (

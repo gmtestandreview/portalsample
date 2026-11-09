@@ -472,13 +472,7 @@ const ServicesWeOffer = () => {
   }
 
   return (
-    <>
-      {/*   {isLoading && (
-                <BlockUISpinner partial>
-                    <p>Loading...</p>
-                </BlockUISpinner>
-            )} */}
-      <div aria-busy={isLoading} aria-live='off'>
+    <div aria-busy={isLoading} aria-live='off'>
         <Container fluid className='default-banner-background mb-5'>
           <Container>
             <Row>
@@ -497,8 +491,7 @@ const ServicesWeOffer = () => {
           </Container>
         </Container>
         {renderServicesSelector()}
-      </div>
-    </>
+    </div>
   );
 };
 

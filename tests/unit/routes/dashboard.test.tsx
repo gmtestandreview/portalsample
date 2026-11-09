@@ -1,7 +1,7 @@
 import type React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { afterEach, vi, describe, it, expect } from 'vitest';
+import { onTestFinished, vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
@@ -303,7 +303,7 @@ vi.mock(
           data-current={currentPage}
           data-total={totalPages}
           onClick={() => {
-            onPageChange((currentPage ?? 1) + 1);
+            onPageChange(currentPage + 1);
           }}
         >
           Next
@@ -519,6 +519,10 @@ function renderDashboard(Dashboard: React.ComponentType) {
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
 const resetDashboardMocks = () => {
+  onTestFinished(() => {
+    vi.restoreAllMocks();
+  });
+
   vi.clearAllMocks();
   // Restore per-test defaults after clearing mock call history.
   mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
@@ -557,10 +561,6 @@ const resetDashboardMocks = () => {
   }));
   mockAccountDetails = { ...BASE };
 };
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
 
 describe('dashboard', () => {
   // ── Test 1: Renders without crashing ──────────────────────────────────────

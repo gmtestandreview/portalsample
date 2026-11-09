@@ -206,35 +206,6 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
   };
 
   return (
-    <>
-      {/*        {errors.length > 0 && (
-                <Alert
-                    variant='danger'
-                    role='alert'
-                    aria-live='assertive'
-                    id='form-error-summary'
-                    data-testid='form-error-summary'
-                    className='d-flex mb-3'
-                    tabIndex={-1}
-                >
-                    <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
-                        <div className='bgCircle me-3'>
-                            <i className='icon-warning' aria-hidden='true' />
-                        </div>
-                    </div>
-                    <div>
-                        <Alert.Heading as='h2' className='h5 fw-normal'>
-                            The following issue(s) must be corrected before you can continue:
-                        </Alert.Heading>
-                        <ul>
-                            {errors.map((error, idx) => (
-                                <li className='text-danger' key={idx}>{error}</li>
-                            ))}
-                        </ul>
-                    </div>
-                </Alert>
-            )} */}
-
       <form className='mb-4' onSubmit={handleSubmit}>
         <Slate editor={editor} initialValue={value} onChange={handleChange}>
           <Editable
@@ -311,7 +282,6 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
           </div>
         </Slate>
       </form>
-    </>
   );
 };
 

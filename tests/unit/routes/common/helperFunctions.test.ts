@@ -144,39 +144,53 @@ const resetHelperFunctionsState = () => {
 };
 
 describe('route common helper functions', () => {
-  it('maps known API enum values and rejects unknown values', () => {
+  it('maps known API enum values', () => {
+    expect.hasAssertions();
+
     expect(toStatusEnumDto(StatusEnumDto.QuoteAvailable)).toBe(
       StatusEnumDto.QuoteAvailable,
     );
-    expect(toStatusEnumDto('server-added-status')).toBeUndefined();
     expect(
       toPatternApprovalStatusEnumDto(PatternApprovalStatusEnumDto.Completed),
     ).toBe(PatternApprovalStatusEnumDto.Completed);
-    expect(
-      toPatternApprovalStatusEnumDto('server-added-status'),
-    ).toBeUndefined();
     expect(toFilterMessages(FilterMessages.ShowNmiMessages)).toBe(
       FilterMessages.ShowNmiMessages,
     );
+  });
+
+  it('rejects unknown API enum values', () => {
+    expect.hasAssertions();
+
+    expect(toStatusEnumDto('server-added-status')).toBeUndefined();
+    expect(
+      toPatternApprovalStatusEnumDto('server-added-status'),
+    ).toBeUndefined();
     expect(toFilterMessages('server-added-filter')).toBeUndefined();
   });
 
-  it('maps dashboard and workflow statuses without asserting unknown values', () => {
+  it('maps dashboard and workflow statuses', () => {
+    expect.hasAssertions();
+
     expect(toDashboardTab('instruments')).toBe(DashboardTab.Instruments);
-    expect(toDashboardTab('server-added-tab')).toBeUndefined();
     expect(toQuoteStatus(QuoteStatus.QuoteAccepted)).toBe(
       QuoteStatus.QuoteAccepted,
     );
-    expect(toQuoteStatus('server-added-quote-status')).toBeUndefined();
     expect(toDashboardItemStatus('QuoteAvailable')).toBe(
       DashboardItemStatus.QuoteAvailable,
     );
-    expect(
-      toDashboardItemStatus('server-added-dashboard-status'),
-    ).toBeUndefined();
     expect(toPaDashboardItemStatus('Completed')).toBe(
       PaDashboardItemStatus.PaCompleted,
     );
+  });
+
+  it('rejects unknown dashboard and workflow statuses', () => {
+    expect.hasAssertions();
+
+    expect(toDashboardTab('server-added-tab')).toBeUndefined();
+    expect(toQuoteStatus('server-added-quote-status')).toBeUndefined();
+    expect(
+      toDashboardItemStatus('server-added-dashboard-status'),
+    ).toBeUndefined();
     expect(
       toPaDashboardItemStatus('server-added-application-status'),
     ).toBeUndefined();
@@ -196,6 +210,8 @@ describe('route common helper functions', () => {
   ])(
     'maps API status %s to the matching dashboard item status',
     (apiStatus, expected) => {
+      expect.hasAssertions();
+
       expect(toDashboardItemStatus(apiStatus)).toBe(expected);
     },
   );
@@ -227,6 +243,8 @@ describe('route common helper functions', () => {
   ])(
     'maps API status %s to the matching quote status',
     (apiStatus, expected) => {
+      expect.hasAssertions();
+
       expect(toQuoteStatus(apiStatus)).toBe(expected);
     },
   );

@@ -115,7 +115,10 @@ class TestIntersectionObserver implements IntersectionObserver {
   }
 }
 
-globalThis.IntersectionObserver ??= TestIntersectionObserver;
+const intersectionObserver: unknown = globalThis.IntersectionObserver;
+if (intersectionObserver === null || intersectionObserver === undefined) {
+  globalThis.IntersectionObserver = TestIntersectionObserver;
+}
 const originalUserAgent = navigator.userAgent;
 
 function DragAndDropCollections() {

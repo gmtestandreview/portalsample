@@ -5,15 +5,19 @@ import { FileStatus } from '../../../../ClientApp/src/routes/ta/types';
 
 describe(getFailedFileErrors, () => {
   it('returns no errors until the upload has finished', () => {
+    expect.hasAssertions();
+
     const progress: UploadProgress = {
       percent: 50,
       files: [{ status: FileStatus.Failed, fileName: 'spec.pdf' }],
     };
 
-    expect(getFailedFileErrors(progress)).toEqual([]);
+    expect(getFailedFileErrors(progress)).toStrictEqual([]);
   });
 
   it('reports failed and cancelled files by name once complete', () => {
+    expect.hasAssertions();
+
     const progress: UploadProgress = {
       percent: 100,
       files: [
@@ -23,19 +27,21 @@ describe(getFailedFileErrors, () => {
       ],
     };
 
-    expect(getFailedFileErrors(progress)).toEqual([
+    expect(getFailedFileErrors(progress)).toStrictEqual([
       'Error uploading broken.pdf',
       'Upload cancelled for stopped.pdf',
     ]);
   });
 
   it('falls back to an empty name when a failed or cancelled file has no fileName', () => {
+    expect.hasAssertions();
+
     const progress: UploadProgress = {
       percent: 100,
       files: [{ status: FileStatus.Failed }, { status: FileStatus.Cancelled }],
     };
 
-    expect(getFailedFileErrors(progress)).toEqual([
+    expect(getFailedFileErrors(progress)).toStrictEqual([
       'Error uploading ',
       'Upload cancelled for ',
     ]);

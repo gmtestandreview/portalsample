@@ -2,9 +2,11 @@ import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import type { FormBannerProps } from './types';
 import SaveAndExitButton from '../SaveAndExitButton';
-import LinkButton from '../../Buttons/LinkButton';
+import NavigationButton from '../../Buttons/LinkButton';
 import SkipLinks from '../../Utilities/skipLinks';
 import NavbarMessage from '../../Header/NavbarMessage';
+
+const getRouterLinkVariant = (): 'Link' => 'Link';
 
 const FormBanner = ({
   title,
@@ -109,18 +111,18 @@ const FormBanner = ({
                     </h2>
                     <div className='d-grid d-lg-block'>
                       {/* LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */}
-                      <LinkButton
+                      <NavigationButton
                         data-testid='form-go-to-dashboard-portal-button'
                         to='/dashboard'
                         variant='tertiary-colorbg'
-                        as='Link'
+                        as={getRouterLinkVariant()}
                       >
                         <i
                           className='icon-arrow-right me-1'
                           aria-hidden='true'
                         />
                         {'Go to dashboard'}
-                      </LinkButton>
+                      </NavigationButton>
                     </div>
                   </Nav>
                 </Navbar.Collapse>

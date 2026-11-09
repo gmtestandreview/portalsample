@@ -273,6 +273,21 @@ describe('storybook MSW handlers', () => {
     expect(response.status).toBe(501);
   });
 
+  it.each(['__proto__', 'constructor', 'toString'])(
+    'fails closed with 501 for inherited application member %s',
+    async (applicationType) => {
+      expect.hasAssertions();
+
+      const response = await fetch(apiUrl('/api/application'), {
+        method: 'POST',
+        body: JSON.stringify({ applicationType }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      expect(response.status).toBe(501);
+    },
+  );
+
   it('fails closed for an unmapped quote application type', async () => {
     expect.hasAssertions();
 

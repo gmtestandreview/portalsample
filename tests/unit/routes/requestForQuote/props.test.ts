@@ -60,7 +60,7 @@ vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
   importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
 ) => {
   const actual = await importOriginal();
-  if (typeof actual !== 'object' || actual === null) {
+  if (typeof actual !== 'object') {
     throw new TypeError('Expected module exports object');
   }
   return {

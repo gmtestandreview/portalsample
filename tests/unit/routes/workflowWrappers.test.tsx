@@ -1130,7 +1130,7 @@ describe('workflow route wrappers', () => {
     // The effect still authenticates, then bails at the missing-id guard
     // before requesting payment details.
     await waitFor(() => {
-      expect(mocks.setAuthToken).toHaveBeenCalled();
+      expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
     });
 
     expect(mocks.getPaymentDetails).not.toHaveBeenCalled();

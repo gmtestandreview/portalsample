@@ -318,6 +318,7 @@ describe('view pdf quote terms', () => {
     await waitFor(() => {
       expect(trackGAEventMock).toHaveBeenCalledWith('Terms', 'download');
     });
+
     expect(setIsLoading).not.toHaveBeenCalled();
     expect(acquireTokenSilentMock).not.toHaveBeenCalled();
     expect(helperMocks.getQuotationFileDetails).not.toHaveBeenCalled();

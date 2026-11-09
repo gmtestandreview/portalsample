@@ -87,7 +87,8 @@ import {
   TreeSection,
 } from '@/components/AriaComponents/Tree/Tree';
 
-if (!Element.prototype.getAnimations) {
+const getAnimations: unknown = Reflect.get(Element.prototype, 'getAnimations');
+if (!getAnimations) {
   Object.defineProperty(Element.prototype, 'getAnimations', {
     configurable: true,
     value: vi.fn<() => Animation[]>(() => []),
@@ -118,7 +119,10 @@ class TestIntersectionObserver implements IntersectionObserver {
   }
 }
 
-globalThis.IntersectionObserver ??= TestIntersectionObserver;
+const intersectionObserver: unknown = globalThis.IntersectionObserver;
+if (intersectionObserver === null || intersectionObserver === undefined) {
+  globalThis.IntersectionObserver = TestIntersectionObserver;
+}
 
 const expectAnything = (): unknown => expect.anything();
 const expectStringContaining = (value: string): unknown =>

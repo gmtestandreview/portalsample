@@ -333,7 +333,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await screen.findByText(/is required/i);
 
-    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
+    const probe = JSON.parse(screen.getByTestId('probe').textContent) as {
       address?: unknown;
       dirty: boolean;
     };

@@ -508,7 +508,10 @@ const AccountContextLifecycleSentinel = ({
   const targetOrganisationName =
     accountState?.details?.targetOrganisation?.targetOrganisationName ?? null;
   const targetOrganisationNameRef = useRef(targetOrganisationName);
-  targetOrganisationNameRef.current = targetOrganisationName;
+
+  useLayoutEffect(() => {
+    targetOrganisationNameRef.current = targetOrganisationName;
+  }, [targetOrganisationName]);
 
   useLayoutEffect(() => {
     accountDispatch?.setTargetOrganisation(name, `${name}:active`);

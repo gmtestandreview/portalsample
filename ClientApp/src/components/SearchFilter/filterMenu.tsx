@@ -199,11 +199,8 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
               {initialFilters?.filtersChanged ? (
                 `${countChangedFilters(initialFilters)}`
               ) : (
-                <>
-                  {/* preserve space */}
-                  <span aria-hidden='true'>&nbsp;</span>
-                  {/* <span className='visually-hidden text-invert'>none</span> */}
-                </>
+                // preserve space
+                <span aria-hidden='true'>&nbsp;</span>
               )}
             </output>
           </span>

@@ -23,8 +23,10 @@ const draft2020Validator = addFormats(
 
 const isJsonSchemaObject = (
   schema: AnySchema,
-): schema is Record<string, unknown> =>
-  typeof schema === 'object' && schema !== null && !Array.isArray(schema);
+): schema is Record<string, unknown> => {
+  const value: unknown = schema;
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+};
 
 const validatorForSchema = (schema: AnySchema) => {
   if (

@@ -14,21 +14,59 @@ const formatBytes = (bytes: number): string => {
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 };
 
+const toDomSafeIdentity = (identity: string) =>
+  Array.from(
+    identity,
+    (character) =>
+      character.codePointAt(0)?.toString(16).padStart(6, '0') ?? '',
+  ).join('');
+
+/**
+ * FileProgress currently exposes no backend/upload ID. Use only the immutable
+ * identity fields available on that DTO, then add a deterministic occurrence
+ * number for unnamed or duplicate rows. This remains stable when polling
+ * returns freshly parsed objects, provided the server preserves row order.
+ */
+const getStableFileEntries = (files: FileProgress[]) => {
+  const occurrenceByIdentity = new Map<string, number>();
+
+  return files.map((file) => {
+    const identity = JSON.stringify([
+      file.blobUrl ?? null,
+      file.fileName ?? null,
+    ]);
+    const occurrence = occurrenceByIdentity.get(identity) ?? 0;
+    occurrenceByIdentity.set(identity, occurrence + 1);
+
+    return {
+      file,
+      key: `file-progress:${identity}:${occurrence}`,
+      domId: `file-progress-${toDomSafeIdentity(identity)}-${occurrence}`,
+    };
+  });
+};
+
 const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
   const [cancelling, setCancelling] = useState<Map<string, boolean>>(
     () => new Map(),
   );
+  const keyedFiles = getStableFileEntries(files);
 
-  // The cancel control only renders when onCancelFile is supplied, so the handler takes it as an
-  // argument rather than re-checking it. Guarding here again was a branch nothing could reach.
-  const handleCancel = (fileName: string, cancel: (name: string) => void) => {
-    setCancelling((prev) => new Map(prev).set(fileName, true));
+  // Keep the public callback filename-only for compatibility with existing upload handlers. The
+  // internal state uses the same stable row identity as the React key, so duplicate names remain
+  // independently cancellable.
+  const handleCancel = (
+    fileKey: string,
+    fileName: string,
+    cancel: (name: string) => void,
+  ) => {
+    setCancelling((prev) => new Map(prev).set(fileKey, true));
     cancel(fileName);
   };
 
   return (
     <ul className='unstyled-list mt-2 p-0'>
-      {files.map((f, index) => {
+      {keyedFiles.map(({ file: f, key, domId }) => {
         const { fileName, bytesUploaded, totalBytes } = f;
         // Narrowing `bytesUploaded`/`totalBytes` through this const means the
         // byte reads below need no `?? 0`/`?? 1` fallbacks (those nullish paths
@@ -43,7 +81,7 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
 
         return (
           <li
-            key={fileName ?? index}
+            key={key}
             className='attachment d-flex flex-column mb-4 p-4 bg-white shadow text-body small'
           >
             <div className='d-flex align-items-top'>
@@ -61,19 +99,19 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                 {isCancellable &&
                   onCancelFile &&
                   fileName !== undefined &&
-                  (cancelling.get(fileName) === true ? (
+                  (cancelling.get(key) === true ? (
                     <span className='text-danger ms-2'>Cancelling...</span>
                   ) : (
                     <button
                       type='button'
-                      data-testid={`cancel-button-${fileName}`}
-                      id={`cancel-button-${fileName}`}
-                      name={`cancel-button-${fileName}`}
+                      data-testid={`cancel-button-${domId}`}
+                      id={`cancel-button-${domId}`}
+                      name={`cancel-button-${domId}`}
                       title='Cancel uploading'
                       aria-label={`Cancel uploading ${fileName}`}
                       className='d-flex align-self-top mt-1 p-0 btn btn-flat fs-7'
                       onClick={() => {
-                        handleCancel(fileName, onCancelFile);
+                        handleCancel(key, fileName, onCancelFile);
                       }}
                     >
                       <i className='icon-close' aria-hidden='true' />

@@ -65,41 +65,17 @@ const AddressLookup = (
   const { setValue } = _helpers;
   const { value: address } = _meta;
 
-  // Always-current snapshot of field value and setter; avoids stale closures in the
-  // manual-sync effect below without adding them as deps (which would cause a loop).
-  const fieldSyncRef = useRef({ value: _field.value, setValue });
-  fieldSyncRef.current.value = _field.value;
-  fieldSyncRef.current.setValue = setValue;
-
   const [text, setText] = useState<string | null | undefined>(
     address?.searchText,
   );
-  const [manual, setManual] = useState(address?.isManuallyEntered);
+  const manual = address?.isManuallyEntered;
 
   const { instance, accounts, inProgress } = useMsal();
   const account = useAccount(accounts[0] ?? {});
 
   useEffect(() => {
-    const { value, setValue: setVal } = fieldSyncRef.current;
-    if (manual !== value?.isManuallyEntered) {
-      const {
-        isManuallyEntered: _isManuallyEntered,
-        ...addressWithoutManualFlag
-      } = value ?? {};
-      void setVal({
-        ...addressWithoutManualFlag,
-        ...omitUndefined({ isManuallyEntered: manual }),
-      });
-    }
-  }, [manual]);
-
-  useEffect(() => {
     setText(_field.value?.searchText);
   }, [_field.value?.searchText]);
-
-  useEffect(() => {
-    setManual(_field.value?.isManuallyEntered);
-  }, [_field.value?.isManuallyEntered]);
 
   const fetchAddressOptions = async (
     term: string,
@@ -183,7 +159,6 @@ const AddressLookup = (
           isManuallyEntered: true,
           searchText: '',
         });
-        setManual(true);
       } else {
         setText(option.displayText);
         void setValue({
@@ -222,12 +197,18 @@ const AddressLookup = (
   };
 
   const onSearchAgain = () => {
-    setManual(false);
+    void setValue({
+      ...(_field.value ?? {}),
+      isManuallyEntered: false,
+    });
   };
 
   const onEnterManually = () => {
     void setTouched(false);
-    setManual(true);
+    void setValue({
+      ...(_field.value ?? {}),
+      isManuallyEntered: true,
+    });
   };
 
   if (isSummary) {

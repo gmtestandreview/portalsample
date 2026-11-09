@@ -64,7 +64,7 @@ describe('storybook coverage worklist', () => {
     const first = worklistModule.buildWorklist(input);
     const second = worklistModule.buildWorklist({
       files: [...input.files].reverse(),
-      candidateFiles: [...(input.candidateFiles ?? [])].reverse(),
+      candidateFiles: [...input.candidateFiles].reverse(),
     });
 
     expect(first).toStrictEqual(second);

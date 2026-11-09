@@ -375,6 +375,7 @@ describe('view pdf quote', () => {
     await waitFor(() => {
       expect(acquireTokenSilentMock).not.toHaveBeenCalled();
     });
+
     expect(helperMocks.getQuotationFileDetails).not.toHaveBeenCalled();
   });
 

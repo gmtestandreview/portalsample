@@ -74,7 +74,8 @@ const stringify = (value: unknown): string => {
     return value.name === '' ? '[Function]' : `[Function ${value.name}]`;
 
   try {
-    return JSON.stringify(value) ?? '[unserialisable]';
+    const serialized: unknown = JSON.stringify(value);
+    return typeof serialized === 'string' ? serialized : '[unserialisable]';
   } catch {
     return '[unserialisable]';
   }
@@ -169,7 +170,7 @@ const start = (): void => {
         expectation.level === level &&
         expectation.pattern.test(text);
 
-      if (claimed && expectation !== null) expectation.matched += 1;
+      if (claimed) expectation.matched += 1;
 
       active.captured.push({ level, text, consumed: claimed });
 

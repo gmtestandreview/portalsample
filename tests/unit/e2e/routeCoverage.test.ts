@@ -24,9 +24,10 @@ const coverageEntryContract = (entry: (typeof routeCoverage)[number]) => {
 
   const featurePath = path.join(repoRoot, ...entry.feature.split('/'));
   const featureSource = readTextFileSync(featurePath, repoRoot);
+  const scenario: unknown = entry.scenario;
   return {
     feature: /^tests\/e2e\/features\/.+\.feature$/.test(entry.feature),
-    scenario: entry.scenario !== undefined,
+    scenario: scenario !== undefined,
     featureExists: pathExists(featurePath, repoRoot),
     scenarioExists: featureSource.includes(`Scenario: ${entry.scenario}`),
   };

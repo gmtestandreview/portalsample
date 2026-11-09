@@ -95,13 +95,23 @@ const applicationReferenceIds: Partial<Record<ApplicationType, string>> = {
   [ApplicationType.QuoteRequest]: 'RFQ-NEW-0001',
 };
 
+const getOwnMappedValue = <T>(
+  values: Partial<Record<string, T>>,
+  key: string | undefined,
+): T | undefined => {
+  if (key === undefined || !Object.hasOwn(values, key)) {
+    return undefined;
+  }
+
+  return Object.entries(values).find(([valueKey]) => valueKey === key)?.[1];
+};
+
 const applicationResponse = (applicationType: string | undefined) => {
   const mappedApplicationType = toApplicationType(applicationType);
-  const referenceId =
-    mappedApplicationType !== undefined &&
-    Object.hasOwn(applicationReferenceIds, mappedApplicationType)
-      ? applicationReferenceIds[mappedApplicationType]
-      : undefined;
+  const referenceId = getOwnMappedValue(
+    applicationReferenceIds,
+    mappedApplicationType,
+  );
 
   if (referenceId === undefined) {
     return HttpResponse.json(
@@ -228,11 +238,7 @@ export const mswHandlers = [
     const lookupType = toCRMLookupTypes(
       new URL(request.url).searchParams.get('LookupType'),
     );
-    const fixture =
-      lookupType === undefined ||
-      !Object.hasOwn(lookupResponsesByType, lookupType)
-        ? undefined
-        : lookupResponsesByType[lookupType];
+    const fixture = getOwnMappedValue(lookupResponsesByType, lookupType);
 
     if (fixture === undefined) {
       return HttpResponse.json(
