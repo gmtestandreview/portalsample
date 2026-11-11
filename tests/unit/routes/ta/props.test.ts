@@ -679,6 +679,89 @@ describe('pattern approval wizard prop factories', () => {
     );
   });
 
+  it('authenticates every client with the acquired access token on each load and save path', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const abortSignal = new AbortController().signal;
+    const app = applicationAndInstrumentProps(
+      'PA-14',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const org = organisationAndContactProps(
+      'PA-14',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const docs = supportingDocumentsProps(
+      'PA-14',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const summary = summaryAndSubmitProps(
+      'PA-14',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const token = ['access-token'];
+    const operations: [string, () => Promise<unknown>, number][] = [
+      ['application load', () => app.loadStepValues(abortSignal), 2],
+      [
+        'application save',
+        () => Promise.resolve(app.onSaveAndNext?.({}, true, abortSignal)),
+        1,
+      ],
+      ['organisation load', () => org.loadStepValues(abortSignal), 1],
+      [
+        'organisation save',
+        () => Promise.resolve(org.onSaveAndNext?.({}, true, abortSignal)),
+        1,
+      ],
+      ['documents load', () => docs.loadStepValues(abortSignal), 1],
+      [
+        'documents save',
+        () =>
+          Promise.resolve(
+            docs.onSaveAndNext?.({ form: {} }, true, abortSignal),
+          ),
+        1,
+      ],
+      ['summary load', () => summary.loadStepValues(abortSignal), 2],
+      [
+        'summary submit',
+        () => Promise.resolve(summary.onSaveAndNext?.({}, true, abortSignal)),
+        1,
+      ],
+    ];
+
+    for (const [name, operation, expectedTokenCalls] of operations) {
+      mocks.setAuthToken.mockClear();
+      await operation();
+
+      expect({
+        name,
+        calls: mocks.setAuthToken.mock.calls,
+      }).toStrictEqual({
+        name,
+        calls: Array.from({ length: expectedTokenCalls }, () => token),
+      });
+    }
+  });
+
   it('logs and rethrows client failures from each async prop helper', async () => {
     expect.hasAssertions();
 
