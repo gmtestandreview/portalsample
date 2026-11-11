@@ -200,7 +200,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass') as unknown as string,
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
@@ -208,7 +208,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle') as unknown as string,
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 
@@ -419,9 +419,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    });
 
     expect({
       authToken: mocks.setAuthToken.mock.calls.at(-1),
@@ -469,9 +469,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    });
 
     expect(screen.getAllByTestId('wizard-step')).toHaveLength(3);
   });
@@ -504,9 +504,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('not-found')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('not-found')).toBeInTheDocument();
+    });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load application steps',
@@ -540,9 +540,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('not-found')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('not-found')).toBeInTheDocument();
+    });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load application steps',
@@ -578,9 +578,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(mocks.acquireTokenSilent.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mocks.acquireTokenSilent.mock.calls.length).toBeGreaterThan(0);
+    });
     unmount();
 
     rejectToken(new Error('interaction_required'));
@@ -615,11 +615,11 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.requestForQuoteGetStepStatuses).toHaveBeenCalledWith(
         'APP-7',
-      ),
-    );
+      );
+    });
     unmount();
 
     resolveStatuses([{ name: 'Organisation and contact', status: 'current' }]);
@@ -705,9 +705,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote-create',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument();
+    });
 
     expect(mocks.createApplication).toHaveBeenCalledWith({
       applicationType: 'QuoteRequest',
@@ -723,9 +723,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote-copy/:id',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument();
+    });
 
     expect(mocks.copyApplication).toHaveBeenCalledWith('RFQ-1', {
       applicationType: 'QuoteRequest',
@@ -748,12 +748,12 @@ describe('workflow route wrappers', () => {
       '/request-for-quote-create',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to create application',
         expect.any(Error),
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
@@ -774,12 +774,12 @@ describe('workflow route wrappers', () => {
       '/request-for-quote-copy/:id',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to copy application',
         expect.any(Error),
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
@@ -816,6 +816,27 @@ describe('workflow route wrappers', () => {
     );
   });
 
+  it('renders request-for-quote success content with an empty reference when the id is absent', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    const RequestForQuoteCreated = (
+      await import('../../../ClientApp/src/routes/requestForQuote/created')
+    ).default;
+
+    renderAt(
+      '/request-for-quote-success',
+      <RequestForQuoteCreated />,
+      '/request-for-quote-success',
+    );
+
+    expect(screen.getByTestId('form-banner')).toHaveAttribute(
+      'data-ref-title',
+      'Ref ID: ',
+    );
+  });
+
   it('renders the submitted request-for-quote summary view after loading statuses', async () => {
     expect.hasAssertions();
 
@@ -831,9 +852,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    });
 
     expect(mocks.requestForQuoteGetStepStatuses).toHaveBeenCalledWith(
       'RFQ-123',
@@ -863,13 +884,13 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to retrieve step statuses',
         expect.any(Error),
         { Id: 'RFQ-FAIL' },
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
@@ -913,9 +934,9 @@ describe('workflow route wrappers', () => {
       '/accept-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    });
 
     expect({
       statuses: mocks.acceptQuoteGetStepStatuses.mock.calls.at(-1),
@@ -957,9 +978,9 @@ describe('workflow route wrappers', () => {
       '/accept-quote/:id/*',
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('not-found')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('not-found')).toBeInTheDocument();
+    });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
@@ -985,11 +1006,11 @@ describe('workflow route wrappers', () => {
       '/accept-quote-create/:id',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.getByTestId('accept-created-destination'),
-      ).toBeInTheDocument(),
-    );
+      ).toBeInTheDocument();
+    });
 
     expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalledWith(
       'QuoteRequest',
@@ -1019,13 +1040,13 @@ describe('workflow route wrappers', () => {
       '/accept-quote-create/:id',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to create an application',
         expect.any(Error),
         { Id: 'RFQ-FAIL' },
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('block-spinner')).toBeInTheDocument();
   });
@@ -1050,9 +1071,9 @@ describe('workflow route wrappers', () => {
       'Quotation ID: AQ-3',
     );
 
-    await waitFor(() =>
-      expect(screen.getByText('Prepayment required')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Prepayment required')).toBeInTheDocument();
+    });
 
     expect(mocks.getPaymentDetails).toHaveBeenCalledWith('AQ-3');
   });
@@ -1075,13 +1096,13 @@ describe('workflow route wrappers', () => {
       '/submitted-success/:id',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.getByText(
           'Invoices must be paid within 30 days of NMI invoice date.',
         ),
-      ).toBeInTheDocument(),
-    );
+      ).toBeInTheDocument();
+    });
 
     expect(screen.queryByText('Prepayment required')).not.toBeInTheDocument();
   });
@@ -1102,13 +1123,38 @@ describe('workflow route wrappers', () => {
       '/submitted-success/:id',
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to retrieve AcceptQuotePreInfo',
         expect.any(Error),
         { Id: 'AQ-FAIL' },
-      ),
+      );
+    });
+  });
+
+  it('skips the payment lookup and shows an empty quotation id when no id is in the route', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    const SubmittedSuccess = (
+      await import('../../../ClientApp/src/routes/acceptQuote/submittedSuccess')
+    ).default;
+
+    renderAt('/submitted-success', <SubmittedSuccess />, '/submitted-success');
+
+    expect(screen.getByTestId('form-banner')).toHaveAttribute(
+      'data-ref-title',
+      'Quotation ID: ',
     );
+
+    // The effect still authenticates, then bails at the missing-id guard
+    // before requesting payment details.
+    await waitFor(() => {
+      expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
+    });
+
+    expect(mocks.getPaymentDetails).not.toHaveBeenCalled();
   });
 
   it('loads quotation summary details and exposes quote actions', async () => {
@@ -1129,11 +1175,11 @@ describe('workflow route wrappers', () => {
     );
 
     const initialSpinner = screen.getByTestId('block-spinner').textContent;
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('quotation-details')).toHaveTextContent(
         'Q-500',
-      ),
-    );
+      );
+    });
 
     expect({
       spinner: initialSpinner,
@@ -1167,12 +1213,12 @@ describe('workflow route wrappers', () => {
       <QuotationSummary cRMQuoteRequestId='CRM-FAIL' isSummary />,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('quotation-details')).toHaveAttribute(
         'data-file-error',
         'true',
-      ),
-    );
+      );
+    });
 
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(

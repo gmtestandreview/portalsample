@@ -98,18 +98,27 @@ class TestIntersectionObserver implements IntersectionObserver {
   readonly scrollMargin = '';
   readonly thresholds = [];
 
-  disconnect() {}
+  disconnect() {
+    // Test double — no observation to tear down.
+  }
 
-  observe() {}
+  observe() {
+    // Test double — no observation to start.
+  }
 
   takeRecords() {
     return [];
   }
 
-  unobserve() {}
+  unobserve() {
+    // Test double — no observation to stop.
+  }
 }
 
-globalThis.IntersectionObserver ??= TestIntersectionObserver;
+const intersectionObserver: unknown = globalThis.IntersectionObserver;
+if (intersectionObserver === null || intersectionObserver === undefined) {
+  globalThis.IntersectionObserver = TestIntersectionObserver;
+}
 const originalUserAgent = navigator.userAgent;
 
 function DragAndDropCollections() {

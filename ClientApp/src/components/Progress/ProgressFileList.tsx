@@ -14,32 +14,74 @@ const formatBytes = (bytes: number): string => {
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 };
 
-const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
-  const [cancelling, setCancelling] = useState<{ [fileName: string]: boolean }>(
-    {},
-  );
+const toDomSafeIdentity = (identity: string) =>
+  Array.from(
+    identity,
+    (character) =>
+      character.codePointAt(0)?.toString(16).padStart(6, '0') ?? '',
+  ).join('');
 
-  // The cancel control only renders when onCancelFile is supplied, so the handler takes it as an
-  // argument rather than re-checking it. Guarding here again was a branch nothing could reach.
-  const handleCancel = (fileName: string, cancel: (name: string) => void) => {
-    setCancelling((prev) => ({ ...prev, [fileName]: true }));
+/**
+ * FileProgress currently exposes no backend/upload ID. Use only the immutable
+ * identity fields available on that DTO, then add a deterministic occurrence
+ * number for unnamed or duplicate rows. This remains stable when polling
+ * returns freshly parsed objects, provided the server preserves row order.
+ */
+const getStableFileEntries = (files: FileProgress[]) => {
+  const occurrenceByIdentity = new Map<string, number>();
+
+  return files.map((file) => {
+    const identity = JSON.stringify([
+      file.blobUrl ?? null,
+      file.fileName ?? null,
+    ]);
+    const occurrence = occurrenceByIdentity.get(identity) ?? 0;
+    occurrenceByIdentity.set(identity, occurrence + 1);
+
+    return {
+      file,
+      key: `file-progress:${identity}:${occurrence}`,
+      domId: `file-progress-${toDomSafeIdentity(identity)}-${occurrence}`,
+    };
+  });
+};
+
+const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
+  const [cancelling, setCancelling] = useState<Map<string, boolean>>(
+    () => new Map(),
+  );
+  const keyedFiles = getStableFileEntries(files);
+
+  // Keep the public callback filename-only for compatibility with existing upload handlers. The
+  // internal state uses the same stable row identity as the React key, so duplicate names remain
+  // independently cancellable.
+  const handleCancel = (
+    fileKey: string,
+    fileName: string,
+    cancel: (name: string) => void,
+  ) => {
+    setCancelling((prev) => new Map(prev).set(fileKey, true));
     cancel(fileName);
   };
 
   return (
     <ul className='unstyled-list mt-2 p-0'>
-      {files.map((f) => {
+      {keyedFiles.map(({ file: f, key, domId }) => {
+        const { fileName, bytesUploaded, totalBytes } = f;
+        // Narrowing `bytesUploaded`/`totalBytes` through this const means the
+        // byte reads below need no `?? 0`/`?? 1` fallbacks (those nullish paths
+        // were unreachable inside the hasProgress guard).
         const hasProgress =
-          f.bytesUploaded !== undefined && f.totalBytes !== undefined;
+          bytesUploaded !== undefined && totalBytes !== undefined;
         const progressPercent = hasProgress
-          ? Math.round((f.bytesUploaded! / f.totalBytes!) * 100)
+          ? Math.round((bytesUploaded / totalBytes) * 100)
           : 0;
         const isCancellable =
           f.status === FileStatus.Uploading || f.status === FileStatus.Pending;
 
         return (
           <li
-            key={f.fileName}
+            key={key}
             className='attachment d-flex flex-column mb-4 p-4 bg-white shadow text-body small'
           >
             <div className='d-flex align-items-top'>
@@ -50,24 +92,27 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                   {f.fileName}
                 </span>
                 <span className='attachment-size mt-1 fs-8 fw-normal text-left'>
-                  {hasProgress ? formatBytes(f.totalBytes!) : ''}
+                  {hasProgress ? formatBytes(totalBytes) : ''}
                 </span>
               </div>
               <div className='d-flex align-items-top ms-3'>
                 {isCancellable &&
                   onCancelFile &&
-                  (cancelling[f.fileName!] ? (
+                  fileName !== undefined &&
+                  (cancelling.get(key) === true ? (
                     <span className='text-danger ms-2'>Cancelling...</span>
                   ) : (
                     <button
                       type='button'
-                      data-testid={`cancel-button-${f.fileName}`}
-                      id={`cancel-button-${f.fileName}`}
-                      name={`cancel-button-${f.fileName}`}
+                      data-testid={`cancel-button-${domId}`}
+                      id={`cancel-button-${domId}`}
+                      name={`cancel-button-${domId}`}
                       title='Cancel uploading'
-                      aria-label={`Cancel uploading ${f.fileName}`}
+                      aria-label={`Cancel uploading ${fileName}`}
                       className='d-flex align-self-top mt-1 p-0 btn btn-flat fs-7'
-                      onClick={() => handleCancel(f.fileName!, onCancelFile)}
+                      onClick={() => {
+                        handleCancel(key, fileName, onCancelFile);
+                      }}
                     >
                       <i className='icon-close' aria-hidden='true' />
                       <span className='visually-hidden'>
@@ -86,20 +131,22 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
               <div
                 role='progressbar'
                 className='mt-1'
-                aria-label={`Uploading ${f.fileName}`}
+                aria-label={
+                  fileName === undefined
+                    ? 'Uploading file'
+                    : `Uploading ${fileName}`
+                }
                 aria-valuenow={progressPercent}
                 aria-valuemin={0}
                 aria-valuemax={100}
               >
                 <div className='d-flex justify-content-between ms-1 mb-1'>
                   <span className='fs-8 text-muted'>
-                    {formatBytes(f.bytesUploaded!)}
+                    {formatBytes(bytesUploaded)}
                     {' / '}
-                    {formatBytes(f.totalBytes!)}
+                    {formatBytes(totalBytes)}
                   </span>
-                  <span className='fs-8 text-muted'>
-                    {` ${progressPercent}%`}
-                  </span>
+                  <span className='fs-8 text-muted'>{` ${progressPercent}%`}</span>
                 </div>
                 <div
                   className='progress w-100 bg-light rounded overflow-hidden'

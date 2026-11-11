@@ -2,6 +2,7 @@ import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
+import type React from 'react';
 import { Alert, Button } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import {
@@ -14,6 +15,7 @@ import TermsOfUse from '../../Footer/termsOfUse';
 import { UsersClient } from '../../../api/web-api-client';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import termsData from '../../../terms-config.json';
+import { joinNameParts } from '../../../utils';
 
 interface DefaultTermsAndConditionModalHeaderProps {
   userName?: string;
@@ -24,7 +26,7 @@ const DefaultTermsAndConditionModalHeader = (
 ): ReactElement => {
   const { userName } = props;
 
-  return <>{`Welcome, ${userName}`}</>;
+  return <>{userName ? `Welcome, ${userName}` : 'Welcome'}</>;
 };
 
 // Any change to the text, update TermsVersion in terms-config.json
@@ -75,7 +77,7 @@ const SavingTermsAndConditionError = (
   return null;
 };
 
-const AnchorLinkToNmi = (): JSX.Element => (
+const AnchorLinkToNmi = (): React.JSX.Element => (
   <Button
     data-testid='exit-portal-button'
     href='/sign-out'
@@ -91,7 +93,7 @@ interface AgreeButtonProps {
   onClick: () => void;
 }
 
-const AgreeButton = (props: Readonly<AgreeButtonProps>): JSX.Element => {
+const AgreeButton = (props: Readonly<AgreeButtonProps>): React.JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton
@@ -166,11 +168,10 @@ const TermsAndConditionModal = () => {
         />
         <Modal.Title id='modal-prompt-terms' as='h2'>
           <DefaultTermsAndConditionModalHeader
-            userName={
-              accountState?.details?.givenName
-                ? `${accountState?.details?.givenName} ${accountState?.details?.familyName}`
-                : `${accountState?.details?.familyName}`
-            }
+            userName={joinNameParts(
+              accountState?.details?.givenName,
+              accountState?.details?.familyName,
+            )}
           />
           <span className='visually-hidden'> (modal dialog)</span>
         </Modal.Title>

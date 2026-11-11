@@ -15,7 +15,7 @@ function AutoSuggestOptions<T>(props: Readonly<AutoSuggestOptionsProps<T>>) {
       {...omitUndefined({ id, 'aria-label': props['aria-label'] })}
       className='suggestion-options'
     >
-      {options?.map((opt, index) => (
+      {options.map((opt, index) => (
         <AutoSuggestOption
           key={opt.id}
           id={opt.id}

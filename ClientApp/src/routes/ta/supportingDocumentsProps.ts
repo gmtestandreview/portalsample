@@ -55,7 +55,10 @@ const loadSummary =
     } else {
       AppLogger.verbose(
         'There are no accounts available to load PA supporting documents',
-        { Id: id, Accounts: accounts },
+        {
+          Id: id,
+          Accounts: accounts,
+        },
       );
       throw new Error(
         `There are no accounts available to load PA supporting documents. Id: ${id}`,
@@ -85,7 +88,7 @@ const saveStep =
 
         // Save for later
         let formStepValues: SupportingDocumentsStep | undefined;
-        if (values.form!.documents) {
+        if (values.form?.documents) {
           const updatedValues: SupportingDocumentsStep = {
             ...values,
           };
@@ -116,7 +119,10 @@ const saveStep =
     } else {
       AppLogger.verbose(
         'There are no accounts available to save PA supporting documents',
-        { Id: id, Accounts: accounts },
+        {
+          Id: id,
+          Accounts: accounts,
+        },
       );
       throw new Error(
         `There are no accounts available to save PA supporting documents. Id: ${id}`,

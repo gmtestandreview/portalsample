@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { env } from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 import storybookProjectConfig from './vitest.storybook.config';
@@ -25,7 +26,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 // `test:all` script deliberately runs the two leaf scripts sequentially instead
 // of keeping both project graphs in one Node process.
 
-const isStorybookAddonChild = process.env['VITEST_STORYBOOK'] === 'true';
+const isStorybookAddonChild = env['VITEST_STORYBOOK'] === 'true';
 
 const workspaceConfig = defineConfig({
   resolve: {

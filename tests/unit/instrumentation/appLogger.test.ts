@@ -84,7 +84,7 @@ describe('appLogger', () => {
     expect(insights.trackException).toHaveBeenCalledWith({
       message: 'Failed to save',
       severityLevel: SeverityLevel.Error,
-      error,
+      exception: error,
       properties,
     });
     expect(insights.trackEvent).toHaveBeenCalledWith({

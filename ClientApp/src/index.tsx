@@ -11,7 +11,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { ai } from './instrumentation/AppInsightsService';
 
 const rootElement = document.getElementById('root');
-const root = createRoot(rootElement!);
+if (!rootElement) throw new Error('Root element #root not found');
+const root = createRoot(rootElement);
 const pca = await createStandardPublicClientApplication(configuration);
 TrustedTypes.createTrustedTypePolicy();
 

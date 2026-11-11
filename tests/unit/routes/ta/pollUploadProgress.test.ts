@@ -31,7 +31,7 @@ const makeClient = () => {
   return { client, getProgress, deleteProgressStatistics };
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(pollUploadProgress, () => {
   const resetPollUploadProgressState = () => {
     vi.useRealTimers();
@@ -112,6 +112,31 @@ describe(pollUploadProgress, () => {
     expect(appLoggerError).toHaveBeenCalledWith(
       'Failed to delete progress statistics',
       expect.any(Error),
+      { uploadId: 'u1' },
+    );
+  });
+
+  it('normalises a non-Error statistics cleanup failure before logging', async () => {
+    expect.hasAssertions();
+
+    resetPollUploadProgressState();
+
+    const { client, getProgress, deleteProgressStatistics } = makeClient();
+    getProgress.mockResolvedValue({ percent: 100, status: 'Completed' });
+    deleteProgressStatistics.mockRejectedValue('gone');
+
+    await pollUploadProgress({
+      client,
+      uploadId: 'u1',
+      signal: new AbortController().signal,
+      onProgress: vi.fn<(...args: unknown[]) => unknown>(),
+      onFinished: vi.fn<(...args: unknown[]) => unknown>(),
+    });
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(appLoggerError).toHaveBeenCalledWith(
+      'Failed to delete progress statistics',
+      expect.objectContaining({ message: 'gone' }),
       { uploadId: 'u1' },
     );
   });

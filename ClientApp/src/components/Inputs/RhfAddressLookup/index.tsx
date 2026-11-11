@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -70,7 +71,7 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
   const controllerRef = useRef<AbortController | null>(null);
 
   const { instance, accounts, inProgress } = useMsal();
-  const account = useAccount(accounts[0] || {});
+  const account = useAccount(accounts[0] ?? {});
 
   const manual = address?.isManuallyEntered === true;
 
@@ -89,8 +90,8 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
 
     const options: AutoSuggestOption<MatchedAddress>[] = addresses.matches.map(
       (a, i) => ({
-        displayText: a.displayText || '',
-        id: a.unqiueId || i.toString(),
+        displayText: a.displayText ?? '',
+        id: orIfEmpty(a.unqiueId, i.toString()),
         value: a,
       }),
     );
@@ -144,8 +145,9 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
     });
   };
 
-  const writeAddress = (value: object) =>
+  const writeAddress = (value: object) => {
     setValue(name, value, { shouldDirty: true });
+  };
 
   const onSelectedOption = (option?: AutoSuggestOption<MatchedAddress>) => {
     if (!option) {
@@ -165,21 +167,22 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
     } else {
       writeAddress({
         ...omitUndefined({ ...identity(), state: option.value.state }),
-        line1: option.value.addressLine1 || '',
-        line2: option.value.addressLine2 || '',
-        line3: option.value.addressLine3 || '',
-        suburb: option.value.suburb || '',
-        postcode: option.value.postCode || '',
+        line1: option.value.addressLine1 ?? '',
+        line2: option.value.addressLine2 ?? '',
+        line3: option.value.addressLine3 ?? '',
+        suburb: option.value.suburb ?? '',
+        postcode: option.value.postCode ?? '',
         isManuallyEntered: false,
         searchText: option.displayText,
       });
     }
   };
 
-  const setManual = (isManuallyEntered: boolean) =>
+  const setManual = (isManuallyEntered: boolean) => {
     setValue(`${name}.isManuallyEntered`, isManuallyEntered, {
       shouldDirty: true,
     });
+  };
 
   const onEnterManually = () => {
     // Leaving the search box must not carry its touched flag into the next
@@ -214,7 +217,13 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
       </legend>
       <Form.Group className='form-field-container'>
         <Form.Text className='contextual-help'>
-          <Button variant='tertiary' size='sm' onClick={() => setManual(false)}>
+          <Button
+            variant='tertiary'
+            size='sm'
+            onClick={() => {
+              setManual(false);
+            }}
+          >
             <i className='icon-search me-1' aria-hidden='true' />
             {' Find an address'}
           </Button>

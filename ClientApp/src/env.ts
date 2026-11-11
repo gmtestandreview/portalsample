@@ -1,4 +1,4 @@
-type EnvType = {
+interface EnvType {
   VITE_B2C_CLIENTID: string;
   VITE_B2C_AUTHORITY: string;
   VITE_B2C_KNOWN_AUTHORITIES: string;
@@ -11,7 +11,7 @@ type EnvType = {
   VITE_APPINSIGHTS_CONN_STRING: string;
   VITE_GA_TRACKINGID: string;
   VITE_ENVIRONMENT: string;
-};
+}
 
 const requiredVars: readonly (keyof EnvType)[] = [
   'VITE_B2C_CLIENTID',
@@ -71,7 +71,7 @@ const getEnvValue = (key: keyof EnvType): string => {
 
 requiredVars.forEach((key) => {
   if (
-    import.meta.env.DEV === true &&
+    import.meta.env.DEV &&
     import.meta.env.MODE !== 'production' &&
     developmentOptionalVars.has(key)
   ) {

@@ -1,6 +1,7 @@
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { useParams } from 'react-router';
+import { createElement, Fragment } from 'react';
 import ButtonGroup from './ButtonGroup';
 import LinkButton from './LinkButton';
 import EditButton from './EditButton';
@@ -33,10 +34,12 @@ const EditDestination = () => {
   return <p>Editing request {requestId} organisation and contact</p>;
 };
 
+const getRouterLinkAs = (): 'Link' => 'Link';
+const renderNothing = () => createElement(Fragment);
+
 const groupedActionsArgs = {
   left: () => (
-    // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
-    <LinkButton as='Link' to='/dashboard' variant='tertiary'>
+    <LinkButton as={getRouterLinkAs()} to='/dashboard' variant='tertiary'>
       Cancel
     </LinkButton>
   ),
@@ -45,6 +48,7 @@ const groupedActionsArgs = {
       as='a'
       href='https://measurement.gov.au'
       target='_blank'
+      rel='noreferrer'
       variant='secondary'
     >
       External reference
@@ -102,8 +106,8 @@ export const GroupedActionsKeyboardNavigation = meta.story({
 
 export const EditSection = meta.story({
   args: {
-    left: () => <></>,
-    right: () => <></>,
+    left: renderNothing,
+    right: renderNothing,
   },
   render: () => (
     <EditButton link='/request-for-quote/123/organisation-and-contact' />

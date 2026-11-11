@@ -22,7 +22,6 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -34,7 +33,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
 
@@ -53,7 +51,6 @@ vi.mock('react-router', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule11>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/authentication/hooks',
   () =>
@@ -67,7 +64,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   () =>
@@ -83,7 +79,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
@@ -111,7 +106,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/Accordion',
   () =>
@@ -147,7 +141,7 @@ vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
@@ -175,7 +169,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule63>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/InTextLink',
   () =>
@@ -212,7 +205,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
@@ -242,7 +234,7 @@ vi.mock(
 
 function renderComponent() {
   return render(
-    <Formik initialValues={{}} onSubmit={() => {}}>
+    <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
       <Form>
         <SummaryAndAccept />
       </Form>
@@ -261,7 +253,7 @@ const resetSummaryAndAcceptMocks = () => {
   });
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(SummaryAndAccept, () => {
   it('skips the API call when no MSAL accounts are available', async () => {
     expect.hasAssertions();
@@ -293,7 +285,7 @@ describe(SummaryAndAccept, () => {
 
     mocks.route.id = 'quote-2';
     rerender(
-      <Formik initialValues={{}} onSubmit={() => {}}>
+      <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
         <Form>
           <SummaryAndAccept />
         </Form>

@@ -30,14 +30,14 @@ export const STORYBOOK_LOCAL_BYPASS_PATHS = [
   '/NMI-tile.png',
 ] as const;
 
-export type StorybookMswStartOptions = {
+export interface StorybookMswStartOptions {
   quiet: boolean;
   onUnhandledFrame: UnhandledFrameHandle;
-};
+}
 
-export type StorybookMswWorker = {
+export interface StorybookMswWorker {
   start: (options: StorybookMswStartOptions) => Promise<unknown>;
-};
+}
 
 /**
  * Keep MSW startup behind the addon loader's async boundary. Creating the

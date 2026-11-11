@@ -16,7 +16,9 @@ const NotificationDecorator = (Story: ComponentType) => {
   });
 
   useEffect(() => {
-    return () => clearGetStartedNotification();
+    return () => {
+      clearGetStartedNotification();
+    };
   }, []);
 
   return <Story />;

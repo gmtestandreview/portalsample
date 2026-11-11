@@ -1,6 +1,7 @@
 import type React from 'react';
+import { useState } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import {
@@ -16,6 +17,7 @@ import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/Wiza
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
 import type { DiscardProps } from '../../../../../ClientApp/src/components/forms/types';
+import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
 import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
 import { type FormikValues } from 'formik';
 
@@ -140,7 +142,7 @@ function makeStepElementAt(location: string, title: string) {
 
 function makeRouter(
   propsOverride: Partial<WizardRoutedStepProps<FormikValues>>,
-  extraRoutes: Array<{ path: string; element: React.ReactNode }> = [],
+  extraRoutes: { path: string; element: React.ReactNode }[] = [],
   accountState = mockStateValue,
   accountDispatch: typeof mockDispatch | null = mockDispatch,
 ) {
@@ -204,9 +206,9 @@ describe('wizardRoutedStep — error navigation', () => {
     });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByText('Not Found Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Not Found Page')).toBeInTheDocument();
+    });
   });
 
   it('navigates to /server-error when loadStepValues throws an unrecognised error — restores suppressed silent failure', async () => {
@@ -221,9 +223,9 @@ describe('wizardRoutedStep — error navigation', () => {
     });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByText('Server Error Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Server Error Page')).toBeInTheDocument();
+    });
   });
 
   it('navigates to a custom redirect URL when getRedirectionLocationOnError returns one', async () => {
@@ -242,9 +244,233 @@ describe('wizardRoutedStep — error navigation', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByText('Custom Gone Page')).toBeInTheDocument(),
+    await waitFor(() => {
+      expect(screen.getByText('Custom Gone Page')).toBeInTheDocument();
+    });
+  });
+
+  it('does not reload step values when the redirection callback identity changes', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
+
+    const loadStepValues = vi
+      .fn<LoadStepHandler>()
+      .mockResolvedValue({ stepValues: {} });
+
+    const ChangingCallbackStep = () => {
+      const [callbackVersion, setCallbackVersion] = useState(0);
+
+      return (
+        <AccountStateCtx.Provider value={mockStateValue}>
+          <AccountDispatchCtx.Provider value={mockDispatch}>
+            <button
+              type='button'
+              onClick={() => {
+                setCallbackVersion((currentVersion) => currentVersion + 1);
+              }}
+            >
+              Change redirect callback
+            </button>
+            <WizardRoutedStep
+              title='Test Step'
+              location='/step-1'
+              url=''
+              initialValues={{}}
+              stepStatuses={[{ status: FormStepStatus.NotStarted }]}
+              loadStepValues={loadStepValues}
+              allSteps={[makeStepElement()]}
+              currentStepIndex={0}
+              locationOnCompletion='/done'
+              bannerTitle='Test Wizard'
+              getRedirectionLocationOnError={() =>
+                callbackVersion === 0 ? '/custom-a' : '/custom-b'
+              }
+            />
+          </AccountDispatchCtx.Provider>
+        </AccountStateCtx.Provider>
+      );
+    };
+
+    const router = createMemoryRouter(
+      [
+        { path: '/step-1', element: <ChangingCallbackStep /> },
+        { path: '/custom-a', element: <div>Custom A</div> },
+        { path: '/custom-b', element: <div>Custom B</div> },
+      ],
+      { initialEntries: ['/step-1'] },
     );
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Change redirect callback' }),
+    );
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('does not reload step values when the load callback identity changes', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
+
+    const loadStepValues = vi
+      .fn<LoadStepHandler>()
+      .mockResolvedValue({ stepValues: {} });
+
+    const ChangingLoadCallbackStep = () => {
+      const [, setCallbackVersion] = useState(0);
+
+      return (
+        <AccountStateCtx.Provider value={mockStateValue}>
+          <AccountDispatchCtx.Provider value={mockDispatch}>
+            <button
+              type='button'
+              onClick={() => {
+                setCallbackVersion((currentVersion) => currentVersion + 1);
+              }}
+            >
+              Change load callback
+            </button>
+            <WizardRoutedStep
+              title='Test Step'
+              location='/step-1'
+              url=''
+              initialValues={{}}
+              stepStatuses={[{ status: FormStepStatus.NotStarted }]}
+              loadStepValues={() => {
+                return loadStepValues();
+              }}
+              allSteps={[makeStepElement()]}
+              currentStepIndex={0}
+              locationOnCompletion='/done'
+              bannerTitle='Test Wizard'
+            />
+          </AccountDispatchCtx.Provider>
+        </AccountStateCtx.Provider>
+      );
+    };
+
+    const router = createMemoryRouter(
+      [{ path: '/step-1', element: <ChangingLoadCallbackStep /> }],
+      { initialEntries: ['/step-1'] },
+    );
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Change load callback' }),
+    );
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('rehydrates copied RFQ values when entering the instrument step', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
+
+    const currentStepIndex = { value: 0 };
+    const loadStepValues = vi.fn<LoadStepHandler>(() => ({
+      stepValues:
+        currentStepIndex.value === 1
+          ? { manufacturer: 'Original Manufacturer' }
+          : {},
+    }));
+
+    const CopiedRfqWizard = () => {
+      const [stepIndex, setStepIndex] = useState(0);
+      currentStepIndex.value = stepIndex;
+
+      return (
+        <AccountStateCtx.Provider value={mockStateValue}>
+          <AccountDispatchCtx.Provider value={mockDispatch}>
+            <button
+              type='button'
+              onClick={() => {
+                setStepIndex(1);
+              }}
+            >
+              Enter copied instrument step
+            </button>
+            <WizardRoutedStep
+              title='Instrument and request'
+              location='/instrument-and-request'
+              url='/request-for-quote/RFQ-2023-009012-COPY'
+              initialValues={{}}
+              stepStatuses={[
+                { status: FormStepStatus.Completed },
+                { status: FormStepStatus.NotStarted },
+              ]}
+              loadStepValues={loadStepValues}
+              allSteps={[
+                <WizardStep
+                  key='organisation'
+                  title='Organisation and contact'
+                  location='/organisation-and-contact'
+                  initialValues={{}}
+                  stepStatuses={[]}
+                  loadStepValues={() => Promise.resolve({ stepValues: {} })}
+                >
+                  <TextInput name='organisation' label='Organisation' />
+                </WizardStep>,
+                <WizardStep
+                  key='instrument'
+                  title='Instrument and request'
+                  location='/instrument-and-request'
+                  initialValues={{}}
+                  stepStatuses={[]}
+                  loadStepValues={() => Promise.resolve({ stepValues: {} })}
+                >
+                  <TextInput name='manufacturer' label='Manufacturer' />
+                </WizardStep>,
+              ]}
+              currentStepIndex={stepIndex}
+              locationOnCompletion='/done'
+              bannerTitle='Request for quote'
+            />
+          </AccountDispatchCtx.Provider>
+        </AccountStateCtx.Provider>
+      );
+    };
+
+    const router = createMemoryRouter(
+      [
+        { path: '*', element: <CopiedRfqWizard /> },
+        { path: '/done', element: <div>Done Page</div> },
+      ],
+      {
+        initialEntries: [
+          '/request-for-quote/RFQ-2023-009012-COPY/instrument-and-request',
+        ],
+      },
+    );
+    render(<RouterProvider router={router} />);
+
+    await screen.findByLabelText('Organisation');
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Enter copied instrument step' }),
+    );
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(2);
+      expect(screen.getByLabelText('Manufacturer')).toHaveValue(
+        'Original Manufacturer',
+      );
+    });
   });
 
   it('automatically retries loadStepValues after a 409 concurrency error', async () => {
@@ -275,10 +501,12 @@ describe('wizardRoutedStep — error navigation', () => {
     resetWizardRoutedStepIntegration();
 
     const replace = vi.fn<Location['replace']>();
-    vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
-      ...globalThis.location,
-      replace,
+    const locationMock = Object.create(globalThis.location) as Location;
+    Object.defineProperty(locationMock, 'replace', {
+      configurable: true,
+      value: replace,
     });
+    vi.spyOn(globalThis, 'location', 'get').mockReturnValue(locationMock);
     const router = makeRouter({
       loadStepValues: vi
         .fn<LoadStepHandler>()
@@ -287,7 +515,9 @@ describe('wizardRoutedStep — error navigation', () => {
 
     render(<RouterProvider router={router} />);
 
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/sign-out'));
+    await waitFor(() => {
+      expect(replace).toHaveBeenCalledWith('/sign-out');
+    });
   });
 
   it('resets target organisation and navigates to dashboard after third-party access is lost', async () => {
@@ -303,9 +533,9 @@ describe('wizardRoutedStep — error navigation', () => {
     });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Dashboard Page')).toBeInTheDocument();
+    });
 
     expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith(
       '12345678901',
@@ -331,9 +561,9 @@ describe('wizardRoutedStep — error navigation', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Dashboard Page')).toBeInTheDocument();
+    });
 
     expect(mockDispatch.setTargetOrganisation).not.toHaveBeenCalled();
   });
@@ -363,9 +593,9 @@ describe('wizardRoutedStep — error navigation', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Dashboard Page')).toBeInTheDocument();
+    });
 
     expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith('', '');
   });
@@ -382,7 +612,9 @@ describe('wizardRoutedStep — error navigation', () => {
     });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
   });
 
   it('redirects to the first incomplete prior step', async () => {
@@ -425,9 +657,9 @@ describe('wizardRoutedStep — error navigation', () => {
     );
 
     render(<RouterProvider router={router} />);
-    await waitFor(() =>
-      expect(screen.getByText('First Step Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('First Step Page')).toBeInTheDocument();
+    });
   });
 });
 
@@ -453,12 +685,16 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     render(<RouterProvider router={router} />);
 
     // Wait for the loading spinner to go away and the form to be ready
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
 
     const submitButton = screen.getByTestId('save-and-next-button');
     await userEvent.click(submitButton);
 
-    await waitFor(() => expect(onSaveAndNext).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSaveAndNext).toHaveBeenCalledTimes(1);
+    });
 
     // The fix: the original DTO object must NOT be mutated
     expect(originalDto.status).toBe(FormStepStatus.NotStarted);
@@ -504,12 +740,14 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('save-and-next-button'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Alternate Second Step')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Alternate Second Step')).toBeInTheDocument();
+    });
 
     expect(onSaveAndNext).toHaveBeenCalledWith(
       { name: 'loaded' },
@@ -538,14 +776,14 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('save-and-exit-button'));
 
-    await waitFor(() =>
-      expect(screen.getByText('After Exit Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('After Exit Page')).toBeInTheDocument();
+    });
 
     expect(onSaveAndExit).toHaveBeenCalledWith(
       { name: 'loaded' },
@@ -568,13 +806,13 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('save-and-exit-button'));
-    await waitFor(() =>
-      expect(screen.getByText('Root Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Root Page')).toBeInTheDocument();
+    });
   });
 
   it('renders update server and WAF errors from failed submissions', async () => {
@@ -594,9 +832,9 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     const router = makeRouter({ onSaveAndNext });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('save-and-next-button'));
 
     await expect(
@@ -625,9 +863,9 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('save-and-exit-button'));
 
     await expect(
@@ -645,9 +883,9 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     const router = makeRouter({});
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('save-and-next-button'));
 
     expect(screen.getByTestId('form')).toBeInTheDocument();
@@ -665,14 +903,14 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     ]);
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('save-and-exit-button'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Root Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Root Page')).toBeInTheDocument();
+    });
   });
 
   it('runs discard and cancel callbacks before navigating', async () => {
@@ -697,14 +935,14 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('cancel-button'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Cancelled Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Cancelled Page')).toBeInTheDocument();
+    });
 
     expect(onDiscard).toHaveBeenCalledWith();
     expect(onCancel).toHaveBeenCalledWith();
@@ -729,9 +967,9 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument();
+    });
 
     expect(
       screen.queryByTestId('save-and-next-button'),
@@ -739,9 +977,9 @@ describe('wizardRoutedStep — prop mutation fix', () => {
 
     await user.click(screen.getByTestId('cancel-button'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Discarded Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Discarded Page')).toBeInTheDocument();
+    });
   });
 
   it('falls back to root when cancelling without a configured location', async () => {
@@ -761,14 +999,14 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('cancel-button'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Root Cancel Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Root Cancel Page')).toBeInTheDocument();
+    });
   });
 
   it('uses the external redirect for an HTTPS discard location', async () => {
@@ -786,9 +1024,9 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument();
+    });
     await user.click(screen.getByTestId('cancel-button'));
 
     expect(screen.getByTestId('form')).toBeInTheDocument();

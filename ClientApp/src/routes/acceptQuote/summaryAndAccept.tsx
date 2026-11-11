@@ -21,6 +21,7 @@ import {
 import { AcceptQuoteClient, DashboardClient } from '../../api/web-api-client';
 import type {
   AcceptQuotePreInfoDto,
+  DownloadedFileResponse,
   OrganisationDto,
   RequestForQuote,
 } from '../../api/web-api-client';
@@ -28,6 +29,7 @@ import InTextLink from '../../components/InTextLink';
 import { useAccountState } from '../../authentication/hooks';
 import QuotationSummary from './quotationSummary';
 import { silentRequestFor } from '../../authentication/silentRequest';
+import { joinNameParts } from '../../utils';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
   getDashboardNotification,
@@ -73,7 +75,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
     ) : null;
   };
   const dashboardMessage = setNotification();
-  const showDashboardMessage = (message: JSX.Element | null) => (
+  const showDashboardMessage = (message: React.JSX.Element | null) => (
     <>
       {message && (
         <Container>
@@ -96,10 +98,12 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
         silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
-      const fileResponse = await client.getQuoteOfferPDFByQuoteID(
+      // The generated client resolves `null` for an HTTP 204 despite its
+      // non-nullable return type, so the guard below is a real runtime check.
+      const fileResponse = (await client.getQuoteOfferPDFByQuoteID(
         acceptQuotePreInfo?.crmQuoteId,
         true,
-      );
+      )) as DownloadedFileResponse | null;
       if (
         fileResponse?.fileData &&
         fileResponse.mimeType &&
@@ -205,7 +209,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             className='mb-4 py-2'
           >
             <ReportRecipient isSummary name='reportRecipient' id={id} />
-            {isSubmitted ? null : (
+            {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/report-recipient`} />
             )}
           </CustomAccordionBody>
@@ -217,7 +221,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             className='mb-4 py-2'
           >
             <DeliveryAndReturn isSummary name='deliveryAndReturn' id={id} />
-            {isSubmitted ? null : (
+            {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/delivery-and-return`} />
             )}
           </CustomAccordionBody>
@@ -229,7 +233,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             className='mb-4 py-2'
           >
             <PaymentDetails isSummary name='paymentDetails' id={id} />
-            {isSubmitted ? null : (
+            {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/payment-details`} />
             )}
           </CustomAccordionBody>
@@ -261,7 +265,10 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                     <br />
                     {account?.details && (
                       <span className='text-break'>
-                        {`${account?.details?.givenName} ${account?.details?.familyName}`}
+                        {joinNameParts(
+                          account.details.givenName,
+                          account.details.familyName,
+                        )}
                         <br />
                       </span>
                     )}
@@ -271,27 +278,26 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                       <i>Request for quote by</i>
                       <br />
                       <span className='text-break'>
-                        {requestForQuote?.contact?.firstName &&
-                          `${requestForQuote?.contact?.firstName}`}
-                        {requestForQuote?.contact?.lastName &&
-                          ` ${requestForQuote?.contact?.lastName}`}
+                        {requestForQuote.contact.firstName}
+                        {requestForQuote.contact.lastName &&
+                          ` ${requestForQuote.contact.lastName}`}
                         <br />
                       </span>
-                      {requestForQuote?.contact?.role && (
+                      {requestForQuote.contact.role && (
                         <span className='text-break'>
-                          {requestForQuote?.contact?.role}
+                          {requestForQuote.contact.role}
                           <br />
                         </span>
                       )}
-                      {requestForQuote?.contact?.phone && (
+                      {requestForQuote.contact.phone && (
                         <span className='text-break'>
-                          {requestForQuote?.contact?.phone}
+                          {requestForQuote.contact.phone}
                           <br />
                         </span>
                       )}
-                      {requestForQuote?.contact?.email && (
+                      {requestForQuote.contact.email && (
                         <span className='text-break'>
-                          {requestForQuote?.contact?.email}
+                          {requestForQuote.contact.email}
                           <br />
                         </span>
                       )}
@@ -305,16 +311,16 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                           <br />
                         </span>
                       )}
-                      {organisationDto?.name && (
+                      {organisationDto.name && (
                         <span className='text-break'>
-                          {organisationDto?.name}
+                          {organisationDto.name}
                           <br />
                         </span>
                       )}
-                      {organisationDto?.abn && (
+                      {organisationDto.abn && (
                         <span className='text-break'>
                           <span className='visually-hidden'>ABN: </span>
-                          <span>{organisationDto?.abn}</span>
+                          <span>{organisationDto.abn}</span>
                           <br />
                         </span>
                       )}
@@ -322,31 +328,30 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                   )}
                   {organisationDto?.streetAddress && (
                     <p>
-                      {organisationDto?.streetAddress?.line1 && (
+                      {organisationDto.streetAddress.line1 && (
                         <span className='text-break'>
-                          {organisationDto?.streetAddress?.line1}
+                          {organisationDto.streetAddress.line1}
                           <br />
                         </span>
                       )}
-                      {organisationDto?.streetAddress?.line2 && (
+                      {organisationDto.streetAddress.line2 && (
                         <span className='text-break'>
-                          {organisationDto?.streetAddress?.line2}
+                          {organisationDto.streetAddress.line2}
                           <br />
                         </span>
                       )}
-                      {organisationDto?.streetAddress?.line3 && (
+                      {organisationDto.streetAddress.line3 && (
                         <span className='text-break'>
-                          {organisationDto?.streetAddress?.line3}
+                          {organisationDto.streetAddress.line3}
                           <br />
                         </span>
                       )}
                       <span className='text-break'>
-                        {organisationDto?.streetAddress?.suburb &&
-                          `${organisationDto?.streetAddress?.suburb}`}
-                        {organisationDto?.streetAddress?.state &&
-                          ` ${organisationDto?.streetAddress?.state}`}
-                        {organisationDto?.streetAddress?.postcode &&
-                          ` ${organisationDto?.streetAddress?.postcode}`}
+                        {organisationDto.streetAddress.suburb}
+                        {organisationDto.streetAddress.state &&
+                          ` ${organisationDto.streetAddress.state}`}
+                        {organisationDto.streetAddress.postcode &&
+                          ` ${organisationDto.streetAddress.postcode}`}
                       </span>
                     </p>
                   )}
@@ -359,25 +364,25 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
                     </strong>
                     {acceptQuotePreInfo?.nmiCheckedByName && (
                       <span className='text-break'>
-                        {acceptQuotePreInfo?.nmiCheckedByName}
+                        {acceptQuotePreInfo.nmiCheckedByName}
                         <br />
                       </span>
                     )}
                     {acceptQuotePreInfo?.nmiCheckedByJobTitle && (
                       <span className='text-break'>
-                        {acceptQuotePreInfo?.nmiCheckedByJobTitle}
+                        {acceptQuotePreInfo.nmiCheckedByJobTitle}
                         <br />
                       </span>
                     )}
                     {acceptQuotePreInfo?.nmiCheckedByPhone && (
                       <span className='text-break'>
-                        {acceptQuotePreInfo?.nmiCheckedByPhone}
+                        {acceptQuotePreInfo.nmiCheckedByPhone}
                         <br />
                       </span>
                     )}
                     {acceptQuotePreInfo?.nmiCheckedByEmail && (
                       <span className='text-break'>
-                        {acceptQuotePreInfo?.nmiCheckedByEmail}
+                        {acceptQuotePreInfo.nmiCheckedByEmail}
                         <br />
                       </span>
                     )}
@@ -422,7 +427,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
           </CustomAccordionBody>
         </CustomAccordion>
       </Row>
-      {isSubmitted && (
+      {isSubmitted && id !== undefined && (
         <Row className='mb-4'>
           <div className='d-grid d-md-block'>
             <Link

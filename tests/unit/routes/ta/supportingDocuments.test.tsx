@@ -173,10 +173,10 @@ const defaultValues = {
   },
 };
 
-type RenderOptions = {
+interface RenderOptions {
   props?: Record<string, unknown>;
   values?: Record<string, unknown>;
-};
+}
 
 let formik: FormikProps<Record<string, unknown>> | undefined;
 
@@ -213,7 +213,7 @@ const renderDocs = async ({
         formik = bag;
       }}
     >
-      <SupportingDocuments {...(componentProps as any)} />
+      <SupportingDocuments {...componentProps} />
     </FormikWrapper>,
     { path: '/ta/:id', initialPath: '/ta/APP-1' },
   );
@@ -495,12 +495,12 @@ describe('supporting documents', () => {
         props: { externalErrors: [ValidationMessages.RequiredDoc] },
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(scrollIntoView).toHaveBeenCalledWith({
           behavior: 'smooth',
           block: 'start',
-        }),
-      );
+        });
+      });
 
       expect(focus).toHaveBeenCalledWith();
 
@@ -517,7 +517,9 @@ describe('supporting documents', () => {
       await renderDocs({
         props: {
           onUploadAttachment:
-            vi.fn<TASupportingDocumentsProps['onUploadAttachment']>(),
+            vi.fn<
+              NonNullable<TASupportingDocumentsProps['onUploadAttachment']>
+            >(),
         },
       });
 
@@ -532,7 +534,7 @@ describe('supporting documents', () => {
       await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockResolvedValue([{ id: 'doc-1' }]);
       const setExternalErrors =
         vi.fn<NonNullable<TASupportingDocumentsProps['setExternalErrors']>>();
@@ -590,7 +592,7 @@ describe('supporting documents', () => {
       await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           errors: {
             file: ['File type not allowed', 'File too large'],
@@ -616,7 +618,7 @@ describe('supporting documents', () => {
       await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({ title: 'Upload rejected' });
       await renderDocs({ props: { onUploadAttachment } });
 
@@ -633,7 +635,7 @@ describe('supporting documents', () => {
       await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({});
       await renderDocs({ props: { onUploadAttachment } });
 
@@ -650,7 +652,7 @@ describe('supporting documents', () => {
       await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           status: 403,
           title: 'No third-party access remains for this organisation',
@@ -661,14 +663,14 @@ describe('supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
           expect.objectContaining<Record<string, unknown>>({
             message: expect.stringContaining('Client Org'),
             severity: 'Error',
           }),
-        ),
-      );
+        );
+      });
 
       expect(
         defined(
@@ -691,7 +693,7 @@ describe('supporting documents', () => {
         details: null,
       });
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           status: 403,
           title: 'No third-party access remains for this organisation',
@@ -702,9 +704,9 @@ describe('supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      await waitFor(() =>
-        expect(mocks.setTargetOrganisation).toHaveBeenCalledWith('', ''),
-      );
+      await waitFor(() => {
+        expect(mocks.setTargetOrganisation).toHaveBeenCalledWith('', '');
+      });
     });
 
     it('treats a 403 without the third-party title as an ordinary failure', async () => {
@@ -713,7 +715,7 @@ describe('supporting documents', () => {
       await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
-        .fn<TASupportingDocumentsProps['onUploadAttachment']>()
+        .fn<NonNullable<TASupportingDocumentsProps['onUploadAttachment']>>()
         .mockRejectedValue({
           status: 403,
           title: 'Forbidden',
@@ -967,7 +969,9 @@ describe('supporting documents', () => {
         props: { setProgress: undefined },
       });
 
-      expect(() => unmount()).not.toThrow();
+      expect(() => {
+        unmount();
+      }).not.toThrow();
     });
   });
 });

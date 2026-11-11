@@ -53,7 +53,7 @@ const createDist = (html: string) => {
 };
 
 describe('mSAL redirect bridge policy', () => {
-  // eslint-disable-next-line vitest/no-hooks -- cleanup must run after every external verifier process.
+  // cleanup must run after every external verifier process.
   afterEach(() => {
     for (const directory of temporaryDirectories.splice(0)) {
       rmSync(directory, { force: true, recursive: true });
@@ -139,7 +139,13 @@ describe('mSAL redirect bridge policy', () => {
       expect(result.output).toContain('bridge response must disable caching');
     } finally {
       await new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve())),
+        server.close((error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve();
+          }
+        }),
       );
     }
   });

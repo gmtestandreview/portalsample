@@ -32,7 +32,9 @@ import unitConfig from '../../../vitest.unit.config';
 
 type TestOptions = NonNullable<ViteUserConfig['test']>;
 
-type PackageScripts = { scripts: Record<string, string> };
+interface PackageScripts {
+  scripts: Record<string, string>;
+}
 
 const testOptions = (config: ViteUserConfig, label: string): TestOptions => {
   const options = config.test;

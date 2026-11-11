@@ -2,19 +2,24 @@ import type { ContactDto } from '../../../api/web-api-client';
 import { Title } from '../../../api/web-api-client';
 import SummaryDisplay from '../../../components/SummaryDisplay';
 import { getPhoneNumberFormat } from '../../../components/Inputs/NumberInput/phoneFormat';
+import { toTitle } from '../../../utils/apiEnumMappings';
 
 const MOBILE_FORMAT = '#### ### ###';
 
 const titleText = (title: string | undefined) => {
   if (!title) return undefined;
-  const known = Title[title as keyof typeof Title] as Title | undefined;
+  const known = toTitle(title);
   return known?.replace(/([A-Z])/g, ' $1').trim();
+};
+
+type ContactSummaryContact = Omit<Partial<ContactDto>, 'title'> & {
+  title?: string | undefined;
 };
 
 interface ContactSummaryProps {
   /** Id prefix for the rows, e.g. `organisationAndContact.contact`. */
   name: string;
-  contact: Partial<ContactDto> | undefined;
+  contact: ContactSummaryContact | undefined;
   hideTitleOther?: boolean;
 }
 
@@ -36,7 +41,7 @@ const ContactSummary = ({
           value={title}
         />
       ) : null}
-      {(contact?.title as string | undefined) === '' ? (
+      {contact?.title === '' ? (
         <SummaryDisplay
           label='Title (optional)'
           id='titleEmpty'
@@ -49,7 +54,7 @@ const ContactSummary = ({
           label='Title, if "Other"'
           id={`${name}.titleOther`}
           as='p'
-          value={contact?.titleOther ?? ''}
+          value={contact.titleOther ?? ''}
         />
       )}
       <SummaryDisplay

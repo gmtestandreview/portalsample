@@ -73,7 +73,8 @@ const acceptQuoteStepHandler =
     if (await fulfillConfiguredFailure(route, state)) {
       return;
     }
-    const step = new URL(route.request().url()).pathname.split('/').at(-1)!;
+    const { pathname } = new URL(route.request().url());
+    const step = pathname.slice(pathname.lastIndexOf('/') + 1);
     state.completedAcceptQuoteSteps.add(step);
     await json(route, {});
   };

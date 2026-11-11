@@ -240,9 +240,9 @@ describe('wizardForm — step navigation', () => {
     const router = makeTwoStepRouter(statuses);
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument();
+    });
 
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
   });
@@ -260,13 +260,15 @@ describe('wizardForm — step navigation', () => {
     const router = makeTwoStepRouter(statuses, step1Save);
     render(<RouterProvider router={router} />);
 
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
 
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument();
+    });
 
     expect(screen.queryByTestId('step-1-content')).not.toBeInTheDocument();
     // Confirm form submission was triggered (navigation is driven by onSaveAndNext resolving)
@@ -282,12 +284,14 @@ describe('wizardForm — step navigation', () => {
     const router = makeTwoStepRouter([], step1Save);
     render(<RouterProvider router={router} />);
 
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument();
+    });
 
     expect(step1Save).toHaveBeenCalledTimes(1);
   });
@@ -309,15 +313,15 @@ describe('wizardForm — step navigation', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument();
+    });
 
     await userEvent.click(screen.getByTestId('back-button'));
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument();
+    });
 
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
   });
@@ -339,9 +343,9 @@ describe('wizardForm — step navigation', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument();
+    });
 
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
   });
@@ -363,13 +367,15 @@ describe('wizardForm — step navigation', () => {
     );
     render(<RouterProvider router={router} />);
 
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByTestId('form')).toBeInTheDocument();
+    });
 
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
-    await waitFor(() =>
-      expect(screen.getByText('Done Page')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('Done Page')).toBeInTheDocument();
+    });
   });
 
   it('smoke: preserves the resolved wizard base path for split splat route step navigation', async () => {
@@ -387,9 +393,9 @@ describe('wizardForm — step navigation', () => {
     const router = makeSplitSplatTwoStepRouter(statuses, step1Save);
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument();
+    });
 
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
@@ -448,9 +454,9 @@ describe('wizardForm — step navigation', () => {
 
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('root-step-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('root-step-content')).toBeInTheDocument();
+    });
   });
 
   it('keeps the current wizard path when the submitted base path is not a string', async () => {
@@ -466,9 +472,9 @@ describe('wizardForm — step navigation', () => {
     const router = makeSplitSplatTwoStepRouter(statuses, step1Save);
     render(<RouterProvider router={router} />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument();
+    });
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
     await waitFor(() => {

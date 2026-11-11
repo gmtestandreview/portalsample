@@ -2,32 +2,32 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, vi } from 'vitest';
 import { VITE_ENV_FIXTURES } from './runtime-env-fixtures';
 
-type UnknownFunction = (...args: unknown[]) => void;
+type UnknownFunction = (..._args: unknown[]) => void;
 
 const createVoidMock = () => vi.fn<UnknownFunction>();
 
 Object.assign(import.meta.env, VITE_ENV_FIXTURES.storybook);
 
-if (!globalThis.matchMedia) {
-  Object.defineProperty(globalThis, 'matchMedia', {
-    writable: true,
-    value: vi.fn<(query: string) => MediaQueryList>().mockImplementation(
-      (query) =>
-        ({
-          matches: false,
-          media: query,
-          onchange: null,
-          addListener: createVoidMock(),
-          removeListener: createVoidMock(),
-          addEventListener: createVoidMock(),
-          removeEventListener: createVoidMock(),
-          dispatchEvent: createVoidMock(),
-        }) as unknown as MediaQueryList,
-    ),
-  });
-}
+const mockMatchMediaImplementation = (query: string): MediaQueryList =>
+  ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: createVoidMock(),
+    removeListener: createVoidMock(),
+    addEventListener: createVoidMock(),
+    removeEventListener: createVoidMock(),
+    dispatchEvent: createVoidMock(),
+  }) as unknown as MediaQueryList;
 
-Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+Object.defineProperty(globalThis, 'matchMedia', {
+  writable: true,
+  value: vi
+    .fn<(query: string) => MediaQueryList>()
+    .mockImplementation(mockMatchMediaImplementation),
+});
+
+Object.defineProperty(globalThis.HTMLElement.prototype, 'scrollIntoView', {
   configurable: true,
   writable: true,
   value: createVoidMock(),
@@ -39,7 +39,7 @@ const originalGetComputedStyle = globalThis.getComputedStyle.bind(globalThis);
 globalThis.getComputedStyle = (element: Element) =>
   originalGetComputedStyle(element);
 
-Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+Object.defineProperty(globalThis.HTMLCanvasElement.prototype, 'getContext', {
   configurable: true,
   writable: true,
   value: vi.fn<() => CanvasRenderingContext2D>(
@@ -47,7 +47,7 @@ Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
       ({
         arc: createVoidMock(),
         beginPath: createVoidMock(),
-        canvas: document.createElement('canvas'),
+        canvas: globalThis.document.createElement('canvas'),
         clearRect: createVoidMock(),
         clip: createVoidMock(),
         closePath: createVoidMock(),
@@ -88,7 +88,7 @@ const expectedErrorBoundaryStoryMessages = [
   'The above error occurred in the <BrokenChild> component',
   'The above error occurred in the <ThrowingComponent> component',
 ];
-const originalConsoleError = console.error;
+const originalConsoleError = globalThis.console.error;
 // Anchor to the start of the message: each expected string is the leading text
 // of its emitted error (a thrown Error.message, or React's "The above error
 // occurred in…" prefix). Matching with `startsWith` instead of `includes` keeps
@@ -96,14 +96,14 @@ const originalConsoleError = console.error;
 // error that merely contains one of these substrings mid-message.
 const isExpectedErrorBoundaryStoryError = (message: string) => {
   // The browser test runner re-reports a render error as "Uncaught Error: <message>".
-  const unwrapped = message.replace(/^Uncaught (?:Error: )?/, '');
+  const unwrapped = message.replace(/^Uncaught (?:Error: )?/u, '');
   return expectedErrorBoundaryStoryMessages.some((expected) =>
     unwrapped.startsWith(expected),
   );
 };
 
 const consoleErrorSpy = vi
-  .spyOn(console, 'error')
+  .spyOn(globalThis.console, 'error')
   .mockImplementation((...args) => {
     const message = args
       .map((arg) => (arg instanceof Error ? arg.message : String(arg)))

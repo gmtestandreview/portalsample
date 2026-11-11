@@ -14,6 +14,9 @@ import {
   oneOfEnum,
   requiredNullableDate,
   requiredNullableString,
+  extAlphaNumMultiLineMatchRegex,
+  extAlphaNumSingleLineMatchRegex,
+  serialNumMatchRegEx,
   websiteUrlSchema,
 } from '../../../ClientApp/src/validationSchemas/common';
 
@@ -101,6 +104,26 @@ describe('common validation helpers', () => {
     await expect(schema.validate('Maybe')).rejects.toThrow(
       'must be one of the following values',
     );
+  });
+
+  it('supports numeric enum values', async () => {
+    expect.hasAssertions();
+
+    const schema = oneOfEnum({ Pending: 0, Complete: 1 } as const);
+
+    await expect(schema.validate(1)).resolves.toBe(1);
+    await expect(schema.validate(2)).rejects.toThrow(
+      'must be one of the following values',
+    );
+  });
+
+  it('preserves the accepted validation formats for special characters', () => {
+    expect.hasAssertions();
+
+    expect(serialNumMatchRegEx.test('ABC-123 [A]')).toBe(true);
+    expect(extAlphaNumSingleLineMatchRegex.test('ABC [A]')).toBe(true);
+    expect(extAlphaNumSingleLineMatchRegex.test('ABC\n[A]')).toBe(false);
+    expect(extAlphaNumMultiLineMatchRegex.test('ABC [A]\r\nDEF')).toBe(true);
   });
 
   it('checks future dates while ignoring empty and invalid values', () => {

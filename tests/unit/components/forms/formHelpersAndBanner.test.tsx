@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Field, Form, Formik, useFormikContext } from 'formik';
@@ -47,11 +47,11 @@ interface FormikHarnessProps<TValues extends FormikValues> {
   readonly children: React.ReactNode;
 }
 
-type AccountFormValues = {
+interface AccountFormValues {
   account: {
     type: string;
   };
-};
+}
 
 function FormikHarness<TValues extends FormikValues>({
   initialValues,
@@ -59,7 +59,7 @@ function FormikHarness<TValues extends FormikValues>({
   initialErrors,
   initialTouched,
   validate,
-  onSubmit = async () => {},
+  onSubmit = vi.fn<() => void>(),
   children,
 }: FormikHarnessProps<TValues>) {
   return (
@@ -200,9 +200,9 @@ describe('form helper components', () => {
       </FormikHarness>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByText('ABN field')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByText('ABN field')).toBeInTheDocument();
+    });
 
     rerender(
       <FormikHarness
@@ -222,9 +222,9 @@ describe('form helper components', () => {
       </FormikHarness>,
     );
 
-    await waitFor(() =>
-      expect(screen.queryByText('ABN field')).not.toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
+    });
   });
 
   it('passes create-account logout wording to UnsavedFormPrompt when dirty and unsubmitted', async () => {
@@ -291,19 +291,19 @@ describe('form helper components', () => {
       <FormikHarness
         initialValues={{ name: '' }}
         validate={() => ({ name: 'Server rejected' })}
-        onSubmit={async () => {}}
+        onSubmit={vi.fn<() => void>()}
       >
         <AutoSubmit />
         <UnsavedFormPrompt />
       </FormikHarness>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('route-leaving-guard')).toHaveAttribute(
         'data-when',
         'true',
-      ),
-    );
+      );
+    });
 
     unmount();
     render(

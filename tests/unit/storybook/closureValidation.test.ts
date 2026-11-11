@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-type ClosureModule = {
+interface ClosureModule {
   computeIndexDigest(index: Record<string, unknown>): string;
   deriveExecutableStorySet(input: {
     index: { entries: Record<string, unknown> };
@@ -8,10 +8,10 @@ type ClosureModule = {
   }): { storyIds: string[]; skipped: string[] };
   validateClosure(input: Record<string, unknown>): {
     ok: boolean;
-    errors: Array<{ code: string; message: string }>;
+    errors: { code: string; message: string }[];
     counts?: Record<string, number>;
   };
-};
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.

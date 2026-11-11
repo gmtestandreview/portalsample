@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseMcpMarkdownReport } from '../../e2e/support/storybookMcpReport';
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(parseMcpMarkdownReport, () => {
   it('extracts passing stories and empty failure sections', () => {
     expect.hasAssertions();

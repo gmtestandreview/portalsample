@@ -15,6 +15,7 @@ import type { AccountDetails } from '../../../../ClientApp/src/authentication/ac
 import { AccountStateCtx } from '../../../../ClientApp/src/authentication/accountContext';
 import RequestForQuoteSummary from '../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary';
 import { resetMsalMock } from '../../helpers/mockMsal';
+import { defined } from '../../helpers/defined';
 import type { ClientMockOf } from '../../helpers/mockApiClient';
 import {
   mockSummaryLookups,
@@ -129,7 +130,7 @@ const resetRequestForQuoteSummary = () => {
   mockSummaryLookups(clients.lookup.methods.getLookup);
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(RequestForQuoteSummary, () => {
   it('shows both sections with the values held by Formik', async () => {
     expect.hasAssertions();
@@ -223,7 +224,9 @@ describe(RequestForQuoteSummary, () => {
 
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
-      { account: { givenName: 'Margaret' } },
+      {
+        account: { givenName: 'Margaret' },
+      },
     );
 
     expect(document.querySelector('#q-currentContact')).toBeNull();
@@ -279,7 +282,7 @@ describe(RequestForQuoteSummary, () => {
 
     expect(editButtons).toHaveLength(2);
 
-    fireEvent.click(editButtons.at(index) as HTMLElement);
+    fireEvent.click(defined(editButtons.at(index), `Edit button ${index}`));
 
     expect(
       screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`),
@@ -306,5 +309,61 @@ describe(RequestForQuoteSummary, () => {
     expect(back).toHaveAttribute('href', '/dashboard');
     expect(within(back).getByText(/back to dashboard/i)).toBeInTheDocument();
     expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();
+  });
+
+  it('treats a status that declares hidden as undefined as no hiding rules', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
+    await renderPage(
+      fixtureValues('fully populated with the principal contact'),
+      { status: { hidden: undefined } },
+    );
+
+    expect(screen.getByText('Lovelace', { exact: false })).toBeInTheDocument();
+  });
+
+  it('uses an empty id in the edit links when the route carries no id', async () => {
+    expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
+
+    render(
+      <MemoryRouter initialEntries={['/request-for-quote/summary']}>
+        <Routes>
+          <Route
+            path='/request-for-quote/summary'
+            element={
+              <Formik
+                initialValues={fixtureValues(
+                  'fully populated with the principal contact',
+                )}
+                initialStatus={{ hidden: summaryHidden }}
+                onSubmit={() => undefined}
+              >
+                <RequestForQuoteSummary name='' isSubmitted={false} />
+              </Formik>
+            }
+          />
+          <Route path='*' element={<LocationProbe />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await screen.findByText('Request details');
+
+    const editButtons = screen.getAllByRole('button', {
+      name: 'Edit this section',
+    });
+
+    expect(editButtons).toHaveLength(2);
+
+    fireEvent.click(defined(editButtons.at(0), 'first edit button'));
+
+    // Empty id collapses the segment: no id sits between the base and the step.
+    expect(
+      screen.getByText(/^\/request-for-quote\/+organisation-and-contact$/),
+    ).toBeInTheDocument();
   });
 });

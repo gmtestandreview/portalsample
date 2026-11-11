@@ -214,16 +214,17 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
         accountsClient.setAuthToken(tokenResult.accessToken);
 
-        const deliveryAndReturn = await acceptQuoteClient.getDeliveryAndReturn(
-          id!,
-        );
+        if (id === undefined) return;
+
+        const deliveryAndReturn =
+          await acceptQuoteClient.getDeliveryAndReturn(id);
         setDeliveryAndReturnStep(deliveryAndReturn);
         setAcceptQuotePreInfo(deliveryAndReturn.acceptQuotePreInfo);
 
         setStreetAddress(deliveryAndReturn.rfqOrganisation?.streetAddress);
 
         if (deliveryAndReturn.rfqOrganisation?.postalAddressSameAsStreetAddress)
-          setPostalAddress(deliveryAndReturn.rfqOrganisation?.streetAddress);
+          setPostalAddress(deliveryAndReturn.rfqOrganisation.streetAddress);
         else setPostalAddress(deliveryAndReturn.rfqOrganisation?.postalAddress);
       } catch (error) {
         AppLogger.error('Failed to load AcceptQuotePreInfo', error as Error, {

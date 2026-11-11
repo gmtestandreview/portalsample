@@ -17,16 +17,31 @@ vi.mock(import('react-ga4'), (async (
   importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule1>>[0],
 ) => {
   const actual = await importOriginal<typeof ReactGaModule>();
+  const defaultMock = Object.create(actual.default, {
+    event: {
+      configurable: true,
+      value: reactGaMock.event,
+      writable: true,
+    },
+    initialize: {
+      configurable: true,
+      value: reactGaMock.initialize,
+      writable: true,
+    },
+    isInitialized: {
+      configurable: true,
+      get: () => reactGaMock.isInitialized,
+    },
+    send: {
+      configurable: true,
+      value: reactGaMock.send,
+      writable: true,
+    },
+  }) as typeof actual.default;
 
   return {
     ...actual,
-    default: {
-      ...actual.default,
-      ...reactGaMock,
-      get isInitialized() {
-        return reactGaMock.isInitialized;
-      },
-    },
+    default: defaultMock,
   } satisfies __ExactMockModule<__TestMockModule1>;
 }) as unknown as __DynamicPartialMockFactory<__TestMockModule1>);
 
@@ -169,94 +184,51 @@ describe('googleAnalytics', () => {
             <input data-pii="email" value="user@example.test" />
             <input data-pii="phone" value="0400000000" />
         `;
-    // JSDOM defaults hostname to 'localhost'; override to avoid triggering the console.table branch
-    const origLocation = globalThis.location;
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: { ...origLocation, hostname: 'portal.measurement.gov.au' },
-    });
+    const consoleSpy = vi
+      .spyOn(console, 'table')
+      .mockImplementation(() => undefined);
 
-    const { trackGAPii } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+    try {
+      const { trackGAPii } =
+        await import('../../../ClientApp/src/analytics/GoogleAnalytics');
 
-    trackGAPii();
+      trackGAPii();
 
-    expect(reactGaMock.send).toHaveBeenCalledWith({
-      hitType: 'event',
-      category: 'form_viewed_sanitized',
-      data: {
-        email: '[REDACTED]',
-        phone: '[REDACTED]',
-      },
-    });
-
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: origLocation,
-    });
+      expect(consoleSpy).not.toHaveBeenCalled();
+      expect(reactGaMock.send).toHaveBeenCalledWith({
+        hitType: 'event',
+        category: 'form_viewed_sanitized',
+        data: {
+          email: '[REDACTED]',
+          phone: '[REDACTED]',
+        },
+      });
+    } finally {
+      consoleSpy.mockRestore();
+    }
   });
 
-  it('logs original PII data to console.table when running on localhost', async () => {
+  it('uses an empty key for a malformed data-pii element', async () => {
     expect.hasAssertions();
 
     resetAnalyticsState();
+    const querySelectorAll = vi
+      .spyOn(document, 'querySelectorAll')
+      .mockReturnValue([{ dataset: {} }] as unknown as NodeListOf<HTMLElement>);
 
-    document.body.innerHTML = '<span data-pii="name">Alice</span>';
-    const consoleSpy = vi.spyOn(console, 'table').mockImplementation(() => {});
-    const origLocation = globalThis.location;
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: { ...origLocation, hostname: 'localhost' },
-    });
+    try {
+      const { trackGAPii } =
+        await import('../../../ClientApp/src/analytics/GoogleAnalytics');
 
-    const { trackGAPii } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
-    trackGAPii();
+      trackGAPii();
 
-    expect(consoleSpy).toHaveBeenCalledWith({
-      originalData: { name: 'Alice' },
-    });
-    expect(reactGaMock.send).toHaveBeenCalledWith({
-      hitType: 'event',
-      category: 'form_viewed_sanitized',
-      data: { name: '[REDACTED]' },
-    });
-
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: origLocation,
-    });
-    consoleSpy.mockRestore();
-  });
-
-  it('does not call console.table when hostname is not localhost', async () => {
-    expect.hasAssertions();
-
-    resetAnalyticsState();
-
-    document.body.innerHTML = '<span data-pii="name">Bob</span>';
-    const consoleSpy = vi.spyOn(console, 'table').mockImplementation(() => {});
-    const origLocation = globalThis.location;
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: { ...origLocation, hostname: 'portal.measurement.gov.au' },
-    });
-
-    const { trackGAPii } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
-    trackGAPii();
-
-    expect(consoleSpy).not.toHaveBeenCalled();
-    expect(reactGaMock.send).toHaveBeenCalledWith({
-      hitType: 'event',
-      category: 'form_viewed_sanitized',
-      data: { name: '[REDACTED]' },
-    });
-
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: origLocation,
-    });
-    consoleSpy.mockRestore();
+      expect(reactGaMock.send).toHaveBeenCalledWith({
+        hitType: 'event',
+        category: 'form_viewed_sanitized',
+        data: { '': '[REDACTED]' },
+      });
+    } finally {
+      querySelectorAll.mockRestore();
+    }
   });
 });

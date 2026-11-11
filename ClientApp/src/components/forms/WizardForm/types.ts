@@ -108,12 +108,12 @@ export interface WizardStepProps<T extends FormikValues> {
     values: T,
     isDirty: boolean,
     abortSignal?: AbortSignal,
-  ) => void | Promise<unknown>;
+  ) => undefined | Promise<unknown>;
   onSaveAndNext?: (
     values: T,
     isDirty: boolean,
     abortSignal?: AbortSignal,
-  ) => void | Promise<unknown>;
+  ) => undefined | Promise<unknown>;
   stepStatuses: FormStepStatusDto[];
   loadStepValues: (
     abortSignal?: AbortSignal,
@@ -158,7 +158,7 @@ export interface SubmitFormResult {
  *                                    all steps from the form level.
  */
 export interface WizardFormProps {
-  children?: ReactElement<any> | Array<ReactElement<any>>;
+  children?: ReactElement | ReactElement[];
   previousButtonTitle?: string;
   nextButtonTitle?: string;
   lastStepNextButtonTitle?: string;
@@ -177,7 +177,7 @@ export interface WizardFormProps {
 }
 
 export interface PreviousStepButtonProps {
-  steps: React.ReactElement<any>[];
+  steps: React.ReactElement[];
   currentStepIndex: number;
   title?: string;
   url: string;

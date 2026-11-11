@@ -16,10 +16,10 @@ import {
  * path is exercised rather than a parallel reimplementation.
  */
 
-type CapturedHooks = {
-  before: Array<() => void>;
-  after: Array<() => void>;
-};
+interface CapturedHooks {
+  before: (() => void)[];
+  after: (() => void)[];
+}
 
 /** Registers the guard against a fake registrar and returns its callbacks. */
 const captureHooks = (): CapturedHooks => {
@@ -33,10 +33,10 @@ const captureHooks = (): CapturedHooks => {
   return captured;
 };
 
-type GuardedRun = {
+interface GuardedRun {
   bodyError: unknown;
   teardownError: unknown;
-};
+}
 
 /**
  * Simulates one guarded test: run the registered `beforeEach`, run `body`, then
@@ -50,7 +50,9 @@ const runGuardedTest = async (
   let bodyError: unknown;
   let teardownError: unknown;
 
-  hooks.before.forEach((fn) => fn());
+  hooks.before.forEach((fn) => {
+    fn();
+  });
 
   try {
     await body();
@@ -59,7 +61,9 @@ const runGuardedTest = async (
   }
 
   try {
-    hooks.after.forEach((fn) => fn());
+    hooks.after.forEach((fn) => {
+      fn();
+    });
   } catch (error) {
     teardownError = error;
   }
@@ -90,14 +94,14 @@ describe('unexpected console guard suite', () => {
   const prepareConsoleSpies = () => {
     // The guard patches over these spies, so re-emitted output lands here
     // instead of the terminal, keeping this suite own output pristine.
-    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
     onTestFinished(() => {
       vi.restoreAllMocks();
     });
   };
 
-  // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+  // function suite titles are required by vitest/prefer-describe-function-title.
   describe(installUnexpectedConsoleGuard, () => {
     it('registers exactly one beforeEach and one afterEach so failures attach to the emitting test', () => {
       expect.hasAssertions();
@@ -129,7 +133,7 @@ describe('unexpected console guard suite', () => {
 
       const before = console.warn;
 
-      await runGuardedTest(() => {});
+      await runGuardedTest(() => undefined);
 
       expect(console.warn).toBe(before);
     });
@@ -139,7 +143,7 @@ describe('unexpected console guard suite', () => {
 
       prepareConsoleSpies();
 
-      const { teardownError } = await runGuardedTest(() => {});
+      const { teardownError } = await runGuardedTest(() => undefined);
 
       expect(teardownError).toBeUndefined();
     });
@@ -222,6 +226,11 @@ describe('unexpected console guard suite', () => {
         'An update to ComboBoxInner was not wrapped',
       ],
       ['%d substitution', ['retry %d of %d', 2, 3], 'retry 2 of 3'],
+      [
+        'symbol numeric substitution',
+        ['value %d', Symbol('seven')],
+        'value Symbol(seven)',
+      ],
       ['%o substitution', ['payload %o', { id: 7 }], 'payload {"id":7}'],
       [
         '%% escape',
@@ -250,6 +259,28 @@ describe('unexpected console guard suite', () => {
       },
     );
 
+    it.each([
+      ['returns undefined', { toJSON: () => undefined }],
+      [
+        'throws',
+        {
+          toJSON: () => {
+            throw new Error('cannot serialise');
+          },
+        },
+      ],
+    ])('uses a safe fallback when JSON.stringify %s', async (_label, value) => {
+      expect.hasAssertions();
+
+      prepareConsoleSpies();
+
+      const { teardownError } = await runGuardedTest(() => {
+        (console.warn as (...values: unknown[]) => void)(value);
+      });
+
+      expect(messageOf(teardownError)).toContain('[unserialisable]');
+    });
+
     it('consumes a message whose pattern only matches after interpolation', async () => {
       expect.hasAssertions();
 
@@ -272,9 +303,31 @@ describe('unexpected console guard suite', () => {
       expect(bodyError).toBeUndefined();
       expect(teardownError).toBeUndefined();
     });
+
+    it.each([
+      ['global', /repeated warning/gu],
+      ['sticky', /repeated warning/uy],
+    ])(
+      'resets %s regular expression state between console messages',
+      async (_label, pattern) => {
+        expect.hasAssertions();
+
+        prepareConsoleSpies();
+
+        const { bodyError, teardownError } = await runGuardedTest(async () => {
+          await expectConsoleMessage('warn', pattern, 2, () => {
+            console.warn('repeated warning');
+            console.warn('repeated warning');
+          });
+        });
+
+        expect(bodyError).toBeUndefined();
+        expect(teardownError).toBeUndefined();
+      },
+    );
   });
 
-  // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+  // function suite titles are required by vitest/prefer-describe-function-title.
   describe(expectConsoleMessage, () => {
     it('consumes a matching message so teardown passes', async () => {
       expect.hasAssertions();
@@ -360,7 +413,12 @@ describe('unexpected console guard suite', () => {
       prepareConsoleSpies();
 
       const { bodyError } = await runGuardedTest(async () => {
-        await expectConsoleMessage('warn', /missing signature/, 1, () => {});
+        await expectConsoleMessage(
+          'warn',
+          /missing signature/,
+          1,
+          () => undefined,
+        );
       });
 
       expect(messageOf(bodyError)).toContain('expected 1');
@@ -390,7 +448,7 @@ describe('unexpected console guard suite', () => {
 
       const { bodyError } = await runGuardedTest(async () => {
         await expectConsoleMessage('warn', /outer/, 1, async () => {
-          await expectConsoleMessage('warn', /inner/, 1, () => {});
+          await expectConsoleMessage('warn', /inner/, 1, () => undefined);
         });
       });
 
@@ -442,7 +500,9 @@ describe('unexpected console guard suite', () => {
 
       prepareConsoleSpies();
 
-      let release = () => {};
+      let release = () => {
+        // Placeholder until the pending promise executor assigns the real resolve function.
+      };
       const pending = new Promise<void>((resolve) => {
         release = resolve;
       });
@@ -453,7 +513,7 @@ describe('unexpected console guard suite', () => {
           /never settles/,
           1,
           () => pending,
-        ).catch(() => {});
+        ).catch(() => undefined);
 
         return Promise.resolve();
       });
@@ -471,7 +531,7 @@ describe('unexpected console guard suite', () => {
       prepareConsoleSpies();
 
       await expect(
-        expectConsoleMessage('warn', /orphan/, 1, () => {}),
+        expectConsoleMessage('warn', /orphan/, 1, () => undefined),
       ).rejects.toThrow(/installUnexpectedConsoleGuard/);
     });
   });

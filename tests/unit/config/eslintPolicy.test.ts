@@ -24,10 +24,10 @@ const LOAD_TIMEOUT_MS = 60_000;
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
 type Severity = 0 | 1 | 2 | 'absent';
 
-type ResolvedLintConfig = {
+interface ResolvedLintConfig {
   rules?: Record<string, unknown>;
   plugins?: Record<string, unknown>;
-};
+}
 
 const calculateConfig = async (
   filePath: string,
@@ -138,7 +138,7 @@ describe('runner-specific lint boundaries', () => {
     expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
     expect(
       severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
-    ).toBe(0);
+    ).toBe('absent');
   });
 
   it(
@@ -195,10 +195,17 @@ describe('resolved plugin rule surface', () => {
 
 describe('vitest policy autofix boundary', () => {
   it(
-    'does not auto-fix partial Vitest mock module specifiers',
+    'leaves partial Vitest mock module specifiers untouched and unflagged',
     async () => {
       expect.assertions(2);
 
+      // `vitest/prefer-import-in-mock` is disabled for the test scope by
+      // deliberate design (see the `nmi/vitest-partial-mock-fix-safety` block
+      // in eslint.config.mjs): the string overload of vi.mock() is required so
+      // the typed-partial-mock pattern type-checks under strict TS, and the
+      // rule's autofix to vi.mock(import('...')) would select the typed
+      // overload and break `npm run type-check` (TS2769). This guard asserts
+      // the effective policy: the specifier is neither rewritten nor flagged.
       const eslint = new ESLint({ fix: true });
       const source =
         "import { vi } from 'vitest';\nvi.mock('partial-module', () => ({}));\n";
@@ -209,14 +216,11 @@ describe('vitest policy autofix boundary', () => {
       const policyResult = requireLintResult(result);
 
       expect(policyResult.output).toBeUndefined();
-      expect(policyResult.messages).toStrictEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            ruleId: 'vitest/prefer-import-in-mock',
-            severity: 1,
-          }),
-        ]),
-      );
+      expect(
+        policyResult.messages.some(
+          ({ ruleId }) => ruleId === 'vitest/prefer-import-in-mock',
+        ),
+      ).toBe(false);
     },
     LOAD_TIMEOUT_MS,
   );

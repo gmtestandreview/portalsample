@@ -7,7 +7,7 @@ import { withPortalProviders } from '../../storybook/storybookHarness';
 const APPLICATION_ID = 'RFQ-2024-000654';
 
 interface ShellObservations {
-  statusRequestIds: Array<string | readonly string[] | undefined>;
+  statusRequestIds: (string | readonly string[] | undefined)[];
 }
 
 const state: { observed: ShellObservations } = {

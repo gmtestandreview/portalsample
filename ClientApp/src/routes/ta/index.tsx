@@ -16,7 +16,6 @@ import {
 } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import type { AccountDetails } from '../../authentication/accountContext';
 import AppLogger from '../../instrumentation/AppLogger';
 import ApplicationAndInstrument from './applicationAndInstrument';
 import applicationAndInstrumentProps from './applicationAndInstrumentProps';
@@ -47,7 +46,7 @@ const ApplicationForTypeApproval = () => {
   useBodyClass('wizard');
 
   const applicationForTypeApprovalProps: WizardFormProps = {
-    locationOnCompletion: `/ta/type-approval-success/${id}`,
+    locationOnCompletion: `/ta/type-approval-success/${id ?? ''}`,
     lastStepNextButtonTitle: 'Submit',
     nextButtonTitle: 'Save and next',
     previousButtonTitle: 'Back',
@@ -73,7 +72,7 @@ const ApplicationForTypeApproval = () => {
         );
         client.setAuthToken(tokenResult.accessToken);
         try {
-          const result = await client.getStepStatuses(id!);
+          const result = await client.getStepStatuses(id ?? '');
           setStatuses(result);
         } catch (error) {
           AppLogger.error('Failed to load application steps', error as Error, {
@@ -114,7 +113,9 @@ const ApplicationForTypeApproval = () => {
         uploadId,
         signal: controller.signal,
         onProgress: setProgress,
-        onFinished: () => setUploading(false),
+        onFinished: () => {
+          setUploading(false);
+        },
       });
     },
     [accounts, instance],
@@ -157,8 +158,8 @@ const ApplicationForTypeApproval = () => {
         null,
         null,
       );
-      const { documents } = result.form || {};
-      uploadIdRef.current = result.uploadId!;
+      const { documents } = result.form ?? {};
+      uploadIdRef.current = result.uploadId ?? '';
 
       attachments =
         documents?.map(
@@ -203,7 +204,8 @@ const ApplicationForTypeApproval = () => {
     return attachments;
   };
 
-  const accountDetails: AccountDetails = account!.details!;
+  if (!account?.details) return null;
+  const accountDetails = account.details;
   return !statuses ? (
     <BlockUISpinner>
       <p>Loading...</p>
@@ -212,7 +214,7 @@ const ApplicationForTypeApproval = () => {
     <WizardForm {...applicationForTypeApprovalProps}>
       <WizardStep
         {...organisationAndContactProps(
-          id!,
+          id ?? '',
           accounts,
           instance,
           accountDetails,
@@ -224,7 +226,7 @@ const ApplicationForTypeApproval = () => {
       </WizardStep>
       <WizardStep
         {...applicationAndInstrumentProps(
-          id!,
+          id ?? '',
           accounts,
           instance,
           accountDetails,
@@ -236,7 +238,7 @@ const ApplicationForTypeApproval = () => {
       </WizardStep>
       <WizardStep
         {...supportingDocumentsProps(
-          id!,
+          id ?? '',
           accounts,
           instance,
           accountDetails,
@@ -261,7 +263,7 @@ const ApplicationForTypeApproval = () => {
       </WizardStep>
       <WizardStep
         {...summaryAndSubmitProps(
-          id!,
+          id ?? '',
           accounts,
           instance,
           accountDetails,

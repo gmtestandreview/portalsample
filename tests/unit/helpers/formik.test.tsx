@@ -42,9 +42,9 @@ describe('formik harness', () => {
 
     // Without a schema Formik reports no errors at all, and an "invalid input is rejected"
     // assertion would pass without testing anything.
-    await waitFor(() =>
-      expect(screen.getByTestId('name-error')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('name-error')).toBeInTheDocument();
+    });
   });
 
   it('captures submitted values through the submit spy', async () => {
@@ -67,7 +67,9 @@ describe('formik harness', () => {
     await user.type(screen.getByTestId('name'), 'Updated');
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
-    await waitFor(() => expect(submit.submitCount()).toBe(1));
+    await waitFor(() => {
+      expect(submit.submitCount()).toBe(1);
+    });
 
     expect(submit.lastValues()).toStrictEqual({ name: 'Updated' });
   });
@@ -91,13 +93,17 @@ describe('formik harness', () => {
     const save = screen.getByRole('button', { name: 'Save' });
 
     await user.click(save);
-    await waitFor(() => expect(submit.submitCount()).toBe(1));
+    await waitFor(() => {
+      expect(submit.submitCount()).toBe(1);
+    });
 
     // A bare vi.fn() returns undefined, so Formik never learns the first submit finished and
     // leaves isSubmitting true. The second click would then do nothing and read as a component
     // bug rather than a harness one.
     await user.click(save);
-    await waitFor(() => expect(submit.submitCount()).toBe(2));
+    await waitFor(() => {
+      expect(submit.submitCount()).toBe(2);
+    });
   });
 
   it('does not submit when the schema rejects the values', async () => {
@@ -120,9 +126,9 @@ describe('formik harness', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
-    await waitFor(() =>
-      expect(screen.getByTestId('name-error')).toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('name-error')).toBeInTheDocument();
+    });
 
     expect(submit.submitCount()).toBe(0);
   });

@@ -2,6 +2,7 @@ import * as yup from 'yup';
 import {
   contactSchema,
   contactSchemaSoft,
+  whenAnswerIsNo,
 } from '../../validationSchemas/contactValidation';
 import '../../validationSchemas/yupExtensions';
 import {
@@ -30,11 +31,7 @@ export const organisationAndContactSubmitValidation = yup.object<
     .label('Business website address')
     .maxLength(100)
     .optional(),
-  contact: yup.mixed().when('isPrincipalContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchema(),
-    otherwise: () => yup.mixed(),
-  }),
+  contact: whenAnswerIsNo('isPrincipalContact', contactSchema),
   isCorrectBranchOrLocation: yup.string().when('organisationCount', {
     is: (val: number) => val > 1,
     then: (schema) =>
@@ -57,11 +54,7 @@ export const organisationAndContactSaveValidation = yup.object<
     .label('Business website address')
     .nullable()
     .maxLength(100),
-  contact: yup.mixed().when('isPrincipalContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchemaSoft(),
-    otherwise: () => yup.mixed(),
-  }),
+  contact: whenAnswerIsNo('isPrincipalContact', contactSchemaSoft),
 });
 
 export const instrumentAndRequestSubmitValidation = yup.object<

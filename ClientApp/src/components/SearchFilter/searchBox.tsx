@@ -14,9 +14,7 @@ const SearchBox = (props: Readonly<SearchBoxProps>) => {
   const [searchValue, setSearchValue] = useState(initialSearchValue);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleSearchClear(
-    _e?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ): void {
+  function handleSearchClear(_e?: React.MouseEvent<HTMLButtonElement>): void {
     setSearchValue('');
     inputRef.current?.focus();
     onSearchSubmit(undefined);
@@ -31,7 +29,7 @@ const SearchBox = (props: Readonly<SearchBoxProps>) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && onSearchSubmit) {
+    if (e.key === 'Enter') {
       e.preventDefault();
       onSearchSubmit(searchValue);
     }
@@ -66,7 +64,9 @@ const SearchBox = (props: Readonly<SearchBoxProps>) => {
           <InputGroup.Text className='p-0 border-0'>
             <Button
               data-testid='clear-search-button'
-              onClick={(e) => handleSearchClear(e)}
+              onClick={(e) => {
+                handleSearchClear(e);
+              }}
               variant='tertiary'
               className='ms-md-auto'
             >

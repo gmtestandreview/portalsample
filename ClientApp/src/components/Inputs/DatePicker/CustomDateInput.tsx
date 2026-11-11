@@ -22,7 +22,7 @@ const CustomDateInput = React.forwardRef<
     calendarButtonTitle,
     calendarOnKeyDown,
     className,
-    containerClassName,
+    containerClassName = '',
     disabled,
     errorMessage,
     forwardedFeedbackRef,
@@ -80,7 +80,7 @@ const CustomDateInput = React.forwardRef<
   };
 
   const handleCustomBlur = <E extends HTMLElement>(
-    event: React.FocusEvent<E, Element>,
+    event: React.FocusEvent<E>,
   ) => {
     // OnBlur - target is what loses the focus and related target is what receives focus (if any)
     handleInputAndButtonFocusEvents(
@@ -92,7 +92,7 @@ const CustomDateInput = React.forwardRef<
   };
 
   const handleCustomFocus = <E extends HTMLElement>(
-    event: React.FocusEvent<E, Element>,
+    event: React.FocusEvent<E>,
   ) => {
     // OnFocus - target is what receives the focus and related target is what loses focus (if any)
     handleInputAndButtonFocusEvents(
@@ -114,7 +114,7 @@ const CustomDateInput = React.forwardRef<
       controlId={name}
     >
       {label && <Form.Label>{label}</Form.Label>}
-      {inlineHelp && (
+      {inlineHelp ? (
         <Form.Text
           as='p'
           id={helpId}
@@ -123,22 +123,20 @@ const CustomDateInput = React.forwardRef<
         >
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
 
       <InputGroup className={`w-md-50 ${focused ? 'custom-focus' : ''}`}>
         <Form.Control
           {...theRest}
           {...omitUndefined({
-            'aria-describedby': hasError
-              ? `${name}-validation-msg`
-              : helpId || undefined,
+            'aria-describedby': hasError ? `${name}-validation-msg` : helpId,
             disabled,
             placeholder,
             readOnly,
             onChange,
             onKeyDown,
           })}
-          className={`form-field form-text-input ${className || ''}`}
+          className={`form-field form-text-input ${className ?? ''}`}
           isInvalid={!!(_meta.touched && _meta.error)}
           onBlur={handleCustomBlur}
           onFocus={handleCustomFocus}
@@ -150,7 +148,7 @@ const CustomDateInput = React.forwardRef<
           aria-label={`Choose your ${calendarButtonTitle.toLowerCase()}`}
           aria-describedby={helpId}
           className='custom-input-button'
-          disabled={disabled || readOnly}
+          disabled={disabled === true || readOnly}
           onBlur={handleCustomBlur}
           onClick={handleCustomOnClick}
           onFocus={handleCustomFocus}

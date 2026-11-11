@@ -6,10 +6,10 @@ import PrimaryButton from '../../Buttons/PrimaryButton';
 export interface ConfirmationModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  onModalYes: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onModalYes: (e: React.MouseEvent<HTMLButtonElement>) => void;
   onModalNo: () => void;
   titleText: string;
-  bodyText: string | JSX.Element;
+  bodyText: string | React.JSX.Element;
   noButtonTitle: string;
   yesButtonTitle: string;
 }
@@ -26,9 +26,7 @@ const ConfirmationModal = (props: Readonly<ConfirmationModalProps>) => {
     yesButtonTitle,
   } = props;
 
-  const onModalYesClick = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const onModalYesClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     closeModal();
     onModalYes(e);
   };

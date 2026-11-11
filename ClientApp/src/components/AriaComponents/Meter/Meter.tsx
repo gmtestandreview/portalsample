@@ -43,7 +43,7 @@ export function Meter({ label, ...props }: Readonly<MeterProps>) {
               className='fill'
               style={
                 {
-                  width: percentage + '%',
+                  width: String(percentage) + '%',
                   '--fill-color': getFillColor(percentage),
                 } as CSSProperties & { '--fill-color': string }
               }

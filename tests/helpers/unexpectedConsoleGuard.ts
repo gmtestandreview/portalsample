@@ -20,28 +20,28 @@ import {
 export type GuardedConsoleLevel = 'warn' | 'error';
 
 /** The subset of the Vitest hook API the guard needs, injectable for testing. */
-export type ConsoleGuardHooks = {
+export interface ConsoleGuardHooks {
   beforeEach: (fn: () => void) => void;
   afterEach: (fn: () => void) => void;
-};
+}
 
-type CapturedMessage = {
+interface CapturedMessage {
   level: GuardedConsoleLevel;
   text: string;
   consumed: boolean;
-};
+}
 
-type ActiveExpectation = {
+interface ActiveExpectation {
   level: GuardedConsoleLevel;
   pattern: RegExp;
   matched: number;
-};
+}
 
-type GuardState = {
+interface GuardState {
   captured: CapturedMessage[];
   original: Record<GuardedConsoleLevel, (...args: unknown[]) => void>;
   expectation: ActiveExpectation | null;
-};
+}
 
 const GUARDED_LEVELS: readonly GuardedConsoleLevel[] = ['warn', 'error'];
 
@@ -74,7 +74,8 @@ const stringify = (value: unknown): string => {
     return value.name === '' ? '[Function]' : `[Function ${value.name}]`;
 
   try {
-    return JSON.stringify(value) ?? '[unserialisable]';
+    const serialized: unknown = JSON.stringify(value);
+    return typeof serialized === 'string' ? serialized : '[unserialisable]';
   } catch {
     return '[unserialisable]';
   }
@@ -103,9 +104,9 @@ export const formatConsoleArguments = (args: readonly unknown[]): string => {
     switch (token) {
       case '%d':
       case '%f':
-        return String(Number(value));
+        return formatNumericArgument(value, false);
       case '%i':
-        return String(Number.parseInt(stringify(value), 10));
+        return formatNumericArgument(value, true);
       default:
         return stringify(value);
     }
@@ -130,6 +131,16 @@ const describeUnconsumed = (messages: readonly CapturedMessage[]): string =>
       ({ level, text }, index) => `  ${index + 1}. console.${level}: ${text}`,
     )
     .join('\n');
+
+const formatNumericArgument = (value: unknown, integer: boolean): string => {
+  try {
+    return String(
+      integer ? Number.parseInt(stringify(value), 10) : Number(value),
+    );
+  } catch {
+    return stringify(value);
+  }
+};
 
 /**
  * Assigns by explicit branch rather than `console[level]`. The repository's
@@ -164,12 +175,20 @@ const start = (): void => {
     setConsoleMethod(level, (...args: unknown[]): void => {
       const text = formatConsoleArguments(args);
       const { expectation } = active;
-      const claimed =
-        expectation !== null &&
-        expectation.level === level &&
-        expectation.pattern.test(text);
+      const matchingExpectation =
+        expectation !== null && expectation.level === level
+          ? expectation
+          : null;
+      let claimed = false;
+      if (matchingExpectation !== null) {
+        matchingExpectation.pattern.lastIndex = 0;
+        claimed = matchingExpectation.pattern.test(text);
+        matchingExpectation.pattern.lastIndex = 0;
+      }
 
-      if (claimed && expectation !== null) expectation.matched += 1;
+      if (matchingExpectation !== null && claimed) {
+        matchingExpectation.matched += 1;
+      }
 
       active.captured.push({ level, text, consumed: claimed });
 

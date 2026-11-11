@@ -25,13 +25,11 @@ const OrganisationAndContact = () => {
   const modalDispatch = useModalDispatch();
   const location = useLocation();
   const { id } = useParams();
-  const rFQId = id || '';
+  const rFQId = id ?? '';
 
   const isCorrectBranchOrLocation = values.isCorrectBranchOrLocation;
 
-  const onShowBranchSelectorClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-  ) => {
+  const onShowBranchSelectorClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     modalDispatch?.setShowRFQSelectModal(true, rFQId, location.pathname);
   };

@@ -16,8 +16,11 @@ export interface TargetOrganisation {
 }
 
 export interface StorageCache {
-  getItem: <T>(key: string) => T | undefined;
-  setItem: <T>(item: T, key: string) => void;
+  getItem: <T>(
+    key: string,
+    deserialize?: (value: unknown) => T,
+  ) => T | undefined;
+  setItem: <T>(item: T, key: string, serialize?: (value: T) => string) => void;
   removeItem: (key: string) => void;
   clear: () => void;
 }

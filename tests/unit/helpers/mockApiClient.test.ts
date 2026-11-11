@@ -62,7 +62,7 @@ describe('generated API client harness', () => {
 
     const original = {
       ApplicationType: { QuoteRequest: 'QuoteRequest' },
-      ApplicationClient: class Real {},
+      ApplicationClient: vi.fn<() => void>(),
     } as unknown as typeof WebApiClient;
     const client = createClientMockFor('getApplications');
 

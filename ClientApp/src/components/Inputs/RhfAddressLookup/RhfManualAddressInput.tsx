@@ -52,7 +52,7 @@ const RhfManualAddressInput = (props: Readonly<ManualAddressInputProps>) => {
           />
         </Col>
         <Col md={6}>
-          <RhfSelectInput<string>
+          <RhfSelectInput
             key={`${name}.state`}
             name={`${name}.state`}
             label='State'

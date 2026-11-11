@@ -77,7 +77,7 @@ const handleBranchSaveError = (
   onShowBranchSelector: () => void,
 ) => {
   const problemDetails = error as ValidationProblemDetails;
-  if (problemDetails?.status === HttpStatusCode.PreconditionFailed) {
+  if (problemDetails.status === HttpStatusCode.PreconditionFailed) {
     setBranchModalNotification({
       message:
         'This branch/location name already exists. Please enter a unique branch/location name.',

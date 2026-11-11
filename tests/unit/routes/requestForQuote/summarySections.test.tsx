@@ -42,7 +42,7 @@ const accountHolder: RfqCurrentContact = {
   email: 'grace@example.com',
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(RfqOrganisationSummary, () => {
   it('shows the trading name, branch, organisation name and spaced ABN', () => {
     expect.hasAssertions();

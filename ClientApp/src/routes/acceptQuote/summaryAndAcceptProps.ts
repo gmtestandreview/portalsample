@@ -77,11 +77,9 @@ const saveStep =
         },
         abortSignal,
       );
-      if (isComplete) {
-        SessionStorageCache().setItem(
-          values.acceptQuotePreInfo!.quoteRequestIdNum!,
-          'accepted-quote-id',
-        );
+      const quoteRequestIdNum = values.acceptQuotePreInfo?.quoteRequestIdNum;
+      if (isComplete && quoteRequestIdNum !== undefined) {
+        SessionStorageCache().setItem(quoteRequestIdNum, 'accepted-quote-id');
       }
     } else {
       throw new Error('No authenticated account available to save form.');

@@ -1,14 +1,7 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { FormProvider, useForm } from 'react-hook-form';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
@@ -29,7 +22,7 @@ import {
   RequestForPatternApprovalClient,
 } from '../../../api/web-api-client';
 import StatusPill from '../../../components/Pill/StatusPill';
-import type { PaDashboardItemStatus } from '../../common/enums';
+import { toPaDashboardItemStatus } from '../../common/helperFunctions';
 import ApplicationSummary from '../summary/ApplicationSummary';
 import appDetailsProps from './appDetailsProps';
 import OrganisationSummary from '../summary/OrganisationSummary';
@@ -37,6 +30,7 @@ import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import ApplicationDocuments from './appDocuments';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
+import { joinNameParts } from '../../../utils';
 
 const ApplicationMessages = lazy(() => import('./appMessages'));
 
@@ -57,7 +51,7 @@ const ApplicationDetails = () => {
   const { id } = useParams();
   const { accounts, instance } = useMsal();
   const options = useMemo(
-    () => appDetailsProps(id!, accounts, instance),
+    () => appDetailsProps(id, accounts, instance),
     [accounts, id, instance],
   );
   const { loadStepValues, hidingFields } = options;
@@ -67,40 +61,20 @@ const ApplicationDetails = () => {
   });
   const [applicationType, setApplicationType] = useState<string | null>(null);
   const [messageCount, setMessageCount] = useState<number>(0);
-  const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const disposedRef = useRef(false);
 
-  const clearPollTimeout = () => {
-    if (pollTimeoutRef.current) {
-      clearTimeout(pollTimeoutRef.current);
-      pollTimeoutRef.current = null;
-    }
-  };
-
-  const fetchMessageCountData = useCallback(async () => {
-    if (!id || accounts.length === 0) return;
-
-    try {
-      const client = new RequestForPatternApprovalClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      client.setAuthToken(tokenResult.accessToken);
-      const count = await client.getAppMessageCount(id, id);
-
-      if (disposedRef.current) return;
-      setMessageCount(count || 0);
-    } catch {
-      // optional: log
-    }
-  }, [accounts, id, instance]);
+  // The application type loads asynchronously and the id is a route param, so
+  // either may be absent; show only what is known.
+  const applicationLabel = joinNameParts(
+    applicationType,
+    id === undefined ? undefined : `(${id})`,
+  );
 
   const breadcrumbs: CustomBreadcrumbItem[] = [
     { to: '/', text: 'Dashboard' },
-    { to: '', text: `${applicationType} (${id})` },
+    { to: '', text: applicationLabel },
   ];
 
-  useHtmlTitle(`${applicationType} (${id}) manage | NMI Services portal`);
+  useHtmlTitle(`${applicationLabel} manage | NMI Services portal`);
   useBodyClass('pa-application-manage');
 
   const formattedDate = (dateToFormat: Date | string | undefined) =>
@@ -123,20 +97,37 @@ const ApplicationDetails = () => {
       setActiveTab(getTabFromQuery());
     };
     globalThis.addEventListener('popstate', onPopState);
-    return () => globalThis.removeEventListener('popstate', onPopState);
+    return () => {
+      globalThis.removeEventListener('popstate', onPopState);
+    };
   }, []);
 
   useEffect(() => {
-    disposedRef.current = false;
+    let active = true;
+    let pollTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const fetchMessageCountData = async () => {
+      if (!id || accounts.length === 0) return;
+
+      try {
+        const client = new RequestForPatternApprovalClient();
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0]),
+        );
+        client.setAuthToken(tokenResult.accessToken);
+        const count = await client.getAppMessageCount(id, id);
+
+        if (!active) return;
+        setMessageCount(count || 0);
+      } catch {
+        // optional: log
+      }
+    };
 
     const poll = async () => {
       await fetchMessageCountData();
-      if (!disposedRef.current) {
-        // The rule cannot trace the clear through clearPollTimeout(),
-        // which this effect's cleanup calls and which does invoke
-        // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
-        // eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
-        pollTimeoutRef.current = setTimeout(() => {
+      if (active) {
+        pollTimeoutId = setTimeout(() => {
           void poll();
         }, POLL_MS);
       }
@@ -145,17 +136,13 @@ const ApplicationDetails = () => {
     void poll();
 
     return () => {
-      clearPollTimeout();
+      active = false;
+      if (pollTimeoutId !== null) {
+        clearTimeout(pollTimeoutId);
+        pollTimeoutId = null;
+      }
     };
-  }, [fetchMessageCountData]);
-
-  useEffect(
-    () => () => {
-      disposedRef.current = true;
-      clearPollTimeout();
-    },
-    [],
-  );
+  }, [accounts, id, instance]);
 
   const refreshMessagesTab = () => {
     setLoadMessagesTab(true);
@@ -184,10 +171,11 @@ const ApplicationDetails = () => {
         // The loader returns the DTO itself; `InitialValue` only widens it with the
         // empty-string form default that this page never produces.
         setAppDetails(result.formValues as RequestForPatternApprovalAppDetails);
-        const appType = result.formValues?.applicationDetails as
-          ApplicationDetailsDto | undefined;
-        setApplicationType(appType?.patternApprovalType || null);
-        setMessageCount(appType?.messageCount || 0);
+        const appType = result.formValues.applicationDetails as
+          | ApplicationDetailsDto
+          | undefined;
+        setApplicationType(orIfEmpty(appType?.patternApprovalType, null));
+        setMessageCount(appType?.messageCount ?? 0);
       } catch (error) {
         // Previously unguarded: a rejected load became an unhandled rejection, and because
         // setIsDataLoading(false) sat only on the success path the page stayed on its
@@ -216,7 +204,8 @@ const ApplicationDetails = () => {
       statusDetail,
       title,
       submittedDate,
-    } = details.applicationDetails || {};
+    } = details.applicationDetails ?? {};
+    const mappedStatus = toPaDashboardItemStatus(status);
     return (
       <Row className='mb-4'>
         <Col aria-busy={isDataLoading} aria-live='polite'>
@@ -237,11 +226,13 @@ const ApplicationDetails = () => {
                     containerClassName='mb-3'
                   >
                     <CustomAccordionBody
-                      name={`${title}`}
+                      name={title ?? 'Application details'}
                       eventKey='0'
                       className='mb-4 py-2'
                       nameRHS={
-                        <StatusPill status={status as PaDashboardItemStatus} />
+                        <StatusPill
+                          status={mappedStatus ?? status ?? 'Unknown status'}
+                        />
                       }
                     >
                       {/* Application Status content body */}
@@ -278,7 +269,9 @@ const ApplicationDetails = () => {
                           </p>
                           <p className='small'>
                             <StatusPill
-                              status={status as PaDashboardItemStatus}
+                              status={
+                                mappedStatus ?? status ?? 'Unknown status'
+                              }
                               className='visually-hidden -me-2'
                             />
                             {statusDetail}
@@ -288,7 +281,9 @@ const ApplicationDetails = () => {
                       <Row>
                         <Col md={12}>
                           <Button
-                            onClick={() => routeToMessages()}
+                            onClick={() => {
+                              routeToMessages();
+                            }}
                             type='button'
                             className='btn btn-secondary'
                             title={`${messageCount} unread messages`}
@@ -541,7 +536,7 @@ const ApplicationDetails = () => {
         <Col md={12} lg={9}>
           <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
             <span className='visually-hidden'>Pattern/type approval:</span>
-            {data?.applicationDetails?.title || 'Application details'}
+            {orIfEmpty(data.applicationDetails?.title, 'Application details')}
             <span className='visually-hidden'> manage</span>
           </h1>
           {/* <HeaderIntroText className='mb-4'>

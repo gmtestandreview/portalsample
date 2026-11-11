@@ -5,6 +5,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ResizableTableContainer } from 'react-aria-components/Table';
+import { defined } from '../helpers/defined';
 import { DialogTrigger } from '@/components/AriaComponents/Dialog/Dialog';
 import { Button } from '@/components/AriaComponents/Button/Button';
 import { Heading, Text } from '@/components/AriaComponents/Content/Content';
@@ -86,7 +87,8 @@ import {
   TreeSection,
 } from '@/components/AriaComponents/Tree/Tree';
 
-if (!Element.prototype.getAnimations) {
+const getAnimations: unknown = Reflect.get(Element.prototype, 'getAnimations');
+if (!getAnimations) {
   Object.defineProperty(Element.prototype, 'getAnimations', {
     configurable: true,
     value: vi.fn<() => Animation[]>(() => []),
@@ -100,18 +102,27 @@ class TestIntersectionObserver implements IntersectionObserver {
   readonly scrollMargin = '';
   readonly thresholds = [];
 
-  disconnect() {}
+  disconnect() {
+    // Test double — no observation to tear down.
+  }
 
-  observe() {}
+  observe() {
+    // Test double — no observation to start.
+  }
 
   takeRecords() {
     return [];
   }
 
-  unobserve() {}
+  unobserve() {
+    // Test double — no observation to stop.
+  }
 }
 
-globalThis.IntersectionObserver ??= TestIntersectionObserver;
+const intersectionObserver: unknown = globalThis.IntersectionObserver;
+if (intersectionObserver === null || intersectionObserver === undefined) {
+  globalThis.IntersectionObserver = TestIntersectionObserver;
+}
 
 const expectAnything = (): unknown => expect.anything();
 const expectStringContaining = (value: string): unknown =>
@@ -327,7 +338,10 @@ describe('react Aria evaluation wrappers', () => {
         screen.getByRole('meter', { name: 'Storage used' }),
       ).toHaveTextContent(`${value}%`);
 
-      const fill = container.querySelector('.fill') as HTMLElement;
+      const fill = defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      );
 
       expect(fill.style.width).toBe(`${value}%`);
       expect(fill.style.getPropertyValue('--fill-color')).toBe(fillColor);
@@ -350,17 +364,19 @@ describe('react Aria evaluation wrappers', () => {
       screen.getByRole('progressbar', { name: 'Upload progress' }),
     ).toHaveTextContent('30%');
     expect(
-      (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent',
-      ),
+      defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      ).style.getPropertyValue('--percent'),
     ).toBe('30%');
 
     rerender(<ProgressBar label='Upload progress' isIndeterminate />);
 
     expect(
-      (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent',
-      ),
+      defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      ).style.getPropertyValue('--percent'),
     ).toBe('100%');
   });
 

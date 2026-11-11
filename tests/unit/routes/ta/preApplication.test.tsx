@@ -144,7 +144,9 @@ describe('pattern approval pre-application', () => {
 
     await user.click(screen.getByTestId('start-application-button'));
 
-    await waitFor(() => expect(currentPath()).toBe('/ta/type-approval-create'));
+    await waitFor(() => {
+      expect(currentPath()).toBe('/ta/type-approval-create');
+    });
   });
 
   it('offers a way back to the type approval dashboard', async () => {
@@ -157,6 +159,8 @@ describe('pattern approval pre-application', () => {
 
     await user.click(screen.getByTestId('go-to-dashboard-ta'));
 
-    await waitFor(() => expect(currentPath()).toBe('/dashboard-ta'));
+    await waitFor(() => {
+      expect(currentPath()).toBe('/dashboard-ta');
+    });
   });
 });

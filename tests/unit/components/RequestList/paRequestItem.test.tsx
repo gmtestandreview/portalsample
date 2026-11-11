@@ -332,7 +332,7 @@ describe('pa request item', () => {
       screen.getByRole('button', { name: 'Yes, delete application' }),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect({
         deleteSuccess: setDeleteSuccess.mock.calls.at(-1)?.[0],
         tokenAccount:
@@ -355,13 +355,13 @@ describe('pa request item', () => {
           severity: NotificationSeverity.Success,
         },
         deleteEvent: 'Deleteapplication',
-      }),
-    );
+      });
+    });
 
     expect({
       resumeHref: resumeAction.getAttribute('href'),
       editEvent,
-      hasReference: confirmationDialog.textContent?.includes('PA-2024-0001'),
+      hasReference: confirmationDialog.textContent.includes('PA-2024-0001'),
     }).toStrictEqual({
       resumeHref: '/ta/PA-2024-0001',
       editEvent: 'Editapplication',
@@ -395,12 +395,12 @@ describe('pa request item', () => {
       screen.getByRole('button', { name: 'Yes, delete application' }),
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.loggerError).toHaveBeenCalledWith(
         'Failed to delete application: PA-2024-0001',
         deleteError,
-      ),
-    );
+      );
+    });
 
     expect(setDeleteSuccess).not.toHaveBeenCalled();
     expect(mocks.setDashboardNotification).not.toHaveBeenCalled();
@@ -408,11 +408,11 @@ describe('pa request item', () => {
     // Awaited rather than asserted outright: the modal fades before it leaves the DOM, and the
     // logger call above lands first. Checking synchronously passed locally and failed on the CI
     // runner, which is slow enough for the fade to still be in flight.
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.queryByRole('dialog', { name: 'Confirm deletion' }),
-      ).not.toBeInTheDocument(),
-    );
+      ).not.toBeInTheDocument();
+    });
   });
 
   it.each([undefined, ''])(
@@ -449,6 +449,42 @@ describe('pa request item', () => {
     },
   );
 
+  it('keeps action routes inert when the portal reference id is absent', async () => {
+    expect.hasAssertions();
+
+    resetPaRequestItemMocks();
+    const user = userEvent.setup();
+    const { portalReferenceId: _portalReferenceId, ...requestWithoutPortalId } =
+      baseRequest;
+
+    renderPaRequestItem({
+      ...requestWithoutPortalId,
+      status: PaDashboardItemStatus.PaSubmitted,
+    });
+
+    await user.click(
+      screen.getByRole('button', { name: 'View application details' }),
+    );
+    await user.click(screen.getByRole('button', { name: /messages/i }));
+
+    expect(
+      screen.getByRole('status', { name: 'Current route' }),
+    ).toHaveTextContent('/dashboard');
+  });
+
+  it('uses the unknown status fallback when the raw status is absent', () => {
+    expect.hasAssertions();
+
+    resetPaRequestItemMocks();
+    const { status: _status, ...requestWithoutStatus } = baseRequest;
+    renderPaRequestItem({
+      ...requestWithoutStatus,
+      unreadMessageCount: undefined,
+    });
+
+    expect(screen.getAllByText('Unknown status')).toHaveLength(2);
+  });
+
   it('uses the manage route and zero-message state for unrecognised non-draft statuses', async () => {
     expect.hasAssertions();
 
@@ -472,14 +508,16 @@ describe('pa request item', () => {
     });
 
     fireEvent.focus(card as HTMLElement);
-    await waitFor(() => expect(card).toHaveAttribute('aria-labelledby', ''));
+    await waitFor(() => {
+      expect(card).toHaveAttribute('aria-labelledby', '');
+    });
     fireEvent.blur(card as HTMLElement);
-    await waitFor(() =>
+    await waitFor(() => {
       expect(card).toHaveAttribute(
         'aria-labelledby',
         'card-summary-PA-2024-0001',
-      ),
-    );
+      );
+    });
 
     await user.click(
       screen.getByRole('button', { name: 'Resume application' }),

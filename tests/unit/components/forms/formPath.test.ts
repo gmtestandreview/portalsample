@@ -63,7 +63,7 @@ describe('form path set in', () => {
     expect.hasAssertions();
     expect(setIn({}, 'a.b', 'x')).toStrictEqual({ a: { b: 'x' } });
 
-    const expectedList: Array<{ name: string } | undefined> = [];
+    const expectedList: ({ name: string } | undefined)[] = [];
     expectedList.length = 2;
     expectedList[1] = { name: 'x' };
 

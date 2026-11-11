@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type React from 'react';
 import { Col, Row, Container } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
@@ -26,7 +27,7 @@ import { silentRequestFor } from '../../authentication/silentRequest';
 import { handleReportFileError } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>

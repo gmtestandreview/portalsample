@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-  PatternApprovalRequiredValueOptions,
   PatternApprovalRequiredValues,
   Title,
   YesNo,
 } from '../../../../../ClientApp/src/api/web-api-client';
+import type { PatternApprovalRequiredValueOptions } from '../../../../../ClientApp/src/api/web-api-client';
 import type { RequestForPatternApprovalAppDetails } from '../../../../../ClientApp/src/api/web-api-client';
 import type { TaSummarySectionProps } from '../../../../../ClientApp/src/routes/ta/summary/types';
+import { toPatternApprovalRequiredValueOptions } from '../../../../../ClientApp/src/utils/apiEnumMappings';
 import ApplicationSummary from '../../../../../ClientApp/src/routes/ta/summary/ApplicationSummary';
 import ContactSummary from '../../../../../ClientApp/src/routes/ta/summary/ContactSummary';
 import OrganisationSummary from '../../../../../ClientApp/src/routes/ta/summary/OrganisationSummary';
@@ -26,7 +27,7 @@ const renderApplication = (
   hidden: Hidden = noRules,
 ) => render(<ApplicationSummary values={values} hidden={hidden} />).container;
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(ContactSummary, () => {
   it('prints a dash for every field of a missing contact', () => {
     expect.hasAssertions();
@@ -82,27 +83,29 @@ describe(ContactSummary, () => {
     expect(screen.getByText('Lord')).toBeInTheDocument();
   });
 
-  it('shows a dash for an Other title with no text and ignores an unknown title', () => {
+  it('shows a dash for an Other title with no text', () => {
     expect.hasAssertions();
 
-    const { rerender } = render(
-      <ContactSummary name='contact' contact={{ title: Title.Other }} />,
-    );
+    render(<ContactSummary name='contact' contact={{ title: Title.Other }} />);
 
     expect(screen.getByText('Title, if "Other"')).toBeInTheDocument();
-
-    rerender(
-      <ContactSummary
-        name='contact'
-        contact={{ title: 'Emperor' as unknown as Title }}
-      />,
-    );
-
-    expect(screen.queryByText('Emperor')).not.toBeInTheDocument();
   });
+
+  it.each(['Emperor', 'constructor', '__proto__', 'toString'])(
+    'ignores an unknown title value: %s',
+    (unknownTitle) => {
+      expect.hasAssertions();
+
+      render(
+        <ContactSummary name='contact' contact={{ title: unknownTitle }} />,
+      );
+
+      expect(screen.queryByText('Title (optional)')).not.toBeInTheDocument();
+    },
+  );
 });
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(OrganisationSummary, () => {
   it('renders nothing for answers that were never given', () => {
     expect.hasAssertions();
@@ -161,7 +164,7 @@ describe(OrganisationSummary, () => {
   });
 });
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(ApplicationSummary, () => {
   it('reports no type and no sub-options for an empty application', () => {
     expect.hasAssertions();
@@ -177,8 +180,12 @@ describe(ApplicationSummary, () => {
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.Variation,
-        varSubOptions:
-          PatternApprovalRequiredValueOptions.AmendmenttoanExistingCoA as unknown as PatternApprovalRequiredValueOptions[],
+        varSubOptions: [
+          toPatternApprovalRequiredValueOptions('AmendmenttoanExistingCoA'),
+        ].filter(
+          (option): option is PatternApprovalRequiredValueOptions =>
+            option !== undefined,
+        ),
       },
     });
 
@@ -191,7 +198,12 @@ describe(ApplicationSummary, () => {
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
-        othSubOptions: ['Unknown' as PatternApprovalRequiredValueOptions],
+        othSubOptions: [
+          toPatternApprovalRequiredValueOptions('Unknown'),
+        ].filter(
+          (option): option is PatternApprovalRequiredValueOptions =>
+            option !== undefined,
+        ),
       },
     });
 

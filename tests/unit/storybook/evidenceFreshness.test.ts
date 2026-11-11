@@ -1,16 +1,16 @@
 import { Buffer } from 'node:buffer';
 import { describe, expect, it } from 'vitest';
 
-type FreshnessModule = {
+interface FreshnessModule {
   computeInputDigest(input: {
-    files: Array<{ path: string; content: string | Uint8Array }>;
+    files: { path: string; content: string | Uint8Array }[];
     manifestPath?: string;
   }): string;
   validateReferences(
     manifest: unknown,
     index: unknown,
-  ): { ok: boolean; errors: Array<{ code: string; message: string }> };
-};
+  ): { ok: boolean; errors: { code: string; message: string }[] };
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.
@@ -137,7 +137,7 @@ describe('computeInputDigest', () => {
     const byteFiles = files.map((file) => ({
       ...file,
       content: file.path.endsWith('coverageManifest.json')
-        ? Buffer.from(String(file.content))
+        ? Buffer.from(file.content)
         : file.content,
     }));
 

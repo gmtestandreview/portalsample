@@ -1,16 +1,18 @@
+// Vite leaves a VITE_* variable undefined when it is not set at build time, so
+// each one is declared optional. env.ts supplies the '' fallback.
 interface ImportMetaEnv {
-  readonly VITE_B2C_CLIENTID: string;
-  readonly VITE_B2C_AUTHORITY: string;
-  readonly VITE_B2C_KNOWN_AUTHORITIES: string;
-  readonly VITE_B2C_POST_LOGOUT_REDIRECT_URL: string;
-  readonly VITE_B2C_READ_SCOPE: string;
-  readonly VITE_B2C_USER_IMPERSONATION_SCOPE: string;
-  readonly VITE_B2C_REDIRECT_URL: string;
-  readonly VITE_EXTERNAL_REDIRECT_URL: string;
-  readonly VITE_APPINSIGHTS_INSTRUMENTATIONKEY: string;
-  readonly VITE_APPINSIGHTS_CONN_STRING: string;
-  readonly VITE_GA_TRACKINGID: string;
-  readonly VITE_ENVIRONMENT: string;
+  readonly VITE_B2C_CLIENTID?: string | undefined;
+  readonly VITE_B2C_AUTHORITY?: string | undefined;
+  readonly VITE_B2C_KNOWN_AUTHORITIES?: string | undefined;
+  readonly VITE_B2C_POST_LOGOUT_REDIRECT_URL?: string | undefined;
+  readonly VITE_B2C_READ_SCOPE?: string | undefined;
+  readonly VITE_B2C_USER_IMPERSONATION_SCOPE?: string | undefined;
+  readonly VITE_B2C_REDIRECT_URL?: string | undefined;
+  readonly VITE_EXTERNAL_REDIRECT_URL?: string | undefined;
+  readonly VITE_APPINSIGHTS_INSTRUMENTATIONKEY?: string | undefined;
+  readonly VITE_APPINSIGHTS_CONN_STRING?: string | undefined;
+  readonly VITE_GA_TRACKINGID?: string | undefined;
+  readonly VITE_ENVIRONMENT?: string | undefined;
 }
 
 interface ImportMeta {

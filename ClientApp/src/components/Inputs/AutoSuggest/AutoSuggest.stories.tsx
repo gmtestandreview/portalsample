@@ -1,12 +1,12 @@
 import preview from '../../../../../.storybook/preview';
-import { expect, screen, userEvent, within } from 'storybook/test';
+import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import AutoSuggest from './index';
 import AutoSuggestContainer from './AutoSuggestContainer';
 import type { AutoSuggestOption } from './types';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
 const noopAsync = () => Promise.resolve();
-const noop = () => {};
+const noop = fn();
 
 const mockOptions: AutoSuggestOption<string>[] = [
   { id: 'opt-1', displayText: 'Sydney NSW', value: 'sydney-nsw' },

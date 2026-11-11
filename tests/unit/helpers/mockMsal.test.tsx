@@ -46,9 +46,9 @@ const TokenProbe = () => {
           setToken(result.accessToken);
         }
       })
-      .catch((reason: Error) => {
+      .catch((reason: unknown) => {
         if (isMounted) {
-          setError(reason.message);
+          setError(reason instanceof Error ? reason.message : String(reason));
         }
       });
 
@@ -75,11 +75,11 @@ describe('shared MSAL harness', () => {
 
     render(<TokenProbe />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('token')).toHaveTextContent(
         DEFAULT_ACCESS_TOKEN,
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('accounts')).toHaveTextContent('1');
     expect(screen.getByTestId('in-progress')).toHaveTextContent(
@@ -100,9 +100,9 @@ describe('shared MSAL harness', () => {
 
     render(<TokenProbe />);
 
-    await waitFor(() =>
-      expect(screen.getByTestId('token')).toHaveTextContent('another-token'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('token')).toHaveTextContent('another-token');
+    });
   });
 
   it('rejects the token so error paths can be exercised', async () => {
@@ -114,11 +114,11 @@ describe('shared MSAL harness', () => {
 
     render(<TokenProbe />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('error')).toHaveTextContent(
         'interaction_required',
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('token')).toHaveTextContent('');
   });
@@ -132,20 +132,20 @@ describe('shared MSAL harness', () => {
 
     render(<TokenProbe />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
         scopes: ['scope'],
         account: testAccount,
-      }),
-    );
+      });
+    });
 
     expect(screen.getByTestId('token')).toHaveTextContent('');
 
     token.settle('late-token');
 
-    await waitFor(() =>
-      expect(screen.getByTestId('token')).toHaveTextContent('late-token'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('token')).toHaveTextContent('late-token');
+    });
   });
 
   it('fails a pending token so mid-flight rejection can be exercised', async () => {
@@ -157,18 +157,18 @@ describe('shared MSAL harness', () => {
 
     render(<TokenProbe />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
         scopes: ['scope'],
         account: testAccount,
-      }),
-    );
+      });
+    });
 
     token.fail(new Error('token expired'));
 
-    await waitFor(() =>
-      expect(screen.getByTestId('error')).toHaveTextContent('token expired'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('error')).toHaveTextContent('token expired');
+    });
   });
 
   it('signs out so token-guarded effects never run', () => {
@@ -197,11 +197,11 @@ describe('shared MSAL harness', () => {
     // still resolves one, and asserting before it lands leaves a state update outside the test
     // body - which is what an act(...) warning is telling you. Awaiting the user-visible end
     // state is the fix; silencing the warning would just hide the unowned update.
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('token')).toHaveTextContent(
         DEFAULT_ACCESS_TOKEN,
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('in-progress')).toHaveTextContent(
       interactionStatus.Login,
@@ -217,11 +217,11 @@ describe('shared MSAL harness', () => {
     // stopped restoring `accounts` every later test in the file would silently run signed out.
     render(<TokenProbe />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('token')).toHaveTextContent(
         DEFAULT_ACCESS_TOKEN,
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('accounts')).toHaveTextContent('1');
     expect(screen.getByTestId('in-progress')).toHaveTextContent(

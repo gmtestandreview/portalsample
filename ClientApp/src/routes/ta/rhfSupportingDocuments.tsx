@@ -26,14 +26,18 @@ import RhfAttachment from '../../components/Inputs/RhfAttachment';
 import InstrumentInfoPanel from './instrumentInfoPanel';
 import { getIn } from '../../components/forms/formPath';
 
-type UploadProblemDetails = {
+const requiredDocMessage: string = ValidationMessages.RequiredDoc;
+const requiredTagMessage: string = ValidationMessages.RequiredTag;
+
+interface UploadProblemDetails {
   status?: number;
   title?: string;
   errors?: Record<string, string[]>;
-};
+}
 
 const ALLOWED_FILE_TYPES =
   '.pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .rtf, .odt, .gif, .csv';
+const emptyExternalErrors: string[] = [];
 
 /**
  * React Hook Form counterpart of `SupportingDocuments`. Same props and upload
@@ -71,15 +75,13 @@ const RhfSupportingDocuments = (
     onDeleteSuccess,
     disableUpload,
     suppressDocChanges,
-    externalErrors = [],
+    externalErrors = emptyExternalErrors,
     setExternalErrors,
   } = props;
 
   // Filter out upload errors that are handled by form validation
   const filteredUploadErrors = uploadErrors.filter(
-    (err) =>
-      err !== String(ValidationMessages.RequiredDoc) &&
-      err !== String(ValidationMessages.RequiredTag),
+    (err) => err !== requiredDocMessage && err !== requiredTagMessage,
   );
 
   const fieldError: unknown = getIn(formErrors, name);
@@ -177,7 +179,7 @@ const RhfSupportingDocuments = (
   if (noThirdPartyAccess) {
     setDashboardNotification({
       message: `You no longer have access to the records
-          for ${accountContext?.details?.targetOrganisation?.targetOrganisationName}
+          for ${accountContext?.details?.targetOrganisation?.targetOrganisationName ?? ''}
           . Your changes have not been saved.`,
       severity: NotificationSeverity.Error,
     });
@@ -253,10 +255,7 @@ const RhfSupportingDocuments = (
               <ul className='mb-0'>
                 {errors.map((err, idx) => {
                   // Only show the 'documents' error if submitCount is 0
-                  if (
-                    err === String(ValidationMessages.RequiredTag) &&
-                    submitCount === 0
-                  ) {
+                  if (err === requiredTagMessage && submitCount === 0) {
                     return null;
                   }
                   return <li key={`err${idx.toString()}`}>{err}</li>;

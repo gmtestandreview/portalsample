@@ -108,20 +108,22 @@ describe('object and array helpers', () => {
     expect(utils.tail([1, 2, 3])).toStrictEqual([2, 3]);
     expect(utils.head([1, 2, 3])).toBe(1);
     expect(utils.tail([])).toStrictEqual([]);
-    expect(utils.head([])).toBeUndefined();
+    expect(utils.head([] as unknown[])).toBeUndefined();
   });
 
   it('returns typed property names and prefixed property names', () => {
     expect.hasAssertions();
 
-    type Example = {
+    interface Example {
       child: string;
-    };
+    }
 
     expect(utils.propertyOf<Example>('child')).toBe('child');
-    expect(utils.prefixedPropertyOf<Example>('parent')('child')).toBe(
-      'parent.child',
-    );
+
+    const prefixedChild: `${string}.child` =
+      utils.prefixedPropertyOf<Example>('parent')('child');
+
+    expect(prefixedChild).toBe('parent.child');
   });
 
   it('converts null and undefined properties to empty strings recursively', () => {
@@ -449,7 +451,7 @@ describe('formatting helpers', () => {
     expect.hasAssertions();
 
     expect(utils.formatCurrencyAmount(undefined)).toBeNull();
-    expect(utils.formatCurrencyAmount(null as unknown as number)).toBeNull();
+    expect(utils.formatCurrencyAmount(null)).toBeNull();
     expect(utils.formatCurrencyAmount(1234.5)).toBe('$1,234.50');
   });
 });

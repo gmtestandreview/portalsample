@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
 import { useEffect, useRef, useState } from 'react';
@@ -53,7 +54,9 @@ const AddressLookup = (
     inlineHelp,
   } = props;
 
-  const [_field, _meta, _helpers] = useField<AddressDetailsDto>(name);
+  const [_field, _meta, _helpers] = useField<AddressDetailsDto | undefined>(
+    name,
+  );
   const [_fieldSearch, _metaSearch, { setTouched }] = useField<string>(
     `${name}.searchText`,
   );
@@ -62,41 +65,17 @@ const AddressLookup = (
   const { setValue } = _helpers;
   const { value: address } = _meta;
 
-  // Always-current snapshot of field value and setter; avoids stale closures in the
-  // manual-sync effect below without adding them as deps (which would cause a loop).
-  const fieldSyncRef = useRef({ value: _field.value, setValue });
-  fieldSyncRef.current.value = _field.value;
-  fieldSyncRef.current.setValue = setValue;
-
   const [text, setText] = useState<string | null | undefined>(
     address?.searchText,
   );
-  const [manual, setManual] = useState(address?.isManuallyEntered);
+  const manual = address?.isManuallyEntered;
 
   const { instance, accounts, inProgress } = useMsal();
-  const account = useAccount(accounts[0] || {});
-
-  useEffect(() => {
-    const { value, setValue: setVal } = fieldSyncRef.current;
-    if (manual !== value?.isManuallyEntered) {
-      const {
-        isManuallyEntered: _isManuallyEntered,
-        ...addressWithoutManualFlag
-      } = value ?? {};
-      void setVal({
-        ...addressWithoutManualFlag,
-        ...omitUndefined({ isManuallyEntered: manual }),
-      });
-    }
-  }, [manual]);
+  const account = useAccount(accounts[0] ?? {});
 
   useEffect(() => {
     setText(_field.value?.searchText);
   }, [_field.value?.searchText]);
-
-  useEffect(() => {
-    setManual(_field.value?.isManuallyEntered);
-  }, [_field.value?.isManuallyEntered]);
 
   const fetchAddressOptions = async (
     term: string,
@@ -113,8 +92,8 @@ const AddressLookup = (
 
     const options: AutoSuggestOption<MatchedAddress>[] = addresses.matches.map(
       (a, i) => ({
-        displayText: a.displayText || '',
-        id: a.unqiueId || i.toString(),
+        displayText: a.displayText ?? '',
+        id: orIfEmpty(a.unqiueId, i.toString()),
         value: a,
       }),
     );
@@ -168,9 +147,9 @@ const AddressLookup = (
         setText('');
         void setValue({
           ...omitUndefined({
-            id: _field.value.id,
-            type: _field.value.type,
-            timeStamp: _field.value.timeStamp,
+            id: _field.value?.id,
+            type: _field.value?.type,
+            timeStamp: _field.value?.timeStamp,
           }),
           line1: '',
           line2: '',
@@ -180,21 +159,20 @@ const AddressLookup = (
           isManuallyEntered: true,
           searchText: '',
         });
-        setManual(true);
       } else {
         setText(option.displayText);
         void setValue({
           ...omitUndefined({
-            id: _field.value.id,
-            type: _field.value.type,
-            timeStamp: _field.value.timeStamp,
+            id: _field.value?.id,
+            type: _field.value?.type,
+            timeStamp: _field.value?.timeStamp,
             state: option.value.state,
           }),
-          line1: option.value.addressLine1 || '',
-          line2: option.value.addressLine2 || '',
-          line3: option.value.addressLine3 || '',
-          suburb: option.value.suburb || '',
-          postcode: option.value.postCode || '',
+          line1: option.value.addressLine1 ?? '',
+          line2: option.value.addressLine2 ?? '',
+          line3: option.value.addressLine3 ?? '',
+          suburb: option.value.suburb ?? '',
+          postcode: option.value.postCode ?? '',
           isManuallyEntered: false,
           searchText: option.displayText,
         });
@@ -203,9 +181,9 @@ const AddressLookup = (
       setText('');
       void setValue({
         ...omitUndefined({
-          id: _field.value.id,
-          type: _field.value.type,
-          timeStamp: _field.value.timeStamp,
+          id: _field.value?.id,
+          type: _field.value?.type,
+          timeStamp: _field.value?.timeStamp,
         }),
         line1: '',
         line2: '',
@@ -218,11 +196,19 @@ const AddressLookup = (
     }
   };
 
-  const onSearchAgain = () => setManual(false);
+  const onSearchAgain = () => {
+    void setValue({
+      ...(_field.value ?? {}),
+      isManuallyEntered: false,
+    });
+  };
 
   const onEnterManually = () => {
     void setTouched(false);
-    setManual(true);
+    void setValue({
+      ...(_field.value ?? {}),
+      isManuallyEntered: true,
+    });
   };
 
   if (isSummary) {

@@ -22,7 +22,6 @@ const mocks = vi.hoisted(() => ({
   updateContactProps: vi.fn<typeof UpdateContactPropsModule.default>(),
 }));
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -53,7 +52,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule27>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm',
   () =>
@@ -78,7 +76,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule60>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
@@ -165,14 +162,14 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 
@@ -390,7 +387,9 @@ describe('account and contact route wrappers', () => {
       -1,
     )?.[4] as () => void;
 
-    expect(() => onShowBranchSelector()).not.toThrow();
+    expect(() => {
+      onShowBranchSelector();
+    }).not.toThrow();
     expect(mocks.setShowBranchSelector).not.toHaveBeenCalled();
   });
 

@@ -47,12 +47,16 @@ import { defaultFilter } from '../common/constants';
 import { BranchSelectionModalMode } from '../../components/modals/BranchSelectorModal/enums';
 import useUserServices from '../../hooks/useUserServices';
 import SessionStorageCache from '../../storage/sessionStorageCache';
+import {
+  toDashboardTab,
+  toPatternApprovalStatusEnumDto,
+} from '../common/helperFunctions';
 
 // TS Move this to a constants file if we need this setting app wide
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 const TAB_SAVE_DEBOUNCE_MS = 300;
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -157,11 +161,12 @@ const resolveFilterParams = (
   actualStatus:
     filterStatusType === defaultFilter.filterStatusType
       ? undefined
-      : (filterStatusType as PatternApprovalStatusEnumDto | undefined),
+      : toPatternApprovalStatusEnumDto(filterStatusType),
 });
 
 const classifyLoadError = (error: ProblemDetails) => {
-  const status = (error.status ?? 0) > 0 ? { status: error.status! } : {};
+  const statusCode = error.status ?? 0;
+  const status = statusCode > 0 ? { status: statusCode } : {};
   if (error.status !== HttpStatusCode.Forbidden) {
     return { ...status, hasError: true };
   }
@@ -196,8 +201,8 @@ const DashboardTA = () => {
   >(undefined);
   const dashboardMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();
-  const orgName = accountContext?.details?.targetOrganisation
-    ?.targetOrganisationName as string;
+  const orgName =
+    accountContext?.details?.targetOrganisation?.targetOrganisationName ?? '';
 
   // Paging
   const [currentPage, setCurrentPage] = useState(1);
@@ -224,7 +229,7 @@ const DashboardTA = () => {
       };
       accountDispatch
         ?.setUserProfile({ patternApprovalDashboard: omitUndefined(profile) })
-        .catch((error) => {
+        .catch((error: unknown) => {
           AppLogger.error(
             'T & C Dashboard failed to save user profile.',
             error as Error,
@@ -305,7 +310,7 @@ const DashboardTA = () => {
       return;
     }
     if (accountDetails?.userProfile) {
-      if (accountDetails?.userProfile?.patternApprovalDashboard) {
+      if (accountDetails.userProfile.patternApprovalDashboard) {
         const tabToSet: string | null | undefined =
           SessionStorageCache().getItem('set-tabop-after-save');
         const p = accountDetails.userProfile.patternApprovalDashboard;
@@ -314,9 +319,8 @@ const DashboardTA = () => {
           ...p,
           filterActiveTab: tabFromSession,
         };
-        setActiveTab(tabFromSession as DashboardTab);
-        // changePlaceholderForSearchBox(p!.filterActiveTab! as DashboardTab);
-        setCurrentPage(updatedP.filterCurrentPage!);
+        setActiveTab(toDashboardTab(tabFromSession) ?? DashboardTab.Drafts);
+        setCurrentPage(updatedP.filterCurrentPage ?? 1);
         SessionStorageCache().removeItem('set-tabop-after-save');
 
         // Only need to do this on first load`
@@ -349,13 +353,14 @@ const DashboardTA = () => {
         filterSortOrder:
           savedUserProfile.patternApprovalDashboard?.filterSortOrder,
         filterCurrentPage: defaultFilter.filterCurrentPage,
-        filterActiveTab: savedUserProfile.patternApprovalDashboard
-          ?.filterActiveTab as DashboardTab,
+        filterActiveTab: toDashboardTab(
+          savedUserProfile.patternApprovalDashboard?.filterActiveTab,
+        ),
         filterSearchText:
           savedUserProfile.patternApprovalDashboard?.filterSearchText,
       };
 
-      setActiveTab(profile.filterActiveTab);
+      setActiveTab(profile.filterActiveTab ?? DashboardTab.Drafts);
       setCurrentPage(profile.filterCurrentPage);
       saveUserProfile(profile);
       setInitialFilters(profile);
@@ -402,8 +407,8 @@ const DashboardTA = () => {
         setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
         setIsModalOpen(
           // List and check all Actionable modals across portal app
-          !!accountDetails?.showBranchSelector ||
-            !accountDetails?.userAcceptedTermsOfUse,
+          accountDetails.showBranchSelector ||
+            !accountDetails.userAcceptedTermsOfUse,
         );
         setIsDataLoading(true);
         const { actualYear, actualStatus } = resolveFilterParams(
@@ -411,20 +416,22 @@ const DashboardTA = () => {
           initialFilters.filterStatusType,
         );
         const requestsResponse = await fetchRequestsByTab({
-          tab: initialFilters.filterActiveTab as DashboardTab,
+          tab:
+            toDashboardTab(initialFilters.filterActiveTab) ??
+            DashboardTab.Drafts,
           client,
           sortOrder: 'descending', // TS whats up here are we changing this?
-          currentPage: initialFilters.filterCurrentPage!,
+          currentPage: initialFilters.filterCurrentPage ?? 1,
           pageSize: DEFAULT_DASHBOARD_PAGESIZE, // TS should we add a pagesize dropdown in the future?
-          accountDetailsCrmGuid: accountDetails?.organisationCRMGuid,
+          accountDetailsCrmGuid: accountDetails.organisationCRMGuid,
           filterSearchText: initialFilters.filterSearchText,
           actualYear,
           actualStatus,
         });
-        setRequests(requestsResponse.items!);
-        setCurrentPage(requestsResponse.currentPage!);
-        setTotalPages(requestsResponse.totalPages!);
-        setTotalCount(requestsResponse.totalCount!);
+        setRequests(requestsResponse.items ?? []);
+        setCurrentPage(requestsResponse.currentPage ?? 1);
+        setTotalPages(requestsResponse.totalPages ?? 0);
+        setTotalCount(requestsResponse.totalCount ?? 0);
         // trackGAPii(); // Keep this here for later when we track pii-data
       } catch (error) {
         AppLogger.error('Failed to load dashboard.', error as Error);
@@ -441,16 +448,20 @@ const DashboardTA = () => {
     };
     setDeleteSuccess(false);
     void loadDataForDisplay();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    accountContext?.details?.organisationCRMGuid,
+    accountContext,
+    accountDetails?.organisationCRMGuid,
+    accountDetails?.showBranchSelector,
+    accountDetails?.userAcceptedTermsOfUse,
+    accountDetails?.userProfile,
+    accounts,
     instance,
     inProgress,
     reload,
     initialFilters,
     deleteSuccess,
     services,
+    navigate,
   ]);
 
   const renderDashTypeTitle = () => (
@@ -460,18 +471,16 @@ const DashboardTA = () => {
           <h2 id='dash-type-title' className='mb-0 me-3' tabIndex={-1}>
             Manage Pattern/type approval
             {/* TO DO - Do we componentise this? */}
-            {services &&
-              services.filter((x: ServicesOffered) => x.isActive).length >
-                1 && (
-                <span className='text-start ms-3 me-3'>
-                  <Link
-                    to='/services-we-offer?mode=manage'
-                    className='fw-normal fs-6'
-                  >
-                    Change
-                  </Link>
-                </span>
-              )}
+            {services.filter((x: ServicesOffered) => x.isActive).length > 1 && (
+              <span className='text-start ms-3 me-3'>
+                <Link
+                  to='/services-we-offer?mode=manage'
+                  className='fw-normal fs-6'
+                >
+                  Change
+                </Link>
+              </span>
+            )}
           </h2>
 
           <span className='text-end'>
@@ -479,7 +488,9 @@ const DashboardTA = () => {
               data-testid='new-application-button'
               to='/ta/type-approval-create-pre'
               className='btn btn-primary text-nowrap'
-              onClick={() => trackGAEvent('New TA application')}
+              onClick={() => {
+                trackGAEvent('New TA application');
+              }}
             >
               <i className='icon-plus me-md-2' aria-hidden='true' />
               <span className='d-none d-md-inline-block'>New application</span>
@@ -505,9 +516,7 @@ const DashboardTA = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests?.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: PatternApprovalDashboardDetailsDto) => (
             <li key={r.referenceId}>
@@ -515,7 +524,7 @@ const DashboardTA = () => {
                 setDeleteSuccess={setDeleteSuccess}
                 request={r}
                 tab={
-                  (initialFilters?.filterActiveTab as DashboardTab) ?? activeTab
+                  toDashboardTab(initialFilters?.filterActiveTab) ?? activeTab
                 }
               />
             </li>
@@ -524,7 +533,6 @@ const DashboardTA = () => {
       ) : (
         !isDataLoading && (
           <NoRequests
-            serviceType='Pattern/type approval'
             serviceName='application'
             serviceNameLinkTitle='new application'
             serviceNameLinkUrl='/ta/type-approval-create-pre'
@@ -575,7 +583,12 @@ const DashboardTA = () => {
         <Tab.Container
           id='dashboard-type'
           activeKey={activeTab}
-          onSelect={(key) => changeTab(key as DashboardTab)}
+          onSelect={(key) => {
+            const tab = toDashboardTab(key);
+            if (tab !== undefined) {
+              changeTab(tab);
+            }
+          }}
         >
           <Nav
             as='ul'
@@ -695,25 +708,25 @@ const DashboardTA = () => {
                     {'Currently managing '}
                   </span>
                   <span className='d-none d-block text-break'>
-                    {!!accountContext?.details?.trading &&
-                      `${accountContext?.details?.trading}`}
-                    {!!accountContext?.details?.trading &&
-                      !!accountContext?.details?.branch &&
+                    {!!accountContext.details.trading &&
+                      accountContext.details.trading}
+                    {!!accountContext.details.trading &&
+                      !!accountContext.details.branch &&
                       ' - '}
-                    {!!accountContext?.details?.branch &&
-                      `${accountContext?.details?.branch}`}
+                    {!!accountContext.details.branch &&
+                      accountContext.details.branch}
                   </span>
                   <span className='d-block text-break'>
-                    {!!accountContext?.details?.organisation &&
-                      `${accountContext?.details?.organisation}`}
+                    {!!accountContext.details.organisation &&
+                      accountContext.details.organisation}
                   </span>
                 </h2>
-                {!!accountContext?.details?.abn && (
+                {!!accountContext.details.abn && (
                   <>
                     <span id='orgABN' className='d-inline-block me-3 fw-normal'>
                       {'ABN: '}
                       <PatternFormat
-                        value={accountContext?.details?.abn}
+                        value={accountContext.details.abn}
                         displayType='text'
                         format='## ### ### ###'
                         aria-hidden='true'
@@ -722,7 +735,7 @@ const DashboardTA = () => {
                       />
                     </span>
                     <span className='visually-hidden'>
-                      {accountContext?.details?.abn?.split('').join(' ')}
+                      {accountContext.details.abn.split('').join(' ')}
                     </span>
                   </>
                 )}

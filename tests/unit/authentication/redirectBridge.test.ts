@@ -41,9 +41,9 @@ describe('mSAL redirect bridge entry', () => {
       .mockImplementation(() => undefined);
 
     await import('../../../ClientApp/src/authentication/redirectBridge');
-    await vi.waitFor(() =>
-      expect(consoleError).toHaveBeenCalledWith('MSAL redirect bridge failed'),
-    );
+    await vi.waitFor(() => {
+      expect(consoleError).toHaveBeenCalledWith('MSAL redirect bridge failed');
+    });
 
     expect(consoleError.mock.calls.flat().join(' ')).not.toContain('token=');
 

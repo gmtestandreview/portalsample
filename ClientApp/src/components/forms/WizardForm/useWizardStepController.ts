@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { ReactElement } from 'react';
@@ -56,7 +57,9 @@ type StepProps = Pick<
 
 /** What the step component should do with the current controller state. */
 export type WizardStepView =
-  { kind: 'form' } | { kind: 'navigate'; to: string } | { kind: 'blank' };
+  | { kind: 'form' }
+  | { kind: 'navigate'; to: string }
+  | { kind: 'blank' };
 
 export interface WizardStepController {
   isLoading: boolean;
@@ -91,6 +94,19 @@ export const useWizardStepController = (
   const accountState = useAccountState();
   const accountDispatch = useAccountDispatch();
   const controllerRef = useRef<AbortController | null>();
+  const loadStepValuesRef = useRef(loadStepValues);
+  const getRedirectionLocationOnErrorRef = useRef(
+    getRedirectionLocationOnError,
+  );
+
+  useEffect(() => {
+    loadStepValuesRef.current = loadStepValues;
+  }, [loadStepValues]);
+
+  useEffect(() => {
+    getRedirectionLocationOnErrorRef.current = getRedirectionLocationOnError;
+  }, [getRedirectionLocationOnError]);
+
   const abortSignal = () => {
     const controller = new AbortController();
     controllerRef.current = controller;
@@ -111,7 +127,9 @@ export const useWizardStepController = (
       }
       try {
         abortSignal();
-        const currentStep = await loadStepValues(controllerRef.current?.signal);
+        const currentStep = await loadStepValuesRef.current(
+          controllerRef.current?.signal,
+        );
         setStepValues(nullOrUndefinedToEmpty(currentStep.stepValues));
       } catch (error) {
         const err = error as Error;
@@ -120,12 +138,15 @@ export const useWizardStepController = (
         AppLogger.trace(
           'Could not load data for form step.',
           SeverityLevel.Error,
-          { problemDetails: loadServerError, err },
+          {
+            problemDetails: loadServerError,
+            err,
+          },
         );
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Load,
           ),
         );
@@ -134,12 +155,12 @@ export const useWizardStepController = (
         setIsLoading(false);
       }
     },
-    [loadStepValues], // eslint-disable-line react-hooks/exhaustive-deps
+    [],
   );
 
   useEffect(() => {
     void loadData();
-  }, [loadData]);
+  }, [currentStepIndex, loadData]);
 
   useEffect(() => {
     if (errorState.kind === 'concurrency') {
@@ -154,7 +175,7 @@ export const useWizardStepController = (
       setDashboardNotification({
         message:
           'You no longer have access to the records for' +
-          ` ${accountState?.details?.targetOrganisation?.targetOrganisationName}. Your changes have not been saved.`,
+          ` ${accountState?.details?.targetOrganisation?.targetOrganisationName ?? ''}. Your changes have not been saved.`,
         severity: NotificationSeverity.Error,
       });
       if (accountDispatch) {
@@ -164,8 +185,13 @@ export const useWizardStepController = (
         );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorState.kind]);
+  }, [
+    accountDispatch,
+    accountState?.details?.abn,
+    accountState?.details?.organisation,
+    accountState?.details?.targetOrganisation?.targetOrganisationName,
+    errorState.kind,
+  ]);
 
   useEffect(() => {
     if (errorState.kind === 'gone') {
@@ -220,14 +246,14 @@ export const useWizardStepController = (
         AppLogger.trace('Could not submit form step.', SeverityLevel.Error, {
           stepIndex: currentStepIndex,
           problemDetails: {
-            status: saveServerError?.status,
-            title: saveServerError?.title,
+            status: saveServerError.status,
+            title: saveServerError.title,
           },
         });
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Update,
           ),
         );
@@ -242,7 +268,7 @@ export const useWizardStepController = (
       try {
         const isDirty = !areFormValuesEqual(stepValues, values);
         await onSaveAndExit(values, isDirty, controllerRef.current?.signal);
-        void navigate(locationAfterExit || '/');
+        void navigate(orIfEmpty(locationAfterExit, '/'));
       } catch (error) {
         const err = error as Error;
         AppLogger.error('Could not save form step.', err, {
@@ -252,20 +278,20 @@ export const useWizardStepController = (
         AppLogger.trace('Could not save form step.', SeverityLevel.Error, {
           stepIndex: currentStepIndex,
           problemDetails: {
-            status: saveServerError?.status,
-            title: saveServerError?.title,
+            status: saveServerError.status,
+            title: saveServerError.title,
           },
         });
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Update,
           ),
         );
       }
     } else {
-      void navigate(locationAfterExit || '/');
+      void navigate(orIfEmpty(locationAfterExit, '/'));
     }
   };
 
@@ -282,7 +308,9 @@ export const useWizardStepController = (
       globalThis.location.replace(env.VITE_EXTERNAL_REDIRECT_URL);
       return;
     }
-    void navigate(discard?.locationOnCancel || discardLocation || '/');
+    void navigate(
+      orIfEmpty(discard?.locationOnCancel, orIfEmpty(discardLocation, '/')),
+    );
   };
 
   return {
@@ -347,7 +375,7 @@ const resolveView = ({
     ) {
       return {
         kind: 'navigate',
-        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location}`,
+        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location ?? ''}`,
       };
     }
   }

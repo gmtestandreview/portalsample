@@ -1,8 +1,8 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useField, useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { useMsal } from '@azure/msal-react';
 import { Alert, Card, Col, Container } from 'react-bootstrap';
 import HidableField from '../../components/forms/HidableField';
 import SelectInput from '../../components/Inputs/SelectInput';
@@ -45,12 +45,11 @@ const ApplicationAndInstrument = (
   const getName = (localName: string) =>
     name ? `${name}.${localName}` : localName;
   const context = useFormikContext<ApplicationAndInstrumentStepDto>();
-  const { accounts, instance } = useMsal();
   const [isDataLoading, setIsDataLoading] = useState(false);
   const initialKey = context.getFieldMeta('patternApprovalType')
     .initialValue as string | null;
   const [selectedApplication, setSelectedApplication] = useState<string | null>(
-    () => initialKey || 'new',
+    () => orIfEmpty(initialKey, 'new'),
   );
   const [instrumentCategories, setInstrumentCategories] =
     useState<LookupResponse[]>();
@@ -78,27 +77,34 @@ const ApplicationAndInstrument = (
   const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
     useState(false);
 
-  const getInstrumentTypes = (
-    values: LookupResponse[],
-    parentId: string,
-  ): SelectInputOption<string>[] => {
-    const options: SelectInputOption<string>[] = [];
-    if (parentId !== undefined && parentId !== '') {
-      for (const l of values) {
-        if (l.parentId === parentId) {
-          options.push({ displayText: l.label!, value: l.id! });
+  const getInstrumentTypes = useCallback(
+    (
+      values: LookupResponse[],
+      parentId: string | undefined,
+    ): SelectInputOption<string>[] => {
+      const options: SelectInputOption<string>[] = [];
+      if (parentId !== undefined && parentId !== '') {
+        for (const l of values) {
+          if (l.parentId === parentId) {
+            options.push({ displayText: l.label ?? '', value: l.id ?? '' });
+          }
+        }
+      } else if (isSummary) {
+        for (const l of values) {
+          options.push({ displayText: l.label ?? '', value: l.id ?? '' });
         }
       }
-    } else if (isSummary) {
-      for (const l of values) {
-        options.push({ displayText: l.label!, value: l.id! });
-      }
-    }
-    const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
-    noInstrumentTypeId.current = lastId;
+      const [sorted, lastId] = sortList(
+        options,
+        'No instrument',
+        'displayText',
+      );
+      noInstrumentTypeId.current = lastId;
 
-    return sorted;
-  };
+      return sorted;
+    },
+    [isSummary],
+  );
 
   // Sync selectedApplication with Formik's patternApprovalType value
   useEffect(() => {
@@ -118,8 +124,8 @@ const ApplicationAndInstrument = (
     const loadInstrumentCategories = () => {
       try {
         if (!instrumentCategories) {
-          const result = _categoryLookupField.value as LookupResponse[];
-          const artefactTypeResult = _typeLookupField.value as LookupResponse[];
+          const result = _categoryLookupField.value;
+          const artefactTypeResult = _typeLookupField.value;
           if (result && artefactTypeResult) {
             const [sorted, lastId] = sortList(
               result,
@@ -129,21 +135,16 @@ const ApplicationAndInstrument = (
             noInstrumentCategoriestId.current = lastId;
             setInstrumentCategories(sorted);
             setInstrumentTypes(artefactTypeResult);
-            if (
-              (artefactTypeResult !== undefined &&
-                _instrumentTypeField.value !== undefined) ||
-              isSummary
-            ) {
+            if (_instrumentTypeField.value !== undefined || isSummary) {
               setInstrumentTypesSelected(
                 getInstrumentTypes(
                   artefactTypeResult,
-                  _instrumentCatField.value as string,
+                  _instrumentCatField.value,
                 ),
               );
               if (
                 !isSummary &&
-                (_instrumentCatField.value as string) ===
-                  noInstrumentCategoriestId.current
+                _instrumentCatField.value === noInstrumentCategoriestId.current
               )
                 setIsInstrumentTypeDisabled(true);
             } else {
@@ -161,19 +162,20 @@ const ApplicationAndInstrument = (
     loadInstrumentCategories();
     // }
     // return () => { isLoadingInstrumentCategories.current = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     _categoryLookupField.value,
     _typeLookupField.value,
-    accounts,
-    instance,
+    _instrumentCatField.value,
+    _instrumentTypeField.value,
     instrumentCategories,
+    getInstrumentTypes,
+    isSummary,
   ]);
 
   const getInstrumentCategories = () => {
     const options: SelectInputOption<string>[] = [];
     for (const l of instrumentCategories ?? []) {
-      options.push({ displayText: l.label!, value: l.id! });
+      options.push({ displayText: l.label ?? '', value: l.id ?? '' });
     }
     return options;
   };
@@ -205,7 +207,7 @@ const ApplicationAndInstrument = (
     setIsInstrumentTypeDisabled(false);
     void context.setFieldValue('instrumentType', '');
     void context.setFieldTouched('instrumentType', false);
-    if (event.target.value !== null && instrumentTypes !== undefined) {
+    if (instrumentTypes !== undefined) {
       setInstrumentTypesSelected(
         getInstrumentTypes(instrumentTypes, event.target.value),
       );
@@ -244,7 +246,10 @@ const ApplicationAndInstrument = (
               .join(', ') || 'Not selected'
           );
         }
-        return options.find((o) => o.value === value)?.label || 'Not selected';
+        return orIfEmpty(
+          options.find((o) => o.value === value)?.label,
+          'Not selected',
+        );
       };
       return (
         <Container>
@@ -255,8 +260,11 @@ const ApplicationAndInstrument = (
               as='p'
               value={
                 _field.value
-                  ? applicationTypes.find((a) => a.value === _field.value)
-                      ?.label || 'Not selected'
+                  ? orIfEmpty(
+                      applicationTypes.find((a) => a.value === _field.value)
+                        ?.label,
+                      'Not selected',
+                    )
                   : 'Not selected'
               }
             />

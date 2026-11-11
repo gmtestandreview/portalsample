@@ -4,16 +4,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": ">=24.21.0"
-  },
-  "devEngines": {
-    "runtime": {
-      "name": "node",
-      "version": ">=24.21.0",
-      "onFail": "error"
-    }
-  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -27,22 +17,23 @@
     "lint:remediation:manifest": "node scripts/lint-remediation-gate.mjs --write-manifest",
     "lint:remediation:gate": "node scripts/lint-remediation-gate.mjs --phase phase-1",
     "test:lint:diagnostics": "node --test scripts/lint-diagnostics.test.mjs",
+    "test:lint:baseline": "node --test scripts/lint-baseline-reconciliation.test.mjs",
     "test:lint:remediation": "node --test scripts/lint-remediation-gate.test.mjs",
-    "format": "node scripts/format-contract.mjs --write",
-    "format:check": "node scripts/format-contract.mjs --check",
-    "format:all": "prettier --write .",
-    "format:all:check": "prettier --check .",
-    "format:docs": "prettier --write \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
-    "format:docs:check": "prettier --check \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "format:all": "oxfmt",
+    "format:all:check": "oxfmt --check .",
+    "format:docs": "oxfmt \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
+    "format:docs:check": "oxfmt --check \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
     "lint:eslint": "eslint \"ClientApp/env.js\" \"ClientApp/src/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx,js,jsx,mjs}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{js,mjs,ts,mts}\" \"quality/**/*.{js,mjs,ts,mts}\" \"*.config.{ts,mts,js}\" \"eslint.config.mjs\" \"remark.config.mjs\" \"storybook-vite-policies.ts\" \"runtime-env-fixtures.ts\" \"test-import.mjs\" \"vitest.shims.d.ts\" \"vitest*.{ts,js}\"",
-    "lint": "npm run lint:eslint && npm run format:check",
+    "lint": "npm run lint:eslint && npm run format:check && npm run lint:mdx && npm run lint:rules && npm run type-check && npm run validate:json",
     "lint:mdx": "remark \".storybook/**/*.mdx\" \"ClientApp/src/**/*.mdx\" --frail",
     "lint:rules": "node scripts/verify-rule-citations.mjs",
     "lint:rules:fix": "node scripts/verify-rule-citations.mjs --fix",
     "validate:json": "node scripts/validate-json.mjs",
     "sonar:backlog": "node scripts/sonar-issues-backlog.mjs",
     "sonar:backlog:test-fixture": "node scripts/sonar-issues-backlog.mjs --fixture tests/fixtures/sonar --out analysis/sonar-issues-backlog.md",
-    "lint:fix": "npm run lint:eslint -- --fix && npm run format",
+    "lint:fix": "npm run lint:eslint -- --fix && npm run format && npm run lint:rules:fix && npm run lint:mdx",
     "check": "npm run type-check && npm run lint && npm run lint:mdx && npm run lint:rules && npm run validate:json",
     "test:script-contract": "node --test scripts/package-scripts.test.mjs",
     "test:unit": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.unit.config.ts",
@@ -51,7 +42,7 @@
     "test:storybook": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.storybook.config.ts",
     "test:storybook:watch": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs --watch --configLoader runner --config vitest.storybook.config.ts",
     "test:storybook:coverage": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.storybook.config.ts --coverage",
-    "test:all": "npm run test:unit && npm run test:storybook",
+    "test:all": "npm run check && npm run test:unit:coverage && npm run test:storybook && npm run build && npm run verify:vite && npm run test:quality:regression && npm run test:e2e && npm run test:api-contract",
     "test:quality:regression": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config quality/vitest.regression.config.ts",
     "test:ci": "npm run type-check && npm run test:ci:unit && npm run test:ci:storybook && npm run test:ci:quality",
     "test:ci:unit": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.unit.config.ts --coverage --reporter=default --reporter=junit --outputFile.junit=reports/vitest/unit-junit.xml",
@@ -73,7 +64,8 @@
     "test:e2e:report": "playwright show-report reports/playwright/app",
     "migration-check": "tsc --noEmit && node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner && npm run build-storybook",
     "postinstall": "node scripts/apply-local-patches.mjs",
-    "sbom-report": "npm sbom --sbom-format=spdx --sbom-type=application > sbom.spdx.json && npm sbom --sbom-format=cyclonedx --sbom-type=application > sbom.cdx.json"
+    "sbom-report": "npm sbom --sbom-format=spdx --sbom-type=application > sbom.spdx.json && npm sbom --sbom-format=cyclonedx --sbom-type=application > sbom.cdx.json",
+    "prepare": "husky"
   },
   "dependencies": {
     "@azure/msal-browser": "^5.27.0",
@@ -137,21 +129,21 @@
     "eslint": "10.14.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-jsx-a11y-x": "^0.2.0",
-    "eslint-plugin-prettier": "^5.5.7",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-security": "^4.2.1",
     "eslint-plugin-sonarjs": "^4.2.2",
     "eslint-plugin-storybook": "10.6.5",
     "eslint-plugin-vitest-globals": "^1.6.1",
     "globals": "17.14.0",
+    "husky": "^9.1.7",
     "jsdom": "^30.1.3",
     "mockdate": "^3.0.5",
     "msw": "^3.0.3",
     "msw-storybook-addon": "^3.0.3",
+    "oxc": "^1.0.1",
+    "oxfmt": "^0.76.0",
     "playwright": "1.64.1",
     "playwright-bdd": "^9.2.1",
-    "prettier": "^3.9.10",
-    "prettier-plugin-markdown-html": "^1.6.1",
     "pyright": "^1.1.414",
     "remark-cli": "^12.0.1",
     "remark-gfm": "^4.0.1",
@@ -165,9 +157,6 @@
     "typescript-language-server": "^6.0.3",
     "vite": "^8.3.5",
     "vitest": "5.0.5"
-  },
-  "msw": {
-    "workerDirectory": ["ClientApp/public", "storybook-static"]
   },
   "overrides": {
     "@mizchi/lsmcp": {
@@ -183,10 +172,23 @@
       "glob": "13.0.6"
     }
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=24.21.0",
+      "onFail": "error"
+    }
+  },
+  "engines": {
+    "node": ">=24.21.0"
+  },
   "packageManager": "npm@11.19.1+sha512.cedb312b1b7f92421a02cfb68b4194e88f8346651dacd6acc5364a25ef5309d4a32b19616a1ff8aff865e7280c0fa5c0835a99f5cd93368991e2a80ec9da75d2",
   "allowScripts": {
     "@parcel/watcher": true,
     "esbuild": true,
     "msw": true
+  },
+  "msw": {
+    "workerDirectory": ["ClientApp/public", "storybook-static"]
   }
 }

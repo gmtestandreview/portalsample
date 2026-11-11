@@ -30,7 +30,11 @@ const RhfSelectInput = <T extends string | number = string>(
   } = props;
 
   const {
-    field,
+    fieldValue: controlledValue,
+    fieldRef,
+    fieldName,
+    onFieldChange,
+    onFieldBlur,
     controlId,
     helpId,
     validationMessageId,
@@ -39,14 +43,20 @@ const RhfSelectInput = <T extends string | number = string>(
   } = useRhfFieldA11y({ name, id, inlineHelp });
 
   const fieldValue =
-    typeof field.value === 'string' || typeof field.value === 'number'
-      ? field.value
+    typeof controlledValue === 'string' || typeof controlledValue === 'number'
+      ? controlledValue
       : '';
 
   if (isSummary) {
-    if (field.value === undefined || field.value === null || field.value === '')
+    if (
+      controlledValue === undefined ||
+      controlledValue === null ||
+      controlledValue === ''
+    )
       return null;
-    const selected = options?.find((option) => option.value === field.value);
+    const selected = options?.find(
+      (option) => option.value === controlledValue,
+    );
     return (
       <SummaryDisplay
         label={label}
@@ -62,18 +72,18 @@ const RhfSelectInput = <T extends string | number = string>(
       (option) => String(option.value) === rawValue,
     );
     const nextValue = selected ? selected.value : defaultValue;
-    field.onChange(nextValue);
+    onFieldChange(nextValue);
     onChange?.(nextValue);
   };
 
   return (
     <Form.Group controlId={controlId} className='form-field-container'>
       <Form.Label>{label}</Form.Label>
-      {inlineHelp && (
+      {inlineHelp ? (
         <Form.Text as='p' id={helpId} className='contextual-help text-muted'>
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
       <div className={`d-grid gap-2 ${containerClassName}`}>
         <Form.Control
           as='select'
@@ -83,16 +93,18 @@ const RhfSelectInput = <T extends string | number = string>(
             'aria-invalid': errorMessage ? true : undefined,
           })}
           className={`form-field form-select ${className}`}
-          name={field.name}
-          ref={field.ref}
+          name={fieldName}
+          ref={fieldRef}
           value={fieldValue}
-          onBlur={field.onBlur}
-          onChange={(event) => onSelectChange(event.target.value)}
+          onBlur={onFieldBlur}
+          onChange={(event) => {
+            onSelectChange(event.target.value);
+          }}
           isInvalid={!!errorMessage}
         >
           {addBlank && (
             <option value={defaultValue}>
-              {defaultDisplayText || 'Please select'}
+              {defaultDisplayText ?? 'Please select'}
             </option>
           )}
           {options?.map((option) => (

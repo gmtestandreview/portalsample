@@ -17,7 +17,7 @@ const onboardedAccount = {
 };
 
 interface TermsObservations {
-  requests: Array<{ method: string; url: string; body: unknown }>;
+  requests: { method: string; url: string; body: unknown }[];
   agreeCount: number;
 }
 

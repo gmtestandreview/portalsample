@@ -2,9 +2,11 @@ import { Button, Container, Nav, Navbar } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import type { FormBannerProps } from './types';
 import SaveAndExitButton from '../SaveAndExitButton';
-import LinkButton from '../../Buttons/LinkButton';
+import NavigationButton from '../../Buttons/LinkButton';
 import SkipLinks from '../../Utilities/skipLinks';
 import NavbarMessage from '../../Header/NavbarMessage';
+
+const getRouterLinkVariant = (): 'Link' => 'Link';
 
 const FormBanner = ({
   title,
@@ -60,7 +62,7 @@ const FormBanner = ({
                 ) : null}
               </div>
             </Navbar.Brand>
-            {showSaveAndExitButton === true || showDiscardButton === true ? (
+            {showSaveAndExitButton === true || showDiscardButton ? (
               <>
                 <Navbar.Toggle aria-controls='form-navbar' />
                 <Navbar.Collapse className='p-4'>
@@ -77,10 +79,12 @@ const FormBanner = ({
                     {showSaveAndExitButton === true ? (
                       <SaveAndExitButton />
                     ) : null}
-                    {showDiscardButton === true ? (
+                    {showDiscardButton ? (
                       <Button
                         data-testid='discard-changes-button'
-                        onClick={() => onClick()}
+                        onClick={() => {
+                          onClick();
+                        }}
                         variant='tertiary-colorbg'
                       >
                         <i className='icon-close me-1' aria-hidden='true' />
@@ -106,19 +110,19 @@ const FormBanner = ({
                       Form actions
                     </h2>
                     <div className='d-grid d-lg-block'>
-                      {/* eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */}
-                      <LinkButton
+                      {/* LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */}
+                      <NavigationButton
                         data-testid='form-go-to-dashboard-portal-button'
                         to='/dashboard'
                         variant='tertiary-colorbg'
-                        as='Link'
+                        as={getRouterLinkVariant()}
                       >
                         <i
                           className='icon-arrow-right me-1'
                           aria-hidden='true'
                         />
                         {'Go to dashboard'}
-                      </LinkButton>
+                      </NavigationButton>
                     </div>
                   </Nav>
                 </Navbar.Collapse>

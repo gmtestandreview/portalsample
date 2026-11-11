@@ -3,6 +3,7 @@ import { Col, Form, Row } from 'react-bootstrap';
 import { Title } from '../../../../api/web-api-client';
 import type { ContactDto } from '../../../../api/web-api-client';
 import { prefixedPropertyOf } from '../../../../utils';
+import { toTitle } from '../../../../utils/apiEnumMappings';
 import SelectInput from '../../../Inputs/SelectInput';
 import TextInput from '../../../Inputs/TextInput';
 import type { SelectInputOption } from '../../../Inputs/SelectInput/types';
@@ -34,10 +35,15 @@ interface ContactDetailsLabels {
 
 const getTitles = (): SelectInputOption<string>[] => {
   const options: SelectInputOption<string>[] = [];
-  for (const key of Object.keys(Title)) {
+  for (const value of Object.values(Title)) {
+    const title = toTitle(value);
+    if (title === undefined) {
+      continue;
+    }
+
     options.push({
-      displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
-      value: key,
+      displayText: title.replace(/([A-Z])/g, ' $1').trim(),
+      value: title,
     });
   }
   return options;
@@ -56,8 +62,8 @@ const ContactDetailsSummaryView = ({
 }: Readonly<ContactDetailsSummaryViewProps>) => (
   <>
     <SelectInput<string>
-      key={`${getName('title')}`}
-      name={`${getName('title')}`}
+      key={getName('title')}
+      name={getName('title')}
       label={labels.title}
       options={getTitles()}
       isSummary
@@ -66,39 +72,31 @@ const ContactDetailsSummaryView = ({
     {titleFieldValue === '' ? (
       <TextInput name='titleEmpty' label={labels.title} isSummary />
     ) : null}
-    <HidableField name={`${getName('titleOther')}`}>
+    <HidableField name={getName('titleOther')}>
       <TextInput
-        name={`${getName('titleOther')}`}
+        name={getName('titleOther')}
         label='Title, if "Other"'
         isSummary
       />
     </HidableField>
-    <TextInput
-      name={`${getName('firstName')}`}
-      label={labels.firstName}
-      isSummary
-    />
-    <TextInput
-      name={`${getName('lastName')}`}
-      label={labels.lastName}
-      isSummary
-    />
-    <TextInput name={`${getName('role')}`} label={labels.role} isSummary />
+    <TextInput name={getName('firstName')} label={labels.firstName} isSummary />
+    <TextInput name={getName('lastName')} label={labels.lastName} isSummary />
+    <TextInput name={getName('role')} label={labels.role} isSummary />
     <NumberInput
-      name={`${getName('phone')}`}
+      name={getName('phone')}
       label={labels.businessPhone}
       type='Phone'
       isSummary
       format='checkPhoneFormat'
     />
     <NumberInput
-      name={`${getName('mobile')}`}
+      name={getName('mobile')}
       label={labels.mobilePhone}
       type='Mobile'
       isSummary
       format='#### ### ###'
     />
-    <TextInput name={`${getName('email')}`} label={labels.email} isSummary />
+    <TextInput name={getName('email')} label={labels.email} isSummary />
   </>
 );
 
@@ -115,18 +113,18 @@ const ContactDetailsEditView = ({
     <Row>
       <Col md={6}>
         <SelectInput<string>
-          key={`${getName('title')}`}
-          name={`${getName('title')}`}
+          key={getName('title')}
+          name={getName('title')}
           label={labels.title}
           options={getTitles()}
           addBlank
         />
       </Col>
       <Col md={6}>
-        <HidableField name={`${getName('titleOther')}`}>
+        <HidableField name={getName('titleOther')}>
           <TextInput
-            key={`${getName('titleOther')}`}
-            name={`${getName('titleOther')}`}
+            key={getName('titleOther')}
+            name={getName('titleOther')}
             label='If "Other"'
             placeholder='Please enter title'
           />
@@ -136,8 +134,8 @@ const ContactDetailsEditView = ({
     <Row>
       <Col>
         <TextInput
-          key={`${getName('firstName')}`}
-          name={`${getName('firstName')}`}
+          key={getName('firstName')}
+          name={getName('firstName')}
           label={labels.firstName}
         />
       </Col>
@@ -145,8 +143,8 @@ const ContactDetailsEditView = ({
     <Row>
       <Col>
         <TextInput
-          key={`${getName('lastName')}`}
-          name={`${getName('lastName')}`}
+          key={getName('lastName')}
+          name={getName('lastName')}
           label={labels.lastName}
         />
       </Col>
@@ -154,8 +152,8 @@ const ContactDetailsEditView = ({
     <Row>
       <Col>
         <TextInput
-          key={`${getName('role')}`}
-          name={`${getName('role')}`}
+          key={getName('role')}
+          name={getName('role')}
           label={labels.role}
         />
       </Col>
@@ -163,8 +161,8 @@ const ContactDetailsEditView = ({
     <Row>
       <Col>
         <NumberInput
-          key={`${getName('phone')}`}
-          name={`${getName('phone')}`}
+          key={getName('phone')}
+          name={getName('phone')}
           label={labels.businessPhone}
           type='Phone'
           format='checkPhoneFormat'
@@ -174,7 +172,7 @@ const ContactDetailsEditView = ({
     <Row>
       <Col>
         <NumberInput
-          name={`${getName('mobile')}`}
+          name={getName('mobile')}
           label={labels.mobilePhone}
           type='Mobile'
           format='#### ### ###'
@@ -184,8 +182,8 @@ const ContactDetailsEditView = ({
     <Row>
       <Col>
         <TextInput
-          key={`${getName('email')}`}
-          name={`${getName('email')}`}
+          key={getName('email')}
+          name={getName('email')}
           label={labels.email}
         />
       </Col>
@@ -204,7 +202,7 @@ const ContactDetailsInput = ({
   mobilePhoneLabel,
   emailAddressLabel,
 }: Readonly<ContactDetailsProps>) => {
-  const getName = prefixedPropertyOf<ContactDto>(`${name}`);
+  const getName = prefixedPropertyOf<ContactDto>(name);
   const [_contact] = useField(name);
   const [_title] = useField('organisationAndContact.contact.title');
 

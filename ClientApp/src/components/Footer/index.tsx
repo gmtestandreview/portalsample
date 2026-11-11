@@ -12,7 +12,7 @@ const Footer = () => {
   const [privacyDialogOpen, setPrivacyDialogOpen] = useState(false);
   const [accessibilityDialogOpen, setAccessibilityDialogOpen] = useState(false);
 
-  const onTermsDialog = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onTermsDialog = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setTermsDialogOpen(true);
   };
@@ -21,7 +21,7 @@ const Footer = () => {
     setTermsDialogOpen(false);
   };
 
-  const onPrivacyDialog = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onPrivacyDialog = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setPrivacyDialogOpen(true);
   };
@@ -30,9 +30,7 @@ const Footer = () => {
     setPrivacyDialogOpen(false);
   };
 
-  const onAccessibilityDialog = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-  ) => {
+  const onAccessibilityDialog = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setAccessibilityDialogOpen(true);
   };

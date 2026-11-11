@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import './yupExtensions';
-import type { ContactDto } from '../api/web-api-client';
+import { YesNo, type ContactDto } from '../api/web-api-client';
 import {
   NotEmpty,
   nullableString,
@@ -115,3 +115,18 @@ export const contactSchemaEmailOnly = () =>
 
 export const authorisedAgentSchema = contactSchema;
 export const authorisedAgentSchemaSoft = contactSchemaSoft;
+
+/**
+ * Validates a nested contact-style field with `buildSchema` only when the
+ * sibling answer field `answerKey` is `YesNo.No`; otherwise the field is
+ * unconstrained.
+ */
+export const whenAnswerIsNo = (
+  answerKey: string,
+  buildSchema: () => yup.Schema,
+) =>
+  yup.mixed().when(answerKey, {
+    is: (answer: YesNo | undefined) => answer === YesNo.No,
+    then: buildSchema,
+    otherwise: () => yup.mixed(),
+  });

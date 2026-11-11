@@ -1,5 +1,4 @@
 // Module-shape queries intentionally use `typeof import()` so this ambient registry adds no runtime imports.
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 
 type __ExactMockModule<TModule> = Partial<
   Record<keyof TModule | 'default', unknown>

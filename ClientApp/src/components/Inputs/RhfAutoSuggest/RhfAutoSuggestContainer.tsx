@@ -26,7 +26,7 @@ const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
 
   useEffect(() => {
     if (hasOptions && state?.isFocused && !previousHasOptions.current) {
-      state?.open(null, 'input');
+      state.open(null, 'input');
     } else if (!hasOptions && previousHasOptions.current) {
       state?.close();
     }
@@ -65,7 +65,9 @@ const RhfAutoSuggestContainer = <T,>(
   } = props;
 
   const {
-    field,
+    fieldName,
+    fieldRef,
+    onFieldBlur,
     controlId,
     helpId,
     validationMessageId,
@@ -101,7 +103,7 @@ const RhfAutoSuggestContainer = <T,>(
           items={options}
           inputValue={searchTerm ?? ''}
           onInputChange={(value) => {
-            field.onBlur();
+            onFieldBlur();
             void onSearchTermChange(value);
           }}
           onChange={(key) => {
@@ -141,11 +143,11 @@ const RhfAutoSuggestContainer = <T,>(
           >
             {label}
           </Label>
-          {inlineHelp && (
+          {inlineHelp ? (
             <p id={helpId} className='contextual-help'>
               {inlineHelp}
             </p>
-          )}
+          ) : null}
           {/*
            * React Aria's `Group`, not a bare wrapper: `ComboBox`
            * exposes its group ref through `GroupContext`, and once a
@@ -161,8 +163,8 @@ const RhfAutoSuggestContainer = <T,>(
           <Group>
             <Input
               id={controlId}
-              name={field.name}
-              ref={field.ref}
+              name={fieldName}
+              ref={fieldRef}
               autoComplete='off'
               spellCheck={false}
               onKeyDown={onKeyDown}
@@ -182,7 +184,7 @@ const RhfAutoSuggestContainer = <T,>(
               <AutoSuggestOptions<T> id={`${name}-options`} options={options} />
             </Popover>
           )}
-          {loading && <p>{loadingMessage || 'Loading options'}</p>}
+          {loading && <p>{loadingMessage ?? 'Loading options'}</p>}
           {errorMessage ? (
             <div className='invalid-feedback' id={validationMessageId}>
               {errorMessage}
@@ -190,8 +192,8 @@ const RhfAutoSuggestContainer = <T,>(
           ) : null}
         </ComboBox>
       </div>
-      {!loading && noResult && <p>{noResultMessage || 'No matches found'}</p>}
-      {error && <p>{searchErrorMessage || 'Results could not be fetched'}</p>}
+      {!loading && noResult && <p>{noResultMessage ?? 'No matches found'}</p>}
+      {error && <p>{searchErrorMessage ?? 'Results could not be fetched'}</p>}
     </>
   );
 };

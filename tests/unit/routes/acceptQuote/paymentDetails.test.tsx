@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -26,7 +26,6 @@ const mockGetPaymentDetails = vi.hoisted(() =>
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -35,7 +34,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   const MockAcceptQuoteClient = vi.fn<typeof actual.AcceptQuoteClient>(
@@ -64,7 +62,6 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
@@ -103,7 +100,6 @@ vi.mock(
       ),
     }) satisfies __ExactMockModule<__TestMockModule52>,
 );
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/forms/HidableField',
   () =>
@@ -144,6 +140,14 @@ function makePreInfo(
   };
 }
 
+function deferred<T>() {
+  let resolve: (value: T | PromiseLike<T>) => void = () => undefined;
+  const promise = new Promise<T>((promiseResolve) => {
+    resolve = promiseResolve;
+  });
+  return { promise, resolve };
+}
+
 const defaultProps = { id: 'TEST-001' };
 const PaymentDetails = paymentDetails;
 
@@ -162,7 +166,7 @@ const renderPaymentDetails = (
             }
       }
       initialStatus={{ hidden: {} }}
-      onSubmit={() => {}}
+      onSubmit={vi.fn<() => void>()}
     >
       <PaymentDetails {...props} />
     </Formik>,
@@ -185,7 +189,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      );
       renderPaymentDetails();
 
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
@@ -197,7 +205,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      );
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.queryByTestId('info-summary')).not.toBeInTheDocument();
@@ -249,7 +261,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      ); // never resolves
 
       renderPaymentDetails();
 
@@ -262,7 +278,11 @@ describe('payment details', () => {
 
       resetPaymentDetailsMocks();
 
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+      acquireTokenSilentMock.mockReturnValue(
+        new Promise(() => {
+          // Never resolves — simulates an in-flight request for loading-state assertions.
+        }),
+      );
 
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
@@ -333,6 +353,94 @@ describe('payment details', () => {
     });
   });
 
+  it('reloads payment details when the quotation id changes', async () => {
+    expect.hasAssertions();
+
+    resetPaymentDetailsMocks();
+
+    const view = renderPaymentDetails({ ...defaultProps, isSummary: true });
+
+    await waitFor(() => {
+      expect(mockGetPaymentDetails).toHaveBeenCalledWith('TEST-001');
+    });
+
+    mockGetPaymentDetails.mockResolvedValueOnce(
+      makePreInfo('Prepaid', 'Q-TEST-002'),
+    );
+    view.rerender(
+      <Formik
+        initialValues={{ paymentDetails: {} }}
+        initialStatus={{ hidden: {} }}
+        onSubmit={vi.fn<() => void>()}
+      >
+        <PaymentDetails id='TEST-002' isSummary />
+      </Formik>,
+    );
+
+    await waitFor(() => {
+      expect(mockGetPaymentDetails).toHaveBeenCalledWith('TEST-002');
+    });
+
+    expect(screen.getByText(/Q-TEST-002/)).toBeInTheDocument();
+  });
+
+  it('keeps the latest payment request authoritative when responses resolve out of order', async () => {
+    expect.hasAssertions();
+
+    resetPaymentDetailsMocks();
+
+    const firstResponse = deferred<ReturnType<typeof makePreInfo>>();
+    const secondResponse = deferred<ReturnType<typeof makePreInfo>>();
+    mockGetPaymentDetails.mockImplementation((requestedId: unknown) =>
+      requestedId === 'TEST-001'
+        ? firstResponse.promise
+        : secondResponse.promise,
+    );
+
+    const view = renderPaymentDetails();
+
+    view.rerender(
+      <Formik
+        initialValues={{
+          purchaseOrderNo: '',
+          invoiceSentTo: InvoiceSentToValues.SamePerson,
+          contact: {},
+        }}
+        initialStatus={{ hidden: {} }}
+        onSubmit={vi.fn<() => void>()}
+      >
+        <PaymentDetails id='TEST-002' />
+      </Formik>,
+    );
+
+    await waitFor(() => {
+      expect(mockGetPaymentDetails.mock.calls).toStrictEqual([
+        ['TEST-001'],
+        ['TEST-002'],
+      ]);
+    });
+
+    await act(async () => {
+      firstResponse.resolve(makePreInfo('Prepaid', 'Q-STALE'));
+      await firstResponse.promise;
+    });
+
+    expect(screen.getByTestId('spinner')).toBeInTheDocument();
+    expect(screen.queryByText(/Prepayment required/)).not.toBeInTheDocument();
+
+    await act(async () => {
+      secondResponse.resolve(makePreInfo('Standard', 'Q-LATEST'));
+      await secondResponse.promise;
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+      expect(
+        screen.getByText(/30 days of NMI invoice date/),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe('aPI error handling', () => {
     it('logs an error and remains rendered when the API call fails', async () => {
       expect.hasAssertions();
@@ -346,11 +454,11 @@ describe('payment details', () => {
       renderPaymentDetails();
 
       await waitFor(() => {
-        expect(vi.mocked(AppLogger)['error']).toHaveBeenCalledWith(
+        expect(vi.mocked(AppLogger).error.mock.calls).toContainEqual([
           'Failed to load Payment details',
           expect.any(Error),
           { Id: 'TEST-001' },
-        );
+        ]);
       });
 
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();

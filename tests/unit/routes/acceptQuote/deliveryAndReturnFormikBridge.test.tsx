@@ -7,9 +7,10 @@ import {
   ReturnAddressTypeValues,
   ReturnContactTypeValues,
   ReturnMethodValues,
-  type AddressDetailsDto,
+  State,
   type DeliveryAndReturnStep,
 } from '@/api/web-api-client';
+import { toState } from '@/utils/apiEnumMappings';
 import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import { MemoryRouter } from 'react-router';
@@ -27,7 +28,6 @@ const mocks = vi.hoisted(() => ({
   account: { homeAccountId: 'mock-id' },
 }));
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -41,7 +41,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
@@ -53,7 +52,6 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
@@ -108,9 +106,9 @@ function Harness({
             hidingFields,
           )(formValues)
         }
-        onSubmit={(submitted) =>
-          onSubmit(removeHidden(submitted, submitted, hidingFields))
-        }
+        onSubmit={(submitted) => {
+          onSubmit(removeHidden(submitted, submitted, hidingFields));
+        }}
       >
         <Form noValidate>
           {withErrorSummary && <ErrorSummary />}
@@ -133,7 +131,7 @@ const resetDeliveryAndReturnMocks = () => {
   mocks.search.mockResolvedValue({ matches: [] });
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(DeliveryAndReturnFormikBridge, () => {
   it('mirrors a manually entered return address into the submit payload', async () => {
     expect.hasAssertions();
@@ -156,7 +154,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnAddressType: ReturnAddressTypeValues.Other,
@@ -186,7 +186,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
             line1: '9 Test Street',
             suburb: 'Lindfield',
             postcode: '2070',
-            state: 'NSW' as AddressDetailsDto['state'],
+            state: toState('NSW') ?? State.NSW,
           },
           returnOrganisationName: 'Loaded return organisation',
         }}
@@ -204,7 +204,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.type(organisationName, 'Edited return organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnOrganisationName: 'Edited return organisation',
@@ -246,7 +248,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(submitted(onSubmit)).toMatchObject({
       returnAddress: {
@@ -329,7 +333,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await screen.findByText(/is required/i);
 
-    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
+    const probe = JSON.parse(screen.getByTestId('probe').textContent) as {
       address?: unknown;
       dirty: boolean;
     };
@@ -358,7 +362,9 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
@@ -434,6 +440,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
 
-    keys.forEach((key) => expect(document.getElementById(key)).not.toBeNull());
+    keys.forEach((key) => {
+      expect(document.getElementById(key)).not.toBeNull();
+    });
   });
 });

@@ -56,7 +56,7 @@ function Harness<TValues extends FormikValues>({
               FormikConfig<TValues>['initialErrors']
             >,
           })}
-      onSubmit={async () => {}}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>{children}</Form>
     </Formik>
@@ -77,7 +77,7 @@ const baseProps = {
   allowedTypes: '.pdf',
   maxSizeInMB: 5,
   setErrors: vi.fn<SetErrors>(),
-  onDeleteFile: vi.fn<DeleteFile>(async () => {}),
+  onDeleteFile: vi.fn<DeleteFile>(),
 };
 
 describe('attachment new behavior', () => {
@@ -147,7 +147,9 @@ describe('attachment new behavior', () => {
   it('survives an upload that finishes after the control has gone', async () => {
     expect.hasAssertions();
 
-    let finishUpload: (value: AttachmentDto[]) => void = () => {};
+    let finishUpload: (value: AttachmentDto[]) => void = () => {
+      // Placeholder until the upload promise executor assigns the real resolve function.
+    };
     const onUploadFiles = vi.fn<UploadFiles>(
       () =>
         new Promise<AttachmentDto[]>((resolve) => {
@@ -165,7 +167,9 @@ describe('attachment new behavior', () => {
       screen.getByTestId('drag-upload-files'),
       new File(['pdf'], 'manual.pdf', { type: 'application/pdf' }),
     );
-    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onUploadFiles).toHaveBeenCalledTimes(1);
+    });
 
     // Navigating away mid-upload detaches the ref, so the post-upload reset of the file input
     // has nothing to write to. It must not throw on the way out.
@@ -180,7 +184,9 @@ describe('attachment new behavior', () => {
   it('survives a delete that finishes after the control has gone', async () => {
     expect.hasAssertions();
 
-    let finishDelete: () => void = () => {};
+    let finishDelete: () => void = () => {
+      // Placeholder until the delete promise executor assigns the real resolve function.
+    };
     const onDeleteFile = vi.fn<DeleteFile>(
       () =>
         new Promise<void>((resolve) => {
@@ -200,7 +206,9 @@ describe('attachment new behavior', () => {
 
     await userEvent.click(screen.getByTestId('cancel-button-doc-1'));
     await userEvent.click(screen.getByRole('button', { name: 'Yes, delete' }));
-    await waitFor(() => expect(onDeleteFile).toHaveBeenCalledWith('doc-1'));
+    await waitFor(() => {
+      expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
+    });
 
     // Same detached-ref path as the upload case: the delete handler clears the file input once
     // the server confirms, and by then the control may be gone.

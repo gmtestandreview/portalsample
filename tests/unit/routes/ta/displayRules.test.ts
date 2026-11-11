@@ -17,9 +17,11 @@ type DtoOverrides = Omit<
   'newSubOptions' | 'instrumentTypeContent'
 > & {
   readonly newSubOptions?:
-    ApplicationAndInstrumentStepDto['newSubOptions'] | undefined;
+    | ApplicationAndInstrumentStepDto['newSubOptions']
+    | undefined;
   readonly instrumentTypeContent?:
-    ApplicationAndInstrumentStepDto['instrumentTypeContent'] | undefined;
+    | ApplicationAndInstrumentStepDto['instrumentTypeContent']
+    | undefined;
 };
 
 const content = (

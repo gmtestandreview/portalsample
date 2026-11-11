@@ -6,6 +6,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import TextReadOnly from '../TextReadOnly';
 import type { SelectInputOption, SelectInputProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 const hasSelectedValue = (value: unknown) =>
   value !== undefined && value !== null && value !== '';
@@ -47,7 +48,7 @@ const SelectInput = <T extends string | number>(
   const {
     displayHorizontally,
     label,
-    inlineHelp = undefined, // default props
+    inlineHelp,
     inlineHelpTitle,
     options,
     defaultValue = '', // default props
@@ -64,7 +65,7 @@ const SelectInput = <T extends string | number>(
   } = selectInputProps;
 
   const [field, meta] = useField(name);
-  const controlId = id || name;
+  const controlId = getControlId(id, name);
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
   const selectedDisplayText = getSelectedDisplayText(field.value, options);
   const validationMessageId = `${controlId}-validation-msg`;
@@ -72,7 +73,7 @@ const SelectInput = <T extends string | number>(
 
   const defaultUIOption = (
     <option value={defaultValue} key={defaultValue} hidden={false}>
-      {defaultDisplayText || 'Please select'}
+      {defaultDisplayText ?? 'Please select'}
     </option>
   );
 
@@ -115,11 +116,11 @@ const SelectInput = <T extends string | number>(
         {...omitUndefined({ disabled, 'aria-describedby': describedBy })}
         className={`form-field form-select ${className}`}
         {...field}
-        onChange={(event) =>
+        onChange={(event) => {
           onSelectChange(
             event as ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-          )
-        }
+          );
+        }}
         isInvalid={!!(meta.touched && meta.error)}
       >
         {addBlank && defaultUIOption}

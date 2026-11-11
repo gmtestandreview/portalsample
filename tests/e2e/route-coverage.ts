@@ -1,18 +1,18 @@
-type CoveredRoute = {
+interface CoveredRoute {
   path: string;
   status: 'app-bdd' | 'storybook-bdd';
   feature: string;
   scenario: string;
   reason?: never;
-};
+}
 
-type ExcludedRoute = {
+interface ExcludedRoute {
   path: string;
   status: 'excluded';
   reason: string;
   feature?: never;
   scenario?: never;
-};
+}
 
 export type RouteCoverageEntry = CoveredRoute | ExcludedRoute;
 

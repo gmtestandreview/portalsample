@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { FilterMessages } from '../../../../ClientApp/src/api/web-api-client';
@@ -140,7 +140,9 @@ vi.mock(
           data-testid='pagination'
           data-current={currentPage}
           data-total={totalPages}
-          onClick={() => onPageChange(2)}
+          onClick={() => {
+            onPageChange(2);
+          }}
         >
           next page
         </button>
@@ -249,9 +251,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Assessment update')).toBeInTheDocument();
+      });
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
         DEFAULT_ACCESS_TOKEN,
@@ -286,9 +288,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('No messages to display')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('No messages to display')).toBeInTheDocument();
+      });
 
       // The count header is for a populated list only.
       expect(screen.queryByTestId('pagination-header')).not.toBeInTheDocument();
@@ -312,9 +314,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Assessment update')).toBeInTheDocument();
+      });
 
       expect(screen.getByTestId('pagination')).toHaveAttribute(
         'data-current',
@@ -337,13 +339,13 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to load application messages',
           expect.any(Error),
           { Id: 'APP-1' },
-        ),
-      );
+        );
+      });
 
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
@@ -396,9 +398,9 @@ describe('application messages', { timeout: 15_000 }, () => {
         release(messagesResponse([messageItem()]));
       });
 
-      await waitFor(() =>
-        expect(screen.getByTestId('pagination')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('pagination')).toBeInTheDocument();
+      });
     });
   });
 
@@ -416,9 +418,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Safe body')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Safe body')).toBeInTheDocument();
+      });
 
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(
         '<p>Safe body</p><script>evil()</script>',
@@ -438,9 +440,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Empty body')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Empty body')).toBeInTheDocument();
+      });
 
       expect(mocks.sanitiseHtml).not.toHaveBeenCalled();
     });
@@ -459,9 +461,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('The NMI team')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('The NMI team')).toBeInTheDocument();
+      });
 
       expect(screen.getAllByText('Regards,')).toHaveLength(1);
     });
@@ -484,7 +486,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() => expect(screen.getByText('NMI')).toBeInTheDocument());
+      await waitFor(() => {
+        expect(screen.getByText('NMI')).toBeInTheDocument();
+      });
 
       expect(screen.getByText('GM')).toBeInTheDocument();
     });
@@ -510,9 +514,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       const { container } = await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Action required')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Action required')).toBeInTheDocument();
+      });
 
       expect(container.querySelectorAll('.read')).toHaveLength(1);
       expect(container.querySelectorAll('.unread')).toHaveLength(1);
@@ -530,7 +534,9 @@ describe('application messages', { timeout: 15_000 }, () => {
       await renderRoute();
 
       // avatar is undefined, so the user branch renders and falls back to '?'.
-      await waitFor(() => expect(screen.getByText('?')).toBeInTheDocument());
+      await waitFor(() => {
+        expect(screen.getByText('?')).toBeInTheDocument();
+      });
     });
 
     it('omits the timestamp when a message has never been sent', async () => {
@@ -546,9 +552,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
 
-      await waitFor(() =>
-        expect(screen.getByText('Draft note')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Draft note')).toBeInTheDocument();
+      });
     });
   });
 
@@ -559,9 +565,9 @@ describe('application messages', { timeout: 15_000 }, () => {
       await resetApplicationMessagesMocks();
 
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument();
+      });
 
       const rendersBefore = editor.renderCount;
 
@@ -570,11 +576,11 @@ describe('application messages', { timeout: 15_000 }, () => {
         await Promise.resolve();
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.addAppMessage,
-        ).toHaveBeenCalledWith('APP-1', expect.any(String)),
-      );
+        ).toHaveBeenCalledWith('APP-1', expect.any(String));
+      });
       const [applicationId, html] = defined(
         clients.patternApproval.methods.addAppMessage.mock
           .calls[0] as unknown as AddMessageCall,
@@ -585,9 +591,9 @@ describe('application messages', { timeout: 15_000 }, () => {
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(html);
 
       // A changed key remounts Slate, which is how the composer is cleared.
-      await waitFor(() =>
-        expect(editor.renderCount).toBeGreaterThan(rendersBefore),
-      );
+      await waitFor(() => {
+        expect(editor.renderCount).toBeGreaterThan(rendersBefore);
+      });
     });
 
     it('refetches the first page after a successful send', async () => {
@@ -596,9 +602,9 @@ describe('application messages', { timeout: 15_000 }, () => {
       await resetApplicationMessagesMocks();
 
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument();
+      });
 
       const fetchesBefore =
         clients.patternApproval.methods.getAppMessages.mock.calls.length;
@@ -608,11 +614,11 @@ describe('application messages', { timeout: 15_000 }, () => {
         await Promise.resolve();
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessages.mock.calls.length,
-        ).toBeGreaterThan(fetchesBefore),
-      );
+        ).toBeGreaterThan(fetchesBefore);
+      });
     });
 
     it('logs a failed send without clearing what was typed', async () => {
@@ -625,22 +631,22 @@ describe('application messages', { timeout: 15_000 }, () => {
       );
 
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument();
+      });
 
       await act(async () => {
         editor.props.onSubmit();
         await Promise.resolve();
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to submit application message',
           expect.any(Error),
           { Id: 'APP-1' },
-        ),
-      );
+        );
+      });
     });
 
     it('does not send without a signed-in account', async () => {
@@ -654,9 +660,9 @@ describe('application messages', { timeout: 15_000 }, () => {
       signOut();
 
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument();
+      });
 
       await act(async () => {
         editor.props.onSubmit();
@@ -677,16 +683,16 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       const user = userEvent.setup();
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Assessment update')).toBeInTheDocument();
+      });
 
       await user.selectOptions(
         screen.getByLabelText('Select your view'),
         FilterMessages.ShowNmiMessages,
       );
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessages,
         ).toHaveBeenLastCalledWith(
@@ -695,8 +701,8 @@ describe('application messages', { timeout: 15_000 }, () => {
           1,
           FilterMessages.ShowNmiMessages,
           'APP-1',
-        ),
-      );
+        );
+      });
     });
 
     it('only ever sends a real FilterMessages member', async () => {
@@ -712,20 +718,20 @@ describe('application messages', { timeout: 15_000 }, () => {
       // is always a member.
       const user = userEvent.setup();
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Assessment update')).toBeInTheDocument();
+      });
 
       const select = screen.getByLabelText('Select your view');
       const members = Object.values(FilterMessages);
 
       for (const member of members) {
         await user.selectOptions(select, member);
-        await waitFor(() =>
+        await waitFor(() => {
           expect(
             clients.patternApproval.methods.getAppMessages,
-          ).toHaveBeenLastCalledWith('APP-1', 10, 1, member, 'APP-1'),
-        );
+          ).toHaveBeenLastCalledWith('APP-1', 10, 1, member, 'APP-1');
+        });
       }
 
       for (const call of clients.patternApproval.methods.getAppMessages.mock
@@ -742,13 +748,40 @@ describe('application messages', { timeout: 15_000 }, () => {
       // The initial state is ShowAllMessages. While the options were valued '1'/'2'/'3' no
       // option matched it, so the control displayed a selection the component did not hold.
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Assessment update')).toBeInTheDocument();
+      });
 
       expect(screen.getByLabelText('Select your view')).toHaveValue(
         FilterMessages.ShowAllMessages,
       );
+    });
+
+    it('keeps the current view when an unknown filter value is emitted', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
+      await renderRoute();
+      await waitFor(() => {
+        expect(screen.getByText('Assessment update')).toBeInTheDocument();
+      });
+
+      const select = screen.getByLabelText('Select your view');
+      fireEvent.change(select, { target: { value: 'UnknownFilter' } });
+
+      await waitFor(() => {
+        expect(
+          clients.patternApproval.methods.getAppMessages,
+        ).toHaveBeenLastCalledWith(
+          'APP-1',
+          10,
+          1,
+          FilterMessages.ShowAllMessages,
+          'APP-1',
+        );
+      });
+
+      expect(select).toHaveValue(FilterMessages.ShowAllMessages);
     });
 
     it('fetches the requested page and scrolls back to the heading', async () => {
@@ -760,9 +793,9 @@ describe('application messages', { timeout: 15_000 }, () => {
       const scrollIntoView = vi.fn<(...args: unknown[]) => unknown>();
 
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByTestId('pagination')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('pagination')).toBeInTheDocument();
+      });
       const messagesSection = requireRenderedElement(
         document.getElementById('application-messages'),
         'Expected application messages section to be rendered',
@@ -771,7 +804,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await user.click(screen.getByTestId('pagination'));
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessages,
         ).toHaveBeenLastCalledWith(
@@ -780,8 +813,8 @@ describe('application messages', { timeout: 15_000 }, () => {
           2,
           FilterMessages.ShowAllMessages,
           'APP-1',
-        ),
-      );
+        );
+      });
 
       expect(scrollIntoView).toHaveBeenCalledWith({
         behavior: 'smooth',
@@ -796,9 +829,9 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       const user = userEvent.setup();
       await renderRoute();
-      await waitFor(() =>
-        expect(screen.getByTestId('pagination')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('pagination')).toBeInTheDocument();
+      });
       const getElementById = document.getElementById.bind(document);
       const getElementByIdSpy = vi
         .spyOn(document, 'getElementById')
@@ -812,7 +845,7 @@ describe('application messages', { timeout: 15_000 }, () => {
         getElementByIdSpy.mockRestore();
       }
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           clients.patternApproval.methods.getAppMessages,
         ).toHaveBeenLastCalledWith(
@@ -821,8 +854,8 @@ describe('application messages', { timeout: 15_000 }, () => {
           2,
           FilterMessages.ShowAllMessages,
           'APP-1',
-        ),
-      );
+        );
+      });
     });
   });
 });

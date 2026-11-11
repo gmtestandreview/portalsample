@@ -22,7 +22,7 @@ const state: {
 
 const OrganisationAndContactDestination = () => {
   const { id } = useParams();
-  return <h1>{`Organisation and contact for request ${id}`}</h1>;
+  return <h1>{`Organisation and contact for request ${id ?? ''}`}</h1>;
 };
 
 const observeCreateRequest = async (request: Request) => {

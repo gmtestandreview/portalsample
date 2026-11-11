@@ -117,10 +117,10 @@ const mockAcceptTermsAndCondition = vi
   .fn<() => Promise<void>>()
   .mockResolvedValue(undefined);
 const mockSetAuthToken = vi.fn<() => void>();
-type MockUsersClient = {
+interface MockUsersClient {
   setAuthToken: typeof mockSetAuthToken;
   acceptTermsAndCondition: typeof mockAcceptTermsAndCondition;
-};
+}
 
 vi.mock(
   import('../../../../ClientApp/src/api/web-api-client'),

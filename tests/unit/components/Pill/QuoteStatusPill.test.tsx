@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import QuoteStatusPill from '@/components/Pill/QuoteStatusPill';
+import { toQuoteStatus } from '@/routes/common/helperFunctions';
 import { QuoteStatus } from '@/routes/common/enums';
 
 describe('quote status pill', () => {
@@ -50,7 +51,9 @@ describe('quote status pill', () => {
   it('renders the raw value for an unmapped status', async () => {
     expect.hasAssertions();
 
-    const customStatus = 'Quote sent to delegate' as QuoteStatus;
+    const customStatus = 'Quote sent to delegate';
+
+    expect(toQuoteStatus(customStatus)).toBeUndefined();
 
     render(<QuoteStatusPill status={customStatus} />);
 

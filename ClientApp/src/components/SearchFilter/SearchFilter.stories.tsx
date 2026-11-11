@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
@@ -33,7 +34,7 @@ const SearchFilterStory = () => {
       <p className='small mt-3 mb-0'>
         Current page: {page}
         {' | Search text: '}
-        {filters?.filterSearchText || 'none'}
+        {orIfEmpty(filters?.filterSearchText, 'none')}
       </p>
     </div>
   );
@@ -56,7 +57,7 @@ const SearchFilterWithSearchTermStory = () => {
       <p className='small mt-3 mb-0'>
         Current page: {page}
         {' | Search text: '}
-        {filters?.filterSearchText || 'none'}
+        {orIfEmpty(filters?.filterSearchText, 'none')}
       </p>
     </div>
   );

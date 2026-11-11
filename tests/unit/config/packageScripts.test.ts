@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-type PackageManifest = {
+interface PackageManifest {
   scripts: Record<string, string>;
-};
+}
 
 const scripts = (
   JSON.parse(readFileSync('package.json', 'utf8')) as PackageManifest
@@ -14,19 +14,19 @@ describe('package formatting scripts', () => {
   it('defines repo-wide formatting commands', () => {
     expect.assertions(2);
 
-    expect(scripts['format']).toBe('node scripts/format-contract.mjs --write');
-    expect(scripts['format:check']).toBe(
-      'node scripts/format-contract.mjs --check',
-    );
+    expect(scripts['format']).toBe('oxfmt');
+    expect(scripts['format:check']).toBe('oxfmt --check');
   });
 
   it('runs ESLint before formatting in the quality scripts', () => {
     expect.assertions(3);
 
     expect(scripts['lint:eslint']).toContain('eslint ');
-    expect(scripts['lint']).toBe('npm run lint:eslint && npm run format:check');
+    expect(scripts['lint']).toBe(
+      'npm run lint:eslint && npm run format:check && npm run lint:mdx && npm run lint:rules && npm run type-check && npm run validate:json',
+    );
     expect(scripts['lint:fix']).toBe(
-      'npm run lint:eslint -- --fix && npm run format',
+      'npm run lint:eslint -- --fix && npm run format && npm run lint:rules:fix && npm run lint:mdx',
     );
   });
 

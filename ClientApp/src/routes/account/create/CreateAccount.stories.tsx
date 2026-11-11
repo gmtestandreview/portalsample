@@ -29,7 +29,7 @@ const validStepValues = {
 
 interface CreateAccountObservations {
   savedBodies: unknown[];
-  organisationAndBranch: Array<[string, string, string]>;
+  organisationAndBranch: [string, string, string][];
   completedCount: number;
 }
 

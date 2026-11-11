@@ -129,7 +129,9 @@ describe('rFQDeleteModal null context', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
 
-    await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith('/');
+    });
 
     expect(mocks.deleteApplication).not.toHaveBeenCalled();
     expect(mocks.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');

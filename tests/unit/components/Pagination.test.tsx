@@ -124,6 +124,7 @@ describe('custom pagination', () => {
       page10: screen.queryByLabelText('Page 10') !== null,
       page11: screen.queryByLabelText('Page 11') !== null,
     }).toStrictEqual({ page1: true, page10: true, page11: false });
+    expect(screen.getAllByLabelText(/^Page \d+$/u)).toHaveLength(10);
 
     rerender(
       <CustomPagination
@@ -138,6 +139,7 @@ describe('custom pagination', () => {
       page11: screen.queryByLabelText('Page 11') !== null,
       page20: screen.queryByLabelText('Page 20') !== null,
     }).toStrictEqual({ page10: false, page11: true, page20: true });
+    expect(screen.getAllByLabelText(/^Page \d+$/u)).toHaveLength(10);
   });
 
   it('updates the visible page range after a debounced responsive resize', () => {

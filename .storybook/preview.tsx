@@ -52,7 +52,7 @@ const preview = definePreview({
   tags: ['autodocs'],
   decorators: [
     (Story, { parameters }) => {
-      const portal = (parameters?.['portal'] ?? {}) as PortalStoryParameters;
+      const portal = (parameters['portal'] ?? {}) as PortalStoryParameters;
       const initialEntries = portal.initialEntries ?? ['/'];
       // A story that renders a route reading useParams needs a pattern to match
       // against; under the catch-all every param is undefined, which is why

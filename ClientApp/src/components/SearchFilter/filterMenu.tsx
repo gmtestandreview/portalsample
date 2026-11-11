@@ -108,14 +108,12 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
     });
   }
 
-  function handleClose(
-    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ): void {
+  function handleClose(_event: React.MouseEvent<HTMLButtonElement>): void {
     setShow(false);
   }
 
   function handleResetFilters(
-    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    _event: React.MouseEvent<HTMLButtonElement>,
   ): void {
     setCurrentPage(1);
     const profile = {
@@ -201,11 +199,8 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
               {initialFilters?.filtersChanged ? (
                 `${countChangedFilters(initialFilters)}`
               ) : (
-                <>
-                  {/* preserve space */}
-                  <span aria-hidden='true'>&nbsp;</span>
-                  {/* <span className='visually-hidden text-invert'>none</span> */}
-                </>
+                // preserve space
+                <span aria-hidden='true'>&nbsp;</span>
               )}
             </output>
           </span>

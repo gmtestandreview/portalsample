@@ -1620,7 +1620,11 @@ export function discoverSourceExports({ files }) {
   );
   const exports = uniqueEntries(discoveredEntries);
   return {
-    exports: exports.map(({ provenance: _provenance, ...entry }) => entry),
+    exports: exports.map(({ source, export: exportName, kind }) => ({
+      source,
+      export: exportName,
+      kind,
+    })),
     provenance: exports.map(({ source, export: exportName, provenance }) => ({
       source,
       export: exportName,

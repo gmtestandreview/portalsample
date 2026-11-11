@@ -17,6 +17,7 @@ import {
   type RequestForQuoteSummary,
 } from '../../../../ClientApp/src/api/web-api-client';
 import { stepStatuses } from '../testFixtures';
+import { toTitle } from '../../../../ClientApp/src/utils/apiEnumMappings';
 
 const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
@@ -33,24 +34,24 @@ const mocks = vi.hoisted(() => ({
 
 type HideRule<T> = (values: Partial<T>) => boolean;
 
-type InstrumentAndRequestHidingFields = {
+interface InstrumentAndRequestHidingFields {
   serialNumber: HideRule<InstrumentAndRequestStep>;
-};
+}
 
-type OrganisationAndContactHidingFields = {
+interface OrganisationAndContactHidingFields {
   businessOrTradingName: HideRule<OrganisationAndContact>;
   branchOrLocationName: HideRule<OrganisationAndContact>;
   principalContactHide: HideRule<OrganisationAndContact>;
   contact: { titleOther: HideRule<OrganisationAndContact> };
-};
+}
 
-type RequestForQuoteSummaryHidingFields = {
+interface RequestForQuoteSummaryHidingFields {
   organisationAndContact: {
     branchOrLocationName: HideRule<RequestForQuoteSummary>;
     principalContactHide: HideRule<RequestForQuoteSummary>;
     contact: { titleOther: HideRule<RequestForQuoteSummary> };
   };
-};
+}
 
 const expectObjectContaining = (value: object): unknown =>
   expect.objectContaining(value);
@@ -59,7 +60,7 @@ vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
   importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
 ) => {
   const actual = await importOriginal();
-  if (typeof actual !== 'object' || actual === null) {
+  if (typeof actual !== 'object') {
     throw new TypeError('Expected module exports object');
   }
   return {
@@ -140,7 +141,7 @@ describe('request for quote wizard prop factories', () => {
       props.hidingFields as unknown as InstrumentAndRequestHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -260,7 +261,7 @@ describe('request for quote wizard prop factories', () => {
       props.hidingFields as unknown as OrganisationAndContactHidingFields;
     const abortSignal = new AbortController().signal;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -322,11 +323,11 @@ describe('request for quote wizard prop factories', () => {
     const abortSignal = new AbortController().signal;
     const summary = {
       organisationAndContact: {
-        contact: { title: 'Dr' },
+        contact: { title: toTitle('Dr') },
       },
     } as RequestForQuoteSummary;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -381,7 +382,7 @@ describe('request for quote wizard prop factories', () => {
     mocks.getSummary.mockRejectedValueOnce(new Error('load failed'));
 
     const loadFailure = await Promise.resolve(
-      props.loadStepValues?.(abortSignal),
+      props.loadStepValues(abortSignal),
     ).catch((error: unknown) => error);
 
     const loadLoggerCall: unknown = mocks.appLoggerError.mock.calls.at(-1);
@@ -420,11 +421,11 @@ describe('request for quote wizard prop factories', () => {
     const summary = {
       organisationAndContact: {
         branchOrLocationName: 'Branch',
-        contact: { title: 'Other' },
+        contact: { title: toTitle('Other') },
       },
     } as RequestForQuoteSummary;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -494,13 +495,13 @@ describe('request for quote wizard prop factories', () => {
 
     const failures = await Promise.all(
       [
-        Promise.resolve(instrumentProps.loadStepValues?.()),
+        Promise.resolve(instrumentProps.loadStepValues()),
         Promise.resolve(instrumentProps.onSaveAndExit?.({}, false)),
-        Promise.resolve(organisationProps.loadStepValues?.()),
+        Promise.resolve(organisationProps.loadStepValues()),
         Promise.resolve(organisationProps.onSaveAndExit?.({}, false)),
-        Promise.resolve(summaryProps.loadStepValues?.()),
+        Promise.resolve(summaryProps.loadStepValues()),
         Promise.resolve(summaryProps.onSaveAndNext?.({}, false)),
-        Promise.resolve(viewSummaryProps.loadStepValues?.()),
+        Promise.resolve(viewSummaryProps.loadStepValues()),
         Promise.resolve(viewSummaryProps.onSaveAndNext?.({}, false)),
       ].map((promise) =>
         promise.then(

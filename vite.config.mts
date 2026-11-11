@@ -73,10 +73,10 @@ function replaceEnvironmentTemplates(
   return transformedHtml;
 }
 
-type AssetInfo = {
+interface AssetInfo {
   name?: string;
   names?: string[];
-};
+}
 
 function assetFileNames(assetInfo: AssetInfo): string {
   const assetName = assetInfo.names?.[0] ?? assetInfo.name ?? '';

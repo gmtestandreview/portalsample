@@ -26,6 +26,9 @@ import {
   paymentDetailsSaveValidation,
   paymentDetailsSubmitValidation,
 } from './validation';
+
+const preconditionFailedStatus: number = HttpStatusCode.PreconditionFailed;
+const notFoundStatus: number = HttpStatusCode.NotFound;
 import { formatBannerTitle } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
@@ -97,16 +100,13 @@ const saveStep =
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) => {
     if (
-      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
+      errorCode === preconditionFailedStatus &&
       errorType === ErrorType.Load
     ) {
       return `/accept-quote/${id}/view-summary`;
     }
 
-    if (
-      errorCode === Number(HttpStatusCode.NotFound) &&
-      errorType === ErrorType.Update
-    ) {
+    if (errorCode === notFoundStatus && errorType === ErrorType.Update) {
       setDashboardNotification({
         message:
           'Another person has deleted this request. Your changes have not been saved.',

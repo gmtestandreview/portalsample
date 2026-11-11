@@ -285,11 +285,11 @@ describe('modal coverage slice', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.deleteApplication).toHaveBeenCalledWith('RFQ-123', {
         applicationType: 'QuoteRequest',
-      }),
-    );
+      });
+    });
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('token-1');
 
@@ -311,7 +311,9 @@ describe('modal coverage slice', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
 
-    await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith('/');
+    });
 
     expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
     expect(setDashboardNotification).not.toHaveBeenCalled();
@@ -334,7 +336,9 @@ describe('modal coverage slice', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
 
-    await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith('/');
+    });
 
     expect(mocks.deleteApplication).not.toHaveBeenCalled();
     expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');

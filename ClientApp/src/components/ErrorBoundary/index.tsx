@@ -35,7 +35,6 @@ const ErrorBoundary = ({
       const exception =
         error instanceof Error ? error : new Error(String(error));
       appInsights?.getAppInsights().trackException({
-        error: exception,
         exception,
         severityLevel: SeverityLevel.Error,
         properties: { ...info },

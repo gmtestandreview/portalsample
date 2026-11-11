@@ -44,8 +44,8 @@ function Harness({
 }
 
 describe('residual input branches', () => {
-  const consoleGuardRegistration = installUnexpectedConsoleGuard();
-  void consoleGuardRegistration;
+  // This helper intentionally registers Vitest lifecycle hooks for the console guard.
+  installUnexpectedConsoleGuard();
 
   it('renders SelectInput horizontal plain help without validation', () => {
     expect.hasAssertions();
@@ -251,7 +251,9 @@ describe('residual input branches', () => {
     const input = screen.getByRole('textbox', { name: 'Nickname' });
     fireEvent.blur(input);
 
-    await waitFor(() => expect(input).toHaveValue(''));
+    await waitFor(() => {
+      expect(input).toHaveValue('');
+    });
   });
 
   it('keeps AutoSuggest keyboard movement inert while closed and uses fallback ids', async () => {

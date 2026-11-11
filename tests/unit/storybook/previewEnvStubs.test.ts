@@ -30,7 +30,7 @@ describe('storybook runtime env stubs', () => {
       import('@microsoft/applicationinsights-react-js') as unknown as string,
       () =>
         ({
-          ReactPlugin: vi.fn<() => void>(function ReactPlugin() {}),
+          ReactPlugin: vi.fn<() => void>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
 

@@ -7,18 +7,13 @@ const RouteChangeScrollTop = () => {
   const resetFocusAndScroll = () => {
     window.scrollTo(0, 0);
     setTimeout(() => {
-      if (document.querySelector('#page-title')) {
-        const el: HTMLElement = document.querySelector(
-          '#page-title',
-        ) as HTMLElement;
+      const title = document.querySelector<HTMLElement>('#page-title');
+      if (title) {
         setTimeout(() => {
-          el?.focus();
+          title.focus();
         }, 500);
       } else {
-        const el: HTMLElement = document.querySelector(
-          '#page-top',
-        ) as HTMLElement;
-        el?.focus();
+        document.querySelector<HTMLElement>('#page-top')?.focus();
       }
     }, 100);
   };

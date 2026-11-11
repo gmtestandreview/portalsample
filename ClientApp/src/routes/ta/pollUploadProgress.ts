@@ -40,14 +40,18 @@ export const pollUploadProgress = async ({
   onProgress,
   onFinished,
 }: PollUploadProgressOptions): Promise<void> => {
-  const poll = async (lastPercent: number): Promise<void> => {
-    if (signal.aborted) return;
+  // `signal.aborted` changes while a request is in flight. Reading it through a function stops
+  // TypeScript carrying the `false` it narrowed to at the top of `poll` across the `await`.
+  const isAborted = () => signal.aborted;
+
+  const poll = async (lastPercent: number | undefined): Promise<void> => {
+    if (isAborted()) return;
 
     let data: UploadProgress;
     try {
       data = await client.getProgress(uploadId, lastPercent, signal);
     } catch {
-      if (signal.aborted) return;
+      if (isAborted()) return;
       await wait(PROGRESS_RETRY_DELAY_MS);
       return poll(lastPercent);
     }
@@ -56,17 +60,17 @@ export const pollUploadProgress = async ({
 
     if (isFinished(data)) {
       onFinished();
-      client.deleteProgressStatistics(uploadId).catch((error) => {
+      client.deleteProgressStatistics(uploadId).catch((error: unknown) => {
         AppLogger.error(
           'Failed to delete progress statistics',
-          error as Error,
+          error instanceof Error ? error : new Error(String(error)),
           { uploadId },
         );
       });
       return;
     }
 
-    return poll(data.percent!);
+    return poll(data.percent);
   };
 
   await poll(INITIAL_PERCENT);

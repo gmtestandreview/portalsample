@@ -328,9 +328,9 @@ describe('application and instrument step', () => {
         values: baseValues({ patternApprovalType: undefined }),
       });
 
-      await waitFor(() =>
-        expect(screen.getByText('Loading data...')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByText('Loading data...')).toBeInTheDocument();
+      });
     });
 
     it('follows the stored type when it is a variation', async () => {
@@ -395,7 +395,9 @@ describe('application and instrument step', () => {
       );
 
       // Switching type changes which fields even apply, so errors about the old branch go.
-      await waitFor(() => expect(formik?.errors).toStrictEqual({}));
+      await waitFor(() => {
+        expect(formik?.errors).toStrictEqual({});
+      });
 
       expect(formik?.touched).toStrictEqual({});
     });
@@ -447,9 +449,9 @@ describe('application and instrument step', () => {
 
       await renderStep();
 
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      });
       const labels = selectNamed('instrumentCategory').options.map(
         (o) => o.displayText,
       );
@@ -468,9 +470,9 @@ describe('application and instrument step', () => {
 
       await renderStep();
 
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentType')).toBeDefined();
+      });
 
       expect(selectNamed('instrumentType').options).toStrictEqual([]);
     });
@@ -487,9 +489,9 @@ describe('application and instrument step', () => {
         }),
       });
 
-      await waitFor(() =>
-        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0),
-      );
+      await waitFor(() => {
+        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0);
+      });
 
       expect(
         selectNamed('instrumentType').options.map((o) => o.displayText),
@@ -506,14 +508,82 @@ describe('application and instrument step', () => {
         values: baseValues({ instrumentCategory: '', instrumentType: '' }),
       });
 
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentType')).toBeDefined();
+      });
 
       // Summary is a record of what was chosen, so it must resolve any stored id to a label.
       expect(selectNamed('instrumentType').options).toHaveLength(
         typeLookup().length,
       );
+    });
+
+    it('keeps empty option fields when a category has no id and a matching type row has no id or label', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        values: baseValues({
+          instrumentCategory: 'cat-weighing',
+          instrumentType: 'type-beam',
+          // The category keeps a defined label (the raw category list is sorted
+          // by label, which throws on undefined) but drops its id.
+          instrumentCategoryLookup: [
+            ...categoryLookup(),
+            { id: undefined, label: 'Edge category', parentId: undefined },
+          ],
+          // The type list is mapped before it is sorted by displayText, so an
+          // id/label-less row flows through safely.
+          instrumentTypeLookup: [
+            ...typeLookup(),
+            { id: undefined, label: undefined, parentId: 'cat-weighing' },
+          ],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0);
+      });
+
+      // getInstrumentCategories maps the id-less row to an empty value.
+      expect(selectNamed('instrumentCategory').options).toContainEqual({
+        displayText: 'Edge category',
+        value: '',
+      });
+      // getInstrumentTypes' parent-id branch maps the id/label-less type row.
+      expect(selectNamed('instrumentType').options).toContainEqual({
+        displayText: '',
+        value: '',
+      });
+    });
+
+    it('keeps empty option fields in summary mode when a type row has no id or label', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        isSummary: true,
+        values: baseValues({
+          instrumentCategory: '',
+          instrumentType: '',
+          instrumentTypeLookup: [
+            ...typeLookup(),
+            { id: undefined, label: undefined, parentId: 'cat-weighing' },
+          ],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentType')).toBeDefined();
+      });
+
+      // Summary mode maps every type row, including the id/label-less one.
+      expect(selectNamed('instrumentType').options).toContainEqual({
+        displayText: '',
+        value: '',
+      });
     });
 
     it('offers nothing when the lookups have not arrived', async () => {
@@ -528,9 +598,9 @@ describe('application and instrument step', () => {
         }),
       });
 
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentType')).toBeDefined();
+      });
 
       expect(selectNamed('instrumentType').options).toStrictEqual([]);
       expect(selectNamed('instrumentCategory').options).toStrictEqual([]);
@@ -548,9 +618,9 @@ describe('application and instrument step', () => {
 
       await renderStep({ values });
 
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentType')).toBeDefined();
+      });
 
       expect(selectNamed('instrumentType').options).toStrictEqual([]);
     });
@@ -566,9 +636,9 @@ describe('application and instrument step', () => {
           instrumentTypeLookup: undefined,
         }),
       });
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      });
 
       await act(async () => {
         selectNamed('instrumentCategory').onChange?.({
@@ -580,7 +650,9 @@ describe('application and instrument step', () => {
       // No lookup means no options to narrow; the field is still cleared for re-entry.
       expect(selectNamed('instrumentType').options).toStrictEqual([]);
 
-      await waitFor(() => expect(formik?.values['instrumentType']).toBe(''));
+      await waitFor(() => {
+        expect(formik?.values['instrumentType']).toBe('');
+      });
     });
 
     it('logs a failure while shaping the lookups', async () => {
@@ -597,12 +669,38 @@ describe('application and instrument step', () => {
         }),
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to retrieve look ups',
           expect.any(Error),
-        ),
-      );
+        );
+      });
+    });
+
+    it('keeps sparse category lookup entries selectable', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        values: baseValues({
+          instrumentCategoryLookup: [
+            { id: undefined, label: 'Sparse category', parentId: undefined },
+          ],
+          instrumentTypeLookup: [],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      });
+
+      await waitFor(() => {
+        expect(selectNamed('instrumentCategory').options).toContainEqual({
+          displayText: 'Sparse category',
+          value: '',
+        });
+      });
     });
   });
 
@@ -614,20 +712,20 @@ describe('application and instrument step', () => {
 
       const user = userEvent.setup();
       await renderStep();
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      });
 
       await user.selectOptions(
         screen.getByTestId('select-instrumentCategory'),
         'cat-length',
       );
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(
           selectNamed('instrumentType').options.map((o) => o.displayText),
-        ).toStrictEqual(['Tape measure']),
-      );
+        ).toStrictEqual(['Tape measure']);
+      });
 
       expect(formik?.values['instrumentType']).toBe('');
     });
@@ -639,9 +737,9 @@ describe('application and instrument step', () => {
 
       const user = userEvent.setup();
       await renderStep();
-      await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
-      );
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      });
 
       await user.selectOptions(
         screen.getByTestId('select-instrumentCategory'),
@@ -650,9 +748,9 @@ describe('application and instrument step', () => {
 
       // Choosing "no measurement instrument" has exactly one valid type, so it is chosen for
       // the user and the field is locked rather than left as an empty required box.
-      await waitFor(() =>
-        expect(formik?.values['instrumentType']).toBe('type-none'),
-      );
+      await waitFor(() => {
+        expect(formik?.values['instrumentType']).toBe('type-none');
+      });
 
       expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
         'data-readonly',
@@ -672,12 +770,12 @@ describe('application and instrument step', () => {
         }),
       });
 
-      await waitFor(() =>
+      await waitFor(() => {
         expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
           'data-readonly',
           'true',
-        ),
-      );
+        );
+      });
     });
   });
 
@@ -694,9 +792,9 @@ describe('application and instrument step', () => {
         }),
       });
 
-      await waitFor(() =>
-        expect(screen.getByTestId('instrument-info-panel')).toBeInTheDocument(),
-      );
+      await waitFor(() => {
+        expect(screen.getByTestId('instrument-info-panel')).toBeInTheDocument();
+      });
 
       expect(captured.infoPanel).toStrictEqual({
         category: 'cat-weighing',

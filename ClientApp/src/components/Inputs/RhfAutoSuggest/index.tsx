@@ -19,7 +19,7 @@ const RhfAutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
   } = props;
 
   const [options, setOptions] = useState<AutoSuggestOption<T>[]>([]);
-  const [searchTerm, setSearchTerm] = useState(selectedOption || '');
+  const [searchTerm, setSearchTerm] = useState(selectedOption ?? '');
   const [noResult, setNoResult] = useState(false);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,13 +73,9 @@ const RhfAutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
   };
 
   useEffect(() => {
-    let mounted = true;
-    if (mounted && selectedOption && selectedOption !== '') {
+    if (selectedOption) {
       setSearchTerm(selectedOption);
     }
-    return () => {
-      mounted = false;
-    };
   }, [selectedOption]);
 
   const onCancel = () => {
@@ -88,7 +84,7 @@ const RhfAutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
     setIsLoading(false);
     setError(false);
     setNoResult(false);
-    setSearchTerm(selectedOption || '');
+    setSearchTerm(selectedOption ?? '');
   };
 
   return (

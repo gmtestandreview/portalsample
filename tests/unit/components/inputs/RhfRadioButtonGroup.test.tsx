@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '@testing-library/react';
+import { useEffect } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
@@ -12,6 +13,10 @@ const options = [
 
 interface Values {
   status: string | boolean;
+}
+
+class SelectionValue {
+  constructor(readonly code: string) {}
 }
 
 const ValueProbe = () => {
@@ -28,6 +33,28 @@ const Harness = ({
     <FormProvider {...methods}>
       <form>{children}</form>
       <ValueProbe />
+    </FormProvider>
+  );
+};
+
+const GenericValueHarness = ({
+  defaultValue,
+  children,
+}: Readonly<{
+  defaultValue: object | symbol | null | undefined | '';
+  children: ReactNode;
+}>) => {
+  const methods = useForm<{
+    selection: object | symbol | null | undefined | '';
+  }>();
+  useEffect(() => {
+    if (defaultValue !== undefined) {
+      methods.setValue('selection', defaultValue);
+    }
+  }, [defaultValue, methods]);
+  return (
+    <FormProvider {...methods}>
+      <form>{children}</form>
     </FormProvider>
   );
 };
@@ -140,6 +167,87 @@ describe('rhf radio button group behavior', () => {
 
     expect(screen.getByLabelText('Yes')).toBeChecked();
     expect(screen.getByTestId('value')).toHaveTextContent('true');
+  });
+
+  it('checks only the selected object-valued option', async () => {
+    expect.hasAssertions();
+
+    const selected = new SelectionValue('selected');
+    const other = new SelectionValue('other');
+    render(
+      <GenericValueHarness defaultValue={selected}>
+        <RhfRadioButtonGroup
+          name='selection'
+          legend='Object selection'
+          options={[
+            { label: 'Other', value: other, id: 'object-other' },
+            { label: 'Selected', value: selected, id: 'object-selected' },
+          ]}
+        />
+      </GenericValueHarness>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Selected')).toBeChecked();
+    });
+
+    expect(screen.getByLabelText('Other')).not.toBeChecked();
+  });
+
+  it('checks only the selected symbol-valued option', async () => {
+    expect.hasAssertions();
+
+    const selected = Symbol('selected');
+    render(
+      <GenericValueHarness defaultValue={selected}>
+        <RhfRadioButtonGroup
+          name='selection'
+          legend='Symbol selection'
+          options={[
+            { label: 'Other', value: Symbol('other'), id: 'symbol-other' },
+            { label: 'Selected', value: selected, id: 'symbol-selected' },
+          ]}
+        />
+      </GenericValueHarness>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Selected')).toBeChecked();
+    });
+
+    expect(screen.getByLabelText('Other')).not.toBeChecked();
+  });
+
+  it.each([
+    { label: 'Null', value: null },
+    { label: 'Undefined', value: undefined },
+  ])('does not collide for a $label value', async ({ label, value }) => {
+    expect.hasAssertions();
+
+    render(
+      <GenericValueHarness defaultValue={value}>
+        <RhfRadioButtonGroup
+          name='selection'
+          legend='Nullish selection'
+          options={[
+            { label: 'Null', value: null, id: 'null-option' },
+            { label: 'Undefined', value: undefined, id: 'undefined-option' },
+            { label: 'Empty', value: '', id: 'empty-option' },
+          ]}
+        />
+      </GenericValueHarness>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(label)).toBeChecked();
+    });
+
+    const otherLabels = ['Null', 'Undefined', 'Empty'].filter(
+      (otherLabel) => otherLabel !== label,
+    );
+    otherLabels.forEach((otherLabel) => {
+      expect(screen.getByLabelText(otherLabel)).not.toBeChecked();
+    });
   });
 
   it('disables every option when the group is disabled', () => {

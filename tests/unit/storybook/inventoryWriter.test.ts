@@ -9,12 +9,12 @@ import {
   writeTextFile,
 } from '../../helpers/safeTestFilesystem';
 
-type CoverageModule = {
+interface CoverageModule {
   writeInventoryRegions(input: {
     inventory: { regions: Record<string, string> };
     root: string;
   }): void;
-};
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained writer is JavaScript and has no declaration file.

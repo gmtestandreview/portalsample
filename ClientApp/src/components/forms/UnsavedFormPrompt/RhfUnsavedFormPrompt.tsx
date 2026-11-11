@@ -19,7 +19,9 @@ const RhfUnsavedFormPrompt = ({ path }: Readonly<{ path?: string }>) => {
       isDirty={isDirty}
       isValid={isValid}
       submitCount={submitCount}
-      onProceed={() => clearErrors()}
+      onProceed={() => {
+        clearErrors();
+      }}
     />
   );
 };

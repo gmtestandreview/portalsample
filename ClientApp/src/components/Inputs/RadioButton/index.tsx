@@ -48,12 +48,12 @@ const RadioButton = <T,>(
           </>
         )}
       </label>
-      {subFormField && (
+      {subFormField ? (
         <div id={`${id}-sub-field`} className='subform-field-container'>
           <div className='checklist-line' />
           {subFormField}
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

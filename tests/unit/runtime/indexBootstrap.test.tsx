@@ -136,4 +136,16 @@ describe('application bootstrap', () => {
       expect.objectContaining({ type: StrictMode }),
     );
   });
+
+  it('fails fast when the application root is absent', async () => {
+    expect.hasAssertions();
+
+    vi.resetModules();
+    document.body.innerHTML = '';
+
+    await expect(import('../../../ClientApp/src/index')).rejects.toThrow(
+      'Root element #root not found',
+    );
+    expect(mocks.createRoot).not.toHaveBeenCalled();
+  });
 });

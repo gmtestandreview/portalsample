@@ -19,11 +19,13 @@ const dispatchContext: AccountDispatchContext = {
   setOrganisationAndBranch: vi.fn<(...args: unknown[]) => void>(),
   setShowBranchSelector: vi.fn<(...args: unknown[]) => void>(),
   setShowRFQSelectModal: vi.fn<(...args: unknown[]) => void>(),
-  setUserProfile: vi.fn<(...args: unknown[]) => Promise<boolean>>().mockResolvedValue(true),
+  setUserProfile: vi
+    .fn<(...args: unknown[]) => Promise<boolean>>()
+    .mockResolvedValue(true),
 };
 
 const ServicesProbe = () => {
-  const services = useUserServices() as Array<{ serviceName: string }>;
+  const services = useUserServices() as { serviceName: string }[];
 
   return (
     <output aria-label='Services'>
@@ -32,7 +34,7 @@ const ServicesProbe = () => {
   );
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(useUserServices, () => {
   it('returns an empty service list when no account context is available', () => {
     expect.hasAssertions();

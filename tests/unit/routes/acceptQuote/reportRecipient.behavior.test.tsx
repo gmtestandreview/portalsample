@@ -1,10 +1,13 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
-import { ReportAddressTypeValues } from '@/api/web-api-client';
-import type { ReportRecipientStep } from '@/api/web-api-client';
+import { ReportAddressTypeValues, State } from '@/api/web-api-client';
+import type {
+  AddressDetailsDto,
+  ReportRecipientStep,
+} from '@/api/web-api-client';
 import ReportRecipient from '@/routes/acceptQuote/reportRecipient';
 import {
   reportRecipientSaveValidation,
@@ -27,7 +30,6 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -41,7 +43,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/authentication/hooks',
   () =>
@@ -53,7 +54,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
@@ -65,7 +65,6 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
@@ -80,7 +79,6 @@ vi.mock(
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
 // The edit form renders the RHF twin; the summary branch keeps the Formik one.
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/AddressLookup',
   () =>
@@ -90,7 +88,6 @@ vi.mock(
       ),
     }) satisfies __ExactMockModule<__TestMockModule31>,
 );
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/RhfAddressLookup',
   () =>
@@ -106,20 +103,29 @@ const hidingFields = {
     x.reportAddressType !== ReportAddressTypeValues.Other,
 };
 
-const streetAddress = {
+const streetAddress: AddressDetailsDto = {
   line1: '1 Street Road',
   suburb: 'Lindfield',
-  state: 'NSW',
+  state: State.NSW,
   postcode: '2070',
 };
-const postalAddress = {
+const postalAddress: AddressDetailsDto = {
   line1: 'PO Box 9',
   suburb: 'Sydney',
-  state: 'NSW',
+  state: State.NSW,
   postcode: '2000',
 };
 
+function deferred<T>() {
+  let resolve: (value: T | PromiseLike<T>) => void = () => undefined;
+  const promise = new Promise<T>((promiseResolve) => {
+    resolve = promiseResolve;
+  });
+  return { promise, resolve };
+}
+
 interface StepHarnessProps {
+  id?: string;
   values?: ReportRecipientStep;
   isSummary?: boolean;
   onSubmit?: (values: ReportRecipientStep) => void;
@@ -127,6 +133,7 @@ interface StepHarnessProps {
 
 // Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
 function StepHarness({
+  id = 'RFQ-1',
   values = {},
   isSummary,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
@@ -144,12 +151,12 @@ function StepHarness({
           hidingFields,
         )(formValues)
       }
-      onSubmit={(submitted) =>
-        onSubmit(removeHidden(submitted, submitted, hidingFields))
-      }
+      onSubmit={(submitted) => {
+        onSubmit(removeHidden(submitted, submitted, hidingFields));
+      }}
     >
       <Form noValidate>
-        <ReportRecipient id='RFQ-1' isSummary={isSummary} />
+        <ReportRecipient id={id} isSummary={isSummary} />
         <button type='submit'>Continue</button>
         <SaveAndExitButton />
       </Form>
@@ -204,9 +211,9 @@ describe('reportRecipient behavior', () => {
     });
     renderStep({});
 
-    await waitFor(() =>
-      expect(screen.getAllByText(/1 Street Road/)).toHaveLength(2),
-    );
+    await waitFor(() => {
+      expect(screen.getAllByText(/1 Street Road/)).toHaveLength(2);
+    });
 
     expect(screen.queryByText(/PO Box 9/)).not.toBeInTheDocument();
   });
@@ -257,7 +264,9 @@ describe('reportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
     const submitted = defined(onSubmit.mock.calls[0], 'submit call')[0];
 
     expect(submitted).toStrictEqual({
@@ -344,7 +353,9 @@ describe('reportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toStrictEqual({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
@@ -367,7 +378,9 @@ describe('reportRecipient behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
 
     expect(screen.queryByText(/400/)).not.toBeInTheDocument();
   });
@@ -383,11 +396,11 @@ describe('reportRecipient behavior', () => {
 
     rerender(<StepHarness values={{ organisationName: 'Loaded' }} />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByLabelText('Organisation name for report')).toHaveValue(
         'Loaded',
-      ),
-    );
+      );
+    });
   });
 
   it('shows validation again after reinitializing following an invalid submit', async () => {
@@ -406,9 +419,9 @@ describe('reportRecipient behavior', () => {
     await expect(screen.findByText(/400/)).resolves.toBeInTheDocument();
 
     rerender(<StepHarness values={{ organisationName: 'y'.repeat(402) }} />);
-    await waitFor(() =>
-      expect(screen.queryByText(/400/)).not.toBeInTheDocument(),
-    );
+    await waitFor(() => {
+      expect(screen.queryByText(/400/)).not.toBeInTheDocument();
+    });
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -424,13 +437,13 @@ describe('reportRecipient behavior', () => {
     mocks.getReportRecipient.mockRejectedValue(new Error('boom'));
     renderStep({});
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mocks.error).toHaveBeenCalledWith(
         'Failed to load AcceptQuotePreInfo',
         expect.any(Error),
         { Id: 'RFQ-1' },
-      ),
-    );
+      );
+    });
 
     expect(
       screen.getByLabelText('Organisation name for report'),
@@ -464,6 +477,93 @@ describe('reportRecipient behavior', () => {
     await expect(
       screen.findByTestId('address-lookup'),
     ).resolves.toBeInTheDocument();
+  });
+
+  it('reloads the recipient when the quotation id changes', async () => {
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
+
+    const view = renderStep({});
+
+    await waitFor(() => {
+      expect(mocks.getReportRecipient).toHaveBeenCalledWith('RFQ-1');
+    });
+
+    mocks.getReportRecipient.mockResolvedValue({
+      reportAddressType: ReportAddressTypeValues.Other,
+      rfqOrganisation: {
+        streetAddress: { ...streetAddress, line1: '2 New Street' },
+        postalAddress,
+        postalAddressSameAsStreetAddress: false,
+      },
+    });
+    view.rerender(<StepHarness id='RFQ-2' />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/2 New Street/)).toBeInTheDocument();
+    });
+
+    expect(mocks.getReportRecipient.mock.calls).toStrictEqual([
+      ['RFQ-1'],
+      ['RFQ-2'],
+    ]);
+    expect(screen.queryByText(/1 Street Road/)).not.toBeInTheDocument();
+  });
+
+  it('keeps the latest recipient request authoritative when responses resolve out of order', async () => {
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
+
+    const firstResponse = deferred<ReportRecipientStep>();
+    const secondResponse = deferred<ReportRecipientStep>();
+    mocks.getReportRecipient.mockImplementation((requestedId: unknown) =>
+      requestedId === 'RFQ-1' ? firstResponse.promise : secondResponse.promise,
+    );
+
+    const view = renderStep({});
+
+    view.rerender(<StepHarness id='RFQ-2' />);
+
+    await waitFor(() => {
+      expect(mocks.getReportRecipient.mock.calls).toStrictEqual([
+        ['RFQ-1'],
+        ['RFQ-2'],
+      ]);
+    });
+
+    await act(async () => {
+      firstResponse.resolve({
+        reportAddressType: ReportAddressTypeValues.Other,
+        rfqOrganisation: {
+          streetAddress,
+          postalAddress,
+          postalAddressSameAsStreetAddress: false,
+        },
+      });
+      await firstResponse.promise;
+    });
+
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(screen.queryByText(/1 Street Road/)).not.toBeInTheDocument();
+
+    await act(async () => {
+      secondResponse.resolve({
+        reportAddressType: ReportAddressTypeValues.Other,
+        rfqOrganisation: {
+          streetAddress: { ...streetAddress, line1: '2 New Street' },
+          postalAddress: { ...postalAddress, line1: 'PO Box 20' },
+          postalAddressSameAsStreetAddress: false,
+        },
+      });
+      await secondResponse.promise;
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+      expect(screen.getByText(/2 New Street/)).toBeInTheDocument();
+    });
   });
 
   it('shows the formatted business address read-only in summary mode', async () => {

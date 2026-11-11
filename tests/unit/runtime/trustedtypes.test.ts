@@ -42,7 +42,9 @@ describe('trustedTypes', () => {
     >();
     (
       globalThis as { trustedTypes?: { createPolicy: typeof createPolicy } }
-    ).trustedTypes = { createPolicy };
+    ).trustedTypes = {
+      createPolicy,
+    };
     const { TrustedTypes } =
       await import('../../../ClientApp/src/trustedtypes');
 
@@ -75,7 +77,9 @@ describe('trustedTypes', () => {
     const { TrustedTypes } =
       await import('../../../ClientApp/src/trustedtypes');
 
-    expect(() => TrustedTypes.createTrustedTypePolicy()).not.toThrow();
+    expect(() => {
+      TrustedTypes.createTrustedTypePolicy();
+    }).not.toThrow();
 
     resetTrustedTypes();
   });

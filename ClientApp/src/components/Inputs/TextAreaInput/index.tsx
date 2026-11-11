@@ -5,6 +5,7 @@ import type { TextAreaInputProps } from './types';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import { removeSupplementaryPlaneCharacters } from '../../../utils/removeSupplementaryPlaneCharacters';
+import { getControlId } from '../getControlId';
 
 type TextAreaFieldValue = string | null | undefined;
 
@@ -22,7 +23,8 @@ const TextAreaInput = ({
   isSummary,
 }: Readonly<TextAreaInputProps>) => {
   const [_field, _meta, _fieldHelper] = useField<TextAreaFieldValue>(name);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
   if (isSummary) {
     return (
@@ -31,7 +33,7 @@ const TextAreaInput = ({
         as='p'
         className='pre-wrap'
         value={_field.value ?? undefined}
-        id={id || name}
+        id={controlId}
       />
     );
   }
@@ -54,24 +56,24 @@ const TextAreaInput = ({
   if (maxCharacters && maxCharacters > 0) {
     const currCharacters = _field.value ? _field.value.trim().length : 0;
     counterText = `${currCharacters} of ${maxCharacters} characters used`;
-    hasExceededMaximum = currCharacters > Number(maxCharacters);
+    hasExceededMaximum = currCharacters > maxCharacters;
   }
 
   return (
     <Form.Group
       className={`form-field-container ${containerClassName}`}
-      controlId={id || name}
+      controlId={controlId}
     >
       <Form.Label>{label}</Form.Label>
-      {inlineHelp && (
+      {inlineHelp ? (
         <Form.Text as='p' id={helpId} className='contextual-help'>
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
       <Form.Control
         className={`form-field form-text-area ${className}`}
         as='textarea'
-        rows={rows || 3}
+        rows={rows ?? 3}
         {..._field}
         value={_field.value ?? ''}
         isInvalid={!!(_meta.touched && _meta.error)}
@@ -79,24 +81,24 @@ const TextAreaInput = ({
           disabled,
           'aria-describedby':
             _meta.touched && _meta.error
-              ? `${id || name}-validation-msg`
+              ? `${controlId}-validation-msg`
               : helpId,
           placeholder,
         })}
         onChange={handleChange}
         onBlur={handleOnBlur}
       />
-      {maxCharacters && (
+      {maxCharacters !== undefined && maxCharacters > 0 ? (
         <div
           className={`text-end ${hasExceededMaximum ? 'counterLabelExceedsMax' : 'counterLabelWithinMax'}`}
         >
           <span className='small'>{counterText}</span>
         </div>
-      )}
+      ) : null}
       {_meta.touched && _meta.error ? (
         <Form.Control.Feedback
           type='invalid'
-          id={`${id || name}-validation-msg`}
+          id={`${controlId}-validation-msg`}
           className='form-validation-message'
         >
           {_meta.error}

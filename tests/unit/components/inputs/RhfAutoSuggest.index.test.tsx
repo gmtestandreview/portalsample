@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import RhfAutoSuggest from '@/components/Inputs/RhfAutoSuggest';
+import { defined } from '../../helpers/defined';
 
 type SelectedOption = AutoSuggestProps<string>['onSelectedOption'];
 import type {
@@ -138,9 +139,9 @@ describe('rhfAutoSuggest parent state', () => {
   it('ignores stale responses after cancellation and restores the selected value', async () => {
     expect.hasAssertions();
 
-    let resolveSearch: (
-      options: AutoSuggestOption<string>[],
-    ) => void = () => {};
+    let resolveSearch: (options: AutoSuggestOption<string>[]) => void = () => {
+      // Placeholder until the search promise executor assigns the real resolve function.
+    };
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
     >(
@@ -171,7 +172,9 @@ describe('rhfAutoSuggest parent state', () => {
   it('ignores a stale failed response after cancellation', async () => {
     expect.hasAssertions();
 
-    let rejectSearch: (error: Error) => void = () => {};
+    let rejectSearch: (error: Error) => void = () => {
+      // Placeholder until the search promise executor assigns the real reject function.
+    };
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
     >(
@@ -201,7 +204,9 @@ describe('rhfAutoSuggest parent state', () => {
   it('updates loading around selection and reflects selectedOption changes', async () => {
     expect.hasAssertions();
 
-    let resolveSelection: () => void = () => {};
+    let resolveSelection: () => void = () => {
+      // Placeholder until the selection promise executor assigns the real resolve function.
+    };
     const onSelectedOption = vi.fn<SelectedOption>(
       () => new Promise<void>((resolve) => (resolveSelection = resolve)),
     );
@@ -212,7 +217,7 @@ describe('rhfAutoSuggest parent state', () => {
     let selectionPromise: Promise<void> | undefined;
     act(() => {
       selectionPromise = containerState.props?.onSelectedOption(
-        selectedOption!,
+        defined(selectedOption, 'first auto-suggest option'),
       );
     });
 

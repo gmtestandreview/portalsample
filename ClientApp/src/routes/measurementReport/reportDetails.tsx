@@ -36,7 +36,7 @@ const ReportDetails = (
       );
     }
   };
-  const showDashboardMessage = (message: JSX.Element | null) => (
+  const showDashboardMessage = (message: React.JSX.Element | null) => (
     <>
       {message && (
         <Container>
@@ -92,7 +92,7 @@ const ReportDetails = (
         <Col md={6}>
           <div className='form-label mb-0'>Report ID</div>
           <p className='mb-0 text-break'>
-            {!!reportData?.report?.reportId && `${reportData?.report.reportId}`}
+            {!!reportData?.report?.reportId && reportData.report.reportId}
           </p>
         </Col>
       </Row>
@@ -101,7 +101,7 @@ const ReportDetails = (
           <div className='form-label mb-0'>Report date</div>
           <p className='mb-0 text-break'>
             {!!reportData?.report?.dateIssued &&
-              `${formatDateToString(new Date(reportData?.report?.dateIssued))}`}
+              formatDateToString(new Date(reportData.report.dateIssued))}
           </p>
         </Col>
         <Col xs={6} className='text-end'>
@@ -109,7 +109,7 @@ const ReportDetails = (
             <>
               <div className='form-label mb-0'>Invoice number</div>
               <p className='mb-0 text-break'>
-                {reportData?.report.invoiceNumber}
+                {reportData.report.invoiceNumber}
               </p>
             </>
           )}
@@ -128,7 +128,7 @@ const ReportDetails = (
             </Col>
             <Col xs={8} lg={9}>
               <p className='mb-0 text-break'>
-                {!!reportData?.serialNumber && `${reportData?.serialNumber}`}
+                {!!reportData?.serialNumber && reportData.serialNumber}
               </p>
             </Col>
             <Col xs={4} lg={3}>
@@ -136,7 +136,7 @@ const ReportDetails = (
             </Col>
             <Col xs={8} lg={9}>
               <p className='mb-0 text-break'>
-                {!!reportData?.manufacturer && `${reportData?.manufacturer}`}
+                {!!reportData?.manufacturer && reportData.manufacturer}
               </p>
             </Col>
             <Col xs={4} lg={3}>
@@ -144,13 +144,17 @@ const ReportDetails = (
             </Col>
             <Col xs={8} lg={9}>
               <p className='mb-0 text-break'>
-                {!!reportData?.model && `${reportData?.model}`}
+                {!!reportData?.model && reportData.model}
               </p>
             </Col>
             <Col xs={4} lg={3} />
             <Col xs={8} lg={9}>
               <p className='mb-0'>
-                <InTextLink onClick={(_e) => showQuoteRequest()}>
+                <InTextLink
+                  onClick={(_e) => {
+                    showQuoteRequest();
+                  }}
+                >
                   View request
                   <ExternalLinkIcon className='ms-2' />
                   <span className='visually-hidden'> Opens in a new tab</span>
@@ -177,7 +181,7 @@ const ReportDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!reportData?.instrumentArtefactToBeCalibrated &&
-                  `${reportData?.instrumentArtefactToBeCalibrated}`}
+                  reportData.instrumentArtefactToBeCalibrated}
               </p>
             </Col>
           </Row>
@@ -187,8 +191,7 @@ const ReportDetails = (
             </Col>
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
-                {!!reportData?.servicesOffered &&
-                  `${reportData?.servicesOffered}`}
+                {!!reportData?.servicesOffered && reportData.servicesOffered}
               </p>
             </Col>
           </Row>
@@ -201,7 +204,7 @@ const ReportDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!reportData?.measurementReportCertificateRequired &&
-                  `${reportData?.measurementReportCertificateRequired}`}
+                  reportData.measurementReportCertificateRequired}
               </p>
             </Col>
           </Row>
@@ -212,7 +215,7 @@ const ReportDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!reportData?.specialConditions &&
-                  `${reportData?.specialConditions}`}
+                  reportData.specialConditions}
               </p>
             </Col>
           </Row>
@@ -230,7 +233,9 @@ const ReportDetails = (
             <Col xs={7} lg={8}>
               <p className='mb-0 text-break'>
                 {!!reportData?.report?.dateDispatched &&
-                  `${formatDateToString(new Date(reportData?.report?.dateDispatched))}`}
+                  formatDateToString(
+                    new Date(reportData.report.dateDispatched),
+                  )}
               </p>
             </Col>
           </Row>
@@ -241,12 +246,12 @@ const ReportDetails = (
             <Col xs={7} lg={8}>
               <p className='mb-0 text-break'>
                 {!!reportData?.returnContactName &&
-                  `${reportData?.returnContactName}`}
+                  reportData.returnContactName}
               </p>
               {!!reportData?.returnContactEmail && (
                 <p className='mb-0 text-break'>
-                  <a href={`mailto:${reportData?.returnContactEmail}`}>
-                    {reportData?.returnContactEmail}
+                  <a href={`mailto:${reportData.returnContactEmail}`}>
+                    {reportData.returnContactEmail}
                   </a>
                 </p>
               )}
@@ -259,7 +264,7 @@ const ReportDetails = (
             <Col xs={7} lg={8}>
               <p className='mb-0 text-break'>
                 {!!reportData?.returnOrganisationName &&
-                  `${reportData?.returnOrganisationName}`}
+                  reportData.returnOrganisationName}
               </p>
             </Col>
           </Row>
@@ -273,30 +278,30 @@ const ReportDetails = (
                 </Col>
                 <Col xs={7} lg={8}>
                   <p className='mb-0 text-break'>
-                    {!!reportData?.returnAddressLine1 && (
+                    {!!reportData.returnAddressLine1 && (
                       <>
-                        {reportData?.returnAddressLine1}
+                        {reportData.returnAddressLine1}
                         <br />
                       </>
                     )}
-                    {!!reportData?.returnAddressLine2 && (
+                    {!!reportData.returnAddressLine2 && (
                       <>
-                        {reportData?.returnAddressLine2}
+                        {reportData.returnAddressLine2}
                         <br />
                       </>
                     )}
-                    {!!reportData?.returnAddressLine3 && (
+                    {!!reportData.returnAddressLine3 && (
                       <>
-                        {reportData?.returnAddressLine3}
+                        {reportData.returnAddressLine3}
                         <br />
                       </>
                     )}
-                    {!!reportData?.returnAddressSuburb &&
-                      `${reportData?.returnAddressSuburb} `}
-                    {!!reportData?.returnAddressState &&
-                      `${reportData?.returnAddressState} `}
-                    {!!reportData?.returnAddressPostcode &&
-                      `${reportData?.returnAddressPostcode}`}
+                    {!!reportData.returnAddressSuburb &&
+                      `${reportData.returnAddressSuburb} `}
+                    {!!reportData.returnAddressState &&
+                      `${reportData.returnAddressState} `}
+                    {!!reportData.returnAddressPostcode &&
+                      reportData.returnAddressPostcode}
                   </p>
                 </Col>
               </>
@@ -306,7 +311,7 @@ const ReportDetails = (
             </Col>
             <Col xs={7} lg={8}>
               <p className='mb-0 text-break'>
-                {!!reportData?.returnMethod && `${reportData?.returnMethod}`}
+                {!!reportData?.returnMethod && reportData.returnMethod}
               </p>
             </Col>
           </Row>
@@ -319,7 +324,7 @@ const ReportDetails = (
               </Col>
               <Col xs={8} lg={9}>
                 <p className='mb-0 text-break'>
-                  {!!reportData?.carrierName && `${reportData?.carrierName}`}
+                  {!!reportData.carrierName && reportData.carrierName}
                 </p>
               </Col>
               <Col xs={12} md={12}>
@@ -330,8 +335,7 @@ const ReportDetails = (
               <Col xs={4} lg={3} />
               <Col xs={8} lg={9}>
                 <p className='mb-0 text-break'>
-                  {!!reportData?.carrierShipRef &&
-                    `${reportData?.carrierShipRef}`}
+                  {!!reportData.carrierShipRef && reportData.carrierShipRef}
                 </p>
               </Col>
               <Col xs={4} lg={3}>
@@ -339,25 +343,25 @@ const ReportDetails = (
               </Col>
               <Col xs={8} lg={9}>
                 <p className='mb-0 text-break'>
-                  {!!reportData?.carrierContactName &&
-                    `${reportData?.carrierContactName}`}
+                  {!!reportData.carrierContactName &&
+                    reportData.carrierContactName}
                 </p>
-                {!!reportData?.carrierContactPhone && (
+                {!!reportData.carrierContactPhone && (
                   <p className='mb-0 text-break'>
-                    <a href={`tel:${reportData?.carrierContactPhone}`}>
-                      {reportData?.carrierContactPhone}
+                    <a href={`tel:${reportData.carrierContactPhone}`}>
+                      {reportData.carrierContactPhone}
                     </a>
                   </p>
                 )}
               </Col>
-              {!!reportData?.report?.consignmentNote && (
+              {!!reportData.report?.consignmentNote && (
                 <>
                   <Col xs={4} lg={3}>
                     <div className='mb-0'>Consignment note:</div>
                   </Col>
                   <Col xs={8} lg={9}>
                     <p className='mb-0 text-break'>
-                      {reportData?.report.consignmentNote}
+                      {reportData.report.consignmentNote}
                     </p>
                   </Col>
                 </>

@@ -164,11 +164,11 @@ vi.mock(
         name: string;
         isSummary?: boolean;
         inlineHelp?: ReactNode;
-        options: Array<{
+        options: {
           label: string;
           descriptor?: ReactNode;
           value: string;
-        }>;
+        }[];
       }) => (
         <section data-testid={`radio-${name}`} data-summary={String(isSummary)}>
           <h3>{legend}</h3>
@@ -300,7 +300,7 @@ const renderWithFormik = (children: ReactNode) =>
     <Formik
       initialValues={formValues}
       initialStatus={{ hidden: {} }}
-      onSubmit={() => {}}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>{children}</Form>
     </Formik>,
@@ -315,7 +315,7 @@ const renderSummary = (
       <Formik
         initialValues={formValues}
         initialStatus={initialStatus}
-        onSubmit={() => {}}
+        onSubmit={vi.fn<() => void>()}
       >
         <Form>
           <Routes>
@@ -340,7 +340,7 @@ const resetTaComponentsMocks = () => {
   mocks.supportingDocumentsUploadFiles.mockClear();
 };
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(OrganisationAndContact, () => {
   it('renders the editable organisation and contact fields with prefixed field names', () => {
     expect.hasAssertions();
@@ -378,14 +378,14 @@ describe(OrganisationAndContact, () => {
       heading: screen.getByRole('heading', { name: 'Contact information' })
         .textContent,
       principalContact: [
-        principalContact.textContent?.includes('Use my contact details'),
-        principalContact.textContent?.includes('Dr Ada Lovelace'),
-        principalContact.textContent?.includes('ada@example.gov.au'),
-        principalContact.textContent?.includes('A different contact person'),
+        principalContact.textContent.includes('Use my contact details'),
+        principalContact.textContent.includes('Dr Ada Lovelace'),
+        principalContact.textContent.includes('ada@example.gov.au'),
+        principalContact.textContent.includes('A different contact person'),
       ],
       help: screen
         .getByTestId('help-organisationAndContact.isPrincipalContact')
-        .textContent?.replace(/\s+/g, ' ')
+        .textContent.replace(/\s+/g, ' ')
         .includes('Dashboard > Settings menu > My contact details'),
     }).toStrictEqual({
       manufacturerSummary: 'false',
@@ -444,7 +444,7 @@ describe(OrganisationAndContact, () => {
   });
 });
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(SummaryAndSubmit, () => {
   it('renders the summaries when the form carries no hiding rules', () => {
     expect.hasAssertions();
@@ -453,7 +453,7 @@ describe(SummaryAndSubmit, () => {
 
     render(
       <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
-        <Formik initialValues={formValues} onSubmit={() => {}}>
+        <Formik initialValues={formValues} onSubmit={vi.fn<() => void>()}>
           <Form>
             <Routes>
               <Route

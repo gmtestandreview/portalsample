@@ -7,7 +7,7 @@ import { withPortalProviders } from '../../storybook/storybookHarness';
 const APPLICATION_ID = 'TA-2024-000321';
 
 interface ShellObservations {
-  statusRequestIds: Array<string | readonly string[] | undefined>;
+  statusRequestIds: (string | readonly string[] | undefined)[];
 }
 
 const state: { observed: ShellObservations } = {

@@ -1,11 +1,22 @@
+import { mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
-type WorklistModule = {
+import {
+  makeDirectorySync,
+  pathExists,
+  readTextFileSync,
+  writeTextFileSync,
+} from '../../helpers/safeTestFilesystem';
+
+interface WorklistModule {
   buildWorklist(input: {
-    files: Array<{ path: string; content: string }>;
-    candidateFiles?: Array<{ path: string; reason?: string }>;
+    files: { path: string; content: string }[];
+    candidateFiles?: { path: string; reason?: string }[];
   }): {
-    worklist: Array<{
+    worklist: {
       source: string;
       export: string;
       discoveryKind: string;
@@ -14,20 +25,173 @@ type WorklistModule = {
       owner: string;
       batch: string;
       status: string;
-    }>;
+    }[];
     summary: {
       categoryCounts: Record<string, number>;
       diagnosticCount: number;
       discoveredExportsWithDiagnostics: number;
     };
   };
-};
+  main(argv?: string[]): {
+    exitCode: number;
+    errors: { code: string; message: string }[];
+  };
+}
 
 const worklistModule =
   // @ts-expect-error The maintained generator is JavaScript and has no declaration file.
   (await import('../../../scripts/storybook-coverage-worklist.mjs')) as WorklistModule;
 
 describe('storybook coverage worklist', () => {
+  const createSourceRoot = () => {
+    const sourceRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'storybook-worklist-source-'),
+    );
+    makeDirectorySync('ClientApp/src/components', sourceRoot);
+    writeTextFileSync(
+      'ClientApp/src/components/Button.tsx',
+      'export const Button = () => null;\n',
+      sourceRoot,
+    );
+    return sourceRoot;
+  };
+
+  const runGenerator = (
+    sourceRoot: string,
+    outputDirectory: string,
+    summaryDirectory = outputDirectory,
+  ) => {
+    const outputPath = path.join(outputDirectory, 'worklist.json');
+    const summaryPath = path.join(summaryDirectory, 'summary.json');
+    const result = worklistModule.main([
+      '--source-root',
+      sourceRoot,
+      '--out',
+      outputPath,
+      '--summary',
+      summaryPath,
+    ]);
+    return { outputPath, result, summaryPath };
+  };
+
+  it('writes nested reports and overwrites an existing report intentionally', () => {
+    expect.hasAssertions();
+
+    const sourceRoot = createSourceRoot();
+    const outputDirectory = path.join(sourceRoot, 'reports', 'nested');
+
+    try {
+      const firstRun = runGenerator(sourceRoot, outputDirectory);
+
+      expect(firstRun.result.exitCode).toBe(0);
+
+      expect(
+        JSON.parse(readTextFileSync('worklist.json', outputDirectory)),
+      ).toMatchObject({ schemaVersion: 1 });
+
+      writeTextFileSync('worklist.json', '{"stale":true}\n', outputDirectory);
+      const secondRun = runGenerator(sourceRoot, outputDirectory);
+
+      expect(secondRun.result.exitCode).toBe(0);
+
+      expect(
+        JSON.parse(readTextFileSync('worklist.json', outputDirectory)),
+      ).toMatchObject({ schemaVersion: 1 });
+      expect(readTextFileSync('worklist.json', outputDirectory)).not.toContain(
+        'stale',
+      );
+    } finally {
+      rmSync(sourceRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('preserves intentionally external, sibling-prefix, and traversal destinations', () => {
+    expect.hasAssertions();
+
+    const sourceRoot = createSourceRoot();
+    const externalRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'storybook-worklist-external-'),
+    );
+    const externalSummaryRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'storybook-worklist-external-summary-'),
+    );
+    const siblingPrefixRoot = path.join(
+      path.dirname(sourceRoot),
+      `${path.basename(sourceRoot)}-sibling`,
+    );
+    const traversalRoot = path.join(
+      sourceRoot,
+      '..',
+      `${path.basename(sourceRoot)}-traversal`,
+    );
+
+    try {
+      const separateExternalRun = runGenerator(
+        sourceRoot,
+        externalRoot,
+        externalSummaryRoot,
+      );
+
+      expect(separateExternalRun.result.exitCode).toBe(0);
+
+      expect(
+        JSON.parse(readTextFileSync('worklist.json', externalRoot)),
+      ).toMatchObject({ schemaVersion: 1 });
+      expect(
+        JSON.parse(readTextFileSync('summary.json', externalSummaryRoot)),
+      ).toMatchObject({ schemaVersion: 1 });
+
+      for (const destination of [siblingPrefixRoot, traversalRoot]) {
+        const { result } = runGenerator(sourceRoot, destination);
+
+        expect(result.exitCode).toBe(0);
+
+        expect(
+          JSON.parse(readTextFileSync('worklist.json', destination)),
+        ).toMatchObject({ schemaVersion: 1 });
+      }
+    } finally {
+      rmSync(sourceRoot, { recursive: true, force: true });
+      rmSync(externalRoot, { recursive: true, force: true });
+      rmSync(externalSummaryRoot, { recursive: true, force: true });
+      rmSync(siblingPrefixRoot, { recursive: true, force: true });
+      rmSync(traversalRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects symlinked output ancestry, including existing nested destinations', () => {
+    expect.hasAssertions();
+
+    const sourceRoot = createSourceRoot();
+    const realOutputRoot = mkdtempSync(
+      path.join(os.tmpdir(), 'storybook-worklist-real-output-'),
+    );
+    const linkRoot = path.join(sourceRoot, 'linked-output');
+
+    try {
+      symlinkSync(
+        realOutputRoot,
+        linkRoot,
+        process.platform === 'win32' ? 'junction' : 'dir',
+      );
+      makeDirectorySync('nested', realOutputRoot);
+
+      const { result } = runGenerator(
+        sourceRoot,
+        path.join(linkRoot, 'nested'),
+      );
+
+      expect(result.exitCode).toBe(1);
+
+      expect(result.errors[0]?.message).toMatch(/symlink/i);
+
+      expect(pathExists('nested/worklist.json', realOutputRoot)).toBe(false);
+    } finally {
+      rmSync(sourceRoot, { recursive: true, force: true });
+      rmSync(realOutputRoot, { recursive: true, force: true });
+    }
+  });
+
   it('uses declaration-aware discovery and emits a deterministic reviewed queue', () => {
     expect.hasAssertions();
 
@@ -64,7 +228,7 @@ describe('storybook coverage worklist', () => {
     const first = worklistModule.buildWorklist(input);
     const second = worklistModule.buildWorklist({
       files: [...input.files].reverse(),
-      candidateFiles: [...(input.candidateFiles ?? [])].reverse(),
+      candidateFiles: [...input.candidateFiles].reverse(),
     });
 
     expect(first).toStrictEqual(second);

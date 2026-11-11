@@ -1,4 +1,5 @@
 import type { AnyObjectSchema } from 'yup';
+import type React from 'react';
 
 /** Library-neutral shape of any form's values. */
 export type FormValues = Record<string, any>;
@@ -27,9 +28,9 @@ export interface DiscardProps {
 
 export interface ModalProps {
   titleText?: string;
-  bodyText?: JSX.Element | string;
+  bodyText?: React.JSX.Element | string;
   modalTitle?: string;
-  modalBodyText?: JSX.Element | string;
+  modalBodyText?: React.JSX.Element | string;
   yesButtonTitle?: string;
   noButtonTitle?: string;
   [key: string]: unknown;
@@ -42,7 +43,9 @@ export type Validation<T extends FormValues = FormValues> =
   | ((values: T) => Record<string, unknown> | Promise<Record<string, unknown>>);
 
 export type HideRule<TValues> =
-  boolean | ((values: TValues) => boolean) | undefined;
+  | boolean
+  | ((values: TValues) => boolean)
+  | undefined;
 
 export type Hideable<TField = unknown, TValues = unknown> = {
   [K in keyof TField]?: NonNullable<TField[K]> extends object

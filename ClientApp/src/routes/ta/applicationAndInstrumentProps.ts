@@ -71,11 +71,15 @@ const loadApplicationAndInstrument =
         AppLogger.error(
           'Failed to load PA application and instrument details',
           error as Error,
-          { Id: id },
+          {
+            Id: id,
+          },
         );
         throw new Error(
           `Failed to load PA application and instrument details. Id: ${id}`,
-          { cause: error },
+          {
+            cause: error,
+          },
         );
       }
     } else {
@@ -129,11 +133,15 @@ const saveStep =
         AppLogger.error(
           'Failed to save PA application and instrument details',
           error as Error,
-          { Id: id },
+          {
+            Id: id,
+          },
         );
         throw new Error(
           `Failed to save PA application and instrument details. Id: ${id}`,
-          { cause: error },
+          {
+            cause: error,
+          },
         );
       }
     } else {

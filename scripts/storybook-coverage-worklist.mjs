@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { Buffer } from 'node:buffer';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { lstatSync as fsLstatSync, mkdirSync, writeFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import * as ts from 'typescript';
@@ -143,13 +143,38 @@ export function buildWorklist({ files, candidateFiles = [] }) {
   };
 }
 
+const missingPathError = (error) =>
+  error?.code === 'ENOENT' || error?.code === 'ENOTDIR';
+
+const assertNoSymlinkedOutputPath = (resolvedPath) => {
+  let currentPath = resolvedPath;
+  while (true) {
+    try {
+      if (fsLstatSync(currentPath).isSymbolicLink()) {
+        throw new Error(`Refusing symlinked output path: ${resolvedPath}`);
+      }
+    } catch (error) {
+      if (!missingPathError(error)) throw error;
+    }
+
+    const parentPath = path.dirname(currentPath);
+    if (parentPath === currentPath) return;
+    currentPath = parentPath;
+  }
+};
+
+/**
+ * --out and --summary intentionally allow caller-selected, including external,
+ * destinations. Check every existing path component through the filesystem root
+ * before creating directories or overwriting a report so a symlink cannot
+ * redirect an ordinary invocation.
+ * Path-based Node APIs cannot make this check race-free; a concurrent path
+ * replacement remains a residual TOCTOU limitation of this CLI boundary.
+ */
 const writeJson = (filePath, value) => {
   const resolvedPath = path.resolve(filePath);
-  // --out and --summary are caller-selected CLI destinations. Keep their
-  // existing path contract while making the dynamic filesystem boundary clear.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  assertNoSymlinkedOutputPath(resolvedPath);
   mkdirSync(path.dirname(resolvedPath), { recursive: true });
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
   writeFileSync(resolvedPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 };
 

@@ -30,7 +30,7 @@ function FormikHarness<TValues extends FormikValues>({
   children,
   initialValues,
   initialTouched,
-  onSubmit = async () => {},
+  onSubmit = vi.fn<() => void>(),
 }: FormikHarnessProps<TValues>) {
   return (
     <Formik
@@ -125,16 +125,16 @@ describe('attachment item new behavior', () => {
 
     expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate');
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Certificate"',
-      ),
-    );
-    await waitFor(() =>
+      );
+    });
+    await waitFor(() => {
       expect(screen.getByTestId('touched')).toHaveTextContent(
         '"attachmentCategory":true',
-      ),
-    );
+      );
+    });
   });
 
   it('updates the category locally when no persisted document id is available', async () => {
@@ -162,11 +162,11 @@ describe('attachment item new behavior', () => {
     expect(onCategoryUpdate).not.toHaveBeenCalled();
     expect(screen.queryByText('2 kb')).not.toBeInTheDocument();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Manuals"',
-      ),
-    );
+      );
+    });
   });
 
   it('does not render removal controls in summary mode and tolerates missing file bytes', () => {
@@ -189,6 +189,16 @@ describe('attachment item new behavior', () => {
     );
   });
 
+  it('keeps the removal description meaningful when the file name is absent', () => {
+    expect.hasAssertions();
+
+    renderItem({}, undefined, { ...attachment, attachmentName: undefined });
+
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveTextContent(
+      'Delete',
+    );
+  });
+
   it('opens and closes the delete confirmation without removing the file', async () => {
     expect.hasAssertions();
 
@@ -206,11 +216,11 @@ describe('attachment item new behavior', () => {
 
     expect(onRemoveItem).not.toHaveBeenCalled();
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' }),
-      ).not.toBeInTheDocument(),
-    );
+      ).not.toBeInTheDocument();
+    });
   });
 
   it('confirms deletion with the current attachment value', async () => {
@@ -225,10 +235,10 @@ describe('attachment item new behavior', () => {
 
     expect(onRemoveItem).toHaveBeenCalledWith(attachment);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' }),
-      ).not.toBeInTheDocument(),
-    );
+      ).not.toBeInTheDocument();
+    });
   });
 });

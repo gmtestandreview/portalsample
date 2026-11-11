@@ -21,11 +21,11 @@ import type { PaSearchFilterProps } from '../../../../ClientApp/src/components/S
 import type { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/types';
 import { defined } from '../../helpers/defined';
 
-type PaRequestItemMockProps = {
+interface PaRequestItemMockProps {
   request: PatternApprovalDashboardDetailsDto;
   tab: DashboardTab;
   setDeleteSuccess: (success: boolean) => void;
-};
+}
 
 const expectObjectContaining = (value: Record<string, unknown>): unknown =>
   expect.objectContaining(value);
@@ -92,7 +92,6 @@ const {
 
 let mockAccountDetails: AccountDetails | null;
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   () =>
@@ -108,10 +107,34 @@ vi.mock(
         TestingCalibration: 'TestingCalibration',
         PatternApproval: 'PatternApproval',
       },
+      StatusEnumDto: {
+        Submitted: 'Submitted',
+        AwaitingClientInformation: 'AwaitingClientInformation',
+        QuoteNotRequired: 'QuoteNotRequired',
+        QuoteInProgress: 'QuoteInProgress',
+        QuoteAvailable: 'QuoteAvailable',
+        QuoteAccepted: 'QuoteAccepted',
+        ReportInProgress: 'ReportInProgress',
+        ReportIssued: 'ReportIssued',
+        QuoteExpired: 'QuoteExpired',
+        QuoteDeclined: 'QuoteDeclined',
+        QuoteClosed: 'QuoteClosed',
+        ArtefactReceived: 'ArtefactReceived',
+      },
+      PatternApprovalStatusEnumDto: {
+        Submitted: 'Submitted',
+        InProgress: 'InProgress',
+        OnHold: 'OnHold',
+        Completed: 'Completed',
+      },
+      FilterMessages: {
+        ShowAllMessages: 'ShowAllMessages',
+        ShowNmiMessages: 'ShowNmiMessages',
+        ShowPortalMessages: 'ShowPortalMessages',
+      },
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -120,7 +143,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-browser',
   () =>
@@ -129,7 +151,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/authentication/hooks',
   () =>
@@ -173,7 +194,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
@@ -198,17 +218,16 @@ vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/tiles/StandardPathway',
   () =>
@@ -238,7 +257,12 @@ vi.mock(
       }: Readonly<PaRequestItemMockProps>) => (
         <div data-testid='request-item' data-tab={tab}>
           {request.referenceId}
-          <button type='button' onClick={() => setDeleteSuccess(true)}>
+          <button
+            type='button'
+            onClick={() => {
+              setDeleteSuccess(true);
+            }}
+          >
             Delete
           </button>
         </div>
@@ -274,7 +298,12 @@ vi.mock(
           >
             Apply filters
           </button>
-          <button type='button' onClick={() => setInitialFilters(undefined)}>
+          <button
+            type='button'
+            onClick={() => {
+              setInitialFilters(undefined);
+            }}
+          >
             Clear filters
           </button>
         </div>
@@ -296,7 +325,9 @@ vi.mock(
           data-current={currentPage}
           data-total={totalPages}
           type='button'
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => {
+            onPageChange(currentPage + 1);
+          }}
         >
           Next
         </button>
@@ -327,7 +358,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule99>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
@@ -340,7 +370,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/routes/common/errorRoutes',
   () =>
@@ -349,7 +378,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule100>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
@@ -384,7 +412,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/storage/sessionStorageCache',
   () =>
@@ -404,7 +431,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   'react-number-format',
   () =>
@@ -571,13 +597,13 @@ describe('pattern/type approval dashboard', () => {
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply filters' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockGetDrafts).toHaveBeenLastCalledWith(
         'crm-guid-001',
         '2024',
@@ -587,8 +613,8 @@ describe('pattern/type approval dashboard', () => {
         1,
         10,
         undefined,
-      ),
-    );
+      );
+    });
   });
 
   it('loads applications, persists the selected tab after the debounce, and records analytics', async () => {
@@ -598,23 +624,24 @@ describe('pattern/type approval dashboard', () => {
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     fireEvent.click(screen.getByRole('tab', { name: 'Applications' }));
 
-    await waitFor(() =>
-      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0);
+    });
     await waitFor(
-      () =>
+      () => {
         expect(mockSetUserProfile).toHaveBeenCalledWith({
           patternApprovalDashboard: expectObjectContaining({
             filterActiveTab: 'requests',
             filterCurrentPage: 1,
           }),
-        }),
+        });
+      },
       { timeout: 1_000 },
     );
 
@@ -629,15 +656,15 @@ describe('pattern/type approval dashboard', () => {
     mockSessionGetItem.mockReturnValue('requests');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() =>
-      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0);
+    });
 
     fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
       'aria-selected',
@@ -655,9 +682,9 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(screen.getByRole('tab', { name: 'Applications' })).toHaveAttribute(
       'aria-selected',
@@ -673,20 +700,20 @@ describe('pattern/type approval dashboard', () => {
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetUserProfile).toHaveBeenCalledWith({
         patternApprovalDashboard: expectObjectContaining({
           filterActiveTab: 'drafts',
           filterCurrentPage: 2,
         }),
-      }),
-    );
+      });
+    });
 
     expect(mockScrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
@@ -705,7 +732,11 @@ describe('pattern/type approval dashboard', () => {
       branchSelectionModalMode: 'SelectAndEditOrg',
       userProfile: {
         ...BASE_ACCOUNT.userProfile,
-        patternApprovalDashboard: { ...BASE_FILTERS, filterCurrentPage: 4 },
+        patternApprovalDashboard: {
+          ...BASE_FILTERS,
+          filterActiveTab: undefined,
+          filterCurrentPage: 4,
+        },
       },
     };
     mockAccountContextState.value = {
@@ -715,7 +746,9 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledTimes(1));
+    await waitFor(() => {
+      expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
+    });
 
     expect(mockSetUserProfile).toHaveBeenCalledWith({
       patternApprovalDashboard: expectObjectContaining({
@@ -742,12 +775,12 @@ describe('pattern/type approval dashboard', () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
         'data-current',
         '1',
-      ),
-    );
+      );
+    });
 
     expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
   });
@@ -761,18 +794,18 @@ describe('pattern/type approval dashboard', () => {
     mockSetUserProfile.mockRejectedValueOnce(saveError);
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockAppLoggerError).toHaveBeenCalledWith(
         'T & C Dashboard failed to save user profile.',
         saveError,
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
   });
@@ -877,7 +910,10 @@ describe('pattern/type approval dashboard', () => {
     ).resolves.toBeInTheDocument();
     expect(mockAppLoggerError).toHaveBeenCalledWith(
       'Failed to load dashboard.',
-      { status: 500, title: 'Server Error' },
+      {
+        status: 500,
+        title: 'Server Error',
+      },
     );
   });
 
@@ -890,12 +926,12 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetDashboardNotification).toHaveBeenCalledWith({
         message: 'forbidden',
         severity: 'error',
-      }),
-    );
+      });
+    });
 
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
   });
@@ -912,12 +948,12 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockSetDashboardNotification).toHaveBeenCalledWith({
         message: 'no-third-party:Target Labs',
         severity: 'error',
-      }),
-    );
+      });
+    });
 
     expect(mockSetTargetOrganisation).toHaveBeenCalledWith(
       '12345678901',
@@ -947,12 +983,12 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', ''),
-    );
+    await waitFor(() => {
+      expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', '');
+    });
 
     expect(mockSetDashboardNotification).toHaveBeenCalledWith({
-      message: 'no-third-party:undefined',
+      message: 'no-third-party:',
       severity: 'error',
     });
   });
@@ -978,9 +1014,9 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
 
     expect(screen.queryByText('TA-HIDDEN')).not.toBeInTheDocument();
     expect(screen.getAllByTestId('no-requests').length).toBeGreaterThan(0);
@@ -1058,9 +1094,9 @@ describe('pattern/type approval dashboard', () => {
 
     fireEvent.click(defined(deleteButton));
 
-    await waitFor(() =>
-      expect(mockGetDrafts.mock.calls.length).toBeGreaterThanOrEqual(2),
-    );
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThanOrEqual(2);
+    });
 
     expect(screen.getAllByTestId('request-item')[0]).toHaveAttribute(
       'data-tab',
@@ -1131,6 +1167,68 @@ describe('pattern/type approval dashboard', () => {
     expect(mockAppLoggerError).toHaveBeenCalledWith(
       'Failed to load dashboard.',
       expect.objectContaining({ message: 'Unsupported tab: instruments' }),
+    );
+  });
+
+  it('falls back to default page and totals when the profile page and response fields are absent', async () => {
+    expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
+
+    // Profile without a saved page -> `filterCurrentPage ?? 1` fallbacks on both
+    // the restore (updatedP) and the fetch (initialFilters).
+    // Omit `filterCurrentPage` entirely (exactOptionalPropertyTypes forbids an
+    // explicit `undefined`); an absent key drives the same `?? 1` fallback.
+    const { filterCurrentPage: _omitPage, ...filtersWithoutPage } =
+      BASE_FILTERS;
+    mockAccountDetails = {
+      ...BASE_ACCOUNT,
+      userProfile: {
+        ...BASE_ACCOUNT.userProfile,
+        patternApprovalDashboard: filtersWithoutPage,
+      },
+    };
+    mockAccountContextState.value = {
+      details: mockAccountDetails,
+      ...mockAccountDispatchState.value,
+    };
+    // A response with no items/currentPage/totalPages/totalCount exercises each
+    // `?? []` / `?? 1` / `?? 0` fallback in the response mapping.
+    mockGetDrafts.mockResolvedValue({});
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
+    });
+
+    const pagination = screen.getAllByTestId('pagination')[0];
+
+    expect(pagination).toHaveAttribute('data-current', '1');
+    expect(pagination).toHaveAttribute('data-total', '0');
+  });
+
+  it('classifies a load failure that carries no status', async () => {
+    expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
+
+    // No `status` on the error -> `(error.status ?? 0) > 0` takes its nullish
+    // fallback in classifyLoadError.
+    mockGetDrafts.mockRejectedValueOnce({ title: 'Mystery failure' });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await expect(
+      screen.findByTestId('error-page'),
+    ).resolves.toBeInTheDocument();
+    expect(mockAppLoggerError).toHaveBeenCalledWith(
+      'Failed to load dashboard.',
+      {
+        title: 'Mystery failure',
+      },
     );
   });
 });

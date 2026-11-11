@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-type ClosureModule = {
+interface ClosureModule {
   computeIndexDigest(index: unknown): string;
   validateClosure(input: {
     manifest: unknown;
@@ -9,8 +9,8 @@ type ClosureModule = {
     receipts: unknown[];
     freeze: unknown;
     producer: unknown;
-  }): { ok: boolean; errors: Array<{ code: string; message: string }> };
-};
+  }): { ok: boolean; errors: { code: string; message: string }[] };
+}
 
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.

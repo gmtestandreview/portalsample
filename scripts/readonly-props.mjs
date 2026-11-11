@@ -220,7 +220,7 @@ function resolveExistingPath(candidate) {
   try {
     // The candidate is one of the fixed executable paths or an explicit
     // operator-provided absolute path; it is not repository input.
-    // eslint-disable-next-line security/detect-non-literal-fs-filename -- executable path is constrained by the fixed allowlist or explicit configuration.
+    // executable path is constrained by the fixed allowlist or explicit configuration.
     return realpathSync(candidate);
   } catch {
     return null;

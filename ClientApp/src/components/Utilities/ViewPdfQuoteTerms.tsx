@@ -33,9 +33,10 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
   const { accounts, instance } = useMsal();
 
   const viewQuoteTermsPagePdf = async () => {
+    if (!quotationData) return;
     try {
       AppLogger.verbose('viewQuoteTermsPagePdf.viewQuoteTermsPagePdf', {
-        crmQuoteRequestId: quotationData?.crmQuoteRequestId,
+        crmQuoteRequestId: quotationData.crmQuoteRequestId,
       });
       setIsLoading(true);
       const tokenResult = await instance.acquireTokenSilent(
@@ -43,7 +44,7 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
       );
       const fileResponse = await getQuotationFileDetails(
         tokenResult.accessToken,
-        quotationData as RequestForQuoteDetails,
+        quotationData,
         true,
       );
       if (
@@ -54,7 +55,7 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
         const fileUrl = getFileUrlFromBase64(fileResponse.fileData);
         // If the quote is declined then the terms pdf will have 3 pages instead of 2
         const pageNumber = getQuoteOfferPageNumber(
-          quotationData!.quoteRequestStatus,
+          quotationData.quoteRequestStatus,
         );
         openPdfPageInNewTab(fileUrl, pageNumber);
       }

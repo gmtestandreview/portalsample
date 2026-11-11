@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { omitUndefined } from '../../../ClientApp/src/utils/omitUndefined';
 
-// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+// function suite titles are required by vitest/prefer-describe-function-title.
 describe(omitUndefined, () => {
   it('removes undefined values while preserving other values', () => {
     expect.hasAssertions();
@@ -139,8 +139,8 @@ describe(omitUndefined, () => {
 
     expect(Object.hasOwn(result, '__proto__')).toBe(true);
     expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
-    expect(result['__proto__']).toBe(input['__proto__']);
-    expect(result).toStrictEqual({ ['__proto__']: input['__proto__'] });
+    expect(result.__proto__).toBe(input.__proto__);
+    expect(result).toStrictEqual({ ['__proto__']: input.__proto__ });
   });
 
   it('rejects arrays instead of returning a non-array object', () => {

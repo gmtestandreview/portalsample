@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 import { omitUndefined } from '../../utils/omitUndefined';
 
 const handleHashLinkClick = (
-  e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+  e: React.MouseEvent<HTMLAnchorElement>,
   id: string,
   scrollToBlock?: 'center' | 'start',
 ): void => {

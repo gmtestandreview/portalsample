@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../utils/orIfEmpty';
 import { InteractionStatus } from '@azure/msal-browser';
 import type { AccountInfo } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
@@ -19,27 +20,22 @@ interface AccountProviderProps {
   children: ReactNode;
 }
 
-type AccountTokenClaims = {
+interface AccountTokenClaims {
   email?: string;
   family_name?: string;
   given_name?: string;
-};
+}
 
 const toAccountDetails = (
   account: AccountInfo,
   user: UserDto,
 ): AccountDetails => {
   const currentTermsVersion = termsData.TermsVersion;
-  const acceptedTermsAndCondition = !!(
-    user?.acceptedTerms === true &&
-    user.termsVersion?.toString() === currentTermsVersion
-  );
-  const accountCreationCompleted = !!(
-    user.organisation && user.organisation?.accountCompleted === true
-  );
-  const accountContactCompleted = !!(
-    user.contact && user.contact?.isCompleted === true
-  );
+  const acceptedTermsAndCondition =
+    user.acceptedTerms === true &&
+    user.termsVersion?.toString() === currentTermsVersion;
+  const accountCreationCompleted = user.organisation?.accountCompleted === true;
+  const accountContactCompleted = user.contact?.isCompleted === true;
   const tokenClaims = account.idTokenClaims as AccountTokenClaims | undefined;
   const email = tokenClaims?.email;
   const familyName = tokenClaims?.family_name;
@@ -48,10 +44,10 @@ const toAccountDetails = (
 
   return {
     homeAccountId: account.homeAccountId,
-    organisation: user.organisation?.name || '',
-    trading: user.organisation?.businessOrTradingName || '',
-    branch: user.organisation?.branchOrLocationName || '',
-    abn: user.organisation?.abn || user.employerAbn || '',
+    organisation: user.organisation?.name ?? '',
+    trading: user.organisation?.businessOrTradingName ?? '',
+    branch: user.organisation?.branchOrLocationName ?? '',
+    abn: orIfEmpty(user.organisation?.abn, user.employerAbn ?? ''),
     ...(email === undefined ? {} : { email }),
     ...(familyName === undefined ? {} : { familyName }),
     ...(givenName === undefined ? {} : { givenName }),
@@ -65,8 +61,8 @@ const toAccountDetails = (
     currentTermsVersion,
     defaultOrganisationId: user.defaultOrganisationId,
     organisationCRMGuid: user.organisation?.crmGuid,
-    organisationIsCompleted: user.organisation?.isCompleted || false,
-    isDefaultOrganisation: user.defaultOrganisationId !== null,
+    organisationIsCompleted: user.organisation?.isCompleted ?? false,
+    isDefaultOrganisation: user.defaultOrganisationId != null,
     showBranchSelector: false,
     contactId: user.contactId,
     userProfile: user.userProfile ?? undefined,
@@ -176,7 +172,11 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   );
 
   const setOrganisationAndBranch = useCallback(
-    (organisationName: string, tradingName: string, branchName: string) => {
+    (
+      organisationName: string,
+      tradingName: string | null | undefined,
+      branchName: string | null | undefined,
+    ) => {
       setAccountDetails((prev) => {
         if (!prev) return prev;
         return {
@@ -200,24 +200,24 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
           );
           client.setAuthToken(tokenResult.accessToken);
           await client.setUserProfile(
-            userProfileDetails?.firstName,
-            userProfileDetails?.lastName,
-            userProfileDetails?.email,
-            userProfileDetails?.services,
-            userProfileDetails?.testingCalibrationDashboard?.filterStatusType,
-            userProfileDetails?.testingCalibrationDashboard?.filterYearType,
-            userProfileDetails?.testingCalibrationDashboard?.filterSortOrder,
-            userProfileDetails?.testingCalibrationDashboard?.filtersChanged,
-            userProfileDetails?.testingCalibrationDashboard?.filterCurrentPage,
-            userProfileDetails?.testingCalibrationDashboard?.filterActiveTab,
-            userProfileDetails?.testingCalibrationDashboard?.filterSearchText,
-            userProfileDetails?.patternApprovalDashboard?.filterStatusType,
-            userProfileDetails?.patternApprovalDashboard?.filterYearType,
-            userProfileDetails?.patternApprovalDashboard?.filterSortOrder,
-            userProfileDetails?.patternApprovalDashboard?.filtersChanged,
-            userProfileDetails?.patternApprovalDashboard?.filterCurrentPage,
-            userProfileDetails?.patternApprovalDashboard?.filterActiveTab,
-            userProfileDetails?.patternApprovalDashboard?.filterSearchText,
+            userProfileDetails.firstName,
+            userProfileDetails.lastName,
+            userProfileDetails.email,
+            userProfileDetails.services,
+            userProfileDetails.testingCalibrationDashboard?.filterStatusType,
+            userProfileDetails.testingCalibrationDashboard?.filterYearType,
+            userProfileDetails.testingCalibrationDashboard?.filterSortOrder,
+            userProfileDetails.testingCalibrationDashboard?.filtersChanged,
+            userProfileDetails.testingCalibrationDashboard?.filterCurrentPage,
+            userProfileDetails.testingCalibrationDashboard?.filterActiveTab,
+            userProfileDetails.testingCalibrationDashboard?.filterSearchText,
+            userProfileDetails.patternApprovalDashboard?.filterStatusType,
+            userProfileDetails.patternApprovalDashboard?.filterYearType,
+            userProfileDetails.patternApprovalDashboard?.filterSortOrder,
+            userProfileDetails.patternApprovalDashboard?.filtersChanged,
+            userProfileDetails.patternApprovalDashboard?.filterCurrentPage,
+            userProfileDetails.patternApprovalDashboard?.filterActiveTab,
+            userProfileDetails.patternApprovalDashboard?.filterSearchText,
           );
         } catch (error) {
           AppLogger.error('Failed to save userprofile', error as Error);
@@ -245,10 +245,13 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
           homeAccountId: account.homeAccountId,
           businessContext,
         });
-        if (user && !businessContext) {
+        if (Object.is(user, null)) {
+          throw new Error('Account details response was null');
+        }
+        if (!businessContext) {
           const targetOrg = {
-            targetOrganisationAbn: user?.organisation?.abn ?? '',
-            targetOrganisationName: user?.organisation?.name ?? '',
+            targetOrganisationAbn: user.organisation?.abn ?? '',
+            targetOrganisationName: user.organisation?.name ?? '',
           };
           setTargetOrganisation(targetOrg);
           AppLogger.verbose('AccountProvider.TargetOrg', {

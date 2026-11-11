@@ -9,6 +9,7 @@ import addBranchProps from '../../../ClientApp/src/routes/account/addBranch/addB
 import createContactProps from '../../../ClientApp/src/routes/contact/create/createContactProps';
 import updateContactProps from '../../../ClientApp/src/routes/contact/update/updateContactProps';
 import { HttpStatusCode } from '../../../ClientApp/src/types';
+import { toTitle } from '../../../ClientApp/src/utils/apiEnumMappings';
 import { ErrorType } from '../../../ClientApp/src/components/forms/WizardForm/types';
 import type { AccountContextState } from '../../../ClientApp/src/authentication/accountContext';
 import {
@@ -38,20 +39,19 @@ const mocks = vi.hoisted(() => ({
 
 type HideRule<T> = (values: Partial<T>) => boolean;
 
-type AccountHidingFields = {
+interface AccountHidingFields {
   isDefaultOrganisation: HideRule<GetAccountValuesDto>;
   postalAddress: HideRule<GetAccountValuesDto>;
   contact: { titleOther: HideRule<GetAccountValuesDto> };
-};
+}
 
-type ContactHidingFields = {
+interface ContactHidingFields {
   contact: { titleOther: HideRule<ContactFormStep> };
-};
+}
 
 const expectStringContaining = (value: string): unknown =>
   expect.stringContaining(value);
 
-// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal();
   if (typeof actual !== 'object' || actual === null) {
@@ -162,10 +162,10 @@ describe('account and contact wizard prop factories', () => {
       branchOrLocationName: 'Branch',
       isDefaultOrganisation: true,
       postalAddressSameAsStreetAddress: true,
-      contact: { title: 'Dr' },
+      contact: { title: toTitle('Dr') },
     } as AccountDto;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -206,6 +206,32 @@ describe('account and contact wizard prop factories', () => {
     });
   });
 
+  it('uses empty organisation labels when optional create-account values are absent', async () => {
+    expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
+    const props = createAccountProps(
+      accounts,
+      instance,
+      statuses,
+      accountContext,
+    );
+
+    await props.onSaveAndNext?.(
+      {
+        contact: { title: toTitle('Dr') },
+      },
+      true,
+      new AbortController().signal,
+    );
+
+    expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
+      '',
+      '',
+      '',
+    );
+  });
+
   it('loads and completes update-account details with success and error notifications', async () => {
     expect.hasAssertions();
 
@@ -228,7 +254,7 @@ describe('account and contact wizard prop factories', () => {
       contact: { title: Title.Other },
     };
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -327,10 +353,10 @@ describe('account and contact wizard prop factories', () => {
       businessOrTradingName: 'Trading',
       branchOrLocationName: 'Branch',
       postalAddressSameAsStreetAddress: false,
-      contact: { title: 'Other' },
+      contact: { title: toTitle('Other') },
     } as AccountDto;
 
-    const loaded = await props.loadStepValues?.(abortSignal);
+    const loaded = await props.loadStepValues(abortSignal);
 
     expect({
       loaded,
@@ -440,10 +466,10 @@ describe('account and contact wizard prop factories', () => {
     const updateHidingFields =
       updateProps.hidingFields as unknown as ContactHidingFields;
     const abortSignal = new AbortController().signal;
-    const values = { contact: { title: 'Dr' } } as ContactFormStep;
+    const values = { contact: { title: toTitle('Dr') } } as ContactFormStep;
 
-    const createLoaded = await createProps.loadStepValues?.(abortSignal);
-    const updateLoaded = await updateProps.loadStepValues?.(abortSignal);
+    const createLoaded = await createProps.loadStepValues(abortSignal);
+    const updateLoaded = await updateProps.loadStepValues(abortSignal);
 
     expect({
       loaded: [createLoaded, updateLoaded],
@@ -614,15 +640,15 @@ describe('account and contact wizard prop factories', () => {
 
     await expect(
       Promise.all([
-        rejectionMessage(() => createAccount.loadStepValues?.()),
+        rejectionMessage(() => createAccount.loadStepValues()),
         rejectionMessage(() => createAccount.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => updateAccount.loadStepValues?.()),
+        rejectionMessage(() => updateAccount.loadStepValues()),
         rejectionMessage(() => updateAccount.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => branch.loadStepValues?.()),
+        rejectionMessage(() => branch.loadStepValues()),
         rejectionMessage(() => branch.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => createContact.loadStepValues?.()),
+        rejectionMessage(() => createContact.loadStepValues()),
         rejectionMessage(() => createContact.onSaveAndNext?.({}, false)),
-        rejectionMessage(() => updateContact.loadStepValues?.()),
+        rejectionMessage(() => updateContact.loadStepValues()),
         rejectionMessage(() => updateContact.onSaveAndNext?.({}, false)),
       ]),
     ).resolves.toStrictEqual([

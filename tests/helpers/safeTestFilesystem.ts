@@ -1,23 +1,83 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
-import type { Dirent } from 'node:fs';
+import type { Dirent, Stats } from 'node:fs';
 import {
   existsSync,
+  lstatSync,
   mkdirSync,
   readFileSync,
   readdirSync,
+  realpathSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
 import path from 'node:path';
 
-type TextDirectoryEntries = Dirent<string>[];
+type DirectoryEntries = Dirent[];
+
+// security/detect-non-literal-fs-filename fires on every fs call below because
+// the path argument is a variable. The rule stays a reviewable warning by repo
+// policy (eslint.config.mjs: noInlineConfig forbids inline suppression), so the
+// mitigation is structural: every public helper routes its path through
+// resolveWithinRoot, which rejects anything outside the caller-provided test
+// root before the fs call runs. Triage verdict: accepted hotspots, mitigated.
+const isOutsideRoot = (candidatePath: string, rootPath: string): boolean => {
+  const relativePath = path.relative(rootPath, candidatePath);
+
+  return (
+    relativePath === '..' ||
+    relativePath.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relativePath)
+  );
+};
+
+const isMissingPathError = (error: unknown): boolean =>
+  typeof error === 'object' &&
+  error !== null &&
+  'code' in error &&
+  (error.code === 'ENOENT' || error.code === 'ENOTDIR');
+
+const nearestExistingPath = (candidatePath: string): string => {
+  let currentPath = candidatePath;
+
+  for (;;) {
+    try {
+      lstatSync(currentPath);
+      return currentPath;
+    } catch (error) {
+      if (!isMissingPathError(error)) {
+        throw error;
+      }
+
+      const parentPath = path.dirname(currentPath);
+      if (parentPath === currentPath) {
+        throw error;
+      }
+
+      currentPath = parentPath;
+    }
+  }
+};
+
+const resolveThroughNearestExistingPath = (candidatePath: string): string => {
+  const existingPath = nearestExistingPath(candidatePath);
+  const realExistingPath = realpathSync.native(existingPath);
+  const remainingPath = path.relative(existingPath, candidatePath);
+
+  return path.resolve(realExistingPath, remainingPath);
+};
 
 const resolveWithinRoot = (filePath: string, root: string): string => {
   const resolvedRoot = path.resolve(root);
-  const resolvedPath = path.resolve(filePath);
-  const relativePath = path.relative(resolvedRoot, resolvedPath);
+  const resolvedPath = path.resolve(resolvedRoot, filePath);
 
-  if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+  if (isOutsideRoot(resolvedPath, resolvedRoot)) {
+    throw new Error(`Path is outside the allowed root: ${filePath}`);
+  }
+
+  const realRoot = resolveThroughNearestExistingPath(resolvedRoot);
+  const realPath = resolveThroughNearestExistingPath(resolvedPath);
+
+  if (isOutsideRoot(realPath, realRoot)) {
     throw new Error(`Path is outside the allowed root: ${filePath}`);
   }
 
@@ -29,15 +89,11 @@ export const readTextFile = async (
   root: string,
 ): Promise<string> => {
   const safePath = resolveWithinRoot(filePath, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   return readFile(safePath, 'utf8');
 };
 
 export const readTextFileSync = (filePath: string, root: string): string => {
   const safePath = resolveWithinRoot(filePath, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   return readFileSync(safePath, 'utf8');
 };
 
@@ -47,8 +103,6 @@ export const writeTextFile = async (
   root: string,
 ): Promise<void> => {
   const safePath = resolveWithinRoot(filePath, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   await writeFile(safePath, contents);
 };
 
@@ -58,28 +112,22 @@ export const writeTextFileSync = (
   root: string,
 ): void => {
   const safePath = resolveWithinRoot(filePath, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   writeFileSync(safePath, contents);
 };
 
 export const readDirectory = async (
   directory: string,
   root: string,
-): Promise<TextDirectoryEntries> => {
+): Promise<DirectoryEntries> => {
   const safePath = resolveWithinRoot(directory, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   return readdir(safePath, { withFileTypes: true });
 };
 
 export const readDirectorySync = (
   directory: string,
   root: string,
-): TextDirectoryEntries => {
+): DirectoryEntries => {
   const safePath = resolveWithinRoot(directory, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   return readdirSync(safePath, { withFileTypes: true });
 };
 
@@ -88,28 +136,20 @@ export const makeDirectory = async (
   root: string,
 ): Promise<void> => {
   const safePath = resolveWithinRoot(directory, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   await mkdir(safePath, { recursive: true });
 };
 
 export const makeDirectorySync = (directory: string, root: string): void => {
   const safePath = resolveWithinRoot(directory, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   mkdirSync(safePath, { recursive: true });
 };
 
 export const pathExists = (filePath: string, root: string): boolean => {
   const safePath = resolveWithinRoot(filePath, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   return existsSync(safePath);
 };
 
-export const statPath = (filePath: string, root: string) => {
+export const statPath = (filePath: string, root: string): Stats => {
   const safePath = resolveWithinRoot(filePath, root);
-  // The path is resolved and confined to the caller-provided test root above.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename -- validated test fixture path
   return statSync(safePath);
 };

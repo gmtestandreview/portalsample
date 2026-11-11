@@ -51,7 +51,7 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
       client.setAuthToken(tokenResult.accessToken);
       const fileResponse = await client.getQuoteReportPDFByID(reportId, true);
       if (
-        fileResponse?.fileData &&
+        fileResponse.fileData &&
         fileResponse.mimeType &&
         fileResponse.filename
       ) {
@@ -90,7 +90,7 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
           reportId,
           false,
         );
-        if (fileResponse?.fileSizeBytes) {
+        if (fileResponse.fileSizeBytes) {
           const spnFileSize = getFileSize(fileResponse.fileSizeBytes);
           setFileSize(spnFileSize);
         }

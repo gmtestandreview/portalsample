@@ -5,15 +5,15 @@ import {
   PatternApprovalRequiredValues,
 } from '../../api/web-api-client';
 
-export class DisplayRules {
-  static isOIMLHiddenP(x: Partial<ApplicationAndInstrumentStepDto>): boolean {
+export const DisplayRules = {
+  isOIMLHiddenP(x: Partial<ApplicationAndInstrumentStepDto>): boolean {
     // Add your display rule logic here
     const { instrumentCategory, instrumentType, instrumentTypeContent } = x;
     const isTicked =
       x.newSubOptions?.includes(
         PatternApprovalRequiredValueOptions.OIMLCertificate,
       ) === true || x.newSubOptions === undefined;
-    if (isTicked === false) {
+    if (!isTicked) {
       return true; // if the OIML option is not ticked, it should be hidden (return true for hidden)
     }
     const content = instrumentTypeContent?.find(
@@ -29,38 +29,30 @@ export class DisplayRules {
     }
     // if no matching content is found, default to showing the OIML option (return true for hidden)
     const isNotEligible = !content.eligibleForOiml;
-    return isTicked && !isNotEligible;
-  }
+    return !isNotEligible;
+  },
 
-  static isApplOtherHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
+  isApplOtherHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval
     );
-  }
+  },
 
-  static isVariationHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
+  isVariationHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
+    return x.patternApprovalType !== PatternApprovalRequiredValues.Variation;
+  },
+
+  isNewCertificateHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.Variation ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate
     );
-  }
+  },
 
-  static isNewCertificateHiddenP(
-    x: Partial<ApplicationAndInstrumentStep>,
-  ): boolean {
-    return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
-      x.patternApprovalType === undefined
-    );
-  }
-
-  static isApplNewInstrumentHiddenP(
+  isApplNewInstrumentHiddenP(
     x: Partial<ApplicationAndInstrumentStep>,
   ): boolean {
     if (
-      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate
     ) {
       return true;
     }
@@ -68,40 +60,35 @@ export class DisplayRules {
       return true;
     }
     return false;
-  }
+  },
 
-  static isOIMLHidden(x: Partial<ApplicationAndInstrumentStep>): boolean {
+  isOIMLHidden(x: Partial<ApplicationAndInstrumentStep>): boolean {
     // Add your display rule logic here
     return (
       x.newSubOptions?.includes(
         PatternApprovalRequiredValueOptions.OIMLCertificate,
       ) === false || x.newSubOptions === undefined
     );
-  }
+  },
 
-  static isApplOtherHidden(x: ApplicationAndInstrumentStep): boolean {
+  isApplOtherHidden(x: ApplicationAndInstrumentStep): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval
     );
-  }
+  },
 
-  static isVariationHidden(x: ApplicationAndInstrumentStep): boolean {
-    return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.Variation ||
-      x.patternApprovalType === undefined
-    );
-  }
+  isVariationHidden(x: ApplicationAndInstrumentStep): boolean {
+    return x.patternApprovalType !== PatternApprovalRequiredValues.Variation;
+  },
 
-  static isNewCertificateHidden(x: ApplicationAndInstrumentStep): boolean {
+  isNewCertificateHidden(x: ApplicationAndInstrumentStep): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate
     );
-  }
+  },
 
   // Example static property
-  static readonly defaultIsHidden: boolean = true;
-}
+  defaultIsHidden: true,
+};
 
 export default DisplayRules;

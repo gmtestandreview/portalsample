@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
+import { Title } from '@/api/web-api-client';
 import ContactDetails from '@/components/forms/CommonForms/ContactDetails';
 
 const customLabels = {
@@ -13,7 +14,7 @@ const customLabels = {
   emailAddressLabel: 'Work email',
 };
 
-type ContactFormValues = {
+interface ContactFormValues {
   contact: {
     title: string;
     titleOther: string;
@@ -25,7 +26,7 @@ type ContactFormValues = {
     email: string;
   };
   organisationAndContact: { contact: { title: string } };
-};
+}
 
 type ContactSubmit = (values: ContactFormValues) => void | Promise<void>;
 
@@ -58,6 +59,12 @@ describe('contactDetails branch coverage', () => {
     for (const label of Object.values(customLabels)) {
       expect(screen.getByText(label)).toBeInTheDocument();
     }
+
+    const options = screen
+      .getAllByRole('option')
+      .map((option) => option.getAttribute('value'));
+
+    expect(options.slice(1)).toStrictEqual(Object.values(Title));
   });
 
   it('omits the empty-title fallback when a summary has a title', () => {

@@ -128,7 +128,10 @@ const submitForm =
     } else {
       AppLogger.verbose(
         'There are no accounts available to submit PA summary',
-        { Id: id, Accounts: accounts },
+        {
+          Id: id,
+          Accounts: accounts,
+        },
       );
       throw new Error(
         `There are no accounts available to submit PA summary. Id: ${id}`,
@@ -173,16 +176,13 @@ const summaryAndSubmitProps = (
     applicationAndInstrument: {
       isApplNewHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.NewCertificate ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.NewCertificate,
       isApplVariationHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.Variation ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.Variation,
       isApplOtherHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.OtherApproval ||
-        x.applicationAndInstrument?.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.OtherApproval,
       isApplOIMLHide: (x: SummaryDisplayValues) => DisplayRules.isOIMLHidden(x),
     },
   },

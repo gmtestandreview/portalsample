@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import type React from 'react';
 import { Col, Row, Container, Button } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
@@ -31,10 +32,11 @@ import { QuoteStatus } from '../common/enums';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { proceedDeclineValidStatuses } from '../common/quoteStatus';
+import { toQuoteStatus } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -73,9 +75,7 @@ const setInfoNotification = () => {
 const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el: HTMLElement = document.querySelector(
-      '[id^="#notif-"]',
-    ) as HTMLElement;
+    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
@@ -93,8 +93,12 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   >();
   const [declineQuoteDialogOpen, setDeclineQuoteDialogOpen] = useState(false);
   const [fileError, setFileError] = useState(false);
-  const closeDeclineQuoteModal = () => setDeclineQuoteDialogOpen(false);
-  const showDeclineQuoteModal = () => setDeclineQuoteDialogOpen(true);
+  const closeDeclineQuoteModal = () => {
+    setDeclineQuoteDialogOpen(false);
+  };
+  const showDeclineQuoteModal = () => {
+    setDeclineQuoteDialogOpen(true);
+  };
   const accountState = useAccountState();
   const dashboardMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();
@@ -106,14 +110,13 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
     { to: '', text: 'Testing and calibration service - Quotation' },
   ];
 
-  const backButtonVisible = useMemo(
-    () =>
-      quotationData?.quoteRequestStatus !== undefined &&
-      proceedDeclineValidStatuses.includes(
-        quotationData.quoteRequestStatus as QuoteStatus,
-      ),
-    [quotationData?.quoteRequestStatus],
-  );
+  const backButtonVisible = useMemo(() => {
+    const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
+    return (
+      quoteStatus !== undefined &&
+      proceedDeclineValidStatuses.includes(quoteStatus)
+    );
+  }, [quotationData?.quoteRequestStatus]);
 
   const declineQuote = async () => {
     setIsLoading(true);
@@ -126,7 +129,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
       client.setAuthToken(tokenResult.accessToken);
       if (quotationData?.crmQuoteRequestId) {
         await client.declineQuote(
-          quotationData?.crmQuoteRequestId,
+          quotationData.crmQuoteRequestId,
           accountState?.details?.givenName,
           accountState?.details?.familyName,
         );
@@ -186,8 +189,8 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
           SessionStorageCache().getItem('view-quote-id');
         if (newlyAcceptedQuoteId) {
           if (
-            quoteData?.quoteRequestIdNum === newlyAcceptedQuoteId &&
-            quoteData?.quoteRequestStatus === QuoteStatus.QuoteAvailable
+            quoteData.quoteRequestIdNum === newlyAcceptedQuoteId &&
+            quoteData.quoteRequestStatus === QuoteStatus.QuoteAvailable
           ) {
             quoteData.quoteRequestStatus = QuoteStatus.QuoteAccepted;
             quoteData.outcomeDate = new Date();
@@ -241,18 +244,16 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   useEffect(() => {
     clearDashboardInfoNotification();
   }, []);
+  const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
   const renderQuotationSummary = () => (
     <>
       <QuoteDetails
         quotationData={quotationData}
         isSummary={isSummary}
-        firstName={accountState?.details?.givenName}
-        lastName={accountState?.details?.familyName}
         fileError={fileError}
       />
-      {!!quotationData?.quoteRequestStatus &&
-        quotationData?.quoteRequestStatus !==
-          String(QuoteStatus.QuoteExpired) && (
+      {quotationData?.quoteRequestStatus !== undefined &&
+        quoteStatus !== QuoteStatus.QuoteExpired && (
           <Row className='mb-3'>
             <Col md={12}>
               <div>
@@ -349,7 +350,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
                     </Button>
                     <Link
                       data-testid='new-request-button'
-                      to={`/accept-quote-create/${id}`}
+                      to={`/accept-quote-create/${id ?? ''}`}
                       className='btn btn-primary'
                     >
                       Proceed with quote

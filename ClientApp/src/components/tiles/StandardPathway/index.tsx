@@ -18,11 +18,11 @@ const StandardPathwayBody = (props: Readonly<StandardBasePathwayProps>) => {
         <Card.Title as='h3' className='mt-0'>
           {title}
         </Card.Title>
-        {bodyText && (
+        {bodyText ? (
           <Card.Text as='div'>
             <BodyText>{bodyText}</BodyText>
           </Card.Text>
-        )}
+        ) : null}
       </Card.Body>
       {digitalIdentity ? (
         <DigitalIdentityFooter linkDescription={linkDescription} />

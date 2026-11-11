@@ -1,5 +1,10 @@
 import ReactGA from 'react-ga4';
-import { DashboardClient } from '../../api/web-api-client';
+import {
+  DashboardClient,
+  FilterMessages,
+  PatternApprovalStatusEnumDto,
+  StatusEnumDto,
+} from '../../api/web-api-client';
 import type {
   AddressDetailsDto,
   DownloadedFileResponse,
@@ -9,18 +14,146 @@ import type {
   UserProfileDto,
 } from '../../api/web-api-client';
 import type { AccountDetails } from '../../authentication/accountContext';
-import type {
-  DashboardTab,
-  UserProfile,
-} from '../../components/SearchFilter/types';
+import { HttpStatusCode } from '../../types';
+import { DashboardTab } from '../../components/SearchFilter/types';
+import type { UserProfile } from '../../components/SearchFilter/types';
+import { DashboardItemStatus, PaDashboardItemStatus } from './enums';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import { base64toBlob } from '../../utils';
+import { toHttpStatusCode } from '../../utils/apiEnumMappings';
 import { DashBoardNotifications } from './dashboardNotifications';
-import { Environment, QuoteStatus } from './enums';
+import { Environment, QuoteStatus, ReportStatus } from './enums';
 import type { SelectInputOption } from '../../components/Inputs/SelectInput/types';
 import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from './openWindow';
 import DOMPurify from 'dompurify';
+
+const enumValue = <T extends Record<string, string>>(
+  enumObject: T,
+  value: unknown,
+): T[keyof T] | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  return Object.values(enumObject).find((enumItem) => enumItem === value) as
+    | T[keyof T]
+    | undefined;
+};
+
+export const toDashboardTab = (value: unknown): DashboardTab | undefined =>
+  enumValue(DashboardTab, value);
+
+export const toStatusEnumDto = (value: unknown): StatusEnumDto | undefined =>
+  enumValue(StatusEnumDto, value);
+
+export const toPatternApprovalStatusEnumDto = (
+  value: unknown,
+): PatternApprovalStatusEnumDto | undefined =>
+  enumValue(PatternApprovalStatusEnumDto, value);
+
+export const toFilterMessages = (value: unknown): FilterMessages | undefined =>
+  enumValue(FilterMessages, value);
+
+export const toDashboardItemStatus = (
+  value: unknown,
+): DashboardItemStatus | undefined => {
+  const localStatus = enumValue(DashboardItemStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  const apiStatus = toStatusEnumDto(value);
+  switch (apiStatus) {
+    case StatusEnumDto.Submitted:
+      return DashboardItemStatus.QuoteSubmitted;
+    case StatusEnumDto.QuoteInProgress:
+      return DashboardItemStatus.QuoteInProgress;
+    case StatusEnumDto.QuoteAvailable:
+      return DashboardItemStatus.QuoteAvailable;
+    case StatusEnumDto.QuoteAccepted:
+      return DashboardItemStatus.QuoteAccepted;
+    case StatusEnumDto.ReportInProgress:
+      return DashboardItemStatus.ReportInProgress;
+    case StatusEnumDto.ReportIssued:
+      return DashboardItemStatus.ReportIssued;
+    case StatusEnumDto.QuoteExpired:
+      return DashboardItemStatus.QuoteExpired;
+    case StatusEnumDto.QuoteDeclined:
+      return DashboardItemStatus.QuoteDeclined;
+    case StatusEnumDto.QuoteClosed:
+      return DashboardItemStatus.QuoteClosed;
+    case StatusEnumDto.ArtefactReceived:
+      return DashboardItemStatus.ArtifactReceived;
+    default:
+      return undefined;
+  }
+};
+
+export const toQuoteStatus = (value: unknown): QuoteStatus | undefined => {
+  const localStatus = enumValue(QuoteStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  // Note: StatusEnumDto.Submitted ("Submitted") shares its string value with
+  // QuoteStatus.QuoteSubmitted, so the local enumValue() lookup above always
+  // resolves "Submitted" first; a StatusEnumDto.Submitted arm here is
+  // unreachable and is intentionally omitted.
+  const apiStatus = toStatusEnumDto(value);
+  switch (apiStatus) {
+    case StatusEnumDto.QuoteInProgress:
+      return QuoteStatus.QuoteInProgress;
+    case StatusEnumDto.QuoteAvailable:
+      return QuoteStatus.QuoteAvailable;
+    case StatusEnumDto.QuoteAccepted:
+      return QuoteStatus.QuoteAccepted;
+    case StatusEnumDto.ReportInProgress:
+      return QuoteStatus.ReportInProgress;
+    case StatusEnumDto.ReportIssued:
+      return QuoteStatus.ReportIssued;
+    case StatusEnumDto.QuoteExpired:
+      return QuoteStatus.QuoteExpired;
+    case StatusEnumDto.QuoteDeclined:
+      return QuoteStatus.QuoteDeclined;
+    case StatusEnumDto.QuoteClosed:
+      return QuoteStatus.QuoteClosed;
+    case StatusEnumDto.ArtefactReceived:
+      return QuoteStatus.ArtifactReceived;
+    default:
+      return undefined;
+  }
+};
+
+export const toReportStatus = (value: unknown): ReportStatus | undefined =>
+  enumValue(ReportStatus, value);
+
+export const toPaDashboardItemStatus = (
+  value: unknown,
+): PaDashboardItemStatus | undefined => {
+  const localStatus = enumValue(PaDashboardItemStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  const apiStatus = enumValue(PatternApprovalStatusEnumDto, value);
+  if (apiStatus === undefined) {
+    return undefined;
+  }
+
+  switch (apiStatus) {
+    case PatternApprovalStatusEnumDto.Submitted:
+      return PaDashboardItemStatus.PaSubmitted;
+    case PatternApprovalStatusEnumDto.InProgress:
+      return PaDashboardItemStatus.PaInProgress;
+    case PatternApprovalStatusEnumDto.OnHold:
+      return PaDashboardItemStatus.PaOnHold;
+    case PatternApprovalStatusEnumDto.Completed:
+      return PaDashboardItemStatus.PaCompleted;
+    default:
+      return undefined;
+  }
+};
 
 /**
  * Gets downloadable files from CRM depending on status
@@ -201,9 +334,7 @@ export const openPdfPageInNewTab = (fileUrl: string, pageNumber: string) => {
 export const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el: HTMLElement = document.querySelector(
-      '[id^="#notif-"]',
-    ) as HTMLElement;
+    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
@@ -222,7 +353,7 @@ export const handleUnexpectedError = (details: ProblemDetails) => {
   handleAlertScroll();
   setDashboardNotification(
     DashBoardNotifications.getDashboardErrorNotification(
-      details.status! ?? 0,
+      toHttpStatusCode(details.status) ?? HttpStatusCode.InternalServerError,
       '',
     ),
   );
@@ -234,20 +365,29 @@ export const mapToUserProfile = (profile: UserProfileDto): UserProfile => ({
   filterSortOrder: profile.testingCalibrationDashboard?.filterSortOrder,
   filtersChanged: profile.testingCalibrationDashboard?.filtersChanged,
   filterCurrentPage: profile.testingCalibrationDashboard?.filterCurrentPage,
-  filterActiveTab: profile.testingCalibrationDashboard
-    ?.filterActiveTab as DashboardTab,
+  filterActiveTab: toDashboardTab(
+    profile.testingCalibrationDashboard?.filterActiveTab,
+  ),
   filterSearchText: profile.testingCalibrationDashboard?.filterSearchText,
 });
+
+/** Account names as the formatters accept them: trading and branch may be absent. */
+type NamedAccountDetails = Pick<AccountDetails, 'organisation'> & {
+  trading?: string | undefined;
+  branch?: string | undefined;
+};
 
 /**
  * Returns a formatted banner title string
  */
-export const formatBannerTitle = (accountDetails: AccountDetails): string => {
+export const formatBannerTitle = (
+  accountDetails: NamedAccountDetails | null | undefined,
+): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
 
     if (accountDetails.trading !== undefined && accountDetails.trading !== '') {
-      result = `${accountDetails.trading}`;
+      result = accountDetails.trading;
     }
 
     if (
@@ -261,7 +401,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
       accountDetails.branch !== undefined &&
       accountDetails.branch !== ''
     ) {
-      result = `${accountDetails.branch}`;
+      result = accountDetails.branch;
     }
 
     if (
@@ -270,7 +410,7 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
     ) {
       result = `${result} - ${accountDetails.organisation}`;
     } else {
-      result = `${accountDetails.organisation}`;
+      result = accountDetails.organisation;
     }
 
     return result;
@@ -279,44 +419,49 @@ export const formatBannerTitle = (accountDetails: AccountDetails): string => {
 };
 
 export const formatOrganisationTitle = (
-  organisationName: string | undefined,
-  tradingName: string | undefined,
-  branchName: string | undefined,
+  organisationName: string | null | undefined,
+  tradingNameInput: string | null | undefined,
+  branchNameInput: string | null | undefined,
 ): string => {
   if (
-    organisationName !== null &&
-    tradingName !== null &&
-    branchName !== null
+    organisationName === null ||
+    tradingNameInput === null ||
+    branchNameInput === null
   ) {
-    let result = '';
-
-    if (tradingName !== '') {
-      result = `${tradingName}`;
-    }
-
-    if (branchName !== '' && tradingName !== '') {
-      result = `${result} - ${branchName}`;
-    } else if (branchName !== '') {
-      result = `${branchName}`;
-    }
-
-    if (branchName !== '' || tradingName !== '') {
-      result = `${result} - ${organisationName}`;
-    } else {
-      result = `${organisationName}`;
-    }
-
-    return result;
+    return '';
   }
-  return '';
+  // A missing (undefined) trading or branch name is the same as an empty one.
+  const tradingName = tradingNameInput ?? '';
+  const branchName = branchNameInput ?? '';
+  let result = '';
+
+  if (tradingName !== '') {
+    result = tradingName;
+  }
+
+  if (branchName !== '' && tradingName !== '') {
+    result = `${result} - ${branchName}`;
+  } else if (branchName !== '') {
+    result = branchName;
+  }
+
+  if (branchName !== '' || tradingName !== '') {
+    // No organisation name to append when it is missing.
+    return organisationName === undefined
+      ? result
+      : `${result} - ${organisationName}`;
+  }
+  return organisationName ?? '';
 };
 
-export const formatTradingBranch = (accountDetails: AccountDetails): string => {
+export const formatTradingBranch = (
+  accountDetails: NamedAccountDetails | null | undefined,
+): string => {
   if (accountDetails?.organisation !== undefined) {
     let result = '';
 
     if (accountDetails.trading !== undefined && accountDetails.trading !== '') {
-      result = `${accountDetails.trading}`;
+      result = accountDetails.trading;
     }
 
     if (
@@ -330,7 +475,7 @@ export const formatTradingBranch = (accountDetails: AccountDetails): string => {
       accountDetails.branch !== undefined &&
       accountDetails.branch !== ''
     ) {
-      result = `${accountDetails.branch}`;
+      result = accountDetails.branch;
     }
 
     return result;
@@ -349,13 +494,13 @@ export const formatTradingBranchFromStrings = (
     let result = '';
 
     if (tradingName !== '') {
-      result = `${tradingName}`;
+      result = tradingName;
     }
 
     if (branchName !== '' && tradingName !== '') {
       result = `${result} - ${branchName}`;
     } else if (branchName !== '') {
-      result = `${branchName}`;
+      result = branchName;
     }
 
     return result;
@@ -388,7 +533,7 @@ export const contentLoaded = (sendPageView: boolean) => {
   const redactedData: Record<string, string> = {};
 
   piiFields.forEach((field) => {
-    const key = field.dataset['pii'] as string;
+    const key = field.dataset['pii'] ?? '';
     Object.defineProperty(redactedData, key, {
       configurable: true,
       enumerable: true,
@@ -411,7 +556,18 @@ export function sortList<T>(
   list: T[],
   lastItem: string,
   displayFieldName: keyof T,
-): [T[], string] {
+): [T[], string];
+// Lookups can be absent before they load; an absent list is returned unchanged.
+export function sortList<T>(
+  list: T[] | undefined,
+  lastItem: string,
+  displayFieldName: keyof T,
+): [T[] | undefined, string];
+export function sortList<T>(
+  list: T[] | undefined,
+  lastItem: string,
+  displayFieldName: keyof T,
+): [T[] | undefined, string] {
   let removedItems;
   let lastId = '';
   let removeId: string | undefined;
@@ -439,7 +595,7 @@ export function sortList<T>(
     removeId = (item as LookupResponse | undefined)?.id ?? '';
   }
 
-  lastId = removeId!;
+  lastId = removeId;
 
   if (indexOfItemToRemove >= 0) {
     removedItems = list.splice(indexOfItemToRemove, 1);
@@ -467,24 +623,19 @@ export const isValidGUID = (value: string | null | undefined): boolean =>
 
 export const getFormattedAddress = (address: AddressDetailsDto | undefined) => {
   let formattedAddress = '';
+  // Server JSON can carry null as well as a missing value; neither is printable.
+  const isSet = (value: unknown) => value !== undefined && value !== null;
 
   if (
     address !== undefined &&
-    address !== null &&
-    address.suburb !== null &&
-    address.state !== null &&
-    address.postcode !== null &&
-    address.suburb !== undefined &&
-    address.suburb !== null
+    isSet(address.suburb) &&
+    isSet(address.state) &&
+    isSet(address.postcode)
   ) {
-    if (address.line1 !== null && address.line1 !== '') {
-      formattedAddress = `${formattedAddress}${address.line1}, `;
-    }
-    if (address.line2 !== null && address.line2 !== '') {
-      formattedAddress = `${formattedAddress}${address.line2}, `;
-    }
-    if (address.line3 !== null && address.line3 !== '') {
-      formattedAddress = `${formattedAddress}${address.line3}, `;
+    for (const line of [address.line1, address.line2, address.line3]) {
+      if (line) {
+        formattedAddress = `${formattedAddress}${line}, `;
+      }
     }
     formattedAddress = `${formattedAddress} ${address.suburb} ${address.state} ${address.postcode}`;
   }

@@ -17,7 +17,9 @@ import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/commo
 import type * as AppLoggerModule from '../../../ClientApp/src/instrumentation/AppLogger';
 import type * as NotificationModule from '../../../ClientApp/src/storage/notification';
 
-type InputChangeEvent = { target: { value: string | null } };
+interface InputChangeEvent {
+  target: { value: string | null };
+}
 type InputChangeHandler = (event: InputChangeEvent) => void;
 
 const mocks: {
@@ -256,6 +258,10 @@ vi.mock(import('formik') as unknown as string, () => {
       setFieldValue: mocks.setFieldValue,
       setFieldTouched: mocks.setFieldTouched,
       getFieldMeta: (name: string) => ({
+        // Real Formik returns both the current `value` and `initialValue`; the
+        // mock's `values` and `initialValues` are the same object here, so both
+        // resolve through `getPath`.
+        value: getPath(name),
         initialValue: getPath(name),
       }),
     }),
@@ -475,7 +481,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass') as unknown as string,
   () =>
     ({
-      default: () => {},
+      default: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 

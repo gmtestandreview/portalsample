@@ -65,7 +65,7 @@ export const OpenWithContent = meta.story({
 export const Closed = meta.story({
   args: {
     showModal: false,
-    onCancelModal: () => {},
+    onCancelModal: fn(),
     modalTitle: 'Closed Modal',
     modalBody: <p>This modal is closed.</p>,
   },

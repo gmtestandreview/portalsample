@@ -199,7 +199,9 @@ When('the user completes the payment details step', async ({ page }) => {
 When('the user accepts the quote terms', async ({ page }) => {
   const acceptance = page.getByLabel(
     'Yes, on behalf of my organisation, I accept the quotation',
-    { exact: true },
+    {
+      exact: true,
+    },
   );
   await page
     .getByText('Yes, on behalf of my organisation, I accept the quotation', {

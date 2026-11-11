@@ -112,15 +112,14 @@ vi.mock(
   import('../../../ClientApp/src/instrumentation/AppLogger'),
   async (importOriginal) => {
     const original = await importOriginal();
-    class MockAppLogger extends original.default {
-      static override error = providerMocks.appLoggerError;
-      static override verbose =
-        vi.fn<(typeof AppLoggerModule)['default']['verbose']>();
-    }
 
     return {
       ...original,
-      default: MockAppLogger,
+      default: {
+        ...original.default,
+        error: providerMocks.appLoggerError,
+        verbose: vi.fn<(typeof AppLoggerModule)['default']['verbose']>(),
+      },
     } satisfies Partial<typeof AppLoggerModule>;
   },
 );
@@ -358,9 +357,9 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
 
     await user.click(screen.getByRole('button', { name: 'agree' }));
     await user.click(screen.getByRole('button', { name: 'complete account' }));
@@ -374,7 +373,7 @@ describe('accountProvider dispatch callbacks', () => {
     await user.click(screen.getByRole('button', { name: 'set org branch' }));
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
-    const details = screen.getByTestId('details').textContent ?? '';
+    const details = screen.getByTestId('details').textContent;
 
     expectDetailsToContain(details, [
       '"userAcceptedTermsOfUse":true',
@@ -398,7 +397,7 @@ describe('accountProvider dispatch callbacks', () => {
       targetOrganisationName: 'Target Org',
     });
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.setUserProfileApi).toHaveBeenCalledWith(
         undefined,
         undefined,
@@ -418,8 +417,8 @@ describe('accountProvider dispatch callbacks', () => {
         undefined,
         undefined,
         undefined,
-      ),
-    );
+      );
+    });
   });
 
   it('logs profile save failures without removing provider children', async () => {
@@ -436,17 +435,17 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to save userprofile',
         expect.any(Error),
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });
@@ -485,11 +484,11 @@ describe('accountProvider dispatch callbacks', () => {
       homeAccountId: 'active-id',
     }) as unknown as AccountInfo;
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
         account: activeAccountMatcher,
-      }),
-    );
+      });
+    });
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
       account: activeAccountMatcher,
@@ -515,11 +514,11 @@ describe('accountProvider dispatch callbacks', () => {
       homeAccountId: 'active-id',
     }) as unknown as AccountInfo;
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
         account: activeAccountMatcher,
-      }),
-    );
+      });
+    });
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledTimes(1);
 
@@ -606,11 +605,11 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('minimal-id'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('minimal-id');
+    });
 
-    const details = screen.getByTestId('details').textContent ?? '';
+    const details = screen.getByTestId('details').textContent;
 
     expectDetailsToContain(details, [
       '"organisation":""',
@@ -620,6 +619,7 @@ describe('accountProvider dispatch callbacks', () => {
       '"userAcceptedTermsOfUse":false',
       '"accountCreationCompleted":false',
       '"accountContactCompleted":false',
+      '"isDefaultOrganisation":false',
       '"targetOrganisationAbn":"stored-abn"',
       '"targetOrganisationName":"Stored Org"',
       '"organisationIsCompleted":false',
@@ -650,14 +650,15 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('test-id'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('test-id');
+    });
 
     expect(providerMocks.setStoredTargetOrganisation).toHaveBeenCalledWith({
       targetOrganisationAbn: '',
       targetOrganisationName: '',
     });
+    expect(providerMocks.setUserProfileApi).not.toHaveBeenCalled();
   });
 
   it('falls back to empty trading and branch names for explicit empty values', async () => {
@@ -673,14 +674,14 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
     await user.click(
       screen.getByRole('button', { name: 'set fallback org branch' }),
     );
 
-    const details = screen.getByTestId('details').textContent ?? '';
+    const details = screen.getByTestId('details').textContent;
 
     expect(details).toContain('"organisation":"Fallback Org"');
     expect(details).toContain('"trading":""');
@@ -700,15 +701,15 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
 
     await user.click(
       screen.getByRole('button', { name: 'set nullish org branch' }),
     );
 
-    const nullishDetails = screen.getByTestId('details').textContent ?? '';
+    const nullishDetails = screen.getByTestId('details').textContent;
 
     expect(nullishDetails).toContain('"organisation":"Nullish Org"');
     expect(nullishDetails).toContain('"trading":""');
@@ -728,20 +729,20 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
     providerMocks.acquireTokenSilent.mockRejectedValueOnce(
       new Error('profile token failed'),
     );
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(providerMocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to save userprofile',
         expect.any(Error),
-      ),
-    );
+      );
+    });
 
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });

@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useEffect, useState } from 'react';
 import { Col, Row, Container, Card, Alert, Button } from 'react-bootstrap';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -29,9 +30,9 @@ const ServicesWeOffer = () => {
   const [selectedService, setSelectedService] = useState<
     ServiceType | undefined
   >(undefined);
-  const [checkedServices, setCheckedServices] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [checkedServices, setCheckedServices] = useState<
+    Record<string, boolean>
+  >({});
   const [defaultService, setDefaultService] = useState<ServiceType | undefined>(
     undefined,
   );
@@ -96,14 +97,14 @@ const ServicesWeOffer = () => {
             const serviceLower = service.serviceType
               ?.toString()
               .toLocaleLowerCase();
-            if (accountDetails?.userProfile?.services) {
+            if (accountDetails.userProfile?.services) {
               const dbService = accountDetails.userProfile.services.find(
                 (s) => s.service?.toLocaleLowerCase() === serviceLower,
               );
               if (dbService) {
                 setCheckedServices((prev) => ({
                   ...prev,
-                  [service.serviceType!]: dbService.isActive!,
+                  [service.serviceType ?? '']: dbService.isActive ?? false,
                 }));
                 if (dbService.isDefault) {
                   setDefaultService(service.serviceType);
@@ -121,8 +122,13 @@ const ServicesWeOffer = () => {
       }
     };
     void loadServices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts, instance, accountDetails, accountDetails?.userProfile]);
+  }, [
+    accounts,
+    instance,
+    accountDetails,
+    accountDetails?.userProfile,
+    services.length,
+  ]);
 
   useEffect(() => {
     if (shouldRedirect) {
@@ -146,7 +152,7 @@ const ServicesWeOffer = () => {
         setDefaultService(undefined);
       }
     }
-    setCheckedServices((prev) => ({ ...prev, [serviceType!]: checked }));
+    setCheckedServices((prev) => ({ ...prev, [serviceType ?? '']: checked }));
   }
 
   function setDefaultServiceFn(serviceType?: ServiceType) {
@@ -192,13 +198,15 @@ const ServicesWeOffer = () => {
     setShowSaveError(false);
 
     const updatedServices = services.map((service) => {
-      const serviceType = service.serviceType!;
+      const serviceKey = service.serviceType ?? '';
       return {
-        service: serviceType, // or serviceType.toString() if needed
+        ...(service.serviceType !== undefined
+          ? { service: service.serviceType }
+          : {}),
         isActive:
-          Object.hasOwn(checkedServices, serviceType) &&
-          Boolean(Reflect.get(checkedServices, serviceType)),
-        isDefault: defaultService === serviceType,
+          Object.hasOwn(checkedServices, serviceKey) &&
+          Reflect.get(checkedServices, serviceKey),
+        isDefault: defaultService === serviceKey,
       };
     });
 
@@ -338,11 +346,12 @@ const ServicesWeOffer = () => {
                 Set your default view and/or add more NMI services to your
                 account
               </legend>
-              {services?.map((service) => (
+              {services.map((service) => (
                 <Card
-                  key={service.serviceType}
+                  key={service.serviceType ?? ''}
                   className={`mb-4 border border-3 border-light ${
-                    (selectedService || defaultService) === service.serviceType
+                    orIfEmpty(selectedService, defaultService) ===
+                    service.serviceType
                       ? 'selected-service'
                       : ''
                   }`}
@@ -355,22 +364,22 @@ const ServicesWeOffer = () => {
                       <div className='radio-button p-4'>
                         <input
                           type='radio'
-                          id={`radio-${service.serviceType}`}
+                          id={`radio-${service.serviceType ?? ''}`}
                           name='service-radio'
                           checked={defaultService === service.serviceType}
-                          onChange={() =>
-                            setDefaultServiceFn(service.serviceType)
-                          }
+                          onChange={() => {
+                            setDefaultServiceFn(service.serviceType);
+                          }}
                           className='form-field me-2'
                         />
                         <label
-                          htmlFor={`radio-${service.serviceType}`}
+                          htmlFor={`radio-${service.serviceType ?? ''}`}
                           className='border-0'
                           aria-label={service.title}
                         >
                           <span className='ms-5 pt-1'>
                             <i
-                              className={`${service.icon || 'icon-file'} me-3 p-2 fs-2 text-placeholder`}
+                              className={`${orIfEmpty(service.icon, 'icon-file')} me-3 p-2 fs-2 text-placeholder`}
                               aria-hidden='true'
                             />
                           </span>
@@ -390,18 +399,20 @@ const ServicesWeOffer = () => {
                       <div className='checkbox p-4'>
                         <input
                           type='checkbox'
-                          id={`checkbox-${service.serviceType}`}
+                          id={`checkbox-${service.serviceType ?? ''}`}
                           name='service-checkbox'
-                          checked={!!checkedServices[service.serviceType!]}
-                          onChange={(e) =>
+                          checked={!!checkedServices[service.serviceType ?? '']}
+                          onChange={(e) => {
                             setCheckedServicesFn(
                               e.target.checked,
                               service.serviceType,
-                            )
-                          }
+                            );
+                          }}
                           className='me-2'
                         />
-                        <label htmlFor={`checkbox-${service.serviceType}`}>
+                        <label
+                          htmlFor={`checkbox-${service.serviceType ?? ''}`}
+                        >
                           <i className='icon-tick me-1' aria-hidden='true' />
                           <span className='text-nowrap'>
                             {'Add '}
@@ -424,7 +435,9 @@ const ServicesWeOffer = () => {
                   hidden={!originalDefaultService}
                   data-testid='go-to-dashboard-button'
                   variant='tertiary'
-                  onClick={() => routeToDefaultDashboard()}
+                  onClick={() => {
+                    routeToDefaultDashboard();
+                  }}
                 >
                   <i className='icon-close me-1' aria-hidden='true' />
                   {'Cancel'}
@@ -459,33 +472,26 @@ const ServicesWeOffer = () => {
   }
 
   return (
-    <>
-      {/*   {isLoading && (
-                <BlockUISpinner partial>
-                    <p>Loading...</p>
-                </BlockUISpinner>
-            )} */}
-      <div aria-busy={isLoading} aria-live='off'>
-        <Container fluid className='default-banner-background mb-5'>
-          <Container>
-            <Row>
-              <Col hidden={!originalDefaultService}>
-                <CustomBreadcrumb breadcrumbs={breadcrumbs} />
-              </Col>
-            </Row>
-            <Row className='gs-wrapper'>
-              <Col md={12} lg={9}>
-                <h1 id='page-title' tabIndex={-1} className='banner-title mb-4'>
-                  Services we offer
-                </h1>
-                {/* <HeaderIntroText>NMI offers a range of services, please choose your services below</HeaderIntroText> */}
-              </Col>
-            </Row>
-          </Container>
+    <div aria-busy={isLoading} aria-live='off'>
+      <Container fluid className='default-banner-background mb-5'>
+        <Container>
+          <Row>
+            <Col hidden={!originalDefaultService}>
+              <CustomBreadcrumb breadcrumbs={breadcrumbs} />
+            </Col>
+          </Row>
+          <Row className='gs-wrapper'>
+            <Col md={12} lg={9}>
+              <h1 id='page-title' tabIndex={-1} className='banner-title mb-4'>
+                Services we offer
+              </h1>
+              {/* <HeaderIntroText>NMI offers a range of services, please choose your services below</HeaderIntroText> */}
+            </Col>
+          </Row>
         </Container>
-        {renderServicesSelector()}
-      </div>
-    </>
+      </Container>
+      {renderServicesSelector()}
+    </div>
   );
 };
 

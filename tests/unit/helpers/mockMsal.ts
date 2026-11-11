@@ -48,7 +48,10 @@ export const interactionStatus = {
 export type InteractionStatusValue =
   (typeof interactionStatus)[keyof typeof interactionStatus];
 
-type TokenResult = { accessToken: string; account: AccountInfo };
+interface TokenResult {
+  accessToken: string;
+  account: AccountInfo;
+}
 type AcquireTokenSilent = (request?: unknown) => Promise<TokenResult>;
 type AcquireTokenRedirect = (request?: unknown) => Promise<void>;
 type GetActiveAccount = () => AccountInfo | null;
@@ -90,8 +93,11 @@ export const msalInstance = {
   ) => msalMocks.acquireTokenRedirect(...args),
   getActiveAccount: (...args: Parameters<typeof msalMocks.getActiveAccount>) =>
     msalMocks.getActiveAccount(...args),
-  setActiveAccount: (...args: Parameters<typeof msalMocks.setActiveAccount>) =>
-    msalMocks.setActiveAccount(...args),
+  setActiveAccount: (
+    ...args: Parameters<typeof msalMocks.setActiveAccount>
+  ) => {
+    msalMocks.setActiveAccount(...args);
+  },
   handleRedirectPromise: (
     ...args: Parameters<typeof msalMocks.handleRedirectPromise>
   ) => msalMocks.handleRedirectPromise(...args),
@@ -106,7 +112,6 @@ export const msalInstance = {
  * `@azure/msal-react` rather than chosen. `no-unnecessary-use-prefix` fires because the stubs hold
  * no hook calls of their own - renaming them would simply break the mock.
  */
-/* eslint-disable @eslint-react/no-unnecessary-use-prefix */
 export const msalReactModuleMock = () => ({
   useMsal: () => ({
     accounts: msalState.accounts,
@@ -116,7 +121,6 @@ export const msalReactModuleMock = () => ({
   useIsAuthenticated: () => msalState.accounts.length > 0,
   useAccount: () => msalState.accounts[0] ?? null,
 });
-/* eslint-enable @eslint-react/no-unnecessary-use-prefix */
 
 export const msalBrowserModuleMock = () => ({
   InteractionStatus: interactionStatus,
@@ -155,15 +159,22 @@ export const pendingToken = () => {
 
   msalMocks.acquireTokenSilent.mockReturnValue(
     new Promise((resolve, reject) => {
-      settle = (accessToken = DEFAULT_ACCESS_TOKEN) =>
+      settle = (accessToken = DEFAULT_ACCESS_TOKEN) => {
         resolve({ accessToken, account: msalState.accounts[0] ?? testAccount });
-      fail = (error = new Error('interaction_required')) => reject(error);
+      };
+      fail = (error = new Error('interaction_required')) => {
+        reject(error);
+      };
     }),
   );
 
   return {
-    settle: (accessToken?: string) => settle(accessToken),
-    fail: (error?: Error) => fail(error),
+    settle: (accessToken?: string) => {
+      settle(accessToken);
+    },
+    fail: (error?: Error) => {
+      fail(error);
+    },
   };
 };
 

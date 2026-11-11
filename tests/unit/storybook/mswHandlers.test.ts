@@ -16,11 +16,11 @@ const expectAnyString = (): unknown => expect.any(String);
 const expectObjectContaining = (value: Record<string, unknown>): unknown =>
   expect.objectContaining(value);
 
-type ApiRequest = {
+interface ApiRequest {
   method: 'GET' | 'POST';
   path: string;
   body?: string;
-};
+}
 
 const assertRouteCoveragePayload = (request: ApiRequest, payload: unknown) => {
   if (request.path.includes('get-quote-request-details-byrefid')) {
@@ -113,14 +113,20 @@ const storyBlocksWithRequests = (source: string) => {
 };
 
 describe('storybook MSW handlers', () => {
-  // eslint-disable-next-line vitest/no-hooks -- MSW server lifecycle spans the suite.
-  beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
+  // MSW server lifecycle spans the suite.
+  beforeAll(() => {
+    server.listen({ onUnhandledFrame: 'error' });
+  });
 
-  // eslint-disable-next-line vitest/no-hooks -- each test starts with clean handlers.
-  afterEach(() => server.resetHandlers());
+  // each test starts with clean handlers.
+  afterEach(() => {
+    server.resetHandlers();
+  });
 
-  // eslint-disable-next-line vitest/no-hooks -- close the shared MSW server after the suite.
-  afterAll(() => server.close());
+  // close the shared MSW server after the suite.
+  afterAll(() => {
+    server.close();
+  });
 
   it('finds the lookup call sites it is supposed to cover', () => {
     expect.hasAssertions();
@@ -267,6 +273,21 @@ describe('storybook MSW handlers', () => {
     expect(response.status).toBe(501);
   });
 
+  it.each(['__proto__', 'constructor', 'toString'])(
+    'fails closed with 501 for inherited application member %s',
+    async (applicationType) => {
+      expect.hasAssertions();
+
+      const response = await fetch(apiUrl('/api/application'), {
+        method: 'POST',
+        body: JSON.stringify({ applicationType }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      expect(response.status).toBe(501);
+    },
+  );
+
   it('fails closed for an unmapped quote application type', async () => {
     expect.hasAssertions();
 
@@ -286,11 +307,12 @@ describe('storybook MSW handlers', () => {
 
       const lookupType =
         CRMLookupTypes[lookupTypeName as keyof typeof CRMLookupTypes];
+      const lookupTypeValue = lookupType as string;
       const lookupResponse = Object.entries(lookupResponsesByType)
-        .find(([name]) => name === String(lookupType))
+        .find(([name]) => name === lookupTypeValue)
         ?.at(1);
       const url = apiUrl('/api/lookup');
-      url.searchParams.set('LookupType', String(lookupType));
+      url.searchParams.set('LookupType', lookupTypeValue);
 
       const response = await fetch(url);
 

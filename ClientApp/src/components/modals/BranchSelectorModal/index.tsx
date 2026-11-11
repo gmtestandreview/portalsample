@@ -3,6 +3,7 @@ import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { useEffect, useState } from 'react';
 import type { ChangeEvent, ReactElement } from 'react';
+import type React from 'react';
 import { Alert, Button, Modal, Row, Col, Table } from 'react-bootstrap';
 import {
   useAccountState,
@@ -27,7 +28,7 @@ interface SavingBranchSelectorErrorProps {
   showError: boolean;
 }
 
-const showBranchModalMessage = (message: JSX.Element | null) => (
+const showBranchModalMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Row className='mb-4'>
@@ -85,7 +86,7 @@ interface SaveButtonProps {
   onClick: () => void;
 }
 
-const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
+const SaveButton = (props: Readonly<SaveButtonProps>): React.JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton
@@ -114,7 +115,7 @@ type SortableBranchKey =
 
 const BranchSelectorButtons = (
   props: Readonly<BranchSelectorButtonsProps>,
-): JSX.Element => {
+): React.JSX.Element => {
   const { showCloseButton, onClose, onSave } = props;
   return (
     <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
@@ -175,7 +176,10 @@ const finaliseAccountCreation = (
   if (accountCreationIncomplete) {
     accountDispatch?.setCompleted();
     accountDispatch?.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
-    accountDispatch?.setTargetOrganisation(selectedOrganisation!, selectedABN!);
+    accountDispatch?.setTargetOrganisation(
+      selectedOrganisation ?? '',
+      selectedABN ?? '',
+    );
   }
 };
 
@@ -309,7 +313,7 @@ const BranchSelectorModal = () => {
         try {
           setIsModalDataLoading(true); // Modal data
           const result = await client.getOrganisationsByABN(
-            accountState.details?.abn,
+            accountState.details.abn,
             true,
           );
           if (!isActive) return;
@@ -320,14 +324,12 @@ const BranchSelectorModal = () => {
             throw new Error('No branches returned for organisation');
           }
           if (
-            hasDefaultOrganisationId(
-              accountState.details?.defaultOrganisationId,
-            )
+            hasDefaultOrganisationId(accountState.details.defaultOrganisationId)
           ) {
-            setSelectedBranch(accountState.details?.defaultOrganisationId);
-            setSelectedCRMGuid(accountState.details?.organisationCRMGuid);
-            setSelectedTradingName(accountState.details?.trading);
-            setSelectedBranchName(accountState.details?.branch);
+            setSelectedBranch(accountState.details.defaultOrganisationId);
+            setSelectedCRMGuid(accountState.details.organisationCRMGuid);
+            setSelectedTradingName(accountState.details.trading);
+            setSelectedBranchName(accountState.details.branch);
           } else {
             setSelectedBranch(firstBranch.organisationId);
             setSelectedTradingName(firstBranch.businessOrTradingName);
@@ -517,7 +519,9 @@ const BranchSelectorModal = () => {
                         <Button
                           variant='flat'
                           data-column-index='0'
-                          onClick={() => sortData('businessListName')}
+                          onClick={() => {
+                            sortData('businessListName');
+                          }}
                           className='ms-2 p-0 px-2 body-text fs-6 fw-bold'
                           title='Change sort order'
                         >
@@ -551,7 +555,7 @@ const BranchSelectorModal = () => {
                     </tbody>
                   ) : (
                     <>
-                      {branches !== undefined && branches?.length > 0 ? (
+                      {branches !== undefined && branches.length > 0 ? (
                         <tbody key='tBodyKey'>
                           {branches.map((branch, index) => (
                             <tr key={branch.organisationId}>
@@ -570,7 +574,7 @@ const BranchSelectorModal = () => {
                                       checked={
                                         branch.organisationId === selectedBranch
                                       }
-                                      onChange={(e) =>
+                                      onChange={(e) => {
                                         handleChange(
                                           e,
                                           branch.organisationId,
@@ -579,8 +583,8 @@ const BranchSelectorModal = () => {
                                           branch.branchOrLocationName,
                                           branch.abn,
                                           branch.crmGuid,
-                                        )
-                                      }
+                                        );
+                                      }}
                                     />
                                     <label
                                       htmlFor={`branch${index}`}
@@ -599,20 +603,27 @@ const BranchSelectorModal = () => {
                               </td>
                               <td data-header='Location' className='text-break'>
                                 <span>
-                                  {`${branch.streetAddress?.suburb}, ${branch.streetAddress?.state}`}
+                                  {[
+                                    branch.streetAddress?.suburb,
+                                    branch.streetAddress?.state,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(', ')}
                                 </span>
                               </td>
                               {branchSelectionModalMode ===
                                 BranchSelectionModalMode.SelectAndEditOrg && (
                                 <td>
                                   <span>
-                                    <Link
-                                      to={`/update-organisation/${branch.organisationId}`}
-                                      onClick={handleClose}
-                                      aria-label='Edit details for this branch/location'
-                                    >
-                                      Edit
-                                    </Link>
+                                    {branch.organisationId !== undefined && (
+                                      <Link
+                                        to={`/update-organisation/${branch.organisationId}`}
+                                        onClick={handleClose}
+                                        aria-label='Edit details for this branch/location'
+                                      >
+                                        Edit
+                                      </Link>
+                                    )}
                                   </span>
                                 </td>
                               )}
