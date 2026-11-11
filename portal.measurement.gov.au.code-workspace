@@ -14,5 +14,8 @@
   ],
   "settings": {
     "js/ts.tsdk.path": "node_modules\\typescript\\lib",
+    "jscpd.analyses.complexity": false,
+    "jscpd.analyses.deadCode": false,
+    "jscpd.analyses.similarFunctions": false,
   },
 }

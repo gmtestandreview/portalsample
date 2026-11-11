@@ -263,6 +263,44 @@ describe('requestList behavior', () => {
     expect(trackGAEvent).toHaveBeenCalledWith('Viewreport');
   });
 
+  it('omits the report button test id when the report has no id', () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+
+    renderInDashboardList(
+      <RequestItem
+        request={{
+          ...baseRequest,
+          report: { ...baseRequest.report, reportId: undefined },
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'View report' }),
+    ).not.toHaveAttribute('data-testid');
+  });
+
+  it('offers no report action when the issued report has no quotation id', () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+
+    renderInDashboardList(
+      <RequestItem
+        request={{
+          ...baseRequest,
+          quote: { ...baseRequest.quote, quotationId: undefined },
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole('button', { name: 'View report' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('runs RequestItem tab and issued-report action callbacks', async () => {
     expect.hasAssertions();
 

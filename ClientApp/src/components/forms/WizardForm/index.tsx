@@ -108,7 +108,7 @@ const WizardForm: FC<WizardFormProps> = (props: Readonly<WizardFormProps>) => {
         key={url}
         element={
           <Navigate
-            to={`${url}${reactChildren.at(-1)?.props.location ?? ''}`}
+            to={[url, reactChildren.at(-1)?.props.location].join('')}
             replace
           />
         }

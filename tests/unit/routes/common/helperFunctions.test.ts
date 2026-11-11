@@ -29,6 +29,7 @@ import {
   handleUnexpectedError,
   mapToUserProfile,
   toDashboardItemStatus,
+  selectDashboardTab,
   toDashboardTab,
   toFilterMessages,
   toPaDashboardItemStatus,
@@ -891,4 +892,31 @@ describe('route common helper functions', () => {
       'https://example.test/report.pdf',
     );
   });
+});
+
+describe(selectDashboardTab, () => {
+  it('passes a dashboard tab key to the callback', () => {
+    expect.hasAssertions();
+
+    const onSelectTab = vi.fn<(tab: DashboardTab) => void>();
+
+    selectDashboardTab('instruments', onSelectTab);
+
+    expect(onSelectTab).toHaveBeenCalledExactlyOnceWith(
+      DashboardTab.Instruments,
+    );
+  });
+
+  it.each([['server-added-tab'], [null], [undefined]])(
+    'ignores the key %s, which is not a dashboard tab',
+    (key) => {
+      expect.hasAssertions();
+
+      const onSelectTab = vi.fn<(tab: DashboardTab) => void>();
+
+      selectDashboardTab(key, onSelectTab);
+
+      expect(onSelectTab).not.toHaveBeenCalled();
+    },
+  );
 });

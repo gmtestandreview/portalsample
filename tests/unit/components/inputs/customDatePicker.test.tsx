@@ -40,6 +40,10 @@ const mockDatePickerRef = vi.hoisted((): { shape: MockDatePickerShape } => ({
   shape: 'with-open-state',
 }));
 
+// The real input only renders its feedback and inline-help elements when it has
+// something to show, so their refs can be unattached while the popper measures.
+const mockInputHelpRefs = vi.hoisted(() => ({ attached: true }));
+
 const expectDatePickerOffsetsAfterReopen = (nextDate: Date) => {
   expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-49');
   expect(screen.getByTestId('top-offset')).toHaveTextContent('-45');
@@ -86,8 +90,14 @@ vi.mock(
             onKeyDown={onKeyDown}
             required
           />
-          <div ref={forwardedInlineHelpRef} data-testid='inline-help-ref' />
-          <div ref={forwardedFeedbackRef} data-testid='feedback-ref' />
+          <div
+            ref={mockInputHelpRefs.attached ? forwardedInlineHelpRef : null}
+            data-testid='inline-help-ref'
+          />
+          <div
+            ref={mockInputHelpRefs.attached ? forwardedFeedbackRef : null}
+            data-testid='feedback-ref'
+          />
           <button type='button' onClick={handleOpenCalendar}>
             Open calendar
           </button>
@@ -532,6 +542,33 @@ describe('custom date picker', () => {
       ).toBeInTheDocument();
     } finally {
       mockDatePickerRef.shape = 'with-open-state';
+    }
+  });
+
+  it('measures the offsets as zero-height when the help and feedback elements are not rendered', async () => {
+    expect.hasAssertions();
+
+    mockInputHelpRefs.attached = false;
+
+    try {
+      const user = userEvent.setup();
+      render(
+        <CustomDatePicker
+          calendarButtonTitle='Date'
+          currentDate={new Date('2026-06-01T00:00:00.000Z')}
+          dateOnBlur={vi.fn<() => void>()}
+          dateOnChange={vi.fn<() => void>()}
+          hasError
+          name='unmeasuredDate'
+        />,
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+      expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-53');
+      expect(screen.getByTestId('top-offset')).toHaveTextContent('-48');
+    } finally {
+      mockInputHelpRefs.attached = true;
     }
   });
 

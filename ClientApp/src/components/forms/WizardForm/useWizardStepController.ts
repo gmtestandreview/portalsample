@@ -375,7 +375,9 @@ const resolveView = ({
     ) {
       return {
         kind: 'navigate',
-        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location ?? ''}`,
+        to: [url, allSteps.at(firstIncompleteStepIndex)?.props.location].join(
+          '',
+        ),
       };
     }
   }

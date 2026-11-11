@@ -192,6 +192,21 @@ describe(ApplicationSummary, () => {
     expect(screen.getByText('Certificate edits')).toBeInTheDocument();
   });
 
+  it('still lists a lone sub-option delivered as a bare string', () => {
+    expect.hasAssertions();
+
+    renderApplication({
+      applicationAndInstrument: {
+        patternApprovalType: PatternApprovalRequiredValues.Variation,
+        // A JSON payload can carry a single value where the contract promises a list.
+        varSubOptions:
+          'AmendmenttoanExistingCoA' as unknown as PatternApprovalRequiredValueOptions[],
+      },
+    });
+
+    expect(screen.getByText('Certificate edits')).toBeInTheDocument();
+  });
+
   it('says Not selected when the sub-options are empty or unknown', () => {
     expect.hasAssertions();
 

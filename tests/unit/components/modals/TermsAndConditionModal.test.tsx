@@ -189,6 +189,20 @@ describe('terms and condition modal', () => {
     expect(screen.getByTestId('termsofuse-heading')).toBeInTheDocument();
   });
 
+  it('greets the user generically when no name is available', () => {
+    expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
+
+    vi.mocked(useAccountState).mockReturnValue(createAccountState());
+
+    render(<TermsAndConditionModal />);
+
+    expect(
+      screen.getByRole('heading', { name: /^Welcome\s*\(modal dialog\)$/ }),
+    ).toBeInTheDocument();
+  });
+
   it('does not render the modal when userAcceptedTermsOfUse is true', () => {
     expect.hasAssertions();
 

@@ -190,7 +190,8 @@ export const formatBytes = (bytes: number, decimalPoints = 2) => {
     Math.max(Math.floor(Math.log(bytes) / Math.log(k)), 0),
     sizes.length - 1,
   );
-  const unit = sizes.at(index) ?? 'bytes';
+  // `index` is clamped to the table above, so the lookup always resolves.
+  const unit = String(sizes.at(index));
 
   return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${unit}`;
 };

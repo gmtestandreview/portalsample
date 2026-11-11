@@ -565,10 +565,10 @@ describe('react Aria evaluation wrappers', () => {
     });
   });
 
-  it('renders toggle and segmented controls with their configured variants', () => {
+  it('renders toggle and segmented controls with their configured variants', async () => {
     expect.hasAssertions();
 
-    act(() => {
+    await act(async () => {
       render(
         <>
           <ToggleButton variant='secondary'>Pin</ToggleButton>
@@ -588,6 +588,7 @@ describe('react Aria evaluation wrappers', () => {
           </SegmentedControl>
         </>,
       );
+      await Promise.resolve();
     });
 
     expect({

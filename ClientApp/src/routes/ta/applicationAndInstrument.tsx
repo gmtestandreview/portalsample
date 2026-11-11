@@ -175,7 +175,9 @@ const ApplicationAndInstrument = (
   const getInstrumentCategories = () => {
     const options: SelectInputOption<string>[] = [];
     for (const l of instrumentCategories ?? []) {
-      options.push({ displayText: l.label ?? '', value: l.id ?? '' });
+      // `sortList` read every `label` to order these categories, so a missing
+      // label cannot reach this point.
+      options.push({ displayText: String(l.label), value: l.id ?? '' });
     }
     return options;
   };

@@ -109,7 +109,8 @@ import DocsTable from '../storybook/DocsTable';
 {/* storybook-coverage:generated:start */} | Source/export | Classification |
 Owner | Required states | Story IDs | | --- | --- | --- | ---: | --- | |
 `ClientApp/src/routes/acceptQuote/create/index.tsx#default` | direct | default |
-1 | routes-exportcoverage--accept-quote-create | |
+2 | routes-acceptquote-create--looks-up-quote-then-report-recipient,
+routes-acceptquote-create--quote-lookup-failure-creates-nothing | |
 `ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx#default` | direct |
 AcceptQuote | 1 | routes-acceptquote--quotation-summary-step | |
 `ClientApp/src/routes/acceptQuote/deliveryAndReturnFormFields.tsx#DeliveryAndReturnFormValues`
@@ -134,8 +135,11 @@ nonvisual | NO_HIDDEN_RULES | 0 | none | |
 nonvisual | addressTouchPaths | 0 | none | |
 `ClientApp/src/routes/acceptQuote/formikBridgeHelpers.ts#createBridgedNamePredicate`
 | nonvisual | createBridgedNamePredicate | 0 | none | |
-`ClientApp/src/routes/acceptQuote/index.tsx#default` | direct | default | 1 |
-routes-exportcoverage--accept-quote-route | |
+`ClientApp/src/routes/acceptQuote/index.tsx#default` | direct | default | 4 |
+routes-acceptquote-shell--loads-statuses-then-first-step,
+routes-acceptquote-shell--no-step-statuses-is-not-found,
+routes-acceptquote-shell--quote-lookup-failure-is-not-found,
+routes-acceptquote-shell--unknown-application-is-not-found | |
 `ClientApp/src/routes/acceptQuote/paymentDetails.tsx#default` | direct |
 AcceptQuote | 1 | routes-acceptquote--quotation-summary-step | |
 `ClientApp/src/routes/acceptQuote/paymentDetailsFormFields.tsx#PaymentDetailsFormValues`
@@ -207,23 +211,31 @@ CreateAccountStep | 1 | routes-account-createaccountstep--organisation-details |
 | `ClientApp/src/routes/account/addBranch/addBranchProps.ts#default` | nonvisual
 | default | 0 | none | |
 `ClientApp/src/routes/account/addBranch/index.tsx#default` | direct | default |
-1 | routes-exportcoverage--account-add-branch | |
+2 | routes-account-addbranch--loads-branch-form,
+routes-account-addbranch--confirmation-cancel-then-confirm-adds | |
 `ClientApp/src/routes/account/addBranch/validation.ts#default` | nonvisual |
 default | 0 | none | |
 `ClientApp/src/routes/account/create/createAccountProps.ts#default` | nonvisual
 | default | 0 | none | | `ClientApp/src/routes/account/create/index.tsx#default`
-| direct | default | 1 | routes-exportcoverage--account-create | |
+| direct | default | 2 |
+routes-account-create--invalid-submit-blocks-confirmation,
+routes-account-create--confirm-creates-account | |
 `ClientApp/src/routes/account/created/index.tsx#default` | direct | default | 1
 | routes-exportcoverage--account-created | |
 `ClientApp/src/routes/account/organisationDetails.tsx#default` | direct |
 OrganisationDetails | 1 | routes-account-organisationdetails--default | |
-`ClientApp/src/routes/account/update/index.tsx#default` | direct | default | 1 |
-routes-exportcoverage--account-update | |
+`ClientApp/src/routes/account/update/index.tsx#default` | direct | default | 4 |
+routes-account-update--loads-organisation-for-editing,
+routes-account-update--confirmation-cancel-then-confirm-saves,
+routes-account-update--malformed-id-is-not-found,
+routes-account-update--non-positive-id-is-not-found | |
 `ClientApp/src/routes/account/update/updateAccountProps.ts#default` | nonvisual
 | default | 0 | none | |
 `ClientApp/src/routes/account/update/validation.ts#default` | nonvisual |
 default | 0 | none | | `ClientApp/src/routes/account/validation.ts#default` |
 nonvisual | default | 0 | none | |
+`ClientApp/src/routes/common/NMIContactDetails.tsx#default` | direct | default |
+1 | routes-exportcoverage--measurement-report-contact | |
 `ClientApp/src/routes/common/commonMessages.ts#errorMessages` | nonvisual |
 errorMessages | 0 | none | | `ClientApp/src/routes/common/constants.ts#default`
 | nonvisual | default | 0 | none | |
@@ -290,6 +302,8 @@ openInNewTab | 0 | none | |
 | openPdfPageInNewTab | 0 | none | |
 `ClientApp/src/routes/common/helperFunctions.ts#sanitiseHtml` | nonvisual |
 sanitiseHtml | 0 | none | |
+`ClientApp/src/routes/common/helperFunctions.ts#selectDashboardTab` | nonvisual
+| selectDashboardTab | 0 | none | |
 `ClientApp/src/routes/common/helperFunctions.ts#sortList` | nonvisual | sortList
 | 0 | none | | `ClientApp/src/routes/common/helperFunctions.ts#triggerDownload`
 | nonvisual | triggerDownload | 0 | none | |
@@ -329,9 +343,13 @@ nonvisual | getValidPositiveIntegerId | 0 | none | |
 nonvisual | loadContactDetails | 0 | none | |
 `ClientApp/src/routes/contact/create/createContactProps.ts#default` | nonvisual
 | default | 0 | none | | `ClientApp/src/routes/contact/create/index.tsx#default`
-| direct | default | 1 | routes-exportcoverage--contact-create | |
-`ClientApp/src/routes/contact/update/index.tsx#default` | direct | default | 1 |
-routes-exportcoverage--contact-update | |
+| direct | default | 2 |
+routes-contact-create--invalid-submit-blocks-confirmation,
+routes-contact-create--confirm-creates-contact | |
+`ClientApp/src/routes/contact/update/index.tsx#default` | direct | default | 3 |
+routes-contact-update--loads-existing-contact,
+routes-contact-update--confirmation-cancel-then-confirm-saves,
+routes-contact-update--save-failure-still-completes | |
 `ClientApp/src/routes/contact/update/updateContactProps.ts#default` | nonvisual
 | default | 0 | none | | `ClientApp/src/routes/contact/validation.ts#default` |
 nonvisual | default | 0 | none | |
@@ -346,11 +364,12 @@ default | 1 | routes-exportcoverage--help-setup-access | |
 `ClientApp/src/routes/help-guide/index.tsx#default` | direct | default | 1 |
 routes-exportcoverage--help-guide-route | |
 `ClientApp/src/routes/measurementReport/index.tsx#default` | direct | default |
-1 | routes-exportcoverage--measurement-report-route | |
+4 | routes-measurementreport-shell--loads-report-for-reference,
+routes-measurementreport-shell--lookup-failure-is-not-found,
+routes-measurementreport-shell--back-to-dashboard-link,
+routes-measurementreport-shell--missing-target-organisation-does-not-load | |
 `ClientApp/src/routes/measurementReport/indexList.tsx#default` | direct |
 InstrumentReports | 1 | routes-measurementreport-instrumentreports--shell | |
-`ClientApp/src/routes/measurementReport/nMIContactDetails.tsx#default` | direct
-| default | 1 | routes-exportcoverage--measurement-report-contact | |
 `ClientApp/src/routes/measurementReport/reportDetails.tsx#default` | direct |
 default | 1 | routes-exportcoverage--measurement-report-details | |
 `ClientApp/src/routes/measurementReport/reportList.tsx#default` | direct |
@@ -359,24 +378,33 @@ ReportList | 1 | routes-measurementreport-reportlist--populated | |
 nonvisual | PreConditionsProps | 0 | none | |
 `ClientApp/src/routes/preConditions/PreConditions.tsx#default` | direct |
 PreConditions | 1 | routes-preconditions--renders-protected-content | |
-`ClientApp/src/routes/quotation/index.tsx#default` | direct | default | 1 |
-routes-exportcoverage--quotation-route | |
-`ClientApp/src/routes/quotation/nMIContactDetails.tsx#default` | consumer |
-default | 1 | routes-acceptquote--delivery-and-return-step | |
+`ClientApp/src/routes/quotation/index.tsx#default` | direct | default | 4 |
+routes-quotation-shell--loads-quotation-for-reference,
+routes-quotation-shell--lookup-failure-is-not-found,
+routes-quotation-shell--newly-accepted-quote-shows-accepted,
+routes-quotation-shell--other-quote-keeps-available-status | |
 `ClientApp/src/routes/quotation/quoteDetails.tsx#default` | consumer | default |
 1 | routes-acceptquote--delivery-and-return-step | |
 `ClientApp/src/routes/quotation/types.ts#QuotationtProps` | nonvisual |
 QuotationtProps | 0 | none | |
 `ClientApp/src/routes/requestForQuote/copy/index.tsx#default` | direct | default
-| 1 | routes-exportcoverage--request-for-quote-copy | |
+| 2 | routes-requestforquote-copy--copies-source-then-organisation-and-contact,
+routes-requestforquote-copy--copy-rejection-keeps-loading | |
 `ClientApp/src/routes/requestForQuote/create/index.tsx#default` | direct |
-default | 1 | routes-exportcoverage--request-for-quote-create | |
+default | 2 |
+routes-requestforquote-create--pending-then-organisation-and-contact,
+routes-requestforquote-create--create-failure-keeps-loading | |
 `ClientApp/src/routes/requestForQuote/created/index.tsx#default` | direct |
 default | 1 | routes-exportcoverage--request-for-quote-created | |
-`ClientApp/src/routes/requestForQuote/index.tsx#default` | direct | default | 1
-| routes-exportcoverage--request-for-quote-route | |
+`ClientApp/src/routes/requestForQuote/index.tsx#default` | direct | default | 4
+| routes-requestforquote-shell--loads-statuses-then-first-step,
+routes-requestforquote-shell--invalid-application-id-is-not-found,
+routes-requestforquote-shell--status-load-failure-is-not-found,
+routes-requestforquote-shell--unknown-application-is-not-found | |
 `ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx#default` | direct
 | RequestForQuote | 1 | routes-requestforquote--instrument-and-request-step | |
+`ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx#useInstrumentAndRequestLookups`
+| nonvisual | useInstrumentAndRequestLookups | 0 | none | |
 `ClientApp/src/routes/requestForQuote/instrumentAndRequestProps.ts#default` |
 nonvisual | default | 0 | none | |
 `ClientApp/src/routes/requestForQuote/instrumentAndRequestProps.ts#isSerialNumberHidden`
@@ -451,14 +479,20 @@ nonvisual | newCertificateSubOptions | 0 | none | |
 nonvisual | otherApprovalSubOptions | 0 | none | |
 `ClientApp/src/routes/ta/applicationOptions.ts#variationSubOptions` | nonvisual
 | variationSubOptions | 0 | none | |
-`ClientApp/src/routes/ta/create/index.tsx#default` | direct | default | 1 |
-routes-exportcoverage--type-approval-create | |
-`ClientApp/src/routes/ta/created/index.tsx#default` | direct | default | 1 |
-routes-exportcoverage--type-approval-created | |
+`ClientApp/src/routes/ta/create/index.tsx#default` | direct | default | 2 |
+routes-typeapproval-create--pending-then-organisation-details,
+routes-typeapproval-create--create-failure-keeps-loading | |
+`ClientApp/src/routes/ta/created/index.tsx#default` | direct | default | 3 |
+routes-typeapproval-created--submitted-reference,
+routes-typeapproval-created--dashboard-button,
+routes-typeapproval-created--dashboard-link | |
 `ClientApp/src/routes/ta/displayRules.ts#DisplayRules` | nonvisual |
 DisplayRules | 0 | none | | `ClientApp/src/routes/ta/displayRules.ts#default` |
 nonvisual | default | 0 | none | | `ClientApp/src/routes/ta/index.tsx#default` |
-direct | default | 1 | routes-exportcoverage--type-approval-route | |
+direct | default | 3 |
+routes-typeapproval-shell--loads-statuses-then-first-step,
+routes-typeapproval-shell--status-load-failure-is-not-found,
+routes-typeapproval-shell--unknown-application-is-not-found | |
 `ClientApp/src/routes/ta/instrumentInfoPanel.tsx#InstrumentCategory` | nonvisual
 | InstrumentCategory | 0 | none | |
 `ClientApp/src/routes/ta/instrumentInfoPanel.tsx#InstrumentType` | nonvisual |

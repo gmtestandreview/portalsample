@@ -736,6 +736,22 @@ describe('branch selector modal', () => {
     expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
   });
 
+  it('records an empty target organisation when none was selected during account creation', async () => {
+    expect.hasAssertions();
+
+    resetBranchSelectorMocks();
+
+    renderModal({ abn: undefined, accountCreationCompleted: false });
+
+    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+
+    await waitFor(() => {
+      expect(mocks.setCompleted).toHaveBeenCalledWith();
+    });
+
+    expect(mocks.setTargetOrganisation).toHaveBeenCalledWith('', '');
+  });
+
   it('calls setCompleted and setTargetOrganisation when account creation is incomplete on save', async () => {
     expect.hasAssertions();
 

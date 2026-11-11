@@ -1,12 +1,18 @@
 import { Col, Row } from 'react-bootstrap';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 
+/**
+ * Shows the NMI test officer's contact details beneath a caller-supplied
+ * heading. The heading is the only text that differs between the quotation and
+ * measurement-report surfaces, so it is a required prop rather than a default.
+ */
 const NMIContactDetails = (
   props: Readonly<{
+    heading: string;
     quotationData: RequestForQuoteDetails | undefined;
   }>,
 ) => {
-  const { quotationData } = props;
+  const { heading, quotationData } = props;
   const mailtoSubject = encodeURIComponent(
     `Reviewing Quotation ID: ${quotationData?.quotationIdNum ?? ''}`,
   );
@@ -15,10 +21,7 @@ const NMIContactDetails = (
     <Row className='mb-3'>
       <Col md={12}>
         <div className='p-4 bg-light'>
-          <h3 className='h5 mb-0'>
-            Contact your NMI test officer if any of the details are not correct
-            before proceeding.
-          </h3>
+          <h3 className='h5 mb-0'>{heading}</h3>
           {/* Render field label + values
                                     Use SummaryDisplay components instead (TBC)
                                     */}
