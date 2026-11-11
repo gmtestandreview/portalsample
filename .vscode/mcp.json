@@ -68,6 +68,11 @@
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "stifler-memex-mcp", "serve", "--repo", "."]
+    },
+    "jscpd": {
+      "type": "stdio",
+      "command": "jscpd",
+      "args": ["--mcp", "/path/to/project"]
     }
   }
 }

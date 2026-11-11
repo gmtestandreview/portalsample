@@ -95,44 +95,45 @@ export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
     }),
   ) as T;
 
-export const parseDate = (value: Date | string): Date | undefined => {
-  let parsedDate: Date | undefined;
+const lengthBasedDateFormat = (value: string): string =>
+  value.length === 10 ? DATE_DDMMYYY_FORMAT : DATE_TIME_LOCALE_FORMAT;
 
+const coerceToDate = (
+  value: Date | string,
+  selectFormat: (value: string) => string,
+): Date | undefined => {
   if (typeof value === 'string') {
-    let dateFormat;
-    if (value.length === 10) {
-      dateFormat = DATE_DDMMYYY_FORMAT;
-    } else {
-      dateFormat = DATE_TIME_LOCALE_FORMAT;
-    }
-
-    parsedDate = parse(value, dateFormat, new Date(), { locale: enAU });
-  } else if (value instanceof Date) {
-    parsedDate = value;
+    return parse(value, selectFormat(value), new Date(), { locale: enAU });
   }
 
-  if (parsedDate !== undefined && isValid(parsedDate)) {
-    parsedDate.setHours(0);
-    parsedDate.setMinutes(0);
-    parsedDate.setSeconds(0);
-    parsedDate.setMilliseconds(0);
-
-    return parsedDate;
+  if (value instanceof Date) {
+    return value;
   }
 
   return undefined;
 };
 
-export const parseDateWithTime = (value: Date | string): Date | undefined => {
-  let parsedDate: Date | undefined;
+// Normalizes the time-of-day to local midnight, mutating the date in place to
+// preserve the long-standing behavior of the parse* helpers.
+const atStartOfDayInPlace = (date: Date): Date => {
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
 
-  if (typeof value === 'string') {
-    const dateFormat =
-      value.length === 10 ? DATE_DDMMYYY_FORMAT : DATE_TIME_LOCALE_FORMAT;
-    parsedDate = parse(value, dateFormat, new Date(), { locale: enAU });
-  } else if (value instanceof Date) {
-    parsedDate = value;
-  }
+  return date;
+};
+
+export const parseDate = (value: Date | string): Date | undefined => {
+  const parsedDate = coerceToDate(value, lengthBasedDateFormat);
+
+  return parsedDate !== undefined && isValid(parsedDate)
+    ? atStartOfDayInPlace(parsedDate)
+    : undefined;
+};
+
+export const parseDateWithTime = (value: Date | string): Date | undefined => {
+  const parsedDate = coerceToDate(value, lengthBasedDateFormat);
 
   return parsedDate !== undefined && isValid(parsedDate)
     ? parsedDate
@@ -140,26 +141,11 @@ export const parseDateWithTime = (value: Date | string): Date | undefined => {
 };
 
 export const parseDateUTC = (value: Date | string): Date | undefined => {
-  let parsedDate: Date | undefined;
+  const parsedDate = coerceToDate(value, () => DATE_TIME_LOCALE_FORMAT);
 
-  if (typeof value === 'string') {
-    parsedDate = parse(value, DATE_TIME_LOCALE_FORMAT, new Date(), {
-      locale: enAU,
-    });
-  } else if (value instanceof Date) {
-    parsedDate = value;
-  }
-
-  if (parsedDate !== undefined && isValid(parsedDate)) {
-    parsedDate.setHours(0);
-    parsedDate.setMinutes(0);
-    parsedDate.setSeconds(0);
-    parsedDate.setMilliseconds(0);
-
-    return parsedDate;
-  }
-
-  return undefined;
+  return parsedDate !== undefined && isValid(parsedDate)
+    ? atStartOfDayInPlace(parsedDate)
+    : undefined;
 };
 
 export const isDateValid = (
