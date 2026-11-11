@@ -13,6 +13,7 @@ import {
   YesNo,
 } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -100,11 +101,11 @@ const submitForm =
   ) => {
     if (accounts.length > 0) {
       try {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          RequestForPatternApprovalClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
 
         const valuesToSave: RequestForPatternApprovalSummary = { ...values };
 
