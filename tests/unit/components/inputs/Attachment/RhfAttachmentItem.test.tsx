@@ -202,6 +202,35 @@ describe('rhf attachment item behavior', () => {
     );
   });
 
+  it('normalises missing attachment names in the save error and remove label', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('save failed'));
+    const onCategoryError = vi.fn<CategoryError>();
+    renderItem(
+      { onCategoryUpdate, onCategoryError },
+      { ...attachment, attachmentName: undefined },
+    );
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate',
+    );
+
+    await waitFor(() => {
+      expect(onCategoryError).toHaveBeenCalledWith(
+        'Could not save the category for .',
+      );
+    });
+
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveTextContent(
+      'Delete',
+    );
+  });
+
   it('survives a failed category save when no error handler is given', async () => {
     expect.hasAssertions();
 

@@ -449,6 +449,42 @@ describe('pa request item', () => {
     },
   );
 
+  it('keeps action routes inert when the portal reference id is absent', async () => {
+    expect.hasAssertions();
+
+    resetPaRequestItemMocks();
+    const user = userEvent.setup();
+    const { portalReferenceId: _portalReferenceId, ...requestWithoutPortalId } =
+      baseRequest;
+
+    renderPaRequestItem({
+      ...requestWithoutPortalId,
+      status: PaDashboardItemStatus.PaSubmitted,
+    });
+
+    await user.click(
+      screen.getByRole('button', { name: 'View application details' }),
+    );
+    await user.click(screen.getByRole('button', { name: /messages/i }));
+
+    expect(
+      screen.getByRole('status', { name: 'Current route' }),
+    ).toHaveTextContent('/dashboard');
+  });
+
+  it('uses the unknown status fallback when the raw status is absent', () => {
+    expect.hasAssertions();
+
+    resetPaRequestItemMocks();
+    const { status: _status, ...requestWithoutStatus } = baseRequest;
+    renderPaRequestItem({
+      ...requestWithoutStatus,
+      unreadMessageCount: undefined,
+    });
+
+    expect(screen.getAllByText('Unknown status')).toHaveLength(2);
+  });
+
   it('uses the manage route and zero-message state for unrecognised non-draft statuses', async () => {
     expect.hasAssertions();
 

@@ -116,6 +116,31 @@ describe(pollUploadProgress, () => {
     );
   });
 
+  it('normalises a non-Error statistics cleanup failure before logging', async () => {
+    expect.hasAssertions();
+
+    resetPollUploadProgressState();
+
+    const { client, getProgress, deleteProgressStatistics } = makeClient();
+    getProgress.mockResolvedValue({ percent: 100, status: 'Completed' });
+    deleteProgressStatistics.mockRejectedValue('gone');
+
+    await pollUploadProgress({
+      client,
+      uploadId: 'u1',
+      signal: new AbortController().signal,
+      onProgress: vi.fn<(...args: unknown[]) => unknown>(),
+      onFinished: vi.fn<(...args: unknown[]) => unknown>(),
+    });
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(appLoggerError).toHaveBeenCalledWith(
+      'Failed to delete progress statistics',
+      expect.objectContaining({ message: 'gone' }),
+      { uploadId: 'u1' },
+    );
+  });
+
   it('backs off then retries with the same percent after a failed poll', async () => {
     expect.hasAssertions();
 

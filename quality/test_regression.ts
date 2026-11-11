@@ -111,15 +111,22 @@ test('BUG-005: trackGAPii reads visible DOM content before redaction in localhos
     await import('../ClientApp/src/analytics/GoogleAnalytics');
 
   document.body.innerHTML = '<div data-pii="contactName">Visible Contact</div>';
-  trackGAPii();
 
-  expect(table).toHaveBeenCalledWith({
-    originalData: {
-      contactName: 'Visible Contact',
-    },
-  });
-  expect(send).toHaveBeenCalled();
-  log.mockRestore();
+  try {
+    trackGAPii();
+
+    expect(table).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledWith({
+      hitType: 'event',
+      category: 'form_viewed_sanitized',
+      data: {
+        contactName: '[REDACTED]',
+      },
+    });
+  } finally {
+    table.mockRestore();
+    log.mockRestore();
+  }
 });
 
 test('BUG-006: AGENTS guidance does not deny the root package.json or npm validation scripts', () => {

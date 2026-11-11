@@ -676,6 +676,32 @@ describe('application and instrument step', () => {
         );
       });
     });
+
+    it('keeps sparse category lookup entries selectable', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        values: baseValues({
+          instrumentCategoryLookup: [
+            { id: undefined, label: 'Sparse category', parentId: undefined },
+          ],
+          instrumentTypeLookup: [],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      });
+
+      await waitFor(() => {
+        expect(selectNamed('instrumentCategory').options).toContainEqual({
+          displayText: 'Sparse category',
+          value: '',
+        });
+      });
+    });
   });
 
   describe('changing the instrument category', () => {

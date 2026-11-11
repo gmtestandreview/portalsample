@@ -816,6 +816,27 @@ describe('workflow route wrappers', () => {
     );
   });
 
+  it('renders request-for-quote success content with an empty reference when the id is absent', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    const RequestForQuoteCreated = (
+      await import('../../../ClientApp/src/routes/requestForQuote/created')
+    ).default;
+
+    renderAt(
+      '/request-for-quote-success',
+      <RequestForQuoteCreated />,
+      '/request-for-quote-success',
+    );
+
+    expect(screen.getByTestId('form-banner')).toHaveAttribute(
+      'data-ref-title',
+      'Ref ID: ',
+    );
+  });
+
   it('renders the submitted request-for-quote summary view after loading statuses', async () => {
     expect.hasAssertions();
 

@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { statSync } from 'node:fs';
 import path from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -128,37 +127,42 @@ test('reconciles a freshly generated lint report and scratch evidence', async ()
     report,
   });
 
+  assert.equal(report.counts.total, 57);
+  assert.deepEqual(report.fileAudit, {
+    missingPatterns: [],
+    transientFiles: [],
+  });
   assert.deepEqual(result.counts, {
-    total: 235,
-    actionable: 234,
-    stale: 1,
+    total: 57,
+    actionable: 57,
+    stale: 0,
     accepted: 0,
     generatedVendor: 0,
   });
-  assert.equal(result.scratch.exists, statSync(scratchPath).isFile());
+  assert.equal(result.counts.total, report.diagnostics.length);
+  assert.equal(result.scratch.exists, false);
   assert.equal(result.scratch.tracked, false);
-  const serializedScratchDiagnostic = JSON.parse(
-    JSON.stringify(result.scratch.diagnostic),
-  );
-  assert.deepEqual(serializedScratchDiagnostic, {
-    file: scratchPath,
-    severity: 'error',
-    ruleId: null,
-    message:
-      `Parsing error: ${scratchPath} was not found by the project service. ` +
-      'Consider either including it in the tsconfig.json or including it in allowDefaultProject.\n' +
-      'allowDefaultProject is set to [".claude/skills/typescript-expert/scripts/tests/utility-types.test.ts"], which does not match \'ClientApp\\src\\components\\Inputs\\.remember\\tmp\\last-ndc.ts\'.',
-    fatal: true,
-    fixable: false,
-  });
+  assert.equal(result.scratch.diagnostic, undefined);
   assert.deepEqual(result.inlineExceptions, []);
   assert.equal(result.diagnosticInventory.length, result.counts.total);
+  assert.deepEqual(
+    result.diagnosticInventory.map(({ index }) => index),
+    report.diagnostics.map((_, index) => index),
+  );
   const categoryCounts = new Map();
   for (const { category } of result.diagnosticInventory) {
     categoryCounts.set(category, (categoryCounts.get(category) ?? 0) + 1);
   }
-  assert.deepEqual(Object.fromEntries(categoryCounts), {
-    actionable: 234,
-    stale: 1,
-  });
+  const expectedCategoryCounts = Object.fromEntries(
+    Object.entries(result.counts)
+      .filter(([category]) => category !== 'total')
+      .filter(([, count]) => count > 0),
+  );
+  assert.deepEqual(Object.fromEntries(categoryCounts), expectedCategoryCounts);
+  assert.equal(
+    Object.entries(result.counts)
+      .filter(([category]) => category !== 'total')
+      .reduce((sum, [, count]) => sum + count, 0),
+    result.counts.total,
+  );
 });

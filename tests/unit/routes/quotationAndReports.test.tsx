@@ -570,6 +570,10 @@ const resetQuotationAndReportsMocks = () => {
         tmasStatus: 'Withdrawn',
         tmasPortalRequestId: 'RFQ-101',
       },
+      {
+        tmasTcReportName: 'RPT-102',
+        tmasStatus: 'Report available',
+      },
     ],
   });
 };
@@ -933,10 +937,9 @@ describe('quotation and measurement report routes', () => {
       expect(screen.getByText('RPT-100')).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('link', { name: 'View report' })).toHaveAttribute(
-      'href',
-      '/report/AQ-100',
-    );
+    expect(
+      screen.getAllByRole('link', { name: 'View report' })[0],
+    ).toHaveAttribute('href', '/report/AQ-100');
     expect(
       screen.getAllByRole('link', {
         name: 'Request recalibration for this instrument/artefact',

@@ -207,4 +207,28 @@ describe('googleAnalytics', () => {
       consoleSpy.mockRestore();
     }
   });
+
+  it('uses an empty key for a malformed data-pii element', async () => {
+    expect.hasAssertions();
+
+    resetAnalyticsState();
+    const querySelectorAll = vi
+      .spyOn(document, 'querySelectorAll')
+      .mockReturnValue([{ dataset: {} }] as unknown as NodeListOf<HTMLElement>);
+
+    try {
+      const { trackGAPii } =
+        await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+
+      trackGAPii();
+
+      expect(reactGaMock.send).toHaveBeenCalledWith({
+        hitType: 'event',
+        category: 'form_viewed_sanitized',
+        data: { '': '[REDACTED]' },
+      });
+    } finally {
+      querySelectorAll.mockRestore();
+    }
+  });
 });

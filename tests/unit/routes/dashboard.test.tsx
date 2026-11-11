@@ -865,6 +865,40 @@ describe('dashboard', () => {
     expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
   });
 
+  it('leaves an accepted quote without quote details unchanged', async () => {
+    expect.hasAssertions();
+
+    resetDashboardMocks();
+
+    mockSessionGetItem.mockReturnValue('RFQ-accepted-without-details');
+    const acceptedItem = {
+      referenceId: 'RFQ-accepted-without-details',
+      status: 'Quote offer is available',
+      quote: undefined,
+      requestForQuote: { artefactName: 'Mass standard' },
+    };
+    mockGetDrafts.mockResolvedValue({
+      items: [acceptedItem],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 1,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      expect(mockSessionSetItem).toHaveBeenCalledWith(
+        'RFQ-accepted-without-details',
+        'view-quote-id',
+      );
+    });
+
+    expect(acceptedItem.status).toBe('Quote offer is accepted');
+    expect(acceptedItem.quote).toBeUndefined();
+    expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
+  });
+
   it('removes an accepted quote marker when the response has no items', async () => {
     expect.hasAssertions();
 

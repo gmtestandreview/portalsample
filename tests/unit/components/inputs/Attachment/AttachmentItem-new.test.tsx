@@ -189,6 +189,16 @@ describe('attachment item new behavior', () => {
     );
   });
 
+  it('keeps the removal description meaningful when the file name is absent', () => {
+    expect.hasAssertions();
+
+    renderItem({}, undefined, { ...attachment, attachmentName: undefined });
+
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveTextContent(
+      'Delete',
+    );
+  });
+
   it('opens and closes the delete confirmation without removing the file', async () => {
     expect.hasAssertions();
 

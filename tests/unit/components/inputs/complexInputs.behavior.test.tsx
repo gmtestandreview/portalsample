@@ -369,8 +369,8 @@ describe('complex input behavior slice', () => {
           displayText: undefined,
           unqiueId: undefined,
           addressLine1: undefined,
-          addressLine2: 'Suite 2',
-          addressLine3: 'Building A',
+          addressLine2: undefined,
+          addressLine3: undefined,
           suburb: undefined,
           postCode: undefined,
           state: State.NSW,
@@ -399,6 +399,8 @@ describe('complex input behavior slice', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent('"line1":""');
+      expect(screen.getByTestId('values')).toHaveTextContent('"line2":""');
+      expect(screen.getByTestId('values')).toHaveTextContent('"line3":""');
       expect(screen.getByTestId('values')).toHaveTextContent('"suburb":""');
       expect(screen.getByTestId('values')).toHaveTextContent('"postcode":""');
     });

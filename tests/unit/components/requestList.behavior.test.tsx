@@ -412,6 +412,32 @@ describe('requestList behavior', () => {
     expect(trackGAEvent).toHaveBeenCalledWith('Viewquotation');
   });
 
+  it('omits withdrawn quotation actions when the quotation id is absent', async () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    const user = userEvent.setup();
+    renderInDashboardList(
+      <RequestItem
+        request={{
+          ...baseRequest,
+          status: DashboardItemStatus.ReportWithdrawn,
+          quote: undefined,
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'Request recalibration' }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    expect(
+      screen.queryByRole('menuitem', { name: 'View quotation' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('renders sparse RequestItem content and the default non-draft action', async () => {
     expect.hasAssertions();
 
@@ -495,6 +521,40 @@ describe('requestList behavior', () => {
       'RFQ-2023-009012',
     );
     expect(trackGAEvent).toHaveBeenCalledWith('Deleterequest');
+  });
+
+  it('does not render RequestItem or InstrumentItem without a reference id', () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    const { container } = renderInDashboardList(
+      <>
+        <RequestItem request={{ ...baseRequest, referenceId: undefined }} />
+        <InstrumentItem
+          request={{ ...instrumentRequest, referenceId: undefined }}
+        />
+      </>,
+    );
+
+    expect(container.querySelector('li')).toBeNull();
+  });
+
+  it('uses the unknown status fallback when RequestItem has no status', () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    renderInDashboardList(
+      <RequestItem
+        request={{
+          ...baseRequest,
+          status: undefined,
+          quote: undefined,
+          report: undefined,
+        }}
+      />,
+    );
+
+    expect(screen.getByText('Unknown status')).toBeInTheDocument();
   });
 
   it('renders RequestItem draft fallback heading when manufacturer is absent', async () => {
@@ -629,6 +689,49 @@ describe('requestList behavior', () => {
     expect(
       screen.getByRole('status', { name: 'Current route' }),
     ).toHaveTextContent('/report/Q-2023-007777');
+  });
+
+  it('renders an unlabelled latest-report button when the report name is absent', () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    renderInDashboardList(
+      <InstrumentItem
+        request={{
+          ...instrumentRequest,
+          artefact: {
+            ...instrumentRequest.artefact,
+            tmasTcReportName: undefined,
+          },
+        }}
+      />,
+    );
+
+    const latestReport = screen.getByRole('button', {
+      name: 'View latest report',
+    });
+
+    expect(latestReport).not.toHaveAttribute('data-testid');
+  });
+
+  it('omits InstrumentItem latest-report actions when the quotation id is absent', async () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    const user = userEvent.setup();
+    renderInDashboardList(
+      <InstrumentItem request={{ ...instrumentRequest, quote: undefined }} />,
+    );
+
+    expect(
+      screen.queryByRole('link', { name: 'View latest report' }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    expect(
+      screen.queryByRole('menuitem', { name: 'View latest report' }),
+    ).not.toBeInTheDocument();
   });
 
   it('runs InstrumentItem tab and issued-report action callbacks', async () => {

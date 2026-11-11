@@ -1,4 +1,4 @@
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { FilterMessages } from '../../../../ClientApp/src/api/web-api-client';
@@ -755,6 +755,33 @@ describe('application messages', { timeout: 15_000 }, () => {
       expect(screen.getByLabelText('Select your view')).toHaveValue(
         FilterMessages.ShowAllMessages,
       );
+    });
+
+    it('keeps the current view when an unknown filter value is emitted', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
+      await renderRoute();
+      await waitFor(() => {
+        expect(screen.getByText('Assessment update')).toBeInTheDocument();
+      });
+
+      const select = screen.getByLabelText('Select your view');
+      fireEvent.change(select, { target: { value: 'UnknownFilter' } });
+
+      await waitFor(() => {
+        expect(
+          clients.patternApproval.methods.getAppMessages,
+        ).toHaveBeenLastCalledWith(
+          'APP-1',
+          10,
+          1,
+          FilterMessages.ShowAllMessages,
+          'APP-1',
+        );
+      });
+
+      expect(select).toHaveValue(FilterMessages.ShowAllMessages);
     });
 
     it('fetches the requested page and scrolls back to the heading', async () => {

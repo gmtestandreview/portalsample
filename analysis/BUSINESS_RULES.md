@@ -265,7 +265,7 @@ never been submitted to CRM and have no `QuoteStatus` value **Confidence:** High
 ### RULE-007: Status → Downloadable Document Mapping
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:39-74` **Plain English:** The
+`ClientApp/src/routes/common/helperFunctions.ts:172-207` **Plain English:** The
 PDF document served to a customer for a given record depends entirely on its
 current status. Different statuses serve fundamentally different documents
 (offer vs acceptance vs report). **Specification:**
@@ -356,8 +356,8 @@ perspective **Confidence:** High
 ### RULE-010: Dashboard Action Menu by Status
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:439-523`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:281-345` _(corrected
+`ClientApp/src/components/RequestList/requestItem.tsx:451-557`,
+`ClientApp/src/components/RequestList/instrumentItem.tsx:306-379` _(corrected
 2026-09-02, CRD-045 - previous citation was past end of file)_ **Plain
 English:** Each dashboard card exposes a specific subset of actions depending on
 the record's status. This is the master gating table for all customer-initiated
@@ -496,8 +496,8 @@ Then   status transitions to QuoteAccepted (optimistically shown immediately)
 ### RULE-015: Recalibration Request Eligibility
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:454-469`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:303-330` _(corrected
+`ClientApp/src/components/RequestList/requestItem.tsx:528-547`,
+`ClientApp/src/components/RequestList/instrumentItem.tsx:341-363` _(corrected
 2026-09-02, CRD-045 - previous citation was past end of file)_ **Plain
 English:** A customer can copy a completed or withdrawn RFQ as a recalibration
 request only when the original has reached specific end states.
@@ -545,7 +545,7 @@ state.
 ### RULE-017: Payment Terms — Prepaid vs 30-Day Invoice
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/acceptQuote/paymentDetails.tsx:86-97`,
+`ClientApp/src/routes/acceptQuote/paymentDetails.tsx:112-126`,
 `ClientApp/src/routes/acceptQuote/submittedSuccess.tsx:50-91` **Plain English:**
 After accepting a quote, customers on "Prepaid" terms must pay before
 calibration commences. All other customers receive standard 30-day invoice
@@ -622,7 +622,7 @@ Then   "View report" link is hidden
 
 **Category:** Lifecycle **Priority:** P2 **Source:**
 `ClientApp/src/routes/common/quoteStatus.ts:35-40`,
-`ClientApp/src/components/RequestList/requestItem.tsx:415-422` **Plain
+`ClientApp/src/components/RequestList/requestItem.tsx:424-433` **Plain
 English:** Once NMI receives the physical instrument, the dashboard card heading
 switches from the customer's make/model entry to NMI's formal artefact name.
 **Specification:**
@@ -724,7 +724,7 @@ Example: 12500.5 → "$12,500.50"
 ### RULE-027: Date Parsing Dispatch
 
 **Category:** Calculation **Priority:** P1 **Source:**
-`ClientApp/src/utils/index.ts:92-115` **Plain English:** The portal accepts
+`ClientApp/src/utils/index.ts:98-124` **Plain English:** The portal accepts
 dates in two formats — Australian short form (dd/MM/yyyy) and ISO 8601 — and
 selects the parser based on string length. **Specification:**
 
@@ -749,7 +749,7 @@ Implementation constants: `DATE_DDMMYYY_FORMAT`, `DATE_TIME_LOCALE_FORMAT`
 ### RULE-028: Reporting Period Abbreviation
 
 **Category:** Calculation **Priority:** P2 **Source:**
-`ClientApp/src/utils/index.ts:241-258` **Plain English:** Financial year strings
+`ClientApp/src/utils/index.ts:262-268` **Plain English:** Financial year strings
 are shortened to a compact form for display. **Specification:**
 
 ```text
@@ -770,7 +770,7 @@ malformed strings **Confidence:** High
 ### RULE-031: Australian Postcode Range
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:389-434`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:452-480`
 **Plain English:** Postcodes must be exactly 4 digits and fall within valid
 Australian ranges. **Specification:**
 
@@ -824,7 +824,7 @@ some `+61`-prefixed variants with spaces?
 ### RULE-033: Email Address Format
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:594-628`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:612-628`
 **Plain English:** Email addresses must match a custom RFC 5321-aligned regex
 and cannot exceed 100 characters. **Specification:**
 
@@ -870,7 +870,7 @@ normal case — **SME question: Should person names accept diacritical character
 ### RULE-035: Business Name Charset (ASIC-Aligned)
 
 **Category:** Validation **Priority:** P0 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:878-916`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:202-220`
 _(corrected 2026-09-02, CRD-043 — the previously cited 678-707 range is a
 different validator)_ **Plain English:** Business and trading names must conform
 to the character set defined in the ASIC CompanyName Business Rules message

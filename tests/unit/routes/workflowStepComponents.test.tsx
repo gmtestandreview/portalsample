@@ -827,6 +827,58 @@ describe('workflow step components', () => {
     });
   });
 
+  it('renders the inactive state when accept-quote step ids are absent', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
+
+    const PaymentDetails = (
+      await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
+    ).default;
+    const payment = renderRoute(
+      '/accept-quote/payment-details',
+      <PaymentDetails id={undefined} name='' />,
+      '/accept-quote/*',
+    );
+
+    expect({
+      hasSummary: Boolean(screen.queryByTestId('info-summary')),
+      calls: mocks.getPaymentDetails.mock.calls.length,
+    }).toStrictEqual({ hasSummary: true, calls: 0 });
+
+    payment.unmount();
+
+    const ReportRecipient = (
+      await import('../../../ClientApp/src/routes/acceptQuote/reportRecipient')
+    ).default;
+    const recipient = renderRoute(
+      '/accept-quote/report-recipient',
+      <ReportRecipient id={undefined} name='' />,
+      '/accept-quote/*',
+    );
+
+    expect({
+      hasSummary: Boolean(screen.queryByTestId('info-summary')),
+      calls: mocks.getReportRecipient.mock.calls.length,
+    }).toStrictEqual({ hasSummary: true, calls: 0 });
+
+    recipient.unmount();
+
+    const DeliveryAndReturn = (
+      await import('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn')
+    ).default;
+    renderRoute(
+      '/accept-quote/delivery-and-return',
+      <DeliveryAndReturn id={undefined} name='' />,
+      '/accept-quote/*',
+    );
+
+    expect({
+      hasSummary: Boolean(screen.queryByTestId('info-summary')),
+      calls: mocks.getDeliveryAndReturn.mock.calls.length,
+    }).toStrictEqual({ hasSummary: true, calls: 0 });
+  });
+
   it('uses separate postal address details for report recipients', async () => {
     expect.hasAssertions();
 

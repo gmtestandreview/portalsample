@@ -206,6 +206,32 @@ describe('account and contact wizard prop factories', () => {
     });
   });
 
+  it('uses empty organisation labels when optional create-account values are absent', async () => {
+    expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
+    const props = createAccountProps(
+      accounts,
+      instance,
+      statuses,
+      accountContext,
+    );
+
+    await props.onSaveAndNext?.(
+      {
+        contact: { title: toTitle('Dr') },
+      },
+      true,
+      new AbortController().signal,
+    );
+
+    expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
+      '',
+      '',
+      '',
+    );
+  });
+
   it('loads and completes update-account details with success and error notifications', async () => {
     expect.hasAssertions();
 

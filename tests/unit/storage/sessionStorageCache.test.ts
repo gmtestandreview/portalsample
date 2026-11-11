@@ -32,6 +32,19 @@ describe(SessionStorageCache, () => {
       ).toStrictEqual({ id: 42 });
     });
 
+    it('passes parsed values through a caller-provided deserializer', () => {
+      expect.hasAssertions();
+
+      clearSessionStorage();
+      globalThis.sessionStorage.setItem('test-key', JSON.stringify({ id: 42 }));
+
+      expect(
+        SessionStorageCache().getItem('test-key', (value) =>
+          String((value as StoredPayload).id),
+        ),
+      ).toBe('42');
+    });
+
     it('returns undefined and removes the key for malformed JSON (fail-soft)', () => {
       expect.hasAssertions();
 

@@ -732,7 +732,11 @@ describe('pattern/type approval dashboard', () => {
       branchSelectionModalMode: 'SelectAndEditOrg',
       userProfile: {
         ...BASE_ACCOUNT.userProfile,
-        patternApprovalDashboard: { ...BASE_FILTERS, filterCurrentPage: 4 },
+        patternApprovalDashboard: {
+          ...BASE_FILTERS,
+          filterActiveTab: undefined,
+          filterCurrentPage: 4,
+        },
       },
     };
     mockAccountContextState.value = {
