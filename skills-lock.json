@@ -1,22 +1,28 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
+    "dry-refactoring": {
+      "source": "kucherenko/jscpd",
+      "sourceType": "github",
+      "skillPath": "skills/dry-refactoring/SKILL.md",
+      "computedHash": "a1271fcaf6f275edf3b71f06371efe0ce346c44d1095114b311d66e6a9ed3d82"
+    },
     "migrate-oxfmt": {
       "source": "oxc-project/oxc",
       "sourceType": "github",
       "skillPath": ".agents/skills/migrate-oxfmt/SKILL.md",
-      "computedHash": "5b44a36de2419d145b7ab34d48b5b7e4709e2b6f1af97febd66ba7300ba6ec71"
+      "computedHash": ""
     },
     "playwright-bdd": {
       "source": "vitalets/playwright-bdd",
       "sourceType": "github",
       "skillPath": "skills/playwright-bdd/SKILL.md",
-      "computedHash": "b8981118393cbfc1f8dae83ef5f59ee01ecdf6d05b73cc8a88106a32895f4db1"
+      "computedHash": ""
     },
     "react-aria": {
       "source": "react-aria.adobe.com",
       "sourceType": "well-known",
-      "computedHash": "c778864aedee25fb7dfe980f772954e13ac76cdf3ff00879dd59b72621d797ae"
+      "computedHash": ""
     }
   }
 }
