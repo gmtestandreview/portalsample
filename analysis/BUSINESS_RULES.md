@@ -704,7 +704,7 @@ Example: "51824753556"
 ### RULE-026: AUD Currency Formatting
 
 **Category:** Calculation **Priority:** P1 **Source:**
-`ClientApp/src/utils/index.ts:328` **Plain English:** All monetary amounts are
+`ClientApp/src/utils/index.ts:320` **Plain English:** All monetary amounts are
 displayed in Australian dollars with locale-correct symbol, thousands
 separators, and two decimal places. **Specification:**
 
@@ -749,7 +749,7 @@ Implementation constants: `DATE_DDMMYYY_FORMAT`, `DATE_TIME_LOCALE_FORMAT`
 ### RULE-028: Reporting Period Abbreviation
 
 **Category:** Calculation **Priority:** P2 **Source:**
-`ClientApp/src/utils/index.ts:262-268` **Plain English:** Financial year strings
+`ClientApp/src/utils/index.ts:245-248` **Plain English:** Financial year strings
 are shortened to a compact form for display. **Specification:**
 
 ```text
