@@ -718,7 +718,7 @@ describe('pattern approval wizard prop factories', () => {
       'Type approval',
     );
     const token = ['access-token'];
-    const operations: [string, () => Promise<unknown>, number][] = [
+    const operations: [string, () => unknown, number][] = [
       ['application load', () => app.loadStepValues(abortSignal), 2],
       [
         'application save',
