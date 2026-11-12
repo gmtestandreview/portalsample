@@ -78,6 +78,9 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     pool: 'forks',
+    // Preserve test-file isolation so jsdom, module and global state cannot leak
+    // between files in the unit suite.
+    isolate: true,
     execArgv: ['--max-old-space-size=8192'],
     maxWorkers: 2,
     globals: true,
