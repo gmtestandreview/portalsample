@@ -24,12 +24,13 @@
  * UNRESOLVED and left alone - guessing would reintroduce the defect this script exists to catch.
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 // Imported explicitly rather than relied on as a global: eslint.config.mjs gives `**/*.mjs` browser
 // globals, so a bare `process` is an undefined-variable error here.
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { pathExists, readTextFile } from './safe-file-io.mjs';
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REGISTER = join(REPO_ROOT, 'analysis', 'BUSINESS_RULES.md');
@@ -178,7 +179,7 @@ function isRepoPath(candidate) {
 function resolveCitedPath(cited) {
   const direct = resolve(REPO_ROOT, cited);
   // the candidate is constrained to REPO_ROOT below
-  if (isRepoPath(direct) && existsSync(direct)) return direct;
+  if (isRepoPath(direct) && pathExists(direct, REPO_ROOT)) return direct;
 
   const suffix = cited.startsWith('/') ? cited : `/${cited}`;
   const matches = [...knownPathIndex()].filter(
@@ -188,12 +189,13 @@ function resolveCitedPath(cited) {
   if (unique.length === 1) {
     const viaKnown = resolve(REPO_ROOT, unique[0]);
     // the candidate is constrained to REPO_ROOT below
-    if (isRepoPath(viaKnown) && existsSync(viaKnown)) return viaKnown;
+    if (isRepoPath(viaKnown) && pathExists(viaKnown, REPO_ROOT))
+      return viaKnown;
   }
   return null;
 }
 
-const register = readFileSync(REGISTER, 'utf8');
+const register = readTextFile(REGISTER, REPO_ROOT);
 // Split on \r?\n deliberately. The register is CRLF, and in JavaScript `.` excludes line
 // terminators - \r among them - so a trailing \r stops `(.*)$` from ever matching a heading.
 // Left unhandled, every regex below silently matches nothing and the check reports a clean pass.
@@ -350,7 +352,7 @@ for (const site of citationSites) {
     }
 
     // abs is returned only for an existing path under REPO_ROOT
-    const srcLines = readFileSync(abs, 'utf8').split(/\r?\n/u);
+    const srcLines = readTextFile(abs, REPO_ROOT).split(/\r?\n/u);
     entry.fileLines = srcLines.length;
 
     if (entry.cited > srcLines.length) {

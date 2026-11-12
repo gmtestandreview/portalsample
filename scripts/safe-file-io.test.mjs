@@ -6,13 +6,16 @@ import { it } from 'node:test';
 import {
   listDirectory,
   makeDirectory,
+  makeExternalDirectory,
   pathExists,
   readBinaryFile,
   readTextFile,
+  realFilePath,
   realPath,
   safePath,
   statPath,
   writeTextFile,
+  writeExternalTextFile,
 } from './safe-file-io.mjs';
 
 const unsafePathCases = [
@@ -61,6 +64,48 @@ it('constrains reads, writes, and traversal to the declared workspace', () => {
     );
   } finally {
     rmSync(root, { recursive: true, force: true });
+  }
+});
+
+it('requires an absolute regular file for executable paths', () => {
+  const root = mkdtempSync(path.join(tmpdir(), 'safe-file-io-executable-'));
+  const executable = path.join(root, 'git.exe');
+  try {
+    writeFileSync(executable, 'binary');
+    assert.equal(realFilePath(executable), executable);
+    assert.throws(() => realFilePath('git'), /must be absolute/u);
+    assert.throws(() => realFilePath(root), /not a regular file/u);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+it('rejects symlinked ancestors for intentionally external output', () => {
+  const tempParent = mkdtempSync(path.join(tmpdir(), 'safe-file-io-external-'));
+  const actualOutput = path.join(tempParent, 'actual-output');
+  const linkedOutput = path.join(tempParent, 'linked-output');
+  try {
+    makeExternalDirectory(actualOutput);
+    symlinkSync(
+      actualOutput,
+      linkedOutput,
+      process.platform === 'win32' ? 'junction' : 'dir',
+    );
+
+    assert.throws(
+      () => makeExternalDirectory(path.join(linkedOutput, 'nested')),
+      /symlinked filesystem path/u,
+    );
+    assert.throws(
+      () =>
+        writeExternalTextFile(
+          path.join(linkedOutput, 'nested', 'result.txt'),
+          'unsafe',
+        ),
+      /symlinked filesystem path/u,
+    );
+  } finally {
+    rmSync(tempParent, { recursive: true, force: true });
   }
 });
 

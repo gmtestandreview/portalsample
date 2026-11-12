@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -15,6 +15,7 @@ import {
   resolveOutputPath,
   runLintDiagnostics,
 } from './lint-diagnostics.mjs';
+import { readTextFile, writeTextFile } from './safe-file-io.mjs';
 
 test('matches the configured lint target globs', () => {
   assert.deepEqual(LINT_PATTERNS, [
@@ -76,7 +77,12 @@ test('checks transient paths literally when they contain glob metacharacters', (
   const literalFile = path.join(projectRoot, 'literal[1].ts');
 
   try {
-    writeFileSync(literalFile, 'export const value = 1;\n', 'utf8');
+    writeTextFile(
+      literalFile,
+      'export const value = 1;\n',
+      'utf8',
+      projectRoot,
+    );
 
     const audit = createLintFileAudit({
       projectRoot,
@@ -109,11 +115,18 @@ test('runLintDiagnostics passes only matched patterns to ESLint', async () => {
   const projectRoot = mkdtempSync(path.join(os.tmpdir(), 'lint-patterns-'));
   const matchedFile = path.join(projectRoot, 'matched.ts');
   const missingPattern = 'missing.ts';
-  writeFileSync(
+  writeTextFile(
     path.join(projectRoot, 'eslint.config.mjs'),
     'export default [{}];\n',
+    undefined,
+    projectRoot,
   );
-  writeFileSync(matchedFile, 'export const value = 1;\n');
+  writeTextFile(
+    matchedFile,
+    'export const value = 1;\n',
+    undefined,
+    projectRoot,
+  );
   const originalLintFiles = ESLint.prototype.lintFiles;
   let lintedPatterns;
   ESLint.prototype.lintFiles = async (patterns) => {
@@ -154,7 +167,7 @@ test('main fails when the diagnostics report contains audit findings', async () 
 
     assert.equal(exitCode, 1);
     assert.deepEqual(
-      JSON.parse(readFileSync(path.join(projectRoot, reportPath), 'utf8')),
+      JSON.parse(readTextFile(path.join(projectRoot, reportPath), projectRoot)),
       report,
     );
   } finally {
@@ -165,16 +178,17 @@ test('main fails when the diagnostics report contains audit findings', async () 
 test('main default wiring fails for a temporary project with missing targets', async () => {
   const projectRoot = mkdtempSync(path.join(os.tmpdir(), 'lint-main-default-'));
   const outputPath = 'diagnostics.json';
-  writeFileSync(
+  writeTextFile(
     path.join(projectRoot, 'eslint.config.mjs'),
     'export default [{}];\n',
     'utf8',
+    projectRoot,
   );
 
   try {
     const exitCode = await main(['--out', outputPath], { projectRoot });
     const report = JSON.parse(
-      readFileSync(path.join(projectRoot, outputPath), 'utf8'),
+      readTextFile(path.join(projectRoot, outputPath), projectRoot),
     );
 
     assert.equal(exitCode, 1);

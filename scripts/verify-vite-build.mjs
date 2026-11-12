@@ -1,7 +1,12 @@
-import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadEnv } from 'vite';
+import {
+  listDirectory,
+  pathExists,
+  readTextFile,
+  safePath,
+} from './safe-file-io.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
@@ -14,29 +19,16 @@ const assert = (condition, message) => {
   if (!condition) fail(message);
 };
 
-const isInside = (parent, candidate) => {
-  const relative = path.relative(parent, candidate);
-  return (
-    relative === '' ||
-    (!relative.startsWith('..') && !path.isAbsolute(relative))
-  );
-};
-
 const distPath = (candidate) => {
-  const resolved = path.resolve(candidate);
-  assert(isInside(dist, resolved), `path escapes dist: ${candidate}`);
-  return resolved;
+  try {
+    return safePath(candidate, dist);
+  } catch {
+    throw new Error(`path escapes dist: ${candidate}`);
+  }
 };
 
 async function exists(filePath) {
-  const safePath = distPath(filePath);
-  try {
-    // safePath is rooted under the build output directory by distPath().
-    await stat(safePath);
-    return true;
-  } catch {
-    return false;
-  }
+  return pathExists(distPath(filePath), dist);
 }
 
 async function filesIn(directory) {
@@ -44,7 +36,7 @@ async function filesIn(directory) {
   if (!(await exists(safeDirectory))) return [];
 
   // safeDirectory is produced from distPath() and is therefore confined to dist.
-  const entries = await readdir(safeDirectory, { withFileTypes: true });
+  const entries = listDirectory(safeDirectory, { withFileTypes: true }, dist);
   const nested = await Promise.all(
     entries.map(async (entry) => {
       const entryPath = distPath(path.join(safeDirectory, entry.name));
@@ -83,8 +75,7 @@ const escapeHtmlAttributeValue = (value) =>
 
 async function readDistFile(filePath) {
   const safePath = distPath(filePath);
-  // safePath is rooted under dist after validation above.
-  return readFile(safePath, 'utf8');
+  return readTextFile(safePath, dist);
 }
 
 async function verifyHtmlEntry(fileName, expectedEntryName) {

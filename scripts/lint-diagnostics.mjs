@@ -1,7 +1,8 @@
-import { existsSync, globSync, mkdirSync, writeFileSync } from 'node:fs';
+import { globSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ESLint } from 'eslint';
+import { makeDirectory, pathExists, writeTextFile } from './safe-file-io.mjs';
 
 export const LINT_PATTERNS = [
   'ClientApp/env.js',
@@ -42,8 +43,8 @@ function relativeFilePath(projectRoot, filePath) {
   return path.relative(projectRoot, filePath).replaceAll(path.sep, '/');
 }
 
-function fileExists(filePath) {
-  return existsSync(filePath);
+function fileExists(filePath, root) {
+  return pathExists(filePath, root);
 }
 
 export function collectLintTargets({ projectRoot, patterns = LINT_PATTERNS }) {
@@ -85,7 +86,7 @@ export function createLintFileAudit({
     .filter(({ files }) => files.length === 0)
     .map(({ pattern }) => pattern);
   const transientFiles = targetFiles
-    .filter((file) => !fileExists(file))
+    .filter((file) => !fileExists(file, resolvedRoot))
     .map((file) => relativeFilePath(resolvedRoot, file));
 
   return { missingPatterns, transientFiles };
@@ -298,8 +299,8 @@ export async function main(
   const serialized = `${JSON.stringify(report, null, 2)}\n`;
 
   if (outputPath) {
-    mkdirSync(path.dirname(outputPath), { recursive: true });
-    writeFileSync(outputPath, serialized, 'utf8');
+    makeDirectory(path.dirname(outputPath), projectRoot);
+    writeTextFile(outputPath, serialized, 'utf8', projectRoot);
     process.stdout.write(`ESLint diagnostics written to ${outputPath}\n`);
   } else {
     process.stdout.write(serialized);

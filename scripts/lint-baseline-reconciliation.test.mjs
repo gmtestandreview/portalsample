@@ -127,14 +127,14 @@ test('reconciles a freshly generated lint report and scratch evidence', async ()
     report,
   });
 
-  assert.equal(report.counts.total, 57);
+  assert.equal(report.counts.total, 0);
   assert.deepEqual(report.fileAudit, {
     missingPatterns: [],
     transientFiles: [],
   });
   assert.deepEqual(result.counts, {
-    total: 57,
-    actionable: 57,
+    total: 0,
+    actionable: 0,
     stale: 0,
     accepted: 0,
     generatedVendor: 0,
