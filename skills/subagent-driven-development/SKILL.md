@@ -5,7 +5,7 @@ description: >-
   independent tasks, in the current session. Dispatches a fresh subagent per
   task with a combined spec-compliance and code-quality review after each, then
   a final whole-branch review, under repository governance (resumable ledger,
-  human gates, 3-round fix cap). Prefer over executing-plans when all work stays
+  human gates, 5-round fix cap). Prefer over executing-plans when all work stays
   in one session and tasks do not need parallel worktrees.
 ---
 
@@ -18,7 +18,7 @@ implementation for spec compliance and code quality, then finishing the branch.
 one brief and keeps the controller's context free for coordination, while an
 independent review per task catches what self-review misses. This skill adds
 this repository's governance on top of the generic method: a recoverable ledger,
-human gates, a 3-round fix cap, and the `.agent-sync/` workspace.
+human gates, a 5-round fix cap, and the `.agent-sync/` workspace.
 
 ## Outcome and acceptance
 
@@ -198,10 +198,10 @@ Everything else is a ruling in the ledger, not a stall.
      the fix diff joins the open findings; out-of-scope observations go to the
      ledger as deferred minors and never extend the loop.
    - After each round append
-     `Task <N>: fix round <R>/3 (<X> addressed, <Y> open — <one-liners>; commits <a7>..<b7>)`.
+     `Task <N>: fix round <R>/5 (<X> addressed, <Y> open — <one-liners>; commits <a7>..<b7>)`.
    - Never fix findings yourself in the controller session: it pollutes your
      context and skips review.
-   - **Round cap: 3.** If round 3's re-review still leaves findings open, stop
+   - **Round cap: 5.** If round 5's re-review still leaves findings open, stop
      and escalate to the human with the open findings and the report path. The
      human may authorize a fresh implementer on a more capable model, a re-plan,
      or a parked finding with a recorded ruling.
@@ -301,7 +301,7 @@ review by a different model.
 All scripts are Bash: run them as `bash <skill-dir>/scripts/<name> ...` (exec
 bits may be stripped), from anywhere inside the plan's repository. Two plans
 that share a filename get distinct workspaces (a `plan-path` marker records the
-owner). `review-package` exits 3 on an empty range or a HEAD that is not a
+owner). `review-package` exits 5 on an empty range or a HEAD that is not a
 descendant of BASE.
 
 ## Example
@@ -327,7 +327,7 @@ Task 2:
   [Resume implementer with both findings; it fixes, re-runs the covering test,
    appends a fix report. Dispatch re-reviewer with re-review-prompt.md]
   Re-reviewer: All findings addressed, no new breakage.
-  [Ledger: Task 2: fix round 1/3 (2 addressed, 0 open; commits d4e5f6a..b7c8d9e)]
+  [Ledger: Task 2: fix round 1/5 (2 addressed, 0 open; commits d4e5f6a..b7c8d9e)]
   [Ledger: Task 2: complete (commits d4e5f6a..b7c8d9e, review clean)]
 
 ... Tasks 3–5 ...
@@ -376,7 +376,7 @@ Task 2:
 - **Reviewer and implementer disagree:** the reviewer's verdict stands; a valid
   implementer concern is adjudicated by the controller, never overruled by the
   implementer.
-- **Review loop reaches round 3 with findings open:** stop and escalate to the
+- **Review loop reaches round 5 with findings open:** stop and escalate to the
   human (see Per task, step 5). The task may need re-planning or a different
   implementer approach.
 - **Ledger missing after compaction or `git clean -fdx`:** rebuild it from
@@ -398,7 +398,7 @@ Task 2:
 - **Upstream variant:** `superpowers:subagent-driven-development` (plugin
   version 7.0.0) is what this skill was merged with. Here this skill takes
   precedence where they differ, each difference required by a repo rule: human
-  gates and Veto Buffer (`.claude/rules/orchestration.md`), a 3-round fix cap
+  gates and Veto Buffer (`.claude/rules/orchestration.md`), a 5-round fix cap
   that escalates to the human, the `.agent-sync/sdd/` workspace kept after the
   run, and Tier 2 as the default final-review model
   (`.claude/rules/performance.md`). Re-diff against the upstream skill whenever
