@@ -1,9 +1,20 @@
 # Review package: routes/acceptQuote
 
-Generated 2026-11-11 from the working tree. 17 stale records across 14 source
-files. Stored digest = what the last reviewer signed; current digest = file now.
-Reviewing means reading the source against its claimed evidence, then
-re-stamping.
+Generated 2026-11-12 from HEAD (49b135ec) after the wizard props consolidation.
+17 stale records across 14 source files, plus 1 export(s) with no claim. Stored
+digest = what the last reviewer signed; current digest = file now. Reviewing
+means reading the source against its claimed evidence, then re-stamping.
+
+Files marked **REFACTOR** were edited by the consolidation
+(`git diff dd818c87..HEAD -- <file>`); their stale digest reflects a real source
+change and needs a read of that diff. Unmarked files were already stale before
+the refactor.
+
+## New exports needing a reviewed claim
+
+- `ClientApp/src/routes/acceptQuote/redirection.ts#acceptQuoteRedirectionOnError`
+  — **REFACTOR** (new file). Proposed classification: nonvisual (non-renderable
+  helper). Unit tests: `tests/unit/routes/acceptQuote/redirection.test.ts`
 
 ## ClientApp/src/routes/acceptQuote/create/index.tsx
 
@@ -19,7 +30,6 @@ re-stamping.
     `ClientApp/src/routes/acceptQuote/create/AcceptQuoteCreate.stories.tsx` ::
     `QuoteLookupFailureCreatesNothing` (marker: "Loading...")
 - Unit tests importing it: `tests/unit/routes/workflowWrappers.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx
 
@@ -31,15 +41,10 @@ re-stamping.
   - Claimed story: `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx` ::
     `QuotationSummaryStep` (marker: "Q-2024-000456")
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
-  `tests/unit/routes/acceptQuote/deliveryAndReturn.behavior.test.tsx`,
   `tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx`,
-  `tests/unit/routes/acceptQuote/deliveryAndReturnFormikBridge.test.tsx`,
-  `tests/unit/routes/acceptQuote/props.test.ts`,
-  `tests/unit/routes/acceptQuote/summaryAndAccept.behavior.test.tsx`,
   `tests/unit/routes/acceptQuote/summaryAndAccept.test.tsx`,
   `tests/unit/routes/workflowStepComponents.test.tsx`,
   `tests/unit/routes/workflowWrappers.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/deliveryAndReturnFormikBridge.tsx
 
@@ -49,14 +54,12 @@ re-stamping.
   `sha256:f8a8a4ae9b1fef3bbe4e05f173dc6991c54423cd0db957629b84733d77c599bf`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
-- Unit tests importing it:
-  `tests/unit/routes/acceptQuote/deliveryAndReturnFormikBridge.test.tsx`
-- Other stories importing it: none
+- Unit tests importing it: none
 
-## ClientApp/src/routes/acceptQuote/deliveryAndReturnProps.ts
+## ClientApp/src/routes/acceptQuote/deliveryAndReturnProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:c30bd1fe45a151f6f551d661fb360964b1ea93671759f76f9927309e8825e643`
+  `sha256:bf8463f9c910b97bd1e36333d2fe4186569af153393bfc7eea74280b337c8bc3`
 - Export `default` (nonvisual) stored digest:
   `sha256:677ac68faf492d25e0b8a18f0a5b2b085d4acb45c12535cf9076a08768697142`
   reviewer: codex-storybook-coverage-review
@@ -66,10 +69,7 @@ re-stamping.
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
-  `tests/unit/routes/acceptQuote/deliveryAndReturn.behavior.test.tsx`,
-  `tests/unit/routes/acceptQuote/deliveryAndReturnFormikBridge.test.tsx`,
   `tests/unit/routes/acceptQuote/props.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/index.tsx
 
@@ -93,7 +93,6 @@ re-stamping.
     `UnknownApplicationIsNotFound` (marker: "Not found destination")
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
   `tests/unit/routes/workflowWrappers.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/paymentDetails.tsx
 
@@ -105,14 +104,9 @@ re-stamping.
   - Claimed story: `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx` ::
     `QuotationSummaryStep` (marker: "Q-2024-000456")
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
-  `tests/unit/routes/acceptQuote/paymentDetails.behavior.test.tsx`,
-  `tests/unit/routes/acceptQuote/paymentDetails.test.tsx`,
-  `tests/unit/routes/acceptQuote/props.test.ts`,
-  `tests/unit/routes/acceptQuote/summaryAndAccept.behavior.test.tsx`,
   `tests/unit/routes/acceptQuote/summaryAndAccept.test.tsx`,
   `tests/unit/routes/workflowStepComponents.test.tsx`,
   `tests/unit/routes/workflowWrappers.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/paymentDetailsFormFields.tsx
 
@@ -126,21 +120,18 @@ re-stamping.
   `sha256:a836ee9ecc839fe1bc66c43ccc8ed53b23cda8b9f8e182470acf534ba5a8435b`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
-- Unit tests importing it:
-  `tests/unit/routes/acceptQuote/paymentDetails.behavior.test.tsx`
-- Other stories importing it: none
+- Unit tests importing it: none
 
-## ClientApp/src/routes/acceptQuote/paymentDetailsProps.ts
+## ClientApp/src/routes/acceptQuote/paymentDetailsProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:4d86b9b70d55c8481d9526432fefe0b3eb46701a3ca043baf2cf37fca08848ba`
+  `sha256:c2afffc767f6005ec53a6f8086e2e7247ef4d88c3f99b5568f77de7406114585`
 - Export `default` (nonvisual) stored digest:
   `sha256:8d108f61bd426e20c47c2a7a027221ec5df47e8ed97dba4c52c7d75fb17bfab8`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
   `tests/unit/routes/acceptQuote/props.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/reportRecipient.tsx
 
@@ -152,14 +143,9 @@ re-stamping.
   - Claimed story: `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx` ::
     `QuotationSummaryStep` (marker: "Q-2024-000456")
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
-  `tests/unit/routes/acceptQuote/props.test.ts`,
-  `tests/unit/routes/acceptQuote/reportRecipient.behavior.test.tsx`,
-  `tests/unit/routes/acceptQuote/reportRecipientFormikBridge.test.tsx`,
-  `tests/unit/routes/acceptQuote/summaryAndAccept.behavior.test.tsx`,
   `tests/unit/routes/acceptQuote/summaryAndAccept.test.tsx`,
   `tests/unit/routes/workflowStepComponents.test.tsx`,
   `tests/unit/routes/workflowWrappers.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/reportRecipientFormikBridge.tsx
 
@@ -169,21 +155,18 @@ re-stamping.
   `sha256:603d3da4c2bc084442d8072a900e97d21747f8b2a4add63126f3db082d1a3a5e`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
-- Unit tests importing it:
-  `tests/unit/routes/acceptQuote/reportRecipientFormikBridge.test.tsx`
-- Other stories importing it: none
+- Unit tests importing it: none
 
-## ClientApp/src/routes/acceptQuote/reportRecipientProps.ts
+## ClientApp/src/routes/acceptQuote/reportRecipientProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:0b85d60e1bb96ce91c22100cf02ebca7a2b014c840b1d297d93b974c0918e37d`
+  `sha256:d53cf19ecf298f21f255f1b0585db2dc0bddd90bc50d2a10065cd9f9d18569a3`
 - Export `default` (nonvisual) stored digest:
   `sha256:d7eab35801a7ff4c0189fb6114785b7397a60ec08cf8b27abc54784718c630ec`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
   `tests/unit/routes/acceptQuote/props.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx
 
@@ -195,13 +178,9 @@ re-stamping.
   - Claimed story: `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx` ::
     `QuotationSummaryStep` (marker: "Q-2024-000456")
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
-  `tests/unit/routes/acceptQuote/props.test.ts`,
-  `tests/unit/routes/acceptQuote/summaryAndAccept.behavior.test.tsx`,
   `tests/unit/routes/acceptQuote/summaryAndAccept.test.tsx`,
-  `tests/unit/routes/acceptQuote/summaryAndAcceptFormikBridge.test.tsx`,
   `tests/unit/routes/workflowStepComponents.test.tsx`,
   `tests/unit/routes/workflowWrappers.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/acceptQuote/summaryAndAcceptFormikBridge.tsx
 
@@ -211,14 +190,12 @@ re-stamping.
   `sha256:f099ea5c8696f30c546b55a3332dd20b2d083f4ce76336f2e613190e2f4a0d92`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
-- Unit tests importing it:
-  `tests/unit/routes/acceptQuote/summaryAndAcceptFormikBridge.test.tsx`
-- Other stories importing it: none
+- Unit tests importing it: none
 
-## ClientApp/src/routes/acceptQuote/summaryAndAcceptProps.ts
+## ClientApp/src/routes/acceptQuote/summaryAndAcceptProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:ccb3046a1f57d16bf0b64fb0db3fd3b53aada973bffdf44482a28100388ea278`
+  `sha256:adea19b584c1c2d74b35db302670e2c5cb42775487b401cc7539904b7911858c`
 - Export `default` (nonvisual) stored digest:
   `sha256:33fbb8f059eb2e763715e5136e0b70b46498fcbbe1b8817689417fca6eb05dcd`
   reviewer: codex-storybook-coverage-review
@@ -228,7 +205,4 @@ re-stamping.
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/acceptQuote/AcceptQuote.test.tsx`,
-  `tests/unit/routes/acceptQuote/props.test.ts`,
-  `tests/unit/routes/acceptQuote/summaryAndAccept.behavior.test.tsx`,
-  `tests/unit/routes/acceptQuote/summaryAndAcceptFormikBridge.test.tsx`
-- Other stories importing it: none
+  `tests/unit/routes/acceptQuote/props.test.ts`

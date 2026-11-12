@@ -1,9 +1,14 @@
 # Review package: routes/ta
 
-Generated 2026-11-11 from the working tree. 40 stale records across 23 source
-files. Stored digest = what the last reviewer signed; current digest = file now.
-Reviewing means reading the source against its claimed evidence, then
-re-stamping.
+Generated 2026-11-12 from HEAD (49b135ec) after the wizard props consolidation.
+40 stale records across 23 source files, plus 0 export(s) with no claim. Stored
+digest = what the last reviewer signed; current digest = file now. Reviewing
+means reading the source against its claimed evidence, then re-stamping.
+
+Files marked **REFACTOR** were edited by the consolidation
+(`git diff dd818c87..HEAD -- <file>`); their stale digest reflects a real source
+change and needs a read of that diff. Unmarked files were already stale before
+the refactor.
 
 ## ClientApp/src/routes/ta/applicationAndInstrument.tsx
 
@@ -18,20 +23,17 @@ re-stamping.
 - Unit tests importing it:
   `tests/unit/routes/ta/applicationAndInstrument.test.tsx`,
   `tests/unit/routes/ta/applicationForTypeApproval.test.tsx`,
-  `tests/unit/routes/ta/props.test.ts`,
   `tests/unit/routes/ta/summary/summaryParity.test.tsx`
-- Other stories importing it: none
 
-## ClientApp/src/routes/ta/applicationAndInstrumentProps.ts
+## ClientApp/src/routes/ta/applicationAndInstrumentProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:cb11c434209663c00dfa1c777cd289e28efb679bf81a9e24d5c3cc181b1df6c3`
+  `sha256:54721acca2cafe2cc80d93b56d2f7e126c570234044b06905c1c54c354011b24`
 - Export `default` (nonvisual) stored digest:
   `sha256:9cd574dbaa69996ddad7be07b4815e47244fad233a55f1647e5ff1e208dbc7f2`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/ta/props.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/create/index.tsx
 
@@ -47,7 +49,6 @@ re-stamping.
     `ClientApp/src/routes/ta/create/TypeApprovalCreate.stories.tsx` ::
     `CreateFailureKeepsLoading` (marker: "Loading...")
 - Unit tests importing it: `tests/unit/routes/ta/create.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/created/index.tsx
 
@@ -66,7 +67,6 @@ re-stamping.
     `ClientApp/src/routes/ta/created/TypeApprovalCreated.stories.tsx` ::
     `DashboardLink` (marker: "Pattern approval dashboard")
 - Unit tests importing it: `tests/unit/routes/ta/created.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/displayRules.ts
 
@@ -81,7 +81,6 @@ re-stamping.
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/ta/displayRules.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/index.tsx
 
@@ -96,10 +95,8 @@ re-stamping.
     `StatusLoadFailureIsNotFound` (marker: "Not found destination")
   - Claimed story: `ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx` ::
     `UnknownApplicationIsNotFound` (marker: "Not found destination")
-- Unit tests importing it: `tests/unit/routes/ta/appDocuments.test.tsx`,
-  `tests/unit/routes/ta/applicationForTypeApproval.test.tsx`,
-  `tests/unit/storybook/moduleCoverage.test.ts`
-- Other stories importing it: none
+- Unit tests importing it:
+  `tests/unit/routes/ta/applicationForTypeApproval.test.tsx`
 
 ## ClientApp/src/routes/ta/instrumentInfoPanel.tsx
 
@@ -120,10 +117,8 @@ re-stamping.
     `WithReferences` (marker: "References for this instrument type")
 - Unit tests importing it:
   `tests/unit/routes/ta/applicationAndInstrument.test.tsx`,
-  `tests/unit/routes/ta/instrumentInfoPanel.test.tsx`,
   `tests/unit/routes/ta/rhfSupportingDocuments.test.tsx`,
   `tests/unit/routes/ta/supportingDocuments.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/manage/appDetails.tsx
 
@@ -135,17 +130,12 @@ re-stamping.
   - Claimed story: `ClientApp/src/routes/ta/manage/appDetails.stories.tsx` ::
     `DetailsTab` (marker: "Application status")
 - Unit tests importing it: `tests/unit/routes/ta/appDetails.summary.test.tsx`,
-  `tests/unit/routes/ta/appDetails.test.tsx`,
-  `tests/unit/routes/ta/manage/appDetailsProps.test.ts`,
-  `tests/unit/routes/ta/manage/index.test.tsx`,
-  `tests/unit/routes/ta/summary/summaryParity.test.tsx`,
-  `tests/unit/storybook/moduleCoverage.test.ts`
-- Other stories importing it: none
+  `tests/unit/routes/ta/appDetails.test.tsx`
 
-## ClientApp/src/routes/ta/manage/appDetailsProps.ts
+## ClientApp/src/routes/ta/manage/appDetailsProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:442e2fbbc0ca86dfb62bbbc8f972aa33b20e7c83912fbb8af8b7e124d476adec`
+  `sha256:6c8ab3fc7c07d6f78320fc6ab42ae21d13498e952d9f5f63a6a6bbc1264ed269`
 - Export `default` (nonvisual) stored digest:
   `sha256:6a2f2d172737116c7e688db33e997ca247c3f17398495b0720fc05ce2ab82404`
   reviewer: codex-storybook-coverage-review
@@ -153,7 +143,6 @@ re-stamping.
 - Unit tests importing it: `tests/unit/routes/ta/appDetails.test.tsx`,
   `tests/unit/routes/ta/manage/appDetailsProps.test.ts`,
   `tests/unit/routes/ta/summary/summaryParity.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/manage/appDocuments.tsx
 
@@ -168,7 +157,6 @@ re-stamping.
   `tests/unit/routes/ta/appDetails.test.tsx`,
   `tests/unit/routes/ta/appDocuments.rhf.test.tsx`,
   `tests/unit/routes/ta/appDocuments.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/manage/appMessages.tsx
 
@@ -182,18 +170,16 @@ re-stamping.
 - Unit tests importing it: `tests/unit/routes/ta/appDetails.summary.test.tsx`,
   `tests/unit/routes/ta/appDetails.test.tsx`,
   `tests/unit/routes/ta/appMessages.test.tsx`
-- Other stories importing it: none
 
-## ClientApp/src/routes/ta/organisationAndContactProps.ts
+## ClientApp/src/routes/ta/organisationAndContactProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:3f524ced46a94240e17b8cc3437595c7c6569939a0d60e12648f5f23ea56c4df`
+  `sha256:bf7c3d5fb59c88d8169ec7dec1c888d7a868c72b3ab7c5b3b54f581fe8af0509`
 - Export `default` (nonvisual) stored digest:
   `sha256:c5e85a3440cc4b7337fa35dbebd5e942be5dea89d94f21c050c87f4d3894f96a`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/ta/props.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/pollUploadProgress.ts
 
@@ -212,7 +198,6 @@ re-stamping.
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/ta/pollUploadProgress.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/preApplication.tsx
 
@@ -224,7 +209,6 @@ re-stamping.
   - Claimed story: `ClientApp/src/routes/ta/preApplication.stories.tsx` ::
     `Default` (marker: "Pattern/type approval")
 - Unit tests importing it: `tests/unit/routes/ta/preApplication.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/rhfSupportingDocuments.tsx
 
@@ -238,7 +222,6 @@ re-stamping.
 - Unit tests importing it: `tests/unit/routes/ta/appDetails.test.tsx`,
   `tests/unit/routes/ta/appDocuments.test.tsx`,
   `tests/unit/routes/ta/rhfSupportingDocuments.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/summary/ApplicationSummary.tsx
 
@@ -252,7 +235,6 @@ re-stamping.
 - Unit tests importing it: `tests/unit/routes/ta/appDetails.test.tsx`,
   `tests/unit/routes/ta/summary/summaryParity.test.tsx`,
   `tests/unit/routes/ta/summary/summarySections.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/summary/ContactSummary.tsx
 
@@ -266,7 +248,6 @@ re-stamping.
     `Editable` (marker: "Organisation and Contact")
 - Unit tests importing it:
   `tests/unit/routes/ta/summary/summarySections.test.tsx`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/summaryAndSubmit.tsx
 
@@ -279,20 +260,17 @@ re-stamping.
     `Editable` (marker: "Organisation details")
 - Unit tests importing it:
   `tests/unit/routes/ta/applicationForTypeApproval.test.tsx`,
-  `tests/unit/routes/ta/components.test.tsx`,
-  `tests/unit/routes/ta/props.test.ts`
-- Other stories importing it: none
+  `tests/unit/routes/ta/components.test.tsx`
 
-## ClientApp/src/routes/ta/summaryAndSubmitProps.ts
+## ClientApp/src/routes/ta/summaryAndSubmitProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:2d67c7d770c7338784e17ccfb9ca1386de889651e1cdc12d1b75933a3ec16009`
+  `sha256:d5ccf43cbdbefb421b63e2cd091a6a06e080b9c32c344bc73560513fc704a7c0`
 - Export `default` (nonvisual) stored digest:
   `sha256:9e07fffe2cf0321270d2d544043dd6264b630d94a80ef863ff659e372cd65aac`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/ta/props.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/supportingDocuments.tsx
 
@@ -306,10 +284,7 @@ re-stamping.
 - Unit tests importing it:
   `tests/unit/routes/ta/applicationForTypeApproval.test.tsx`,
   `tests/unit/routes/ta/components.test.tsx`,
-  `tests/unit/routes/ta/props.test.ts`,
-  `tests/unit/routes/ta/supportingDocuments.test.tsx`,
-  `tests/unit/routes/ta/supportingDocumentsHelpers.test.ts`
-- Other stories importing it: none
+  `tests/unit/routes/ta/supportingDocuments.test.tsx`
 
 ## ClientApp/src/routes/ta/supportingDocumentsHelpers.ts
 
@@ -325,18 +300,16 @@ re-stamping.
   - Claimed story: none (non-renderable)
 - Unit tests importing it:
   `tests/unit/routes/ta/supportingDocumentsHelpers.test.ts`
-- Other stories importing it: none
 
-## ClientApp/src/routes/ta/supportingDocumentsProps.ts
+## ClientApp/src/routes/ta/supportingDocumentsProps.ts — **REFACTOR**
 
 - Current digest:
-  `sha256:d3fb34e02d3af951b5855e9fc38fc2006a50d026de5a1f2a79523d05af147d21`
+  `sha256:e8d88e9b8c3eb67739737484e02f6b1ff70df0b3f2d4685a122142f1511c1ffa`
 - Export `default` (nonvisual) stored digest:
   `sha256:2e33b36dd92f612fc9bb038020a0a54460db1cdd8bca7178263d892907d2ebc4`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
 - Unit tests importing it: `tests/unit/routes/ta/props.test.ts`
-- Other stories importing it: none
 
 ## ClientApp/src/routes/ta/types.ts
 
@@ -390,23 +363,10 @@ re-stamping.
   `sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149`
   reviewer: codex-storybook-coverage-review
   - Claimed story: none (non-renderable)
-- Unit tests importing it:
-  `tests/unit/components/inputs/Attachment/index-new.test.tsx`,
-  `tests/unit/components/inputs/Attachment/RhfAttachment.test.tsx`,
-  `tests/unit/components/Progress/ProgressFileList.test.tsx`,
-  `tests/unit/routes/ta/appDocuments.rhf.test.tsx`,
+- Unit tests importing it: `tests/unit/routes/ta/appDocuments.rhf.test.tsx`,
   `tests/unit/routes/ta/props.test.ts`,
   `tests/unit/routes/ta/rhfSupportingDocuments.test.tsx`,
   `tests/unit/routes/ta/supportingDocuments.test.tsx`,
   `tests/unit/routes/ta/supportingDocumentsHelpers.test.ts`,
   `tests/unit/routes/ta/types.test.ts`,
   `tests/unit/routes/ta/validation.test.ts`
-- Other stories importing it:
-  `ClientApp/src/components/Alert/NotificationMessage.stories.tsx`,
-  `ClientApp/src/components/get-started/GetStarted.stories.tsx`,
-  `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx`,
-  `ClientApp/src/components/Progress/ProgressFileList.stories.tsx`,
-  `ClientApp/src/components/RequestList/paRequestItem.stories.tsx`,
-  `ClientApp/src/components/SearchFilter/SearchFilter.stories.tsx`,
-  `ClientApp/src/routes/common/ErrorRoutes.stories.tsx`,
-  `ClientApp/src/routes/dashboard/Dashboard.stories.tsx`
