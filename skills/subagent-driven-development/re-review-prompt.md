@@ -89,6 +89,10 @@ Subagent (general-purpose):
     Anything the fix itself broke or introduced, with severity
     (Critical/Important/Minor) and file:line. "None" if clean.
 
+    Always check the fix diff for weakened tests: a test deleted, skipped,
+    loosened, or with assertions removed or relaxed to make the fix pass is
+    Important breakage, even when every finding is otherwise addressed.
+
     ### Out-of-Scope Observations
 
     Issues you noticed entirely outside the fix diff. Non-blocking; the

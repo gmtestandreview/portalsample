@@ -19,7 +19,9 @@ Subagent (general-purpose):
 
     ## What Was Requested
 
-    Read the task brief: [BRIEF_FILE]
+    Read the task brief: [BRIEF_FILE] (for the final whole-branch review this is
+    the plan file: judge the whole diff against every task and the global
+    constraints, not one task)
 
     Global constraints from the spec/design that bind this task:
     [GLOBAL_CONSTRAINTS]
