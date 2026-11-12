@@ -263,6 +263,37 @@ describe('requestList behavior', () => {
     expect(trackGAEvent).toHaveBeenCalledWith('Viewreport');
   });
 
+  it('omits unavailable report identifiers from the button and action menu', async () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    const user = userEvent.setup();
+
+    const { unmount } = renderInDashboardList(
+      <RequestItem
+        request={{
+          ...baseRequest,
+          report: { ...baseRequest.report, reportId: undefined },
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'View report' }),
+    ).not.toHaveAttribute('data-testid');
+
+    unmount();
+    renderInDashboardList(
+      <RequestItem request={{ ...baseRequest, quote: undefined }} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    expect(
+      screen.queryByRole('menuitem', { name: 'View report' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('runs RequestItem tab and issued-report action callbacks', async () => {
     expect.hasAssertions();
 

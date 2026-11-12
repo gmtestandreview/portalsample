@@ -152,4 +152,39 @@ describe(useInstrumentAndRequestLookups, () => {
     ]);
     expect(result.current.isInstrumentOrArtefactTypeDisabled).toBe(true);
   });
+
+  it('rebuilds artefact options when the measurement category changes', async () => {
+    expect.hasAssertions();
+
+    resetMsalMock();
+    clients.lookup.methods.getLookup.mockReset();
+    wrapperInitialValues.value = {};
+    grantToken();
+    clients.lookup.methods.getLookup
+      .mockResolvedValueOnce([
+        { id: 'category-1', label: 'Category 1' },
+        { id: 'no-measurement', label: 'No measurement' },
+      ])
+      .mockResolvedValueOnce([
+        { id: 'artefact-1', label: 'Artefact 1', parentId: 'category-1' },
+      ]);
+
+    const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
+      wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    act(() => {
+      result.current.onMeasurementCategoryChange({
+        target: { value: 'category-1' },
+      } as React.ChangeEvent<HTMLSelectElement>);
+    });
+
+    expect(result.current.artefactTypesSelected).toStrictEqual([
+      { displayText: 'Artefact 1', value: 'artefact-1' },
+    ]);
+  });
 });

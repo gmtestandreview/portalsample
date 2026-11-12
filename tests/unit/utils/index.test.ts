@@ -387,6 +387,18 @@ describe('formatting helpers', () => {
     ]).toStrictEqual(['0 Bytes', '1 kb', '1.5 kb', '2 kb']);
   });
 
+  it('falls back to bytes when the computed unit cannot be read', () => {
+    expect.hasAssertions();
+
+    const at = vi.spyOn(Array.prototype, 'at').mockReturnValueOnce(undefined);
+
+    try {
+      expect(utils.formatBytes(1024)).toBe('1 bytes');
+    } finally {
+      at.mockRestore();
+    }
+  });
+
   it('formats calendar and financial reporting periods', () => {
     expect.hasAssertions();
 

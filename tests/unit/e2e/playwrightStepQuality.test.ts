@@ -1,33 +1,33 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
-const steps = fs.readFileSync(
+const steps = readTextFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'storybook.steps.ts'),
-  'utf8',
+  repoRoot,
 );
-const quoteSteps = fs.readFileSync(
+const quoteSteps = readTextFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'quote.steps.ts'),
-  'utf8',
+  repoRoot,
 );
-const accountMaintenanceSteps = fs.readFileSync(
+const accountMaintenanceSteps = readTextFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'account-maintenance.steps.ts'),
-  'utf8',
+  repoRoot,
 );
-const commonSteps = fs.readFileSync(
+const commonSteps = readTextFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'common.steps.ts'),
-  'utf8',
+  repoRoot,
 );
-const rfqLifecycleSteps = fs.readFileSync(
+const rfqLifecycleSteps = readTextFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'rfq-lifecycle.steps.ts'),
-  'utf8',
+  repoRoot,
 );
-const reportSteps = fs.readFileSync(
+const reportSteps = readTextFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'report.steps.ts'),
-  'utf8',
+  repoRoot,
 );
-const workflowErrorsFeature = fs.readFileSync(
+const workflowErrorsFeature = readTextFileSync(
   path.join(
     repoRoot,
     'tests',
@@ -36,11 +36,11 @@ const workflowErrorsFeature = fs.readFileSync(
     'resilience',
     'workflow-errors.feature',
   ),
-  'utf8',
+  repoRoot,
 );
-const mockApi = fs.readFileSync(
+const mockApi = readTextFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'support', 'mock-api.ts'),
-  'utf8',
+  repoRoot,
 );
 
 const routeHandler = (routePattern: string) => {

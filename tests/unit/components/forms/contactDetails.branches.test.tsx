@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
 import { Title } from '@/api/web-api-client';
 import ContactDetails from '@/components/forms/CommonForms/ContactDetails';
+import * as apiEnumMappings from '@/utils/apiEnumMappings';
 
 const customLabels = {
   titleLabel: 'Salutation',
@@ -93,5 +94,45 @@ describe('contactDetails branch coverage', () => {
     );
 
     expect(screen.getByText('Dr')).toBeInTheDocument();
+  });
+
+  it('skips title options that do not map to a display title', () => {
+    expect.hasAssertions();
+
+    const toTitle = vi
+      .spyOn(apiEnumMappings, 'toTitle')
+      .mockImplementation((value) =>
+        value === Title.Dr ? undefined : (value as Title),
+      );
+
+    try {
+      render(
+        <Formik
+          initialValues={{
+            contact: {
+              title: '',
+              titleOther: '',
+              firstName: '',
+              lastName: '',
+              role: '',
+              phone: '',
+              mobile: '',
+              email: '',
+            },
+            organisationAndContact: { contact: { title: '' } },
+          }}
+          initialStatus={{ hidden: {} }}
+          onSubmit={vi.fn<ContactSubmit>()}
+        >
+          <ContactDetails name='contact' />
+        </Formik>,
+      );
+
+      expect(
+        screen.getAllByRole('option').map((option) => option.textContent),
+      ).not.toContain('Dr');
+    } finally {
+      toTitle.mockRestore();
+    }
   });
 });

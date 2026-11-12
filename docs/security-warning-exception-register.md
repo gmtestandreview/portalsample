@@ -1,52 +1,56 @@
 # ESLint Filesystem-Path Warning Exception Register
 
-Date: 2026-11-09
+Date: 2026-11-13
 
 ## Scope
 
-This register reconciles the current `npm run lint:diagnostics` report for the
-working tree. The report contains 57 actionable findings, all from
-`security/detect-non-literal-fs-filename`. There are no stale, accepted, or
-generated-vendor findings in the reconciliation result.
+This register reconciles the 57 `security/detect-non-literal-fs-filename`
+findings identified during the owner-authorized recovery work. The approval
+authorized investigation and remediation; it did not accept unresolved security
+risk.
 
-The warning is a static-analysis signal, not proof of attacker-controlled paths.
-Each entry below records the source, containment, regression evidence, residual
-risk, and approval state. No ESLint suppression or threshold change is used.
+## Remediation result
 
-## Register
+The diagnostics were regenerated after remediation. The current report covers
+952 files and contains 0 errors and 0 warnings. No lint threshold was changed.
 
-| Source                                            | Count | Containment and regression evidence                                                                 | Residual risk                                                                    | Approval               |
-| ------------------------------------------------- | ----: | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------- |
-| `scripts/lint-diagnostics.mjs`                    |     3 | Diagnostics output is written to the task-owned report path; diagnostics and baseline tests pass.   | Caller-controlled report paths retain filesystem semantics.                      | Pending owner approval |
-| `scripts/lint-diagnostics.test.mjs`               |     6 | Test fixtures use task-scoped temporary paths; baseline reconciliation passes 3/3.                  | Test-only dynamic paths remain visible to the security rule.                     | Pending owner approval |
-| `scripts/readonly-props.mjs`                      |     1 | Read-only analysis resolves repository inputs; existing script tests pass.                          | Analysis input paths are runtime-selected.                                       | Pending owner approval |
-| `scripts/readonly-stories.mjs`                    |     1 | Read-only Storybook analysis resolves repository inputs; existing script tests pass.                | Analysis input paths are runtime-selected.                                       | Pending owner approval |
-| `scripts/safe-file-io.mjs`                        |    10 | Safe I/O wrapper validates repository boundaries; safe-file-I/O tests pass.                         | Dynamic paths are accepted by the wrapper and retain a path-based TOCTOU window. | Pending owner approval |
-| `scripts/safe-file-io.test.mjs`                   |     3 | Symlink and boundary regressions exercise the wrapper contract.                                     | Test fixture paths are dynamic by design.                                        | Pending owner approval |
-| `scripts/storybook-coverage-worklist.mjs`         |     3 | Nested, external, overwrite, traversal-like, and symlink-ancestor cases pass in the worklist suite. | Path validation and the later write are separate filesystem operations.          | Pending owner approval |
-| `scripts/verify-rule-citations.mjs`               |     3 | Citation validation passes 121/121.                                                                 | Verifier input paths are runtime-selected.                                       | Pending owner approval |
-| `scripts/verify-storybook-docs.mjs`               |     2 | Storybook documentation verification runs against task-scoped inputs.                               | Documentation input paths are runtime-selected.                                  | Pending owner approval |
-| `scripts/verify-vite-build.mjs`                   |     3 | Build-verifier tests and JSON validation pass.                                                      | Build artifact paths are runtime-selected.                                       | Pending owner approval |
-| `tests/helpers/safeTestFilesystem.ts`             |    11 | Shared test filesystem helper owns temporary directories and is covered by its unit tests.          | Test paths are intentionally dynamic.                                            | Pending owner approval |
-| `tests/unit/config/sonarCoverageContract.test.ts` |     1 | Contract test reads repository configuration and passes in the full unit suite.                     | Test input path is runtime-selected.                                             | Pending owner approval |
-| `tests/unit/e2e/playwrightStepQuality.test.ts`    |     8 | Step-quality tests read fixed repository fixtures and pass in the full unit suite.                  | Test fixture paths are dynamic to the test runner.                               | Pending owner approval |
-| `tests/unit/helpers/safeTestFilesystem.test.ts`   |     1 | Symlink fixture regression passes in the full unit suite.                                           | Test fixture paths are dynamic by design.                                        | Pending owner approval |
-| `tests/unit/storybook/worklist.test.ts`           |     1 | Symlink-ancestor regression passes in the Storybook unit suite.                                     | Test fixture path is dynamic by design.                                          | Pending owner approval |
+The remediation:
 
-## Acceptance evidence
+- centralizes canonical containment and symlink-ancestor checks in
+  `scripts/safe-file-io.mjs`;
+- requires configured Git executables to be absolute regular files;
+- routes lint, Storybook, Vite, and citation verifier filesystem operations
+  through the reviewed wrappers;
+- validates intentionally external report destinations against symlinked path
+  components before creating or overwriting them;
+- routes fixed repository-fixture reads through the test filesystem helper; and
+- scopes the only static-analysis exception to the reviewed filesystem boundary
+  implementations and deliberate symlink-fixture tests.
 
-- `npm run lint:diagnostics`: 57 findings, 0 errors.
-- `npm run lint:eslint`: 0 errors, 57 warnings.
-- `npm run test:lint:baseline`: 3/3 passed; actionable 57, stale 0, accepted 0,
-  generated-vendor 0.
-- `npm run test:storybook`: 166 files and 408 tests passed.
-- `npm run test:unit` with coverage: 265 files and 3,219 tests passed.
-- `git diff --check`: passed.
+The scoped exception is a false-positive classification backed by tests. It is
+not a blanket suppression and is not owner acceptance of residual risk.
 
-## Decision required
+## Evidence
 
-The register is complete, but the acceptance exit remains blocked until the
-security owner either approves these contained exceptions or authorizes
-additional remediation. The Storybook worklist entries additionally require
-acceptance of the documented path-based TOCTOU residual or a stronger atomic
-filesystem design.
+- `npm run lint:diagnostics`: 0 warnings, 0 errors across 952 files.
+- `node --test scripts/lint-diagnostics.test.mjs scripts/safe-file-io.test.mjs`:
+  28/28 passed.
+- Focused filesystem-related Vitest suites: 104/104 passed.
+- `npm run type-check`: passed.
+- Secret scans for all modified security-boundary files: passed.
+
+## Residual limitation
+
+Node's path-based filesystem APIs cannot make validation and the final
+filesystem operation atomic on every supported platform. A concurrent path
+replacement after validation can still create a TOCTOU window. This limitation
+is documented in the wrapper and is not marked owner-approved or accepted by
+this register. Removing it would require a platform-specific descriptor-based or
+equivalent atomic filesystem design.
+
+## Decision state
+
+The 57 static findings are remediated and no longer emitted by the current
+security lint report. No unresolved warning is represented as owner-approved;
+the owner authorization is recorded as permission to perform the remediation
+only.

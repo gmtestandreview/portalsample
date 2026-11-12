@@ -580,4 +580,66 @@ describe('custom date picker', () => {
 
     expectDatePickerOffsetsAfterReopen(nextDate);
   });
+
+  it('accounts for rendered feedback and inline-help heights in offsets', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    render(
+      <CustomDatePicker
+        calendarButtonTitle='Date'
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
+        hasError
+        inlineHelp='Date help'
+        name='sizedOffsetDate'
+      />,
+    );
+
+    Object.defineProperty(screen.getByTestId('feedback-ref'), 'clientHeight', {
+      configurable: true,
+      value: 12,
+    });
+    Object.defineProperty(
+      screen.getByTestId('inline-help-ref'),
+      'clientHeight',
+      { configurable: true, value: 8 },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+    expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-65');
+    expect(screen.getByTestId('top-offset')).toHaveTextContent('-56');
+  });
+
+  it('uses zero heights when feedback and inline-help refs report undefined', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    render(
+      <CustomDatePicker
+        calendarButtonTitle='Date'
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
+        hasError
+        inlineHelp='Date help'
+        name='undefinedOffsetDate'
+      />,
+    );
+
+    Object.defineProperty(screen.getByTestId('feedback-ref'), 'clientHeight', {
+      configurable: true,
+      value: undefined,
+    });
+    Object.defineProperty(
+      screen.getByTestId('inline-help-ref'),
+      'clientHeight',
+      { configurable: true, value: undefined },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+    expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-53');
+    expect(screen.getByTestId('top-offset')).toHaveTextContent('-48');
+  });
 });

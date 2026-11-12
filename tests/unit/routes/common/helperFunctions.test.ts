@@ -183,6 +183,49 @@ describe('route common helper functions', () => {
     );
   });
 
+  it('maps API pattern approval statuses when local enum values are absent', () => {
+    expect.hasAssertions();
+
+    const localEntries = Object.entries(PaDashboardItemStatus);
+    const mutableEnum = PaDashboardItemStatus as unknown as Record<
+      string,
+      unknown
+    >;
+
+    for (const key of Object.keys(mutableEnum)) {
+      Object.defineProperty(mutableEnum, key, {
+        configurable: true,
+        enumerable: true,
+        value: `__local_${key}`,
+        writable: true,
+      });
+    }
+
+    const expectedStatuses = {
+      submitted: mutableEnum['PaSubmitted'],
+      inProgress: mutableEnum['PaInProgress'],
+      onHold: mutableEnum['PaOnHold'],
+      completed: mutableEnum['PaCompleted'],
+    };
+
+    try {
+      expect(
+        toPaDashboardItemStatus(PatternApprovalStatusEnumDto.Submitted),
+      ).toBe(expectedStatuses.submitted);
+      expect(
+        toPaDashboardItemStatus(PatternApprovalStatusEnumDto.InProgress),
+      ).toBe(expectedStatuses.inProgress);
+      expect(toPaDashboardItemStatus(PatternApprovalStatusEnumDto.OnHold)).toBe(
+        expectedStatuses.onHold,
+      );
+      expect(
+        toPaDashboardItemStatus(PatternApprovalStatusEnumDto.Completed),
+      ).toBe(expectedStatuses.completed);
+    } finally {
+      Object.assign(mutableEnum, Object.fromEntries(localEntries));
+    }
+  });
+
   it('rejects unknown dashboard and workflow statuses', () => {
     expect.hasAssertions();
 
