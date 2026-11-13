@@ -169,7 +169,7 @@ Subagent (general-purpose):
 **Placeholders:**
 
 - `[MODEL]` — REQUIRED: implementer model per SKILL.md Model Selection
-- `[BRIEF_FILE]` — REQUIRED: the path `scripts/task-brief PLAN N` printed
+- `[BRIEF_FILE]` — REQUIRED: the path `scripts/task-brief.sh PLAN N` printed
 - `[REPORT_FILE]` — REQUIRED: the brief's path with `brief` replaced by `report`
   (`<workspace>/task-N-report.md`); the reviewer prompts read the same file and
   fix-round reports are appended to it

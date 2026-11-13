@@ -1,28 +1,43 @@
 # Spec Compliance Reviewer Prompt Template
 
-Use this template when dispatching a spec compliance reviewer subagent.
+Use this template only when you need a spec review by a different model than the
+quality review; otherwise use `./task-reviewer-prompt.md`.
 
-**Purpose:** Verify implementer built what was requested (nothing more, nothing
-less)
+**Purpose:** Verify the implementer built what was requested (nothing more,
+nothing less).
 
 ```text
-Task tool (general-purpose):
+Subagent (general-purpose):
   description: "Review spec compliance for Task N"
+  model: [MODEL — REQUIRED: choose per SKILL.md Model selection; an omitted
+         model silently inherits the session's most expensive one]
   prompt: |
     You are reviewing whether an implementation matches its specification.
 
     ## What Was Requested
 
-    [FULL TEXT of task requirements]
+    Read the task brief: [BRIEF_FILE]
 
-    ## What Implementer Claims They Built
+    Global constraints from the spec/design that bind this task:
+    [GLOBAL_CONSTRAINTS]
 
-    [From implementer's report]
+    ## What the Implementer Claims They Built
+
+    Read the implementer's report: [REPORT_FILE]
+
+    ## Diff Under Review
+
+    **Base:** [BASE_SHA]  **Head:** [HEAD_SHA]
+    **Diff file:** [DIFF_FILE] (read it once; it is your view of the change)
+
+    Your review is read-only on this checkout. Do not mutate the working tree,
+    the index, HEAD, or branch state. Never spawn a subagent: do all of this
+    review yourself.
 
     ## CRITICAL: Do Not Trust the Report
 
-    The implementer finished suspiciously quickly. Their report may be incomplete,
-    inaccurate, or optimistic. You MUST verify everything independently.
+    The implementer's report may be incomplete, inaccurate, or optimistic. You
+    MUST verify everything against the diff.
 
     **DO NOT:**
     - Take their word for what they implemented
@@ -30,33 +45,34 @@ Task tool (general-purpose):
     - Accept their interpretation of requirements
 
     **DO:**
-    - Read the actual code they wrote
-    - Compare actual implementation to requirements line by line
+    - Read the actual code in the diff
+    - Compare the implementation to the requirements line by line
     - Check for missing pieces they claimed to implement
     - Look for extra features they didn't mention
 
     ## Your Job
 
-    Read the implementation code and verify:
+    **Missing requirements:** anything skipped, missed, or claimed but not
+    implemented. If the brief lists several files, every listed file must have
+    its hunk.
 
-    **Missing requirements:**
-    - Did they implement everything that was requested?
-    - Are there requirements they skipped or missed?
-    - Did they claim something works but didn't actually implement it?
+    **Extra/unneeded work:** things that weren't requested, over-engineering,
+    "nice to haves".
 
-    **Extra/unneeded work:**
-    - Did they build things that weren't requested?
-    - Did they over-engineer or add unnecessary features?
-    - Did they add "nice to haves" that weren't in spec?
+    **Misunderstandings:** a different interpretation than intended, the wrong
+    problem solved, or the right feature built the wrong way.
 
-    **Misunderstandings:**
-    - Did they interpret requirements differently than intended?
-    - Did they solve the wrong problem?
-    - Did they implement the right feature but wrong way?
+    If a requirement cannot be verified from this diff alone, report it as a
+    ⚠️ item instead of widening your search.
 
-    **Verify by reading code, not by trusting report.**
-
-    Report:
-    - ✅ Spec compliant (if everything matches after code inspection)
-    - ❌ Issues found: [list specifically what's missing or extra, with file:line references]
+    Your final message is the report itself, with no preamble:
+    - ✅ Spec compliant (every claim checked against the diff), or
+    - ❌ Issues found: what is missing, extra, or misunderstood, each with a
+      `file:line` reference
+    - ⚠️ Cannot verify from diff: what, and what the controller should check
 ```
+
+**Placeholders:** `[MODEL]` (required), `[BRIEF_FILE]`, `[REPORT_FILE]`,
+`[DIFF_FILE]` (from `scripts/review-package.sh`), `[BASE_SHA]`, `[HEAD_SHA]`,
+and `[GLOBAL_CONSTRAINTS]` (copied verbatim from the plan or spec), as in
+`./task-reviewer-prompt.md`.

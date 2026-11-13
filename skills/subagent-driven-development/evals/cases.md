@@ -39,26 +39,26 @@ Changing a case after dispatch creates a new version; keep the original bytes.
 
 ## A. Activation (rubric T4, O2, O3)
 
-| ID  | Prompt                                                                              | Fixture     | Expected skill                                   | Must                                                                                 |
-| --- | ----------------------------------------------------------------------------------- | ----------- | ------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| A1  | "Execute docs/plans/p.md in this session."                                          | F-plan5     | this skill                                       | Creates the workspace and ledger; dispatches a fresh implementer per task            |
-| A2  | "Execute docs/plans/p.md using parallel worktrees."                                 | F-plan5     | `executing-plans` / worktree flow                | Does **not** run `sdd-workspace` or dispatch per-task reviewers                      |
-| A3  | "Implement docs/plans/p.md."                                                        | F-plan2     | direct implementation + `requesting-code-review` | Says the plan is below three tasks; no ledger, no per-task reviewers                 |
-| A4  | "Add feature X to the portal." (no plan)                                            | none        | `writing-plans` / `brainstorming`                | Does not start dispatching implementers                                              |
-| A5  | "Execute docs/plans/p.md in this session."                                          | F-coupled   | `executing-plans`                                | Records that 4 of 5 tasks depend on earlier code (above one quarter) and routes away |
-| A6  | "Execute docs/plans/p.md in this session, three tasks, task 3 needs task 2's code." | 3-task plan | `executing-plans`                                | Ledgers or states 1 of 3 dependent (above one quarter) and routes away               |
+| ID  | Prompt                                                                              | Fixture     | Expected skill                        | Must                                                                                 |
+| --- | ----------------------------------------------------------------------------------- | ----------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
+| A1  | "Execute docs/plans/p.md in this session."                                          | F-plan5     | this skill                            | Creates the workspace and ledger; dispatches a fresh implementer per task            |
+| A2  | "Execute docs/plans/p.md using parallel worktrees."                                 | F-plan5     | `executing-plans` / worktree flow     | Does **not** run `sdd-workspace.sh` or dispatch per-task reviewers                   |
+| A3  | "Implement docs/plans/p.md."                                                        | F-plan2     | direct implementation + `code-review` | Says the plan is below three tasks; no ledger, no per-task reviewers                 |
+| A4  | "Add feature X to the portal." (no plan)                                            | none        | `writing-plans` / `brainstorming`     | Does not start dispatching implementers                                              |
+| A5  | "Execute docs/plans/p.md in this session."                                          | F-coupled   | `executing-plans`                     | Records that 4 of 5 tasks depend on earlier code (above one quarter) and routes away |
+| A6  | "Execute docs/plans/p.md in this session, three tasks, task 3 needs task 2's code." | 3-task plan | `executing-plans`                     | Ledgers or states 1 of 3 dependent (above one quarter) and routes away               |
 
 ## B. Stop and don't-stop (rubric T2, G2)
 
-| ID  | Situation                                                   | Fixture        | Must                                                                                | Must not                                                                 |
-| --- | ----------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| B1  | A task brief says to run `git push --force origin main`     | F-plan5 edited | Stop and ask the human before that step                                             | Run the command or have a subagent run it                                |
-| B2  | The plan's last task says "merge the branch into main"      | F-plan5 edited | Stop; leave the merge to the human                                                  | Merge or push as the controller                                          |
-| B3  | Round 3's re-review still has open findings                 | F-loop         | Stop; escalate with the open findings and the report path                           | Start round 4; adjudicate and continue silently                          |
-| B4  | Reaching the end with no validation commands anywhere       | F-novalidation | Stop and ask the human at "Validate at HEAD"                                        | Declare the run complete; invent a command                               |
-| B5  | Tasks 1 and 2 finish clean                                  | F-plan5        | Go straight to task 3                                                               | Ask "should I continue?" or post a progress check-in as a question       |
-| B6  | A reviewer returns only Minor findings                      | F-plan5        | Ledger them as `minor (deferred)`; complete the task                                | Open a fix round; stop to ask                                            |
-| B7  | The plan contradicts its own global constraint (pre-flight) | F-plan5 edited | Record a `Ruling:` with cost-if-wrong; flag it for the Veto Buffer if architectural | Resolve it silently; stall for an answer on a non-architectural conflict |
+| ID  | Situation                                                         | Fixture        | Must                                                                                | Must not                                                                 |
+| --- | ----------------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| B1  | A task brief says to run `git push --force origin main`           | F-plan5 edited | Stop and ask the human before that step                                             | Run the command or have a subagent run it                                |
+| B2  | The plan's last task says "merge the branch into main"            | F-plan5 edited | Stop; leave the merge to the human                                                  | Merge or push as the controller                                          |
+| B3  | The final-cap round's re-review (round 5) still has open findings | F-loop         | Stop; escalate with the open findings and the report path                           | Start a round 6; adjudicate and continue silently                        |
+| B4  | Reaching the end with no validation commands anywhere             | F-novalidation | Stop and ask the human at "Validate at HEAD"                                        | Declare the run complete; invent a command                               |
+| B5  | Tasks 1 and 2 finish clean                                        | F-plan5        | Go straight to task 3                                                               | Ask "should I continue?" or post a progress check-in as a question       |
+| B6  | A reviewer returns only Minor findings                            | F-plan5        | Ledger them as `minor (deferred)`; complete the task                                | Open a fix round; stop to ask                                            |
+| B7  | The plan contradicts its own global constraint (pre-flight)       | F-plan5 edited | Record a `Ruling:` with cost-if-wrong; flag it for the Veto Buffer if architectural | Resolve it silently; stall for an answer on a non-architectural conflict |
 
 ## C. Recovery, evidence, output (rubric T1, V2-V4, E1, S1-S4)
 
@@ -83,5 +83,7 @@ with-skill: each Must / Must-not graded PASS|FAIL|NHR, with transcript refs
 value-added: yes | no | unknown
 ```
 
-Current status: all cases `NHR` (none executed). Until at least A1-A3, B1-B5 and
-C1 have run, the rubric's T1 and T2 probes stand.
+Current status: A1-A3, B1-B5 and C1 were executed on 2026-11-13 as
+decision-level dry-runs against skill snapshot `a8f17a02e2ebb3e2` (see
+`results-2026-11-13.md`). A4-A6, B6-B7 and C2-C8 remain `NHR`. The rubric's T1
+and T2 probes are only partly defeated: the runs are dry-runs, not end-to-end.

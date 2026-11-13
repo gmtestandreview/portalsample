@@ -114,7 +114,7 @@ Subagent (general-purpose):
 - `[REPORT_FILE]` — the implementer's report file (fix reports appended)
 - `[FIX_BASE_SHA]` — the head the previous review saw
 - `[HEAD_SHA]` — current commit
-- `[DIFF_FILE]` — the path `scripts/review-package PLAN_FILE FIX_BASE HEAD`
+- `[DIFF_FILE]` — the path `scripts/review-package.sh PLAN_FILE FIX_BASE HEAD`
   printed
 
 **Re-reviewer returns:** per-finding verdicts (ADDRESSED / NOT ADDRESSED), new

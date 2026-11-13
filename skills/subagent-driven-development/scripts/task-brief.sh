@@ -3,14 +3,14 @@
 # implementer reads in one call, so the task text never has to be pasted
 # through the controller's context.
 #
-# Usage: task-brief PLAN_FILE TASK_NUMBER [OUTFILE]
+# Usage: task-brief.sh PLAN_FILE TASK_NUMBER [OUTFILE]
 # Default OUTFILE: <repo-root>/.agent-sync/sdd/<plan-basename>/task-<N>-brief.md
 # (per plan and per worktree; concurrent runs of the SAME plan in the same
 # working tree share it).
 set -euo pipefail
 
 if [[ $# -lt 2 ]] || [[ $# -gt 3 ]]; then
-  echo "usage: task-brief PLAN_FILE TASK_NUMBER [OUTFILE]" >&2
+  echo "usage: task-brief.sh PLAN_FILE TASK_NUMBER [OUTFILE]" >&2
   exit 2
 fi
 
@@ -23,7 +23,7 @@ if [[ $# -eq 3 ]]; then
 else
   # Invoke via bash rather than direct exec: some extractors strip Unix exec
   # bits when unpacking packages.
-  dir=$("${BASH:-bash}" "$(cd "$(dirname "$0")" && pwd)/sdd-workspace" "$plan")
+  dir=$("${BASH:-bash}" "$(cd "$(dirname "$0")" && pwd)/sdd-workspace.sh" "$plan")
   out="$dir/task-${n}-brief.md"
 fi
 

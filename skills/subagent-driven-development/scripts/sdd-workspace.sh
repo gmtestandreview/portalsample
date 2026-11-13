@@ -31,11 +31,11 @@
 # Single source of truth for the workspace location, so task-brief and
 # review-package cannot drift to different directories.
 #
-# Usage: sdd-workspace PLAN_FILE
+# Usage: sdd-workspace.sh PLAN_FILE
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-  echo "usage: sdd-workspace PLAN_FILE" >&2
+  echo "usage: sdd-workspace.sh PLAN_FILE" >&2
   exit 2
 fi
 

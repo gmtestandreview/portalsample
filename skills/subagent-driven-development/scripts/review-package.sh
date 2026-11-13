@@ -4,13 +4,13 @@
 # call. Using the recorded per-task BASE (not HEAD~1) keeps multi-commit
 # tasks intact.
 #
-# Usage: review-package PLAN_FILE BASE HEAD [OUTFILE]
+# Usage: review-package.sh PLAN_FILE BASE HEAD [OUTFILE]
 # Default OUTFILE: <repo-root>/.agent-sync/sdd/<plan-basename>/review-<base7>..<head7>.diff
 # (named per range, so a re-review after fixes gets a distinct fresh file).
 set -euo pipefail
 
 if (($# < 3 || $# > 4)); then
-  echo "usage: review-package PLAN_FILE BASE HEAD [OUTFILE]" >&2
+  echo "usage: review-package.sh PLAN_FILE BASE HEAD [OUTFILE]" >&2
   exit 2
 fi
 
@@ -35,7 +35,7 @@ if (($# == 4)); then
 else
   # Invoke via bash rather than direct exec: some extractors strip Unix exec
   # bits when unpacking packages.
-  dir=$("${BASH:-bash}" "$(cd "$(dirname "$0")" && pwd)/sdd-workspace" "$plan")
+  dir=$("${BASH:-bash}" "$(cd "$(dirname "$0")" && pwd)/sdd-workspace.sh" "$plan")
   out="$dir/review-$(git rev-parse --short "$base")..$(git rev-parse --short "$head").diff"
 fi
 

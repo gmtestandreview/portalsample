@@ -45,8 +45,8 @@ Choose this skill when **all three** conditions hold:
 
 1. You have a written implementation plan (from `writing-plans` or equivalent)
    with **three or more tasks**. One or two tasks do not repay the ledger,
-   per-task review, and final review: implement them directly and use
-   `requesting-code-review`, unless the human asks for the full process.
+   per-task review, and final review: implement them directly and run one
+   `code-review` pass at the end, unless the human asks for the full process.
 2. The plan's tasks are mostly independent: each can be implemented and reviewed
    from its brief plus at most the previous task's report, and no more than a
    quarter of the tasks need an earlier task's code. Record the call (task
@@ -66,7 +66,7 @@ If tasks are tightly coupled or you need parallel sessions, use
 - A working directory where scripts can run, inside the repository that owns the
   plan.
 
-Run `scripts/sdd-workspace PLAN_FILE` once to create the per-plan working
+Run `scripts/sdd-workspace.sh PLAN_FILE` once to create the per-plan working
 directory at `.agent-sync/sdd/<plan-basename>/` and print its path. All
 artifacts for this plan (ledger, briefs, reports, review packages) live there.
 Another plan's directory is never yours to read or write.
@@ -114,16 +114,23 @@ prompts. Stop and ask the human only for:
   the controller never merges);
 - a plan so broken that every path forward is a guess;
 - a review loop that reaches its round cap (below);
-- a material public, data, or billing choice (see Setup step 4).
+- a material public, data, or billing choice (see Setup step 4);
+- starting implementation on `main`/`master` with no `Consent:` ledger line (see
+  Prerequisites).
+
+A stop halts the run at that step: do not run or delegate the step, and do not
+continue to later tasks until the human answers. Work already complete stays
+complete. Record the answer as `Consent: <what, who, when>` in the ledger, the
+only record a later session can see, so nobody asks twice.
 
 Everything else is a ruling in the ledger, not a stall.
 
 ### Per task (repeat for each)
 
 1. **Record BASE** (`git rev-parse HEAD`) in the ledger, then **extract brief:**
-   run `scripts/task-brief PLAN_FILE N` to write `<workspace>/task-N-brief.md`.
-   N matches the heading's whole task number, so `5` and `5.1` are distinct
-   tasks.
+   run `scripts/task-brief.sh PLAN_FILE N` to write
+   `<workspace>/task-N-brief.md`. N matches the heading's whole task number, so
+   `5` and `5.1` are distinct tasks.
 
 2. **Dispatch the implementer** using `./implementer-prompt.md`. The dispatch
    describes one task, never the session's history:
@@ -155,7 +162,7 @@ Everything else is a ruling in the ledger, not a stall.
      ruling in the dispatch. Never retry the same model unchanged.
 
 4. **Generate the review package:** run
-   `scripts/review-package PLAN_FILE BASE HEAD` (BASE from step 1, never
+   `scripts/review-package.sh PLAN_FILE BASE HEAD` (BASE from step 1, never
    `HEAD~1`, which drops all but the last commit of a multi-commit task) and
    dispatch `./task-reviewer-prompt.md` (combined spec-compliance +
    code-quality, single pass) with four inputs: the brief file, the report file,
@@ -192,7 +199,7 @@ Everything else is a ruling in the ledger, not a stall.
      code, and appends a fix report to the same report file. Before
      re-reviewing, confirm that report names the covering tests, the command,
      and the output.
-   - Re-review: `scripts/review-package PLAN_FILE FIX_BASE HEAD` (FIX_BASE is
+   - Re-review: `scripts/review-package.sh PLAN_FILE FIX_BASE HEAD` (FIX_BASE is
      the head the previous review saw) and `./re-review-prompt.md` with the
      findings, brief, report, and diff path. New Critical/Important breakage in
      the fix diff joins the open findings; out-of-scope observations go to the
@@ -221,8 +228,9 @@ Everything else is a ruling in the ledger, not a stall.
    `Validation @<head7>: <command> -> exit <code>; log <path>`. A non-zero exit
    is a finding for the fix wave in step 3, not something to report around.
 2. Final whole-branch review: run
-   `scripts/review-package PLAN_FILE MERGE_BASE HEAD` (MERGE_BASE = the commit
-   the branch started from, for example `git merge-base main HEAD`) and dispatch
+   `scripts/review-package.sh PLAN_FILE MERGE_BASE HEAD` (MERGE_BASE = the
+   commit the branch started from, for example `git merge-base main HEAD`; on
+   `main` that equals HEAD, so use the ledger's BASE instead) and dispatch
    `./task-reviewer-prompt.md` with that diff path, the plan file as the
    requirements source in place of a task brief (set `[BRIEF_FILE]` to the
    plan), its global constraints, and the ledger's deferred minors and parked
@@ -265,9 +273,10 @@ Use the lowest tier that can do the role (`.claude/rules/performance.md`).
 Adjust by task, not by habit:
 
 - **Turn count beats token price.** The cheapest tier often takes 2-3x the turns
-  on multi-step work. Tier 2 is the floor for reviewers and for implementers
-  working from prose; Tier 3 only when the brief contains the complete code to
-  write, or for a single-file mechanical fix.
+  on multi-step work. Tier 2 is the floor for reviewers (a scoped re-review of a
+  small fix diff may use Tier 3) and for implementers working from prose; Tier 3
+  for an implementer only when the brief contains the complete code to write, or
+  for a single-file mechanical fix.
 - **By complexity:** one or two files with a complete spec, cheaper tier;
   multi-file integration, standard; design judgment, most capable.
 - **Raise the tier** for a final review of a subtle or high-risk diff
@@ -292,32 +301,32 @@ review by a different model.
 
 ### Scripts
 
-| Script                                       | Purpose                                                |
-| -------------------------------------------- | ------------------------------------------------------ |
-| `scripts/sdd-workspace PLAN_FILE`            | Create per-plan workspace at `.agent-sync/sdd/<plan>/` |
-| `scripts/task-brief PLAN_FILE N`             | Extract task N's full text to a brief file             |
-| `scripts/review-package PLAN_FILE BASE HEAD` | Generate diff package for review                       |
+| Script                                          | Purpose                                                |
+| ----------------------------------------------- | ------------------------------------------------------ |
+| `scripts/sdd-workspace.sh PLAN_FILE`            | Create per-plan workspace at `.agent-sync/sdd/<plan>/` |
+| `scripts/task-brief.sh PLAN_FILE N`             | Extract task N's full text to a brief file             |
+| `scripts/review-package.sh PLAN_FILE BASE HEAD` | Generate diff package for review                       |
 
 All scripts are Bash: run them as `bash <skill-dir>/scripts/<name> ...` (exec
 bits may be stripped), from anywhere inside the plan's repository. Two plans
 that share a filename get distinct workspaces (a `plan-path` marker records the
-owner). `review-package` exits 5 on an empty range or a HEAD that is not a
+owner). `review-package.sh` exits 3 on an empty range or a HEAD that is not a
 descendant of BASE.
 
 ## Example
 
 ```text
 [Read plan: docs/plans/feature-plan.md — 5 tasks]
-[Run: scripts/sdd-workspace docs/plans/feature-plan.md]
+[Run: scripts/sdd-workspace.sh docs/plans/feature-plan.md]
 [Create task list: Task 1–5; create progress.md ledger, write pre-flight table]
 
 Task 1:
-  [Ledger: BASE a1b2c3d. Run: scripts/task-brief docs/plans/feature-plan.md 1]
+  [Ledger: BASE a1b2c3d. Run: scripts/task-brief.sh docs/plans/feature-plan.md 1]
   [Dispatch implementer with task-1-brief.md + task-1-report.md paths + context]
   Implementer: "Should the hook install at user or system level?"
   Controller: "User level (~/.config/hooks/)"
   Implementer: DONE, 5/5 tests pass, committed; report in task-1-report.md.
-  [Run: scripts/review-package ... BASE HEAD]
+  [Run: scripts/review-package.sh ... BASE HEAD]
   [Dispatch reviewer with task-reviewer-prompt.md]
   Reviewer: ✅ Spec compliant. Code quality approved.
   [Ledger: Task 1: complete (commits a1b2c3d..d4e5f6a, review clean)]
@@ -327,12 +336,12 @@ Task 2:
   [Resume implementer with both findings; it fixes, re-runs the covering test,
    appends a fix report. Dispatch re-reviewer with re-review-prompt.md]
   Re-reviewer: All findings addressed, no new breakage.
-  [Ledger: Task 2: fix round 1/5 (2 addressed, 0 open; commits d4e5f6a..b7c8d9e)]
+  [Ledger: Task 2: fix round 1/5 (2 addressed, 0 open — none; commits d4e5f6a..b7c8d9e)]
   [Ledger: Task 2: complete (commits d4e5f6a..b7c8d9e, review clean)]
 
 ... Tasks 3–5 ...
 
-[Run review-package PLAN MERGE_BASE HEAD; dispatch final branch reviewer]
+[Run scripts/review-package.sh PLAN MERGE_BASE HEAD; dispatch final branch reviewer]
 [Final message: "Rulings I made" list, then finishing-a-development-branch]
 ```
 
@@ -371,7 +380,7 @@ Task 2:
 - **Task depends on a previous task's output:** dispatch sequentially (the
   default) and include the prior report and file paths in the dispatch.
 - **Plan changes mid-execution:** stop, update the plan, re-extract affected
-  briefs with `scripts/task-brief`, and resume. Never continue with stale
+  briefs with `scripts/task-brief.sh`, and resume. Never continue with stale
   briefs.
 - **Reviewer and implementer disagree:** the reviewer's verdict stands; a valid
   implementer concern is adjudicated by the controller, never overruled by the
@@ -384,7 +393,7 @@ Task 2:
   never re-dispatch a task whose commits are already in history. A rebuilt
   ledger carries no test evidence: mark those tasks `evidence lost` and cover
   them in the "Validate at HEAD" step.
-- **Plan outside a git repo:** `sdd-workspace` exits 2. A plan under a parent
+- **Plan outside a git repo:** `sdd-workspace.sh` exits 2. A plan under a parent
   repo (for example a home-directory repo) uses that repo, so keep plans in
   their own project.
 
@@ -395,12 +404,16 @@ Task 2:
 - **Subagents follow:** `test-driven-development` for each task.
 - **Alternative:** `executing-plans` for parallel-session execution with
   worktrees.
-- **Upstream variant:** `superpowers:subagent-driven-development` (plugin
-  version 7.0.0) is what this skill was merged with. Here this skill takes
-  precedence where they differ, each difference required by a repo rule: human
-  gates and Veto Buffer (`.claude/rules/orchestration.md`), a 5-round fix cap
-  that escalates to the human, the `.agent-sync/sdd/` workspace kept after the
-  run, and Tier 2 as the default final-review model
-  (`.claude/rules/performance.md`). Re-diff against the upstream skill whenever
-  the plugin version changes, and update this list and the version above. The
-  maintainer is the human acceptance owner for this repository's skills.
+- **Upstream variant:** `superpowers:subagent-driven-development` is what this
+  skill was merged with. It was merged from plugin 7.0.0; 7.0.2 is installed and
+  restructures the skill into `references/` files with a new `sdd-repo` script,
+  which this skill has not adopted (re-merge pending). Where they differ, this
+  skill follows two repo rules: human gates and the Veto Buffer
+  (`.claude/rules/orchestration.md`) and Tier 2 as the default final-review
+  model (`.claude/rules/performance.md`). Other differences are local choices,
+  not repo rules: escalating to the human at the round cap (upstream adjudicates
+  itself), the `.agent-sync/sdd/` workspace kept after the run, the three-task
+  threshold, and the Validate-at-HEAD and final-message steps. The 5-round cap
+  is the upstream value. Re-diff against upstream whenever the plugin version
+  changes, and update this list and the version above. The maintainer is the
+  human acceptance owner for this repository's skills.
