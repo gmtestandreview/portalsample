@@ -55,25 +55,25 @@ const hasOptionalBoolean = (object: JsonObject, key: string): boolean =>
   Reflect.get(object, key) === undefined ||
   typeof Reflect.get(object, key) === 'boolean';
 
-const hasOptionalEnum = <T extends string>(
+const hasOptionalEnum = (
   object: JsonObject,
   key: string,
-  values: readonly T[],
+  values: readonly string[],
 ): boolean =>
   Reflect.get(object, key) === undefined ||
   isEnumValue(Reflect.get(object, key), values);
 
-const hasOptionalObject = <T>(
+const hasOptionalObject = (
   object: JsonObject,
   key: string,
-  guard: (value: unknown) => value is T,
+  guard: (value: unknown) => boolean,
 ): boolean =>
   Reflect.get(object, key) === undefined || guard(Reflect.get(object, key));
 
-const hasOptionalArray = <T>(
+const hasOptionalArray = (
   object: JsonObject,
   key: string,
-  guard: (value: unknown) => value is T,
+  guard: (value: unknown) => boolean,
 ): boolean => {
   const value = Reflect.get(object, key);
   return value === undefined || (Array.isArray(value) && value.every(guard));
