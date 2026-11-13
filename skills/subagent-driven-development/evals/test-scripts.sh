@@ -102,6 +102,60 @@ brief_heads() {
   fi
 }
 
+# run_in DIR COMMAND...: run COMMAND from inside DIR, with git unable to walk up
+# into a parent repository of the temp dirs (so "outside any repo" is real).
+run_in() {
+  local dir=$1
+  shift
+  (cd "$dir" && GIT_CEILING_DIRECTORIES="$CEIL" "$@")
+}
+
+# expect_dir NAME PATH: PATH is an existing directory.
+expect_dir() {
+  local name=$1
+  local path=$2
+  if [[ -d "$path" ]]; then
+    ok "$name"
+  else
+    bad "$name" "not a directory: $path"
+  fi
+}
+
+# expect_absent NAME PATH: nothing exists at PATH.
+expect_absent() {
+  local name=$1
+  local path=$2
+  if [[ -e "$path" ]]; then
+    bad "$name" "unexpectedly exists: $path"
+  else
+    ok "$name"
+  fi
+}
+
+# expect_ne NAME A B
+expect_ne() {
+  local name=$1
+  local left=$2
+  local right=$3
+  if [[ "$left" != "$right" ]]; then
+    ok "$name"
+  else
+    bad "$name" "both are '$left'"
+  fi
+}
+
+# expect_match NAME VALUE GLOB: VALUE matches the glob pattern GLOB.
+expect_match() {
+  local name=$1
+  local value=$2
+  local pattern=$3
+  # shellcheck disable=SC2254 # the pattern is meant to be a glob
+  case $value in
+    $pattern) ok "$name" ;;
+    *) bad "$name" "'$value' does not match '$pattern'" ;;
+  esac
+}
+
 T=$(mktemp -d) || exit 2
 N=$(mktemp -d) || exit 2
 E=$(mktemp -d) || exit 2
@@ -157,14 +211,11 @@ echo "== sdd-repo"
 expect_eq "prints the current directory's toplevel" "$(bash "$S/sdd-repo.sh")" "$TOP"
 expect_eq "prints the toplevel from a subdirectory" "$(cd sub && bash "$S/sdd-repo.sh")" "$TOP"
 expect_eq "--with-commit prints the toplevel in a repo with commits" "$(bash "$S/sdd-repo.sh" --with-commit)" "$TOP"
-expect_rc "outside any repo exits 2" 2 -- \
-  env GIT_CEILING_DIRECTORIES="$CEIL" bash -c 'cd "$1" && bash "$2/sdd-repo.sh"' _ "$N" "$S"
+expect_rc "outside any repo exits 2" 2 -- run_in "$N" bash "$S/sdd-repo.sh"
 expect_contains "outside-repo message names the fix" "$out" "SDD scripts must run from inside the git working tree"
 expect_contains "outside-repo message quotes git" "$out" "git said:"
-expect_rc "no commit yet: plain call still prints the toplevel" 0 -- \
-  bash -c 'cd "$1" && bash "$2/sdd-repo.sh"' _ "$E" "$S"
-expect_rc "no commit yet: --with-commit exits 2" 2 -- \
-  bash -c 'cd "$1" && bash "$2/sdd-repo.sh" --with-commit' _ "$E" "$S"
+expect_rc "no commit yet: plain call still prints the toplevel" 0 -- run_in "$E" bash "$S/sdd-repo.sh"
+expect_rc "no commit yet: --with-commit exits 2" 2 -- run_in "$E" bash "$S/sdd-repo.sh" --with-commit
 expect_contains "no-commit message names the fix" "$out" "with at least one commit"
 expect_rc "usage error with an extra arg" 2 -- bash "$S/sdd-repo.sh" extra
 expect_contains "usage names sdd-repo.sh" "$out" "usage: sdd-repo.sh [--with-commit]"
@@ -172,17 +223,13 @@ expect_rc "usage error with --with-commit and an extra arg" 2 -- bash "$S/sdd-re
 
 echo "== sdd-workspace"
 W=$(bash "$S/sdd-workspace.sh" docs/alpha/plan.md)
-[[ -d "$W" ]]
-verdict "creates workspace" $? "$W"
-[[ "$W" == */.agent-sync/sdd/plan ]]
-verdict "workspace path is under .agent-sync/sdd/<slug>" $? "$W"
+expect_dir "creates workspace" "$W"
+expect_match "workspace path is under .agent-sync/sdd/<slug>" "$W" "*/.agent-sync/sdd/plan"
 expect_eq "plan-path marker is repo-relative" "$(cat "$W/plan-path")" "docs/alpha/plan.md"
 expect_eq "idempotent for the same plan" "$(bash "$S/sdd-workspace.sh" docs/alpha/plan.md)" "$W"
 W2=$(bash "$S/sdd-workspace.sh" docs/beta/plan.md)
-[[ "$W2" != "$W" ]]
-verdict "same basename, different plan gets a distinct workspace" $? "$W2"
-[[ "$W2" == */.agent-sync/sdd/plan-beta ]]
-verdict "slug collision is disambiguated with the parent dir" $? "$W2"
+expect_ne "same basename, different plan gets a distinct workspace" "$W2" "$W"
+expect_match "slug collision is disambiguated with the parent dir" "$W2" "*/.agent-sync/sdd/plan-beta"
 expect_eq "colliding workspace marker names its own plan" "$(cat "$W2/plan-path")" "docs/beta/plan.md"
 expect_eq "same workspace from a subdirectory" "$(cd sub && bash "$S/sdd-workspace.sh" ../docs/alpha/plan.md)" "$W"
 expect_eq "absolute plan path from inside the repo" "$(bash "$S/sdd-workspace.sh" "$T/docs/alpha/plan.md")" "$W"
@@ -190,13 +237,12 @@ expect_eq "absolute plan path from inside the repo" "$(bash "$S/sdd-workspace.sh
 # The repository is the cwd's, never the plan's: a cwd outside any repo must
 # stop even though the plan itself sits inside one.
 expect_rc "cwd outside any repo exits 2 (plan inside a repo)" 2 -- \
-  env GIT_CEILING_DIRECTORIES="$CEIL" bash -c 'cd "$1" && bash "$2/sdd-workspace.sh" "$3"' _ "$N" "$S" "$T/docs/alpha/plan.md"
+  run_in "$N" bash "$S/sdd-workspace.sh" "$T/docs/alpha/plan.md"
 expect_contains "cwd-outside message is sdd-repo's" "$out" "SDD scripts must run from inside the git working tree"
 expect_rc "cwd outside any git repo exits 2 (plan outside too)" 2 -- \
-  env GIT_CEILING_DIRECTORIES="$CEIL" bash -c 'cd "$1" && bash "$2/sdd-workspace.sh" "$1/p.md"' _ "$N" "$S"
+  run_in "$N" bash "$S/sdd-workspace.sh" "$N/p.md"
 expect_contains "non-repo message is sdd-repo's" "$out" "SDD scripts must run from inside the git working tree"
-[[ ! -e "$N/.agent-sync" ]]
-verdict "nothing is written outside a repo" $?
+expect_absent "nothing is written outside a repo" "$N/.agent-sync"
 expect_eq "-C DIR acts on DIR's repo from anywhere" \
   "$(cd "$N" && GIT_CEILING_DIRECTORIES="$CEIL" bash "$S/sdd-workspace.sh" -C "$T" docs/alpha/plan.md)" "$W"
 expect_rc "bad -C directory exits 2" 2 -- bash "$S/sdd-workspace.sh" -C "$N/missing" docs/alpha/plan.md
@@ -208,8 +254,7 @@ WT="$X/wt"
 if git worktree add -q --detach "$WT" HEAD 2> /dev/null; then
   WW=$(cd "$WT" && bash "$S/sdd-workspace.sh" "$T/docs/alpha/plan.md")
   WT_TOP=$(cd "$WT" && git rev-parse --show-toplevel)
-  [[ "$WW" == "$WT_TOP"/.agent-sync/sdd/plan ]]
-  verdict "worktree cwd + main-checkout plan: workspace is in the worktree" $? "$WW"
+  expect_eq "worktree cwd + main-checkout plan: workspace is in the worktree" "$WW" "$WT_TOP/.agent-sync/sdd/plan"
   expect_eq "worktree marker is the plan's absolute path" "$(cat "$WW/plan-path")" "$(cd "$T" && pwd -P)/docs/alpha/plan.md"
 else
   bad "git worktree add" "could not create a linked worktree"
@@ -254,8 +299,7 @@ rm -f "$B/fence1.md"
 expect_rc "unclosed fence hiding a later Task while capturing exits 4" 4 -- \
   bash "$S/task-brief.sh" docs/ids/fence.md 1 "$B/fence1.md"
 expect_contains "exit-4 message names the open fence" "$out" "the code fence opened at line 2 of docs/ids/fence.md never closes"
-[[ ! -e "$B/fence1.md" ]]
-verdict "exit 4 removes the partial brief" $?
+expect_absent "exit 4 removes the partial brief" "$B/fence1.md"
 expect_rc "Task heading hidden by an unclosed fence is not found (exit 3)" 3 -- \
   bash "$S/task-brief.sh" docs/ids/fence.md 2 "$B/fence2.md"
 expect_contains "hidden-heading message explains the fence" "$out" "so no Task heading after it can be seen"
@@ -275,10 +319,10 @@ expect_contains "usage names task-brief.sh" "$out" "usage: task-brief.sh [-C DIR
 expect_rc "missing plan file" 2 -- bash "$S/task-brief.sh" nope.md 1
 rm -f "$W/task-2-brief.md"
 expect_rc "-C DIR writes into DIR's workspace from anywhere" 0 -- \
-  env GIT_CEILING_DIRECTORIES="$CEIL" bash -c 'cd "$1" && bash "$2/task-brief.sh" -C "$3" docs/alpha/plan.md 2' _ "$N" "$S" "$T"
+  run_in "$N" bash "$S/task-brief.sh" -C "$T" docs/alpha/plan.md 2
 expect_eq "-C brief content" "$(heads "$W/task-2-brief.md")" "## Task 2: B|"
 expect_rc "task-brief from outside any repo exits 2" 2 -- \
-  env GIT_CEILING_DIRECTORIES="$CEIL" bash -c 'cd "$1" && bash "$2/task-brief.sh" "$3" 1' _ "$N" "$S" "$T/docs/alpha/plan.md"
+  run_in "$N" bash "$S/task-brief.sh" "$T/docs/alpha/plan.md" 1
 
 echo "== review-package"
 expect_rc "valid range exits 0" 0 -- bash "$S/review-package.sh" docs/alpha/plan.md "$BASE" "$HEAD_SHA"
@@ -287,8 +331,7 @@ if [[ -n "$pkg" && -f "$pkg" ]]; then
   ok "package file is written"
   expect_contains "package lists commits" "$(cat "$pkg")" "## Commits"
   expect_contains "package contains the diff" "$(cat "$pkg")" "## Diff"
-  [[ "$pkg" == "$W"/review-*..*.diff ]]
-  verdict "package is in the plan workspace, named per range" $? "$pkg"
+  expect_match "package is in the plan workspace, named per range" "$pkg" "$W/review-*..*.diff"
 else
   bad "package file is written" "$out"
 fi
@@ -301,16 +344,14 @@ expect_rc "bad HEAD exits 2" 2 -- bash "$S/review-package.sh" docs/alpha/plan.md
 expect_rc "usage error" 2 -- bash "$S/review-package.sh" docs/alpha/plan.md
 expect_contains "usage names review-package.sh" "$out" "usage: review-package.sh [-C DIR] PLAN_FILE BASE HEAD [OUTFILE]"
 expect_rc "-C DIR packages DIR's repo from anywhere" 0 -- \
-  env GIT_CEILING_DIRECTORIES="$CEIL" bash -c 'cd "$1" && bash "$2/review-package.sh" -C "$3" docs/alpha/plan.md "$4" "$5" "$6"' \
-  _ "$N" "$S" "$T" "$BASE" "$HEAD_SHA" "$B/pkg.diff"
+  run_in "$N" bash "$S/review-package.sh" -C "$T" docs/alpha/plan.md "$BASE" "$HEAD_SHA" "$B/pkg.diff"
 expect_contains "-C package has the commits" "$(cat "$B/pkg.diff" 2> /dev/null)" "## Commits"
 expect_rc "review-package from outside any repo exits 2" 2 -- \
-  env GIT_CEILING_DIRECTORIES="$CEIL" bash -c 'cd "$1" && bash "$2/review-package.sh" "$3" "$4" "$5"' \
-  _ "$N" "$S" "$T/docs/alpha/plan.md" "$BASE" "$HEAD_SHA"
+  run_in "$N" bash "$S/review-package.sh" "$T/docs/alpha/plan.md" "$BASE" "$HEAD_SHA"
 expect_contains "outside-repo review message is sdd-repo's" "$out" "SDD scripts must run from inside the git working tree"
 printf '## Task 1\n' > "$E/p.md"
 expect_rc "review-package in a repo with no commit exits 2" 2 -- \
-  bash -c 'cd "$1" && bash "$2/review-package.sh" p.md HEAD HEAD' _ "$E" "$S"
+  run_in "$E" bash "$S/review-package.sh" p.md HEAD HEAD
 
 echo
 echo "passed: $pass  failed: $fail"

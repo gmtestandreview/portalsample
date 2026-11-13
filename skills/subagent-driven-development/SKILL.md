@@ -290,10 +290,13 @@ task's end. `bash evals/test-scripts.sh` re-runs their tests.
   Tier 2 as the default final-review model (`.claude/rules/performance.md`).
   Other differences are local choices, not repo rules: escalating to the human
   at the round cap (upstream adjudicates itself), the `.agent-sync/sdd/`
-  workspace kept after the run, the three-task threshold, the main-branch
-  consent stop, the Validate-at-HEAD and final-message steps, the `.sh` script
-  names, the rewritten alternative reviewer templates (required `model:`, files
-  not pasted text, no plugin dependency), the quote-the-line citation rule, and
-  the ledger-only-what-you-saw rule. Re-diff against upstream whenever the
-  plugin version changes, and update this list and the version above. The
-  maintainer is the human acceptance owner for this repository's skills.
+  workspace kept after the run (the `.agent-sync/` directory is the repo's
+  convention for orchestration state, per `.claude/rules/orchestration.md`; its
+  `sdd/` subdirectory is this skill's own choice), the three-task threshold, the
+  main-branch consent stop, the Validate-at-HEAD and final-message steps, the
+  `.sh` script names, the rewritten alternative reviewer templates (required
+  `model:`, files not pasted text, no plugin dependency), the quote-the-line
+  citation rule, and the ledger-only-what-you-saw rule. Re-diff against upstream
+  whenever the plugin version changes, and update this list and the version
+  above. The maintainer is the human acceptance owner for this repository's
+  skills.
