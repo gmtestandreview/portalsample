@@ -10,7 +10,7 @@ that the fix itself broke nothing.
 ```text
 Subagent (general-purpose):
   description: "Re-review Task N fix round R"
-  model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
+  model: [MODEL — REQUIRED: choose per SKILL.md "Model selection"; an omitted
          model silently inherits the session's most expensive one]
   prompt: |
     You are re-reviewing one task's fix round. A previous review produced
@@ -80,8 +80,7 @@ Subagent (general-purpose):
     ### Finding Verdicts
 
     For each finding in The Findings Under Verification, in order:
-    - **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line
-      evidence. "Attempted" is not addressed: the specific defect must no
+    - **[finding one-liner]** — ADDRESSED | NOT ADDRESSED, with file:line evidence (a line in the file as it exists at HEAD, never a line inside the diff file, with the line's text quoted in backticks). "Attempted" is not addressed: the specific defect must no
       longer exist.
 
     ### New Breakage in the Fix Diff
@@ -106,7 +105,7 @@ Subagent (general-purpose):
 
 **Placeholders:**
 
-- `[MODEL]` — REQUIRED: reviewer model per SKILL.md Model Selection; scoped
+- `[MODEL]` — REQUIRED: reviewer model per SKILL.md "Model selection"; scoped
   re-reviews of small fix diffs take a cheap-to-mid tier
 - `[BRIEF_FILE]` — the task brief file (same file the implementer worked from)
 - `[FINDINGS]` — the Critical/Important findings and spec gaps from the previous
@@ -115,7 +114,7 @@ Subagent (general-purpose):
 - `[FIX_BASE_SHA]` — the head the previous review saw
 - `[HEAD_SHA]` — current commit
 - `[DIFF_FILE]` — the path `scripts/review-package.sh PLAN_FILE FIX_BASE HEAD`
-  printed
+  printed (run by its absolute path, from the working tree you are executing in)
 
 **Re-reviewer returns:** per-finding verdicts (ADDRESSED / NOT ADDRESSED), new
 breakage in the fix diff, out-of-scope observations, and a round verdict.

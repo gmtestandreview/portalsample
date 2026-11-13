@@ -5,7 +5,7 @@ Use this template when dispatching an implementer subagent.
 ```text
 Subagent (general-purpose):
   description: "Implement Task N: [task name]"
-  model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
+  model: [MODEL — REQUIRED: choose per SKILL.md "Model selection"; an omitted
          model silently inherits the session's most expensive one]
   prompt: |
     You are implementing Task N: [task name]
@@ -140,7 +140,7 @@ Subagent (general-purpose):
 
     Write your full report to [REPORT_FILE]:
     - What you implemented (or what you attempted, if blocked)
-    - What you tested and test results
+    - What you tested: the command run and its output (always, TDD or not)
     - **TDD Evidence** (if TDD was required for this task):
       - RED: command run, relevant failing output before implementation, and
         why the failure was expected
@@ -168,8 +168,9 @@ Subagent (general-purpose):
 
 **Placeholders:**
 
-- `[MODEL]` — REQUIRED: implementer model per SKILL.md Model Selection
+- `[MODEL]` — REQUIRED: implementer model per SKILL.md "Model selection"
 - `[BRIEF_FILE]` — REQUIRED: the path `scripts/task-brief.sh PLAN N` printed
+  (run by its absolute path, from the working tree you are executing in)
 - `[REPORT_FILE]` — REQUIRED: the brief's path with `brief` replaced by `report`
   (`<workspace>/task-N-report.md`); the reviewer prompts read the same file and
   fix-round reports are appended to it

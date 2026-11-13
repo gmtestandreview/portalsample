@@ -84,6 +84,7 @@ value-added: yes | no | unknown
 ```
 
 Current status: A1-A3, B1-B5 and C1 were executed on 2026-11-13 as
-decision-level dry-runs against skill snapshot `a8f17a02e2ebb3e2` (see
-`results-2026-11-13.md`). A4-A6, B6-B7 and C2-C8 remain `NHR`. The rubric's T1
-and T2 probes are only partly defeated: the runs are dry-runs, not end-to-end.
+decision-level dry-runs (see `results-2026-11-13.md`), and a separate end-to-end
+run (3 tasks, real dispatches, off `main`) was done on the re-merged skill.
+A4-A6, B6-B7 and C2-C8 remain `NHR`. The fix loop, destructive-step stop, round
+cap and resume were not exercised end-to-end.

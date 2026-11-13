@@ -18,24 +18,32 @@
 # legacy workspace adopts instead of detecting; acceptable, marker-less
 # workspaces age out as plans finish.
 #
-# The repository root is resolved from the PLAN's directory, not the caller's
-# cwd, so running from another directory can never write .agent-sync/ into an
-# unrelated repository.
-#
 # The workspace lives in the working tree (not under .git/) because Claude Code
 # treats .git/ as a protected path and denies agent writes there — which blocks
 # an implementer subagent from writing its report file. A self-ignoring
 # .gitignore at .agent-sync/sdd/ keeps every plan's workspace out of
 # `git status` and out of accidental commits without modifying any tracked file.
 #
-# Single source of truth for the workspace location, so task-brief and
-# review-package cannot drift to different directories.
+# Single source of truth for the workspace location, so task-brief.sh and
+# review-package.sh cannot drift to different directories.
 #
-# Usage: sdd-workspace.sh PLAN_FILE
+# The repository is the current directory's (see sdd-repo.sh). -C DIR runs as
+# if started in DIR, the way git -C does: a caller working on another
+# checkout or worktree needs no `cd DIR ;` prefix, a compound that harnesses
+# cannot allowlist because DIR differs on every run.
+#
+# Usage: sdd-workspace.sh [-C DIR] PLAN_FILE
 set -euo pipefail
 
-if [[ $# -ne 1 ]]; then
-  echo "usage: sdd-workspace.sh PLAN_FILE" >&2
+here=$(cd "$(dirname "$0")" && pwd)
+if [[ "${1:-}" == "-C" ]]; then
+  [[ -d "${2:-}" ]] || { echo "bad -C directory: ${2:-}" >&2; exit 2; }
+  cd "$2"
+  shift 2
+fi
+
+if (($# != 1)); then
+  echo "usage: sdd-workspace.sh [-C DIR] PLAN_FILE" >&2
   exit 2
 fi
 
@@ -43,20 +51,25 @@ plan=$1
 [[ -f "$plan" ]] || { echo "no such plan file: $plan" >&2; exit 2; }
 
 slug=$(basename "$plan" .md)
-[[ -n "$slug" ]] && [[ "$slug" != "." ]] && [[ "$slug" != ".." ]] \
-  || { echo "cannot derive a workspace name from: $plan" >&2; exit 2; }
+if [[ -z "$slug" || "$slug" == "." || "$slug" == ".." ]]; then
+  echo "cannot derive a workspace name from: $plan" >&2
+  exit 2
+fi
 
 # Physical path, spelled the way pwd -P spells the plan path below: on Git
 # Bash, rev-parse prints C:/Users/... while pwd prints /c/Users/..., and the
-# repo-relative marker check needs both in the same form.
-plan_dir=$(CDPATH='' cd -- "$(dirname "$plan")" && pwd -P)
-root_raw=$(git -C "$plan_dir" rev-parse --show-toplevel 2>/dev/null) \
-  || { echo "plan is not inside a git repository: $plan" >&2; exit 2; }
-root=$(CDPATH='' cd -- "$root_raw" && pwd -P)
+# repo-relative marker check needs both in the same form. Two steps, so a
+# failing sdd-repo.sh stops the script instead of handing cd an empty path.
+# Invoke via bash rather than direct exec: some extractors strip Unix exec
+# bits when unpacking packages.
+toplevel=$("${BASH:-bash}" "$here/sdd-repo.sh")
+root=$(CDPATH='' cd -- "$toplevel" && pwd -P)
 base="$root/.agent-sync/sdd"
 
-# Express the plan path as the marker value: repo-relative when the plan lives
-# under the repo root, absolute otherwise.
+# Normalize the plan path (physical directory, so relative/absolute/../
+# spellings of one plan compare equal) and express it as the marker value:
+# repo-relative when the plan lives under the repo root, absolute otherwise.
+plan_dir=$(CDPATH='' cd -- "$(dirname "$plan")" && pwd -P)
 plan_abs="$plan_dir/$(basename "$plan")"
 case "$plan_abs" in
   "$root"/*) plan_id=${plan_abs#"$root"/} ;;
@@ -91,4 +104,11 @@ fi
 # Create-only: a repo may commit its own .gitignore here (e.g. to version
 # progress.md ledgers); overwriting it would revert that on every run.
 [[ -e "$base/.gitignore" ]] || printf '*\n' > "$base/.gitignore"
-CDPATH='' cd -- "$dir" && pwd
+
+# On Windows (Git Bash, MSYS2, Cygwin) print C:/Users/... rather than
+# /c/Users/... or /tmp/...: the caller may be PowerShell or another native
+# tool, which can't resolve MSYS paths, and bash accepts this form too.
+# Only the printed path changes; the plan-path markers above keep pwd -P's
+# spelling, so existing workspaces still match their plans.
+CDPATH='' cd -- "$dir"
+if command -v cygpath >/dev/null 2>&1; then cygpath -m "$PWD"; else pwd; fi

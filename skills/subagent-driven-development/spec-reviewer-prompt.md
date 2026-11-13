@@ -66,7 +66,7 @@ Subagent (general-purpose):
     ⚠️ item instead of widening your search.
 
     Your final message is the report itself, with no preamble:
-    - ✅ Spec compliant (every claim checked against the diff), or
+    - ✅ Spec compliant (every claim checked against the diff, each with a `file:line` at HEAD and the line's text quoted in backticks), or
     - ❌ Issues found: what is missing, extra, or misunderstood, each with a
       `file:line` reference
     - ⚠️ Cannot verify from diff: what, and what the controller should check

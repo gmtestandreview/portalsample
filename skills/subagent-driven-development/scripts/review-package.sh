@@ -4,13 +4,22 @@
 # call. Using the recorded per-task BASE (not HEAD~1) keeps multi-commit
 # tasks intact.
 #
-# Usage: review-package.sh PLAN_FILE BASE HEAD [OUTFILE]
+# Usage: review-package.sh [-C DIR] PLAN_FILE BASE HEAD [OUTFILE]
 # Default OUTFILE: <repo-root>/.agent-sync/sdd/<plan-basename>/review-<base7>..<head7>.diff
 # (named per range, so a re-review after fixes gets a distinct fresh file).
+# The repository is the one sdd-repo.sh names; -C DIR runs as if started in
+# DIR, as in sdd-workspace.sh.
 set -euo pipefail
 
+here=$(cd "$(dirname "$0")" && pwd)
+if [[ "${1:-}" == "-C" ]]; then
+  [[ -d "${2:-}" ]] || { echo "bad -C directory: ${2:-}" >&2; exit 2; }
+  cd "$2"
+  shift 2
+fi
+
 if (($# < 3 || $# > 4)); then
-  echo "usage: review-package.sh PLAN_FILE BASE HEAD [OUTFILE]" >&2
+  echo "usage: review-package.sh [-C DIR] PLAN_FILE BASE HEAD [OUTFILE]" >&2
   exit 2
 fi
 
@@ -19,37 +28,37 @@ base=$2
 head=$3
 [[ -f "$plan" ]] || { echo "no such plan file: $plan" >&2; exit 2; }
 
-git rev-parse --verify --quiet "$base" >/dev/null || { echo "bad BASE: $base" >&2; exit 2; }
-git rev-parse --verify --quiet "$head" >/dev/null || { echo "bad HEAD: $head" >&2; exit 2; }
+# Invoke via bash rather than direct exec: some extractors strip Unix exec
+# bits when unpacking packages.
+repo=$("${BASH:-bash}" "$here/sdd-repo.sh" --with-commit)
+
+git -C "$repo" rev-parse --verify --quiet "$base" >/dev/null || { echo "bad BASE: $base" >&2; exit 2; }
+git -C "$repo" rev-parse --verify --quiet "$head" >/dev/null || { echo "bad HEAD: $head" >&2; exit 2; }
 
 # Range guards (exit 3): a wrong-branch HEAD yields a range that is empty or
 # not rooted at BASE; either would silently produce a bogus review package.
-git merge-base --is-ancestor "$base" "$head" \
-  || { echo "HEAD is not a descendant of BASE: ${base}..${head}" >&2; exit 3; }
-commits=$(git rev-list --count "${base}..${head}")
-((commits > 0)) \
-  || { echo "empty commit range: ${base}..${head}" >&2; exit 3; }
+git -C "$repo" merge-base --is-ancestor "$base" "$head" || { echo "HEAD is not a descendant of BASE: ${base}..${head}" >&2; exit 3; }
+(($(git -C "$repo" rev-list --count "${base}..${head}") > 0)) || { echo "empty commit range: ${base}..${head}" >&2; exit 3; }
 
 if (($# == 4)); then
   out=$4
 else
-  # Invoke via bash rather than direct exec: some extractors strip Unix exec
-  # bits when unpacking packages.
-  dir=$("${BASH:-bash}" "$(cd "$(dirname "$0")" && pwd)/sdd-workspace.sh" "$plan")
-  out="$dir/review-$(git rev-parse --short "$base")..$(git rev-parse --short "$head").diff"
+  dir=$("${BASH:-bash}" "$here/sdd-workspace.sh" "$plan")
+  out="$dir/review-$(git -C "$repo" rev-parse --short "$base")..$(git -C "$repo" rev-parse --short "$head").diff"
 fi
 
 {
   echo "# Review package: ${base}..${head}"
   echo
   echo "## Commits"
-  git log --oneline "${base}..${head}"
+  git -C "$repo" log --oneline "${base}..${head}"
   echo
   echo "## Files changed"
-  git diff --stat "${base}..${head}"
+  git -C "$repo" diff --stat "${base}..${head}"
   echo
   echo "## Diff"
-  git diff -U10 "${base}..${head}"
+  git -C "$repo" diff -U10 "${base}..${head}"
 } > "$out"
 
+commits=$(git -C "$repo" rev-list --count "${base}..${head}")
 echo "wrote ${out}: ${commits} commit(s), $(wc -c < "$out" | tr -d ' ') bytes"

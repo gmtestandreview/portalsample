@@ -50,8 +50,7 @@ Subagent (general-purpose):
 
     ## Output
 
-    Your final message is the report, with no preamble and a `file:line` for
-    every finding:
+    Your final message is the report, with no preamble and a `file:line` for every finding (a line in the file at HEAD, never in the diff file, with the line's text quoted in backticks):
 
     ### Strengths
     ### Issues
