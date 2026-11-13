@@ -12,6 +12,11 @@ ClientApp/css/main.*.css
 ClientApp/css/main.*.css.map
 ClientApp/src/main.*.js
 ClientApp/src/main.*.js.map
+/example-codeql-db/
+/report/
+/esprint.json
+/eslint-*-effective.json
+
 
 # TypeScript
 *.tsbuildinfo
