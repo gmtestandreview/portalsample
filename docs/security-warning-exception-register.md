@@ -37,6 +37,10 @@ not a blanket suppression and is not owner acceptance of residual risk.
 - `npm run test:lint:diagnostics`: 14/14 passed.
 - `npm run test:lint:baseline`: 3/3 passed.
 - `node --test scripts/safe-file-io.test.mjs`: 14/14 passed.
+- `node --test scripts/lint-diagnostics.test.mjs scripts/safe-file-io.test.mjs`:
+  28/28 passed.
+- Focused filesystem-related Vitest suites: 104/104 passed.
+- `npm run type-check`: passed.
 - Secret scans for all modified security-boundary files: passed.
 
 ## Residual limitation

@@ -14,7 +14,7 @@ Feature: Create a request for quote (RFQ)
 
     When the user fills in the instrument manufacturer "Fluke"
     And the user fills in the instrument model "87V"
-    And the user fills in the serial number "SN123456"
+    And the user completes the required instrument and request details
     And the user clicks "Save and next"
     Then the user should be on the RFQ wizard step 3 "Summary"
 
@@ -33,6 +33,8 @@ Feature: Create a request for quote (RFQ)
     When the user clicks "Create new request"
     And the user clicks "Save and next"
     And the user fills in the instrument manufacturer "Fluke"
+    And the user fills in the instrument model "87V"
+    And the user completes the required instrument and request details
     And the user clicks "Save and next"
     Then the user should be on the RFQ wizard step 3
     When the user clicks "Back"

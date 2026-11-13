@@ -198,7 +198,7 @@ const AddressLookup = (
 
   const onSearchAgain = () => {
     void setValue({
-      ..._field.value,
+      ...(_field.value ?? {}),
       isManuallyEntered: false,
     });
   };

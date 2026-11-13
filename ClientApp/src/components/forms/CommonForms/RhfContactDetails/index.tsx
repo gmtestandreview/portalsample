@@ -3,6 +3,7 @@ import { useWatch } from 'react-hook-form';
 import { Title } from '../../../../api/web-api-client';
 import type { ContactDto } from '../../../../api/web-api-client';
 import { prefixedPropertyOf } from '../../../../utils';
+import { toTitle } from '../../../../utils/apiEnumMappings';
 import RhfSelectInput from '../../../Inputs/RhfSelectInput';
 import RhfTextInput from '../../../Inputs/RhfTextInput';
 import RhfNumberInput from '../../../Inputs/RhfNumberInput';
@@ -13,11 +14,18 @@ import type { ContactDetailsProps } from '../ContactDetails';
 const PHONE_FORMAT = 'checkPhoneFormat';
 const MOBILE_FORMAT = '#### ### ###';
 
-const TITLE_OPTIONS: SelectInputOption<string>[] = Object.values(Title).map(
-  (title) => ({
-    displayText: title.replace(/([A-Z])/g, ' $1').trim(),
-    value: title,
-  }),
+const TITLE_OPTIONS: SelectInputOption<string>[] = Object.values(Title).flatMap(
+  (value) => {
+    const title = toTitle(value);
+    return title === undefined
+      ? []
+      : [
+          {
+            displayText: title.replace(/([A-Z])/g, ' $1').trim(),
+            value: title,
+          },
+        ];
+  },
 );
 
 type FieldProps = Readonly<Required<Omit<ContactDetailsProps, 'isSummary'>>>;

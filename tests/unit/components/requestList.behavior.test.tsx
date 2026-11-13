@@ -301,6 +301,23 @@ describe('requestList behavior', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('omits the report menu action when the request has no quote', async () => {
+    expect.hasAssertions();
+
+    resetRequestListMocks();
+    const user = userEvent.setup();
+
+    renderInDashboardList(
+      <RequestItem request={{ ...baseRequest, quote: undefined }} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    expect(
+      screen.queryByRole('menuitem', { name: 'View report' }),
+    ).not.toBeInTheDocument();
+  });
+
   it('runs RequestItem tab and issued-report action callbacks', async () => {
     expect.hasAssertions();
 
