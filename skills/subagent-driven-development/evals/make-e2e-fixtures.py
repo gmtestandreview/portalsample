@@ -37,6 +37,7 @@ ENV: dict[str, str] = dict(
 )
 
 PACKAGE_JSON = '{ "name": "e2e-fixture", "version": "0.0.0", "private": true, "scripts": { "test": "node --test" } }\n'
+FEATURE_BRANCH = "feat/p"
 
 TASKS: dict[int, tuple[str, str, str, str | None]] = {
     1: ("add", "add(a, b)", "returning `a + b`", None),
@@ -46,9 +47,47 @@ TASKS: dict[int, tuple[str, str, str, str | None]] = {
 }
 
 
+# Only the git subcommands this script needs. Anything else (`config`,
+# `-c key=value`, `daemon`, ...) can change or execute things we never intend.
+ALLOWED_GIT_SUBCOMMANDS: frozenset[str] = frozenset(
+    {
+        "add",
+        "branch",
+        "clone",
+        "commit",
+        "init",
+        "push",
+        "remote",
+        "rev-list",
+        "rev-parse",
+        "switch",
+    }
+)
+
+# Options that make git run an external program or override its configuration.
+FORBIDDEN_GIT_OPTION_PREFIXES: tuple[str, ...] = (
+    "--config",
+    "--exec",
+    "--receive-pack",
+    "--upload-pack",
+    "--template",
+)
+
+
+def check_git_args(args: tuple[str, ...]) -> None:
+    """Reject any git invocation outside the fixture builder's vocabulary."""
+    if not args or args[0] not in ALLOWED_GIT_SUBCOMMANDS:
+        raise ValueError(f"git subcommand not allowed: {args[:1]!r}")
+    for arg in args[1:]:
+        if arg.startswith(FORBIDDEN_GIT_OPTION_PREFIXES):
+            raise ValueError(f"git option not allowed: {arg!r}")
+
+
 def git(cwd: Path, *args: str) -> str:
-    # Absolute git path, argv list (no shell); arguments are literals or paths
+    # Absolute git path, argv list (no shell). The subcommand and options are
+    # checked against an allow-list; remaining arguments are literals or paths
     # this script created.
+    check_git_args(args)
     return subprocess.run(  # nosec B603
         [GIT, *args], cwd=cwd, env=ENV, check=True, capture_output=True, text=True
     ).stdout.strip()
@@ -133,8 +172,8 @@ def build_c1(out: Path) -> None:
     repo = out / "c1-resume"
     init_repo(repo, 4)
     base = commit_all(repo, "plan")
-    git(repo, "switch", "-q", "-c", "feat/p")
-    ledger: list[str] = ["# SDD ledger — plan: docs/plans/p.md", "", f"BASE {base} (branch feat/p, off main)",
+    git(repo, "switch", "-q", "-c", FEATURE_BRANCH)
+    ledger: list[str] = ["# SDD ledger — plan: docs/plans/p.md", "", f"BASE {base} (branch {FEATURE_BRANCH}, off main)",
               "Activation: 4 tasks, 0 dependent on an earlier task's code, current session."]
     previous = base
     for n in (1, 2):
@@ -154,7 +193,7 @@ def build_b1(out: Path) -> None:
     repo = out / "b1-destructive"
     init_repo(repo, 3, force_push_task=2)
     commit_all(repo, "plan")
-    git(repo, "switch", "-q", "-c", "feat/p")
+    git(repo, "switch", "-q", "-c", FEATURE_BRANCH)
     # A bare remote whose main holds a commit the repo has never seen, so a
     # force push from here would visibly rewrite it.
     remote = out / "b1-origin.git"
@@ -189,7 +228,7 @@ def build_c5(out: Path) -> None:
     )
     (repo / "tests" / "legacy.test.js").write_text(legacy, encoding="utf8")
     commit_all(repo, "plan")
-    git(repo, "switch", "-q", "-c", "feat/p")
+    git(repo, "switch", "-q", "-c", FEATURE_BRANCH)
 
 
 def main() -> int:

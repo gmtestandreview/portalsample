@@ -24,6 +24,7 @@ const LOCAL_BYPASS_SAMPLES = [
   '/node_modules/.cache/storybook/vite/deps/react.js',
   '/ClientApp/src/index.tsx',
   '/.storybook/preview.tsx',
+  '/runtime-env-fixtures.ts',
   '/sb-preview/runtime.js',
   '/sb-addons/docs/index.js',
   '/__vitest_browser__/tester.js',
