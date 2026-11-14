@@ -550,28 +550,44 @@ When(
       key: string,
       expected: string | null,
     ) => {
-      await expect.poll(() => readSessionSentinel(key)).toBe(expected);
+      await expect
+        .poll(() => readSessionSentinel(key), {
+          timeout: STORY_RENDER_TIMEOUT_MS,
+        })
+        .toBe(expected);
     };
     const expectMountedProviderPair = async () => {
       await expect
-        .poll(async () => {
-          const events = await readProviderEvents();
-          return events
-            .filter((event) => event.phase === 'mounted')
-            .map((event) => event.sentinel)
-            .sort((a, b) => a.localeCompare(b));
-        })
+        .poll(
+          async () => {
+            const events = await readProviderEvents();
+            return [
+              ...new Set(
+                events
+                  .filter((event) => event.phase === 'mounted')
+                  .map((event) => event.sentinel),
+              ),
+            ].sort((a, b) => a.localeCompare(b));
+          },
+          { timeout: STORY_RENDER_TIMEOUT_MS },
+        )
         .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
     };
     const expectActiveAccountPair = async () => {
       await expect
-        .poll(async () => {
-          const events = await readAccountEvents();
-          return events
-            .filter((event) => event.phase === 'active')
-            .map((event) => event.sentinel)
-            .sort((a, b) => a.localeCompare(b));
-        })
+        .poll(
+          async () => {
+            const events = await readAccountEvents();
+            return [
+              ...new Set(
+                events
+                  .filter((event) => event.phase === 'active')
+                  .map((event) => event.sentinel),
+              ),
+            ].sort((a, b) => a.localeCompare(b));
+          },
+          { timeout: STORY_RENDER_TIMEOUT_MS },
+        )
         .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
     };
     const findStoryFrame = (storyId: string) => {
@@ -907,10 +923,13 @@ When(
       expect(probe.failedRequests).toEqual([]);
       const providerEvents = await readProviderEvents();
       expect(
-        providerEvents
-          .filter((event) => event.phase === 'mounted')
-          .map((event) => event.sentinel)
-          .sort((a, b) => a.localeCompare(b)),
+        [
+          ...new Set(
+            providerEvents
+              .filter((event) => event.phase === 'mounted')
+              .map((event) => event.sentinel),
+          ),
+        ].sort((a, b) => a.localeCompare(b)),
       ).toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
       expect(
         providerEvents.filter((event) => event.phase === 'cleaned'),
@@ -928,9 +947,13 @@ When(
       ]);
       const accountEvents = await readAccountEvents();
       expect(
-        accountEvents
-          .filter((event) => event.phase === 'active')
-          .sort((left, right) => left.sentinel.localeCompare(right.sentinel)),
+        [
+          ...new Map(
+            accountEvents
+              .filter((event) => event.phase === 'active')
+              .map((event) => [event.sentinel, event]),
+          ).values(),
+        ].sort((left, right) => left.sentinel.localeCompare(right.sentinel)),
       ).toEqual([
         {
           type: 'storybook-account-context',

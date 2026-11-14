@@ -71,9 +71,20 @@ const preview = definePreview({
   ],
 
   beforeEach() {
-    // Stories share one page, so session state written by an earlier story (for
-    // example the branch-modal notification) would otherwise leak into the next.
-    globalThis.sessionStorage.clear();
+    // Stories share one page, so ordinary session state written by an earlier
+    // story (for example the branch-modal notification) would otherwise leak
+    // into the next. Keep the per-story lifecycle sentinels: Docs can render
+    // multiple story frames concurrently, and each frame runs this hook.
+    for (
+      let index = globalThis.sessionStorage.length - 1;
+      index >= 0;
+      index -= 1
+    ) {
+      const key = globalThis.sessionStorage.key(index);
+      if (key !== null && !key.startsWith('storybook:')) {
+        globalThis.sessionStorage.removeItem(key);
+      }
+    }
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
       JSON.stringify({

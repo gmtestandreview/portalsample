@@ -37,6 +37,11 @@ delete a branch/worktree, or discard changes without an explicit user request
 for that action and the required permissions. Treat uncertain authority as a
 reason to stop the side effect, not the read-only audit.
 
+**Same-named skill:** this repository's skill replaces the plugin skill
+`superpowers:finishing-a-development-branch` here. Use this one unless the user
+explicitly invokes the plugin skill; where the two differ, this one's
+explicit-request rule for side effects governs.
+
 ## Workflow
 
 ### 1. Establish the authoritative target
@@ -50,7 +55,10 @@ conflict; do not pick the easier rule.
 Confirm the intended base from user instructions, PR metadata, repository
 conventions, or a documented tracked target. **Do not assume `main`.** If no
 reliable base exists, continue safe inspection, but mark full diff review and
-merge readiness **BLOCKED: base unknown**.
+merge readiness **BLOCKED: base unknown** (report the state as NOT READY). Do
+not compare the branch against a guessed candidate base; name the candidate
+branches only. Ask the user for the target; that is the only question to put to
+them until it is answered.
 
 ### 2. Capture branch and evidence baseline
 
@@ -127,6 +135,22 @@ result, evidence revision); readiness state and blockers; required manual/CI
 steps; and a concise PR title/summary, testing, risks, screenshots or recordings
 for UI changes if available, and follow-ups. Label unrun and unavailable checks.
 Do not imply a screenshot, PR, commit, or approval exists when it does not.
+
+When the user asked to finish or close out the branch, end the handoff by asking
+which next action they want; perform none until they answer, and treat a vague
+reply as no answer and ask again. If the base is unknown, ask only for the
+target (step 1) instead. For a review-only request, stop at the review and the
+recommended action. Offer only options the readiness state and repository policy
+allow:
+
+1. **Open or update a PR** (recommended for a protected base); offer only when
+   `READY FOR PR REVIEW` or `READY TO INTEGRATE`.
+2. **Integrate** (merge) via the project's required route; offer only when
+   `READY TO INTEGRATE`.
+3. **Keep** the branch and worktree as they are.
+4. **Discard** local-only work that was never pushed or shared; describe exactly
+   what would be lost, require the user to retype the branch name before any
+   deletion, and follow step 7 and the worktree reference.
 
 ### 7. Execute only requested Git actions
 
