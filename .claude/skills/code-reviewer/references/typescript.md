@@ -15,7 +15,8 @@ async behavior, and package changes.
 
 ```ts
 type Result =
-  { status: 'success'; value: string } | { status: 'error'; message: string };
+  | { status: 'success'; value: string }
+  | { status: 'error'; message: string };
 ```
 
 ## Null and Undefined

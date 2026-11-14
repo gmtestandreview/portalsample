@@ -44,6 +44,20 @@ const enumValue = <T extends Record<string, string>>(
 export const toDashboardTab = (value: unknown): DashboardTab | undefined =>
   enumValue(DashboardTab, value);
 
+/**
+ * Applies a selection from the dashboard tab control. The control reports its
+ * key as `string | null`, so a key that is not a dashboard tab is ignored.
+ */
+export const selectDashboardTab = (
+  key: unknown,
+  onSelectTab: (tab: DashboardTab) => void,
+) => {
+  const tab = toDashboardTab(key);
+  if (tab !== undefined) {
+    onSelectTab(tab);
+  }
+};
+
 export const toStatusEnumDto = (value: unknown): StatusEnumDto | undefined =>
   enumValue(StatusEnumDto, value);
 
@@ -128,32 +142,12 @@ export const toQuoteStatus = (value: unknown): QuoteStatus | undefined => {
 export const toReportStatus = (value: unknown): ReportStatus | undefined =>
   enumValue(ReportStatus, value);
 
+// PatternApprovalStatusEnumDto's members (Submitted, InProgress, OnHold,
+// Completed) carry the same string values as the matching PaDashboardItemStatus
+// members, so a single lookup resolves both the local and the API vocabulary.
 export const toPaDashboardItemStatus = (
   value: unknown,
-): PaDashboardItemStatus | undefined => {
-  const localStatus = enumValue(PaDashboardItemStatus, value);
-  if (localStatus !== undefined) {
-    return localStatus;
-  }
-
-  const apiStatus = enumValue(PatternApprovalStatusEnumDto, value);
-  if (apiStatus === undefined) {
-    return undefined;
-  }
-
-  switch (apiStatus) {
-    case PatternApprovalStatusEnumDto.Submitted:
-      return PaDashboardItemStatus.PaSubmitted;
-    case PatternApprovalStatusEnumDto.InProgress:
-      return PaDashboardItemStatus.PaInProgress;
-    case PatternApprovalStatusEnumDto.OnHold:
-      return PaDashboardItemStatus.PaOnHold;
-    case PatternApprovalStatusEnumDto.Completed:
-      return PaDashboardItemStatus.PaCompleted;
-    default:
-      return undefined;
-  }
-};
+): PaDashboardItemStatus | undefined => enumValue(PaDashboardItemStatus, value);
 
 /**
  * Gets downloadable files from CRM depending on status

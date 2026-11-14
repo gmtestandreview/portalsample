@@ -209,8 +209,7 @@ type __TestMockModule150 =
 type __TestMockModule151 =
   typeof import('@/routes/requestForQuote/requestForQuoteSummary');
 type __TestMockModule152 = typeof import('@/routes/quotation/quoteDetails');
-type __TestMockModule153 =
-  typeof import('@/routes/quotation/nMIContactDetails');
+type __TestMockModule153 = typeof import('@/routes/common/NMIContactDetails');
 type __TestMockModule154 = typeof import('react-dom/client');
 type __TestMockModule155 = typeof import('react-router/dom');
 type __TestMockModule156 = typeof import('@/authentication/AccountProvider');

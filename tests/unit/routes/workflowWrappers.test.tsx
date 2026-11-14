@@ -306,7 +306,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/quotation/nMIContactDetails') as unknown as string,
+  import('../../../ClientApp/src/routes/common/NMIContactDetails') as unknown as string,
   () =>
     ({
       default: () => <div>NMI contact details</div>,
@@ -1225,5 +1225,30 @@ describe('workflow route wrappers', () => {
       'Failed to get Quotedetails: CRM-FAIL',
       expect.any(Error),
     );
+  });
+
+  it('logs quote loading failures with an empty id when none is supplied', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    mocks.getQuoteRequestDetails.mockRejectedValueOnce(
+      new Error('quote failed'),
+    );
+    const QuotationSummary = (
+      await import('../../../ClientApp/src/routes/acceptQuote/quotationSummary')
+    ).default;
+
+    renderAt(
+      '/quotation-summary',
+      <QuotationSummary cRMQuoteRequestId={undefined} isSummary />,
+    );
+
+    await waitFor(() => {
+      expect(mocks.appLoggerError).toHaveBeenCalledWith(
+        'Failed to get Quotedetails: ',
+        expect.any(Error),
+      );
+    });
   });
 });

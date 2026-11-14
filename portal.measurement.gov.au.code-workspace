@@ -3,8 +3,19 @@
     {
       "path": ".",
     },
+    {
+      "name": "[example-codeql-db source archive]",
+      "uri": "codeql-zip-archive://1-68/c:\\Users\\gregm\\codeql\\codeql-zero-to-hero\\example-codeql-db\\src.zip",
+    },
+    {
+      "name": "[GitHubSecurityLab/codeql-zero-to-hero source archive]",
+      "uri": "codeql-zip-archive://1-165/c:\\Users\\gregm\\AppData\\Roaming\\Code\\User\\workspaceStorage\\7e1e06dd73567cae2f1b86c3e3f6ce14\\GitHub.vscode-codeql\\githubsecuritylab-codeql-zero-to-hero\\python\\src.zip",
+    },
   ],
   "settings": {
     "js/ts.tsdk.path": "node_modules\\typescript\\lib",
+    "jscpd.analyses.complexity": false,
+    "jscpd.analyses.deadCode": false,
+    "jscpd.analyses.similarFunctions": false,
   },
 }

@@ -40,8 +40,8 @@ call useMsal() directly will see 'Test User'; components going through
 useAccountState() see 'Taylor Nguyen'. This is an inconsistency that will be
 invisible until a component accesses both paths.
 
-1. Component-by-Component Gaps Accordion Stories: SingleSection, WithSubHeading
-   | Tag: ai-generated, needs-work
+1. Component-by-Component Gaps Accordion Stories: SingleSection,
+   WithSubHeading | Tag: ai-generated, needs-work
 
 Prop/Case Source Has It Story Covers It containerClassName on CustomAccordion ✅
 ❌ namePartThree / namePartThreeClassName ✅ ❌ className on CustomAccordionBody
@@ -311,9 +311,9 @@ RequestsTabWithNotification
 
 CRITICAL DATA BUG in fixture filtering:
 
-// Dashboard.stories.tsx const draftItems = dashboardItems.filter(i => i.status
-=== 'Quote drafted'); const instrumentItems = dashboardItems.filter(i =>
-i.status === 'Report issued'); From enums.ts:21:
+// Dashboard.stories.tsx const draftItems = dashboardItems.filter(i =>
+i.status === 'Quote drafted'); const instrumentItems = dashboardItems.filter(i
+=> i.status === 'Report issued'); From enums.ts:21:
 
 DashboardItemStatus.QuoteDrafted = 'Quote request drafted' ≠ 'Quote drafted'
 DashboardItemStatus.ReportIssued = 'Report is available' ≠ 'Report issued' Both

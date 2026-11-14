@@ -20,6 +20,7 @@ import type { DiscardProps } from '../../../../../ClientApp/src/components/forms
 import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
 import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
 import { type FormikValues } from 'formik';
+import { getDashboardNotification } from '../../../../../ClientApp/src/storage/notification';
 
 type AppLogger = typeof AppLoggerModule;
 type SaveHandler = NonNullable<
@@ -598,6 +599,36 @@ describe('wizardRoutedStep — error navigation', () => {
     });
 
     expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith('', '');
+  });
+
+  it('words the lost-access notice without an organisation name when none is held', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
+
+    const accountWithoutTarget = {
+      ...mockStateValue,
+      details: { ...mockStateValue.details, targetOrganisation: undefined },
+    };
+    const router = makeRouter(
+      {
+        loadStepValues: vi.fn<LoadStepHandler>().mockRejectedValue({
+          status: 403,
+          title: 'No third-party access to this resource',
+        }),
+      },
+      [],
+      accountWithoutTarget as unknown as typeof mockStateValue,
+    );
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Dashboard Page')).toBeInTheDocument();
+    });
+
+    expect(getDashboardNotification()?.message).toBe(
+      'You no longer have access to the records for . Your changes have not been saved.',
+    );
   });
 
   it('keeps rendering after an aborted load request', async () => {

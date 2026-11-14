@@ -204,7 +204,7 @@ parcel build index.html
     "build": "webpack --mode production",
     "test": "jest",
     "lint": "eslint src/",
-    "format": "prettier --write src/"
+    "format": "oxfmt src/"
   }
 }
 ```

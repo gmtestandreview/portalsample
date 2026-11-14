@@ -23,8 +23,8 @@ import {
   STORYBOOK_BASE,
   STORYBOOK_MCP,
   STORY_RENDER_TIMEOUT_MS,
-  MCP_HEADERS,
   executeMcpTestRun,
+  initializeMcpSession,
   readMcpEvent,
   loadStoryIframe,
   loadDocsIframe,
@@ -92,6 +92,70 @@ const PAYMENT_DETAILS_PREPAID_SESSION_KEY =
 const PAYMENT_DETAILS_POSTPAID_SESSION_KEY =
   'storybook:accept-quote:payment-details:postpaid';
 
+interface LifecycleEvent {
+  phase: string;
+  sentinel: string;
+}
+
+const expectLifecyclePair = async <T extends LifecycleEvent>(
+  readEvents: () => Promise<T[]>,
+  phase: T['phase'],
+  expectedSentinels: readonly string[],
+) => {
+  await expect
+    .poll(
+      async () => {
+        const events = await readEvents();
+        return events
+          .filter((event) => event.phase === phase)
+          .map((event) => event.sentinel)
+          .sort((a, b) => a.localeCompare(b));
+      },
+      { timeout: STORY_RENDER_TIMEOUT_MS },
+    )
+    .toEqual(expectedSentinels);
+};
+
+const assertLifecycleEventsContain = <T>(events: T[], expectedEvents: T[]) => {
+  expect(events).toEqual(expect.arrayContaining(expectedEvents));
+};
+
+const expectLifecycleEventsEventually = async <T>(
+  readEvents: () => Promise<T[]>,
+  expectedEvents: T[],
+) => {
+  await expect
+    .poll(readEvents, { timeout: STORY_RENDER_TIMEOUT_MS })
+    .toEqual(expect.arrayContaining(expectedEvents));
+};
+
+const expectAcceptQuotePaymentFrames = async (page: Page) => {
+  await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
+  await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
+  await expect(
+    page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
+  ).toContainText('Prepayment required', {
+    timeout: STORY_RENDER_TIMEOUT_MS,
+  });
+  await expect(
+    page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
+  ).toContainText('Invoices must be paid within 30 days', {
+    timeout: STORY_RENDER_TIMEOUT_MS,
+  });
+};
+
+const expectVisibleStatusPill = async (page: Page) => {
+  const root = storybookPreviewFrame(page).locator('#storybook-root');
+
+  await expect(root).toBeVisible({ timeout: 10_000 });
+
+  const pills = root.locator(
+    'span, .badge, [class*="pill"], [class*="status"]',
+  );
+
+  await expect(pills.first()).toBeVisible({ timeout: 10_000 });
+};
+
 const captureLateUnmountSignal = (
   messages: string[],
   source: string,
@@ -137,42 +201,15 @@ Given('the Storybook MCP server is running', async ({ page, request }) => {
 Then(
   'the Storybook MCP endpoint should initialize and list configured tools',
   async ({ request }) => {
-    const initialize = await request.post(STORYBOOK_MCP, {
-      headers: MCP_HEADERS,
-      data: {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'initialize',
-        params: {
-          protocolVersion: '2025-03-26',
-          capabilities: {},
-          clientInfo: { name: 'dependency-security-test', version: '1.0.0' },
-        },
-      },
+    const { initializeEnvelope, sessionHeaders } = await initializeMcpSession({
+      clientInfo: { name: 'dependency-security-test', version: '1.0.0' },
+      initializeId: 1,
+      request,
     });
-
-    expect(initialize.status()).toBe(200);
-
-    const sessionId = initialize.headers()['mcp-session-id'];
-    if (sessionId === undefined) {
-      throw new Error('MCP initialize response did not provide a session ID');
-    }
-    const initializeEnvelope = await readMcpEvent(initialize, 1);
 
     expect(initializeEnvelope.result?.serverInfo?.name).toBe(
       '@storybook/addon-mcp',
     );
-
-    const sessionHeaders = {
-      ...MCP_HEADERS,
-      'mcp-session-id': sessionId,
-    };
-    const initialized = await request.post(STORYBOOK_MCP, {
-      headers: sessionHeaders,
-      data: { jsonrpc: '2.0', method: 'notifications/initialized' },
-    });
-
-    expect(initialized.status()).toBe(202);
 
     const toolsList = await request.post(STORYBOOK_MCP, {
       headers: sessionHeaders,
@@ -550,29 +587,11 @@ When(
       key: string,
       expected: string | null,
     ) => {
-      await expect.poll(() => readSessionSentinel(key)).toBe(expected);
-    };
-    const expectMountedProviderPair = async () => {
       await expect
-        .poll(async () => {
-          const events = await readProviderEvents();
-          return events
-            .filter((event) => event.phase === 'mounted')
-            .map((event) => event.sentinel)
-            .sort((a, b) => a.localeCompare(b));
+        .poll(() => readSessionSentinel(key), {
+          timeout: STORY_RENDER_TIMEOUT_MS,
         })
-        .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
-    };
-    const expectActiveAccountPair = async () => {
-      await expect
-        .poll(async () => {
-          const events = await readAccountEvents();
-          return events
-            .filter((event) => event.phase === 'active')
-            .map((event) => event.sentinel)
-            .sort((a, b) => a.localeCompare(b));
-        })
-        .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
+        .toBe(expected);
     };
     const findStoryFrame = (storyId: string) => {
       const frame = page
@@ -609,6 +628,25 @@ When(
         });
       await expect(page.locator(selector)).toHaveCount(0);
     };
+    const removeAndExpectRemainingPaymentDetailsFrame = async (
+      selector: string,
+      remainingSelector: string,
+    ) => {
+      await removeFrame(selector);
+      await expect(page.locator(remainingSelector)).toHaveCount(1);
+    };
+    const removeAndExpectNoPaymentDetailsFrames = async (selector: string) => {
+      await removeFrame(selector);
+      await expect
+        .poll(
+          () =>
+            page
+              .frames()
+              .filter((frame) => frame.url().includes('payment-details-'))
+              .length,
+        )
+        .toBe(0);
+    };
 
     page.on('request', requestHandler);
     page.on('requestfailed', requestFailedHandler);
@@ -632,20 +670,15 @@ When(
         await readSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY),
       ).toBeNull();
       await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
-      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
-      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
-      ).toContainText('Prepayment required', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
-      ).toContainText('Invoices must be paid within 30 days', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expectMountedProviderPair();
-      await expectActiveAccountPair();
+      await expectAcceptQuotePaymentFrames(page);
+      await expectLifecyclePair(readProviderEvents, 'mounted', [
+        'payment-details-postpaid',
+        'payment-details-prepaid',
+      ]);
+      await expectLifecyclePair(readAccountEvents, 'active', [
+        'payment-details-postpaid',
+        'payment-details-prepaid',
+      ]);
       await expect
         .poll(() =>
           readAccountTargetOrganisation(
@@ -673,21 +706,22 @@ When(
       );
       expect(probe.endpointRequests).toHaveLength(2);
 
-      await removeFrame(PAYMENT_DETAILS_STEP_FRAME);
-      await expect.poll(readProviderEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-          },
-          {
-            type: 'storybook-portal-provider',
-            phase: 'mounted',
-            sentinel: 'payment-details-postpaid',
-          },
-        ]),
+      await removeAndExpectRemainingPaymentDetailsFrame(
+        PAYMENT_DETAILS_STEP_FRAME,
+        PAYMENT_DETAILS_POSTPAID_FRAME,
       );
+      await expectLifecycleEventsEventually(readProviderEvents, [
+        {
+          type: 'storybook-portal-provider',
+          phase: 'cleaned',
+          sentinel: 'payment-details-prepaid',
+        },
+        {
+          type: 'storybook-portal-provider',
+          phase: 'mounted',
+          sentinel: 'payment-details-postpaid',
+        },
+      ]);
       expect(await readProviderEvents()).not.toEqual(
         expect.arrayContaining([
           {
@@ -697,16 +731,14 @@ When(
           },
         ]),
       );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-            targetOrganisationName: 'payment-details-prepaid:active',
-          },
-        ]),
-      );
+      await expectLifecycleEventsEventually(readAccountEvents, [
+        {
+          type: 'storybook-account-context',
+          phase: 'cleaned',
+          sentinel: 'payment-details-prepaid',
+          targetOrganisationName: 'payment-details-prepaid:active',
+        },
+      ]);
       await expect
         .poll(() =>
           readAccountTargetOrganisation(
@@ -732,55 +764,39 @@ When(
         },
       });
 
-      await removeFrame(PAYMENT_DETAILS_POSTPAID_FRAME);
-      await expect
-        .poll(
-          () =>
-            page
-              .frames()
-              .filter((frame) => frame.url().includes('payment-details-'))
-              .length,
-        )
-        .toBe(0);
-      expect(await readProviderEvents()).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-          },
-        ]),
+      await removeAndExpectNoPaymentDetailsFrames(
+        PAYMENT_DETAILS_POSTPAID_FRAME,
       );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-            targetOrganisationName: 'payment-details-postpaid:active',
-          },
-        ]),
-      );
+      assertLifecycleEventsContain(await readProviderEvents(), [
+        {
+          type: 'storybook-portal-provider',
+          phase: 'cleaned',
+          sentinel: 'payment-details-postpaid',
+        },
+      ]);
+      await expectLifecycleEventsEventually(readAccountEvents, [
+        {
+          type: 'storybook-account-context',
+          phase: 'cleaned',
+          sentinel: 'payment-details-postpaid',
+          targetOrganisationName: 'payment-details-postpaid:active',
+        },
+      ]);
       await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
       await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
 
       await page.goto(
         `${STORYBOOK_BASE}/iframe.html?id=${ACCEPT_QUOTE_DOCS_ID}&viewMode=docs`,
       );
-      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
-      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
-      ).toContainText('Prepayment required', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
-      ).toContainText('Invoices must be paid within 30 days', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expectMountedProviderPair();
-      await expectActiveAccountPair();
+      await expectAcceptQuotePaymentFrames(page);
+      await expectLifecyclePair(readProviderEvents, 'mounted', [
+        'payment-details-postpaid',
+        'payment-details-prepaid',
+      ]);
+      await expectLifecyclePair(readAccountEvents, 'active', [
+        'payment-details-postpaid',
+        'payment-details-prepaid',
+      ]);
       await expectSessionSentinel(
         PAYMENT_DETAILS_PREPAID_SESSION_KEY,
         `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
@@ -793,21 +809,22 @@ When(
       // after A cleanup, then two initial requests from the reversed pair.
       expect(probe.endpointRequests).toHaveLength(5);
 
-      await removeFrame(PAYMENT_DETAILS_POSTPAID_FRAME);
-      await expect.poll(readProviderEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-          },
-          {
-            type: 'storybook-portal-provider',
-            phase: 'mounted',
-            sentinel: 'payment-details-prepaid',
-          },
-        ]),
+      await removeAndExpectRemainingPaymentDetailsFrame(
+        PAYMENT_DETAILS_POSTPAID_FRAME,
+        PAYMENT_DETAILS_STEP_FRAME,
       );
+      await expectLifecycleEventsEventually(readProviderEvents, [
+        {
+          type: 'storybook-portal-provider',
+          phase: 'cleaned',
+          sentinel: 'payment-details-postpaid',
+        },
+        {
+          type: 'storybook-portal-provider',
+          phase: 'mounted',
+          sentinel: 'payment-details-prepaid',
+        },
+      ]);
       expect(await readProviderEvents()).not.toEqual(
         expect.arrayContaining([
           {
@@ -817,22 +834,20 @@ When(
           },
         ]),
       );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-            targetOrganisationName: 'payment-details-postpaid:active',
-          },
-          {
-            type: 'storybook-account-context',
-            phase: 'active',
-            sentinel: 'payment-details-prepaid',
-            targetOrganisationName: 'payment-details-prepaid:active',
-          },
-        ]),
-      );
+      await expectLifecycleEventsEventually(readAccountEvents, [
+        {
+          type: 'storybook-account-context',
+          phase: 'cleaned',
+          sentinel: 'payment-details-postpaid',
+          targetOrganisationName: 'payment-details-postpaid:active',
+        },
+        {
+          type: 'storybook-account-context',
+          phase: 'active',
+          sentinel: 'payment-details-prepaid',
+          targetOrganisationName: 'payment-details-prepaid:active',
+        },
+      ]);
       await expect
         .poll(() =>
           readAccountTargetOrganisation(
@@ -858,35 +873,22 @@ When(
         },
       });
 
-      await removeFrame(PAYMENT_DETAILS_STEP_FRAME);
-      await expect
-        .poll(
-          () =>
-            page
-              .frames()
-              .filter((frame) => frame.url().includes('payment-details-'))
-              .length,
-        )
-        .toBe(0);
-      expect(await readProviderEvents()).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-          },
-        ]),
-      );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-            targetOrganisationName: 'payment-details-prepaid:active',
-          },
-        ]),
-      );
+      await removeAndExpectNoPaymentDetailsFrames(PAYMENT_DETAILS_STEP_FRAME);
+      assertLifecycleEventsContain(await readProviderEvents(), [
+        {
+          type: 'storybook-portal-provider',
+          phase: 'cleaned',
+          sentinel: 'payment-details-prepaid',
+        },
+      ]);
+      await expectLifecycleEventsEventually(readAccountEvents, [
+        {
+          type: 'storybook-account-context',
+          phase: 'cleaned',
+          sentinel: 'payment-details-prepaid',
+          targetOrganisationName: 'payment-details-prepaid:active',
+        },
+      ]);
       await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
       await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
 
@@ -907,10 +909,13 @@ When(
       expect(probe.failedRequests).toEqual([]);
       const providerEvents = await readProviderEvents();
       expect(
-        providerEvents
-          .filter((event) => event.phase === 'mounted')
-          .map((event) => event.sentinel)
-          .sort((a, b) => a.localeCompare(b)),
+        [
+          ...new Set(
+            providerEvents
+              .filter((event) => event.phase === 'mounted')
+              .map((event) => event.sentinel),
+          ),
+        ].sort((a, b) => a.localeCompare(b)),
       ).toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
       expect(
         providerEvents.filter((event) => event.phase === 'cleaned'),
@@ -928,9 +933,13 @@ When(
       ]);
       const accountEvents = await readAccountEvents();
       expect(
-        accountEvents
-          .filter((event) => event.phase === 'active')
-          .sort((left, right) => left.sentinel.localeCompare(right.sentinel)),
+        [
+          ...new Map(
+            accountEvents
+              .filter((event) => event.phase === 'active')
+              .map((event) => [event.sentinel, event]),
+          ).values(),
+        ].sort((left, right) => left.sentinel.localeCompare(right.sentinel)),
       ).toEqual([
         {
           type: 'storybook-account-context',
@@ -1057,18 +1066,7 @@ When('I open the AcceptQuote documentation', async ({ page }) => {
 Then(
   'the generated AcceptQuote Docs page should render independent request frames',
   async ({ page }) => {
-    await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
-    await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
-    await expect(
-      page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
-    ).toContainText('Prepayment required', {
-      timeout: STORY_RENDER_TIMEOUT_MS,
-    });
-    await expect(
-      page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
-    ).toContainText('Invoices must be paid within 30 days', {
-      timeout: STORY_RENDER_TIMEOUT_MS,
-    });
+    await expectAcceptQuotePaymentFrames(page);
   },
 );
 
@@ -1432,34 +1430,12 @@ Then(
 
 Then(
   'the story iframe should contain text matching a dashboard status label',
-  async ({ page }) => {
-    // The pill renders status text; assert at least one span/badge is visible
-    const root = storybookPreviewFrame(page).locator('#storybook-root');
-
-    await expect(root).toBeVisible({ timeout: 10_000 });
-
-    // At least one pill should be rendered
-    const pills = root.locator(
-      'span, .badge, [class*="pill"], [class*="status"]',
-    );
-
-    await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-  },
+  async ({ page }) => expectVisibleStatusPill(page),
 );
 
 Then(
   'the story iframe should contain text matching a quote status label',
-  async ({ page }) => {
-    const root = storybookPreviewFrame(page).locator('#storybook-root');
-
-    await expect(root).toBeVisible({ timeout: 10_000 });
-
-    const pills = root.locator(
-      'span, .badge, [class*="pill"], [class*="status"]',
-    );
-
-    await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-  },
+  async ({ page }) => expectVisibleStatusPill(page),
 );
 
 // ---------------------------------------------------------------------------

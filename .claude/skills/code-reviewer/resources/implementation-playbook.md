@@ -199,7 +199,7 @@ considered the performance impact with 100k users?"
 
 ### Technique 3: Suggest, Don't Command
 
-````markdown
+```markdown
 ## Use Collaborative Language
 
 ❌ "You must change this to use async/await" ✅ "Suggestion: async/await might
@@ -209,7 +209,7 @@ What do you think?"
 
 ❌ "Extract this into a function" ✅ "This logic appears in 3 places. Would it
 make sense to extract it into a shared utility function?"
-````
+```
 
 ### Technique 4: Differentiate Severity
 

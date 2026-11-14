@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   deleteApplication: vi.fn<() => void>(),
   navigate: vi.fn<() => void>(),
   setShowRFQDeleteModal: vi.fn<() => void>(),
+  appLoggerError: vi.fn<() => void>(),
 }));
 
 vi.mock(
@@ -67,7 +68,7 @@ vi.mock(
   import('@/instrumentation/AppLogger'),
   (() =>
     ({
-      default: { error: vi.fn<() => void>() },
+      default: { error: mocks.appLoggerError },
     }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
@@ -135,5 +136,23 @@ describe('rFQDeleteModal null context', () => {
 
     expect(mocks.deleteApplication).not.toHaveBeenCalled();
     expect(mocks.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
+  });
+
+  it('logs a failed deletion with an empty id when there is no modal state', async () => {
+    expect.hasAssertions();
+
+    const failure = new Error('token failed');
+    mocks.acquireTokenSilent.mockRejectedValueOnce(failure);
+
+    render(<RFQDeleteModal />);
+
+    fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
+
+    await waitFor(() => {
+      expect(mocks.appLoggerError).toHaveBeenCalledWith(
+        'Failed to delete application: ',
+        failure,
+      );
+    });
   });
 });

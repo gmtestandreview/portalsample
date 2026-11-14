@@ -48,6 +48,7 @@ import { BranchSelectionModalMode } from '../../components/modals/BranchSelector
 import useUserServices from '../../hooks/useUserServices';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 import {
+  selectDashboardTab,
   toDashboardTab,
   toPatternApprovalStatusEnumDto,
 } from '../common/helperFunctions';
@@ -584,10 +585,7 @@ const DashboardTA = () => {
           id='dashboard-type'
           activeKey={activeTab}
           onSelect={(key) => {
-            const tab = toDashboardTab(key);
-            if (tab !== undefined) {
-              changeTab(tab);
-            }
+            selectDashboardTab(key, changeTab);
           }}
         >
           <Nav

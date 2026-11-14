@@ -105,15 +105,15 @@ is done: GitHub repo secret deleted 2026-09-10 (see Security).
 
 ### Why two collections, not one
 
-Originally justified by differing rebuild policy (source = full rebuild, memory
-= incremental, to avoid clobbering ad hoc agent writes). That justification
-evaporated once ad hoc writes were dropped (#7) — both collections now rebuild
-identically. The surviving reason is **query-scoping**: an agent asking "what
-does `AuthenticatedElement` do" and one asking "what did we decide about
-SEC-010" are different intents, and passing `collection_name` on `qdrant-find`
-is free — no `FilterableField`/`QDRANT_ALLOW_ARBITRARY_FILTER` config needed. A
-single collection with a `content_type` payload filter was considered and
-rejected as strictly more setup for the same effect.
+Originally justified by differing rebuild policy (source = full rebuild,
+memory = incremental, to avoid clobbering ad hoc agent writes). That
+justification evaporated once ad hoc writes were dropped (#7) — both collections
+now rebuild identically. The surviving reason is **query-scoping**: an agent
+asking "what does `AuthenticatedElement` do" and one asking "what did we decide
+about SEC-010" are different intents, and passing `collection_name` on
+`qdrant-find` is free — no `FilterableField`/`QDRANT_ALLOW_ARBITRARY_FILTER`
+config needed. A single collection with a `content_type` payload filter was
+considered and rejected as strictly more setup for the same effect.
 
 ### Resolving the memory directory (worktree-aware)
 

@@ -32,6 +32,12 @@
     "DeepGraph React MCP": {
       "command": "npx",
       "args": ["-y", "mcp-code-graph@latest", "facebook/react"]
+    },
+    "mcpServers": {
+      "jscpd": {
+        "command": "jscpd",
+        "args": ["--mcp", "/path/to/project"]
+      }
     }
   }
 }

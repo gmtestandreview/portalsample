@@ -710,14 +710,18 @@ for all child components and MSAL hooks to isolate the routing logic.
   }));
   vi.mock(
     '../../../static/js/components/Utilities/routeChangeScrollTop',
-    () => ({ default: () => null }),
+    () => ({
+      default: () => null,
+    }),
   );
   vi.mock('../../../static/js/components/Utilities/backToTopButton', () => ({
     default: () => null,
   }));
   vi.mock(
     '../../../static/js/components/Utilities/routeAccessibleNavigation',
-    () => ({ default: () => null }),
+    () => ({
+      default: () => null,
+    }),
   );
 
   // ─── Auth mocks ────────────────────────────────────────────────────────────────
@@ -1301,7 +1305,9 @@ call.
       // Navigate renders to /unexpected-error; child is absent
       await waitFor(
         () => expect(screen.queryByTestId('welcome')).not.toBeInTheDocument(),
-        { timeout: 3000 },
+        {
+          timeout: 3000,
+        },
       );
     });
   });

@@ -8,7 +8,7 @@ description:
   for all contributors. This file applies to all TypeScript files in the
   project, including those in the `components/`, `pages/`, and `src/`
   directories.'
-applyTo: 'AGENTS.md,.github/copilot-instructions.md,.github/instructions/**/*.md,package.json,COMMAND_CANON.md,eslint.config.js,eslint.config.cjs,eslint.config.mjs,eslint.config.ts,eslint.config.mts,.prettierrc,.prettierrc.json,.prettierrc.js,.prettierrc.cjs,.prettierrc.mjs,.prettierignore,.husky/**,scripts/copilot-precommit-quality.mjs'
+applyTo: 'AGENTS.md,.github/copilot-instructions.md,.github/instructions/**/*.md,package.json,COMMAND_CANON.md,eslint.config.js,eslint.config.cjs,eslint.config.mjs,eslint.config.ts,eslint.config.mts,.oxfmtrc.json,.oxfmtrc.jsonc,oxfmt.config.ts,oxfmt.config.mts,.husky/**,scripts/copilot-precommit-quality.mjs'
 ---
 
 # Policy-sensitive files
@@ -39,14 +39,15 @@ not ordinary implementation files.
 - Keep **ESLint code-only** for the main gate.
 - ESLint covers JavaScript, TypeScript, React, Next.js, React Hooks, and
   Storybook code.
-- Prettier covers formatting for code, JSON, Markdown, YAML, CSS, and other
+- Oxfmt covers formatting for code, JSON, Markdown, YAML, CSS, and other
   supported text files.
 - Do **not** add `@eslint/json`, `@eslint/markdown`, or `@eslint/css` by
   default.
 - Do **not** widen `pnpm lint` to docs, JSON, Markdown, YAML, CSS, generated
   files, or `.copilot-tracking/**`.
 - Do **not** lint `.copilot-tracking/**`.
-- Respect `.prettierignore` as the true repo-wide formatting boundary.
+- Respect `.oxfmtrc.json` `ignorePatterns` as the true repo-wide formatting
+  boundary.
 
 ## If you edit package scripts
 
@@ -54,7 +55,7 @@ Prefer this intent unless the task explicitly requires something else:
 
 - `format` uses the repository's scoped formatting contract
 - `format:check` validates the repository's scoped formatting contract
-- `format:all` is reserved for an intentional repo-wide Prettier rewrite
+- `format:all` is reserved for an intentional repo-wide Oxfmt rewrite
 - `lint` runs app lint first, then formatting check
 - `lint:fix` runs auto-fixable app lint, then formatting
 
@@ -79,9 +80,10 @@ Keep generated, build, test, cache, and tracking outputs ignored.
 
 Do **not** lint `.copilot-tracking/**`.
 
-## If you edit Prettier config or ignores
+## If you edit Oxfmt config or ignores
 
-- Respect `.prettierignore` as the true repo-wide formatting boundary.
+- Respect `.oxfmtrc.json` `ignorePatterns` as the true repo-wide formatting
+  boundary.
 - Keep generated outputs, lockfiles, build output, test reports, caches, and
   most `.copilot-tracking/**` artifacts out of repo-wide formatting.
 - Preserve any deliberate exception that keeps durable lessons or curated docs
@@ -102,7 +104,7 @@ This includes `.husky/**` and `scripts/copilot-precommit-quality.mjs`.
 
 - Do not weaken lint rules, suppress warnings, add `eslint-disable` comments, or
   broaden ignore patterns to avoid fixing the real issue.
-- Do not remove or weaken `pnpm lint`, `pnpm format:check`, CI checks, or
+- Do not remove or weaken `npm run lint`, `npm run format:check`, CI checks, or
   pre-commit quality checks just to make failures disappear.
 - If a referenced script or command does not exist, report the mismatch clearly
   instead of inventing a replacement.
@@ -113,8 +115,8 @@ This includes `.husky/**` and `scripts/copilot-precommit-quality.mjs`.
 
 After policy changes, run:
 
-- `pnpm lint`
-- `pnpm format:check`
+- `npm run lint`
+- `npm run format:check`
 
 Run targeted tests when the touched policy surface has them.
 

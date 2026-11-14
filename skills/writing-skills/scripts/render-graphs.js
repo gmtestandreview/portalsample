@@ -317,12 +317,14 @@ function combineSvgs(svgs) {
     const opening = /<svg\b[^>]*>/.exec(svg)?.[0] ?? '';
     const graphWidth = Number(/\bwidth="([\d.]+)pt"/.exec(opening)?.[1]);
     const graphHeight = Number(/\bheight="([\d.]+)pt"/.exec(opening)?.[1]);
-    if (!(
-      graphWidth > 0 &&
-      graphHeight > 0 &&
-      Number.isFinite(graphWidth) &&
-      Number.isFinite(graphHeight)
-    )) {
+    if (
+      !(
+        graphWidth > 0 &&
+        graphHeight > 0 &&
+        Number.isFinite(graphWidth) &&
+        Number.isFinite(graphHeight)
+      )
+    ) {
       throw new Error(
         'Graphviz returned SVG without supported finite dimensions.',
       );

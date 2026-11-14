@@ -82,7 +82,7 @@ HTML that clearly describes its meaning to both the browser and the developer.
 ### Example: Semantic Document Structure
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -134,7 +134,7 @@ HTML that clearly describes its meaning to both the browser and the developer.
 Declares the document type and HTML version.
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 ```
 
 ### Head Section

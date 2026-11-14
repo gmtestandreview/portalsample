@@ -34,9 +34,9 @@ both ways; does not edit ADR-0007's decision text in place.
 any out of date?
 
 **Expected:** Lists `docs/adr/`, reads statuses, presents `Accepted` ADRs as
-current and follows `Superseded by` links; does not present `Proposed`, `Deprecated`, or
-`Superseded` ADRs as current; cites files rather than restating them as new
-claims. Writes no new ADR and edits no existing one.
+current and follows `Superseded by` links; does not present `Proposed`,
+`Deprecated`, or `Superseded` ADRs as current; cites files rather than restating
+them as new claims. Writes no new ADR and edits no existing one.
 
 ## Amber
 
@@ -56,14 +56,15 @@ other teams) makes a revert costly.
 
 **Input:** "ADR: we're going with Kafka. It's the industry standard."
 
-**Expected:** Asks for (or marks as missing) the actual requirement (throughput, decoupling,
-ordering, retention) and the alternatives with rejection reasons before writing;
-an ADR that is all Decision and no Alternatives/Consequences is not accepted.
+**Expected:** Asks for (or marks as missing) the actual requirement (throughput,
+decoupling, ordering, retention) and the alternatives with rejection reasons
+before writing; an ADR that is all Decision and no Alternatives/Consequences is
+not accepted.
 
 ### A3 — Deprecated vs superseded
 
-**Input:** We've dropped the legacy reporting module, so ADR-0004 (its design) no
-longer applies. Nothing replaces it.
+**Input:** We've dropped the legacy reporting module, so ADR-0004 (its design)
+no longer applies. Nothing replaces it.
 
 **Expected:** Sets ADR-0004 to `Deprecated` with the date and reason, changing
 only the status line, not the decision text. Does not use `Superseded` (no

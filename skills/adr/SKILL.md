@@ -1,16 +1,16 @@
 ---
 name: adr
 description:
-  'Use when a consequential, hard-to-reverse technical decision needs to be
+  "Use when a consequential, hard-to-reverse technical decision needs to be
   recorded or revisited — datastore/tech-stack choice, service or module
   boundary, data-ownership shift, integration pattern, major dependency or
   infrastructure commitment, or superseding or deprecating a past decision. Also
-  use when onboarding someone to the project''s recorded decisions, reviewing
+  use when onboarding someone to the project's recorded decisions, reviewing
   decision history in docs/adr/, or setting up or auditing the ADR process
   (index, template, status conventions). Writing an ADR produces a record in
   docs/adr/ that matches repo precedent, with context, the decision, honest
   consequences, alternatives with rejection reasons, rollback, and a review
-  trigger. Not for reversible implementation choices or routine library picks.'
+  trigger. Not for reversible implementation choices or routine library picks."
 ---
 
 # ADR — Architecture Decision Record
@@ -46,11 +46,11 @@ PR), it needs an ADR.
 **Size alone is not irreversibility.** A change that touches many files is not
 hard to reverse if a revert PR restores the previous state with no persisted
 data, public contract, vendor lock-in, or other team's dependence involved.
-Under the hard-to-reverse bullet, a large migration or dependency swap
-qualifies only when something outside the diff makes undoing it costly
-(persisted data, a public contract, vendor lock-in, another team's dependence,
-or a pervasive assumption others now rely on); name that cost, or it is not an
-ADR on that ground. The other bullets are assessed independently.
+Under the hard-to-reverse bullet, a large migration or dependency swap qualifies
+only when something outside the diff makes undoing it costly (persisted data, a
+public contract, vendor lock-in, another team's dependence, or a pervasive
+assumption others now rely on); name that cost, or it is not an ADR on that
+ground. The other bullets are assessed independently.
 
 ## Match Repo Precedent First
 
@@ -61,10 +61,10 @@ ADRs live in **`docs/adr/`**. Before writing:
    - **2 or more real ADRs:** match their structure, front matter, and
      file-naming convention. Follow the most recent actual ADRs, not a spec's
      example: `.github/agents/adr-generator.agent.md` describes a numbered
-     `adr-NNNN-slug.md` coded-bullet style that may differ from what
-     `docs/adr/` actually contains. Do not add a third style, and do not
-     unilaterally migrate the repo from one to another (flag the inconsistency
-     for the team instead).
+     `adr-NNNN-slug.md` coded-bullet style that may differ from what `docs/adr/`
+     actually contains. Do not add a third style, and do not unilaterally
+     migrate the repo from one to another (flag the inconsistency for the team
+     instead).
    - **0 or 1 real ADRs:** there is no reliable precedent. Take **naming and
      format** from the one file if it exists, otherwise from
      `.github/agents/adr-generator.agent.md`; take **section structure** from

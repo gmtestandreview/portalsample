@@ -91,13 +91,17 @@ describe('resolveErrorState', () => {
     it('returns notFound for 404', () => {
       expect(
         resolveErrorState(makeError(404), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'notFound' });
+      ).toEqual({
+        kind: 'notFound',
+      });
     });
 
     it('returns gone for 410', () => {
       expect(
         resolveErrorState(makeError(410), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'gone' });
+      ).toEqual({
+        kind: 'gone',
+      });
     });
 
     it('returns noThirdPartyAccess for 403 with third-party title', () => {
@@ -122,13 +126,17 @@ describe('resolveErrorState', () => {
     it('returns loading for unrecognised HTTP status — restores the previously silent failure', () => {
       expect(
         resolveErrorState(makeError(500), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'loading' });
+      ).toEqual({
+        kind: 'loading',
+      });
     });
 
     it('returns loading for a network error with no status property', () => {
       expect(
         resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'loading' });
+      ).toEqual({
+        kind: 'loading',
+      });
     });
 
     it('returns none for an aborted request — stays silent', () => {

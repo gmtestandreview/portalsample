@@ -50,6 +50,7 @@ import CustomPaginationHeader from '../../components/PaginationHeader';
 import { defaultFilter } from '../common/constants';
 import {
   mapToUserProfile,
+  selectDashboardTab,
   toDashboardTab,
   toStatusEnumDto,
 } from '../common/helperFunctions';
@@ -199,11 +200,9 @@ const checkAcceptedQuoteStatus = (
       );
       items.unshift(...items.splice(index, 1));
 
-      // Non-null assertion required: property is typed nullable but guaranteed non-null here
-      SessionStorageCache().setItem(
-        requestResponse.referenceId ?? '',
-        'view-quote-id',
-      );
+      // The item was found by `referenceId === newlyAcceptedQuoteId`, so the
+      // accepted quote id is exactly its reference id.
+      SessionStorageCache().setItem(newlyAcceptedQuoteId, 'view-quote-id');
     }
     SessionStorageCache().removeItem('accepted-quote-id');
   }
@@ -221,12 +220,9 @@ const handleDashboardLoadError = (
   >,
 ) => {
   const problemDetails = error as ProblemDetails;
-  if ((problemDetails.status ?? 0) > 0) {
-    // Non-null assertion required: property is typed nullable but guaranteed non-null here
-    setErrorStatus((prevState) => ({
-      ...prevState,
-      status: problemDetails.status ?? 0,
-    }));
+  const status = problemDetails.status ?? 0;
+  if (status > 0) {
+    setErrorStatus((prevState) => ({ ...prevState, status }));
   }
   if (
     problemDetails.status === HttpStatusCode.Forbidden &&
@@ -714,11 +710,10 @@ const Dashboard = () => {
           id='dashboard-type'
           activeKey={activeTab}
           onSelect={(key) => {
-            const tab = toDashboardTab(key);
-            if (tab !== undefined) {
+            selectDashboardTab(key, (tab) => {
               changeTab(tab);
               trackGAEvent(tab);
-            }
+            });
           }}
         >
           <Nav

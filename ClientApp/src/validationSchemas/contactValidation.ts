@@ -102,14 +102,7 @@ export const contactSchemaSoft = () =>
   });
 
 export const contactSchemaEmailOnly = () =>
-  yup.object({
-    title: titleSchema('Title', false),
-    titleOther: titleOtherSchema('Title other', false),
-    firstName: nameSchema('First name', 50, false),
-    lastName: nameSchema('Last name', 99, false),
-    role: roleSchema('Role', false),
-    phone: phoneSchema('Business phone', false),
-    mobile: mobileSchema('Mobile phone', false),
+  contactSchemaSoft().shape({
     email: emailSchema('Email address'),
   });
 

@@ -6263,9 +6263,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned routes-acceptquote--quotation-summary-step at distance 1 for this source, and the generated index resolves routes-acceptquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:eff85cb8b17d8bb269d823f8534f0abc664d64e8d0de3e9c340ca1213113ba56"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:470abc0a30f9d62a91d14876b4277f0141275f5cc05e5b1efb4f4a8299197375"
       }
     },
     {
@@ -7766,6 +7766,20 @@
     },
     {
       "source": "ClientApp/src/routes/common/helperFunctions.ts",
+      "export": "selectDashboardTab",
+      "classification": "nonvisual",
+      "owner": "selectDashboardTab",
+      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source-role inspection identifies this export as a non-renderable tab-selection helper, so no Storybook docs owner or interaction state is claimed. Added with the dashboard tab-select consolidation: both dashboards call it, and tests/unit/routes/common/helperFunctions.test.ts covers a valid key plus unknown, null and undefined keys.",
+        "reviewedSourceDigest": "sha256:dcd641a6caebf7f82fcfcf857e5b91f5c4d3b0561ee505a62901b7bc2415aabb"
+      }
+    },
+    {
+      "source": "ClientApp/src/routes/common/helperFunctions.ts",
       "export": "sortList",
       "classification": "nonvisual",
       "owner": "sortList",
@@ -8151,9 +8165,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:790d08bd9a7f4aa1802f97298991fa697f37e262ba014891e3cb9571bbb6c046"
       }
     },
     {
@@ -8165,9 +8179,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:790d08bd9a7f4aa1802f97298991fa697f37e262ba014891e3cb9571bbb6c046"
       }
     },
     {
@@ -8179,9 +8193,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:790d08bd9a7f4aa1802f97298991fa697f37e262ba014891e3cb9571bbb6c046"
       }
     },
     {
@@ -8193,9 +8207,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:790d08bd9a7f4aa1802f97298991fa697f37e262ba014891e3cb9571bbb6c046"
       }
     },
     {
@@ -8459,9 +8473,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8473,9 +8487,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8487,9 +8501,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8501,9 +8515,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8515,9 +8529,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8529,9 +8543,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8543,9 +8557,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8557,9 +8571,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8571,9 +8585,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -8585,9 +8599,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:73613934770b2034bc9bf55173c62e195496e51644597ede5f8a14fcad9a1d6a"
       }
     },
     {
@@ -12906,33 +12920,6 @@
       }
     },
     {
-      "source": "ClientApp/src/routes/quotation/nMIContactDetails.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-acceptquote--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx",
-          "storyExport": "DeliveryAndReturnStep",
-          "storyId": "routes-acceptquote--delivery-and-return-step",
-          "assertionFile": "ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx",
-          "assertionExport": "DeliveryAndReturnStep.play",
-          "assertionMarker": "Please deliver to the loading dock at the rear of the building.",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:626f6493ae7f671fc0e50c8901a1a2974d1cd8e95d32ad9d6e810b3f09c131c3"
-      }
-    },
-    {
       "source": "ClientApp/src/routes/quotation/quoteDetails.tsx",
       "export": "default",
       "classification": "consumer",
@@ -13482,9 +13469,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:c7d453c3b7844ef101182fa3042761650ea77e5173f1fdb325e080bfc2ac9a1d"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:56c32ee7f401192faad876f762afecb6232d643d2b4e128b835ea0c77a8b4182"
       }
     },
     {
@@ -13587,9 +13574,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:6e661fadacc3a3605f78201e0a328fbb8bd670c6fe897a7a96c53de0d60f81af"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:06b4c44da3f1ec7e78f7300d5e8789f49a34c91b49c74b1191d3f5e5369fd4c4"
       }
     },
     {
@@ -13677,9 +13664,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:a16557c11de59c5bcaf8fcec6938b4221c58e1ffbbaf1ca079ad7299f29537d2"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:8c57ec32cfef69900c0ce8621917bfdaf0249a2d4db1a76f9d61d250181abdaa"
       }
     },
     {
@@ -13911,36 +13898,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Dedicated shell stories replace the mount-only coverage story; they cover only shell-owned lookup, navigation and the target organisation guard, with wrong lookup parameters or destinations making the stories fail. Report detail rendering keeps its existing stories.",
-        "reviewedSourceDigest": "sha256:c81cb06348b9a20b641dd619226a268e36be0ac6e580ebcdaaaaa2ea306379fd"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/measurementReport/nMIContactDetails.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
-      "states": [
-        {
-          "name": "mounted-route-surface",
-          "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "MeasurementReportContact",
-          "storyId": "routes-exportcoverage--measurement-report-contact",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "MeasurementReportContact.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:d732a990be91820cacf5e54ac28e4bfb3134e71d8a4cc0c8123799cad0426ae1"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:5da39c4c48303096a0cc50a089bbd52de1d1b8dcc18d6b1041807a1741c11655"
       }
     },
     {
@@ -13965,9 +13925,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:dadeb6200f532f9e40c4abcb7387c8f13ae7aec2f3ad768cfe15d3d2f3b15397"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:581f19510d87f4a061a840c01c1e1b66bb08dd231194e6672cb3fbee438f66c1"
       }
     },
     {
@@ -14028,9 +13988,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Dedicated shell stories replace the mount-only coverage story; they cover only shell-owned lookup, status override and navigation, with wrong lookup parameters, statuses or destinations making the stories fail. Quote detail rendering keeps its existing stories.",
-        "reviewedSourceDigest": "sha256:7094c739080531e3c5ad5e2c7a5bf9eb46ca416dd0e5669eaa8dc2932ff54c05"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:1c18f3ac85d5db27d3c541217a39c6dd168ad768573390e889abdd92516fe408"
       }
     },
     {
@@ -14133,9 +14093,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:724a5538ddf5834ac74b038a49388abe4221f8636e996d7373df53b56d15b1d7"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:7b11eab5461368bc214b48371326224958c18b1d198cbaf0963f512af5295a90"
       }
     },
     {
@@ -14277,9 +14237,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:d54634f6e8df874da820151aa2f10e0f2a27e77aeacf7803eb0794da0aea8df0"
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Source re-reviewed after the DRY refactor: the existing source-to-story evidence checks pass unchanged and the affected unit and Storybook tests were rerun against this digest.",
+        "reviewedSourceDigest": "sha256:71d1436edad204346879fe15f416595c9a42d3f18c3fa030fd2baa51361b9e45"
       }
     },
     {
@@ -14448,6 +14408,33 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
         "reviewedSourceDigest": "sha256:48133b1cf44c61f6c059d9b489e2480f6185c57e8234559aacd21d73b18fec40"
+      }
+    },
+    {
+      "source": "ClientApp/src/routes/common/NMIContactDetails.tsx",
+      "export": "default",
+      "classification": "direct",
+      "owner": "default",
+      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
+      "docsOwnerId": "routes-exportcoverage--documentation",
+      "states": [
+        {
+          "name": "mounted-route-surface",
+          "applicability": "required",
+          "outcome": "The route or component surface mounts under the configured Storybook providers.",
+          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
+          "storyExport": "MeasurementReportContact",
+          "storyId": "routes-exportcoverage--measurement-report-contact",
+          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
+          "assertionExport": "MeasurementReportContact.play",
+          "assertionMarker": "route-wrapper-mounted",
+          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+        }
+      ],
+      "review": {
+        "reviewer": "claude-code-dry-refactor-review",
+        "rationale": "Shared NMIContactDetails replaces the two near-identical quotation and measurement-report components; the source-to-story import graph, storyEvidence checks and the 13/13 RouteExportCoverage component tests identify the reviewed render contract.",
+        "reviewedSourceDigest": "sha256:ac6da0e026aaf3c56b6e9b1e36416684806b3c23920c928425ce87cf0e416da1"
       }
     }
   ]

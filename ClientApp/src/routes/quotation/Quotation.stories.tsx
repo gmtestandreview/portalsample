@@ -1,6 +1,6 @@
 import preview from '../../../../.storybook/preview';
 import QuoteDetails from './quoteDetails';
-import NMIContactDetails from './nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import { requestForQuoteDetailsFixture } from '../../storybook/storybookFixtures';
 
@@ -26,7 +26,10 @@ export const QuoteSummary = meta.story({
         isSummary={false}
         fileError={false}
       />
-      <NMIContactDetails quotationData={requestForQuoteDetailsFixture} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if any of the details are not correct before proceeding.'
+        quotationData={requestForQuoteDetailsFixture}
+      />
     </>
   ),
 });
@@ -44,7 +47,10 @@ export const ExpiredNoDelivery = meta.story({
   render: (args) => (
     <>
       <QuoteDetails {...args} />
-      <NMIContactDetails quotationData={args.quotationData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if any of the details are not correct before proceeding.'
+        quotationData={args.quotationData}
+      />
     </>
   ),
 });

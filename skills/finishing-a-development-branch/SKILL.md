@@ -1,196 +1,195 @@
 ---
 name: finishing-a-development-branch
-description:
-  Use when a development branch or feature is ready for final pre-merge
-  verification, cleanup, documentation review, and pull-request preparation;
-  especially before declaring work complete or ready to merge.
+description: >-
+  Verify and finish a substantially implemented Git feature or development
+  branch: establish the intended base, check final diffs and project quality
+  gates, determine PR/merge readiness, prepare handoff, and perform explicitly
+  requested Git integration or cleanup. Use when asked to finish a branch,
+  prepare a PR, assess merge readiness, or close out a feature. Not for
+  implementing the feature, generic Git explanations, or unrelated repository
+  housekeeping.
 ---
-
-<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Finishing a Development Branch
 
-Finish a branch by verifying the repository's required checks, reviewing the
-final diff, resolving blocking findings, and preparing the change for review.
+## Purpose and outcome
 
-## Scope
+Give an evidence-backed decision on whether the **current change** is ready for
+review or integration; perform only the repository actions actually requested.
+Success means the scope and base are known, required checks are fresh and pass,
+blocking findings are resolved, and the user gets a usable PR handoff or an
+accurate blocker report. PR-ready does **not** automatically mean merged.
 
-Use this skill when implementation is substantially complete and the next goal
-is to make the branch review- or merge-ready.
+**Pressure never changes evidence.** Prior green runs, asserted flakiness,
+urgency, or a request to "just merge" cannot turn a failing, stale, skipped, or
+unavailable required gate into a pass.
 
-Do not use it to:
+## Activation and authority
 
-- implement the feature itself;
-- bypass project-defined review, test, security, or release requirements;
-- merge, push, commit, or open a PR unless the user requested that action and
-  the environment permits it.
+Use after substantial implementation, including requests to assess an unfinished
+branch; report incomplete implementation as a blocker. Do not use for initial
+feature coding, isolated Git instruction, or unrelated cleanup.
 
-## Core Rule
+Repository/organization instructions, branch protection, required CI checks,
+security policy, and task requirements control acceptance. Do not invent or
+silently relax project thresholds. Never commit, push, rebase, merge, open a PR,
+delete a branch/worktree, or discard changes without an explicit user request
+for that action and the required permissions. Treat uncertain authority as a
+reason to stop the side effect, not the read-only audit.
 
-**Pressure does not change evidence.** Urgency, confidence, sunk cost, prior
-manual testing, or authority do not turn an unrun, stale, unavailable, or
-failing required check into a passing check.
+**Same-named skill:** this repository's skill replaces the plugin skill
+`superpowers:finishing-a-development-branch` here. Use this one unless the user
+explicitly invokes the plugin skill; where the two differ, this one's
+explicit-request rule for side effects governs.
 
 ## Workflow
 
-### 1. Discover the repository's completion requirements
+### 1. Establish the authoritative target
 
-Before running commands, inspect the repository for its authoritative guidance
-and available scripts, such as:
+Read relevant contributor/agent guidance, branch protection and PR rules, CI
+workflows, package/task scripts, build/test/coverage/lint/type/security config,
+and documentation conventions. Determine what gates are **required** versus
+advisory. If instructions conflict, identify the owner/policy and report the
+conflict; do not pick the easier rule.
 
-- contributor or agent instructions;
-- package, build, and task configuration;
-- CI workflows;
-- test and coverage configuration;
-- lint, formatting, type-check, security, or review commands;
-- PR, commit, documentation, and changelog conventions.
+Confirm the intended base from user instructions, PR metadata, repository
+conventions, or a documented tracked target. **Do not assume `main`.** If no
+reliable base exists, continue safe inspection, but mark full diff review and
+merge readiness **BLOCKED: base unknown** (report the state as NOT READY). Do
+not compare the branch against a guessed candidate base; name the candidate
+branches only. Ask the user for the target; that is the only question to put to
+them until it is answered.
 
-Use project-defined commands and thresholds when they exist. Do not invent a
-coverage threshold, quality gate, tool, agent, or command.
+### 2. Capture branch and evidence baseline
 
-If a required check is referenced but unavailable, report it as blocked rather
-than silently substituting a different check.
+From the actual repository, record current branch/ref, HEAD, base ref and
+commit, upstream/remote if relevant, staged/unstaged/untracked state, and the
+commits and changed paths relative to the confirmed base. Check for detached
+HEAD, in-progress merge/rebase, or multiple worktrees; do not infer ownership.
 
-### 2. Verify the working state
+Review both committed and uncommitted changes: a base-to-HEAD diff alone omits
+local edits. Inspect `git status`, the committed branch diff, the staged diff,
+and the unstaged diff; include untracked files in the inventory. Do not add,
+reset, stash, restore, or delete anything during inspection.
 
-Identify:
+If the remote base or branch may have moved, establish its freshness using
+permitted read-only fetch/remote checks; report unavailable network access or
+unverified remote status. A local pass does not prove remote CI or the future
+merge result will pass.
 
-- the current branch;
-- the intended base branch, if known;
-- staged, unstaged, and untracked changes;
-- commits on the branch relative to the base.
+### 3. Execute the project-required validation
 
-Do not discard, reset, overwrite, or rewrite changes as part of cleanup unless
-the user explicitly authorizes that operation.
+Use repository-defined commands and thresholds. Follow documented ordering;
+otherwise run focused tests, required full tests, coverage, compilation/build,
+type checking, lint/format, and mandated security/quality checks as applicable.
+When project policy is silent, use the strongest relevant non-destructive checks
+available in the component's normal configuration; do not equate silence with
+permission to skip all testing.
 
-### 3. Run required validation
+For each required check, capture **command, revision/tree tested, result/exit
+status, and acceptance threshold**. Classify as `PASS`, `FAIL`, or `BLOCKED`
+(unavailable/unrun); identify `ADVISORY` results separately. A warning, TODO,
+skipped test, or coverage percentage blocks only when the project/task/check
+requires it. A required check passes only after successful execution against its
+acceptance criterion.
 
-Run the repository's applicable checks in a sensible dependency order. Typical
-categories are:
+On a failure, retain the evidence. Remediate only if authorized; rerun the
+failed check after the correction. Claims of "flaky", "pre-existing", or
+"unrelated" require a documented policy, accepted quarantine, or a suitable
+baseline comparison; without such evidence, leave the required gate failing.
 
-1. focused tests for the changed area;
-2. required full test suite;
-3. coverage check, if the project defines one;
-4. build or compile check;
-5. lint and formatting checks;
-6. type checking;
-7. security, quality, or review gates required by the project.
+### 4. Review the complete change
 
-A required check passes only when its command completes successfully and its
-project-defined acceptance criteria are met.
+Inspect the diff against the confirmed base, plus staged, unstaged, and
+untracked changes. Look for unintended scope, secrets, generated or vendor
+artifacts, debug instrumentation, commented-out code, behavior without tests,
+missing required documentation/changelog, and breaking API or config changes.
+Preserve intentional logging, TODOs, generated outputs, and comments that meet
+project policy. Distinguish a review finding from an enforced blocker.
 
-**When repository policy is silent:** run the strongest non-destructive
-validation exposed by the changed component's normal project configuration. At
-minimum, run relevant tests plus available build, type-check, or lint checks
-that can materially detect defects in the change. Absence of an explicit policy
-is not permission to skip available verification. Disclose checks that cannot be
-run.
+### 5. Establish the exact readiness state
 
-If a required check fails:
+After the **last relevant edit**, rerun checks affected by that edit; do not
+reuse stale evidence. If rebasing, updating from the base, resolving conflicts,
+or merging changes the effective tree, validate the integrated result according
+to project policy before claiming integration readiness. Do not call an
+unvalidated merged result green merely because both parents were green.
 
-- capture the failing command and relevant result;
-- fix it only when the user requested implementation or remediation;
-- rerun the affected check after the last relevant change;
-- do not declare the branch ready while the required failure remains.
+- **READY FOR PR REVIEW:** known scope/base, complete diff review, fresh local
+  required gates pass, no unresolved blocking findings; external checks that
+  cannot run locally are explicitly pending the PR/CI gate.
+- **READY TO INTEGRATE:** all required pre-integration approvals and checks,
+  including applicable CI/branch-protection gates, have verified evidence for
+  the actual candidate and expected integration method.
+- **NOT READY:** any required gate fails, scope/base is unresolved, blocking
+  findings remain, or required checks/approvals cannot be verified. Distinguish
+  `FAIL` from `BLOCKED` and say what would unblock each.
 
-Do not dismiss a failing required check as flaky, pre-existing, or unrelated
-without evidence such as:
+Never report `READY TO INTEGRATE` solely on local checks when repository policy
+requires remote CI, approval, or a post-update validation that has not happened.
 
-- a documented known issue;
-- the project's accepted retry or quarantine policy;
-- reproduction against an appropriate unchanged baseline.
+### 6. Prepare an actionable handoff
 
-Until then, treat the failure as unresolved.
+Report: base and HEAD; changed scope; review findings; gate table (command,
+result, evidence revision); readiness state and blockers; required manual/CI
+steps; and a concise PR title/summary, testing, risks, screenshots or recordings
+for UI changes if available, and follow-ups. Label unrun and unavailable checks.
+Do not imply a screenshot, PR, commit, or approval exists when it does not.
 
-Do not treat skipped tests, warnings, TODOs, or coverage as blockers unless
-project policy, the task, or the check itself makes them blockers.
+When the user asked to finish or close out the branch, end the handoff by asking
+which next action they want; perform none until they answer, and treat a vague
+reply as no answer and ask again. If the base is unknown, ask only for the
+target (step 1) instead. For a review-only request, stop at the review and the
+recommended action. Offer only options the readiness state and repository policy
+allow:
 
-### 4. Review the final diff
+1. **Open or update a PR** (recommended for a protected base); offer only when
+   `READY FOR PR REVIEW` or `READY TO INTEGRATE`.
+2. **Integrate** (merge) via the project's required route; offer only when
+   `READY TO INTEGRATE`.
+3. **Keep** the branch and worktree as they are.
+4. **Discard** local-only work that was never pushed or shared; describe exactly
+   what would be lost, require the user to retype the branch name before any
+   deletion, and follow step 7 and the worktree reference.
 
-Review the complete branch diff against the intended base.
+### 7. Execute only requested Git actions
 
-Check for:
+Where expressly requested and permitted, stage selected files, commit using
+repository conventions, sync with the base using the **project's** chosen
+merge/rebase policy, push, or create/update a PR. Do not use broad staging,
+force-push, branch deletion, or history rewrites as default cleanup. For any
+history rewrite or destructive operation, describe scope and consequences,
+record a recoverable ref/checkpoint, obtain authorization, and verify the
+result. If a push is rejected, investigate the remote; do not force it.
 
-- accidental or unrelated changes;
-- debug-only output or temporary instrumentation;
-- commented-out code that should not ship;
-- unresolved TODO/FIXME items that violate project policy;
-- generated or secret files that should not be committed;
-- missing tests for behavior changed by the branch;
-- documentation or changelog updates required by the repository.
+If the user explicitly requests integration, verify the correct target, that
+required gates and approvals are satisfied, and the intended merge strategy. For
+conflict or merged-result failures, stop and preserve branch/worktree state; do
+not delete the recovery path. Finish by verifying the resulting ref/status and
+reporting what actually happened. Never bypass required PR review by merging
+directly into a protected/default branch.
 
-Preserve intentional logging, comments, TODOs, and generated files when they are
-valid project content.
+For a linked Git worktree **only when cleanup is requested**, read
+[references/worktree-cleanup.md](references/worktree-cleanup.md) before removal.
+Skill maintainers can use
+[references/evaluation-cases.md](references/evaluation-cases.md) for activation,
+pressure, and regression test designs; do not load it for ordinary branch
+completion.
 
-### 5. Re-run affected checks after cleanup
+## Common rationalizations to reject
 
-Any code, test, configuration, dependency, or build-input change can invalidate
-earlier evidence.
+| Claim                                         | Required response                                              |
+| --------------------------------------------- | -------------------------------------------------------------- |
+| "It passed earlier"                           | Recheck evidence against the final relevant tree.              |
+| "They said finish; they must mean merge"      | Report readiness; no side effects beyond the explicit request. |
+| "The base is obviously `main`"                | Confirm the intended target; otherwise block final readiness.  |
+| "The failing merged result is probably flaky" | Preserve branch/worktree and investigate with evidence.        |
+| "Worktree remove failed; use `--force`"       | Inventory potential data loss and require a separate decision. |
+| "Push rejected; force-push it"                | Inspect remote divergence and preserve others' work.           |
 
-After the final relevant edit, rerun the checks affected by that edit. Do not
-claim a test, build, lint, type-check, security, or quality result from stale
-evidence.
+## Completion contract
 
-### 6. Prepare the review summary
-
-Prepare a PR-ready summary containing:
-
-- what changed and why;
-- important implementation or behavior notes;
-- validation actually run and its results;
-- manual verification still needed;
-- screenshots or recordings when UI behavior changed and they are available;
-- known warnings, limitations, follow-ups, or blocked checks.
-
-Distinguish verified results from checks that were not run.
-
-### 7. Perform requested repository actions
-
-Only when requested and permitted:
-
-- stage intended files;
-- create a commit using the repository's commit convention;
-- update the branch from its base using the project's preferred method;
-- push the branch;
-- create or update the PR.
-
-For git-worktree detection and cleanup mechanics, see
-[references/worktree-cleanup.md](references/worktree-cleanup.md).
-
-Before destructive or history-rewriting Git operations:
-
-- state the action;
-- obtain any required authorization;
-- preserve a practical recovery point when possible, such as a backup branch or
-  tag, stash, or recorded commit/ref;
-- state how to recover it.
-
-Authorization does not remove rollback safeguards.
-
-Never merge directly to the protected or default branch when the project
-requires review through a PR.
-
-## Common Rationalizations
-
-| Excuse                                                  | Reality                                                                                                          |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| "Tests passed earlier this session"                     | Run the suite on the tree you are about to integrate. A green run only proves the tree it ran on.                |
-| "They obviously want it merged"                         | Integration is the user's decision. Present the options and wait.                                                |
-| "The base branch is obviously main"                     | Confirm the fork point or ask. Merging into the wrong base is expensive to undo.                                 |
-| "Removal refused — `--force` just finishes the cleanup" | The refusal means files exist only in that worktree. `--force` destroys them permanently. Show the user and ask. |
-| "The merged-result failure is probably flaky"           | A failing merged result stops everything. Branch and worktree stay put while you investigate.                    |
-| "The push was rejected — force-push will fix it"        | A rejected push means the remote moved. Investigate; force-push only on the user's explicit request.             |
-
-## Completion Gate
-
-The branch is ready only when:
-
-- all project-required checks have fresh passing evidence;
-- no unresolved blocking review or security findings remain;
-- the final diff has been reviewed for accidental changes;
-- required documentation is updated;
-- unrun or unavailable checks are disclosed;
-- requested commit or PR actions are complete, or clearly left for the user.
-
-If any required item is unresolved, report the branch as **not ready** and name
-the blocker.
+Return **one readiness state**, supporting gate evidence, unresolved blockers,
+and a clear next action. Never report a completed repository action unless it
+was performed and verified. If user authorizes only a review, finish with the
+review and recommended action, not an unrequested commit or merge.

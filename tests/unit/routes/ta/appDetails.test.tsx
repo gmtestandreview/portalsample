@@ -907,8 +907,13 @@ describe('application details', () => {
       // inactive panes mounted, so more than one is on the page.
       expect(screen.getAllByText('Loading data...').length).toBeGreaterThan(0);
 
-      act(() => {
+      await act(async () => {
         release(stepValues());
+        await Promise.resolve();
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
       });
     });
   });

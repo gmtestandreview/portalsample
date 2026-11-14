@@ -27,9 +27,9 @@ and maintain the ADR log (onboarding, history review, process setup).
   ratified it; `Superseded by <ref>` or `Deprecated` for retired decisions
 - Deprecating: a status-line edit on the existing ADR (date and reason); no new
   ADR
-- For onboarding, history review, and process setup: findings and proposals —
-  no new ADR and no edits to Accepted ADRs; files such as an index are created
-  only if you ask
+- For onboarding, history review, and process setup: findings and proposals — no
+  new ADR and no edits to Accepted ADRs; files such as an index are created only
+  if you ask
 
 **Not for:** reversible implementation choices or routine library picks — leave
 a code comment or a plan note instead.

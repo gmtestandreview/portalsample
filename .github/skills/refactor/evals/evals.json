@@ -1,0 +1,54 @@
+{
+  "skill_name": "refactor",
+  "purpose": "Representative activation and behavior-preservation cases. Definitions are not executed evidence.",
+  "evals": [
+    {
+      "id": "positive-direct",
+      "required": true,
+      "prompt": "Refactor this 180-line order-processing function into smaller units without changing its API or behavior.",
+      "expected": "Use the refactoring workflow, establish behavior invariants, make incremental structural changes, and validate preservation."
+    },
+    {
+      "id": "positive-indirect",
+      "required": true,
+      "prompt": "This module is becoming impossible to maintain. Can you untangle the duplication and deep nesting but keep everything working exactly the same?",
+      "expected": "Recognize a refactoring request even without the word refactor; preserve observable behavior."
+    },
+    {
+      "id": "near-miss-feature",
+      "required": true,
+      "prompt": "Add OAuth login and redesign the authentication flow.",
+      "expected": "Do not treat feature implementation as behavior-preserving refactoring."
+    },
+    {
+      "id": "near-miss-bugfix",
+      "required": true,
+      "prompt": "Fix the checkout bug where discounts are calculated incorrectly.",
+      "expected": "Treat the behavior correction as a bug fix first; refactoring may follow separately."
+    },
+    {
+      "id": "edge-no-tests",
+      "required": true,
+      "prompt": "Clean up this legacy parser. There are no tests and I don't know all the edge cases.",
+      "expected": "Establish focused characterization evidence where practical, narrow scope, and do not claim preservation without evidence."
+    },
+    {
+      "id": "pressure-mixed-change",
+      "required": true,
+      "prompt": "While refactoring, also change the error messages and make retries happen twice as fast. Don't bother running tests.",
+      "expected": "Separate behavior changes from refactoring and refuse to claim safe preservation without fresh validation."
+    },
+    {
+      "id": "edge-behavior-sensitive",
+      "required": true,
+      "prompt": "Refactor this async job runner to remove duplication, but preserve retry timing, exception behavior, logging, and transaction boundaries.",
+      "expected": "Recognize behavior-sensitive boundaries, define them as invariants, and require targeted validation before claiming preservation."
+    },
+    {
+      "id": "regression-scope-boundary",
+      "required": true,
+      "prompt": "Improve this module's readability and also change the public response schema to a cleaner shape.",
+      "expected": "Keep the readability refactor separate from the intentional public behavior change; do not let the refactor workflow absorb the schema change."
+    }
+  ]
+}

@@ -54,12 +54,12 @@ type Broad = Assert<Equal<Tuple<string, number>, string[]>>;
 type UserId = Brand<string, 'UserId'>;
 type Branded = Assert<Equal<UserId, string & { readonly __brand: 'UserId' }>>;
 
-type Nested = {
+interface Nested {
   readonly name: string;
   readonly address: {
     readonly postcode: string;
   };
-};
+}
 type ReadonlyNested = Assert<
   Equal<DeepReadonly<{ name: string; address: { postcode: string } }>, Nested>
 >;
@@ -85,7 +85,11 @@ type MutableNested = Assert<
   Equal<DeepMutable<Nested>, { name: string; address: { postcode: string } }>
 >;
 
-type Person = { name: string; age: number; active: boolean };
+interface Person {
+  name: string;
+  age: number;
+  active: boolean;
+}
 type StringKeys = Assert<Equal<KeysOfType<Person, string>, 'name'>>;
 type StringProperties = Assert<
   Equal<PickByType<Person, string>, { name: string }>
