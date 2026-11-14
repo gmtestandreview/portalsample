@@ -6,8 +6,8 @@
     "organization": "gmtestandreview",
     "repositoryId": "913233",
     "repositoryName": "portalsample",
-    "createdAt": "2026-11-13T05:35:10.299Z",
-    "updatedAt": "2026-11-13T05:35:10.299Z",
+    "createdAt": "2026-11-14T07:29:39.716Z",
+    "updatedAt": "2026-11-14T07:29:39.716Z",
     "languages": [
       "CSS",
       "HTML",
@@ -851,57 +851,6 @@
           "patternId": "Semgrep_python.boto3.security.hardcoded-token.hardcoded-token"
         },
         {
-          "patternId": "Semgrep_python.aws-lambda.security.tainted-sql-string.tainted-sql-string"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.tainted-pickle-deserialization.tainted-pickle-deserialization"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.tainted-html-string.tainted-html-string"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.tainted-html-response.tainted-html-response"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.tainted-code-exec.tainted-code-exec"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.sqlalchemy-sqli.sqlalchemy-sqli"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.pymysql-sqli.pymysql-sqli"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.pymssql-sqli.pymssql-sqli"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.psycopg-sqli.psycopg-sqli"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.mysql-sqli.mysql-sqli"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.dynamodb-filter-injection.dynamodb-filter-injection"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.dangerous-system-call.dangerous-system-call"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.dangerous-subprocess-use.dangerous-subprocess-use"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.dangerous-spawn-process.dangerous-spawn-process"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.dangerous-asyncio-shell.dangerous-asyncio-shell"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.dangerous-asyncio-exec.dangerous-asyncio-exec"
-        },
-        {
-          "patternId": "Semgrep_python.aws-lambda.security.dangerous-asyncio-create-exec.dangerous-asyncio-create-exec"
-        },
-        {
           "patternId": "Semgrep_problem-based-packs.insecure-transport.js-node.telnet-request.telnet-request"
         },
         {
@@ -921,15 +870,6 @@
         },
         {
           "patternId": "Semgrep_problem-based-packs.insecure-transport.js-node.bypass-tls-verification.bypass-tls-verification"
-        },
-        {
-          "patternId": "Semgrep_json.aws.security.wildcard-assume-role.wildcard-assume-role"
-        },
-        {
-          "patternId": "Semgrep_json.aws.security.public-s3-policy-statement.public-s3-policy-statement"
-        },
-        {
-          "patternId": "Semgrep_json.aws.security.public-s3-bucket.public-s3-bucket"
         },
         {
           "patternId": "Semgrep_javascript.sequelize.security.audit.sequelize-injection-express.express-sequelize-injection"
@@ -1071,33 +1011,6 @@
         },
         {
           "patternId": "Semgrep_javascript.browser.security.open-redirect.js-open-redirect"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.vm-runincontext-injection.vm-runincontext-injection"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.tainted-html-string.tainted-html-string"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.tainted-html-response.tainted-html-response"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.sequelize-sqli.sequelize-sqli"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.pg-sqli.pg-sqli"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.mysql-sqli.mysql-sqli"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.knex-sqli.knex-sqli"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.dynamodb-request-object.dynamodb-request-object"
-        },
-        {
-          "patternId": "Semgrep_javascript.aws-lambda.security.detect-child-process.detect-child-process"
         },
         {
           "patternId": "Semgrep_javascript.argon2.security.unsafe-argon2-config.unsafe-argon2-config"
@@ -1286,118 +1199,13 @@
       "toolId": "Checkov",
       "patterns": [
         {
-          "patternId": "Checkov_CKV_AWS_394"
-        },
-        {
           "patternId": "Checkov_CKV_OCI_23"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_127"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_126"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_37"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_38"
-        },
-        {
-          "patternId": "Checkov_CKV2_AWS_75"
-        },
-        {
-          "patternId": "Checkov_CKV_K8S_159"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_125"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_248"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_243"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_242"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_240"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_239"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_238"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_384"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_373"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_371"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_370"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_369"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_368"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_367"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_366"
-        },
-        {
-          "patternId": "Checkov_CKV2_AZURE_54"
-        },
-        {
-          "patternId": "Checkov_CKV2_AZURE_53"
-        },
-        {
-          "patternId": "Checkov_CKV2_AZURE_52"
-        },
-        {
-          "patternId": "Checkov_CKV2_AZURE_51"
-        },
-        {
-          "patternId": "Checkov_CKV2_AZURE_49"
-        },
-        {
-          "patternId": "Checkov_CKV2_AZURE_48"
-        },
-        {
-          "patternId": "Checkov_CKV2_AWS_72"
-        },
-        {
-          "patternId": "Checkov_CKV2_AWS_71"
-        },
-        {
-          "patternId": "Checkov_CKV2_AWS_69"
-        },
-        {
-          "patternId": "Checkov_CKV2_AWS_68"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_124"
         },
         {
           "patternId": "Checkov_CKV_PAN_17"
         },
         {
           "patternId": "Checkov_CKV_PAN_16"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_236"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_233"
         },
         {
           "patternId": "Checkov_CKV2_IBM_7"
@@ -1439,36 +1247,6 @@
           "patternId": "Checkov_CKV2_GCP_30"
         },
         {
-          "patternId": "Checkov_CKV2_GCP_29"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_28"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_27"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_26"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_25"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_24"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_23"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_22"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_21"
-        },
-        {
-          "patternId": "Checkov_CKV2_AZURE_46"
-        },
-        {
           "patternId": "Checkov_CKV_TF_1"
         },
         {
@@ -1482,57 +1260,6 @@
         },
         {
           "patternId": "Checkov_CKV_NCP_18"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_122"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_121"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_120"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_119"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_118"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_229"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_227"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_226"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_225"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_223"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_222"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_218"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_216"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_364"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_363"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_361"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_360"
         },
         {
           "patternId": "Checkov_CKV2_OCI_6"
@@ -1661,9 +1388,6 @@
           "patternId": "Checkov_CKV_NCP_1"
         },
         {
-          "patternId": "Checkov_CKV_GITLABCI_3"
-        },
-        {
           "patternId": "Checkov_CKV_GITHUB_28"
         },
         {
@@ -1712,181 +1436,7 @@
           "patternId": "Checkov_CKV_GITHUB_11"
         },
         {
-          "patternId": "Checkov_CKV_GCP_117"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_116"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_115"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_114"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_113"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_112"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_111"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_110"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_108"
-        },
-        {
-          "patternId": "Checkov_CKV_GCP_107"
-        },
-        {
           "patternId": "Checkov_CKV_CIRCLECIPIPELINES_8"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_213"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_212"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_209"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_208"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_206"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_193"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_192"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_191"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_189"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_183"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_182"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_178"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_177"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_176"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_175"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_174"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_173"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_172"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_171"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_169"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_168"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_166"
-        },
-        {
-          "patternId": "Checkov_CKV_AZURE_163"
-        },
-        {
-          "patternId": "Checkov_CKV_AZUREPIPELINES_5"
-        },
-        {
-          "patternId": "Checkov_CKV_AZUREPIPELINES_3"
-        },
-        {
-          "patternId": "Checkov_CKV_AZUREPIPELINES_2"
-        },
-        {
-          "patternId": "Checkov_CKV_AZUREPIPELINES_1"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_317"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_291"
-        },
-        {
-          "patternId": "Checkov_CKV_ANSIBLE_6"
-        },
-        {
-          "patternId": "Checkov_CKV_ANSIBLE_5"
-        },
-        {
-          "patternId": "Checkov_CKV_ANSIBLE_4"
-        },
-        {
-          "patternId": "Checkov_CKV_ANSIBLE_3"
-        },
-        {
-          "patternId": "Checkov_CKV_ANSIBLE_2"
-        },
-        {
-          "patternId": "Checkov_CKV_ANSIBLE_1"
-        },
-        {
-          "patternId": "Checkov_CKV2_K8S_6"
-        },
-        {
-          "patternId": "Checkov_CKV2_K8S_5"
-        },
-        {
-          "patternId": "Checkov_CKV2_K8S_4"
-        },
-        {
-          "patternId": "Checkov_CKV2_K8S_3"
-        },
-        {
-          "patternId": "Checkov_CKV2_K8S_2"
-        },
-        {
-          "patternId": "Checkov_CKV2_K8S_1"
-        },
-        {
-          "patternId": "Checkov_CKV2_GHA_1"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_20"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_19"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_18"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_12"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_11"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_10"
         },
         {
           "patternId": "Checkov_CKV2_DOCKER_9"
@@ -2486,33 +2036,6 @@
           "patternId": "Checkov_CKV_AZURE_133"
         },
         {
-          "patternId": "Checkov_CKV_AWS_260"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_258"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_197"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_195"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_194"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_193"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_192"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_187"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_174"
-        },
-        {
           "patternId": "Checkov_CKV_ARGO_2"
         },
         {
@@ -2630,15 +2153,6 @@
           "patternId": "Checkov_CKV_ALI_1"
         },
         {
-          "patternId": "Checkov_CKV2_GCP_9"
-        },
-        {
-          "patternId": "Checkov_CKV2_GCP_8"
-        },
-        {
-          "patternId": "Checkov_CKV2_AWS_33"
-        },
-        {
           "patternId": "Checkov_CKV_SECRET_9"
         },
         {
@@ -2694,15 +2208,6 @@
         },
         {
           "patternId": "Checkov_CKV_AZURE_132"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_173"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_172"
-        },
-        {
-          "patternId": "Checkov_CKV_AWS_170"
         },
         {
           "patternId": "Checkov_CKV_K8S_99"
@@ -12851,6 +12356,61 @@
     }
   ],
   "exclude": [
+    "*",
+    ".agent-sync/**",
+    ".agents/**",
+    ".claude/**",
+    ".codacy/**",
+    ".codex/**",
+    ".copilot-tracking/**",
+    ".features-gen/**",
+    ".git/**",
+    ".github/*",
+    ".github/.sonar/**",
+    ".github/actions/**",
+    ".github/agents/**",
+    ".github/docs/**",
+    ".github/instructions/**",
+    ".github/migration-verifier/**",
+    ".github/skills/**",
+    ".husky/**",
+    ".lsmcp/**",
+    ".mypy_cache/**",
+    ".npm-cache/**",
+    ".playwright-mcp/**",
+    ".pytest_cache/**",
+    ".remember/**",
+    ".reports/**",
+    ".ruff_cache/**",
+    ".scannerwork/**",
+    ".sonar/**",
+    ".storybook/**",
+    ".superpowers/**",
+    ".testagent/**",
+    ".tokensave/**",
+    ".tours/**",
+    ".venv/**",
+    ".vitest/**",
+    ".vscode/**",
+    ".worktrees/**",
+    "analysis/**",
+    "coverage/**",
+    "dist/**",
+    "evals/**",
+    "example-codeql-db/**",
+    "hooks/**",
+    "memory/**",
+    "node_modules/**",
+    "patches/**",
+    "plugins/**",
+    "quality/**",
+    "report/**",
+    "reports/**",
+    "skills/**",
+    "storybook-static/**",
+    "templates/**",
+    "typings/**",
+    "vendor/**",
     "vendor/braces/index.d.ts",
     "vendor/braces/index.js",
     "vendor/braces/lib/compile.js",

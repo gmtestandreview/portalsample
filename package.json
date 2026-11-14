@@ -21,8 +21,6 @@
     "test:lint:remediation": "node --test scripts/lint-remediation-gate.test.mjs",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "format:all": "oxfmt",
-    "format:all:check": "oxfmt --check .",
     "format:docs": "oxfmt \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
     "format:docs:check": "oxfmt --check \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
     "lint:eslint": "eslint \"ClientApp/env.js\" \"ClientApp/src/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx,js,jsx,mjs}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{js,mjs,ts,mts}\" \"quality/**/*.{js,mjs,ts,mts}\" \"*.config.{ts,mts,js}\" \"eslint.config.mjs\" \"remark.config.mjs\" \"storybook-vite-policies.ts\" \"runtime-env-fixtures.ts\" \"test-import.mjs\" \"vitest.shims.d.ts\" \"vitest*.{ts,js}\"",

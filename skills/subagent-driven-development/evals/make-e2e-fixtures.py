@@ -20,9 +20,13 @@ fixtures' tests). Refuses to overwrite an existing OUTDIR.
 """
 
 import os
-import subprocess
+import shutil
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
+
+# Resolve git once to an absolute path so subprocess never searches PATH per call.
+GIT: str = shutil.which("git") or sys.exit("git not found on PATH")
 
 ENV: dict[str, str] = dict(
     os.environ,
@@ -43,8 +47,10 @@ TASKS: dict[int, tuple[str, str, str, str | None]] = {
 
 
 def git(cwd: Path, *args: str) -> str:
-    return subprocess.run(
-        ["git", *args], cwd=cwd, env=ENV, check=True, capture_output=True, text=True
+    # Absolute git path, argv list (no shell); arguments are literals or paths
+    # this script created.
+    return subprocess.run(  # nosec B603
+        [GIT, *args], cwd=cwd, env=ENV, check=True, capture_output=True, text=True
     ).stdout.strip()
 
 

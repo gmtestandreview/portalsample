@@ -46,6 +46,21 @@ const mockBranches = [
   },
 ];
 
+const findVisibleDialog = async (name: RegExp) => {
+  const dialog = await screen.findByRole('dialog', { name });
+  await waitFor(() => expect(dialog).toBeVisible());
+  return dialog;
+};
+
+const findBranchRadios = async (dialog: HTMLElement) => ({
+  selectedBranch: await within(dialog).findByRole('radio', {
+    name: /acme sydney office/i,
+  }),
+  alternateBranch: await within(dialog).findByRole('radio', {
+    name: /acme melbourne branch/i,
+  }),
+});
+
 interface RecordedRequest {
   method: string;
   url: string;
@@ -257,10 +272,7 @@ export const ConfirmationOpen = meta.story({
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Modal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await screen.findByRole('dialog', {
-      name: /delete this request\?/i,
-    });
-    await waitFor(() => expect(dialog).toBeVisible());
+    const dialog = await findVisibleDialog(/delete this request\?/i);
 
     await expect(
       within(dialog).getByRole('button', { name: /yes, delete/i }),
@@ -297,10 +309,7 @@ export const ConfirmationClosed = meta.story({
 
     await userEvent.click(openButton);
     // Modal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await screen.findByRole('dialog', {
-      name: /save and exit\?/i,
-    });
-    await waitFor(() => expect(dialog).toBeVisible());
+    const dialog = await findVisibleDialog(/save and exit\?/i);
 
     await expect(within(dialog).getByText(/saved as a draft/i)).toBeVisible();
     await expect(
@@ -387,21 +396,13 @@ export const BranchSelectorSelectAndEdit = meta.story({
   },
   render: () => <BranchSelectorModal />,
   play: async () => {
-    const dialog = await screen.findByRole('dialog', {
-      name: /manage your branch or location/i,
-    });
-    await waitFor(() => expect(dialog).toBeVisible());
+    const dialog = await findVisibleDialog(/manage your branch or location/i);
 
     await expect(
       within(dialog).getByText(/branches or locations are available/i),
     ).toBeVisible();
 
-    const selectedBranch = await within(dialog).findByRole('radio', {
-      name: /acme sydney office/i,
-    });
-    const alternateBranch = await within(dialog).findByRole('radio', {
-      name: /acme melbourne branch/i,
-    });
+    const { selectedBranch, alternateBranch } = await findBranchRadios(dialog);
 
     await expect(selectedBranch).toBeChecked();
     await expect(alternateBranch).not.toBeChecked();
@@ -445,10 +446,7 @@ export const BranchSelectorRFQMode = meta.story({
   },
   render: () => <BranchSelectorModal />,
   play: async () => {
-    const dialog = await screen.findByRole('dialog', {
-      name: /change branch\/location/i,
-    });
-    await waitFor(() => expect(dialog).toBeVisible());
+    const dialog = await findVisibleDialog(/change branch\/location/i);
 
     await expect(
       within(dialog).getByText(
@@ -456,12 +454,7 @@ export const BranchSelectorRFQMode = meta.story({
       ),
     ).toBeVisible();
 
-    const selectedBranch = await within(dialog).findByRole('radio', {
-      name: /acme sydney office/i,
-    });
-    const alternateBranch = await within(dialog).findByRole('radio', {
-      name: /acme melbourne branch/i,
-    });
+    const { selectedBranch, alternateBranch } = await findBranchRadios(dialog);
 
     await expect(selectedBranch).toBeChecked();
     await expect(
@@ -655,10 +648,7 @@ export const RFQDeleteConfirmation = meta.story({
   render: () => <RFQDeleteModal />,
   play: async () => {
     // RFQDeleteModal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await screen.findByRole('dialog', {
-      name: /confirm deletion/i,
-    });
-    await waitFor(() => expect(dialog).toBeVisible());
+    const dialog = await findVisibleDialog(/confirm deletion/i);
 
     await expect(
       within(dialog).getByText(/RFQ-2024-001234/),
@@ -681,10 +671,7 @@ export const RFQDeleteCancelRestoresFocus = meta.story({
     });
     await userEvent.click(trigger);
     // RFQDeleteModal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await screen.findByRole('dialog', {
-      name: /confirm deletion/i,
-    });
-    await waitFor(() => expect(dialog).toBeVisible());
+    const dialog = await findVisibleDialog(/confirm deletion/i);
 
     await expect(
       within(dialog).getByText(/RFQ-2024-001234/),

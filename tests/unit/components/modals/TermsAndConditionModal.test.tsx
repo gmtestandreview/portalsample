@@ -156,6 +156,19 @@ import {
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
+const alice = { givenName: 'Alice', familyName: 'Smith' };
+const bob = { givenName: 'Bob', familyName: 'Jones' };
+
+const renderModalFor = (overrides: Partial<AccountDetails> = {}) => {
+  vi.mocked(useAccountState).mockReturnValue(createAccountState(overrides));
+  return render(<TermsAndConditionModal />);
+};
+
+const agreeAndContinue = (overrides: Partial<AccountDetails> = {}) => {
+  renderModalFor(overrides);
+  fireEvent.click(screen.getByRole('button', { name: /agree and continue/i }));
+};
+
 describe('terms and condition modal', () => {
   const resetTermsAndConditionMocks = () => {
     vi.clearAllMocks();
@@ -174,14 +187,7 @@ describe('terms and condition modal', () => {
 
     resetTermsAndConditionMocks();
 
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Alice',
-        familyName: 'Smith',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
+    renderModalFor(alice);
 
     expect(
       screen.getByTestId('prompt-termsandcondition-modal'),
@@ -194,9 +200,7 @@ describe('terms and condition modal', () => {
 
     resetTermsAndConditionMocks();
 
-    vi.mocked(useAccountState).mockReturnValue(createAccountState());
-
-    render(<TermsAndConditionModal />);
+    renderModalFor();
 
     expect(
       screen.getByRole('heading', { name: /^Welcome\s*\(modal dialog\)$/ }),
@@ -208,15 +212,7 @@ describe('terms and condition modal', () => {
 
     resetTermsAndConditionMocks();
 
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        userAcceptedTermsOfUse: true,
-        givenName: 'Alice',
-        familyName: 'Smith',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
+    renderModalFor({ ...alice, userAcceptedTermsOfUse: true });
 
     expect(
       screen.queryByTestId('prompt-termsandcondition-modal'),
@@ -228,17 +224,7 @@ describe('terms and condition modal', () => {
 
     resetTermsAndConditionMocks();
 
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Bob',
-        familyName: 'Jones',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
-    fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i }),
-    );
+    agreeAndContinue(bob);
 
     await waitFor(() => {
       expect(mockSetAgree).toHaveBeenCalledExactlyOnceWith();
@@ -250,17 +236,7 @@ describe('terms and condition modal', () => {
 
     resetTermsAndConditionMocks();
 
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Bob',
-        familyName: 'Jones',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
-    fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i }),
-    );
+    agreeAndContinue(bob);
 
     await waitFor(() => {
       expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token');
@@ -275,11 +251,7 @@ describe('terms and condition modal', () => {
 
     resetTermsAndConditionMocks();
 
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({ familyName: 'Solo' }),
-    );
-
-    render(<TermsAndConditionModal />);
+    renderModalFor({ familyName: 'Solo' });
 
     expect(
       screen.getByRole('heading', { name: /welcome, solo/i }),
@@ -291,14 +263,7 @@ describe('terms and condition modal', () => {
 
     resetTermsAndConditionMocks();
 
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Alice',
-        familyName: 'Smith',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
+    renderModalFor(alice);
 
     expect(
       screen.getByRole('button', { name: /exit portal/i }),
@@ -311,17 +276,7 @@ describe('terms and condition modal', () => {
     resetTermsAndConditionMocks();
 
     mockMsal.inProgress = 'login';
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Alice',
-        familyName: 'Smith',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
-    fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i }),
-    );
+    agreeAndContinue(alice);
 
     await waitFor(() => {
       expect(mockAcceptTermsAndCondition).not.toHaveBeenCalled();
@@ -334,17 +289,7 @@ describe('terms and condition modal', () => {
     resetTermsAndConditionMocks();
 
     mockMsal.accounts = [];
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Alice',
-        familyName: 'Smith',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
-    fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i }),
-    );
+    agreeAndContinue(alice);
 
     await waitFor(() => {
       expect(mockAcceptTermsAndCondition).not.toHaveBeenCalled();
@@ -357,17 +302,7 @@ describe('terms and condition modal', () => {
     resetTermsAndConditionMocks();
 
     vi.mocked(useAccountDispatch).mockReturnValue(null);
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Bob',
-        familyName: 'Jones',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
-    fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i }),
-    );
+    agreeAndContinue(bob);
 
     await waitFor(() => {
       expect(mockAcceptTermsAndCondition).toHaveBeenCalledWith({
@@ -387,17 +322,7 @@ describe('terms and condition modal', () => {
       new Error('Network error'),
     );
 
-    vi.mocked(useAccountState).mockReturnValue(
-      createAccountState({
-        givenName: 'Eve',
-        familyName: 'Error',
-      }),
-    );
-
-    render(<TermsAndConditionModal />);
-    fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i }),
-    );
+    agreeAndContinue({ givenName: 'Eve', familyName: 'Error' });
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();

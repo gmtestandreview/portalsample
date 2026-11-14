@@ -191,6 +191,65 @@ const ContactDetailsEditView = ({
   </Form.Group>
 );
 
+type ContactDetailsLabelProps = {
+  [
+    Key in keyof Pick<
+      ContactDetailsProps,
+      | 'titleLabel'
+      | 'firstNameLabel'
+      | 'lastNameLabel'
+      | 'roleLabel'
+      | 'businessPhoneLabel'
+      | 'mobilePhoneLabel'
+      | 'emailAddressLabel'
+    >
+  ]-?: ContactDetailsProps[Key] | undefined;
+};
+
+const createContactDetailsLabels = ({
+  titleLabel,
+  firstNameLabel,
+  lastNameLabel,
+  roleLabel,
+  businessPhoneLabel,
+  mobilePhoneLabel,
+  emailAddressLabel,
+}: Readonly<ContactDetailsLabelProps>): ContactDetailsLabels => ({
+  title: titleLabel ?? 'Title (optional)',
+  firstName: firstNameLabel ?? 'First name',
+  lastName: lastNameLabel ?? 'Last name',
+  role: roleLabel ?? 'Role (optional)',
+  businessPhone: businessPhoneLabel ?? 'Business phone',
+  mobilePhone: mobilePhoneLabel ?? 'Mobile phone',
+  email: emailAddressLabel ?? 'Email address',
+});
+
+interface ContactDetailsSummaryRendererProps {
+  contactValue: unknown;
+  titleValue: unknown;
+  getName: (name: keyof ContactDto) => string;
+  labels: ContactDetailsLabels;
+}
+
+const renderContactDetailsSummary = ({
+  contactValue,
+  titleValue,
+  getName,
+  labels,
+}: Readonly<ContactDetailsSummaryRendererProps>) => {
+  if (contactValue === '') {
+    return <span>No details added</span>;
+  }
+
+  return (
+    <ContactDetailsSummaryView
+      getName={getName}
+      titleFieldValue={titleValue as string}
+      labels={labels}
+    />
+  );
+};
+
 const ContactDetailsInput = ({
   name,
   isSummary,
@@ -206,30 +265,26 @@ const ContactDetailsInput = ({
   const [_contact] = useField(name);
   const [_title] = useField('organisationAndContact.contact.title');
 
-  const labels: ContactDetailsLabels = {
-    title: titleLabel ?? 'Title (optional)',
-    firstName: firstNameLabel ?? 'First name',
-    lastName: lastNameLabel ?? 'Last name',
-    role: roleLabel ?? 'Role (optional)',
-    businessPhone: businessPhoneLabel ?? 'Business phone',
-    mobilePhone: mobilePhoneLabel ?? 'Mobile phone',
-    email: emailAddressLabel ?? 'Email address',
-  };
+  const labels = createContactDetailsLabels({
+    titleLabel,
+    firstNameLabel,
+    lastNameLabel,
+    roleLabel,
+    businessPhoneLabel,
+    mobilePhoneLabel,
+    emailAddressLabel,
+  });
 
-  if (isSummary) {
-    if (_contact.value === '') {
-      return <span>No details added</span>;
-    }
-    return (
-      <ContactDetailsSummaryView
-        getName={getName}
-        titleFieldValue={_title.value as string}
-        labels={labels}
-      />
-    );
+  if (!isSummary) {
+    return <ContactDetailsEditView getName={getName} labels={labels} />;
   }
 
-  return <ContactDetailsEditView getName={getName} labels={labels} />;
+  return renderContactDetailsSummary({
+    contactValue: _contact.value,
+    titleValue: _title.value,
+    getName,
+    labels,
+  });
 };
 
 export default ContactDetailsInput;

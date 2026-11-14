@@ -71,6 +71,9 @@ const preview = definePreview({
   ],
 
   beforeEach() {
+    // Stories share one page, so session state written by an earlier story (for
+    // example the branch-modal notification) would otherwise leak into the next.
+    globalThis.sessionStorage.clear();
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
       JSON.stringify({
