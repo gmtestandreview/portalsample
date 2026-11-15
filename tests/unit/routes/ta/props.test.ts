@@ -219,6 +219,30 @@ const createSummaryProps = () =>
     'Type approval',
   );
 
+interface LoggedFailureCase {
+  operation: () => unknown;
+  message: string;
+  logger: string;
+  id: string;
+}
+
+const expectLoggedFailures = async (
+  failureCases: readonly LoggedFailureCase[],
+) => {
+  for (const failureCase of failureCases) {
+    await expect(Promise.resolve(failureCase.operation())).rejects.toThrow(
+      failureCase.message,
+    );
+    expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
+      failureCase.logger,
+      expect.any(Error),
+      {
+        Id: failureCase.id,
+      },
+    );
+  }
+};
+
 describe('application and instrument loading and visibility', () => {
   it('loads application/instrument details and exposes hide branches', async () => {
     expect.hasAssertions();
@@ -922,18 +946,7 @@ describe('application and organisation client failures', () => {
       },
     ];
 
-    for (const failureCase of failureCases) {
-      await expect(Promise.resolve(failureCase.operation())).rejects.toThrow(
-        failureCase.message,
-      );
-      expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
-        failureCase.logger,
-        expect.any(Error),
-        {
-          Id: failureCase.id,
-        },
-      );
-    }
+    await expectLoggedFailures(failureCases);
   });
 });
 
@@ -1017,18 +1030,7 @@ describe('document and summary client failures', () => {
       },
     ];
 
-    for (const failureCase of failureCases) {
-      await expect(Promise.resolve(failureCase.operation())).rejects.toThrow(
-        failureCase.message,
-      );
-      expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
-        failureCase.logger,
-        expect.any(Error),
-        {
-          Id: failureCase.id,
-        },
-      );
-    }
+    await expectLoggedFailures(failureCases);
   });
 });
 
