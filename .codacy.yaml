@@ -1,0 +1,38 @@
+---
+exclude_paths:
+  - 'vendor/**'
+  - 'tests/fixtures/**'
+  - '.github/migration-verifier/fixtures/**'
+engines:
+  markdownlint:
+    exclude_paths:
+      - '.claude/skills/**'
+      - '.github/skills/**'
+      - 'skills/**'
+      - '.claude/agents/**'
+      - '.github/agents/**'
+  prospector:
+    exclude_paths:
+      - '.claude/skills/**'
+      - '.github/skills/**'
+      - 'skills/**'
+      - '**/tests/**'
+      - '**/test_*.py'
+  eslint9:
+    exclude_paths:
+      - '.claude/skills/**'
+      - '.github/skills/**'
+      - 'skills/**'
+  lizard:
+    exclude_paths:
+      - '.claude/skills/**'
+      - '.github/skills/**'
+      - 'skills/**'
+  bandit:
+    exclude_paths:
+      - '**/tests/**'
+      - '**/test_*.py'
+  semgrep:
+    exclude_paths:
+      - '**/tests/**'
+      - '**/test_*.py'

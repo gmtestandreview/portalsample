@@ -1,33 +1,59 @@
 # Skill Audit: [Skill Name]
 
+> Template only: placeholders do not constitute verified findings. Use the
+> user-supplied rubric when applicable; use `references/audit-scoring.md` only
+> for the default skill-wide methodology.
+
+## Scope, authority and baseline
+
+- Artifact completeness: [complete directory / complete SKILL.md / excerpt /
+  unknown]
+- Baseline revision and SHA-256: [value or NHR]
+- Reviewer, assessment date and intended environment: [values]
+- Applicable rubric and numeric threshold: [source and literal comparison]
+- Examined file count / excluded generated files: [counts]
+
 ## Verdict
 
-[Production-ready / Needs targeted fixes / Needs major revision]
+- Design quality: [score]/100 — [reason]
+- Required readiness gates: [PASS / AMBER / FAIL / NHR / N/A, each evidenced]
+- Final recommendation: [deploy / revise / split / merge / deprecate / hold]
 
-## Score
+## Top findings and preservation requirements
 
-[score]/100
+| Severity | ID / source path:line | Finding / counterexample       | Preservation constraint | Fix / disposition |
+| -------- | --------------------- | ------------------------------ | ----------------------- | ----------------- |
+| [level]  | [ID and evidence]     | [observable defect and attack] | [unchanged invariant]   | [action]          |
 
-## Top Findings
+## Rubric breakdown — before and after
 
-| Severity | Finding | Evidence | Recommendation |
-| -------- | ------- | -------- | -------------- |
+| Criterion / maximum  |  Before |   After | Evidence and deduction |
+| -------------------- | ------: | ------: | ---------------------- |
+| [criterion / points] | [score] | [score] | [source and test]      |
 
-## Rubric Breakdown
+For atomic reviews, attach one row **per first-party file** with its role,
+criterion scores, finding, counterexample, evidence, and baseline/final total.
+Report the minimum individual score; the mean does not override a low file.
 
-| Criterion | Score | Notes |
-| --------- | ----: | ----- |
+## Checks performed
 
-## Recommended Fix Plan
+| Command or scenario | Target / revision | Expected result | Observed status       | Evidence  |
+| ------------------- | ----------------- | --------------- | --------------------- | --------- |
+| [exact command]     | [file/hash]       | [predeclared]   | [PASS/AMBER/FAIL/NHR] | [raw log] |
 
-1. [Fix]
-2. [Fix]
-3. [Fix]
+## Unexecuted tests and release blockers
 
-## Validation Needed
+- [ ] Specification and frontmatter
+- [ ] Resource links and script/assets paths
+- [ ] Direct/indirect positive and near-miss activation
+- [ ] Invalid/edge/pressure and behavioral RED/GREEN comparisons
+- [ ] Regressions after the latest revision
+- [ ] Authorization, backup/rollback for high-impact operations
 
-- [ ] Frontmatter
-- [ ] Markdown structure
-- [ ] References/scripts/assets
-- [ ] Trigger accuracy
-- [ ] Regression behavior
+Unrun work is `NHR`, not PASS. State what evidence would resolve each blocker.
+
+## Delivery
+
+- Candidate artifact(s): [verified location]
+- Changed files, hashes and rollback baseline: [paths]
+- Remaining blockers and decision owner: [items]

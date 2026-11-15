@@ -91,9 +91,7 @@ def _artifacts(record: dict[str, object], root: Path) -> dict[str, str]:
     return roles
 
 
-def _validate_case(
-    case: dict[str, object], key: str, status: str, roles: dict[str, str]
-) -> None:
+def _validate_case(case: dict[str, object], key: str, status: str, roles: dict[str, str]) -> None:
     passed = case.get("passed")
     if "passed" not in case or (
         (status == "PASS" and passed is not True)

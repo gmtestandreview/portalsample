@@ -87,14 +87,18 @@ def run_record(tmp_path: Path, record: dict[str, Any], dispatch: bool = False) -
     return CliRunner().invoke(main, args)
 
 
-def test_consistent_hold_is_valid_but_not_acceptance(tmp_path: Path, record: dict[str, Any]) -> None:
+def test_consistent_hold_is_valid_but_not_acceptance(
+    tmp_path: Path, record: dict[str, Any]
+) -> None:
     result = run_record(tmp_path, record)
     assert result.exit_code == 0, result.output
     assert "hold" in result.output
 
 
 @pytest.mark.parametrize("role", ["candidate", "oracle", "rubric", "raw", "checkpoint"])
-def test_modified_artifact_rejects_stale_evidence(tmp_path: Path, record: dict[str, Any], role: str) -> None:
+def test_modified_artifact_rejects_stale_evidence(
+    tmp_path: Path, record: dict[str, Any], role: str
+) -> None:
     (tmp_path / f"{role}.md").write_text("changed", encoding="utf-8")
     result = run_record(tmp_path, record)
     assert result.exit_code == 1
@@ -164,7 +168,9 @@ def test_static_score_cannot_override_runtime_hold(tmp_path: Path, record: dict[
 
 
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), True, "96"])
-def test_invalid_score_is_not_a_number(tmp_path: Path, record: dict[str, Any], value: object) -> None:
+def test_invalid_score_is_not_a_number(
+    tmp_path: Path, record: dict[str, Any], value: object
+) -> None:
     record["score"]["value"] = value
     assert run_record(tmp_path, record).exit_code == 1
 
@@ -196,7 +202,9 @@ def test_literal_decimal_score_does_not_round_across_threshold(
     assert result.exit_code == expected, result.output
 
 
-def test_literal_capacity_just_above_reserve_is_not_rounded_down(tmp_path: Path, record: dict[str, Any]) -> None:
+def test_literal_capacity_just_above_reserve_is_not_rounded_down(
+    tmp_path: Path, record: dict[str, Any]
+) -> None:
     path = tmp_path / "run.json"
     path.write_text(
         json.dumps(record).replace(
@@ -226,7 +234,9 @@ def test_optional_dispatch_requires_capacity_and_new_question(
     assert run_record(tmp_path, record).exit_code == 0
 
 
-def test_optional_dispatch_accepts_focused_question_with_checkpoint(tmp_path: Path, record: dict[str, Any]) -> None:
+def test_optional_dispatch_accepts_focused_question_with_checkpoint(
+    tmp_path: Path, record: dict[str, Any]
+) -> None:
     assert run_record(tmp_path, record, dispatch=True).exit_code == 0
 
 

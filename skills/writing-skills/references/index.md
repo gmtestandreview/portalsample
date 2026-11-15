@@ -37,6 +37,8 @@ the current task. Do not load every reference.
 | General skill authoring and information architecture                   | `best practices-for-skill-creators.md`               | `anthropic-best-practices.md` only for Claude/Anthropic targets                                                                                                                          |
 | Static quality audit or optimization                                   | `best-practices-evaluations.md`                      | `audit-scoring.md` for scoring; `../assets/templates/skill-audit.md` only for report shape                                                                                               |
 | Iterative optimisation, comparative campaigns or interrupted closeout  | `bounded-optimisation.md`                            | Scoring/testing references only for the acceptance question being evaluated                                                                                                              |
+| Devil’s Advocate six-area rubric review                                | `devils-advocate-rubric.md`                          | `file-review-rubric.md` when every support file is in scope; final checklist for deployment                                                                                              |
+| Exhaustive first-party file review                                     | `file-review-rubric.md`                              | User rubric governs numeric scores for its stated scope; otherwise local ten-area fallback; inventory all first-party files                                                              |
 | Full scored audit                                                      | `best-practices-evaluations.md`                      | `audit-scoring.md`; `SKILL-testing-checklist.md` for final validation                                                                                                                    |
 | Classify as Discipline, Technique, Pattern, Reference, or Hybrid       | `skill-classification.md`                            | Testing reference selected from the resulting class                                                                                                                                      |
 | Fix activation or description wording                                  | `description-optimization.md`                        | Use for rigorous description evaluation testing.                                                                                                                                         |
@@ -99,7 +101,19 @@ Defines **how to score**:
 Load it only when a score, severity, formal audit verdict, or rescoring is
 required.
 
-#### `SKILL-testing-checklist.md`
+#### `devils-advocate-rubric.md` and `file-review-rubric.md`
+
+When the user supplies a scoring rubric, **it is the primary numeric authority
+for every file within its stated scope**; local default weights are not an
+additional score. A six-area Devil's Advocate review uses the supplied rubric,
+with `devils-advocate-rubric.md` as an implementation aid. For atomic package
+reviews, `file-review-rubric.md` supplies role-specific diagnostics and the
+fallback ten-area score **only if no user rubric applies**. Record the selected
+source, scope, weights and anchors; never blend schemes or silently compare
+scores from different rubrics. Do not treat historical campaigns as fresh
+runtime evidence or average away a weak file or blocker.
+
+### `SKILL-testing-checklist.md`
 
 Final validation/deployment gate.
 
