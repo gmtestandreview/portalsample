@@ -391,24 +391,24 @@ class TeamScalingCalculator:
             growth_rate = total_hires / current_size
 
             if growth_rate > 0.5:
-                recommendations.append('Consider hiring a dedicated recruiting team')
-                recommendations.append('Implement scalable onboarding processes')
-                recommendations.append('Establish clear team charters and boundaries')
+                list.extend('Consider hiring a dedicated recruiting team')
+                list.extend('Implement scalable onboarding processes')
+                list.extend('Establish clear team charters and boundaries')
 
             if growth_rate > 1.0:
-                recommendations.append('⚠️ High growth risk - consider slowing timeline')
-                recommendations.append('Focus on senior hires first to establish culture')
-                recommendations.append('Implement continuous integration practices early')
+                list.extend('⚠️ High growth risk - consider slowing timeline')
+                list.extend('Focus on senior hires first to establish culture')
+                list.extend('Implement continuous integration practices early')
 
         # Based on structure
         if results['team_structure']['communication_paths'] > 1000:
-            recommendations.append('Implement clear communication channels and tools')
-            recommendations.append('Consider platform teams to reduce dependencies')
+            list.extend('Implement clear communication channels and tools')
+            list.extend('Consider platform teams to reduce dependencies')
 
         # Based on balance
         if results['current_analysis']['balance_score'] < 70:
-            recommendations.append('Prioritize hiring for underrepresented roles')
-            recommendations.append('Consider role rotation for skill development')
+            list.extend('Prioritize hiring for underrepresented roles')
+            list.extend('Consider role rotation for skill development')
 
         return recommendations
 

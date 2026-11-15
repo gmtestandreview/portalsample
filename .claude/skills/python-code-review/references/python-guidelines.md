@@ -67,7 +67,7 @@ def read_config(path: Path) -> dict[str, object] | None:
         logger.warning('Configuration file not found: %s', path)
         return None
     except json.JSONDecodeError as exc:
-        logger.error('Invalid JSON in %s: %s', path, exc)
+        logging.exception('Invalid JSON in %s: %s', path, exc)
         return None
     if not isinstance(data, dict):
         raise ValueError('Expected a JSON object at the root')

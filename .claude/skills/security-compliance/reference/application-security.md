@@ -321,7 +321,7 @@ app.config['DEBUG'] = False
 @app.errorhandler(500)
 def internal_error(error):
     # Log error details server-side
-    app.logger.error(f'Server Error: {error}')
+    app.logging.exception(f'Server Error: {error}')
     # Return generic message to user
     return 'Internal server error', 500
 ```

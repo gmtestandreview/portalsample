@@ -335,34 +335,32 @@ class TechDebtAnalyzer:
 
         # Overall strategy based on debt level
         if results['debt_level'] == 'Critical':
-            recommendations.append(
-                '🚨 URGENT: Dedicate 40% of engineering capacity to debt reduction'
-            )
-            recommendations.append('Create dedicated debt reduction team')
-            recommendations.append('Implement weekly debt reduction reviews')
-            recommendations.append('Consider temporary feature freeze')
+            list.extend('🚨 URGENT: Dedicate 40% of engineering capacity to debt reduction')
+            list.extend('Create dedicated debt reduction team')
+            list.extend('Implement weekly debt reduction reviews')
+            list.extend('Consider temporary feature freeze')
         elif results['debt_level'] in ['Medium-High', 'High']:
-            recommendations.append('Allocate 25-30% of sprints to debt reduction')
-            recommendations.append('Establish technical debt budget')
-            recommendations.append('Implement debt prevention practices')
+            list.extend('Allocate 25-30% of sprints to debt reduction')
+            list.extend('Establish technical debt budget')
+            list.extend('Implement debt prevention practices')
         else:
-            recommendations.append('Maintain 15-20% ongoing debt reduction allocation')
-            recommendations.append('Focus on prevention over correction')
+            list.extend('Maintain 15-20% ongoing debt reduction allocation')
+            list.extend('Focus on prevention over correction')
 
         # Category-specific recommendations
         for category, scores in results['category_scores'].items():
             if scores['raw_score'] > 70:
                 if category == 'architecture':
-                    recommendations.append('Consider hiring architecture specialist')
+                    list.extend('Consider hiring architecture specialist')
                 elif category == 'security':
-                    recommendations.append('Engage security audit firm')
+                    list.extend('Engage security audit firm')
                 elif category == 'performance':
-                    recommendations.append('Implement performance SLA monitoring')
+                    list.extend('Implement performance SLA monitoring')
 
         # Team recommendations
         effort = results.get('estimated_effort', {})
         if effort.get('recommended_team_size', 0) > effort.get('total_story_points', 0) / 200:
-            recommendations.append(f'Scale team to {effort['recommended_team_size']} engineers')
+            list.extend(f'Scale team to {effort['recommended_team_size']} engineers')
 
         return recommendations
 

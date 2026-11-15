@@ -487,47 +487,37 @@ class StrategyAnalyzer:
         # Based on overall score
         score = results['strategic_health_score']
         if score < 40:
-            recommendations.append(
+            list.extend(
                 '🚨 URGENT: Immediate turnaround required - consider bringing in crisis management team'
             )
-            recommendations.append('Focus on cash preservation and core business stabilization')
+            list.extend('Focus on cash preservation and core business stabilization')
         elif score < 60:
-            recommendations.append(
-                '⚠️ Strategic repositioning needed - prioritize 2-3 key initiatives'
-            )
-            recommendations.append('Strengthen weak pillars before pursuing growth')
+            list.extend('⚠️ Strategic repositioning needed - prioritize 2-3 key initiatives')
+            list.extend('Strengthen weak pillars before pursuing growth')
         elif score < 80:
-            recommendations.append('✓ Solid position - focus on selective improvements and growth')
-            recommendations.append('Invest in innovation and market expansion')
+            list.extend('✓ Solid position - focus on selective improvements and growth')
+            list.extend('Invest in innovation and market expansion')
         else:
-            recommendations.append(
-                '⭐ Excellent position - maintain momentum and explore bold moves'
-            )
-            recommendations.append('Consider industry disruption or category creation')
+            list.extend('⭐ Excellent position - maintain momentum and explore bold moves')
+            list.extend('Consider industry disruption or category creation')
 
         # Based on specific weaknesses
         for pillar, analysis in results['pillar_analysis'].items():
             if analysis['score'] < 50:
                 if pillar == 'market_position':
-                    recommendations.append(
-                        f'Strengthen {pillar}: Launch competitive differentiation program'
-                    )
+                    list.extend(f'Strengthen {pillar}: Launch competitive differentiation program')
                 elif pillar == 'financial_health':
-                    recommendations.append(
-                        f'Improve {pillar}: Implement profitability improvement plan'
-                    )
+                    list.extend(f'Improve {pillar}: Implement profitability improvement plan')
                 elif pillar == 'organizational_capability':
-                    recommendations.append(
-                        f'Build {pillar}: Invest in talent and culture transformation'
-                    )
+                    list.extend(f'Build {pillar}: Invest in talent and culture transformation')
 
         # Based on opportunities
         if results['framework_analysis']['porter_analysis']['overall_attractiveness'] > 70:
-            recommendations.append('Industry is attractive - consider aggressive expansion')
+            list.extend('Industry is attractive - consider aggressive expansion')
 
         # Risk-based recommendations
         if results['risk_assessment']['overall_risk'] > 60:
-            recommendations.append('High risk profile - implement comprehensive risk management')
+            list.extend('High risk profile - implement comprehensive risk management')
 
         return recommendations
 

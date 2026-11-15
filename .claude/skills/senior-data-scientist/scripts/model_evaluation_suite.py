@@ -53,7 +53,7 @@ class ModelEvaluationSuite:
         except Exception as e:
             self.results['status'] = 'failed'
             self.results['error'] = str(e)
-            logger.error(f'Processing failed: {e}')
+            logging.exception(f'Processing failed: {e}')
             raise
 
     def _execute(self) -> dict:
@@ -85,7 +85,7 @@ def main():
         sys.exit(0)
 
     except Exception as e:
-        logger.error(f'Fatal error: {e}')
+        logging.exception(f'Fatal error: {e}')
         sys.exit(1)
 
 

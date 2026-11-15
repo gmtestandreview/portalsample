@@ -260,7 +260,7 @@ except:  # Catches everything, even KeyboardInterrupt!
 try:
     result = risky_operation()
 except ValueError as e:
-    logger.error(f'Invalid value: {e}')
+    logging.exception(f'Invalid value: {e}')
     raise
 
 
