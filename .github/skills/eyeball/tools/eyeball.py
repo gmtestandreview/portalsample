@@ -147,9 +147,11 @@ def _convert_with_libreoffice(soffice_path, source_path, output_pdf_path):
     """Convert using LibreOffice headless mode."""
     with tempfile.TemporaryDirectory() as tmpdir:
         try:
+            # An absolute path can never start with "-", so a --source value such as
+            # "--foo.docx" cannot be read by soffice as an option.
             result = subprocess.run(
                 [soffice_path, "--headless", "--convert-to", "pdf",
-                 "--outdir", tmpdir, source_path],
+                 "--outdir", tmpdir, os.path.abspath(source_path)],
                 capture_output=True, text=True, timeout=120
             )
             if result.returncode != 0:

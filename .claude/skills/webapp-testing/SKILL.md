@@ -60,6 +60,41 @@ python scripts/with_server.py \
   -- python your_automation.py
 ```
 
+### `--server` command syntax
+
+`with_server.py` never starts a shell. Each `--server` value is parsed into an
+argument list and the program is launched directly.
+
+- **Supported:** `COMMAND ARG...`, optionally preceded by one or more
+  `cd DIR &&` prefixes. The `cd` prefixes set the working directory (relative to
+  where you run the script, cumulative across prefixes). Quote any argument or
+  directory that contains spaces: `--server 'cd "my app" && npm run dev'`.
+- **Quoted text is data.** `'a;b'` or `'x && y'` inside a longer quoted argument
+  is passed unchanged to the program, never interpreted.
+- **Rejected with an error (not executed):** pipes, `;`, `||`, a lone `&`,
+  redirects (`>`, `<`), `$(...)` and backticks, any `&&` segment other than
+  `cd DIR`, and a command that ends in `cd`. A standalone operator such as `';'`
+  is rejected even when quoted. Environment assignments (`FOO=1 cmd`), variable
+  expansion and globbing are not performed. A trailing `# comment` is dropped,
+  as in a shell.
+- **Need a pipeline or compound command?** Put it in a script file and pass
+  `--server "python start.py"`.
+- **Executables:** a bare name (`npm`, `python`) is resolved through `PATH` (so
+  `npm.cmd` shims work on Windows). On Windows, a bare name that exists only in
+  the current directory is refused. Give an explicit path to choose a specific
+  binary.
+- **Windows batch files (`.cmd`/`.bat`, including npm/pnpm shims):** `cmd.exe`
+  re-parses their arguments, so only letters, digits and `_ @ + = : , . / \ -`
+  and spaces are accepted; anything else (`& | < > ^ % ! " ( )`) is rejected.
+  Use the underlying `node`/`python` executable if you need other characters.
+- **Shutdown:** servers and their child processes are stopped when the command
+  finishes or startup fails. On Windows the whole tree is force-killed with
+  `taskkill`; on POSIX the process group gets SIGTERM, then SIGKILL.
+- **Compatibility change:** earlier versions ran the string through a shell, so
+  pipelines, `;` chains and env-var prefixes worked. They now fail fast.
+- The command after `--` is run directly with the same executable rules, not
+  through a shell.
+
 To create an automation script, include only Playwright logic (servers are
 managed automatically):
 

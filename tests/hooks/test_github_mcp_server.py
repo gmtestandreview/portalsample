@@ -23,7 +23,9 @@ TOKEN_KEYS = (
     "GITHUB_PAT_TOKEN",
 )
 Launcher = tuple[list[str], dict[str, str], Path, Path]
-TASKKILL = Path(os.environ.get("SYSTEMROOT", r"C:\Windows")) / "System32" / "taskkill.exe"
+SYSTEM32 = Path(os.environ.get("SYSTEMROOT", r"C:\Windows")) / "System32"
+TASKKILL = SYSTEM32 / "taskkill.exe"
+CMD_EXE = SYSTEM32 / "cmd.exe"
 
 AUTH = """const fs = require('node:fs');
 const path = require('node:path');
@@ -88,7 +90,7 @@ def launcher(tmp_path: Path) -> Launcher:
         TMP=str(temp),
         LAUNCHER_TEST_STATE=str(tmp_path),
     )
-    command = [os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", str(LAUNCHER)]
+    command = [str(CMD_EXE), "/d", "/c", str(LAUNCHER)]
     return command, environment, tmp_path, temp
 
 
@@ -102,8 +104,8 @@ def validated_command(command: Sequence[str]) -> list[str]:
         pytest.fail("Launcher command must use cmd.exe with /d /c")
     if Path(arguments[3]).resolve() != LAUNCHER.resolve():
         pytest.fail("Launcher command must target the repository launcher")
-    if Path(arguments[0]).name.casefold() != "cmd.exe":
-        pytest.fail("Launcher command must use cmd.exe as its executable")
+    if Path(arguments[0]) != CMD_EXE:
+        pytest.fail("Launcher command must use the System32 cmd.exe, not a PATH/COMSPEC lookup")
     return arguments
 
 

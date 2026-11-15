@@ -14,11 +14,176 @@ Usage:
       -- python test.py
 """
 
-import subprocess
-import socket
-import time
-import sys
+from __future__ import annotations
+
 import argparse
+import os
+import re
+import shlex
+import signal
+import shutil
+import socket
+import subprocess
+import sys
+import time
+
+# Shell punctuation that must never reach an executed command. `&&` is the only
+# operator supported, and only to chain `cd DIR && ...` prefixes.
+_SHELL_PUNCTUATION = set("();<>|&")
+
+
+def _split_segments(command: str) -> list[list[str]]:
+    """Tokenise `command` into `&&`-separated segments, rejecting every other operator."""
+    lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
+    if os.name == "nt":
+        lexer.escape = ""  # backslashes are path separators on Windows, not escapes
+    segments: list[list[str]] = [[]]
+    for part in lexer:
+        if part == "&&":
+            segments.append([])
+        elif set(part) <= _SHELL_PUNCTUATION:
+            raise ValueError(f"Unsupported shell operator in server command: {part!r}")
+        elif "$(" in part or "`" in part:
+            raise ValueError("Command substitution is not supported in server commands")
+        else:
+            segments[-1].append(part)
+    if any(not segment for segment in segments):
+        raise ValueError("Server command is empty or has an empty '&&' segment")
+    return segments
+
+
+def _apply_cd_prefixes(prefixes: list[list[str]], base: str | None) -> str | None:
+    """Resolve successive `cd DIR` prefixes to one working directory."""
+    cwd: str | None = None
+    for prefix in prefixes:
+        if len(prefix) != 2 or prefix[0] != "cd":
+            raise ValueError("Only 'cd DIR' may precede '&&' in a server command")
+        target = os.path.join(cwd or base or os.getcwd(), prefix[1])
+        if not os.path.isdir(target):
+            raise ValueError(f"cd target is not a directory: {prefix[1]!r}")
+        cwd = target
+    return cwd
+
+
+def parse_server_command(
+    command: str, base: str | None = None
+) -> tuple[str | None, list[str]]:
+    """Turn a `[cd DIR && ]... COMMAND ARGS` string into (cwd, argv) without a shell.
+
+    Anything else a shell would interpret (`;`, `|`, `||`, `&`, redirects, `$(...)`,
+    backticks) is rejected instead of executed. Quoted text is passed as data.
+    """
+    *prefixes, argv = _split_segments(command)
+    if argv[0] == "cd":
+        raise ValueError("A server command cannot end with 'cd'")
+    return _apply_cd_prefixes(prefixes, base), argv
+
+
+# cmd.exe re-parses the arguments of .cmd/.bat targets even with shell=False, so
+# only a conservative character set may reach them.
+_BATCH_SUFFIXES = (".cmd", ".bat")
+_SAFE_BATCH_ARGUMENT = re.compile(r"[A-Za-z0-9_@+=:,./\\ -]*")
+
+
+def resolve_executable(name: str) -> str:
+    """Resolve `name` through PATH, refusing a bare name found only in the current directory.
+
+    Windows searches the current directory before PATH; a planted `npm.cmd` there must
+    not win. A name containing a path separator is an explicit operator choice.
+    """
+    if os.path.dirname(name):
+        return name
+    found = shutil.which(name)
+    if found is None:
+        # Never hand a bare name to CreateProcess, which may search the current directory.
+        raise FileNotFoundError(f"Executable not found on PATH: {name!r}")
+    here = os.path.normcase(os.path.realpath(os.getcwd()))
+    parent = os.path.normcase(os.path.realpath(os.path.dirname(found)))
+    on_path = {
+        os.path.normcase(os.path.realpath(entry or os.getcwd()))
+        for entry in os.environ.get("PATH", "").split(os.pathsep)
+    }
+    if parent == here and here not in on_path:
+        raise ValueError(f"Refusing to run {name!r} from the current directory")
+    return found
+
+
+def prepare_argv(argv: list[str]) -> list[str]:
+    """Resolve argv[0] and validate arguments passed to batch-file targets."""
+    argv = [resolve_executable(argv[0]), *argv[1:]]
+    if argv[0].lower().endswith(_BATCH_SUFFIXES):
+        for argument in argv[1:]:
+            if not _SAFE_BATCH_ARGUMENT.fullmatch(argument):
+                raise ValueError(
+                    f"Argument {argument!r} is not allowed for batch-file target {argv[0]!r}"
+                )
+    return argv
+
+
+def start_server(command: str, base: str | None = None) -> subprocess.Popen[bytes]:
+    """Start one server process directly (shell=False) from a validated command."""
+    cwd, argv = parse_server_command(command, base=base)
+    argv = prepare_argv(argv)
+    # Own process group/session so stop_server can end the whole tree.
+    if os.name == "nt":
+        return subprocess.Popen(
+            argv,
+            cwd=cwd,
+            shell=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
+        )
+    return subprocess.Popen(
+        argv,
+        cwd=cwd,
+        shell=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        start_new_session=True,
+    )
+
+
+def _kill_tree(process: subprocess.Popen[bytes]) -> None:
+    if os.name == "nt":
+        taskkill = os.path.join(
+            os.environ.get("SYSTEMROOT", r"C:\Windows"), "System32", "taskkill.exe"
+        )
+        subprocess.run(
+            [taskkill, "/PID", str(process.pid), "/T", "/F"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    else:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+
+
+def stop_server(process: subprocess.Popen[bytes]) -> None:
+    """Stop a server and its descendants.
+
+    POSIX: SIGTERM the process group, then SIGKILL whatever remains. Windows: console
+    servers cannot be asked to exit, and descendants are only reachable while their
+    parent is alive, so the tree is force-killed first.
+    """
+    if os.name != "nt" and process.poll() is None:
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+            process.wait(timeout=5)
+        except (ProcessLookupError, PermissionError, subprocess.TimeoutExpired):
+            pass
+    if os.name != "nt" or process.poll() is None:
+        _kill_tree(process)
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait()
+
 
 def is_server_ready(port, timeout=30):
     """Wait for server to be ready by polling the port."""
@@ -65,13 +230,8 @@ def main():
         for i, server in enumerate(servers):
             print(f"Starting server {i+1}/{len(servers)}: {server['cmd']}")
 
-            # Use shell=True to support commands with cd and &&
-            process = subprocess.Popen(
-                server['cmd'],
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
+            # No shell: `cd DIR &&` prefixes become cwd; other operators are rejected.
+            process = start_server(server['cmd'])
             server_processes.append(process)
 
             # Wait for this server to be ready
@@ -85,19 +245,14 @@ def main():
 
         # Run the command
         print(f"Running: {' '.join(args.command)}\n")
-        result = subprocess.run(args.command)
+        result = subprocess.run(prepare_argv(args.command), shell=False)
         sys.exit(result.returncode)
 
     finally:
         # Clean up all servers
         print(f"\nStopping {len(server_processes)} server(s)...")
         for i, process in enumerate(server_processes):
-            try:
-                process.terminate()
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
+            stop_server(process)
             print(f"Server {i+1} stopped")
         print("All servers stopped")
 
