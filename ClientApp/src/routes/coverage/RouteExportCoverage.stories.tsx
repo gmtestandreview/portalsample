@@ -53,7 +53,7 @@ const manageFetch: typeof globalThis.fetch = (input) => {
     ? JSON.stringify({ applicationDetails })
     : '0';
   return Promise.resolve(
-    new Response(body, {
+    new globalThis.Response(body, {
       status: 200,
       headers: { 'content-type': 'application/json' },
     }),
@@ -100,7 +100,7 @@ export const AccountCreated = meta.story({
   play: async ({ canvas }) => {
     await expect(
       await canvas.findByRole('heading', {
-        name: /your portal account is ready/i,
+        name: /your portal account is ready/iu,
       }),
       'route-wrapper-mounted',
     ).toBeVisible();
@@ -141,7 +141,7 @@ export const HelpSetupAccess = meta.story({
     await expect(
       await canvas.findByRole('heading', {
         level: 1,
-        name: /how to set up access to the nmi services portal/i,
+        name: /how to set up access to the nmi services portal/iu,
       }),
       'route-wrapper-mounted',
     ).toBeVisible();
@@ -166,7 +166,7 @@ export const MeasurementReportContact = meta.story({
   play: async ({ canvas }) => {
     await expect(
       await canvas.findByRole('heading', {
-        name: /contact your nmi test officer/i,
+        name: /contact your nmi test officer/iu,
       }),
       'route-wrapper-mounted',
     ).toBeVisible();
@@ -219,7 +219,7 @@ export const SignOutHelperRoute = meta.story({
   play: async ({ canvas }) => {
     await expect(
       await canvas.findByRole('heading', {
-        name: /to complete your log out, close your browser window/i,
+        name: /to complete your log out, close your browser window/iu,
       }),
       'route-wrapper-mounted',
     ).toBeVisible();

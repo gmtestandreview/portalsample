@@ -166,7 +166,7 @@ const renderModalFor = (overrides: Partial<AccountDetails> = {}) => {
 
 const agreeAndContinue = (overrides: Partial<AccountDetails> = {}) => {
   renderModalFor(overrides);
-  fireEvent.click(screen.getByRole('button', { name: /agree and continue/i }));
+  fireEvent.click(screen.getByRole('button', { name: /agree and continue/iu }));
 };
 
 describe('terms and condition modal', () => {
@@ -203,7 +203,7 @@ describe('terms and condition modal', () => {
     renderModalFor();
 
     expect(
-      screen.getByRole('heading', { name: /^Welcome\s*\(modal dialog\)$/ }),
+      screen.getByRole('heading', { name: /^Welcome\s*\(modal dialog\)$/u }),
     ).toBeInTheDocument();
   });
 
@@ -254,7 +254,7 @@ describe('terms and condition modal', () => {
     renderModalFor({ familyName: 'Solo' });
 
     expect(
-      screen.getByRole('heading', { name: /welcome, solo/i }),
+      screen.getByRole('heading', { name: /welcome, solo/iu }),
     ).toBeInTheDocument();
   });
 
@@ -266,7 +266,7 @@ describe('terms and condition modal', () => {
     renderModalFor(alice);
 
     expect(
-      screen.getByRole('button', { name: /exit portal/i }),
+      screen.getByRole('button', { name: /exit portal/iu }),
     ).toHaveAttribute('href', '/sign-out');
   });
 
@@ -327,7 +327,7 @@ describe('terms and condition modal', () => {
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(
-        screen.getByText(/error found trying to save/i),
+        screen.getByText(/error found trying to save/iu),
       ).toBeInTheDocument();
     });
   });

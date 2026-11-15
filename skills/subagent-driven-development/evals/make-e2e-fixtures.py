@@ -26,7 +26,10 @@ import sys
 from pathlib import Path
 
 # Resolve git once to an absolute path so subprocess never searches PATH per call.
-GIT: str = shutil.which("git") or sys.exit("git not found on PATH")
+_git = shutil.which("git")
+if _git is None:
+    sys.exit("git not found on PATH")
+GIT: str = _git
 
 ENV: dict[str, str] = dict(
     os.environ,

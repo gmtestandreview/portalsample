@@ -54,10 +54,10 @@ const findVisibleDialog = async (name: RegExp) => {
 
 const findBranchRadios = async (dialog: HTMLElement) => ({
   selectedBranch: await within(dialog).findByRole('radio', {
-    name: /acme sydney office/i,
+    name: /acme sydney office/iu,
   }),
   alternateBranch: await within(dialog).findByRole('radio', {
-    name: /acme melbourne branch/i,
+    name: /acme melbourne branch/iu,
   }),
 });
 
@@ -272,13 +272,13 @@ export const ConfirmationOpen = meta.story({
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Modal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await findVisibleDialog(/delete this request\?/i);
+    const dialog = await findVisibleDialog(/delete this request\?/iu);
 
     await expect(
-      within(dialog).getByRole('button', { name: /yes, delete/i }),
+      within(dialog).getByRole('button', { name: /yes, delete/iu }),
     ).toBeInTheDocument();
     await expect(
-      within(dialog).getByRole('button', { name: /^cancel$/i }),
+      within(dialog).getByRole('button', { name: /^cancel$/iu }),
     ).toBeInTheDocument();
     // Button is still in the canvas
     await expect(
@@ -287,11 +287,11 @@ export const ConfirmationOpen = meta.story({
 
     // SB-018: clicking No closes the modal
     await userEvent.click(
-      within(dialog).getByRole('button', { name: /^cancel$/i }),
+      within(dialog).getByRole('button', { name: /^cancel$/iu }),
     );
     await waitFor(() =>
       expect(
-        screen.queryByRole('dialog', { name: /delete this request\?/i }),
+        screen.queryByRole('dialog', { name: /delete this request\?/iu }),
       ).not.toBeInTheDocument(),
     );
   },
@@ -309,14 +309,14 @@ export const ConfirmationClosed = meta.story({
 
     await userEvent.click(openButton);
     // Modal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await findVisibleDialog(/save and exit\?/i);
+    const dialog = await findVisibleDialog(/save and exit\?/iu);
 
-    await expect(within(dialog).getByText(/saved as a draft/i)).toBeVisible();
+    await expect(within(dialog).getByText(/saved as a draft/iu)).toBeVisible();
     await expect(
-      within(dialog).getByRole('button', { name: /save and exit/i }),
+      within(dialog).getByRole('button', { name: /save and exit/iu }),
     ).toBeInTheDocument();
     await expect(
-      within(dialog).getByRole('button', { name: /continue editing/i }),
+      within(dialog).getByRole('button', { name: /continue editing/iu }),
     ).toBeInTheDocument();
 
     // keyboard={false}: Escape must not dismiss the modal
@@ -329,11 +329,11 @@ export const ConfirmationClosed = meta.story({
 
     // Cancel path: closes, reports the choice and returns focus to the trigger
     await userEvent.click(
-      within(dialog).getByRole('button', { name: /continue editing/i }),
+      within(dialog).getByRole('button', { name: /continue editing/iu }),
     );
     await waitFor(() =>
       expect(
-        screen.queryByRole('dialog', { name: /save and exit\?/i }),
+        screen.queryByRole('dialog', { name: /save and exit\?/iu }),
       ).not.toBeInTheDocument(),
     );
 
@@ -346,14 +346,14 @@ export const ConfirmationClosed = meta.story({
     // Confirm path: closes and reports the confirmed choice
     await userEvent.click(openButton);
     const reopened = await screen.findByRole('dialog', {
-      name: /save and exit\?/i,
+      name: /save and exit\?/iu,
     });
     await userEvent.click(
-      within(reopened).getByRole('button', { name: /^save and exit$/i }),
+      within(reopened).getByRole('button', { name: /^save and exit$/iu }),
     );
     await waitFor(() =>
       expect(
-        screen.queryByRole('dialog', { name: /save and exit\?/i }),
+        screen.queryByRole('dialog', { name: /save and exit\?/iu }),
       ).not.toBeInTheDocument(),
     );
 
@@ -396,10 +396,10 @@ export const BranchSelectorSelectAndEdit = meta.story({
   },
   render: () => <BranchSelectorModal />,
   play: async () => {
-    const dialog = await findVisibleDialog(/manage your branch or location/i);
+    const dialog = await findVisibleDialog(/manage your branch or location/iu);
 
     await expect(
-      within(dialog).getByText(/branches or locations are available/i),
+      within(dialog).getByText(/branches or locations are available/iu),
     ).toBeVisible();
 
     const { selectedBranch, alternateBranch } = await findBranchRadios(dialog);
@@ -407,11 +407,11 @@ export const BranchSelectorSelectAndEdit = meta.story({
     await expect(selectedBranch).toBeChecked();
     await expect(alternateBranch).not.toBeChecked();
     await expect(
-      within(dialog).getByRole('link', { name: /add branch or location/i }),
+      within(dialog).getByRole('link', { name: /add branch or location/iu }),
     ).toBeVisible();
 
     const editLinks = within(dialog).getAllByRole('link', {
-      name: /edit details for this branch\/location/i,
+      name: /edit details for this branch\/location/iu,
     });
 
     await expect(editLinks).toHaveLength(2);
@@ -446,11 +446,11 @@ export const BranchSelectorRFQMode = meta.story({
   },
   render: () => <BranchSelectorModal />,
   play: async () => {
-    const dialog = await findVisibleDialog(/change branch\/location/i);
+    const dialog = await findVisibleDialog(/change branch\/location/iu);
 
     await expect(
       within(dialog).getByText(
-        /select default branch or location name to manage/i,
+        /select default branch or location name to manage/iu,
       ),
     ).toBeVisible();
 
@@ -458,11 +458,11 @@ export const BranchSelectorRFQMode = meta.story({
 
     await expect(selectedBranch).toBeChecked();
     await expect(
-      within(dialog).queryByRole('link', { name: /add branch or location/i }),
+      within(dialog).queryByRole('link', { name: /add branch or location/iu }),
     ).not.toBeInTheDocument();
     await expect(
       within(dialog).queryByRole('link', {
-        name: /edit details for this branch\/location/i,
+        name: /edit details for this branch\/location/iu,
       }),
     ).not.toBeInTheDocument();
 
@@ -530,16 +530,16 @@ export const BranchSelectorSaveSelection = meta.story({
       await canvas.findByRole('button', { name: 'Manage branch or location' }),
     );
     const dialog = await screen.findByRole('dialog', {
-      name: /manage your branch or location/i,
+      name: /manage your branch or location/iu,
     });
     await userEvent.click(
       await within(dialog).findByRole('radio', {
-        name: /acme melbourne branch/i,
+        name: /acme melbourne branch/iu,
       }),
     );
     await expectEscapeLeavesOpen(dialog);
     await userEvent.click(
-      within(dialog).getByRole('button', { name: /save and continue/i }),
+      within(dialog).getByRole('button', { name: /save and continue/iu }),
     );
 
     await expect(
@@ -577,20 +577,20 @@ export const BranchSelectorCancelDiscardsSelection = meta.story({
     });
     await userEvent.click(trigger);
     const dialog = await screen.findByRole('dialog', {
-      name: /manage your branch or location/i,
+      name: /manage your branch or location/iu,
     });
     const melbourne = await within(dialog).findByRole('radio', {
-      name: /acme melbourne branch/i,
+      name: /acme melbourne branch/iu,
     });
     await userEvent.click(melbourne);
     await waitFor(() => expect(melbourne).toBeChecked());
 
     await userEvent.click(
-      within(dialog).getByRole('button', { name: /cancel/i }),
+      within(dialog).getByRole('button', { name: /cancel/iu }),
     );
     await waitFor(() =>
       expect(
-        screen.queryByRole('dialog', { name: /manage your branch/i }),
+        screen.queryByRole('dialog', { name: /manage your branch/iu }),
       ).not.toBeInTheDocument(),
     );
     await waitFor(() => expect(trigger).toHaveFocus());
@@ -605,7 +605,7 @@ export const BranchSelectorCancelDiscardsSelection = meta.story({
     // Reopening shows the saved default again, not the discarded selection
     await userEvent.click(trigger);
     const reopened = await screen.findByRole('dialog', {
-      name: /manage your branch or location/i,
+      name: /manage your branch or location/iu,
     });
 
     await expect(
@@ -648,16 +648,16 @@ export const RFQDeleteConfirmation = meta.story({
   render: () => <RFQDeleteModal />,
   play: async () => {
     // RFQDeleteModal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await findVisibleDialog(/confirm deletion/i);
+    const dialog = await findVisibleDialog(/confirm deletion/iu);
 
     await expect(
-      within(dialog).getByText(/RFQ-2024-001234/),
+      within(dialog).getByText(/RFQ-2024-001234/u),
     ).toBeInTheDocument();
     await expect(
-      within(dialog).getByRole('button', { name: /^cancel$/i }),
+      within(dialog).getByRole('button', { name: /^cancel$/iu }),
     ).toBeInTheDocument();
     await expect(
-      within(dialog).getByRole('button', { name: /yes, delete/i }),
+      within(dialog).getByRole('button', { name: /yes, delete/iu }),
     ).toBeInTheDocument();
   },
 });
@@ -671,20 +671,20 @@ export const RFQDeleteCancelRestoresFocus = meta.story({
     });
     await userEvent.click(trigger);
     // RFQDeleteModal renders via React Bootstrap portal into document.body — use screen
-    const dialog = await findVisibleDialog(/confirm deletion/i);
+    const dialog = await findVisibleDialog(/confirm deletion/iu);
 
     await expect(
-      within(dialog).getByText(/RFQ-2024-001234/),
+      within(dialog).getByText(/RFQ-2024-001234/u),
     ).toBeInTheDocument();
 
     await expectEscapeLeavesOpen(dialog);
 
     await userEvent.click(
-      within(dialog).getByRole('button', { name: /^cancel$/i }),
+      within(dialog).getByRole('button', { name: /^cancel$/iu }),
     );
     await waitFor(() =>
       expect(
-        screen.queryByRole('dialog', { name: /confirm deletion/i }),
+        screen.queryByRole('dialog', { name: /confirm deletion/iu }),
       ).not.toBeInTheDocument(),
     );
     await waitFor(() =>
@@ -709,10 +709,10 @@ export const RFQDeleteConfirmed = meta.story({
       await canvas.findByRole('button', { name: 'Delete draft request' }),
     );
     const dialog = await screen.findByRole('dialog', {
-      name: /confirm deletion/i,
+      name: /confirm deletion/iu,
     });
     await userEvent.click(
-      within(dialog).getByRole('button', { name: /yes, delete/i }),
+      within(dialog).getByRole('button', { name: /yes, delete/iu }),
     );
 
     await expect(
