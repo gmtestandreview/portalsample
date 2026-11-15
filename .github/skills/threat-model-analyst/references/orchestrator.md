@@ -321,7 +321,7 @@ this one file. Do NOT create any other files or folders."
    **⛔ COMPONENT ANCHOR VERIFICATION (MANDATORY — do this BEFORE Step 2):**
    After identifying all components, create a mental checklist:
 
-   ```
+   ```text
    For EACH component:
      Q: What is the EXACT filename or class that anchors this component?
      A: [must cite a real file path, e.g., "src/Core/TaskProcessor.cs"]
@@ -863,35 +863,34 @@ this one file. Do NOT create any other files or folders."
   ⛔ **HARD GATE — TRUNCATION RECOVERY (MANDATORY):** If post-write validation
   detects ANY array mismatch:
 
-  1.  **DELETE** the truncated `threat-inventory.json` immediately
-  2.  **DO NOT attempt to patch** the truncated file — partial JSON is
-      unreliable
-  3.  **Regenerate using one of these strategies** (in preference order): a.
-      **Delegate to a sub-agent** — hand the sub-agent the output folder path
-      and instruct it to read `2-stride-analysis.md` and `3-findings.md`, then
-      write `threat-inventory.json`. The sub-agent has a fresh context window.
-      b. **Python extraction script** — write a Python script that reads the
-      markdown files, extracts threats/findings via regex, and writes the JSON.
-      Run the script via terminal. c. **Chunked write** — use the Large Repo
-      Strategy below.
-  4.  **Re-validate** after regeneration — if still mismatched, repeat with the
-      next strategy
-  5.  **NEVER proceed to Step 9 (assessment) or Step 10 (verification) with
-      mismatched counts**
+  1. **DELETE** the truncated `threat-inventory.json` immediately
+  2. **DO NOT attempt to patch** the truncated file — partial JSON is unreliable
+  3. **Regenerate using one of these strategies** (in preference order): a.
+     **Delegate to a sub-agent** — hand the sub-agent the output folder path and
+     instruct it to read `2-stride-analysis.md` and `3-findings.md`, then write
+     `threat-inventory.json`. The sub-agent has a fresh context window. b.
+     **Python extraction script** — write a Python script that reads the
+     markdown files, extracts threats/findings via regex, and writes the JSON.
+     Run the script via terminal. c. **Chunked write** — use the Large Repo
+     Strategy below.
+  4. **Re-validate** after regeneration — if still mismatched, repeat with the
+     next strategy
+  5. **NEVER proceed to Step 9 (assessment) or Step 10 (verification) with
+     mismatched counts**
 
   ⛔ **LARGE REPO STRATEGY (MANDATORY for repos with >60 threats):** For repos
   producing more than ~60 threats, the JSON file can exceed output token limits
   if generated in one pass. Use this chunked approach:
 
-  1.  **Write metadata + components + boundaries + flows + metrics first** —
-      these are small arrays
-  2.  **Append threats in batches** — write threats array with ~20 threats per
-      append operation. Use `replace_string_in_file` to add batches to the
-      existing file rather than writing the entire JSON in one `create_file`
-      call.
-  3.  **Append findings** — similarly batch if >15 findings
-  4.  **Final validation** — read the completed file and verify all array
-      lengths match metrics
+  1. **Write metadata + components + boundaries + flows + metrics first** —
+     these are small arrays
+  2. **Append threats in batches** — write threats array with ~20 threats per
+     append operation. Use `replace_string_in_file` to add batches to the
+     existing file rather than writing the entire JSON in one `create_file`
+     call.
+  3. **Append findings** — similarly batch if >15 findings
+  4. **Final validation** — read the completed file and verify all array lengths
+     match metrics
 
   **Alternative approach:** If chunked writing is not feasible, keep each
   threat/finding entry minimal:

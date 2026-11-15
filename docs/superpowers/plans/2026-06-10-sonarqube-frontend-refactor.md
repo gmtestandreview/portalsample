@@ -428,7 +428,7 @@ where loading state was planned but never wired up.
   closing tag.
   <!-- markdownlint-disable-next-line MD038 -->
 
-  The pattern `, ` is already in `{', '}` but the text before the `<strong>` at
+  The pattern `,` is already in `{','}` but the text before the `<strong>` at
   L126 ends with the preceding element. Fix: ensure whitespace is explicit
   around `<strong>` elements. This is already handled via `{', '}` between
   elements — the issue is likely the text node after the closing `</strong>` tag
