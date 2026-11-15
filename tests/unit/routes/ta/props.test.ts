@@ -219,8 +219,8 @@ const createSummaryProps = () =>
     'Type approval',
   );
 
-describe('pattern approval wizard prop factories', () => {
-  it('loads and saves application/instrument details while stripping lookup-only values', async () => {
+describe('application and instrument loading and visibility', () => {
+  it('loads application/instrument details and exposes hide branches', async () => {
     expect.hasAssertions();
 
     resetTaPropsMocks();
@@ -293,6 +293,24 @@ describe('pattern approval wizard prop factories', () => {
       bannerSubTitle: 'Trading - Branch - National Measurement Institute',
       hidingFields: [false, true, false, false, false],
     });
+  });
+});
+
+describe('application and instrument saving', () => {
+  it('saves application/instrument details while stripping lookup-only values', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const props = applicationAndInstrumentProps(
+      'PA-1',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const abortSignal = new AbortController().signal;
 
     await props.onSaveAndNext?.(
       {
@@ -344,7 +362,9 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     );
   });
+});
 
+describe('organisation and contact visibility', () => {
   it('loads organisation/contact step values and exposes all hide branches', async () => {
     expect.hasAssertions();
 
@@ -423,7 +443,9 @@ describe('pattern approval wizard prop factories', () => {
       redirect: '/not-found',
     });
   });
+});
 
+describe('organisation and contact saving', () => {
   it('saves organisation/contact details on exit and on next', async () => {
     expect.hasAssertions();
 
@@ -464,7 +486,9 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     ]);
   });
+});
 
+describe('supporting document props', () => {
   it('loads and saves supporting documents with document-list branches', async () => {
     expect.hasAssertions();
 
@@ -535,7 +559,9 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     ]);
   });
+});
 
+describe('summary loading', () => {
   it('loads summary values enriched with application lookups', async () => {
     expect.hasAssertions();
 
@@ -569,7 +595,9 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     ]);
   });
+});
 
+describe('summary organisation and contact visibility', () => {
   it('exposes summary organisation/contact hide branches', () => {
     expect.hasAssertions();
 
@@ -638,7 +666,9 @@ describe('pattern approval wizard prop factories', () => {
       true,
     ]);
   });
+});
 
+describe('summary application and instrument visibility and submission', () => {
   it('exposes summary application/instrument hide branches and error handling flags', () => {
     expect.hasAssertions();
 
@@ -721,7 +751,9 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     );
   });
+});
 
+describe('client authentication', () => {
   it('authenticates every client with the acquired access token on each load and save path', async () => {
     expect.hasAssertions();
 
@@ -804,8 +836,10 @@ describe('pattern approval wizard prop factories', () => {
       });
     }
   });
+});
 
-  it('logs and rethrows client failures from each async prop helper', async () => {
+describe('application and organisation client failures', () => {
+  it('logs and rethrows application and organisation client failures', async () => {
     expect.hasAssertions();
 
     resetTaPropsMocks();
@@ -886,6 +920,31 @@ describe('pattern approval wizard prop factories', () => {
         logger: 'Failed to save PA org and contact details',
         id: 'PA-8',
       },
+    ];
+
+    for (const failureCase of failureCases) {
+      await expect(Promise.resolve(failureCase.operation())).rejects.toThrow(
+        failureCase.message,
+      );
+      expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
+        failureCase.logger,
+        expect.any(Error),
+        {
+          Id: failureCase.id,
+        },
+      );
+    }
+  });
+});
+
+describe('document and summary client failures', () => {
+  it('logs and rethrows document and summary client failures', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const abortSignal = new AbortController().signal;
+    const failureCases = [
       {
         operation: () => {
           mocks.getSupportingDocuments.mockRejectedValueOnce(
@@ -971,7 +1030,9 @@ describe('pattern approval wizard prop factories', () => {
       );
     }
   });
+});
 
+describe('account availability', () => {
   it('throws account-availability errors before making client calls', async () => {
     expect.hasAssertions();
 
