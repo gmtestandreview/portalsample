@@ -95,6 +95,13 @@ argument list and the program is launched directly.
   output is not shown live, so a chatty server can neither block nor fill the
   disk. If a server does not become ready in time, the last 2000 bytes are
   printed. Earlier versions piped the output without reading it.
+- **Trust model:** the `--server` and post-`--` commands are chosen by the
+  person running the CLI and execute with their authority; this is intentional.
+  Do not expose `with_server.py` to lower-trust callers (web requests, issue
+  text, untrusted config).
+- **Windows limitation:** a server that exits before cleanup can leave child
+  processes running, because `taskkill /T` only reaches descendants of a live
+  parent. This is a local development utility, not a process supervisor.
 - **Compatibility change:** earlier versions ran the string through a shell, so
   pipelines, `;` chains and env-var prefixes worked. They now fail fast.
 - The command after `--` is run directly with the same executable rules, not
