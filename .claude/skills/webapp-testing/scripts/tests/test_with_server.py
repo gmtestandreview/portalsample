@@ -73,7 +73,7 @@ class ParseServerCommandTests(unittest.TestCase):
 class StartServerTests(unittest.TestCase):
     def test_popen_never_uses_a_shell_and_receives_argv(self) -> None:
         with mock.patch.object(ws.subprocess, "Popen") as popen:
-            ws.start_server("node app.js --port 3000")
+            ws.start_server(f'"{sys.executable}" app.js --port 3000')
         args, kwargs = popen.call_args
         self.assertIsInstance(args[0], list)
         self.assertEqual(args[0][1:], ["app.js", "--port", "3000"])
@@ -88,7 +88,7 @@ class StartServerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             (Path(root) / "web").mkdir()
             with mock.patch.object(ws.subprocess, "Popen") as popen:
-                ws.start_server("cd web && node app.js", base=root)
+                ws.start_server(f'cd web && "{sys.executable}" app.js', base=root)
             self.assertEqual(Path(popen.call_args.kwargs["cwd"]), Path(root) / "web")
 
     def test_missing_executable_raises_file_not_found(self) -> None:
@@ -99,10 +99,13 @@ class StartServerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             marker = Path(root) / "pwned"
             script = "import sys; print(sys.argv[1])"
-            process = ws.start_server(
-                f'"{sys.executable}" -c "{script}" "x; touch {marker}"', base=root
-            )
-            out, _ = process.communicate(timeout=20)
+            with tempfile.TemporaryFile() as log:
+                process = ws.start_server(
+                    f'"{sys.executable}" -c "{script}" "x; touch {marker}"', base=root, log=log
+                )
+                process.wait(timeout=20)
+                log.seek(0)
+                out = log.read()
             self.assertFalse(marker.exists())
             self.assertIn(b"touch", out)
 
@@ -158,6 +161,21 @@ class CleanupTests(unittest.TestCase):
             time.sleep(0.5)
             self.assertEqual(before, beat.stat().st_size, "descendant kept running")
 
+    def test_stop_server_does_not_touch_unrelated_processes(self) -> None:
+        sleeper = [sys.executable, "-c", "import time; time.sleep(60)"]
+        bystander = subprocess.Popen(sleeper)
+        try:
+            server = ws.start_server(f'"{sys.executable}" -c "import time; time.sleep(60)"')
+            ws.stop_server(server)
+            self.assertIsNotNone(server.poll())
+            self.assertIsNone(bystander.poll(), "an unrelated process was stopped")
+            # Also safe to call again once the server is gone (PID may be reused).
+            ws.stop_server(server)
+            self.assertIsNone(bystander.poll())
+        finally:
+            bystander.kill()
+            bystander.wait()
+
     def test_stop_server_is_safe_on_already_exited_process(self) -> None:
         process = ws.start_server(f'"{sys.executable}" -c "pass"')
         process.wait(timeout=20)
@@ -177,6 +195,43 @@ class CleanupTests(unittest.TestCase):
         ):
             ws.main()
         stop.assert_called_once_with(started)
+
+
+class PipeDrainTests(unittest.TestCase):
+    NOISY = (
+        "import sys, pathlib, time\n"
+        "chunk = 'x' * 1023 + '\\n'\n"
+        "for _ in range(4096):\n"
+        "    sys.stdout.write(chunk)\n"
+        "    sys.stderr.write(chunk)\n"
+        "sys.stdout.flush(); sys.stderr.flush()\n"
+        "pathlib.Path(sys.argv[1]).write_text('done')\n"
+        "time.sleep(60)\n"
+    )
+
+    def test_chatty_server_is_not_blocked_by_unread_output(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            script = Path(root) / "noisy.py"
+            script.write_text(self.NOISY, encoding="utf-8")
+            done = Path(root) / "done"
+            process = ws.start_server(f'"{sys.executable}" "{script}" "{done}"')
+            try:
+                deadline = time.time() + 20
+                while not done.exists() and time.time() < deadline:
+                    time.sleep(0.1)
+                self.assertTrue(done.exists(), "server blocked writing to an unread pipe")
+            finally:
+                ws.stop_server(process)
+                for stream in (process.stdout, process.stderr):
+                    if stream is not None:
+                        stream.close()
+
+    def test_output_is_kept_in_the_log_for_diagnostics(self) -> None:
+        with tempfile.TemporaryFile() as log:
+            process = ws.start_server(f'"{sys.executable}" -c "print(12345)"', log=log)
+            process.wait(timeout=20)
+            log.seek(0)
+            self.assertIn(b"12345", log.read())
 
 
 class ParserEdgeCaseTests(unittest.TestCase):
@@ -232,6 +287,14 @@ class ParserEdgeCaseTests(unittest.TestCase):
 
 
 class ExecutableProvenanceTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Windows system directory lookup")
+    def test_taskkill_location_ignores_environment_variables(self) -> None:
+        with mock.patch.dict(os.environ, {"SYSTEMROOT": r"C:\evil", "WINDIR": r"C:\evil"}):
+            taskkill = ws._taskkill_path()
+        self.assertNotIn("evil", taskkill.lower())
+        self.assertTrue(taskkill.lower().endswith(r"system32\taskkill.exe"))
+        self.assertTrue(os.path.isfile(taskkill))
+
     def test_batch_target_rejects_cmd_metacharacters(self) -> None:
         for argument in ("a&calc", "a|b", "a>b", "%PATH%", '"q"', "a^b", "(x)", "!x!"):
             with self.subTest(argument=argument), self.assertRaises(ValueError):
@@ -260,8 +323,11 @@ class ExecutableProvenanceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ws.start_server(f'"{shim}" "x&type nul>{marker}"', base=root)
             self.assertFalse(marker.exists())
-            process = ws.start_server(f'"{shim}" safe-arg', base=root)
-            out, _ = process.communicate(timeout=20)
+            with tempfile.TemporaryFile() as log:
+                process = ws.start_server(f'"{shim}" safe-arg', base=root, log=log)
+                process.wait(timeout=20)
+                log.seek(0)
+                out = log.read()
             self.assertIn(b"got:safe-arg", out)
 
     @unittest.skipUnless(os.name == "nt", "Windows searches the current directory first")

@@ -90,6 +90,10 @@ argument list and the program is launched directly.
 - **Shutdown:** servers and their child processes are stopped when the command
   finishes or startup fails. On Windows the whole tree is force-killed with
   `taskkill`; on POSIX the process group gets SIGTERM, then SIGKILL.
+- **Server output:** stdout and stderr (merged) are written to a temporary
+  file, not shown live and never piped, so a chatty server cannot block. If a
+  server does not become ready in time, the last 2000 bytes are printed.
+  Earlier versions piped the output without reading it.
 - **Compatibility change:** earlier versions ran the string through a shell, so
   pipelines, `;` chains and env-var prefixes worked. They now fail fast.
 - The command after `--` is run directly with the same executable rules, not

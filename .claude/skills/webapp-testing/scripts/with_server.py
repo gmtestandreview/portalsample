@@ -17,6 +17,8 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import tempfile
+from typing import IO
 import os
 import re
 import shlex
@@ -121,37 +123,52 @@ def prepare_argv(argv: list[str]) -> list[str]:
     return argv
 
 
-def start_server(command: str, base: str | None = None) -> subprocess.Popen[bytes]:
-    """Start one server process directly (shell=False) from a validated command."""
+def start_server(
+    command: str, base: str | None = None, log: IO[bytes] | None = None
+) -> subprocess.Popen[bytes]:
+    """Start one server process directly (shell=False) from a validated command.
+
+    Output goes to `log` (stderr merged into stdout) or is discarded. It is never piped
+    to this process, because nothing drains a pipe and a chatty server would block once
+    the OS pipe buffer fills.
+    """
     cwd, argv = parse_server_command(command, base=base)
     argv = prepare_argv(argv)
+    output = log if log is not None else subprocess.DEVNULL
     # Own process group/session so stop_server can end the whole tree.
     if os.name == "nt":
         return subprocess.Popen(
             argv,
             cwd=cwd,
             shell=False,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stdout=output,
+            stderr=subprocess.STDOUT,
             creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
         )
     return subprocess.Popen(
         argv,
         cwd=cwd,
         shell=False,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stdout=output,
+        stderr=subprocess.STDOUT,
         start_new_session=True,
     )
 
 
+def _taskkill_path() -> str:
+    """Absolute taskkill.exe path from the OS (not from SYSTEMROOT/WINDIR/PATH)."""
+    import ctypes
+
+    buffer = ctypes.create_unicode_buffer(260)
+    if not ctypes.windll.kernel32.GetSystemWindowsDirectoryW(buffer, 260):
+        raise OSError("Cannot determine the Windows system directory")
+    return os.path.join(buffer.value, "System32", "taskkill.exe")
+
+
 def _kill_tree(process: subprocess.Popen[bytes]) -> None:
     if os.name == "nt":
-        taskkill = os.path.join(
-            os.environ.get("SYSTEMROOT", r"C:\Windows"), "System32", "taskkill.exe"
-        )
         subprocess.run(
-            [taskkill, "/PID", str(process.pid), "/T", "/F"],
+            [_taskkill_path(), "/PID", str(process.pid), "/T", "/F"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             check=False,
@@ -169,14 +186,17 @@ def stop_server(process: subprocess.Popen[bytes]) -> None:
     POSIX: SIGTERM the process group, then SIGKILL whatever remains. Windows: console
     servers cannot be asked to exit, and descendants are only reachable while their
     parent is alive, so the tree is force-killed first.
+
+    A process that had already exited and been reaped on entry is not signalled: its PID
+    (and process-group id) may have been reused by an unrelated process.
     """
-    if os.name != "nt" and process.poll() is None:
-        try:
-            os.killpg(process.pid, signal.SIGTERM)
-            process.wait(timeout=5)
-        except (ProcessLookupError, PermissionError, subprocess.TimeoutExpired):
-            pass
-    if os.name != "nt" or process.poll() is None:
+    if process.poll() is None:
+        if os.name != "nt":
+            try:
+                os.killpg(process.pid, signal.SIGTERM)
+                process.wait(timeout=5)
+            except (ProcessLookupError, PermissionError, subprocess.TimeoutExpired):
+                pass
         _kill_tree(process)
     try:
         process.wait(timeout=5)
@@ -224,6 +244,7 @@ def main():
         servers.append({'cmd': cmd, 'port': port})
 
     server_processes = []
+    logs = []
 
     try:
         # Start all servers
@@ -231,12 +252,18 @@ def main():
             print(f"Starting server {i+1}/{len(servers)}: {server['cmd']}")
 
             # No shell: `cd DIR &&` prefixes become cwd; other operators are rejected.
-            process = start_server(server['cmd'])
+            # Output goes to a temp file (never an undrained pipe) kept for diagnostics.
+            log = tempfile.TemporaryFile()
+            logs.append(log)
+            process = start_server(server['cmd'], log=log)
             server_processes.append(process)
 
             # Wait for this server to be ready
             print(f"Waiting for server on port {server['port']}...")
             if not is_server_ready(server['port'], timeout=args.timeout):
+                log.seek(0, os.SEEK_END)
+                log.seek(max(0, log.tell() - 2000))
+                print(log.read().decode("utf-8", errors="replace"))
                 raise RuntimeError(f"Server failed to start on port {server['port']} within {args.timeout}s")
 
             print(f"Server ready on port {server['port']}")
@@ -254,6 +281,8 @@ def main():
         for i, process in enumerate(server_processes):
             stop_server(process)
             print(f"Server {i+1} stopped")
+        for log in logs:
+            log.close()
         print("All servers stopped")
 
 
