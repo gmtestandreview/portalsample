@@ -157,6 +157,7 @@ const declaredJobs = [
   'vitest',
   'e2e-node24',
   'lower-bound-node24',
+  'webapp-testing-python',
 ];
 
 const evidenceJobs = [
