@@ -46,11 +46,54 @@ const PAYMENT_DETAILS_PREPAID_SESSION_KEY =
   'storybook:accept-quote:payment-details:prepaid';
 const PAYMENT_DETAILS_POSTPAID_SESSION_KEY =
   'storybook:accept-quote:payment-details:postpaid';
+const PREPAID = 'payment-details-prepaid';
+const POSTPAID = 'payment-details-postpaid';
+const BOTH_SENTINELS = [POSTPAID, PREPAID] as const;
+const PREPAID_STORY = 'routes-acceptquote--payment-details-step';
+const POSTPAID_STORY = 'routes-acceptquote--payment-details-postpaid';
+const PREPAID_SESSION_ACTIVE = `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`;
+const POSTPAID_SESSION_ACTIVE = `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`;
 
 interface LifecycleEvent {
   phase: string;
   sentinel: string;
 }
+
+const providerEvent = (
+  phase: ProviderLifecycleEvent['phase'],
+  sentinel: string,
+): ProviderLifecycleEvent => ({
+  type: 'storybook-portal-provider',
+  phase,
+  sentinel,
+});
+
+const accountEvent = (
+  phase: AccountContextLifecycleEvent['phase'],
+  sentinel: string,
+): AccountContextLifecycleEvent => ({
+  type: 'storybook-account-context',
+  phase,
+  sentinel,
+  targetOrganisationName: `${sentinel}:active`,
+});
+
+// Sentinels opened (`openPhase`) and not yet closed (`closePhase`).
+const unclosedSentinels = (
+  events: LifecycleEvent[],
+  openPhase: string,
+  closePhase: string,
+) => {
+  const open = new Set(
+    events.filter((e) => e.phase === openPhase).map((e) => e.sentinel),
+  );
+  for (const event of events) {
+    if (event.phase === closePhase) {
+      open.delete(event.sentinel);
+    }
+  }
+  return [...open].sort((a, b) => a.localeCompare(b));
+};
 
 const expectLifecyclePair = async <T extends LifecycleEvent>(
   readEvents: () => Promise<T[]>,
@@ -179,11 +222,18 @@ const createReaders = (page: Page) => {
       })
       .toBe(expected);
   };
+  const expectSessionSentinels = async (
+    prepaid: string | null,
+    postpaid: string | null,
+  ) => {
+    await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, prepaid);
+    await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, postpaid);
+  };
   return {
     readProviderEvents,
     readAccountEvents,
     readSessionSentinel,
-    expectSessionSentinel,
+    expectSessionSentinels,
   };
 };
 
@@ -214,6 +264,10 @@ const createFrameActions = (page: Page) => {
           'storybookAccountTargetOrganisation'
         ] ?? null,
     );
+  const expectAccountTarget = (storyId: string, sentinel: string) =>
+    expect
+      .poll(() => readAccountTargetOrganisation(storyId))
+      .toBe(`${sentinel}:active`);
   const removeFrame = async (selector: string) => {
     await page
       .locator(selector)
@@ -244,7 +298,7 @@ const createFrameActions = (page: Page) => {
 
   return {
     fetchPaymentDetails,
-    readAccountTargetOrganisation,
+    expectAccountTarget,
     removeAndExpectRemainingPaymentDetailsFrame,
     removeAndExpectNoPaymentDetailsFrames,
   };
@@ -263,14 +317,20 @@ const createContext = (
 
 type DocsContext = ReturnType<typeof createContext>;
 
+const expectBothFramesActive = async ({
+  readProviderEvents,
+  readAccountEvents,
+}: DocsContext) => {
+  await expectLifecyclePair(readProviderEvents, 'mounted', BOTH_SENTINELS);
+  await expectLifecyclePair(readAccountEvents, 'active', BOTH_SENTINELS);
+};
+
 const loadInitialPaymentFrames = async (context: DocsContext) => {
   const {
     page,
     readSessionSentinel,
-    readProviderEvents,
-    readAccountEvents,
-    readAccountTargetOrganisation,
-    expectSessionSentinel,
+    expectAccountTarget,
+    expectSessionSentinels,
   } = context;
   await page.addInitScript(() => {
     const target = globalThis as typeof globalThis & {
@@ -288,38 +348,13 @@ const loadInitialPaymentFrames = async (context: DocsContext) => {
   ).toBeNull();
   await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
   await expectAcceptQuotePaymentFrames(page);
-  await expectLifecyclePair(readProviderEvents, 'mounted', [
-    'payment-details-postpaid',
-    'payment-details-prepaid',
-  ]);
-  await expectLifecyclePair(readAccountEvents, 'active', [
-    'payment-details-postpaid',
-    'payment-details-prepaid',
-  ]);
-  await expect
-    .poll(() =>
-      readAccountTargetOrganisation('routes-acceptquote--payment-details-step'),
-    )
-    .toBe('payment-details-prepaid:active');
-  await expect
-    .poll(() =>
-      readAccountTargetOrganisation(
-        'routes-acceptquote--payment-details-postpaid',
-      ),
-    )
-    .toBe('payment-details-postpaid:active');
-  await expectSessionSentinel(
-    PAYMENT_DETAILS_PREPAID_SESSION_KEY,
-    `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
-  );
-  await expectSessionSentinel(
-    PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
-    `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
-  );
-  const sessionBefore = await page.evaluate(() =>
+  await expectBothFramesActive(context);
+  await expectAccountTarget(PREPAID_STORY, PREPAID);
+  await expectAccountTarget(POSTPAID_STORY, POSTPAID);
+  await expectSessionSentinels(PREPAID_SESSION_ACTIVE, POSTPAID_SESSION_ACTIVE);
+  return page.evaluate(() =>
     globalThis.sessionStorage.getItem('targetOrganisation'),
   );
-  return sessionBefore;
 };
 
 const assertPostPrepaidRemoval = async (context: DocsContext) => {
@@ -329,8 +364,8 @@ const assertPostPrepaidRemoval = async (context: DocsContext) => {
     removeAndExpectNoPaymentDetailsFrames,
     readProviderEvents,
     readAccountEvents,
-    readAccountTargetOrganisation,
-    expectSessionSentinel,
+    expectAccountTarget,
+    expectSessionSentinels,
     fetchPaymentDetails,
   } = context;
   expect(probe.endpointRequests).toHaveLength(2);
@@ -340,50 +375,18 @@ const assertPostPrepaidRemoval = async (context: DocsContext) => {
     PAYMENT_DETAILS_POSTPAID_FRAME,
   );
   await expectLifecycleEventsEventually(readProviderEvents, [
-    {
-      type: 'storybook-portal-provider',
-      phase: 'cleaned',
-      sentinel: 'payment-details-prepaid',
-    },
-    {
-      type: 'storybook-portal-provider',
-      phase: 'mounted',
-      sentinel: 'payment-details-postpaid',
-    },
+    providerEvent('cleaned', PREPAID),
+    providerEvent('mounted', POSTPAID),
   ]);
   expect(await readProviderEvents()).not.toEqual(
-    expect.arrayContaining([
-      {
-        type: 'storybook-portal-provider',
-        phase: 'cleaned',
-        sentinel: 'payment-details-postpaid',
-      },
-    ]),
+    expect.arrayContaining([providerEvent('cleaned', POSTPAID)]),
   );
   await expectLifecycleEventsEventually(readAccountEvents, [
-    {
-      type: 'storybook-account-context',
-      phase: 'cleaned',
-      sentinel: 'payment-details-prepaid',
-      targetOrganisationName: 'payment-details-prepaid:active',
-    },
+    accountEvent('cleaned', PREPAID),
   ]);
-  await expect
-    .poll(() =>
-      readAccountTargetOrganisation(
-        'routes-acceptquote--payment-details-postpaid',
-      ),
-    )
-    .toBe('payment-details-postpaid:active');
-  await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
-  await expectSessionSentinel(
-    PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
-    `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
-  );
-  const postpaidAfterStepCleanup = await fetchPaymentDetails(
-    'routes-acceptquote--payment-details-postpaid',
-  );
-  expect(postpaidAfterStepCleanup).toEqual({
+  await expectAccountTarget(POSTPAID_STORY, POSTPAID);
+  await expectSessionSentinels(null, POSTPAID_SESSION_ACTIVE);
+  expect(await fetchPaymentDetails(POSTPAID_STORY)).toEqual({
     status: 200,
     body: {
       acceptQuotePreInfo: {
@@ -395,22 +398,12 @@ const assertPostPrepaidRemoval = async (context: DocsContext) => {
 
   await removeAndExpectNoPaymentDetailsFrames(PAYMENT_DETAILS_POSTPAID_FRAME);
   assertLifecycleEventsContain(await readProviderEvents(), [
-    {
-      type: 'storybook-portal-provider',
-      phase: 'cleaned',
-      sentinel: 'payment-details-postpaid',
-    },
+    providerEvent('cleaned', POSTPAID),
   ]);
   await expectLifecycleEventsEventually(readAccountEvents, [
-    {
-      type: 'storybook-account-context',
-      phase: 'cleaned',
-      sentinel: 'payment-details-postpaid',
-      targetOrganisationName: 'payment-details-postpaid:active',
-    },
+    accountEvent('cleaned', POSTPAID),
   ]);
-  await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
-  await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
+  await expectSessionSentinels(null, null);
 };
 
 const assertReversedPaymentFrames = async (context: DocsContext) => {
@@ -420,30 +413,16 @@ const assertReversedPaymentFrames = async (context: DocsContext) => {
     removeAndExpectRemainingPaymentDetailsFrame,
     readProviderEvents,
     readAccountEvents,
-    readAccountTargetOrganisation,
-    expectSessionSentinel,
+    expectAccountTarget,
+    expectSessionSentinels,
     fetchPaymentDetails,
   } = context;
   await page.goto(
     `${STORYBOOK_BASE}/iframe.html?id=${ACCEPT_QUOTE_DOCS_ID}&viewMode=docs`,
   );
   await expectAcceptQuotePaymentFrames(page);
-  await expectLifecyclePair(readProviderEvents, 'mounted', [
-    'payment-details-postpaid',
-    'payment-details-prepaid',
-  ]);
-  await expectLifecyclePair(readAccountEvents, 'active', [
-    'payment-details-postpaid',
-    'payment-details-prepaid',
-  ]);
-  await expectSessionSentinel(
-    PAYMENT_DETAILS_PREPAID_SESSION_KEY,
-    `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
-  );
-  await expectSessionSentinel(
-    PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
-    `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
-  );
+  await expectBothFramesActive(context);
+  await expectSessionSentinels(PREPAID_SESSION_ACTIVE, POSTPAID_SESSION_ACTIVE);
   // Two initial requests from the first A/B pair, one explicit B request
   // after A cleanup, then two initial requests from the reversed pair.
   expect(probe.endpointRequests).toHaveLength(5);
@@ -453,54 +432,19 @@ const assertReversedPaymentFrames = async (context: DocsContext) => {
     PAYMENT_DETAILS_STEP_FRAME,
   );
   await expectLifecycleEventsEventually(readProviderEvents, [
-    {
-      type: 'storybook-portal-provider',
-      phase: 'cleaned',
-      sentinel: 'payment-details-postpaid',
-    },
-    {
-      type: 'storybook-portal-provider',
-      phase: 'mounted',
-      sentinel: 'payment-details-prepaid',
-    },
+    providerEvent('cleaned', POSTPAID),
+    providerEvent('mounted', PREPAID),
   ]);
   expect(await readProviderEvents()).not.toEqual(
-    expect.arrayContaining([
-      {
-        type: 'storybook-portal-provider',
-        phase: 'cleaned',
-        sentinel: 'payment-details-prepaid',
-      },
-    ]),
+    expect.arrayContaining([providerEvent('cleaned', PREPAID)]),
   );
   await expectLifecycleEventsEventually(readAccountEvents, [
-    {
-      type: 'storybook-account-context',
-      phase: 'cleaned',
-      sentinel: 'payment-details-postpaid',
-      targetOrganisationName: 'payment-details-postpaid:active',
-    },
-    {
-      type: 'storybook-account-context',
-      phase: 'active',
-      sentinel: 'payment-details-prepaid',
-      targetOrganisationName: 'payment-details-prepaid:active',
-    },
+    accountEvent('cleaned', POSTPAID),
+    accountEvent('active', PREPAID),
   ]);
-  await expect
-    .poll(() =>
-      readAccountTargetOrganisation('routes-acceptquote--payment-details-step'),
-    )
-    .toBe('payment-details-prepaid:active');
-  await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
-  await expectSessionSentinel(
-    PAYMENT_DETAILS_PREPAID_SESSION_KEY,
-    `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
-  );
-  const stepAfterPostpaidCleanup = await fetchPaymentDetails(
-    'routes-acceptquote--payment-details-step',
-  );
-  expect(stepAfterPostpaidCleanup).toEqual({
+  await expectAccountTarget(PREPAID_STORY, PREPAID);
+  await expectSessionSentinels(PREPAID_SESSION_ACTIVE, null);
+  expect(await fetchPaymentDetails(PREPAID_STORY)).toEqual({
     status: 200,
     body: {
       acceptQuotePreInfo: {
@@ -516,26 +460,16 @@ const assertPostPostpaidRemoval = async (context: DocsContext) => {
     removeAndExpectNoPaymentDetailsFrames,
     readProviderEvents,
     readAccountEvents,
-    expectSessionSentinel,
+    expectSessionSentinels,
   } = context;
   await removeAndExpectNoPaymentDetailsFrames(PAYMENT_DETAILS_STEP_FRAME);
   assertLifecycleEventsContain(await readProviderEvents(), [
-    {
-      type: 'storybook-portal-provider',
-      phase: 'cleaned',
-      sentinel: 'payment-details-prepaid',
-    },
+    providerEvent('cleaned', PREPAID),
   ]);
   await expectLifecycleEventsEventually(readAccountEvents, [
-    {
-      type: 'storybook-account-context',
-      phase: 'cleaned',
-      sentinel: 'payment-details-prepaid',
-      targetOrganisationName: 'payment-details-prepaid:active',
-    },
+    accountEvent('cleaned', PREPAID),
   ]);
-  await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
-  await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
+  await expectSessionSentinels(null, null);
 };
 
 const assertFinalIsolation = async (
@@ -551,11 +485,11 @@ const assertFinalIsolation = async (
   } = context;
   expect(probe.endpointRequests).toHaveLength(6);
   expect(probe.mockedResponses).toHaveLength(6);
+  expect(probe.mockedResponses.filter((name) => name === PREPAID)).toHaveLength(
+    3,
+  );
   expect(
-    probe.mockedResponses.filter((name) => name === 'payment-details-prepaid'),
-  ).toHaveLength(3);
-  expect(
-    probe.mockedResponses.filter((name) => name === 'payment-details-postpaid'),
+    probe.mockedResponses.filter((name) => name === POSTPAID),
   ).toHaveLength(3);
   expect(probe.liveSends).toEqual([]);
   expect(probe.unmatchedRequests).toEqual([]);
@@ -569,18 +503,10 @@ const assertFinalIsolation = async (
           .map((event) => event.sentinel),
       ),
     ].sort((a, b) => a.localeCompare(b)),
-  ).toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
+  ).toEqual([POSTPAID, PREPAID]);
   expect(providerEvents.filter((event) => event.phase === 'cleaned')).toEqual([
-    {
-      type: 'storybook-portal-provider',
-      phase: 'cleaned',
-      sentinel: 'payment-details-postpaid',
-    },
-    {
-      type: 'storybook-portal-provider',
-      phase: 'cleaned',
-      sentinel: 'payment-details-prepaid',
-    },
+    providerEvent('cleaned', POSTPAID),
+    providerEvent('cleaned', PREPAID),
   ]);
   const accountEvents = await readAccountEvents();
   expect(
@@ -592,32 +518,12 @@ const assertFinalIsolation = async (
       ).values(),
     ].sort((left, right) => left.sentinel.localeCompare(right.sentinel)),
   ).toEqual([
-    {
-      type: 'storybook-account-context',
-      phase: 'active',
-      sentinel: 'payment-details-postpaid',
-      targetOrganisationName: 'payment-details-postpaid:active',
-    },
-    {
-      type: 'storybook-account-context',
-      phase: 'active',
-      sentinel: 'payment-details-prepaid',
-      targetOrganisationName: 'payment-details-prepaid:active',
-    },
+    accountEvent('active', POSTPAID),
+    accountEvent('active', PREPAID),
   ]);
   expect(accountEvents.filter((event) => event.phase === 'cleaned')).toEqual([
-    {
-      type: 'storybook-account-context',
-      phase: 'cleaned',
-      sentinel: 'payment-details-postpaid',
-      targetOrganisationName: 'payment-details-postpaid:active',
-    },
-    {
-      type: 'storybook-account-context',
-      phase: 'cleaned',
-      sentinel: 'payment-details-prepaid',
-      targetOrganisationName: 'payment-details-prepaid:active',
-    },
+    accountEvent('cleaned', POSTPAID),
+    accountEvent('cleaned', PREPAID),
   ]);
   expect(
     await page.evaluate(() =>
@@ -634,7 +540,7 @@ const cleanupIsolation = async (context: DocsContext, completed: boolean) => {
     requestFailedHandler,
     responseHandler,
     consoleErrorHandler,
-    expectSessionSentinel,
+    expectSessionSentinels,
     readProviderEvents,
     readAccountEvents,
   } = context;
@@ -657,35 +563,16 @@ const cleanupIsolation = async (context: DocsContext, completed: boolean) => {
   );
   await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(0);
   await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(0);
-  await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
-  await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
+  await expectSessionSentinels(null, null);
   await expect
-    .poll(async () => {
-      const events = await readProviderEvents();
-      const mounted = new Set(
-        events
-          .filter((event) => event.phase === 'mounted')
-          .map((event) => event.sentinel),
-      );
-      events
-        .filter((event) => event.phase === 'cleaned')
-        .forEach((event) => mounted.delete(event.sentinel));
-      return [...mounted].sort((a, b) => a.localeCompare(b));
-    })
+    .poll(async () =>
+      unclosedSentinels(await readProviderEvents(), 'mounted', 'cleaned'),
+    )
     .toEqual([]);
   await expect
-    .poll(async () => {
-      const events = await readAccountEvents();
-      const active = new Set(
-        events
-          .filter((event) => event.phase === 'active')
-          .map((event) => event.sentinel),
-      );
-      events
-        .filter((event) => event.phase === 'cleaned')
-        .forEach((event) => active.delete(event.sentinel));
-      return [...active].sort((a, b) => a.localeCompare(b));
-    })
+    .poll(async () =>
+      unclosedSentinels(await readAccountEvents(), 'active', 'cleaned'),
+    )
     .toEqual([]);
 };
 
