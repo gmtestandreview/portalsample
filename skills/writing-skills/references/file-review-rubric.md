@@ -29,18 +29,18 @@ permission to award unsupported credit.
    including support and reference files. Interpret each category against the
    file's delegated role and its verified consumer. Do **not** substitute the
    local ten-criterion weights, silently blend the schemes, or issue a second
-   competing numeric total. Use the role-specific questions below as
-   _unscored diagnostic checks_ only. For the supplied six-area Devil's Advocate
-   rubric, `devils-advocate-rubric.md` records its questions, while the user's
-   actual attached version is authoritative if they differ.
+   competing numeric total. Use the role-specific questions below as _unscored
+   diagnostic checks_ only. For the supplied six-area Devil's Advocate rubric,
+   `devils-advocate-rubric.md` records its questions, while the user's actual
+   attached version is authoritative if they differ.
 2. **Explicitly limited user-rubric scope:** Respect that limit. For file-level
    scores outside it, identify the separate rubric chosen before scoring; label
    those totals as distinct and never present them as scores under the user's
    rubric. Do not infer that a rubric for one file controls unrelated files
    unless the request establishes that scope.
-3. **No applicable user rubric:** The ten-criterion rubric below is the
-   default for first-party support files. The default whole-skill lifecycle
-   rubric remains in `audit-scoring.md`; use the six-area local rubric only when
+3. **No applicable user rubric:** The ten-criterion rubric below is the default
+   for first-party support files. The default whole-skill lifecycle rubric
+   remains in `audit-scoring.md`; use the six-area local rubric only when
    explicitly selected.
 4. **Conflicting or missing authority:** Report the exact ambiguity and score
    the reliably supported scope only. Mark affected totals `NHR` instead of

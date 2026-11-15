@@ -10498,11 +10498,7 @@
           "patternId": "ESLint9_@angular-eslint_component-class-suffix"
         }
       ],
-      "exclude": [
-        ".claude/skills/**",
-        ".github/skills/**",
-        "skills/**"
-      ]
+      "exclude": [".claude/skills/**", ".github/skills/**", "skills/**"]
     },
     {
       "toolId": "Semgrep",
@@ -12659,10 +12655,7 @@
           "patternId": "Semgrep_bash.curl.security.curl-eval.curl-eval"
         }
       ],
-      "exclude": [
-        "**/tests/**",
-        "**/test_*.py"
-      ]
+      "exclude": ["**/tests/**", "**/test_*.py"]
     },
     {
       "toolId": "Trivy",
@@ -17214,11 +17207,7 @@
           }
         }
       ],
-      "exclude": [
-        ".claude/skills/**",
-        ".github/skills/**",
-        "skills/**"
-      ]
+      "exclude": [".claude/skills/**", ".github/skills/**", "skills/**"]
     },
     {
       "toolId": "Stylelint",
@@ -18579,10 +18568,7 @@
           "patternId": "Bandit_B404"
         }
       ],
-      "exclude": [
-        "**/tests/**",
-        "**/test_*.py"
-      ]
+      "exclude": ["**/tests/**", "**/test_*.py"]
     }
   ],
   "exclude": [
