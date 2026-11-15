@@ -11,8 +11,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / "eyeball.py"
-SPEC = importlib.util.spec_from_file_location("eyeball", MODULE_PATH)
+MODULE_PATH = Path(__file__).resolve().parents[1] / 'eyeball.py'
+SPEC = importlib.util.spec_from_file_location('eyeball', MODULE_PATH)
 assert SPEC is not None
 assert SPEC.loader is not None
 eyeball = importlib.util.module_from_spec(SPEC)
@@ -26,17 +26,17 @@ class LibreOfficeArgvTests(unittest.TestCase):
             previous = os.getcwd()
             os.chdir(root)
             try:
-                with mock.patch.object(eyeball.subprocess, "run") as run:
+                with mock.patch.object(eyeball.subprocess, 'run') as run:
                     run.return_value.returncode = 1
-                    eyeball._convert_with_libreoffice("soffice", "--evil.docx", "out.pdf")
+                    eyeball._convert_with_libreoffice('soffice', '--evil.docx', 'out.pdf')
             finally:
                 os.chdir(previous)
         argv = run.call_args.args[0]
-        self.assertEqual(argv[0], "soffice")
+        self.assertEqual(argv[0], 'soffice')
         self.assertTrue(os.path.isabs(argv[-1]))
-        self.assertFalse(argv[-1].startswith("-"))
-        self.assertFalse(run.call_args.kwargs.get("shell", False))
+        self.assertFalse(argv[-1].startswith('-'))
+        self.assertFalse(run.call_args.kwargs.get('shell', False))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

@@ -6,12 +6,7 @@
 
 ```python
 def establish_baseline(prompt, test_cases):
-    results = {
-        'accuracy': 0,
-        'avg_tokens': 0,
-        'avg_latency': 0,
-        'success_rate': 0
-    }
+    results = {'accuracy': 0, 'avg_tokens': 0, 'avg_latency': 0, 'success_rate': 0}
 
     for test_case in test_cases:
         response = llm.complete(prompt.format(**test_case['input']))
@@ -23,7 +18,7 @@ def establish_baseline(prompt, test_cases):
 
     # Average across test cases
     n = len(test_cases)
-    return {k: v/n for k, v in results.items()}
+    return {k: v / n for k, v in results.items()}
 ```
 
 ### 2. Iterative Refinement Workflow
@@ -43,11 +38,7 @@ class PromptOptimizer:
         for i in range(max_iterations):
             # Test current prompt
             results = self.evaluate_prompt(self.prompt)
-            self.history.append({
-                'iteration': i,
-                'prompt': self.prompt,
-                'results': results
-            })
+            self.history.append({'iteration': i, 'prompt': self.prompt, 'results': results})
 
             # Stop if good enough
             if results['accuracy'] > 0.95:
@@ -74,19 +65,14 @@ class PromptABTest:
         self.variant_b = variant_b
 
     def run_test(self, test_queries, metrics=['accuracy', 'latency']):
-        results = {
-            'A': {m: [] for m in metrics},
-            'B': {m: [] for m in metrics}
-        }
+        results = {'A': {m: [] for m in metrics}, 'B': {m: [] for m in metrics}}
 
         for query in test_queries:
             # Randomly assign variant (50/50 split)
             variant = 'A' if random.random() < 0.5 else 'B'
             prompt = self.variant_a if variant == 'A' else self.variant_b
 
-            response, metrics_data = self.execute_with_metrics(
-                prompt.format(query=query['input'])
-            )
+            response, metrics_data = self.execute_with_metrics(prompt.format(query=query['input']))
 
             for metric in metrics:
                 results[variant][metric].append(metrics_data[metric])
@@ -110,7 +96,7 @@ class PromptABTest:
                 'improvement': (np.mean(b_values) - np.mean(a_values)) / np.mean(a_values),
                 'statistically_significant': p_value < 0.05,
                 'p_value': p_value,
-                'winner': 'B' if np.mean(b_values) > np.mean(a_values) else 'A'
+                'winner': 'B' if np.mean(b_values) > np.mean(a_values) else 'A',
             }
 
         return analysis
@@ -127,17 +113,14 @@ def optimize_for_tokens(prompt):
         ('in order to', 'to'),
         ('due to the fact that', 'because'),
         ('at this point in time', 'now'),
-
         # Consolidate instructions
         ('First, ...\\nThen, ...\\nFinally, ...', 'Steps: 1) ... 2) ... 3) ...'),
-
         # Use abbreviations (after first definition)
         ('Natural Language Processing (NLP)', 'NLP'),
-
         # Remove filler words
         (' actually ', ' '),
         (' basically ', ' '),
-        (' really ', ' ')
+        (' really ', ' '),
     ]
 
     optimized = prompt
@@ -155,7 +138,7 @@ def optimize_for_latency(prompt):
         'shorter_prompt': reduce_token_count(prompt),
         'streaming': enable_streaming_response(prompt),
         'caching': add_cacheable_prefix(prompt),
-        'early_stopping': add_stop_sequences(prompt)
+        'early_stopping': add_stop_sequences(prompt),
     }
 
     # Test each strategy
@@ -179,16 +162,16 @@ def improve_accuracy(prompt, failure_cases):
 
     # Add constraints for common failures
     if has_format_errors(failure_cases):
-        improvements.append("Output must be valid JSON with no additional text.")
+        improvements.append('Output must be valid JSON with no additional text.')
 
     # Add examples for edge cases
     edge_cases = identify_edge_cases(failure_cases)
     if edge_cases:
-        improvements.append(f"Examples of edge cases:\\n{format_examples(edge_cases)}")
+        improvements.append(f'Examples of edge cases:\\n{format_examples(edge_cases)}')
 
     # Add verification step
     if has_logical_errors(failure_cases):
-        improvements.append("Before responding, verify your answer is logically consistent.")
+        improvements.append('Before responding, verify your answer is logically consistent.')
 
     # Strengthen instructions
     if has_ambiguity_errors(failure_cases):
@@ -211,6 +194,7 @@ class PromptMetrics:
     def consistency(responses):
         # Measure how often identical inputs produce identical outputs
         from collections import defaultdict
+
         input_responses = defaultdict(list)
 
         for inp, resp in responses:
@@ -240,13 +224,7 @@ class PromptMetrics:
 
 ```python
 def evaluate_prompt_comprehensively(prompt, test_suite):
-    results = {
-        'accuracy': [],
-        'consistency': [],
-        'latency': [],
-        'tokens': [],
-        'success_rate': []
-    }
+    results = {'accuracy': [], 'consistency': [], 'latency': [], 'tokens': [], 'success_rate': []}
 
     # Run each test case multiple times for consistency measurement
     for test_case in test_suite:
@@ -275,7 +253,7 @@ def evaluate_prompt_comprehensively(prompt, test_suite):
         'avg_consistency': np.mean(results['consistency']),
         'p95_latency': np.percentile(results['latency'], 95),
         'avg_tokens': np.mean(results['tokens']),
-        'success_rate': np.mean(results['success_rate'])
+        'success_rate': np.mean(results['success_rate']),
     }
 ```
 
@@ -292,15 +270,12 @@ class FailureAnalyzer:
             'logic_errors': [],
             'incomplete_responses': [],
             'hallucinations': [],
-            'off_topic': []
+            'off_topic': [],
         }
 
         for result in test_results:
             if not result['success']:
-                category = self.determine_failure_type(
-                    result['response'],
-                    result['expected']
-                )
+                category = self.determine_failure_type(result['response'], result['expected'])
                 categories[category].append(result)
 
         return categories
@@ -312,21 +287,21 @@ class FailureAnalyzer:
             fixes.append({
                 'issue': 'Format errors',
                 'fix': 'Add explicit format examples and constraints',
-                'priority': 'high'
+                'priority': 'high',
             })
 
         if categorized_failures['hallucinations']:
             fixes.append({
                 'issue': 'Hallucinations',
                 'fix': 'Add grounding instruction: "Base your answer only on provided context"',
-                'priority': 'critical'
+                'priority': 'critical',
             })
 
         if categorized_failures['incomplete_responses']:
             fixes.append({
                 'issue': 'Incomplete responses',
                 'fix': 'Add: "Ensure your response fully addresses all parts of the question"',
-                'priority': 'medium'
+                'priority': 'medium',
             })
 
         return fixes

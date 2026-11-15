@@ -102,10 +102,10 @@ Provide feedback on:
 
 # Usage
 prompt = template.format(
-    language="Python",
-    focus_area="security vulnerabilities",
+    language='Python',
+    focus_area='security vulnerabilities',
     code_block=user_code,
-    checklist="1. SQL injection\n2. XSS risks\n3. Authentication"
+    checklist='1. SQL injection\n2. XSS risks\n3. Authentication',
 )
 ```
 

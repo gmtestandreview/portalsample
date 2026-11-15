@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Skill Packager - Creates a distributable .skill file of a skill folder.
+"""Skill Packager - Creates a distributable .skill file of a skill folder.
 
 Usage:
     python -m scripts.package_skill <path/to/skill-folder> [output-directory]
@@ -23,7 +22,7 @@ try:
 except ModuleNotFoundError as exc:
     # Support direct execution without masking a missing dependency imported
     # from inside scripts.quick_validate.
-    if exc.name not in {"scripts", "scripts.quick_validate"}:
+    if exc.name not in {'scripts', 'scripts.quick_validate'}:
         raise
     from quick_validate import validate_skill
 
@@ -31,21 +30,21 @@ PathInput = str | Path
 
 # Patterns to exclude when packaging skills.
 EXCLUDE_DIRS = {
-    "__pycache__",
-    "node_modules",
-    ".remember",
-    ".mypy_cache",
-    ".pytest_cache",
-    ".ruff_cache",
-    ".venv",
-    "venv",
-    ".git",
-    ".tokensave",
+    '__pycache__',
+    'node_modules',
+    '.remember',
+    '.mypy_cache',
+    '.pytest_cache',
+    '.ruff_cache',
+    '.venv',
+    'venv',
+    '.git',
+    '.tokensave',
 }
-EXCLUDE_GLOBS = {"*.pyc"}
-EXCLUDE_FILES = {".DS_Store"}
+EXCLUDE_GLOBS = {'*.pyc'}
+EXCLUDE_FILES = {'.DS_Store'}
 # Directories excluded only at the skill root (not when nested deeper).
-ROOT_EXCLUDE_DIRS = {"evals"}
+ROOT_EXCLUDE_DIRS = {'evals'}
 # Fixed ZIP metadata (the earliest timestamp ZIP supports) for reproducible output.
 ARCHIVE_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 EXECUTABLE_BITS = 0o111
@@ -92,20 +91,20 @@ def _resolve_packaged_file(file_path: Path, skill_path: Path) -> Path | None:
 def _validate_skill_directory(skill_path: Path) -> bool:
     """Validate the skill directory and its required SKILL.md file."""
     if not skill_path.exists():
-        print(f"❌ Error: Skill folder not found: {skill_path}")
+        print(f'❌ Error: Skill folder not found: {skill_path}')
         return False
 
     if not skill_path.is_dir():
-        print(f"❌ Error: Path is not a directory: {skill_path}")
+        print(f'❌ Error: Path is not a directory: {skill_path}')
         return False
 
-    skill_md = skill_path / "SKILL.md"
+    skill_md = skill_path / 'SKILL.md'
     resolved_skill_md = _resolve_packaged_file(skill_md, skill_path)
     if resolved_skill_md is None:
-        print(f"❌ Error: SKILL.md must be a file contained in {skill_path}")
+        print(f'❌ Error: SKILL.md must be a file contained in {skill_path}')
         return False
     if should_exclude(resolved_skill_md.relative_to(skill_path.parent)):
-        print("❌ Error: required SKILL.md source is excluded from the archive")
+        print('❌ Error: required SKILL.md source is excluded from the archive')
         return False
 
     return True
@@ -113,14 +112,14 @@ def _validate_skill_directory(skill_path: Path) -> bool:
 
 def _run_skill_validation(skill_path: Path) -> bool:
     """Run the project skill validator and report a controlled failure."""
-    print("🔍 Validating skill...")
+    print('🔍 Validating skill...')
     valid, message = validate_skill(skill_path)
     if not valid:
-        print(f"❌ Validation failed: {message}")
-        print("   Please fix the validation errors before packaging.")
+        print(f'❌ Validation failed: {message}')
+        print('   Please fix the validation errors before packaging.')
         return False
 
-    print(f"✅ {message}\n")
+    print(f'✅ {message}\n')
     return True
 
 
@@ -139,7 +138,7 @@ def _collect_archive_members(
     """Return validated archive members, rejecting files that escape the skill."""
     members: list[tuple[Path, Path]] = []
     candidates = sorted(
-        skill_path.rglob("*"),
+        skill_path.rglob('*'),
         key=lambda path: path.relative_to(skill_path).as_posix(),
     )
 
@@ -149,20 +148,20 @@ def _collect_archive_members(
             # Real directories are structural; a link that is not a file
             # (dangling or pointing at a directory) is omitted, so say so.
             if file_path.is_symlink():
-                print(f"  Skipped: {arcname} (dangling or directory symlink)")
+                print(f'  Skipped: {arcname} (dangling or directory symlink)')
             continue
 
         if should_exclude(arcname):
-            print(f"  Skipped: {arcname}")
+            print(f'  Skipped: {arcname}')
             continue
 
         resolved_file = _resolve_packaged_file(file_path, skill_path)
         if resolved_file is None:
-            print(f"❌ Error: packaged file escapes or is invalid: {file_path}")
+            print(f'❌ Error: packaged file escapes or is invalid: {file_path}')
             return None
 
         if should_exclude(resolved_file.relative_to(skill_path.parent)):
-            print(f"  Skipped: {arcname} (source is excluded)")
+            print(f'  Skipped: {arcname} (source is excluded)')
             continue
 
         members.append((resolved_file, arcname))
@@ -181,7 +180,7 @@ def _add_member(zipf: zipfile.ZipFile, source: Path, arcname: Path) -> None:
     info.compress_type = zipfile.ZIP_DEFLATED
     executable = source.stat().st_mode & EXECUTABLE_BITS
     info.external_attr = (EXEC_FILE_MODE if executable else PLAIN_FILE_MODE) << 16
-    with source.open("rb") as src, zipf.open(info, "w") as dest:
+    with source.open('rb') as src, zipf.open(info, 'w') as dest:
         shutil.copyfileobj(src, dest)
 
 
@@ -194,18 +193,18 @@ def _write_archive(
     """Write an archive atomically, preserving any existing archive on failure."""
     try:
         output_path.mkdir(parents=True, exist_ok=True)
-        temp_path = output_path / f".{skill_name}.{uuid.uuid4().hex}.skill.tmp"
+        temp_path = output_path / f'.{skill_name}.{uuid.uuid4().hex}.skill.tmp'
 
         try:
             # Exclusive creation with no explicit mode: the archive gets the
             # normal umask-derived permissions (mkstemp would force 0600).
             with (
-                temp_path.open("xb") as temp_file,
-                zipfile.ZipFile(temp_file, "w", zipfile.ZIP_DEFLATED) as zipf,
+                temp_path.open('xb') as temp_file,
+                zipfile.ZipFile(temp_file, 'w', zipfile.ZIP_DEFLATED) as zipf,
             ):
                 for resolved_file, arcname in archive_members:
                     _add_member(zipf, resolved_file, arcname)
-                    print(f"  Added: {arcname}")
+                    print(f'  Added: {arcname}')
             temp_path.replace(skill_filename)
         finally:
             # On success the temporary path has been replaced and no longer
@@ -213,7 +212,7 @@ def _write_archive(
             temp_path.unlink(missing_ok=True)
 
     except (OSError, zipfile.BadZipFile) as exc:
-        print(f"❌ Error creating .skill file: {exc}")
+        print(f'❌ Error creating .skill file: {exc}')
         return False
 
     return True
@@ -223,8 +222,7 @@ def package_skill(
     skill_path: PathInput,
     output_dir: PathInput | None = None,
 ) -> Path | None:
-    """
-    Package a skill folder into a .skill file.
+    """Package a skill folder into a .skill file.
 
     Args:
         skill_path: Path to the skill folder.
@@ -243,10 +241,10 @@ def package_skill(
 
     skill_name = resolved_skill_path.name
     output_path = _get_output_path(resolved_skill_path, output_dir)
-    skill_filename = output_path / f"{skill_name}.skill"
+    skill_filename = output_path / f'{skill_name}.skill'
 
     if _is_within(skill_filename, resolved_skill_path):
-        print(f"❌ Error: output archive must be outside the skill directory: {skill_filename}")
+        print(f'❌ Error: output archive must be outside the skill directory: {skill_filename}')
         return None
 
     # Resolve and validate every source before opening the output archive. This
@@ -264,23 +262,23 @@ def package_skill(
     ):
         return None
 
-    print(f"\n✅ Successfully packaged skill to: {skill_filename}")
+    print(f'\n✅ Successfully packaged skill to: {skill_filename}')
     return skill_filename
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Package an Agent Skill as a .skill archive")
-    parser.add_argument("skill_path", type=Path)
-    parser.add_argument("output_directory", nargs="?", type=Path, default=None)
+    parser = argparse.ArgumentParser(description='Package an Agent Skill as a .skill archive')
+    parser.add_argument('skill_path', type=Path)
+    parser.add_argument('output_directory', nargs='?', type=Path, default=None)
     args = parser.parse_args()
 
-    print(f"Packaging skill: {args.skill_path}")
+    print(f'Packaging skill: {args.skill_path}')
     if args.output_directory is not None:
-        print(f"Output directory: {args.output_directory}")
+        print(f'Output directory: {args.output_directory}')
 
     result = package_skill(args.skill_path, args.output_directory)
     raise SystemExit(0 if result is not None else 1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

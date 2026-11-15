@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Cross-repo pack drift checker for A Team.
+"""Cross-repo pack drift checker for A Team.
 
 Compares packs.json (the local truth for the builder-* domain packs)
 against the LIVE state of the builder-* repositories on GitHub:
@@ -32,13 +31,13 @@ import urllib.request
 from pathlib import Path
 from typing import Any, TypedDict, cast
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 REPO_ROOT = Path(__file__).parent.parent
-API = "https://api.github.com"
+API = 'https://api.github.com'
 
-SKILL_PATH_RE = re.compile(r"^skills/[^/]+/SKILL[.]md$")
-AGENT_PATH_RE = re.compile(r"^\.claude/agents/[^/]+[.]md$")
+SKILL_PATH_RE = re.compile(r'^skills/[^/]+/SKILL[.]md$')
+AGENT_PATH_RE = re.compile(r'^\.claude/agents/[^/]+[.]md$')
 
 
 class Pack(TypedDict):
@@ -78,18 +77,18 @@ class PluginManifest(TypedDict, total=False):
 
 
 def _find_counts(description: str) -> tuple[str, str, str] | None:
-    marker = " skills and "
-    suffix = " agents"
+    marker = ' skills and '
+    suffix = ' agents'
     search_start = 0
 
     while (skills_end := description.find(marker, search_start)) != -1:
         skills_start = skills_end
-        while skills_start > 0 and "0" <= description[skills_start - 1] <= "9":
+        while skills_start > 0 and '0' <= description[skills_start - 1] <= '9':
             skills_start -= 1
 
         agents_start = skills_end + len(marker)
         agents_end = agents_start
-        while agents_end < len(description) and "0" <= description[agents_end] <= "9":
+        while agents_end < len(description) and '0' <= description[agents_end] <= '9':
             agents_end += 1
 
         if (
@@ -109,28 +108,28 @@ def _find_counts(description: str) -> tuple[str, str, str] | None:
 
 
 def gh_api(path: str) -> dict[str, Any] | list[dict[str, Any]]:
-    req = urllib.request.Request(f"{API}{path}")
-    req.add_header("Accept", "application/vnd.github+json")
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    req = urllib.request.Request(f'{API}{path}')
+    req.add_header('Accept', 'application/vnd.github+json')
+    token = os.environ.get('GITHUB_TOKEN') or os.environ.get('GH_TOKEN')
     if token:
-        req.add_header("Authorization", f"Bearer {token}")
+        req.add_header('Authorization', f'Bearer {token}')
     with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+        return json.loads(resp.read().decode('utf-8'))
 
 
 def load_packs() -> tuple[str, list[Pack]]:
     data = cast(
         PacksFile,
-        json.loads((REPO_ROOT / "packs.json").read_text(encoding="utf-8")),
+        json.loads((REPO_ROOT / 'packs.json').read_text(encoding='utf-8')),
     )
-    return data["owner"], data["packs"]
+    return data['owner'], data['packs']
 
 
 def _live_repositories(repos: list[Repository]) -> dict[str, Repository]:
     return {
-        repo["name"]: repo
+        repo['name']: repo
         for repo in repos
-        if repo["name"].startswith("builder-") and not repo["archived"] and not repo["private"]
+        if repo['name'].startswith('builder-') and not repo['archived'] and not repo['private']
     }
 
 
@@ -142,9 +141,9 @@ def _roster_errors(live: dict[str, Repository], expected: dict[str, Pack]) -> li
     missing = sorted(set(expected) - set(live))
     unknown = sorted(set(live) - set(expected))
     if missing:
-        errors.append(f"ROSTER   packs listed in packs.json but not live on GitHub: {missing}")
+        errors.append(f'ROSTER   packs listed in packs.json but not live on GitHub: {missing}')
     if unknown:
-        errors.append(f"ROSTER   live builder-* repos missing from packs.json: {unknown}")
+        errors.append(f'ROSTER   live builder-* repos missing from packs.json: {unknown}')
     return errors
 
 
@@ -152,22 +151,22 @@ def _check_file_tree(owner: str, name: str, pack: Pack, branch: str) -> list[str
     try:
         tree = cast(
             TreeResponse,
-            gh_api(f"/repos/{owner}/{name}/git/trees/{branch}?recursive=1"),
+            gh_api(f'/repos/{owner}/{name}/git/trees/{branch}?recursive=1'),
         )
-        paths = [entry["path"] for entry in tree.get("tree", [])]
+        paths = [entry['path'] for entry in tree.get('tree', [])]
     except urllib.error.URLError as e:
-        return [f"ERROR    {name}: could not read file tree: {e}"]
+        return [f'ERROR    {name}: could not read file tree: {e}']
 
     errors: list[str] = []
     skills = sum(1 for path in paths if SKILL_PATH_RE.match(path))
     agents = sum(1 for path in paths if AGENT_PATH_RE.match(path))
-    if skills != pack["skills"]:
+    if skills != pack['skills']:
         errors.append(
-            f"DRIFT    {name}: repo has {skills} skills, packs.json says {pack['skills']}"
+            f'DRIFT    {name}: repo has {skills} skills, packs.json says {pack['skills']}'
         )
-    if agents != pack["agents"]:
+    if agents != pack['agents']:
         errors.append(
-            f"DRIFT    {name}: repo has {agents} agents, packs.json says {pack['agents']}"
+            f'DRIFT    {name}: repo has {agents} agents, packs.json says {pack['agents']}'
         )
     return errors
 
@@ -176,37 +175,37 @@ def _check_manifest(owner: str, name: str, pack: Pack, branch: str) -> list[str]
     try:
         blob = cast(
             ContentResponse,
-            gh_api(f"/repos/{owner}/{name}/contents/.claude-plugin/plugin.json?ref={branch}"),
+            gh_api(f'/repos/{owner}/{name}/contents/.claude-plugin/plugin.json?ref={branch}'),
         )
         manifest = cast(
             PluginManifest,
-            json.loads(base64.b64decode(blob["content"]).decode("utf-8")),
+            json.loads(base64.b64decode(blob['content']).decode('utf-8')),
         )
-        if manifest.get("version") != pack["version"]:
+        if manifest.get('version') != pack['version']:
             return [
-                f"DRIFT    {name}: manifest version {manifest.get('version')!r}, "
-                f"packs.json says {pack['version']!r}"
+                f'DRIFT    {name}: manifest version {manifest.get('version')!r}, '
+                f'packs.json says {pack['version']!r}'
             ]
     except (urllib.error.URLError, KeyError, ValueError) as e:
-        return [f"ERROR    {name}: could not read .claude-plugin/plugin.json: {e}"]
+        return [f'ERROR    {name}: could not read .claude-plugin/plugin.json: {e}']
     return []
 
 
 def _check_description(repo: Repository, pack: Pack) -> list[str]:
-    desc = repo.get("description") or ""
+    desc = repo.get('description') or ''
     match = _find_counts(desc)
-    if match and (int(match[1]) != pack["skills"] or int(match[2]) != pack["agents"]):
+    if match and (int(match[1]) != pack['skills'] or int(match[2]) != pack['agents']):
         return [
             f"DRIFT    {repo['name']}: GitHub description says '{match[0]}', "
-            f"repo truth is {pack['skills']} skills and {pack['agents']} agents"
+            f'repo truth is {pack['skills']} skills and {pack['agents']} agents'
         ]
     return []
 
 
 def _check_repository(owner: str, name: str, pack: Pack, repo: Repository) -> list[str]:
-    branch = repo["default_branch"]
+    branch = repo['default_branch']
     errors = _check_file_tree(owner, name, pack, branch)
-    if any(error.startswith("ERROR") for error in errors):
+    if any(error.startswith('ERROR') for error in errors):
         return errors
     errors.extend(_check_manifest(owner, name, pack, branch))
     errors.extend(_check_description(repo, pack))
@@ -215,12 +214,12 @@ def _check_repository(owner: str, name: str, pack: Pack, repo: Repository) -> li
 
 def main() -> int:
     owner, packs = load_packs()
-    expected = {pack["name"]: pack for pack in packs}
+    expected = {pack['name']: pack for pack in packs}
 
     try:
-        repos = cast(list[Repository], gh_api(f"/users/{owner}/repos?per_page=100"))
+        repos = cast(list[Repository], gh_api(f'/users/{owner}/repos?per_page=100'))
     except urllib.error.URLError as e:
-        print(f"ERROR: could not reach GitHub API: {e}")
+        print(f'ERROR: could not reach GitHub API: {e}')
         return 1
 
     live = _live_repositories(repos)
@@ -232,17 +231,17 @@ def main() -> int:
         errors.extend(_check_repository(owner, name, pack, repo))
 
     if errors:
-        print(f"Found {len(errors)} pack drift issue(s):\n")
+        print(f'Found {len(errors)} pack drift issue(s):\n')
         for e in errors:
-            print(f"  {e}")
+            print(f'  {e}')
         print()
-        print("Update packs.json (and the surfaces check_consistency.py enforces),")
-        print("or fix the builder-* repo, so both sides agree.")
+        print('Update packs.json (and the surfaces check_consistency.py enforces),')
+        print('or fix the builder-* repo, so both sides agree.')
         return 1
 
-    print(f"All {len(expected)} packs in sync with live GitHub state")
+    print(f'All {len(expected)} packs in sync with live GitHub state')
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

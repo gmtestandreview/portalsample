@@ -13,21 +13,18 @@ class PromptTemplate:
     def render(self, **kwargs):
         missing = set(self.variables) - set(kwargs.keys())
         if missing:
-            raise ValueError(f"Missing required variables: {missing}")
+            raise ValueError(f'Missing required variables: {missing}')
 
         return self.template.format(**kwargs)
 
+
 # Usage
 template = PromptTemplate(
-    template_string="Translate {text} from {source_lang} to {target_lang}",
-    variables=['text', 'source_lang', 'target_lang']
+    template_string='Translate {text} from {source_lang} to {target_lang}',
+    variables=['text', 'source_lang', 'target_lang'],
 )
 
-prompt = template.render(
-    text="Hello world",
-    source_lang="English",
-    target_lang="Spanish"
-)
+prompt = template.render(text='Hello world', source_lang='English', target_lang='Spanish')
 ```
 
 ### Conditional Templates
@@ -40,6 +37,7 @@ class ConditionalTemplate(PromptTemplate):
 
         # Handle if-blocks: {{#if variable}}content{{/if}}
         import re
+
         if_pattern = r'\{\{#if (\w+)\}\}(.*?)\{\{/if\}\}'
 
         def replace_if(match):
@@ -62,6 +60,7 @@ class ConditionalTemplate(PromptTemplate):
 
         # Finally, render remaining variables
         return result.format(**kwargs)
+
 
 # Usage
 template = ConditionalTemplate("""
@@ -104,22 +103,23 @@ class ModularTemplate:
 
         return '\\n\\n'.join(parts)
 
+
 # Usage
 builder = ModularTemplate()
 
-builder.register_component('system', "You are a {role}.")
-builder.register_component('context', "Context: {context}")
-builder.register_component('instruction', "Task: {task}")
-builder.register_component('examples', "Examples:\\n{examples}")
-builder.register_component('input', "Input: {input}")
-builder.register_component('format', "Output format: {format}")
+builder.register_component('system', 'You are a {role}.')
+builder.register_component('context', 'Context: {context}')
+builder.register_component('instruction', 'Task: {task}')
+builder.register_component('examples', 'Examples:\\n{examples}')
+builder.register_component('input', 'Input: {input}')
+builder.register_component('format', 'Output format: {format}')
 
 # Compose different templates for different scenarios
 basic_prompt = builder.render(
     ['system', 'instruction', 'input'],
     role='helpful assistant',
     instruction='Summarize the text',
-    input='...'
+    input='...',
 )
 
 advanced_prompt = builder.render(
@@ -129,7 +129,7 @@ advanced_prompt = builder.render(
     examples='...',
     instruction='Analyze sentiment',
     input='...',
-    format='JSON'
+    format='JSON',
 )
 ```
 
@@ -244,18 +244,20 @@ class TemplateRegistry:
         # Child overwrites parent sections
         return {**parent, **child}
 
+
 # Usage
 registry = TemplateRegistry()
 
-registry.register('base_analysis', {
-    'system': 'You are an expert analyst.',
-    'format': 'Provide analysis in structured format.'
-})
+registry.register(
+    'base_analysis',
+    {'system': 'You are an expert analyst.', 'format': 'Provide analysis in structured format.'},
+)
 
-registry.register('sentiment_analysis', {
-    'instruction': 'Analyze sentiment',
-    'format': 'Provide sentiment score from -1 to 1.'
-}, parent='base_analysis')
+registry.register(
+    'sentiment_analysis',
+    {'instruction': 'Analyze sentiment', 'format': 'Provide sentiment score from -1 to 1.'},
+    parent='base_analysis',
+)
 ```
 
 ### Variable Validation
@@ -275,30 +277,31 @@ class ValidatedTemplate:
                 if 'type' in var_schema:
                     expected_type = var_schema['type']
                     if not isinstance(value, expected_type):
-                        raise TypeError(f"{var_name} must be {expected_type}")
+                        raise TypeError(f'{var_name} must be {expected_type}')
 
                 # Range validation
                 if 'min' in var_schema and value < var_schema['min']:
-                    raise ValueError(f"{var_name} must be >= {var_schema['min']}")
+                    raise ValueError(f'{var_name} must be >= {var_schema['min']}')
 
                 if 'max' in var_schema and value > var_schema['max']:
-                    raise ValueError(f"{var_name} must be <= {var_schema['max']}")
+                    raise ValueError(f'{var_name} must be <= {var_schema['max']}')
 
                 # Enum validation
                 if 'choices' in var_schema and value not in var_schema['choices']:
-                    raise ValueError(f"{var_name} must be one of {var_schema['choices']}")
+                    raise ValueError(f'{var_name} must be one of {var_schema['choices']}')
 
     def render(self, **kwargs):
         self.validate_vars(**kwargs)
         return self.template.format(**kwargs)
 
+
 # Usage
 template = ValidatedTemplate(
-    template="Summarize in {length} words with {tone} tone",
+    template='Summarize in {length} words with {tone} tone',
     schema={
         'length': {'type': int, 'min': 10, 'max': 500},
-        'tone': {'type': str, 'choices': ['formal', 'casual', 'technical']}
-    }
+        'tone': {'type': str, 'choices': ['formal', 'casual', 'technical']},
+    },
 )
 ```
 
@@ -352,10 +355,10 @@ class ConversationTemplate:
         return messages
 
     def render_as_text(self):
-        result = f"System: {self.system_prompt}\\n\\n"
+        result = f'System: {self.system_prompt}\\n\\n'
         for msg in self.history:
             role = msg['role'].capitalize()
-            result += f"{role}: {msg['content']}\\n\\n"
+            result += f'{role}: {msg['content']}\\n\\n'
         return result
 ```
 
@@ -378,30 +381,40 @@ class StatefulTemplate:
         template = self.templates.get(current_state)
 
         if not template:
-            raise ValueError(f"No template for state: {current_state}")
+            raise ValueError(f'No template for state: {current_state}')
 
         return template.format(**self.state)
+
 
 # Usage for multi-step workflows
 workflow = StatefulTemplate()
 
-workflow.register_state_template('init', """
+workflow.register_state_template(
+    'init',
+    """
 Welcome! Let's {task}.
 What is your {first_input}?
-""")
+""",
+)
 
-workflow.register_state_template('processing', """
+workflow.register_state_template(
+    'processing',
+    """
 Thanks! Processing {first_input}.
 Now, what is your {second_input}?
-""")
+""",
+)
 
-workflow.register_state_template('complete', """
+workflow.register_state_template(
+    'complete',
+    """
 Great! Based on:
 - {first_input}
 - {second_input}
 
 Here's the result: {result}
-""")
+""",
+)
 ```
 
 ## Best Practices
@@ -426,21 +439,19 @@ QA_TEMPLATES = {
 Context: {context}
 Question: {question}
 Answer:""",
-
     'multi_hop': """Answer the question by reasoning across multiple facts.
 
 Facts: {facts}
 Question: {question}
 
 Reasoning:""",
-
     'conversational': """Continue the conversation naturally.
 
 Previous conversation:
 {history}
 
 User: {question}
-Assistant:"""
+Assistant:""",
 }
 ```
 
@@ -456,7 +467,6 @@ Requirements:
 - Include: {key_points}
 
 Blog post:""",
-
     'product_description': """Write a product description for {product}.
 
 Features: {features}
@@ -464,14 +474,13 @@ Benefits: {benefits}
 Target audience: {audience}
 
 Description:""",
-
     'email': """Write a {type} email.
 
 To: {recipient}
 Context: {context}
 Key points: {key_points}
 
-Email:"""
+Email:""",
 }
 ```
 

@@ -21,40 +21,40 @@ class RedGreenControlTests(unittest.TestCase):
     def test_result_error_event_preserves_rate_limit_status(self) -> None:
         with self.assertRaises(ClaudeCliError) as raised:
             run_red_green_eval.result_event_decision({
-                "type": "result",
-                "is_error": True,
-                "api_error_status": 429,
-                "result": "rate limited",
+                'type': 'result',
+                'is_error': True,
+                'api_error_status': 429,
+                'result': 'rate limited',
             })
         self.assertEqual(raised.exception.status, 429)
 
     def test_artifact_manifest_rejects_escape_and_digest_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "evidence.txt").write_text("evidence", encoding="utf-8")
+            (root / 'evidence.txt').write_text('evidence', encoding='utf-8')
             manifest = run_red_green_eval.artifact_manifest(root)
             self.assertIsNone(run_red_green_eval.validate_artifact_manifest(root, manifest))
             self.assertEqual(
                 run_red_green_eval.validate_artifact_manifest(
                     root,
-                    [{"relative_path": "../outside", "sha256": "x"}],
+                    [{'relative_path': '../outside', 'sha256': 'x'}],
                 ),
-                "artifact path escapes workspace",
+                'artifact path escapes workspace',
             )
-            invalid_manifest: list[object] = [{1: "evidence.txt", "sha256": "x"}]
+            invalid_manifest: list[object] = [{1: 'evidence.txt', 'sha256': 'x'}]
             self.assertEqual(
                 run_red_green_eval.validate_artifact_manifest(
                     root,
                     invalid_manifest,
                 ),
-                "artifact evidence has invalid fields",
+                'artifact evidence has invalid fields',
             )
-            manifest[0]["sha256"] = "0" * 64
+            manifest[0]['sha256'] = '0' * 64
             self.assertIn(
-                "digest mismatch",
-                run_red_green_eval.validate_artifact_manifest(root, manifest) or "",
+                'digest mismatch',
+                run_red_green_eval.validate_artifact_manifest(root, manifest) or '',
             )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

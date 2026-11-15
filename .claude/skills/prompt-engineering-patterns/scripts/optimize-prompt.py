@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""
-Prompt Optimization Script
+"""Prompt Optimization Script
 
 Automatically test and optimize prompts using A/B testing and metrics tracking.
 """
 
 import json
 import time
-from typing import Any
-from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from typing import Any
+
 import numpy as np
 
 
@@ -31,17 +31,14 @@ class PromptOptimizer:
         """Shutdown the thread pool executor."""
         self.executor.shutdown(wait=True)
 
-    def evaluate_prompt(self, prompt_template: str, test_cases: list[TestCase] = None) -> dict[str, float]:
+    def evaluate_prompt(
+        self, prompt_template: str, test_cases: list[TestCase] = None
+    ) -> dict[str, float]:
         """Evaluate a prompt template against test cases in parallel."""
         if test_cases is None:
             test_cases = self.test_suite
 
-        metrics = {
-            'accuracy': [],
-            'latency': [],
-            'token_count': [],
-            'success_rate': []
-        }
+        metrics = {'accuracy': [], 'latency': [], 'token_count': [], 'success_rate': []}
 
         def process_test_case(test_case):
             start_time = time.time()
@@ -64,7 +61,7 @@ class PromptOptimizer:
                 'latency': latency,
                 'token_count': token_count,
                 'success_rate': success,
-                'accuracy': accuracy
+                'accuracy': accuracy,
             }
 
         # Run test cases in parallel
@@ -82,7 +79,7 @@ class PromptOptimizer:
             'avg_latency': np.mean(metrics['latency']),
             'p95_latency': np.percentile(metrics['latency'], 95),
             'avg_tokens': np.mean(metrics['token_count']),
-            'success_rate': np.mean(metrics['success_rate'])
+            'success_rate': np.mean(metrics['success_rate']),
         }
 
     def calculate_accuracy(self, response: str, expected: str) -> float:
@@ -109,7 +106,7 @@ class PromptOptimizer:
         current_metrics = None
 
         for iteration in range(max_iterations):
-            print(f"\nIteration {iteration + 1}/{max_iterations}")
+            print(f'\nIteration {iteration + 1}/{max_iterations}')
 
             # Evaluate current prompt
             # Bolt Optimization: Avoid re-evaluating if we already have metrics from previous iteration
@@ -118,13 +115,15 @@ class PromptOptimizer:
             else:
                 metrics = self.evaluate_prompt(current_prompt)
 
-            print(f"Accuracy: {metrics['avg_accuracy']:.2f}, Latency: {metrics['avg_latency']:.2f}s")
+            print(
+                f'Accuracy: {metrics['avg_accuracy']:.2f}, Latency: {metrics['avg_latency']:.2f}s'
+            )
 
             # Track results
             self.results_history.append({
                 'iteration': iteration,
                 'prompt': current_prompt,
-                'metrics': metrics
+                'metrics': metrics,
             })
 
             # Update best if improved
@@ -134,7 +133,7 @@ class PromptOptimizer:
 
             # Stop if good enough
             if metrics['avg_accuracy'] > 0.95:
-                print("Achieved target accuracy!")
+                print('Achieved target accuracy!')
                 break
 
             # Generate variations for next iteration
@@ -158,7 +157,7 @@ class PromptOptimizer:
         return {
             'best_prompt': best_prompt,
             'best_score': best_score,
-            'history': self.results_history
+            'history': self.results_history,
         }
 
     def generate_variations(self, prompt: str, current_metrics: dict) -> list[str]:
@@ -166,13 +165,13 @@ class PromptOptimizer:
         variations = []
 
         # Variation 1: Add explicit format instruction
-        variations.append(prompt + "\n\nProvide your answer in a clear, concise format.")
+        variations.append(prompt + '\n\nProvide your answer in a clear, concise format.')
 
         # Variation 2: Add step-by-step instruction
         variations.append("Let's solve this step by step.\n\n" + prompt)
 
         # Variation 3: Add verification step
-        variations.append(prompt + "\n\nVerify your answer before responding.")
+        variations.append(prompt + '\n\nVerify your answer before responding.')
 
         # Variation 4: Make more concise
         concise = self.make_concise(prompt)
@@ -180,7 +179,7 @@ class PromptOptimizer:
             variations.append(concise)
 
         # Variation 5: Add examples (if none present)
-        if "example" not in prompt.lower():
+        if 'example' not in prompt.lower():
             variations.append(self.add_examples(prompt))
 
         return variations[:3]  # Return top 3 variations
@@ -188,10 +187,10 @@ class PromptOptimizer:
     def make_concise(self, prompt: str) -> str:
         """Remove redundant words to make prompt more concise."""
         replacements = [
-            ("in order to", "to"),
-            ("due to the fact that", "because"),
-            ("at this point in time", "now"),
-            ("in the event that", "if"),
+            ('in order to', 'to'),
+            ('due to the fact that', 'because'),
+            ('at this point in time', 'now'),
+            ('in the event that', 'if'),
         ]
 
         result = prompt
@@ -211,17 +210,17 @@ Output: Sample output
 
     def compare_prompts(self, prompt_a: str, prompt_b: str) -> dict[str, Any]:
         """A/B test two prompts."""
-        print("Testing Prompt A...")
+        print('Testing Prompt A...')
         metrics_a = self.evaluate_prompt(prompt_a)
 
-        print("Testing Prompt B...")
+        print('Testing Prompt B...')
         metrics_b = self.evaluate_prompt(prompt_b)
 
         return {
             'prompt_a_metrics': metrics_a,
             'prompt_b_metrics': metrics_b,
             'winner': 'A' if metrics_a['avg_accuracy'] > metrics_b['avg_accuracy'] else 'B',
-            'improvement': abs(metrics_a['avg_accuracy'] - metrics_b['avg_accuracy'])
+            'improvement': abs(metrics_a['avg_accuracy'] - metrics_b['avg_accuracy']),
         }
 
     def export_results(self, filename: str):
@@ -233,18 +232,9 @@ Output: Sample output
 def main():
     # Example usage
     test_suite = [
-        TestCase(
-            input={'text': 'This movie was amazing!'},
-            expected_output='Positive'
-        ),
-        TestCase(
-            input={'text': 'Worst purchase ever.'},
-            expected_output='Negative'
-        ),
-        TestCase(
-            input={'text': 'It was okay, nothing special.'},
-            expected_output='Neutral'
-        )
+        TestCase(input={'text': 'This movie was amazing!'}, expected_output='Positive'),
+        TestCase(input={'text': 'Worst purchase ever.'}, expected_output='Negative'),
+        TestCase(input={'text': 'It was okay, nothing special.'}, expected_output='Neutral'),
     ]
 
     # Mock LLM client for demonstration
@@ -261,14 +251,14 @@ def main():
     optimizer = PromptOptimizer(MockLLMClient(), test_suite)
 
     try:
-        base_prompt = "Classify the sentiment of: {text}\nSentiment:"
+        base_prompt = 'Classify the sentiment of: {text}\nSentiment:'
 
         results = optimizer.optimize(base_prompt)
 
-        print("\n" + "="*50)
-        print("Optimization Complete!")
-        print(f"Best Accuracy: {results['best_score']:.2f}")
-        print(f"Best Prompt:\n{results['best_prompt']}")
+        print('\n' + '=' * 50)
+        print('Optimization Complete!')
+        print(f'Best Accuracy: {results['best_score']:.2f}')
+        print(f'Best Prompt:\n{results['best_prompt']}')
 
         optimizer.export_results('optimization_results.json')
     finally:

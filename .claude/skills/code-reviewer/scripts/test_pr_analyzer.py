@@ -16,7 +16,7 @@ SPEC.loader.exec_module(pr_analyzer)
 
 
 def test_parse_diff_counts_source_lines_that_begin_with_double_signs() -> None:
-    diff = '''\
+    diff = """\
 diff --git a/example.txt b/example.txt
 index 1111111..2222222 100644
 --- a/example.txt
@@ -26,7 +26,7 @@ index 1111111..2222222 100644
 ---beta
 +++gamma
 +--delta
-'''
+"""
 
     files = pr_analyzer.parse_diff(diff)
 
@@ -36,14 +36,14 @@ index 1111111..2222222 100644
 
 
 def test_parse_diff_decodes_git_quoted_utf8_path() -> None:
-    diff = r'''diff --git "a/caf\303\251.py" "b/caf\303\251.py"
+    diff = r"""diff --git "a/caf\303\251.py" "b/caf\303\251.py"
 index 1111111..2222222 100644
 --- "a/caf\303\251.py"
 +++ "b/caf\303\251.py"
 @@ -1 +1 @@
 -print("old")
 +print("new")
-'''
+"""
 
     files = pr_analyzer.parse_diff(diff)
 
@@ -53,7 +53,7 @@ index 1111111..2222222 100644
 
 
 def test_parse_diff_preserves_paths_with_spaces() -> None:
-    diff = '''\
+    diff = """\
 diff --git a/src/file name.py b/src/file name.py
 index 1111111..2222222 100644
 --- a/src/file name.py
@@ -61,7 +61,7 @@ index 1111111..2222222 100644
 @@ -1 +1 @@
 -old = 1
 +new = 2
-'''
+"""
 
     files = pr_analyzer.parse_diff(diff)
 
@@ -149,7 +149,7 @@ def test_cli_help_exposes_one_merged_interface() -> None:
 
 
 def test_cli_json_stdout_is_machine_readable_without_banner_noise() -> None:
-    diff = '''\
+    diff = """\
 diff --git a/src/app.py b/src/app.py
 index 1111111..2222222 100644
 --- a/src/app.py
@@ -157,7 +157,7 @@ index 1111111..2222222 100644
 @@ -1 +1 @@
 -old = 1
 +new = 2
-'''
+"""
     result = subprocess.run(
         [sys.executable, str(MODULE_PATH), '--json'],
         input=diff,
@@ -176,7 +176,7 @@ def test_cli_output_writes_selected_format_without_changing_stdout_contract(tmp_
     diff_file = tmp_path / 'change.diff'
     output_file = tmp_path / 'analysis.json'
     diff_file.write_text(
-        '''\
+        """\
 diff --git a/src/app.py b/src/app.py
 index 1111111..2222222 100644
 --- a/src/app.py
@@ -184,7 +184,7 @@ index 1111111..2222222 100644
 @@ -1 +1 @@
 -old = 1
 +new = 2
-''',
+""",
         encoding='utf-8',
     )
 
@@ -210,7 +210,7 @@ index 1111111..2222222 100644
 
 
 def test_parse_diff_counts_hunk_lines_that_exactly_resemble_patch_headers() -> None:
-    diff = '''\
+    diff = """\
 diff --git a/example.txt b/example.txt
 index 1111111..2222222 100644
 --- a/example.txt
@@ -220,7 +220,7 @@ index 1111111..2222222 100644
 -plain old
 +++ new-looking-header
 +plain new
-'''
+"""
 
     files = pr_analyzer.parse_diff(diff)
 

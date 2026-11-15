@@ -11,8 +11,8 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-WRAPPER = ROOT / "scripts/pre_tool_use_wrapper.mjs"
-LAUNCHER = ROOT / "scripts/python314.mjs"
+WRAPPER = ROOT / 'scripts/pre_tool_use_wrapper.mjs'
+LAUNCHER = ROOT / 'scripts/python314.mjs'
 
 # Execute the real ESM launcher in a VM; only interpreter subprocess calls are
 # stubbed. Every filesystem read is limited to maintained source/dependencies.
@@ -68,30 +68,30 @@ console.log(JSON.stringify({code, stderr, calls}));
 
 
 @pytest.mark.parametrize(
-    ("versions", "expected_command", "expected_prefix"),
+    ('versions', 'expected_command', 'expected_prefix'),
     [
-        ({"python": "3.13"}, None, []),
-        ({"python": "3.15"}, None, []),
-        ({"python": "3.14"}, "python", []),
-        ({"python": "3.13", "python3": "3.14"}, "python3", []),
-        ({"python3.14": "3.14", "python": "3.14"}, "python3.14", []),
-        ({"py -3.14": "3.14", "python": "3.13"}, "py", ["-3.14"]),
+        ({'python': '3.13'}, None, []),
+        ({'python': '3.15'}, None, []),
+        ({'python': '3.14'}, 'python', []),
+        ({'python': '3.13', 'python3': '3.14'}, 'python3', []),
+        ({'python3.14': '3.14', 'python': '3.14'}, 'python3.14', []),
+        ({'py -3.14': '3.14', 'python': '3.13'}, 'py', ['-3.14']),
         ({}, None, []),
     ],
 )
 def test_guard_selects_only_python314(
     versions: dict[str, str], expected_command: str | None, expected_prefix: list[str]
 ) -> None:
-    node = shutil.which("node")
+    node = shutil.which('node')
     assert node is not None
     result = subprocess.run(
         [
             node,
-            "--experimental-vm-modules",
-            "-e",
+            '--experimental-vm-modules',
+            '-e',
             PROBE,
             str(LAUNCHER),
-            json.dumps({"versions": versions}),
+            json.dumps({'versions': versions}),
         ],
         capture_output=True,
         text=True,
@@ -100,43 +100,41 @@ def test_guard_selects_only_python314(
     assert result.returncode == 0, result.stderr
     outcome = json.loads(result.stdout)
     if expected_command is None:
-        assert outcome["code"] == 0, "selection must not execute a guard script"
-        assert outcome["calls"]
-        assert all("-c" in call["args"] for call in outcome["calls"])
+        assert outcome['code'] == 0, 'selection must not execute a guard script'
+        assert outcome['calls']
+        assert all('-c' in call['args'] for call in outcome['calls'])
     else:
-        assert outcome["code"] == 0
-        execution = outcome["calls"][-1]
-        assert execution["command"] == expected_command
-        assert execution["args"][:-2] == [*expected_prefix, "-I", "-S"]
+        assert outcome['code'] == 0
+        execution = outcome['calls'][-1]
+        assert execution['command'] == expected_command
+        assert execution['args'][:-2] == [*expected_prefix, '-I', '-S']
 
 
 def test_settings_use_python314_for_post_tool_and_watcher() -> None:
-    settings = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))
-    hooks = settings["hooks"]
-    post = hooks["PostToolUse"][0]["hooks"][0]["command"]
-    assert "python314.mjs" in post
-    startup = [hook["command"] for group in hooks["SessionStart"] for hook in group["hooks"]]
+    settings = json.loads((ROOT / '.claude/settings.json').read_text(encoding='utf-8'))
+    hooks = settings['hooks']
+    post = hooks['PostToolUse'][0]['hooks'][0]['command']
+    assert 'python314.mjs' in post
+    startup = [hook['command'] for group in hooks['SessionStart'] for hook in group['hooks']]
     watcher = next(
-        command for command in startup if "scripts/watcher.py" in command and "&" in command
+        command for command in startup if 'scripts/watcher.py' in command and '&' in command
     )
-    assert "python314.mjs" in watcher
+    assert 'python314.mjs' in watcher
 
 
-@pytest.mark.parametrize("failure", ["ETIMEDOUT", "ENOENT"])
+@pytest.mark.parametrize('failure', ['ETIMEDOUT', 'ENOENT'])
 def test_failed_probe_falls_back_with_bounded_timeout(failure: str) -> None:
     result = subprocess.run(
         [
-            "node",
-            "--experimental-vm-modules",
-            "-e",
+            'node',
+            '--experimental-vm-modules',
+            '-e',
             PROBE,
             str(LAUNCHER),
-            json.dumps(
-                {
-                    "versions": {"python": "3.14"},
-                    "failures": {"python3.14": failure, "py -3.14": failure},
-                }
-            ),
+            json.dumps({
+                'versions': {'python': '3.14'},
+                'failures': {'python3.14': failure, 'py -3.14': failure},
+            }),
         ],
         capture_output=True,
         text=True,
@@ -144,21 +142,21 @@ def test_failed_probe_falls_back_with_bounded_timeout(failure: str) -> None:
     )
     assert result.returncode == 0, result.stderr
     outcome = json.loads(result.stdout)
-    assert outcome["code"] == 0
-    assert outcome["calls"][-1]["command"] == "python"
-    for probe in outcome["calls"][:-1]:
-        assert 0 < probe["options"]["timeout"] <= 3000
+    assert outcome['code'] == 0
+    assert outcome['calls'][-1]['command'] == 'python'
+    for probe in outcome['calls'][:-1]:
+        assert 0 < probe['options']['timeout'] <= 3000
 
 
 def test_launcher_reports_missing_python314() -> None:
     result = subprocess.run(
         [
-            "node",
-            "--experimental-vm-modules",
-            "-e",
+            'node',
+            '--experimental-vm-modules',
+            '-e',
             PROBE,
             str(LAUNCHER),
-            json.dumps({"versions": {}, "launch": True}),
+            json.dumps({'versions': {}, 'launch': True}),
         ],
         capture_output=True,
         text=True,
@@ -166,45 +164,45 @@ def test_launcher_reports_missing_python314() -> None:
     )
     assert result.returncode == 0, result.stderr
     outcome = json.loads(result.stdout)
-    assert outcome["code"] == 1
-    assert "Python 3.14 is required" in outcome["stderr"]
+    assert outcome['code'] == 1
+    assert 'Python 3.14 is required' in outcome['stderr']
 
 
 def test_launcher_forwards_arguments_stdin_and_exit_code() -> None:
-    with tempfile.TemporaryDirectory(prefix="python314-launcher-") as directory:
+    with tempfile.TemporaryDirectory(prefix='python314-launcher-') as directory:
         root = Path(directory)
-        script = root / "probe with spaces.py"
+        script = root / 'probe with spaces.py'
         script.write_text(
-            "import json,sys\n"
-            "assert sys.version_info[:2] == (3,14)\n"
-            "print(json.dumps([sys.argv[1:],sys.stdin.read()]))\n"
+            'import json,sys\n'
+            'assert sys.version_info[:2] == (3,14)\n'
+            'print(json.dumps([sys.argv[1:],sys.stdin.read()]))\n'
             "print('owned stderr',file=sys.stderr)\n"
-            "sys.exit(2)\n",
-            encoding="utf-8",
+            'sys.exit(2)\n',
+            encoding='utf-8',
         )
         result = subprocess.run(
-            ["node", str(LAUNCHER), script.name, "argument with spaces"],
-            input="owned input",
+            ['node', str(LAUNCHER), script.name, 'argument with spaces'],
+            input='owned input',
             text=True,
             capture_output=True,
             timeout=20,
             cwd=root,
-            env={**os.environ, "CLAUDE_PROJECT_DIR": str(root)},
+            env={**os.environ, 'CLAUDE_PROJECT_DIR': str(root)},
         )
         assert result.returncode == 2, result.stderr
-        assert json.loads(result.stdout) == [["argument with spaces"], "owned input"]
-        assert result.stderr.strip() == "owned stderr"
+        assert json.loads(result.stdout) == [['argument with spaces'], 'owned input']
+        assert result.stderr.strip() == 'owned stderr'
 
 
 @pytest.mark.parametrize(
-    "relative",
+    'relative',
     [
-        "scripts/pre_tool_use.py",
-        "scripts/post_tool_use.py",
-        "scripts/watcher.py",
-        "scripts/process_utils.py",
-        "templates/watcher.py",
-        ".claude/hooks/secret-scanner.py",
+        'scripts/pre_tool_use.py',
+        'scripts/post_tool_use.py',
+        'scripts/watcher.py',
+        'scripts/process_utils.py',
+        'templates/watcher.py',
+        '.claude/hooks/secret-scanner.py',
     ],
 )
 def test_scoped_script_imports_on_python314(relative: str) -> None:
@@ -216,18 +214,18 @@ spec = importlib.util.spec_from_file_location("candidate", sys.argv[1])
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 """
-    with tempfile.TemporaryDirectory(prefix="python314-import-") as directory:
+    with tempfile.TemporaryDirectory(prefix='python314-import-') as directory:
         result = subprocess.run(
             [
                 sys.executable,
-                "-I",
-                "-S",
-                "-W",
-                "error::SyntaxWarning",
-                "-c",
+                '-I',
+                '-S',
+                '-W',
+                'error::SyntaxWarning',
+                '-c',
                 source,
                 str(ROOT / relative),
-                str(ROOT / "scripts"),
+                str(ROOT / 'scripts'),
             ],
             cwd=directory,
             capture_output=True,
@@ -235,5 +233,5 @@ spec.loader.exec_module(module)
             timeout=20,
         )
         assert result.returncode == 0, result.stderr
-        assert result.stdout == ""
-        assert result.stderr == ""
+        assert result.stdout == ''
+        assert result.stderr == ''

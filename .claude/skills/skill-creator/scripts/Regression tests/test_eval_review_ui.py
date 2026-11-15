@@ -48,42 +48,58 @@ const { chromium } = require('playwright');
 """
 
 
-@unittest.skipUnless(shutil.which("node"), "Node is required for the real-browser UI regression")
+@unittest.skipUnless(shutil.which('node'), 'Node is required for the real-browser UI regression')
 class EvalReviewBrowserTests(unittest.TestCase):
     def run_browser_case(self, case: str) -> None:
         creator = Path(__file__).resolve().parents[2]
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            skill = root / "skill"
+            skill = root / 'skill'
             skill.mkdir()
-            (skill / "SKILL.md").write_text(
-                "---\nname: demo\ndescription: test skill\n---\n", encoding="utf-8"
+            (skill / 'SKILL.md').write_text(
+                '---\nname: demo\ndescription: test skill\n---\n', encoding='utf-8'
             )
-            source = root / "evals.json"
-            source.write_text(json.dumps([
-                {"query": "existing positive query", "should_trigger": True},
-                {"query": "existing negative query", "should_trigger": False},
-            ]), encoding="utf-8")
-            output = root / "review.html"
+            source = root / 'evals.json'
+            source.write_text(
+                json.dumps([
+                    {'query': 'existing positive query', 'should_trigger': True},
+                    {'query': 'existing negative query', 'should_trigger': False},
+                ]),
+                encoding='utf-8',
+            )
+            output = root / 'review.html'
             generated = subprocess.run(
-                [sys.executable, str(creator / "scripts" / "generate_eval_review.py"),
-                 "--eval-set", str(source), "--skill-path", str(skill),
-                 "--output", str(output)],
-                capture_output=True, text=True, check=False,
+                [
+                    sys.executable,
+                    str(creator / 'scripts' / 'generate_eval_review.py'),
+                    '--eval-set',
+                    str(source),
+                    '--skill-path',
+                    str(skill),
+                    '--output',
+                    str(output),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
             )
             self.assertEqual(generated.returncode, 0, generated.stderr)
             browser = subprocess.run(
-                ["node", "--eval", NODE_TEST, str(output), case],
-                cwd=creator, capture_output=True, text=True, check=False, timeout=30,
+                ['node', '--eval', NODE_TEST, str(output), case],
+                cwd=creator,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=30,
             )
             self.assertEqual(browser.returncode, 0, browser.stderr)
 
     def test_query_and_trigger_controls_have_accessible_row_labels(self) -> None:
-        self.run_browser_case("labels")
+        self.run_browser_case('labels')
 
     def test_add_query_focuses_inserted_positive_row_before_existing_negative(self) -> None:
-        self.run_browser_case("focus")
+        self.run_browser_case('focus')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

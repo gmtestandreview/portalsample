@@ -684,7 +684,7 @@ kms_client = boto3.client('kms')
 # Generate data encryption key
 response = kms_client.generate_data_key(
     KeyId='arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012',
-    KeySpec='AES_256'
+    KeySpec='AES_256',
 )
 
 # Plaintext DEK (use to encrypt data, then discard)
@@ -695,8 +695,9 @@ encrypted_dek = response['CiphertextBlob']
 
 # Encrypt data with plaintext DEK
 from cryptography.fernet import Fernet
+
 cipher = Fernet(base64.urlsafe_b64encode(plaintext_dek))
-encrypted_data = cipher.encrypt(b"Sensitive data")
+encrypted_data = cipher.encrypt(b'Sensitive data')
 
 # Store encrypted_data and encrypted_dek together
 # Discard plaintext_dek from memory
@@ -903,18 +904,14 @@ users:
 # "User can edit a document if they are the owner OR a collaborator"
 
 relationships = {
-    "document:123": {
-        "owner": "user:alice",
-        "collaborators": ["user:bob", "user:charlie"]
-    }
+    'document:123': {'owner': 'user:alice', 'collaborators': ['user:bob', 'user:charlie']}
 }
+
 
 def can_edit(user, document):
     doc_rels = relationships.get(document)
-    return (
-        user == doc_rels["owner"] or
-        user in doc_rels["collaborators"]
-    )
+    return user == doc_rels['owner'] or user in doc_rels['collaborators']
+
 
 # Using authorization service like Ory Keto or SpiceDB
 # Tuple format: <object>#<relation>@<subject>

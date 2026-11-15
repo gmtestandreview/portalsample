@@ -68,10 +68,10 @@ Example:
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 
-chat = ChatOpenAI(model="gpt-4", temperature=0)
+chat = ChatOpenAI(model='gpt-4', temperature=0)
 messages = [
-    SystemMessage(content="You are a helpful assistant."),
-    HumanMessage(content="What is LangChain?")
+    SystemMessage(content='You are a helpful assistant.'),
+    HumanMessage(content='What is LangChain?'),
 ]
 response = chat.invoke(messages)
 print(response.content)
@@ -151,10 +151,10 @@ from langchain_core.documents import Document
 embedding_model = OpenAIEmbeddings()
 vector_store = InMemoryVectorStore(embedding=embedding_model)
 
-documents = [Document(page_content="LangChain content", metadata={"source": "doc1"})]
-vector_store.add_documents(documents=documents, ids=["doc1"])
+documents = [Document(page_content='LangChain content', metadata={'source': 'doc1'})]
+vector_store.add_documents(documents=documents, ids=['doc1'])
 
-results = vector_store.similarity_search("What is RAG?", k=2)
+results = vector_store.similarity_search('What is RAG?', k=2)
 for doc in results:
     print(doc.page_content, doc.metadata)
 ```

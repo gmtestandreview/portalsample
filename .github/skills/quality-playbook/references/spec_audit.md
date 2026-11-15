@@ -182,8 +182,9 @@ real.
 
 ```python
 # Confirmation proof: RING_RESET is not a case label in the whitelist
-assert "case VIRTIO_F_RING_RESET:" in source_of("vring_transport_features"), \
-    "RING_RESET should be in the switch but is not — cleared by default at line 3527"
+assert 'case VIRTIO_F_RING_RESET:' in source_of('vring_transport_features'), (
+    'RING_RESET should be in the switch but is not — cleared by default at line 3527'
+)
 ```
 
 **Every assertion must cite an exact line number** for the evidence it

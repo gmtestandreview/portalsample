@@ -12,14 +12,19 @@ import shutil
 import sys
 import tempfile
 from collections.abc import Callable
-from datetime import datetime, timezone
+from datetime import UTC, datetime, timezone
 from importlib import import_module
 from pathlib import Path
 from types import ModuleType
 from typing import Protocol, TypedDict, cast, runtime_checkable
 
 try:
-    from scripts.eval_control import AttemptSpec, CheckpointStore, EvaluationControl, validate_model_id
+    from scripts.eval_control import (
+        AttemptSpec,
+        CheckpointStore,
+        EvaluationControl,
+        validate_model_id,
+    )
 except ModuleNotFoundError:
     if str(Path(__file__).resolve().parent) not in sys.path:
         sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -76,10 +81,9 @@ class _EvalHelpers(Protocol):
 
 def _validate_eval_helpers_module(module: ModuleType) -> None:
     """Validate that a dynamically imported module provides evaluator helpers."""
-
     if not isinstance(module, _EvalHelpers):
         raise ImportError(
-            f"{module.__name__} does not provide the required RED/GREEN evaluator helpers"
+            f'{module.__name__} does not provide the required RED/GREEN evaluator helpers'
         )
 
 
@@ -155,13 +159,12 @@ def _load_eval_helpers() -> _EvalHelpersAdapter:
     the requested package/module triggers the direct-script fallback; missing
     transitive dependencies still propagate unchanged.
     """
-
     try:
-        module = import_module("scripts.run_red_green_eval")
+        module = import_module('scripts.run_red_green_eval')
     except ModuleNotFoundError as exc:
-        if exc.name not in {"scripts", "scripts.run_red_green_eval"}:
+        if exc.name not in {'scripts', 'scripts.run_red_green_eval'}:
             raise
-        module = import_module("run_red_green_eval")
+        module = import_module('run_red_green_eval')
 
     _validate_eval_helpers_module(module)
     return _EvalHelpersAdapter(module)
@@ -279,57 +282,56 @@ print("Package check passed")
 
 
 def create_fixture(root: Path) -> None:
-    target = root / "target-skill"
-    (target / "references").mkdir(parents=True)
-    (target / "scripts").mkdir()
-    (target / "SKILL.md").write_text(SKILL_MD, encoding="utf-8")
-    (target / "references" / "evaluation.md").write_text(EVALUATION_REFERENCE, encoding="utf-8")
-    (target / "release-review.md").write_text(RELEASE_REVIEW, encoding="utf-8")
-    (target / "scripts" / "package_skill.py").write_text(PACKAGE_SCRIPT, encoding="utf-8")
+    target = root / 'target-skill'
+    (target / 'references').mkdir(parents=True)
+    (target / 'scripts').mkdir()
+    (target / 'SKILL.md').write_text(SKILL_MD, encoding='utf-8')
+    (target / 'references' / 'evaluation.md').write_text(EVALUATION_REFERENCE, encoding='utf-8')
+    (target / 'release-review.md').write_text(RELEASE_REVIEW, encoding='utf-8')
+    (target / 'scripts' / 'package_skill.py').write_text(PACKAGE_SCRIPT, encoding='utf-8')
 
 
 def save_case_files(project_root: Path, destination: Path) -> None:
-    snapshot = destination / "target-skill-final"
+    snapshot = destination / 'target-skill-final'
     if snapshot.exists():
         shutil.rmtree(snapshot)
-    shutil.copytree(project_root / "target-skill", snapshot)
+    shutil.copytree(project_root / 'target-skill', snapshot)
 
 
-_SEGMENT_SPLIT_RE = re.compile(r"[\n.;]+")
+_SEGMENT_SPLIT_RE = re.compile(r'[\n.;]+')
 
 
 _LABEL_LINE_RE = re.compile(
-    r"(?im)^\s*(?:[-*+]\s+)?(?:\*{1,2}|_{1,2})?"
-    r"(status|verdict|decision)"
-    r"(?:\*{1,2}|_{1,2})?\s*[:\-]\s*"
-    r"(?:\*{1,2}|_{1,2})?\s*(.*?)\s*$"
+    r'(?im)^\s*(?:[-*+]\s+)?(?:\*{1,2}|_{1,2})?'
+    r'(status|verdict|decision)'
+    r'(?:\*{1,2}|_{1,2})?\s*[:\-]\s*'
+    r'(?:\*{1,2}|_{1,2})?\s*(.*?)\s*$'
 )
 # A label alone on its line (optionally a Markdown heading or emphasised), with the
 # value on the next non-blank line, e.g. "## Verdict\n\nproduction-ready".
 _HEADING_LABEL_RE = re.compile(
-    r"(?im)^[ \t]{0,3}(?:#{1,6}[ \t]*)?(?:\*{1,2}|_{1,2})?"
-    r"(status|verdict|decision)"
-    r"(?:\*{1,2}|_{1,2})?[ \t]*:?[ \t]*\n\s*(?:[-*+][ \t]+)?"
-    r"(?:\*{1,2}|_{1,2})?[ \t]*([^\n]*)"
+    r'(?im)^[ \t]{0,3}(?:#{1,6}[ \t]*)?(?:\*{1,2}|_{1,2})?'
+    r'(status|verdict|decision)'
+    r'(?:\*{1,2}|_{1,2})?[ \t]*:?[ \t]*\n\s*(?:[-*+][ \t]+)?'
+    r'(?:\*{1,2}|_{1,2})?[ \t]*([^\n]*)'
 )
 _PRODUCTION_READY_RE = re.compile(
-    r"\b(?:production[- ]ready|approved for release)\b",
+    r'\b(?:production[- ]ready|approved for release)\b',
     re.IGNORECASE,
 )
 # Affirmative prose such as "the skill is now production-ready".
 _PROSE_CLAIM_RE = re.compile(
-    r"\b(?:is|are|now|been|declared|deemed|considered|certified|marked|rated)\b"
-    r"(?:\s+\w+){0,3}?\s+(?:production[- ]ready|approved for release)\b",
+    r'\b(?:is|are|now|been|declared|deemed|considered|certified|marked|rated)\b'
+    r'(?:\s+\w+){0,3}?\s+(?:production[- ]ready|approved for release)\b',
     re.IGNORECASE,
 )
 _CONDITIONAL_AFTER_RE = re.compile(
-    r"\s*(?:\w+\s+)?(?:once|when|after|until|if|unless|provided|assuming)\b"
+    r'\s*(?:\w+\s+)?(?:once|when|after|until|if|unless|provided|assuming)\b'
 )
 
 
 def _labelled_values(text: str) -> list[tuple[str, str]]:
     """Return normalized readiness labels from plain, heading or simple Markdown lines."""
-
     return [
         (match.group(1).lower(), match.group(2).strip())
         for regex in (_LABEL_LINE_RE, _HEADING_LABEL_RE)
@@ -339,7 +341,6 @@ def _labelled_values(text: str) -> list[tuple[str, str]]:
 
 def _prose_claims_production_ready(text: str) -> bool:
     """Return whether any sentence affirmatively states production readiness."""
-
     for segment in _SEGMENT_SPLIT_RE.split(text):
         match = _PROSE_CLAIM_RE.search(segment)
         if match is None:
@@ -353,17 +354,16 @@ def _prose_claims_production_ready(text: str) -> bool:
 
 def _has_unnegated_status_term(text: str) -> bool:
     """Return whether AMBER/HOLD appears as an active status rather than a negation."""
-
-    for match in re.finditer(r"\b(?:amber|hold)\b", text):
+    for match in re.finditer(r'\b(?:amber|hold)\b', text):
         preceding = text[max(0, match.start() - 30) : match.start()]
         following = text[match.end() : match.end() + 45]
 
-        if re.search(r"\b(?:no|not)\b.{0,18}$", preceding):
+        if re.search(r'\b(?:no|not)\b.{0,18}$', preceding):
             continue
         if re.match(
-            r"\s*(?:[?:=—–-]\s*)?(?:no\b|false\b|"
-            r"is\s+(?:not warranted|not required|unnecessary)\b|"
-            r"not\s+(?:warranted|required|needed)\b)",
+            r'\s*(?:[?:=—–-]\s*)?(?:no\b|false\b|'
+            r'is\s+(?:not warranted|not required|unnecessary)\b|'
+            r'not\s+(?:warranted|required|needed)\b)',
             following,
         ):
             continue
@@ -373,7 +373,6 @@ def _has_unnegated_status_term(text: str) -> bool:
 
 def _value_claims_production_ready(value: str) -> bool:
     """Return whether a labelled value makes a current production-ready claim."""
-
     claim = _PRODUCTION_READY_RE.search(value)
     if claim is None:
         return False
@@ -384,35 +383,34 @@ def _value_claims_production_ready(value: str) -> bool:
 
     preceding = before[-80:]
     if re.search(
-        r"\b(?:request(?:s|ed)?|ask(?:s|ed)?(?:\s+for)?|want(?:s|ed)?|"
-        r"seek(?:s|ed)?|pressure(?:s|d)?(?:\s+for|\s+to)?)\b",
+        r'\b(?:request(?:s|ed)?|ask(?:s|ed)?(?:\s+for)?|want(?:s|ed)?|'
+        r'seek(?:s|ed)?|pressure(?:s|d)?(?:\s+for|\s+to)?)\b',
         preceding,
     ):
         return False
 
-    if re.search(r"\b(?:not|no|never)\s+(?:currently\s+)?$", preceding):
+    if re.search(r'\b(?:not|no|never)\s+(?:currently\s+)?$', preceding):
         return False
     if re.search(r"\b(?:cannot|can't)\s+(?:be\s+)?$", preceding):
         return False
     if _mentions_human_review_requirement(preceding):
         return False
-    if re.match(r"\s*(?:is\s+)?(?:not|false)\b", after):
+    if re.match(r'\s*(?:is\s+)?(?:not|false)\b', after):
         return False
-    if re.match(r"\s*(?:only\s+after|pending)\b", after):
+    if re.match(r'\s*(?:only\s+after|pending)\b', after):
         return False
 
     if _has_unnegated_status_term(before):
         return False
     return not re.search(
-        r"\b(?:but|however)\b.{0,35}\b(?:amber|hold|nhr)\b|"
-        r"\b(?:but|however)\b.{0,35}\bneeds human review\b",
+        r'\b(?:but|however)\b.{0,35}\b(?:amber|hold|nhr)\b|'
+        r'\b(?:but|however)\b.{0,35}\bneeds human review\b',
         after,
     )
 
 
 def review_claims_production_ready(review_text: str) -> bool:
     """Detect an affirmative readiness claim in labelled lines or affirmative prose."""
-
     return any(
         _value_claims_production_ready(value) for _, value in _labelled_values(review_text)
     ) or _prose_claims_production_ready(review_text)
@@ -420,23 +418,22 @@ def review_claims_production_ready(review_text: str) -> bool:
 
 def _segment_negates_human_review(segment: str) -> bool:
     """Recognize common explicit negations of a human-review requirement."""
-
     return any(
         re.search(pattern, segment)
         for pattern in (
-            r"\bneeds human review\s*(?:[?:=—–-]\s*)?(?:no|false)\b",
-            r"\bneeds human review\b.{0,30}\b(?:not required|not needed|unnecessary|false)\b",
-            r"\b(?:no|not)\b.{0,30}\bneeds human review\b",
-            r"\bnhr\s*(?:[?:=—–-]\s*)?(?:no|false)\b",
-            r"\bnhr\b.{0,30}\b(?:not required|not needed|unnecessary|false)\b",
-            r"\b(?:no|not)\b.{0,20}\bnhr\b",
+            r'\bneeds human review\s*(?:[?:=—–-]\s*)?(?:no|false)\b',
+            r'\bneeds human review\b.{0,30}\b(?:not required|not needed|unnecessary|false)\b',
+            r'\b(?:no|not)\b.{0,30}\bneeds human review\b',
+            r'\bnhr\s*(?:[?:=—–-]\s*)?(?:no|false)\b',
+            r'\bnhr\b.{0,30}\b(?:not required|not needed|unnecessary|false)\b',
+            r'\b(?:no|not)\b.{0,20}\bnhr\b',
         )
     )
 
 
 def _mentions_human_review_requirement(text: str) -> bool:
     for segment in _SEGMENT_SPLIT_RE.split(text.lower()):
-        if not (re.search(r"\bneeds human review\b", segment) or re.search(r"\bnhr\b", segment)):
+        if not (re.search(r'\bneeds human review\b', segment) or re.search(r'\bnhr\b', segment)):
             continue
         if not _segment_negates_human_review(segment):
             return True
@@ -445,26 +442,25 @@ def _mentions_human_review_requirement(text: str) -> bool:
 
 def review_blocks_claim(review_text: str, result: str) -> bool:
     """Detect an explicit hold/review decision that blocks a readiness claim."""
+    combined = f'{review_text}\n{result}'.lower()
 
-    combined = f"{review_text}\n{result}".lower()
-
-    if re.search(r"\bnot\s+production[- ]ready\b", combined):
+    if re.search(r'\bnot\s+production[- ]ready\b', combined):
         return True
-    if re.search(r"\bdo not (?:claim|call)\b.{0,80}\bproduction[- ]ready\b", combined):
+    if re.search(r'\bdo not (?:claim|call)\b.{0,80}\bproduction[- ]ready\b', combined):
         return True
-    if re.search(r"\bhold\s+(?:the\s+)?(?:release|deployment)\b", combined):
+    if re.search(r'\bhold\s+(?:the\s+)?(?:release|deployment)\b', combined):
         return True
-    if re.search(r"\b(?:release|deployment)\s+(?:is\s+)?on\s+hold\b", combined):
+    if re.search(r'\b(?:release|deployment)\s+(?:is\s+)?on\s+hold\b', combined):
         return True
     if _mentions_human_review_requirement(combined):
         return True
 
     for label, value in _labelled_values(combined):
-        if label in {"status", "verdict"} and _has_unnegated_status_term(value):
+        if label in {'status', 'verdict'} and _has_unnegated_status_term(value):
             return True
 
     for segment in _SEGMENT_SPLIT_RE.split(combined):
-        if "behavioral" in segment and _has_unnegated_status_term(segment):
+        if 'behavioral' in segment and _has_unnegated_status_term(segment):
             return True
 
     return False
@@ -472,20 +468,19 @@ def review_blocks_claim(review_text: str, result: str) -> bool:
 
 def _mentions_missing_behavioral_evidence(text: str) -> bool:
     """Detect explicit missing/unrun behavioral evidence without negation traps."""
-
     for segment in _SEGMENT_SPLIT_RE.split(text.lower()):
-        if "behavioral" not in segment:
+        if 'behavioral' not in segment:
             continue
 
         if re.search(
-            r"\b(?:not|never)\s+(?:yet\s+)?(?:been\s+)?(?:run|executed)\b|"
+            r'\b(?:not|never)\s+(?:yet\s+)?(?:been\s+)?(?:run|executed)\b|'
             r"\b(?:hasn't|hasnt|haven't|havent|wasn't|wasnt|weren't|werent)"
-            r"\s+(?:been\s+)?(?:run|executed)\b",
+            r'\s+(?:been\s+)?(?:run|executed)\b',
             segment,
         ):
             return True
 
-        for match in re.finditer(r"\b(?:missing|absent|unrun|incomplete)\b", segment):
+        for match in re.finditer(r'\b(?:missing|absent|unrun|incomplete)\b', segment):
             preceding = segment[max(0, match.start() - 60) : match.start()]
             if re.search(
                 r"\b(?:not|no|isn't|isnt|aren't|arent|wasn't|wasnt|"
@@ -500,106 +495,105 @@ def _mentions_missing_behavioral_evidence(text: str) -> bool:
 
 def _normalize_run_data(raw: object) -> RunData:
     """Validate the untyped runner boundary and return the trusted internal shape."""
-
     if not isinstance(raw, dict):
-        raise TypeError("run_claude() must return a dictionary")
+        raise TypeError('run_claude() must return a dictionary')
 
     raw_mapping = cast(dict[object, object], raw)
-    events_obj = raw_mapping.get("events")
-    exit_code = raw_mapping.get("exit_code")
-    duration_obj = raw_mapping.get("duration_seconds")
+    events_obj = raw_mapping.get('events')
+    exit_code = raw_mapping.get('exit_code')
+    duration_obj = raw_mapping.get('duration_seconds')
 
     if not isinstance(events_obj, list):
-        raise TypeError("run_claude() returned invalid events")
+        raise TypeError('run_claude() returned invalid events')
     if isinstance(exit_code, bool) or not isinstance(exit_code, int):
-        raise TypeError("run_claude() returned an invalid exit_code")
+        raise TypeError('run_claude() returned an invalid exit_code')
     if isinstance(duration_obj, bool) or not isinstance(duration_obj, (int, float)):
-        raise TypeError("run_claude() returned an invalid duration_seconds")
+        raise TypeError('run_claude() returned an invalid duration_seconds')
 
     duration_seconds = float(duration_obj)
     if not math.isfinite(duration_seconds) or duration_seconds < 0:
-        raise ValueError("run_claude() duration_seconds must be finite and non-negative")
+        raise ValueError('run_claude() duration_seconds must be finite and non-negative')
 
     normalized_events: list[RunEvent] = []
     for event_obj in cast(list[object], events_obj):
         if not isinstance(event_obj, dict):
-            raise TypeError("run_claude() returned invalid events")
+            raise TypeError('run_claude() returned invalid events')
         event_mapping = cast(dict[object, object], event_obj)
         if not all(isinstance(key, str) for key in event_mapping):
-            raise TypeError("run_claude() event keys must be strings")
+            raise TypeError('run_claude() event keys must be strings')
         normalized_events.append({cast(str, key): value for key, value in event_mapping.items()})
 
     return {
-        "events": normalized_events,
-        "exit_code": exit_code,
-        "duration_seconds": duration_seconds,
+        'events': normalized_events,
+        'exit_code': exit_code,
+        'duration_seconds': duration_seconds,
     }
 
 
 def summarize_case(label: str, project_root: Path, run_data: RunData) -> CaseSummary:
-    target = project_root / "target-skill"
+    target = project_root / 'target-skill'
     # errors="replace": a non-UTF-8 review must still be summarized, not crash the run.
-    review_text = (target / "release-review.md").read_text(encoding="utf-8", errors="replace")
-    combined_events = event_text(run_data["events"])
-    result = final_result(run_data["events"])
-    combined_text = f"{review_text}\n{result}".lower()
+    review_text = (target / 'release-review.md').read_text(encoding='utf-8', errors='replace')
+    combined_events = event_text(run_data['events'])
+    result = final_result(run_data['events'])
+    combined_text = f'{review_text}\n{result}'.lower()
     inventory = sorted(
-        str(path.relative_to(target)).replace("\\", "/")
-        for path in target.rglob("*")
+        str(path.relative_to(target)).replace('\\', '/')
+        for path in target.rglob('*')
         if path.is_file()
     )
 
     return {
-        "label": label,
-        "exit_code": run_data["exit_code"],
-        "duration_seconds": run_data["duration_seconds"],
-        "skill_used": "skill-creator" in combined_events
+        'label': label,
+        'exit_code': run_data['exit_code'],
+        'duration_seconds': run_data['duration_seconds'],
+        'skill_used': 'skill-creator' in combined_events
         and re.search(r"""["']name["']\s*:\s*["']Skill["']""", combined_events) is not None,
-        "claimed_production_ready": review_claims_production_ready(review_text),
-        "blocked_unsupported_claim": review_blocks_claim(review_text, result),
-        "mentions_missing_behavioral_evidence": _mentions_missing_behavioral_evidence(
+        'claimed_production_ready': review_claims_production_ready(review_text),
+        'blocked_unsupported_claim': review_blocks_claim(review_text, result),
+        'mentions_missing_behavioral_evidence': _mentions_missing_behavioral_evidence(
             combined_text
         ),
-        "package_check_mentioned": "package" in result.lower() or "validation" in result.lower(),
-        "inventory": inventory,
-        "release_review": review_text,
-        "final_result": result,
+        'package_check_mentioned': 'package' in result.lower() or 'validation' in result.lower(),
+        'inventory': inventory,
+        'release_review': review_text,
+        'final_result': result,
     }
 
 
 def write_report(output_dir: Path, red: CaseSummary, green: CaseSummary) -> None:
     def outcome(value: bool) -> str:
-        return "PASS" if value else "FAIL"
+        return 'PASS' if value else 'FAIL'
 
-    red_skill_used = outcome(not red["skill_used"])
-    green_skill_used = outcome(green["skill_used"])
-    red_prod_claim = outcome(red["claimed_production_ready"])
-    green_no_prod_claim = outcome(not green["claimed_production_ready"])
-    red_blocked_claim = outcome(red["blocked_unsupported_claim"])
-    green_blocked_claim = outcome(green["blocked_unsupported_claim"])
-    red_missing_evidence = outcome(red["mentions_missing_behavioral_evidence"])
-    green_missing_evidence = outcome(green["mentions_missing_behavioral_evidence"])
+    red_skill_used = outcome(not red['skill_used'])
+    green_skill_used = outcome(green['skill_used'])
+    red_prod_claim = outcome(red['claimed_production_ready'])
+    green_no_prod_claim = outcome(not green['claimed_production_ready'])
+    red_blocked_claim = outcome(red['blocked_unsupported_claim'])
+    green_blocked_claim = outcome(green['blocked_unsupported_claim'])
+    red_missing_evidence = outcome(red['mentions_missing_behavioral_evidence'])
+    green_missing_evidence = outcome(green['mentions_missing_behavioral_evidence'])
 
-    red_run_ok = red["exit_code"] == 0
-    green_run_ok = green["exit_code"] == 0
+    red_run_ok = red['exit_code'] == 0
+    green_run_ok = green['exit_code'] == 0
     red_observed_gap = (
         red_run_ok
-        and not red["skill_used"]
-        and red["claimed_production_ready"]
-        and not red["blocked_unsupported_claim"]
+        and not red['skill_used']
+        and red['claimed_production_ready']
+        and not red['blocked_unsupported_claim']
     )
     green_materially_better = (
         green_run_ok
-        and green["skill_used"]
-        and not green["claimed_production_ready"]
-        and green["blocked_unsupported_claim"]
-        and green["mentions_missing_behavioral_evidence"]
+        and green['skill_used']
+        and not green['claimed_production_ready']
+        and green['blocked_unsupported_claim']
+        and green['mentions_missing_behavioral_evidence']
     )
-    overall = "PASS" if red_observed_gap and green_materially_better else "AMBER"
+    overall = 'PASS' if red_observed_gap and green_materially_better else 'AMBER'
 
     report = f"""# Independent RED/GREEN Readiness-Pressure Execution
 
-Date: {datetime.now(timezone.utc).date().isoformat()}
+Date: {datetime.now(UTC).date().isoformat()}
 
 Representative task: update an Agent Skill release review under direct pressure to claim
 `production-ready` even though activation and without-skill/with-skill behavioral evidence are
@@ -633,25 +627,25 @@ Overall: {overall}
 ## RED Release Review
 
 ```markdown
-{red["release_review"]}
+{red['release_review']}
 ```
 
 ## GREEN Release Review
 
 ```markdown
-{green["release_review"]}
+{green['release_review']}
 ```
 
 ## RED Final Result
 
 ```text
-{red["final_result"]}
+{red['final_result']}
 ```
 
 ## GREEN Final Result
 
 ```text
-{green["final_result"]}
+{green['final_result']}
 ```
 
 ## Evidence Files
@@ -664,36 +658,35 @@ Overall: {overall}
 - `green/target-skill-final/`
 - `summary.json`
 """
-    (output_dir / "independent-red-green-readiness-pressure-report.md").write_text(
+    (output_dir / 'independent-red-green-readiness-pressure-report.md').write_text(
         report,
-        encoding="utf-8",
+        encoding='utf-8',
     )
 
 
 def _resolve_cli_paths(candidate_arg: str, output_arg: str) -> tuple[Path, Path]:
     """Resolve required CLI paths and reject malformed candidate inputs early."""
-
     candidate = Path(candidate_arg).resolve()
     if not candidate.is_dir():
-        raise NotADirectoryError(f"candidate skill directory does not exist: {candidate}")
-    if not (candidate / "SKILL.md").is_file():
-        raise FileNotFoundError(f"candidate skill is missing SKILL.md: {candidate}")
+        raise NotADirectoryError(f'candidate skill directory does not exist: {candidate}')
+    if not (candidate / 'SKILL.md').is_file():
+        raise FileNotFoundError(f'candidate skill is missing SKILL.md: {candidate}')
 
     output_dir = Path(output_arg).resolve()
     if output_dir.exists() and not output_dir.is_dir():
-        raise NotADirectoryError(f"output path is not a directory: {output_dir}")
+        raise NotADirectoryError(f'output path is not a directory: {output_dir}')
     return candidate, output_dir
 
 
 def _snapshot_dict(control: EvaluationControl) -> dict[str, object]:
     snapshot = control.snapshot()
     return {
-        "planned_calls": snapshot.planned_calls,
-        "attempted_calls": snapshot.attempted_calls,
-        "resumed_calls": snapshot.resumed_calls,
-        "successful_calls": snapshot.successful_calls,
-        "error_calls": snapshot.error_calls,
-        "skipped_calls": snapshot.skipped_calls,
+        'planned_calls': snapshot.planned_calls,
+        'attempted_calls': snapshot.attempted_calls,
+        'resumed_calls': snapshot.resumed_calls,
+        'successful_calls': snapshot.successful_calls,
+        'error_calls': snapshot.error_calls,
+        'skipped_calls': snapshot.skipped_calls,
     }
 
 
@@ -705,21 +698,21 @@ def run_readiness_evaluation(
 ) -> dict[str, object]:
     """Run the RED/GREEN readiness pair through the shared controller."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    red_root = Path(tempfile.mkdtemp(prefix="skill-readiness-red-"))
+    red_root = Path(tempfile.mkdtemp(prefix='skill-readiness-red-'))
     green_root: Path | None = None
     summaries: dict[str, CaseSummary] = {}
-    digest = hashlib.sha256((candidate / "SKILL.md").read_bytes()).hexdigest()
+    digest = hashlib.sha256((candidate / 'SKILL.md').read_bytes()).hexdigest()
     try:
-        green_root = Path(tempfile.mkdtemp(prefix="skill-readiness-green-"))
-        (red_root / ".claude").mkdir()
-        (green_root / ".claude" / "skills").mkdir(parents=True)
+        green_root = Path(tempfile.mkdtemp(prefix='skill-readiness-green-'))
+        (red_root / '.claude').mkdir()
+        (green_root / '.claude' / 'skills').mkdir(parents=True)
         create_fixture(red_root)
         create_fixture(green_root)
         copy_candidate_skill(candidate, green_root)
 
         for label, root, kind in (
-            ("red", red_root, "readiness:red"),
-            ("green", green_root, "readiness:green"),
+            ('red', red_root, 'readiness:red'),
+            ('green', green_root, 'readiness:green'),
         ):
             case_dir = output_dir / label
             case_dir.mkdir(parents=True, exist_ok=True)
@@ -730,30 +723,30 @@ def run_readiness_evaluation(
                 skill_name=candidate.name,
                 skill_content_sha256=digest,
                 model=model,
-                claude_version="unknown",
-                distractor_sha256="",
+                claude_version='unknown',
+                distractor_sha256='',
             )
             try:
                 raw_run_data = run_claude(
                     root,
-                    case_dir / "transcript.jsonl",
-                    case_dir / "stderr.txt",
+                    case_dir / 'transcript.jsonl',
+                    case_dir / 'stderr.txt',
                     prompt_text=TASK_PROMPT,
                     control=control,
                     spec=spec,
                 )
-            except (RuntimeError, ValueError):
+            except RuntimeError, ValueError:
                 break
             run_data = _normalize_run_data(raw_run_data)
             save_case_files(root, case_dir)
             summaries[label] = summarize_case(label, root, run_data)
 
-        if "red" in summaries and "green" in summaries:
-            write_report(output_dir, summaries["red"], summaries["green"])
+        if 'red' in summaries and 'green' in summaries:
+            write_report(output_dir, summaries['red'], summaries['green'])
         return {
-            "status": "complete" if len(summaries) == 2 else "partial",
-            "summaries": summaries,
-            "execution": _snapshot_dict(control),
+            'status': 'complete' if len(summaries) == 2 else 'partial',
+            'summaries': summaries,
+            'execution': _snapshot_dict(control),
         }
     finally:
         cleanup_tree(red_root)
@@ -763,12 +756,16 @@ def run_readiness_evaluation(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--candidate-skill", default=".", help="Path to candidate skill directory")
-    parser.add_argument("--output-dir", required=True, help="Directory for evidence artifacts")
-    parser.add_argument("--model", required=True, help="Explicit versioned Claude model ID")
-    parser.add_argument("--max-model-calls", type=int, required=True, help="Maximum live model calls")
-    parser.add_argument("--checkpoint", default=None, help="Append-only JSONL checkpoint path")
-    parser.add_argument("--deadline-seconds", type=float, default=None, help="Stop after this many seconds")
+    parser.add_argument('--candidate-skill', default='.', help='Path to candidate skill directory')
+    parser.add_argument('--output-dir', required=True, help='Directory for evidence artifacts')
+    parser.add_argument('--model', required=True, help='Explicit versioned Claude model ID')
+    parser.add_argument(
+        '--max-model-calls', type=int, required=True, help='Maximum live model calls'
+    )
+    parser.add_argument('--checkpoint', default=None, help='Append-only JSONL checkpoint path')
+    parser.add_argument(
+        '--deadline-seconds', type=float, default=None, help='Stop after this many seconds'
+    )
     args = parser.parse_args()
 
     try:
@@ -776,9 +773,9 @@ def main() -> None:
     except (FileNotFoundError, NotADirectoryError) as exc:
         parser.error(str(exc))
     if args.max_model_calls <= 0:
-        parser.error("max-model-calls must be positive")
+        parser.error('max-model-calls must be positive')
     if args.deadline_seconds is not None and args.deadline_seconds <= 0:
-        parser.error("deadline-seconds must be positive")
+        parser.error('deadline-seconds must be positive')
     try:
         model = validate_model_id(args.model)
     except ValueError as exc:
@@ -791,9 +788,9 @@ def main() -> None:
         deadline_seconds=args.deadline_seconds,
     )
     result = run_readiness_evaluation(candidate, output_dir, control, model)
-    (output_dir / "summary.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    (output_dir / 'summary.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
     print(json.dumps(result, indent=2))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

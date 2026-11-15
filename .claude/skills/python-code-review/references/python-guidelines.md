@@ -58,18 +58,19 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+
 def read_config(path: Path) -> dict[str, object] | None:
     """Read a JSON object; return None for missing or invalid JSON files."""
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding='utf-8'))
     except FileNotFoundError:
-        logger.warning("Configuration file not found: %s", path)
+        logger.warning('Configuration file not found: %s', path)
         return None
     except json.JSONDecodeError as exc:
-        logger.error("Invalid JSON in %s: %s", path, exc)
+        logger.error('Invalid JSON in %s: %s', path, exc)
         return None
     if not isinstance(data, dict):
-        raise ValueError("Expected a JSON object at the root")
+        raise ValueError('Expected a JSON object at the root')
     return data
 ```
 
@@ -92,9 +93,7 @@ def get_user(id):
 Good:
 
 ```python
-def get_user(
-    user_id: int, users: dict[int, dict[str, object]]
-) -> dict[str, object] | None:
+def get_user(user_id: int, users: dict[int, dict[str, object]]) -> dict[str, object] | None:
     """Return a user record when the ID exists."""
     return users.get(user_id)
 ```
@@ -123,11 +122,13 @@ Good:
 ```python
 from dataclasses import dataclass, field
 
+
 @dataclass
 class User:
     id: int
     name: str
     email: str
+
 
 @dataclass(frozen=True)
 class Config:
@@ -149,13 +150,13 @@ Bad when a simple collection is all the loop computes:
 ```python
 squares = []
 for number in range(10):
-    squares.append(number ** 2)
+    squares.append(number**2)
 ```
 
 Good:
 
 ```python
-squares = [number ** 2 for number in range(10)]
+squares = [number**2 for number in range(10)]
 evens = [number for number in range(20) if number % 2 == 0]
 matrix = [[i * j for j in range(3)] for i in range(3)]
 ```
@@ -172,7 +173,7 @@ closes a managed file even when an exception occurs.
 Bad:
 
 ```python
-f = open("file.txt")
+f = open('file.txt')
 data = f.read()
 f.close()
 ```
@@ -182,11 +183,12 @@ Good:
 ```python
 from pathlib import Path
 
+
 def uppercase_small_file(source: Path, destination: Path) -> None:
     """Uppercase a small UTF-8 file; overwrites destination."""
-    with source.open("r", encoding="utf-8") as infile:
+    with source.open('r', encoding='utf-8') as infile:
         data = infile.read()
-    with destination.open("w", encoding="utf-8") as outfile:
+    with destination.open('w', encoding='utf-8') as outfile:
         outfile.write(data.upper())
 ```
 
@@ -205,11 +207,12 @@ lines; projects often explicitly choose 88 or another limit.
 Bad:
 
 ```python
-def CalculateTotal(itemPrice,qty):
-  return itemPrice*qty
+def CalculateTotal(itemPrice, qty):
+    return itemPrice * qty
+
 
 class user_account:
-  pass
+    pass
 ```
 
 Good:
@@ -257,12 +260,12 @@ def normalize_email(address: str) -> str:
         ValueError: If the trimmed address is empty.
 
     Example:
-        >>> normalize_email(" TEST@Example.com ")
+        >>> normalize_email(' TEST@Example.com ')
         'test@example.com'
     """
     cleaned = address.strip()
     if not cleaned:
-        raise ValueError("Email address must be nonempty")
+        raise ValueError('Email address must be nonempty')
     return cleaned.lower()
 ```
 
@@ -281,7 +284,8 @@ from collections import Counter
 from collections.abc import Hashable
 from typing import TypeVar
 
-T = TypeVar("T", bound=Hashable)
+T = TypeVar('T', bound=Hashable)
+
 
 def find_duplicates(items: list[T]) -> list[T]:
     """Return repeated hashable values once, in first-occurrence order.
@@ -289,7 +293,7 @@ def find_duplicates(items: list[T]) -> list[T]:
     Example:
         >>> find_duplicates([1, 2, 2, 3, 3, 3])
         [2, 3]
-        >>> find_duplicates(["a", "b", "a", "c"])
+        >>> find_duplicates(['a', 'b', 'a', 'c'])
         ['a']
     """
     counts = Counter(items)

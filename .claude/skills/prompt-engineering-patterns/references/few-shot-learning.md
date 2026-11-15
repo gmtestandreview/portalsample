@@ -16,6 +16,7 @@ Select examples most similar to the input query using embedding-based retrieval.
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
+
 class SemanticExampleSelector:
     def __init__(self, examples, model_name='all-MiniLM-L6-v2'):
         self.model = SentenceTransformer(model_name)
@@ -37,6 +38,7 @@ Maximize coverage of different patterns and edge cases.
 
 ```python
 from sklearn.cluster import KMeans
+
 
 class DiversityExampleSelector:
     def __init__(self, examples, model_name='all-MiniLM-L6-v2'):
@@ -110,20 +112,14 @@ All examples should follow identical formatting:
 ```python
 # Good: Consistent format
 examples = [
-    {
-        "input": "What is the capital of France?",
-        "output": "Paris"
-    },
-    {
-        "input": "What is the capital of Germany?",
-        "output": "Berlin"
-    }
+    {'input': 'What is the capital of France?', 'output': 'Paris'},
+    {'input': 'What is the capital of Germany?', 'output': 'Berlin'},
 ]
 
 # Bad: Inconsistent format
 examples = [
-    "Q: What is the capital of France? A: Paris",
-    {"question": "What is the capital of Germany?", "answer": "Berlin"}
+    'Q: What is the capital of France? A: Paris',
+    {'question': 'What is the capital of Germany?', 'answer': 'Berlin'},
 ]
 ```
 
@@ -133,15 +129,12 @@ Ensure examples demonstrate the exact task you want the model to perform:
 
 ```python
 # Good: Clear input-output relationship
-example = {
-    "input": "Sentiment: The movie was terrible and boring.",
-    "output": "Negative"
-}
+example = {'input': 'Sentiment: The movie was terrible and boring.', 'output': 'Negative'}
 
 # Bad: Ambiguous relationship
 example = {
-    "input": "The movie was terrible and boring.",
-    "output": "This review expresses negative sentiment toward the film."
+    'input': 'The movie was terrible and boring.',
+    'output': 'This review expresses negative sentiment toward the film.',
 }
 ```
 
@@ -152,13 +145,11 @@ Include examples spanning the expected difficulty range:
 ```python
 examples = [
     # Simple case
-    {"input": "2 + 2", "output": "4"},
-
+    {'input': '2 + 2', 'output': '4'},
     # Moderate case
-    {"input": "15 * 3 + 8", "output": "53"},
-
+    {'input': '15 * 3 + 8', 'output': '53'},
     # Complex case
-    {"input": "(12 + 8) * 3 - 15 / 5", "output": "57"}
+    {'input': '(12 + 8) * 3 - 15 / 5', 'output': '57'},
 ]
 ```
 
@@ -192,9 +183,9 @@ class TokenAwareSelector:
         candidates = self.rank_by_relevance(query)
 
         for example in candidates[:k]:
-            example_tokens = len(self.tokenizer.encode(
-                f"Input: {example['input']}\nOutput: {example['output']}\n\n"
-            ))
+            example_tokens = len(
+                self.tokenizer.encode(f'Input: {example['input']}\nOutput: {example['output']}\n\n')
+            )
 
             if total_tokens + example_tokens <= self.max_tokens:
                 selected.append(example)
@@ -212,16 +203,13 @@ class TokenAwareSelector:
 ```python
 edge_case_examples = [
     # Empty input
-    {"input": "", "output": "Please provide input text."},
-
+    {'input': '', 'output': 'Please provide input text.'},
     # Very long input (truncated in example)
-    {"input": "..." + "word " * 1000, "output": "Input exceeds maximum length."},
-
+    {'input': '...' + 'word ' * 1000, 'output': 'Input exceeds maximum length.'},
     # Ambiguous input
-    {"input": "bank", "output": "Ambiguous: Could refer to financial institution or river bank."},
-
+    {'input': 'bank', 'output': 'Ambiguous: Could refer to financial institution or river bank.'},
     # Invalid input
-    {"input": "!@#$%", "output": "Invalid input format. Please provide valid text."}
+    {'input': '!@#$%', 'output': 'Invalid input format. Please provide valid text.'},
 ]
 ```
 
@@ -231,12 +219,12 @@ edge_case_examples = [
 
 ```python
 def build_classification_prompt(examples, query, labels):
-    prompt = f"Classify the text into one of these categories: {', '.join(labels)}\n\n"
+    prompt = f'Classify the text into one of these categories: {', '.join(labels)}\n\n'
 
     for ex in examples:
-        prompt += f"Text: {ex['input']}\nCategory: {ex['output']}\n\n"
+        prompt += f'Text: {ex['input']}\nCategory: {ex['output']}\n\n'
 
-    prompt += f"Text: {query}\nCategory:"
+    prompt += f'Text: {query}\nCategory:'
     return prompt
 ```
 
@@ -244,12 +232,12 @@ def build_classification_prompt(examples, query, labels):
 
 ```python
 def build_extraction_prompt(examples, query):
-    prompt = "Extract structured information from the text.\n\n"
+    prompt = 'Extract structured information from the text.\n\n'
 
     for ex in examples:
-        prompt += f"Text: {ex['input']}\nExtracted: {json.dumps(ex['output'])}\n\n"
+        prompt += f'Text: {ex['input']}\nExtracted: {json.dumps(ex['output'])}\n\n'
 
-    prompt += f"Text: {query}\nExtracted:"
+    prompt += f'Text: {query}\nExtracted:'
     return prompt
 ```
 
@@ -257,12 +245,12 @@ def build_extraction_prompt(examples, query):
 
 ```python
 def build_transformation_prompt(examples, query):
-    prompt = "Transform the input according to the pattern shown in examples.\n\n"
+    prompt = 'Transform the input according to the pattern shown in examples.\n\n'
 
     for ex in examples:
-        prompt += f"Input: {ex['input']}\nOutput: {ex['output']}\n\n"
+        prompt += f'Input: {ex['input']}\nOutput: {ex['output']}\n\n'
 
-    prompt += f"Input: {query}\nOutput:"
+    prompt += f'Input: {query}\nOutput:'
     return prompt
 ```
 
@@ -276,7 +264,7 @@ def evaluate_example_quality(example, validation_set):
         'clarity': rate_clarity(example),  # 0-1 score
         'representativeness': calculate_similarity_to_validation(example, validation_set),
         'difficulty': estimate_difficulty(example),
-        'uniqueness': calculate_uniqueness(example, other_examples)
+        'uniqueness': calculate_uniqueness(example, other_examples),
     }
     return metrics
 ```
@@ -296,7 +284,7 @@ class ExampleSetTester:
             'set_a_accuracy': results_a['accuracy'],
             'set_b_accuracy': results_b['accuracy'],
             'winner': 'A' if results_a['accuracy'] > results_b['accuracy'] else 'B',
-            'improvement': abs(results_a['accuracy'] - results_b['accuracy'])
+            'improvement': abs(results_a['accuracy'] - results_b['accuracy']),
         }
 
     def evaluate_set(self, examples, test_queries):
@@ -318,6 +306,7 @@ Train a small model to predict which examples will be most effective:
 ```python
 from sklearn.ensemble import RandomForestClassifier
 
+
 class LearnedExampleSelector:
     def __init__(self):
         self.selector_model = RandomForestClassifier()
@@ -338,7 +327,7 @@ class LearnedExampleSelector:
             semantic_similarity(query, example['input']),
             len(example['input']),
             len(example['output']),
-            keyword_overlap(query, example['input'])
+            keyword_overlap(query, example['input']),
         ]
 
     def select(self, query, candidates, k=3):

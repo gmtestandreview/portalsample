@@ -2,6 +2,8 @@
   "include": ["scripts", "tests"],
   "exclude": ["**/node_modules", "**/__pycache__", "**/.venv"],
   "extraPaths": ["scripts"],
+  "venvPath": ".",
+  "venv": ".venv",
   "pythonVersion": "3.14",
   "typeCheckingMode": "strict"
 }

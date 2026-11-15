@@ -39,8 +39,8 @@ When invoked:
   system = f"You are a helpful assistant. The user's name is {user_input}."
 
   # [VALID]
-  system = "You are a helpful assistant."
-  user_message = f"My name is {user_input}. Please help me."
+  system = 'You are a helpful assistant.'
+  user_message = f'My name is {user_input}. Please help me.'
   ```
 
 - **Tool results injected into prompts without sanitization** — if a tool

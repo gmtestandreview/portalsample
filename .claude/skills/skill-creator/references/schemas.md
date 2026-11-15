@@ -124,8 +124,7 @@ summary.
 
 ## `evals.json`
 
-**Location:** `evals/evals.json`  
-**Schema:** `schemas/evals.schema.json`
+**Location:** `evals/evals.json` **Schema:** `schemas/evals.schema.json`
 
 Defines the frozen representative eval set for an iteration.
 
@@ -144,8 +143,8 @@ The JSON Schema validates individual IDs but cannot enforce uniqueness of the
 
 ## `eval_metadata.json`
 
-**Location:** `<eval-dir>/eval_metadata.json`  
-**Schema:** `schemas/eval-metadata.schema.json`
+**Location:** `<eval-dir>/eval_metadata.json` **Schema:**
+`schemas/eval-metadata.schema.json`
 
 Binds workspace evidence to the exact eval contract.
 
@@ -160,8 +159,7 @@ Rules:
 
 ## `history.json`
 
-**Location:** workspace root  
-**Schema:** `schemas/history.schema.json`
+**Location:** workspace root **Schema:** `schemas/history.schema.json`
 
 Tracks iteration lineage.
 
@@ -181,8 +179,7 @@ Those lineage constraints require semantic validation.
 
 ## `grading.json`
 
-**Location:** `<run-dir>/grading.json`  
-**Schema:** `schemas/grading.schema.json`
+**Location:** `<run-dir>/grading.json` **Schema:** `schemas/grading.schema.json`
 
 Contains run-level expectation verdicts.
 
@@ -223,8 +220,8 @@ evidence to add or replace it.
 
 ## `metrics.json`
 
-**Location:** `<run-dir>/outputs/metrics.json`  
-**Schema:** `schemas/metrics.schema.json`
+**Location:** `<run-dir>/outputs/metrics.json` **Schema:**
+`schemas/metrics.schema.json`
 
 Contains only executor-observed counts and sizes.
 
@@ -242,8 +239,7 @@ Rules:
 
 ## `timing.json`
 
-**Location:** `<run-dir>/timing.json`  
-**Schema:** `schemas/timing.schema.json`
+**Location:** `<run-dir>/timing.json` **Schema:** `schemas/timing.schema.json`
 
 Contains only runtime-observed token and timing data.
 
@@ -260,8 +256,8 @@ Rules:
 
 ## `benchmark.json`
 
-**Location:** iteration/benchmark output directory  
-**Schema:** `schemas/benchmark.schema.json`
+**Location:** iteration/benchmark output directory **Schema:**
+`schemas/benchmark.schema.json`
 
 Aggregates valid run-level grading and execution evidence.
 
@@ -301,8 +297,8 @@ Semantic checks required in code:
 
 ## `comparison.json`
 
-**Location:** `<grading-dir>/comparison-N.json`  
-**Schema:** `schemas/comparison.schema.json`
+**Location:** `<grading-dir>/comparison-N.json` **Schema:**
+`schemas/comparison.schema.json`
 
 Stores blind comparator output.
 
@@ -339,8 +335,8 @@ a deliberate schema change rather than silently emitting a new winner value.
 
 ## `analysis.json`
 
-**Location:** `<grading-dir>/analysis.json`  
-**Schema:** `schemas/analysis.schema.json`
+**Location:** `<grading-dir>/analysis.json` **Schema:**
+`schemas/analysis.schema.json`
 
 Stores post-hoc analysis after the comparison has been unblinded.
 
@@ -355,8 +351,7 @@ Rules:
 
 ## `feedback.json`
 
-**Location:** iteration workspace  
-**Schema:** `schemas/feedback.schema.json`
+**Location:** iteration workspace **Schema:** `schemas/feedback.schema.json`
 
 Stores explicit human review feedback.
 
@@ -398,15 +393,15 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-schema_dir = Path("references/schemas")
-schema = json.loads((schema_dir / "evals.schema.json").read_text(encoding="utf-8"))
-instance = json.loads(Path("evals/evals.json").read_text(encoding="utf-8"))
+schema_dir = Path('references/schemas')
+schema = json.loads((schema_dir / 'evals.schema.json').read_text(encoding='utf-8'))
+instance = json.loads(Path('evals/evals.json').read_text(encoding='utf-8'))
 
 registry = Registry()
-for path in schema_dir.glob("*.schema.json"):
-    resource_data = json.loads(path.read_text(encoding="utf-8"))
+for path in schema_dir.glob('*.schema.json'):
+    resource_data = json.loads(path.read_text(encoding='utf-8'))
     registry = registry.with_resource(
-        resource_data["$id"],
+        resource_data['$id'],
         Resource.from_contents(resource_data),
     )
 

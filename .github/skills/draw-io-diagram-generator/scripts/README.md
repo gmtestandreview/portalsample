@@ -6,8 +6,15 @@ project.
 ## Requirements
 
 - Python 3.8+
-- No external dependencies (uses standard library only: `xml.etree.ElementTree`,
-  `argparse`, `json`, `sys`, `pathlib`)
+- [`defusedxml`](https://pypi.org/project/defusedxml/) >= 0.7.1. It parses
+  untrusted `.drawio` files safely (the standard library `xml` parsers are
+  vulnerable to XXE and entity-expansion attacks). Install it with:
+
+  ```bash
+  python -m pip install -r .github/skills/draw-io-diagram-generator/scripts/requirements.txt
+  ```
+
+- Everything else is standard library (`argparse`, `sys`, `pathlib`, `uuid`)
 
 ## Scripts
 

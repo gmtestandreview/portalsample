@@ -12,10 +12,10 @@ def _writing_skills_dir():
 def test_description_covers_called_writing_skills_alias():
     props = read_properties(_writing_skills_dir())
 
-    assert "called writing skills" in props.description.lower()
+    assert 'called writing skills' in props.description.lower()
 
 
 def test_prompt_exposes_called_writing_skills_alias():
     result = to_prompt([_writing_skills_dir()])
 
-    assert "called writing skills" in result.lower()
+    assert 'called writing skills' in result.lower()

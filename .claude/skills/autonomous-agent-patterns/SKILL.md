@@ -54,14 +54,12 @@ class AgentLoop:
         self.history = []
 
     def run(self, task: str) -> str:
-        self.history.append({"role": "user", "content": task})
+        self.history.append({'role': 'user', 'content': task})
 
         for i in range(self.max_iterations):
             # Think: Get LLM response with tool options
             response = self.llm.chat(
-                messages=self.history,
-                tools=self._format_tools(),
-                tool_choice="auto"
+                messages=self.history, tools=self._format_tools(), tool_choice='auto'
             )
 
             # Decide: Check if agent wants to use a tool
@@ -72,15 +70,15 @@ class AgentLoop:
 
                     # Observe: Add result to history
                     self.history.append({
-                        "role": "tool",
-                        "tool_call_id": tool_call.id,
-                        "content": str(result)
+                        'role': 'tool',
+                        'tool_call_id': tool_call.id,
+                        'content': str(result),
                     })
             else:
                 # No more tool calls = task complete
                 return response.content
 
-        return "Max iterations reached"
+        return 'Max iterations reached'
 
     def _execute_tool(self, tool_call) -> Any:
         tool = self.tools[tool_call.name]
@@ -101,19 +99,19 @@ class MultiModelAgent:
 
     def __init__(self):
         self.models = {
-            "fast": "gpt-3.5-turbo",      # Quick decisions
-            "smart": "gpt-4-turbo",        # Complex reasoning
-            "code": "claude-3-sonnet",     # Code generation
+            'fast': 'gpt-3.5-turbo',  # Quick decisions
+            'smart': 'gpt-4-turbo',  # Complex reasoning
+            'code': 'claude-3-sonnet',  # Code generation
         }
 
     def select_model(self, task_type: str) -> str:
-        if task_type == "planning":
-            return self.models["fast"]
-        elif task_type == "analysis":
-            return self.models["smart"]
-        elif task_type == "code":
-            return self.models["code"]
-        return self.models["smart"]
+        if task_type == 'planning':
+            return self.models['fast']
+        elif task_type == 'analysis':
+            return self.models['smart']
+        elif task_type == 'code':
+            return self.models['code']
+        return self.models['smart']
 ```
 
 ---
@@ -130,41 +128,36 @@ class Tool:
     def schema(self) -> dict:
         """JSON Schema for the tool"""
         return {
-            "name": self.name,
-            "description": self.description,
-            "parameters": {
-                "type": "object",
-                "properties": self._get_parameters(),
-                "required": self._get_required()
-            }
+            'name': self.name,
+            'description': self.description,
+            'parameters': {
+                'type': 'object',
+                'properties': self._get_parameters(),
+                'required': self._get_required(),
+            },
         }
 
     def execute(self, **kwargs) -> ToolResult:
         """Execute the tool and return result"""
         raise NotImplementedError
 
+
 class ReadFileTool(Tool):
-    name = "read_file"
-    description = "Read the contents of a file from the filesystem"
+    name = 'read_file'
+    description = 'Read the contents of a file from the filesystem'
 
     def _get_parameters(self):
         return {
-            "path": {
-                "type": "string",
-                "description": "Absolute path to the file"
+            'path': {'type': 'string', 'description': 'Absolute path to the file'},
+            'start_line': {
+                'type': 'integer',
+                'description': 'Line to start reading from (1-indexed)',
             },
-            "start_line": {
-                "type": "integer",
-                "description": "Line to start reading from (1-indexed)"
-            },
-            "end_line": {
-                "type": "integer",
-                "description": "Line to stop reading at (inclusive)"
-            }
+            'end_line': {'type': 'integer', 'description': 'Line to stop reading at (inclusive)'},
         }
 
     def _get_required(self):
-        return ["path"]
+        return ['path']
 
     def execute(self, path: str, start_line: int = None, end_line: int = None) -> ToolResult:
         try:
@@ -172,17 +165,11 @@ class ReadFileTool(Tool):
                 lines = f.readlines()
 
             if start_line and end_line:
-                lines = lines[start_line-1:end_line]
+                lines = lines[start_line - 1 : end_line]
 
-            return ToolResult(
-                success=True,
-                output="".join(lines)
-            )
+            return ToolResult(success=True, output=''.join(lines))
         except FileNotFoundError:
-            return ToolResult(
-                success=False,
-                error=f"File not found: {path}"
-            )
+            return ToolResult(success=False, error=f'File not found: {path}')
 ```
 
 ### 2.2 Essential Agent Tools
@@ -190,31 +177,27 @@ class ReadFileTool(Tool):
 ```python
 CODING_AGENT_TOOLS = {
     # File operations
-    "read_file": "Read file contents",
-    "write_file": "Create or overwrite a file",
-    "edit_file": "Make targeted edits to a file",
-    "list_directory": "List files and folders",
-    "search_files": "Search for files by pattern",
-
+    'read_file': 'Read file contents',
+    'write_file': 'Create or overwrite a file',
+    'edit_file': 'Make targeted edits to a file',
+    'list_directory': 'List files and folders',
+    'search_files': 'Search for files by pattern',
     # Code understanding
-    "search_code": "Search for code patterns (grep)",
-    "get_definition": "Find function/class definition",
-    "get_references": "Find all references to a symbol",
-
+    'search_code': 'Search for code patterns (grep)',
+    'get_definition': 'Find function/class definition',
+    'get_references': 'Find all references to a symbol',
     # Terminal
-    "run_command": "Execute a shell command",
-    "read_output": "Read command output",
-    "send_input": "Send input to running command",
-
+    'run_command': 'Execute a shell command',
+    'read_output': 'Read command output',
+    'send_input': 'Send input to running command',
     # Browser (optional)
-    "open_browser": "Open URL in browser",
-    "click_element": "Click on page element",
-    "type_text": "Type text into input",
-    "screenshot": "Capture screenshot",
-
+    'open_browser': 'Open URL in browser',
+    'click_element': 'Click on page element',
+    'type_text': 'Type text into input',
+    'screenshot': 'Capture screenshot',
     # Context
-    "ask_user": "Ask the user a question",
-    "search_web": "Search the web for information"
+    'ask_user': 'Ask the user a question',
+    'search_web': 'Search the web for information',
 }
 ```
 
@@ -227,15 +210,11 @@ class EditFileTool(Tool):
     Uses search/replace pattern for reliable edits.
     """
 
-    name = "edit_file"
-    description = "Edit a file by replacing specific content"
+    name = 'edit_file'
+    description = 'Edit a file by replacing specific content'
 
     def execute(
-        self,
-        path: str,
-        search: str,
-        replace: str,
-        expected_occurrences: int = 1
+        self, path: str, search: str, replace: str, expected_occurrences: int = 1
     ) -> ToolResult:
         """
         Args:
@@ -252,14 +231,11 @@ class EditFileTool(Tool):
         if actual_occurrences != expected_occurrences:
             return ToolResult(
                 success=False,
-                error=f"Expected {expected_occurrences} occurrences, found {actual_occurrences}"
+                error=f'Expected {expected_occurrences} occurrences, found {actual_occurrences}',
             )
 
         if actual_occurrences == 0:
-            return ToolResult(
-                success=False,
-                error="Search text not found in file"
-            )
+            return ToolResult(success=False, error='Search text not found in file')
 
         # Apply edit
         new_content = content.replace(search, replace)
@@ -267,10 +243,7 @@ class EditFileTool(Tool):
         with open(path, 'w') as f:
             f.write(new_content)
 
-        return ToolResult(
-            success=True,
-            output=f"Replaced {actual_occurrences} occurrence(s)"
-        )
+        return ToolResult(success=True, output=f'Replaced {actual_occurrences} occurrence(s)')
 ```
 
 ---
@@ -282,34 +255,32 @@ class EditFileTool(Tool):
 ```python
 class PermissionLevel(Enum):
     # Fully automatic - no user approval needed
-    AUTO = "auto"
+    AUTO = 'auto'
 
     # Ask once per session
-    ASK_ONCE = "ask_once"
+    ASK_ONCE = 'ask_once'
 
     # Ask every time
-    ASK_EACH = "ask_each"
+    ASK_EACH = 'ask_each'
 
     # Never allow
-    NEVER = "never"
+    NEVER = 'never'
+
 
 PERMISSION_CONFIG = {
     # Low risk - can auto-approve
-    "read_file": PermissionLevel.AUTO,
-    "list_directory": PermissionLevel.AUTO,
-    "search_code": PermissionLevel.AUTO,
-
+    'read_file': PermissionLevel.AUTO,
+    'list_directory': PermissionLevel.AUTO,
+    'search_code': PermissionLevel.AUTO,
     # Medium risk - ask once
-    "write_file": PermissionLevel.ASK_ONCE,
-    "edit_file": PermissionLevel.ASK_ONCE,
-
+    'write_file': PermissionLevel.ASK_ONCE,
+    'edit_file': PermissionLevel.ASK_ONCE,
     # High risk - ask each time
-    "run_command": PermissionLevel.ASK_EACH,
-    "delete_file": PermissionLevel.ASK_EACH,
-
+    'run_command': PermissionLevel.ASK_EACH,
+    'delete_file': PermissionLevel.ASK_EACH,
     # Dangerous - never auto-approve
-    "sudo_command": PermissionLevel.NEVER,
-    "format_disk": PermissionLevel.NEVER
+    'sudo_command': PermissionLevel.NEVER,
+    'format_disk': PermissionLevel.NEVER,
 }
 ```
 
@@ -338,9 +309,7 @@ class ApprovalManager:
 
         # Show approval dialog
         approved = self.ui.show_approval_dialog(
-            tool=tool_name,
-            args=args,
-            risk_level=self._assess_risk(tool_name, args)
+            tool=tool_name, args=args, risk_level=self._assess_risk(tool_name, args)
         )
 
         if level == PermissionLevel.ASK_ONCE:
@@ -350,11 +319,11 @@ class ApprovalManager:
 
     def _assess_risk(self, tool_name: str, args: dict) -> str:
         """Analyze specific call for risk level"""
-        if tool_name == "run_command":
-            cmd = args.get("command", "")
-            if any(danger in cmd for danger in ["rm -rf", "sudo", "chmod"]):
-                return "HIGH"
-        return "MEDIUM"
+        if tool_name == 'run_command':
+            cmd = args.get('command', '')
+            if any(danger in cmd for danger in ['rm -rf', 'sudo', 'chmod']):
+                return 'HIGH'
+        return 'MEDIUM'
 ```
 
 ### 3.3 Sandboxing
@@ -367,8 +336,8 @@ class SandboxedExecution:
 
     def __init__(self, workspace_dir: str):
         self.workspace = workspace_dir
-        self.allowed_commands = ["npm", "python", "node", "git", "ls", "cat"]
-        self.blocked_paths = ["/etc", "/usr", "/bin", os.path.expanduser("~")]
+        self.allowed_commands = ['npm', 'python', 'node', 'git', 'ls', 'cat']
+        self.blocked_paths = ['/etc', '/usr', '/bin', os.path.expanduser('~')]
 
     def validate_path(self, path: str) -> bool:
         """Ensure path is within workspace"""
@@ -387,10 +356,7 @@ class SandboxedExecution:
 
     def execute_sandboxed(self, command: str) -> ToolResult:
         if not self.validate_command(command):
-            return ToolResult(
-                success=False,
-                error=f"Command not allowed: {command}"
-            )
+            return ToolResult(success=False, error=f'Command not allowed: {command}')
 
         # Execute in isolated environment
         result = subprocess.run(
@@ -401,14 +367,14 @@ class SandboxedExecution:
             timeout=30,
             env={
                 **os.environ,
-                "HOME": self.workspace,  # Isolate home directory
-            }
+                'HOME': self.workspace,  # Isolate home directory
+            },
         )
 
         return ToolResult(
             success=result.returncode == 0,
             output=result.stdout.decode(),
-            error=result.stderr.decode() if result.returncode != 0 else None
+            error=result.stderr.decode() if result.returncode != 0 else None,
         )
 ```
 
@@ -444,35 +410,29 @@ class BrowserTool:
 
         return ToolResult(
             success=True,
-            output=f"Loaded: {title}",
-            metadata={
-                "screenshot": base64.b64encode(screenshot).decode(),
-                "url": self.page.url
-            }
+            output=f'Loaded: {title}',
+            metadata={'screenshot': base64.b64encode(screenshot).decode(), 'url': self.page.url},
         )
 
     async def click(self, selector: str) -> ToolResult:
         """Click on an element"""
         try:
             await self.page.click(selector, timeout=5000)
-            await self.page.wait_for_load_state("networkidle")
+            await self.page.wait_for_load_state('networkidle')
 
             screenshot = await self.page.screenshot()
             return ToolResult(
                 success=True,
-                output=f"Clicked: {selector}",
-                metadata={"screenshot": base64.b64encode(screenshot).decode()}
+                output=f'Clicked: {selector}',
+                metadata={'screenshot': base64.b64encode(screenshot).decode()},
             )
         except TimeoutError:
-            return ToolResult(
-                success=False,
-                error=f"Element not found: {selector}"
-            )
+            return ToolResult(success=False, error=f'Element not found: {selector}')
 
     async def type_text(self, selector: str, text: str) -> ToolResult:
         """Type text into an input"""
         await self.page.fill(selector, text)
-        return ToolResult(success=True, output=f"Typed into {selector}")
+        return ToolResult(success=True, output=f'Typed into {selector}')
 
     async def get_page_content(self) -> ToolResult:
         """Get accessible text content of the page"""
@@ -518,11 +478,14 @@ class VisualAgent:
 
         response = self.llm.chat([
             {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Describe this webpage. List all interactive elements you see."},
-                    {"type": "image", "data": screenshot}
-                ]
+                'role': 'user',
+                'content': [
+                    {
+                        'type': 'text',
+                        'text': 'Describe this webpage. List all interactive elements you see.',
+                    },
+                    {'type': 'image', 'data': screenshot},
+                ],
             }
         ])
 
@@ -535,24 +498,24 @@ class VisualAgent:
         # Ask vision model to find element
         response = self.llm.chat([
             {
-                "role": "user",
-                "content": [
+                'role': 'user',
+                'content': [
                     {
-                        "type": "text",
-                        "text": f"""
+                        'type': 'text',
+                        'text': f"""
                         Find the element matching: "{description}"
                         Return the approximate coordinates as JSON: {{"x": number, "y": number}}
-                        """
+                        """,
                     },
-                    {"type": "image", "data": screenshot}
-                ]
+                    {'type': 'image', 'data': screenshot},
+                ],
             }
         ])
 
         coords = json.loads(response.content)
-        await self.browser.page.mouse.click(coords["x"], coords["y"])
+        await self.browser.page.mouse.click(coords['x'], coords['y'])
 
-        return ToolResult(success=True, output=f"Clicked at ({coords['x']}, {coords['y']})")
+        return ToolResult(success=True, output=f'Clicked at ({coords['x']}, {coords['y']})')
 ```
 
 ---
@@ -577,11 +540,7 @@ class ContextManager:
         with open(path, 'r') as f:
             content = f.read()
 
-        self.context.append({
-            "type": "file",
-            "path": path,
-            "content": content
-        })
+        self.context.append({'type': 'file', 'path': path, 'content': content})
 
     def add_folder(self, path: str, max_files: int = 20) -> None:
         """@folder - Add all files in folder"""
@@ -595,31 +554,24 @@ class ContextManager:
         response = requests.get(url)
         content = html_to_markdown(response.text)
 
-        self.context.append({
-            "type": "url",
-            "url": url,
-            "content": content
-        })
+        self.context.append({'type': 'url', 'url': url, 'content': content})
 
     def add_problems(self, diagnostics: list) -> None:
         """@problems - Add IDE diagnostics"""
-        self.context.append({
-            "type": "diagnostics",
-            "problems": diagnostics
-        })
+        self.context.append({'type': 'diagnostics', 'problems': diagnostics})
 
     def format_for_prompt(self) -> str:
         """Format all context for LLM prompt"""
         parts = []
         for item in self.context:
-            if item["type"] == "file":
-                parts.append(f"## File: {item['path']}\n```\n{item['content']}\n```")
-            elif item["type"] == "url":
-                parts.append(f"## URL: {item['url']}\n{item['content']}")
-            elif item["type"] == "diagnostics":
-                parts.append(f"## Problems:\n{json.dumps(item['problems'], indent=2)}")
+            if item['type'] == 'file':
+                parts.append(f'## File: {item['path']}\n```\n{item['content']}\n```')
+            elif item['type'] == 'url':
+                parts.append(f'## URL: {item['url']}\n{item['content']}')
+            elif item['type'] == 'diagnostics':
+                parts.append(f'## Problems:\n{json.dumps(item['problems'], indent=2)}')
 
-        return "\n\n".join(parts)
+        return '\n\n'.join(parts)
 ````
 
 ### 5.2 Checkpoint/Resume
@@ -637,15 +589,15 @@ class CheckpointManager:
     def save_checkpoint(self, session_id: str, state: dict) -> str:
         """Save current agent state"""
         checkpoint = {
-            "timestamp": datetime.now().isoformat(),
-            "session_id": session_id,
-            "history": state["history"],
-            "context": state["context"],
-            "workspace_state": self._capture_workspace(state["workspace"]),
-            "metadata": state.get("metadata", {})
+            'timestamp': datetime.now().isoformat(),
+            'session_id': session_id,
+            'history': state['history'],
+            'context': state['context'],
+            'workspace_state': self._capture_workspace(state['workspace']),
+            'metadata': state.get('metadata', {}),
         }
 
-        path = os.path.join(self.storage_dir, f"{session_id}.json")
+        path = os.path.join(self.storage_dir, f'{session_id}.json')
         with open(path, 'w') as f:
             json.dump(checkpoint, f, indent=2)
 
@@ -657,18 +609,18 @@ class CheckpointManager:
             checkpoint = json.load(f)
 
         return {
-            "history": checkpoint["history"],
-            "context": checkpoint["context"],
-            "workspace": self._restore_workspace(checkpoint["workspace_state"]),
-            "metadata": checkpoint["metadata"]
+            'history': checkpoint['history'],
+            'context': checkpoint['context'],
+            'workspace': self._restore_workspace(checkpoint['workspace_state']),
+            'metadata': checkpoint['metadata'],
         }
 
     def _capture_workspace(self, workspace: str) -> dict:
         """Capture relevant workspace state"""
         # Git status, file hashes, etc.
         return {
-            "git_ref": subprocess.getoutput(f"cd {workspace} && git rev-parse HEAD"),
-            "git_dirty": subprocess.getoutput(f"cd {workspace} && git status --porcelain")
+            'git_ref': subprocess.getoutput(f'cd {workspace} && git rev-parse HEAD'),
+            'git_dirty': subprocess.getoutput(f'cd {workspace} && git status --porcelain'),
         }
 ```
 
@@ -680,6 +632,7 @@ class CheckpointManager:
 
 ```python
 from mcp import Server, Tool
+
 
 class MCPAgent:
     """
@@ -700,10 +653,7 @@ class MCPAgent:
         # Discover tools
         tools = server.list_tools()
         for tool in tools:
-            self.available_tools[tool.name] = {
-                "server": name,
-                "schema": tool.schema
-            }
+            self.available_tools[tool.name] = {'server': name, 'schema': tool.schema}
 
     async def create_tool(self, description: str) -> str:
         """
@@ -721,15 +671,15 @@ class MCPAgent:
 
         # Save and install
         server_name = self._extract_name(description)
-        path = f"./mcp_servers/{server_name}/server.py"
+        path = f'./mcp_servers/{server_name}/server.py'
 
         with open(path, 'w') as f:
             f.write(code)
 
         # Hot-reload
-        self.connect_server(server_name, {"path": path})
+        self.connect_server(server_name, {'path': path})
 
-        return f"Created tool: {server_name}"
+        return f'Created tool: {server_name}'
 ```
 
 ---

@@ -17,8 +17,9 @@ def zero_shot_cot(query):
 
 Let's think step by step:"""
 
+
 # Example
-query = "If a train travels 60 mph for 2.5 hours, how far does it go?"
+query = 'If a train travels 60 mph for 2.5 hours, how far does it go?'
 prompt = zero_shot_cot(query)
 
 # Model output:
@@ -63,15 +64,14 @@ Generate multiple reasoning paths and take the majority vote:
 import openai
 from collections import Counter
 
+
 def self_consistency_cot(query, n=5, temperature=0.7):
     prompt = f"{query}\n\nLet's think step by step:"
 
     responses = []
     for _ in range(n):
         response = openai.ChatCompletion.create(
-            model="gpt-5",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=temperature
+            model='gpt-5', messages=[{'role': 'user', 'content': prompt}], temperature=temperature
         )
         responses.append(extract_final_answer(response))
 
@@ -82,7 +82,7 @@ def self_consistency_cot(query, n=5, temperature=0.7):
     return {
         'answer': final_answer,
         'confidence': answer_counts[final_answer] / n,
-        'all_responses': responses
+        'all_responses': responses,
     }
 ```
 
@@ -105,7 +105,7 @@ Subproblems:"""
 
     # Stage 2: Sequential solving
     solutions = []
-    context = ""
+    context = ''
 
     for subproblem in subproblems:
         solve_prompt = f"""{context}
@@ -116,7 +116,7 @@ Solve this subproblem:
 Solution:"""
         solution = get_llm_response(solve_prompt)
         solutions.append(solution)
-        context += f"\n\nPreviously solved: {subproblem}\nSolution: {solution}"
+        context += f'\n\nPreviously solved: {subproblem}\nSolution: {solution}'
 
     # Stage 3: Final integration
     final_prompt = f"""Given these solutions to subproblems:
@@ -156,7 +156,7 @@ class TreeOfThought:
 
         return best_path
 
-    def generate_thoughts(self, problem, context="", depth=0):
+    def generate_thoughts(self, problem, context='', depth=0):
         prompt = f"""Problem: {problem}
 {context}
 
@@ -212,7 +212,7 @@ Verification:"""
     verification = get_llm_response(verification_prompt)
 
     # Step 3: Revise if needed
-    if "incorrect" in verification.lower() or "error" in verification.lower():
+    if 'incorrect' in verification.lower() or 'error' in verification.lower():
         revision_prompt = f"""The previous solution had errors:
 {verification}
 
@@ -325,10 +325,7 @@ class ReasoningCache:
         problem_embedding = embed(problem)
 
         for cached_problem, reasoning in self.cache.items():
-            similarity = cosine_similarity(
-                problem_embedding,
-                embed(cached_problem)
-            )
+            similarity = cosine_similarity(problem_embedding, embed(cached_problem))
             if similarity > threshold:
                 return reasoning
 
@@ -365,7 +362,7 @@ def evaluate_cot_quality(reasoning_chain):
         'completeness': check_all_steps_present(reasoning_chain),
         'correctness': verify_final_answer(reasoning_chain),
         'efficiency': count_unnecessary_steps(reasoning_chain),
-        'clarity': rate_explanation_clarity(reasoning_chain)
+        'clarity': rate_explanation_clarity(reasoning_chain),
     }
     return metrics
 ```
