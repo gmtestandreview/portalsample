@@ -40,6 +40,7 @@ jobs:
       agent-tooling: ${{ steps.scope.outputs.agent-tooling }}
       date-logic: ${{ steps.scope.outputs.date-logic }}
       deps: ${{ steps.scope.outputs.deps }}
+      webapp-testing: ${{ steps.scope.outputs.webapp-testing }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -57,6 +58,14 @@ jobs:
           else
             echo "agent-tooling=false" >> "$GITHUB_OUTPUT"
             echo "No scripts/, templates/, or tests/hooks/ changes - agent-tooling steps will be skipped."
+          fi
+
+          # webapp-testing server launcher (process lifecycle differs per OS).
+          if match '^(\.claude/skills/webapp-testing/|\.github/workflows/pr\.yml$)'; then
+            echo "webapp-testing=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "webapp-testing=false" >> "$GITHUB_OUTPUT"
+            echo "No webapp-testing changes - webapp-testing-python will be skipped."
           fi
 
           # dateOnly.ts local-vs-UTC split and its consumers / tests.
@@ -259,6 +268,36 @@ jobs:
           path: reports/vitest/date-sydney-junit.xml
           if-no-files-found: error
           retention-days: 14
+
+  # with_server.py starts and kills process trees with OS-specific code
+  # (taskkill on Windows, process groups on POSIX), so the suite must run on both.
+  # Standard library only: no dependency install and no third-party actions.
+  webapp-testing-python:
+    name: webapp-testing-python-${{ matrix.os }}
+    needs: detect-changes
+    if: needs.detect-changes.outputs.webapp-testing == 'true'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: python3
+          - os: windows-latest
+            python: python
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Run with_server.py unit tests
+        env:
+          PYTHON: ${{ matrix.python }}
+        run: |
+          "$PYTHON" --version
+          "$PYTHON" -W error::ResourceWarning -I -m unittest discover \
+            -s .claude/skills/webapp-testing/scripts/tests -v 2>&1 | tee unittest.log
+          # unittest exits 0 when discovery finds nothing on older Pythons.
+          grep -Eq '^Ran [1-9][0-9]* tests?' unittest.log
 
   # Each long-running test environment remains its own required status. Keeping
   # unit, Storybook Browser Mode, and Playwright separate preserves attribution

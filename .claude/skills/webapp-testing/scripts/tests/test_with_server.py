@@ -99,13 +99,7 @@ class StartServerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as root:
             marker = Path(root) / "pwned"
             script = "import sys; print(sys.argv[1])"
-            with tempfile.TemporaryFile() as log:
-                process = ws.start_server(
-                    f'"{sys.executable}" -c "{script}" "x; touch {marker}"', base=root, log=log
-                )
-                process.wait(timeout=20)
-                log.seek(0)
-                out = log.read()
+            out = run_for_output(f'"{sys.executable}" -c "{script}" "x; touch {marker}"', root)
             self.assertFalse(marker.exists())
             self.assertIn(b"touch", out)
 
@@ -226,12 +220,78 @@ class PipeDrainTests(unittest.TestCase):
                     if stream is not None:
                         stream.close()
 
-    def test_output_is_kept_in_the_log_for_diagnostics(self) -> None:
-        with tempfile.TemporaryFile() as log:
-            process = ws.start_server(f'"{sys.executable}" -c "print(12345)"', log=log)
+    def test_output_is_kept_in_the_tail_for_diagnostics(self) -> None:
+        self.assertIn(b"12345", run_for_output(f'"{sys.executable}" -c "print(12345)"'))
+
+
+class BoundedOutputTests(unittest.TestCase):
+    LIMIT = 4096
+
+    def _noisy(self, root: str, megabytes: int) -> tuple[str, Path]:
+        script = Path(root) / "flood.py"
+        done = Path(root) / "done"
+        script.write_text(
+            "import sys, pathlib, time\n"
+            "line = 'y' * 1023 + '\\n'\n"
+            f"for _ in range({megabytes} * 1024):\n"
+            "    sys.stdout.write(line)\n"
+            "    sys.stderr.write(line)\n"
+            "sys.stdout.write('LAST-LINE-MARKER\\n'); sys.stdout.flush()\n"
+            "pathlib.Path(sys.argv[1]).write_text('done')\n"
+            "time.sleep(60)\n",
+            encoding="utf-8",
+        )
+        return f'"{sys.executable}" "{script}" "{done}"', done
+
+    def test_high_volume_output_keeps_only_a_bounded_tail(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            command, done = self._noisy(root, megabytes=8)
+            tail = ws.OutputTail(limit=self.LIMIT)
+            process = ws.start_server(command, tail=tail)
+            try:
+                deadline = time.time() + 60
+                while not done.exists() and time.time() < deadline:
+                    time.sleep(0.1)
+                self.assertTrue(done.exists(), "server blocked on output")
+                time.sleep(0.3)
+                data = tail.read()
+                self.assertLessEqual(len(data), self.LIMIT)
+                self.assertIn(b"LAST-LINE-MARKER", data)
+            finally:
+                ws.stop_server(process)
+                tail.close()
+
+    def test_no_output_file_is_created_for_server_output(self) -> None:
+        with tempfile.TemporaryDirectory() as scratch, mock.patch.object(
+            tempfile, "tempdir", scratch
+        ):
+            tail = ws.OutputTail(limit=self.LIMIT)
+            process = ws.start_server(f'"{sys.executable}" -c "print(1)"', tail=tail)
             process.wait(timeout=20)
-            log.seek(0)
-            self.assertIn(b"12345", log.read())
+            tail.close()
+            self.assertEqual(os.listdir(scratch), [])
+
+    def test_close_releases_stream_and_thread(self) -> None:
+        tail = ws.OutputTail(limit=self.LIMIT)
+        process = ws.start_server(f'"{sys.executable}" -c "print(7)"', tail=tail)
+        process.wait(timeout=20)
+        tail.close()
+        self.assertIn(b"7", tail.read())
+        assert process.stdout is not None
+        self.assertTrue(process.stdout.closed)
+
+    def test_small_limit_is_rejected(self) -> None:
+        with self.assertRaises(ValueError):
+            ws.OutputTail(limit=0)
+
+
+def run_for_output(command: str, base: str | None = None) -> bytes:
+    """Run `command` to completion and return its (bounded) combined output."""
+    tail = ws.OutputTail()
+    process = ws.start_server(command, base=base, tail=tail)
+    process.wait(timeout=20)
+    tail.close()
+    return tail.read()
 
 
 class ParserEdgeCaseTests(unittest.TestCase):
@@ -323,11 +383,7 @@ class ExecutableProvenanceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ws.start_server(f'"{shim}" "x&type nul>{marker}"', base=root)
             self.assertFalse(marker.exists())
-            with tempfile.TemporaryFile() as log:
-                process = ws.start_server(f'"{shim}" safe-arg', base=root, log=log)
-                process.wait(timeout=20)
-                log.seek(0)
-                out = log.read()
+            out = run_for_output(f'"{shim}" safe-arg', root)
             self.assertIn(b"got:safe-arg", out)
 
     @unittest.skipUnless(os.name == "nt", "Windows searches the current directory first")

@@ -17,17 +17,19 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import tempfile
-from typing import IO
+import contextlib
+import io
 import os
 import re
 import shlex
-import signal
 import shutil
+import signal
 import socket
 import subprocess
 import sys
+import threading
 import time
+from typing import IO, cast
 
 # Shell punctuation that must never reach an executed command. `&&` is the only
 # operator supported, and only to chain `cd DIR && ...` prefixes.
@@ -123,21 +125,66 @@ def prepare_argv(argv: list[str]) -> list[str]:
     return argv
 
 
+class OutputTail:
+    """Continuously drains a server's output, keeping only the last `limit` bytes.
+
+    Memory is bounded and nothing is written to disk, so a server that prints without
+    end can neither block on a full pipe nor exhaust disk space.
+    """
+
+    def __init__(self, limit: int = 65536) -> None:
+        if limit < 1:
+            raise ValueError("limit must be at least 1 byte")
+        self._limit = limit
+        self._buffer = bytearray()
+        self._lock = threading.Lock()
+        self._stream: IO[bytes] | None = None
+        self._thread: threading.Thread | None = None
+
+    def attach(self, stream: IO[bytes]) -> None:
+        self._stream = stream
+        self._thread = threading.Thread(target=self._pump, args=(stream,), daemon=True)
+        self._thread.start()
+
+    def _pump(self, stream: IO[bytes]) -> None:
+        # read1 returns as soon as any data is available; read(n) would wait for n bytes.
+        reader = cast(io.BufferedReader, stream)
+        try:
+            while chunk := reader.read1(8192):
+                with self._lock:
+                    self._buffer.extend(chunk)
+                    if len(self._buffer) > self._limit:
+                        del self._buffer[: len(self._buffer) - self._limit]
+        except (OSError, ValueError):
+            pass  # stream closed underneath us
+
+    def read(self) -> bytes:
+        with self._lock:
+            return bytes(self._buffer)
+
+    def close(self) -> None:
+        """Wait for end-of-output, then release the pipe. Safe to call repeatedly."""
+        if self._thread is not None:
+            self._thread.join(timeout=5)
+            # A surviving descendant can keep the pipe open; leave it to the daemon thread.
+            if not self._thread.is_alive() and self._stream is not None:
+                self._stream.close()
+
+
 def start_server(
-    command: str, base: str | None = None, log: IO[bytes] | None = None
+    command: str, base: str | None = None, tail: OutputTail | None = None
 ) -> subprocess.Popen[bytes]:
     """Start one server process directly (shell=False) from a validated command.
 
-    Output goes to `log` (stderr merged into stdout) or is discarded. It is never piped
-    to this process, because nothing drains a pipe and a chatty server would block once
-    the OS pipe buffer fills.
+    Output (stderr merged into stdout) is drained into `tail` when given, otherwise
+    discarded. It is never left in an unread pipe, which would block a chatty server.
     """
     cwd, argv = parse_server_command(command, base=base)
     argv = prepare_argv(argv)
-    output = log if log is not None else subprocess.DEVNULL
+    output = subprocess.PIPE if tail is not None else subprocess.DEVNULL
     # Own process group/session so stop_server can end the whole tree.
     if os.name == "nt":
-        return subprocess.Popen(
+        process = subprocess.Popen(
             argv,
             cwd=cwd,
             shell=False,
@@ -145,14 +192,18 @@ def start_server(
             stderr=subprocess.STDOUT,
             creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
         )
-    return subprocess.Popen(
-        argv,
-        cwd=cwd,
-        shell=False,
-        stdout=output,
-        stderr=subprocess.STDOUT,
-        start_new_session=True,
-    )
+    else:
+        process = subprocess.Popen(
+            argv,
+            cwd=cwd,
+            shell=False,
+            stdout=output,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+    if tail is not None and process.stdout is not None:
+        tail.attach(process.stdout)
+    return process
 
 
 def _taskkill_path() -> str:
@@ -174,10 +225,8 @@ def _kill_tree(process: subprocess.Popen[bytes]) -> None:
             check=False,
         )
     else:
-        try:
+        with contextlib.suppress(ProcessLookupError):
             os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
 
 
 def stop_server(process: subprocess.Popen[bytes]) -> None:
@@ -244,7 +293,7 @@ def main():
         servers.append({'cmd': cmd, 'port': port})
 
     server_processes = []
-    logs = []
+    tails = []
 
     try:
         # Start all servers
@@ -252,18 +301,16 @@ def main():
             print(f"Starting server {i+1}/{len(servers)}: {server['cmd']}")
 
             # No shell: `cd DIR &&` prefixes become cwd; other operators are rejected.
-            # Output goes to a temp file (never an undrained pipe) kept for diagnostics.
-            log = tempfile.TemporaryFile()
-            logs.append(log)
-            process = start_server(server['cmd'], log=log)
+            # Output is drained into a bounded in-memory tail kept for diagnostics.
+            tail = OutputTail()
+            tails.append(tail)
+            process = start_server(server['cmd'], tail=tail)
             server_processes.append(process)
 
             # Wait for this server to be ready
             print(f"Waiting for server on port {server['port']}...")
             if not is_server_ready(server['port'], timeout=args.timeout):
-                log.seek(0, os.SEEK_END)
-                log.seek(max(0, log.tell() - 2000))
-                print(log.read().decode("utf-8", errors="replace"))
+                print(tail.read()[-2000:].decode("utf-8", errors="replace"))
                 raise RuntimeError(f"Server failed to start on port {server['port']} within {args.timeout}s")
 
             print(f"Server ready on port {server['port']}")
@@ -281,8 +328,8 @@ def main():
         for i, process in enumerate(server_processes):
             stop_server(process)
             print(f"Server {i+1} stopped")
-        for log in logs:
-            log.close()
+        for tail in tails:
+            tail.close()
         print("All servers stopped")
 
 
