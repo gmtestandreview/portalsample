@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Validate the checked-in A Team roster and Codex project installation.
 
 Run: python scripts/roster.py

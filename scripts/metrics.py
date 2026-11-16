@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.14
 # scripts/metrics.py
 """Shared metrics module for A Team.
 Append-only log: .agent-sync/metrics/YYYY-MM-DD.log

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Cross-repo pack drift checker for A Team.
 
 Compares packs.json (the local truth for the builder-* domain packs)

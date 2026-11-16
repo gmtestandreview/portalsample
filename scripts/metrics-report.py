@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.14
 # scripts/metrics-report.py
 """A Team metrics report CLI.
 Usage: python metrics-report.py [--days 7]

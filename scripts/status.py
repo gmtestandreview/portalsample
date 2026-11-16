@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.14
 # scripts/status.py
 """A Team status line script.
 Reads: .agent-sync/TEAM.md, current-task.json, watcher.pid
@@ -11,7 +12,7 @@ import json
 import re
 import sys
 from contextlib import suppress
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from process_utils import pid_is_running

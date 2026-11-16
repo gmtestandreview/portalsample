@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """A Team session export — Stop hook.
 Converts the session transcript (.jsonl) to a readable JSON array in
 .agent-sync/logs/chat-YYYY-MM-DD-{session_id[:8]}.json for post-session debugging.
