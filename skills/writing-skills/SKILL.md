@@ -115,10 +115,17 @@ criteria. Planning is read-only unless implementation is authorized.
 
 ### 5. Score
 
-For scored audits, load `references/best-practices-evaluations.md` and
-`references/audit-scoring.md`. Classify artifact completeness before scoring.
-Use the current 100-point rubric and normalize only genuine `N/A` criteria. A
-numeric score never overrides a blocker.
+Classify artifact completeness, then **freeze numeric authority and scope**
+before assigning any points. A user-supplied rubric governs every artifact/file
+within its stated scope; preserve its weights, anchors and threshold without
+blending a local fallback. For a requested Devil's Advocate six-area review
+without an attached rubric, use `references/devils-advocate-rubric.md`.
+Otherwise use `references/audit-scoring.md` for the default whole-skill score
+and `references/file-review-rubric.md` for first-party file scores. Load
+`references/best-practices-evaluations.md` for unscored quality diagnostics.
+Label any distinct rubrics separately; prior scores under different schemes are
+not like-for-like baselines. Normalize only genuinely inapplicable criteria
+under the chosen rubric. A numeric score never overrides a blocker.
 
 ### 6. Test or assess evidence
 
@@ -181,11 +188,12 @@ failures. `deploy` is prohibited while any required blocker remains unresolved.
 
 ### 11. Auto-optimize
 
-Use the user's supplied rubric when one is provided; do not silently substitute
-this package's default scoring methodology. For an explicitly requested
-**Devil's Advocate** six-area review, use
-`references/devils-advocate-rubric.md`. For an exhaustive package review, also
-use `references/file-review-rubric.md` to inspect every first-party file by its
+Use the selected numeric rubric and scope from step 5; do not substitute a
+different rubric during an optimization wave. For an explicitly requested
+**Devil's Advocate** six-area review, apply
+`references/devils-advocate-rubric.md` unless an in-scope user-supplied version
+takes precedence. For an exhaustive package review, also use
+`references/file-review-rubric.md` to inspect every first-party file by its
 role, including code, tests, evals, templates, metadata, and configuration.
 Report exclusions such as vendored environments, compiled outputs, caches, and
 session logs separately; do not treat them as deployable support files. Score

@@ -1,7 +1,7 @@
 """Tests for prompt module."""
 
 from pathlib import Path
-from typing import Protocol
+from xml.etree.ElementTree import Element
 
 import pytest
 from defusedxml import ElementTree as ET
@@ -10,13 +10,7 @@ from skills_ref.errors import ParseError, SkillError
 from skills_ref.prompt import to_prompt
 
 
-class _TextFinder(Protocol):
-    """Structural type for parsed XML elements; avoids importing native xml."""
-
-    def findtext(self, path: str) -> str | None: ...
-
-
-def _required_text(element: _TextFinder, path: str) -> str:
+def _required_text(element: Element, path: str) -> str:
     text = element.findtext(path)
     assert text is not None, f'Missing XML text at {path}'
     return text.strip()

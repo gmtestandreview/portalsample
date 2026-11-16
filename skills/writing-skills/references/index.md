@@ -12,9 +12,11 @@ the current task. Do not load every reference.
 2. Load the smallest primary reference that governs the task.
 3. Load a secondary reference only when its stated condition is met.
 4. Use `specification.md` for mandatory Agent Skills format/compliance claims.
-5. Use `best-practices-evaluations.md` for quality criteria, including
-   knowledge-delta, anti-pattern, and common failure-pattern review; use
-   `audit-scoring.md` for scoring mechanics.
+5. Use `best-practices-evaluations.md` for unscored quality diagnostics. **For
+   numeric scores, freeze the user-supplied rubric within its stated scope
+   first.** Without one, use `audit-scoring.md` for default whole-skill scoring,
+   or `file-review-rubric.md` for first-party file-level scoring. The six-area
+   `devils-advocate-rubric.md` applies when selected.
 6. Use `SKILL-testing-checklist.md` as the final validation/deployment gate, not
    as a substitute for specialist methods.
 7. Treat best-practice guides, operational methods, and templates as supporting
@@ -35,11 +37,11 @@ the current task. Do not load every reference.
 | ---------------------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Mandatory `SKILL.md` format, frontmatter, directory/resource rules     | `specification.md`                                   | `SKILL-testing-checklist.md` at final validation                                                                                                                                         |
 | General skill authoring and information architecture                   | `best practices-for-skill-creators.md`               | `anthropic-best-practices.md` only for Claude/Anthropic targets                                                                                                                          |
-| Static quality audit or optimization                                   | `best-practices-evaluations.md`                      | `audit-scoring.md` for scoring; `../assets/templates/skill-audit.md` only for report shape                                                                                               |
+| Static quality audit or optimization                                   | `best-practices-evaluations.md`                      | User rubric within scope; otherwise `audit-scoring.md` for whole-skill scores; audit template only for report shape                                                                      |
 | Iterative optimisation, comparative campaigns or interrupted closeout  | `bounded-optimisation.md`                            | Scoring/testing references only for the acceptance question being evaluated                                                                                                              |
 | Devil’s Advocate six-area rubric review                                | `devils-advocate-rubric.md`                          | `file-review-rubric.md` when every support file is in scope; final checklist for deployment                                                                                              |
 | Exhaustive first-party file review                                     | `file-review-rubric.md`                              | User rubric governs numeric scores for its stated scope; otherwise local ten-area fallback; inventory all first-party files                                                              |
-| Full scored audit                                                      | `best-practices-evaluations.md`                      | `audit-scoring.md`; `SKILL-testing-checklist.md` for final validation                                                                                                                    |
+| Full scored audit                                                      | `best-practices-evaluations.md`                      | User rubric if supplied; otherwise `audit-scoring.md`; final validation with `SKILL-testing-checklist.md`                                                                                |
 | Classify as Discipline, Technique, Pattern, Reference, or Hybrid       | `skill-classification.md`                            | Testing reference selected from the resulting class                                                                                                                                      |
 | Fix activation or description wording                                  | `description-optimization.md`                        | Use for rigorous description evaluation testing.                                                                                                                                         |
 | Fix instruction form after an observed shaping/adherence failure       | `instruction-form.md`                                | Load only after a concrete failure identifies instruction form as causal                                                                                                                 |
@@ -86,7 +88,8 @@ Use it to identify quality failures. Do not use it alone for numeric scoring.
 
 #### `audit-scoring.md`
 
-Defines **how to score**:
+Defines the **default whole-skill** scoring method when no user rubric governs
+numeric scores, plus useful nonnumeric audit mechanics:
 
 - artifact-completeness classification;
 - applicability and `N/A` normalization;
@@ -231,8 +234,9 @@ requirements.
 
 Optional output template for a formal skill-audit report.
 
-Use `best-practices-evaluations.md` for audit criteria and `audit-scoring.md`
-for scoring mechanics.
+Use `best-practices-evaluations.md` for audit criteria and the selected rubric
+(`audit-scoring.md` only when no supplied whole-skill rubric governs) for
+scoring mechanics.
 
 ### `../assets/templates/swot-analysis.md`
 
@@ -262,7 +266,7 @@ Load:
 1. candidate skill and relevant supporting resources;
 2. `specification.md`;
 3. `best-practices-evaluations.md`;
-4. `audit-scoring.md`;
+4. the user-provided rubric when applicable; otherwise `audit-scoring.md`;
 5. `skill-classification.md` when test emphasis or scope depends on type;
 6. `SKILL-testing-checklist.md` before a final deployment/readiness claim.
 

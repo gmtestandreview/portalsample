@@ -14,7 +14,7 @@ MAIN = ROOT / 'SKILL.md'
 
 def local_links(path: Path):
     # Remove fenced code examples; those are not package dependencies.
-    active = []
+    active: list[str] = []
     in_fence = False
     marker = ''
     for line in path.read_text(encoding='utf-8').splitlines():
@@ -91,9 +91,9 @@ def test_distributable_routes_and_negative_oracle():
         assert (ROOT / path).is_file()
 
 
-def test_original_error_is_visible_to_negative_checker(tmp_path):
+def test_original_error_is_visible_to_negative_checker(tmp_path: Path):
     """The sample below is intentionally invalid; it must fail resolution."""
-    candidate = tmp_path / 'example.md'
+    candidate: Path = tmp_path / 'example.md'
     candidate.write_text('See [missing](some-other-file.md).', encoding='utf-8')
     assert broken_local_links(candidate) == ['some-other-file.md']
 
@@ -102,27 +102,69 @@ def test_user_rubric_precedence_is_explicit_across_resource_routes():
     """Positive: a supplied rubric governs numeric file scores, without blending."""
     main = MAIN.read_text(encoding='utf-8')
     index = (ROOT / 'references/index.md').read_text(encoding='utf-8')
-    # Normalise whitespace so prose re-wrapping (oxfmt proseWrap: always) is inert.
-    rubric = ' '.join(
-        (ROOT / 'references/file-review-rubric.md').read_text(encoding='utf-8').split()
-    )
-    assert "Use the user's supplied rubric when one is provided" in main
+    rubric = (ROOT / 'references/file-review-rubric.md').read_text(encoding='utf-8')
+    assert 'A user-supplied rubric governs every artifact/file' in main
     assert 'primary numeric authority' in index
     assert 'user-supplied rubric' in rubric
     assert 'Do **not** substitute the' in rubric
     assert 'local ten-criterion weights' in rubric
-    # Drop `_` emphasis markers so italics do not affect the match.
-    assert 'unscored diagnostic checks' in rubric.replace('_', '')
+    assert 'unscored diagnostic checks' in rubric
     assert 'Scores from different rubrics' not in rubric  # no phantom equivalence
 
 
 def test_no_user_rubric_preserves_explicit_file_fallback():
     """Negative/near-miss: absence of a supplied rubric must not erase fallback."""
-    # Normalise whitespace so prose re-wrapping (oxfmt proseWrap: always) is inert.
-    rubric = ' '.join(
-        (ROOT / 'references/file-review-rubric.md').read_text(encoding='utf-8').split()
-    )
+    rubric = (ROOT / 'references/file-review-rubric.md').read_text(encoding='utf-8')
     assert 'No applicable user rubric' in rubric
     assert 'default for first-party support files' in rubric
     assert 'Fallback 100-point rubric' in rubric
     assert 'P K C A U R V I M F' in rubric
+
+
+def test_numeric_authority_is_consistent_across_entrypoint_and_fallback():
+    """Static contract only; not a behavioral agent rubric-choice test."""
+    main = MAIN.read_text(encoding='utf-8')
+    index = (ROOT / 'references/index.md').read_text(encoding='utf-8')
+    default = (ROOT / 'references/audit-scoring.md').read_text(encoding='utf-8')
+    file_rubric = (ROOT / 'references/file-review-rubric.md').read_text(encoding='utf-8')
+    assert 'freeze numeric authority and scope' in main
+    assert 'Without one, use `audit-scoring.md`' in index
+    assert 'fallback whole-skill score' in default
+    assert 'user-supplied rubric; it alone' in default
+    assert 'No applicable user rubric' in file_rubric
+    assert 'Never blend their weighted totals' in default
+
+
+def test_activation_cases_have_unique_positive_negative_and_evidence_oracles():
+    """Document structure only; actual host selection/loading remains NHR."""
+    import re
+
+    cases = (ROOT / 'evals/activation-regression-cases.md').read_text(encoding='utf-8')
+    rows = [line.split('|') for line in cases.splitlines() if re.match(r'^\| ACT-\d{3} \|', line)]
+    ids = [row[1].strip() for row in rows]
+    assert len(ids) == len(set(ids)) == 12
+    for row in rows:
+        assert len(row) == 7  # | ID | Request | Expected | Forbidden | Evidence |
+        assert all(cell.strip() for cell in row[1:-1])
+    for required in (
+        'ACT-001',
+        'ACT-002',
+        'ACT-004',
+        'ACT-005',
+        'ACT-006',
+        'ACT-007',
+        'ACT-009',
+        'ACT-012',
+    ):
+        assert required in ids
+    assert 'Case definitions and static QAQ/RMI mapping never substitute' in cases
+
+
+def test_swot_template_requires_falsification_and_source_preservation():
+    """No template example is treated as executed external merge evidence."""
+    template = (ROOT / 'assets/templates/swot-analysis.md').read_text(encoding='utf-8')
+    assert 'most plausible wrong assumption' in template
+    assert 'unique safety rules, activation constraints' in template
+    assert 'This template does not perform the test' in template
+    assert 'A decision to' in template
+    assert 'keep skills separate' in template

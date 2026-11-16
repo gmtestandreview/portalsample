@@ -5,9 +5,8 @@ import locale
 import os
 import shutil
 import subprocess
-from collections.abc import Iterable
 from pathlib import Path
-from typing import Protocol
+from xml.etree.ElementTree import Element
 
 import pytest
 from defusedxml import ElementTree as ET
@@ -40,17 +39,7 @@ def _skill(tmp_path: Path, markdown: str, name: str = 'graph-skill') -> Path:
     return skill
 
 
-class _TextNode(Protocol):
-    text: str | None
-
-
-class _SvgNode(Protocol):
-    """Structural type for parsed SVG elements; avoids importing native xml."""
-
-    def iter(self, tag: str) -> Iterable[_TextNode]: ...
-
-
-def _text_labels(root: _SvgNode) -> list[str]:
+def _text_labels(root: Element) -> list[str]:
     labels: list[str] = []
     for node in root.iter('{http://www.w3.org/2000/svg}text'):
         assert node.text is not None, 'SVG text node has no label'
