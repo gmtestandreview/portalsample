@@ -473,3 +473,16 @@ A valid grading result is:
 - **schema-valid** — output conforms to the canonical grading schema;
 - **missingness-safe** — unavailable evidence remains unavailable;
 - **auditable** — another reviewer can reconstruct why each verdict was reached.
+
+## Adversarial verification contract
+
+**Calibration fixture:** Evaluate one expectation with direct transcript
+evidence, one that is contradicted by artifact content, and one with no
+observable evidence. Expected `verified` values are true, false and null
+respectively; only genuinely observed successes contribute to `summary.passed`.
+**Negative:** Plausible executor prose without artifacts is not proof.
+**Regression:** Verify `passed + failed == total` and any reported pass rate
+against all graded expectations; validate the result with the grading schema,
+then audit the semantic invariants separately. **Independence:** Run the same
+frozen fixture against independently labelled outcomes before making a
+reliability claim; unavailable trials are NHR.

@@ -1,0 +1,403 @@
+{
+  "source_version": "v4",
+  "source_files": 79,
+  "skill_name": "skill-creator",
+  "rubric": "Six-category Devils Advocate (frozen)",
+  "files": [
+    {
+      "relative_path": ".python-version",
+      "sha256": "a876e0b10411037a012498b9fe18d9bc1df32ed8b722a13564dc944ddcfd9135",
+      "size_bytes": "5"
+    },
+    {
+      "relative_path": "LICENSE.txt",
+      "sha256": "bc6b3af2f331cbc7fb0da1344efb2cbe5877a31498b4d70dbc7000f3405a1362",
+      "size_bytes": "11345"
+    },
+    {
+      "relative_path": "SKILL.md",
+      "sha256": "6ef800fdd0571f085da09a38d46df7f117a7a6164cac6e557cddb881abaa6b1a",
+      "size_bytes": "22259"
+    },
+    {
+      "relative_path": "agents/analyzer.md",
+      "sha256": "578275cad005ef6d75cba49ac906d0230fa85c650b118809288dd0d645be0f21",
+      "size_bytes": "18462"
+    },
+    {
+      "relative_path": "agents/comparator.md",
+      "sha256": "182b15769b8640dd49d140fc87eba0a431ebfe0a2dd05c623bdd9e1070d77cea",
+      "size_bytes": "18956"
+    },
+    {
+      "relative_path": "agents/grader.md",
+      "sha256": "86adbd5ff80f31935de164cd06a7b6b4fa7d2d63974df44a5c3fb7bb03285e28",
+      "size_bytes": "16586"
+    },
+    {
+      "relative_path": "assets/eval_review.html",
+      "sha256": "7dfccc003707ff8abbd82ec7fab4f603f5fe05068543c6dee900377dace21887",
+      "size_bytes": "8606"
+    },
+    {
+      "relative_path": "eval-viewer/generate_review.py",
+      "sha256": "1c6855897eb1d8aa59806609a04c55c8bc854885083cb75a4b0d0f21c6ed4168",
+      "size_bytes": "41981"
+    },
+    {
+      "relative_path": "eval-viewer/viewer.html",
+      "sha256": "80f39cbe4007d29887477091696295515dcaa25895a02ab76389b4a28286639a",
+      "size_bytes": "69690"
+    },
+    {
+      "relative_path": "references/activation-cases/README.md",
+      "sha256": "7bf56d4e5ba6b4829b4238677055d84a2267643e3ddb10645f02083c8fe0a04d",
+      "size_bytes": "7815"
+    },
+    {
+      "relative_path": "references/activation-cases/activation-eval.json",
+      "sha256": "225377415659a1339b3b3c30a87c00b5463b4890a974177666c2277b5ec5d646",
+      "size_bytes": "2967"
+    },
+    {
+      "relative_path": "references/activation-cases/activation-holdout.json",
+      "sha256": "69900854fb27e63f74e220afc97c05194e78561c491ca5cce0a7f1841f9f4ef3",
+      "size_bytes": "1280"
+    },
+    {
+      "relative_path": "references/activation-cases/activation-smoke.json",
+      "sha256": "6bea8c41eeb1fc7d4c6dc2ce8918ba7f60e60613438d4c659a18f7f0ba76f12e",
+      "size_bytes": "594"
+    },
+    {
+      "relative_path": "references/adversarial-quality-review.md",
+      "sha256": "6ef227c5485f2694a28514e29f8e702b98b1000466921ade740a1c55a542e014",
+      "size_bytes": "8065"
+    },
+    {
+      "relative_path": "references/authoring-craft.md",
+      "sha256": "a0f4bf34671edeed89f522c701536a4c69c1c6c7ad8a284cb2ad35c162d81f36",
+      "size_bytes": "8482"
+    },
+    {
+      "relative_path": "references/claude-code-advanced.md",
+      "sha256": "73d1f8d917898a476e058f19b2c14e3c1b515018d41190c040370899f38ee8df",
+      "size_bytes": "5657"
+    },
+    {
+      "relative_path": "references/claude-code-hook-mechanisms.md",
+      "sha256": "12288f9e4dc72cd75c44546069c2dcfd932162f75496ca2eb796319263649c08",
+      "size_bytes": "10183"
+    },
+    {
+      "relative_path": "references/claude-code-patterns-library.md",
+      "sha256": "6ea27c77b8f789d75ee13c16874636f6c873902799cd811baaf0d99507c099d7",
+      "size_bytes": "4785"
+    },
+    {
+      "relative_path": "references/claude-code-skill-rules-reference.md",
+      "sha256": "35582013562b0b6d0461fcd86041188800c6a049cb500206147074d376f7d130",
+      "size_bytes": "10774"
+    },
+    {
+      "relative_path": "references/claude-code-trigger-types.md",
+      "sha256": "854a3f58b370be5b070a21f11b34382f7481b677dd8315a4f5ed8a7678558549",
+      "size_bytes": "9046"
+    },
+    {
+      "relative_path": "references/claude-code-troubleshooting.md",
+      "sha256": "20ba5788d2da0fd58d490afdcdfc8ee16e7aea94635c60c600d90904436f1851",
+      "size_bytes": "11690"
+    },
+    {
+      "relative_path": "references/description-optimization.md",
+      "sha256": "9a432f7821ab7904a458d23a1cdbb583fe3428ea68db778781d71e6def3d065d",
+      "size_bytes": "6844"
+    },
+    {
+      "relative_path": "references/evaluation-workflow.md",
+      "sha256": "8fdd935810a93eade61e688c8affbbfabc5ddbdda6b501e370cc296c6d05443a",
+      "size_bytes": "39780"
+    },
+    {
+      "relative_path": "references/independent-holdout-protocol.md",
+      "sha256": "7569d8d4bac9918b8fe8003bd7dbcbff319770d0446d15614ee821ebce91d1dd",
+      "size_bytes": "3197"
+    },
+    {
+      "relative_path": "references/output-patterns.md",
+      "sha256": "0610ff61ed34b7fee6911bcfb99c9ef3e99c8fd1a72d9c6bdc606fb561403e1e",
+      "size_bytes": "2851"
+    },
+    {
+      "relative_path": "references/schema-manifest.json",
+      "sha256": "2afe68efe885f582c58f2e946b69fd042145bcde1ccf96f30904f2db1173e5dc",
+      "size_bytes": "678"
+    },
+    {
+      "relative_path": "references/schema-validation-2026-11-17-py313.json",
+      "sha256": "16ac51dd2610fbee95813e3c308a82d5cb70413d6051aaa9143c367dcd15b1a3",
+      "size_bytes": "4151"
+    },
+    {
+      "relative_path": "references/schemas.md",
+      "sha256": "a66ea35ebd34a6436c53de01f3303847e01d09a78e6cfed7be468f91b65bf020",
+      "size_bytes": "19950"
+    },
+    {
+      "relative_path": "references/schemas/analysis.schema.json",
+      "sha256": "1148ddc08f40ea5f5909f23d19373cf72cccdfc98151e93610577f9be62ac905",
+      "size_bytes": "3286"
+    },
+    {
+      "relative_path": "references/schemas/benchmark.schema.json",
+      "sha256": "ba8d8f50c25dfc5724e8465001a3f7fa249a4da71d3c5178235449bd8a99a65e",
+      "size_bytes": "5420"
+    },
+    {
+      "relative_path": "references/schemas/common.schema.json",
+      "sha256": "5bdc61090536293778988f69e90fdc400a8854a2b0d8579283dba225baf81897",
+      "size_bytes": "2092"
+    },
+    {
+      "relative_path": "references/schemas/comparison.schema.json",
+      "sha256": "d55ccf0216589181b1473f8e0421cca88d7b7e49d093c3ea5becdb940dd6aca5",
+      "size_bytes": "3546"
+    },
+    {
+      "relative_path": "references/schemas/eval-metadata.schema.json",
+      "sha256": "7caca062947eb0b71d7f9a83946446f90ac73b677b31c3cceb41df60e8c13448",
+      "size_bytes": "771"
+    },
+    {
+      "relative_path": "references/schemas/evals.schema.json",
+      "sha256": "3282e63c7ab7bac8dbe43453e8501ac7e29004d25a8a23ef8ad7d9bd893ccc3c",
+      "size_bytes": "1392"
+    },
+    {
+      "relative_path": "references/schemas/feedback.schema.json",
+      "sha256": "bb8a58ab7577eb26deb98de646c1a571f1c060788874e354568d2aa4e2809fef",
+      "size_bytes": "1034"
+    },
+    {
+      "relative_path": "references/schemas/grading.schema.json",
+      "sha256": "5559dff0f91a1c381cb07de83b7b859a3ed16f5b4b4ad26f50c2c56388066342",
+      "size_bytes": "3552"
+    },
+    {
+      "relative_path": "references/schemas/history.schema.json",
+      "sha256": "07dc8ea0ba5075dea09d7a6156b87018a268ddcdfd27b827ec0535719330b4da",
+      "size_bytes": "1821"
+    },
+    {
+      "relative_path": "references/schemas/metrics.schema.json",
+      "sha256": "3f738a4c838ce3d79b5eaa172f13af574fc3c28fe01aae5039c1214562ac731b",
+      "size_bytes": "882"
+    },
+    {
+      "relative_path": "references/schemas/timing.schema.json",
+      "sha256": "3b02c7d5539ad3820553297b36662d8372204cac3daee76fccd58eaea8458d5c",
+      "size_bytes": "945"
+    },
+    {
+      "relative_path": "references/validation-results.json",
+      "sha256": "fe87952cc4f309305f80450cfa80285d30f5933f0bd0f29fc044b9c5c89bb29d",
+      "size_bytes": "4744"
+    },
+    {
+      "relative_path": "references/workflows.md",
+      "sha256": "12b6e91a08553e9e3e6762725f00865c464808d586e2c40b5f36481271fb6b47",
+      "size_bytes": "3331"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_aggregate_benchmark.py",
+      "sha256": "7903c6508e17394af1b542fa0929c7f5fef6329b1a17d4b7d41b1bd53c738552",
+      "size_bytes": "17907"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_browser_viewer_py.py",
+      "sha256": "5013693e9f50dfdd798193886610fca30784bc8492b17fde83a4bdcb2c7319c8",
+      "size_bytes": "5291"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_comparison_schema.py",
+      "sha256": "8a503cc835f0302d1205778dd4a90516d8c185d8504dc5fbe5bfd1c59d1bb341",
+      "size_bytes": "6068"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_eval_control.py",
+      "sha256": "303b34aaa4559e24f67d01aed2e38c41f921554eab720091786bfdc221f33a3e",
+      "size_bytes": "10123"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_eval_review_ui.py",
+      "sha256": "f7efec567afe7d0b801f39786f98a0ff824b4acf1bb5faff0406e3f47dbf4019",
+      "size_bytes": "6352"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_generate_report.py",
+      "sha256": "677944ffec32e3f133828855f8423476b8c48600acc40953d9d9706077fac0d7",
+      "size_bytes": "13148"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_generate_review.py",
+      "sha256": "3d8d11c692c2bf26a6734ec500301e0954423629983539c40940cf5a06df74c3",
+      "size_bytes": "21315"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_improve_description.py",
+      "sha256": "09ff51d201eb0fb78841e799a1e934a0fab3aea6323da2c574e94499be037ec8",
+      "size_bytes": "7836"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_init_skill.py",
+      "sha256": "0c4924ee4deadefbc5ab429774e092029ef859a76e6eac7827df17635ba9e39b",
+      "size_bytes": "11036"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_package_skill.py",
+      "sha256": "21d85592ddafe85bcc8f0b7387cb83a92dc04b97e29c3bf7c24e120753cfe537",
+      "size_bytes": "18581"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_quick_validate.py",
+      "sha256": "b0cdf6af0c3e334a017b751720a2b2e3dd69794630234ec85931aaf5bb23bfc2",
+      "size_bytes": "5373"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_reference_contracts.py",
+      "sha256": "095b0d0a8b91608ba192ba544ad87f4002919c20ebd6053d3defca6200571d37",
+      "size_bytes": "3492"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_run_early_exit_eval.py",
+      "sha256": "722d47cd040d9b865f5ff321b91221c92c9bf26a1eccf8ce3b5136d3538ed445",
+      "size_bytes": "4006"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_run_eval.py",
+      "sha256": "f21a5bfde0f210d57607847da35a797553192fef087cdaad1cb0115e08692c86",
+      "size_bytes": "14476"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_run_loop.py",
+      "sha256": "b47e7f5056218af3e3914ff3789c9109ad213b102a15c2daadef282b4bfd2789",
+      "size_bytes": "9328"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_run_pipeline.py",
+      "sha256": "7821135271cc4580b10f8aa6ea773e59abb0ee0bb68c925d2ca263278ab1226c",
+      "size_bytes": "15945"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_run_readiness_pressure_eval.py",
+      "sha256": "8e459fe8637d5ac47b4abfcb795384bb086525e92c0b4f920a49d0177aefc7e9",
+      "size_bytes": "33264"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_run_red_green_eval.py",
+      "sha256": "027935744cbac8d3004bfebdad38082fcc752c4a12051b9d43e71a97e5b106d7",
+      "size_bytes": "3532"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_schema_fixture_contracts.py",
+      "sha256": "98256b8c9343545a65f7dd1501753541a16fb718ad3f84e43bf18787e23b10fd",
+      "size_bytes": "3896"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_utils.py",
+      "sha256": "12bbd24527157dcedffb0afa118fdef2fb4060b3fd5cd948095e868b94485c72",
+      "size_bytes": "8107"
+    },
+    {
+      "relative_path": "scripts/Regression tests/test_viewer.py",
+      "sha256": "d19d68c608454def150742143af2501db0766ce48219c28893411b5113653ffe",
+      "size_bytes": "2976"
+    },
+    {
+      "relative_path": "scripts/__init__.py",
+      "sha256": "cf861debf3e9e4e11c4924adbe23c030022f37ac18d7a4bd0008560df2246930",
+      "size_bytes": "364"
+    },
+    {
+      "relative_path": "scripts/aggregate_benchmark.py",
+      "sha256": "284fe1ec343e43c257bb98a93600961304368eecbe8d39123c46a7b9d7008728",
+      "size_bytes": "42953"
+    },
+    {
+      "relative_path": "scripts/eval_control.py",
+      "sha256": "5c584bb827601676d1fe50d169f452a309b32cd223e2a07bf6f59d1ed9423684",
+      "size_bytes": "18610"
+    },
+    {
+      "relative_path": "scripts/generate_eval_review.py",
+      "sha256": "a44de1d5a589c42f0520c9ba04894550ed4cf8aefb14def5505324478c42c041",
+      "size_bytes": "3514"
+    },
+    {
+      "relative_path": "scripts/generate_report.py",
+      "sha256": "ee9126af7d9af13ec9feb8fcd9f61e3fd0c3b7b9cfd55d4220cb0b0d55cc03c3",
+      "size_bytes": "20880"
+    },
+    {
+      "relative_path": "scripts/improve_description.py",
+      "sha256": "5d5d585ee460891858e6140fb2c71c111fe13abe8871cb3b4f1faf776508d1ea",
+      "size_bytes": "30173"
+    },
+    {
+      "relative_path": "scripts/init_skill.py",
+      "sha256": "f5403068964fa252d486f3cfbee357376d827abbacb260e99152d0878fbea090",
+      "size_bytes": "4959"
+    },
+    {
+      "relative_path": "scripts/package_skill.py",
+      "sha256": "0eb288c277f3080d94a644cef1f2173350fa2f7915dc381a59c60baa5a8be606",
+      "size_bytes": "9808"
+    },
+    {
+      "relative_path": "scripts/quick_validate.py",
+      "sha256": "24b1c39f52716612ed66475ea0627216c8178216eb03c7992a4c7f917f3db105",
+      "size_bytes": "6122"
+    },
+    {
+      "relative_path": "scripts/run_early_exit_eval.py",
+      "sha256": "e260f70e1345d4c6a1f7c8c3e0c980fe1c6e2b788b7d2c58cacb9c364112cb33",
+      "size_bytes": "8684"
+    },
+    {
+      "relative_path": "scripts/run_eval.py",
+      "sha256": "593080e6dd4e986eade208170bbaa1d5bdb1493e726d5feea5710ec47f9b8489",
+      "size_bytes": "46097"
+    },
+    {
+      "relative_path": "scripts/run_loop.py",
+      "sha256": "11542c877bb2c81fd32462619c8d663a973c3e94e6acec0b507c50f860453caf",
+      "size_bytes": "36283"
+    },
+    {
+      "relative_path": "scripts/run_pipeline.py",
+      "sha256": "61821362935a5eb1592b240ffc9a9e715dab585b9c9aca3e72b397da48769a5d",
+      "size_bytes": "39972"
+    },
+    {
+      "relative_path": "scripts/run_readiness_pressure_eval.py",
+      "sha256": "1b55b3d357269069bc631013753b12ee0eae85d402dcb8afd08b5842f08779fc",
+      "size_bytes": "28905"
+    },
+    {
+      "relative_path": "scripts/run_red_green_eval.py",
+      "sha256": "c8a1453f718651b2f851af41cde4d09e2ff6545c1765c38685a64cfa89dacb25",
+      "size_bytes": "26417"
+    },
+    {
+      "relative_path": "scripts/test_regressions.py",
+      "sha256": "04bacecbae443ddf69ddc26fd8c054921edbb7baf631fea47dae9e9d1ea9ed4d",
+      "size_bytes": "20537"
+    },
+    {
+      "relative_path": "scripts/utils.py",
+      "sha256": "93b6a7352a20358f749bad53bb00599da8ba948a3c4992a8eeba4c3b22867f23",
+      "size_bytes": "4352"
+    }
+  ]
+}

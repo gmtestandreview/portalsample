@@ -129,7 +129,11 @@ IF ALLOWED:
 - **Exit code 0**: ALLOW
 - **Timing**: Runs BEFORE tool execution
 - **Session tracking**: Prevents repeated blocks in same session
-- **Fail open**: On errors, allows operation (don't break workflow)
+- **Observed in this _described_ design, not verified here**: ordinary hook
+  errors may allow an operation; **never rely on fail-open behavior for
+  safety-critical enforcement**. A safety-critical guardrail must be
+  independently enforced at the actual action boundary or the operation must be
+  held until its policy is verified.
 - **Purpose**: Enforce critical guardrails
 
 ### PreToolUse Input Format
@@ -321,3 +325,22 @@ per session per skill. This means:
 - [troubleshooting](claude-code-troubleshooting.md) - Debug hook issues
 - [skill rules reference](claude-code-skill-rules-reference.md) - Configuration
   reference
+
+## Adversarial verification contract
+
+**Boundary:** The named `.claude/hooks/*.sh`, `*.ts`, `skill-rules.json` and
+`.claude/settings.json` are _external project prerequisites_, not bundled skill
+resources. Do not claim this package implements or tests these hook paths.
+Determine exit semantics from the installed target host and code, not solely
+from an illustrative flow diagram.
+
+**Risk-level oracle:** Advisory suggestion may continue when the advisory hook
+is unavailable, with a warning; **blocking security policy may not silently
+become advisory** merely because a hook crashes, times out, or a per-session
+marker claims a skill was used. Verify fail-closed enforcement outside the hook
+or HOLD the policy gate. **Positive test:** a matching guarded edit is blocked
+until independent authorization; **near miss:** unrelated file is allowed;
+**failure:** a broken hook, stale state file, forged skip marker, or undefined
+exit code yields a recorded policy decision, not assumed success. Attach
+command, stderr, exit code, runtime, rule revision and actual result from the
+target host before asserting those behaviors.

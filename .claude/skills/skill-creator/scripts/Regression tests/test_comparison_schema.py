@@ -8,7 +8,10 @@ import unittest
 from pathlib import Path
 from typing import Protocol, TypedDict, cast
 
-from jsonschema import Draft202012Validator, ValidationError
+from jsonschema import (  # pyright: ignore[reportMissingModuleSource]
+    Draft202012Validator,
+    ValidationError,
+)
 
 SKILL_ROOT = Path(__file__).resolve().parents[2]
 
@@ -56,7 +59,7 @@ class ComparisonSchemaTests(unittest.TestCase):
         schema: dict[str, object] = json.loads(
             (SKILL_ROOT / 'references/schemas/comparison.schema.json').read_text(encoding='utf-8')
         )
-        Draft202012Validator.check_schema(schema)
+        Draft202012Validator.check_schema(schema)  # pyright: ignore[reportUnknownMemberType]
         self.validator: ComparisonValidator = Draft202012Validator(schema)
         self.comparison: dict[str, object] = {
             'winner': 'A',
@@ -148,8 +151,8 @@ class ComparisonSchemaTests(unittest.TestCase):
                 self.assertAlmostEqual(rubric['content_score'], round(content_mean, 1))
                 self.assertAlmostEqual(rubric['structure_score'], round(structure_mean, 1))
                 overall = round(content_mean + structure_mean, 1)
-                self.assertAlmostEqual(rubric['overall_score'], overall)
-                self.assertAlmostEqual(example['output_quality'][side]['score'], overall)
+                self.assertEqual(rubric['overall_score'], overall)
+                self.assertEqual(example['output_quality'][side]['score'], overall)
 
     def test_documented_example_uses_shared_rubric_keys(self) -> None:
         example = self._documented_example()

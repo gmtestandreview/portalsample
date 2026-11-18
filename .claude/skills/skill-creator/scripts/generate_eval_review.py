@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Generate a safe standalone trigger-eval review page."""
 
 from __future__ import annotations
@@ -9,11 +9,9 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import cast
 
-try:
-    from scripts.utils import parse_skill_md
-except ModuleNotFoundError as exc:
-    if exc.name not in {'scripts', 'scripts.utils'}:
-        raise
+if __package__:
+    from .utils import parse_skill_md
+else:
     from utils import parse_skill_md
 
 
@@ -66,8 +64,10 @@ def generate_review(
         'evals': validated_eval_set,
     }
     marker = '__REVIEW_DATA_PLACEHOLDER__'
-    if marker not in template:
-        raise ValueError(f'template is missing {marker}')
+    if template.count(marker) != 1:
+        raise ValueError(
+            f'template must contain exactly one {marker}; found {template.count(marker)}'
+        )
     return template.replace(marker, _json_for_script(payload))
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Validate an Agent Skill directory against the supplied core specification."""
 
 from __future__ import annotations
@@ -123,22 +123,12 @@ def _validate_metadata(frontmatter: Mapping[object, object]) -> None:
 
 
 def _validate_allowed_tools(frontmatter: Mapping[object, object]) -> None:
+    """Accept the spec-defined space-separated string, not a YAML sequence."""
     if 'allowed-tools' not in frontmatter:
         return
-
-    allowed_tools = frontmatter['allowed-tools']
-    if isinstance(allowed_tools, str):
-        if not allowed_tools.strip():
-            _invalid('allowed-tools must be non-empty when provided')
-        return
-
-    if isinstance(allowed_tools, list):
-        tools = cast(list[object], allowed_tools)
-        if tools and all(isinstance(tool, str) and bool(tool.strip()) for tool in tools):
-            return
-        _invalid('allowed-tools list entries must be non-empty strings')
-
-    _invalid('allowed-tools must be a string or list of strings')
+    value = frontmatter['allowed-tools']
+    if not isinstance(value, str) or not value.strip():
+        _invalid('allowed-tools must be a non-empty space-separated string')
 
 
 def _validate_frontmatter(frontmatter: Mapping[object, object], skill_path: Path) -> None:

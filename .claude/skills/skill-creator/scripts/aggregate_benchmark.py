@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Aggregate graded benchmark runs into JSON and Markdown summaries.
 
 The aggregator preserves observed evidence only:
@@ -19,7 +19,7 @@ import math
 import sys
 from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import fmean, stdev
 from typing import TypeAlias, TypedDict, TypeGuard, cast

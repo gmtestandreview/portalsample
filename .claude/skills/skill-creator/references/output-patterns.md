@@ -1,90 +1,77 @@
-# Output Patterns
+# Output Patterns — Agent Skill Artifacts
 
-Use these patterns when skills need to produce consistent, high-quality output.
+**Load:** When the requested result needs an explicit, reusable output contract.
+These are templates to adapt, not default formats imposed on an API, JSON
+Schema, or user-supplied style. A strict schema takes precedence over a Markdown
+example.
 
-## Template Pattern
+## Strict contract: readiness JSON
 
-Provide templates for output format. Match the level of strictness to your
-needs.
-
-**For strict requirements (like API responses or data formats):**
-
-```markdown
-## Report structure
-
-ALWAYS use this exact template structure:
-
-# [Analysis Title]
-
-## Executive summary
-
-[One-paragraph overview of key findings]
-
-## Key findings
-
-- Finding 1 with supporting data
-- Finding 2 with supporting data
-- Finding 3 with supporting data
-
-## Recommendations
-
-1. Specific actionable recommendation
-2. Specific actionable recommendation
-```
-
-**For flexible guidance (when adaptation is useful):**
-
-```markdown
-## Report structure
-
-Here is a sensible default format, but use your best judgment:
-
-# [Analysis Title]
-
-## Executive summary
-
-[Overview]
-
-## Key findings
-
-[Adapt sections based on what you discover]
-
-## Recommendations
-
-[Tailor to the specific context]
-
-Adjust sections as needed for the specific analysis type.
-```
-
-## Examples Pattern
-
-For skills where output quality depends on seeing examples, provide input/output
-pairs:
-
-````markdown
-## Commit message format
-
-Generate commit messages following these examples:
-
-**Example 1:** Input: Added user authentication with JWT tokens Output:
+Use the selected `references/schemas/*.schema.json` when one governs the
+artifact. Do not replace its required fields with this example. For a
+human-facing readiness decision, preserve these independent concepts rather than
+using a single generic "passed" field:
 
 ```text
-feat(auth): implement JWT-based authentication
-
-Add login endpoint and token validation middleware
+artifact: <skill path and candidate hash>
+checks: <command, runtime, exit code, evidence path>
+observed: <direct evidence, failures, omissions>
+missing: <required tests not executed, with NHR reason>
+verdict: <PASS|AMBER|FAIL|NHR> by evidence requirement
+recommendation: <deploy|revise|split|merge|deprecate|hold>
 ```
 
-**Example 2:** Input: Fixed bug where dates displayed incorrectly in reports
-Output:
+**Positive oracle:** An incomplete host-evaluation record produces NHR and HOLD
+even if a parser returned zero. **Negative oracle:** Never emit
+`release_ready=true` when required cases are missing, failed, or changed from
+the frozen oracle. Run `scripts/run_pipeline.py release --dry-run` to verify the
+planned gates; executing a dry run is not proof of results.
+
+## Flexible contract: change report
+
+```markdown
+# Agent Skill revision — <candidate name>
+
+## Scope and preserved invariants
+
+- Source revision, `name`, trigger boundary, no-change assumptions
+
+## Edits
+
+- Exact path — the smallest functional change and its risk
+
+## Verification
+
+- Check — environment — exit code — result — raw evidence location
+- Unrun/blocked check — NHR and reason
+
+## Decision
+
+- Actionable recommendation and remaining risk
+```
+
+Use this structure **only** if the user has not supplied a different report
+format. A short wording edit may need only a diff and concise evidence record.
+
+## Example: commit message
 
 ```text
-fix(reports): correct date formatting in timezone conversion
+fix(skill-eval): reject missing release-case evidence
 
-Use UTC timestamps consistently across report generation
+Validate required stage outcomes before setting release_ready.
+Add regression tests for absent and failed evidence.
 ```
 
-Follow this style: type(scope): brief description, then detailed explanation.
-````
+A commit message is a proposed artifact, not a claim that the commit or test run
+happened.
 
-Examples help Claude understand the desired style and level of detail more
-clearly than descriptions alone.
+## Adversarial verification contract
+
+**Input:** User request, target artifact and controlling output schema/format,
+available evidence. **Result:** A report or machine output that the consumer can
+parse and verify. **Failure:** If required fields or evidence are unavailable,
+preserve NHR instead of filling fabricated values. **Regression fixture:** A
+required JSON grading schema with a `summary.pass_rate` cannot be replaced by
+the prose readiness template. **Check:** Validate schema-controlled outputs with
+a schema validator and semantic tests before release; compare flexible text
+outputs against the user's actual requested deliverable.

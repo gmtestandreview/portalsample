@@ -1,23 +1,138 @@
 from __future__ import annotations
 
+import importlib
 import subprocess
 import sys
 import tempfile
 import unittest
+from collections.abc import Callable
 from pathlib import Path
+from types import ModuleType
+from typing import Protocol, cast
 from unittest.mock import patch
 
 SCRIPTS_DIR = Path(__file__).resolve().parents[1]
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
-import improve_description
-from eval_control import CheckpointStore, EvaluationControl
+
+class _CheckpointStore(Protocol):
+    """Structural type for the checkpoint store used by these regression tests."""
+
+
+class _EvaluationControl(Protocol):
+    attempted_calls: int
+    successful_calls: int
+    resumed_calls: int
+
+
+class _CheckpointStoreFactory(Protocol):
+    def __call__(self, path: Path) -> _CheckpointStore: ...
+
+
+class _EvaluationControlFactory(Protocol):
+    def __call__(
+        self,
+        *,
+        max_calls: int,
+        planned_calls: int,
+        checkpoint: _CheckpointStore | None,
+        deadline_seconds: float | None,
+        clock: Callable[[], float] | None = None,
+    ) -> _EvaluationControl: ...
+
+
+class _EvalControlModule(Protocol):
+    CheckpointStore: _CheckpointStoreFactory
+    EvaluationControl: _EvaluationControlFactory
+
+
+class _ImproveDescriptionModule(Protocol):
+    subprocess: ModuleType
+    os: ModuleType
+    shutil: ModuleType
+
+    def improve_description(
+        self,
+        *,
+        skill_name: str,
+        skill_content: str,
+        current_description: str,
+        eval_results: object,
+        history: object,
+        model: str,
+        iteration: int | None = None,
+        log_dir: Path | None = None,
+        control: object | None = None,
+    ) -> str: ...
+
+
+def _load_module(name: str) -> ModuleType:
+    """Import a sibling script after the runtime scripts directory is on sys.path."""
+    return importlib.import_module(name)
+
+
+eval_control = cast(_EvalControlModule, _load_module('eval_control'))
+_improve_description_module = _load_module('improve_description')
+improve_description = cast(_ImproveDescriptionModule, _improve_description_module)
+
+# These helpers are deliberately private production implementation details.
+# The regression suite exercises them through typed test-only adapters so
+# Pylance does not mistake intentional white-box testing for public API usage.
+extract_description = cast(
+    Callable[[str], str],
+    _improve_description_module._extract_description,
+)
+call_claude = cast(
+    Callable[[str, str], str],
+    _improve_description_module._call_claude,
+)
+
+CheckpointStore = eval_control.CheckpointStore
+EvaluationControl = eval_control.EvaluationControl
 
 
 class ImproveDescriptionControlTests(unittest.TestCase):
-    def _response(self, text: str) -> subprocess.CompletedProcess[str]:
+    @staticmethod
+    def _response(text: str) -> subprocess.CompletedProcess[str]:
         return subprocess.CompletedProcess(['claude'], 0, text, '')
+
+    @staticmethod
+    def _control(
+        directory: str,
+        *,
+        max_calls: int,
+        planned_calls: int,
+    ) -> _EvaluationControl:
+        return EvaluationControl(
+            max_calls=max_calls,
+            planned_calls=planned_calls,
+            checkpoint=CheckpointStore(Path(directory) / 'checkpoint.jsonl'),
+            deadline_seconds=None,
+        )
+
+    def test_hostile_or_ambiguous_model_response_rejected(self) -> None:
+        invalid_responses = (
+            '',
+            'model refused',
+            '<new_description></new_description>',
+            '<new_description>safe</new_description> trailing',
+            '<new_description>safe</new_description>\n<new_description>another</new_description>',
+            '<new_description>safe\x00description</new_description>',
+            '<new_description>\u0001control</new_description>',
+        )
+        for response in invalid_responses:
+            with self.subTest(response=response), self.assertRaises(RuntimeError):
+                extract_description(response)
+
+        self.assertEqual(
+            extract_description('<new_description>"quoted"</new_description>'),
+            'quoted',
+        )
+        self.assertEqual(
+            extract_description('<new_description>"quoted</new_description>'),
+            '"quoted',
+        )
 
     def test_rewrite_and_shortening_use_distinct_permits(self) -> None:
         over_limit = 'x' * 1025
@@ -33,12 +148,7 @@ class ImproveDescriptionControlTests(unittest.TestCase):
                 side_effect=responses,
             ) as run,
         ):
-            control = EvaluationControl(
-                max_calls=2,
-                planned_calls=2,
-                checkpoint=CheckpointStore(Path(directory) / 'checkpoint.jsonl'),
-                deadline_seconds=None,
-            )
+            control = self._control(directory, max_calls=2, planned_calls=2)
             result = improve_description.improve_description(
                 skill_name='demo',
                 skill_content='body',
@@ -69,12 +179,7 @@ class ImproveDescriptionControlTests(unittest.TestCase):
                 return_value=self._response(f'<new_description>{over_limit}</new_description>'),
             ) as run,
         ):
-            control = EvaluationControl(
-                max_calls=1,
-                planned_calls=2,
-                checkpoint=CheckpointStore(Path(directory) / 'checkpoint.jsonl'),
-                deadline_seconds=None,
-            )
+            control = self._control(directory, max_calls=1, planned_calls=2)
             with self.assertRaisesRegex(RuntimeError, 'budget_exhausted'):
                 improve_description.improve_description(
                     skill_name='demo',
@@ -111,7 +216,7 @@ class ImproveDescriptionControlTests(unittest.TestCase):
                 return_value=response,
             ) as run,
         ):
-            result = improve_description._call_claude(
+            result = call_claude(
                 'prompt',
                 'claude-sonnet-4-6',
             )
@@ -148,13 +253,17 @@ class ImproveDescriptionControlTests(unittest.TestCase):
                     iteration=1,
                     control=first,
                 )
+
             second = EvaluationControl(
                 max_calls=1,
                 planned_calls=1,
                 checkpoint=checkpoint,
                 deadline_seconds=None,
             )
-            with patch.object(improve_description.subprocess, 'run') as second_run:
+            with patch.object(
+                improve_description.subprocess,
+                'run',
+            ) as second_run:
                 second_result = improve_description.improve_description(
                     skill_name='demo',
                     skill_content='body',

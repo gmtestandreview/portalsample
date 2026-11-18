@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Run an independent RED/GREEN behavioral eval for skill-creator."""
 
 from __future__ import annotations
@@ -11,32 +11,31 @@ import os
 import shutil
 import signal
 import subprocess
-import sys
 import tempfile
 import time
 from collections.abc import Iterable
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, NoReturn, TypedDict, TypeGuard, cast
 
-try:
-    from scripts.eval_control import (
+if __package__:
+    from .eval_control import (
         AttemptSpec,
         CachedResult,
         CheckpointStore,
         ClaudeCliError,
         EvaluationControl,
+        effective_skill_digest,
         validate_model_id,
     )
-except ModuleNotFoundError:
-    if str(Path(__file__).resolve().parent) not in sys.path:
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
+else:
     from eval_control import (
         AttemptSpec,
         CachedResult,
         CheckpointStore,
         ClaudeCliError,
         EvaluationControl,
+        effective_skill_digest,
         validate_model_id,
     )
 
@@ -179,7 +178,7 @@ Compare without-skill and with-skill outputs on:
 Missing production incident data must be marked Needs Human Review.
 """
 
-PACKAGE_SCRIPT = """#!/usr/bin/env python3
+PACKAGE_SCRIPT = """#!/usr/bin/env python3.14
 from pathlib import Path
 import re
 import sys
@@ -278,6 +277,13 @@ def _parse_stream_events(stdout: str) -> list[Event]:
     return events
 
 
+def _has_terminal_success(events: list[Event]) -> bool:
+    """No model output, malformed output or interim events are not a successful run."""
+    return any(
+        event.get('type') == 'result' and event.get('is_error') is not True for event in events
+    )
+
+
 def _record_eval_result(
     control: EvaluationControl,
     spec: AttemptSpec,
@@ -352,10 +358,16 @@ def run_claude(
         error = TimeoutError(f'claude run exceeded {CLAUDE_TIMEOUT_SECONDS}s')
         _record_eval_error(control, spec, error)
         raise error from exc
+    except OSError as exc:
+        error = RuntimeError(f'failed to execute Claude CLI: {exc}')
+        _record_eval_error(control, spec, error)
+        raise error from exc
 
     try:
         events = _parse_stream_events(stdout)
-    except ClaudeCliError as exc:
+        if not _has_terminal_success(events):
+            raise RuntimeError('Claude stream ended without an observable successful result event')
+    except (ClaudeCliError, RuntimeError) as exc:
         _record_eval_error(control, spec, exc)
         raise
 
@@ -659,7 +671,8 @@ Overall: {overall}
 
 
 def _skill_content_digest(candidate: Path) -> str:
-    return hashlib.sha256((candidate / SKILL_MD_FILENAME).read_bytes()).hexdigest()
+    """Checkpoint identity includes supporting files, not just SKILL.md."""
+    return effective_skill_digest(candidate)
 
 
 def _snapshot_dict(control: EvaluationControl) -> dict[str, object]:
@@ -718,7 +731,7 @@ def run_red_green_evaluation(
                     control=control,
                     spec=spec,
                 )
-            except ClaudeCliError, RuntimeError:
+            except ClaudeCliError, RuntimeError, TimeoutError:
                 if control.stop_reason is not None:
                     break
                 continue

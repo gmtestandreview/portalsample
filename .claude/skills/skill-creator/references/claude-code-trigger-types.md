@@ -315,3 +315,19 @@ EOF
   skill-rules.json schema
 - [patterns library](claude-code-patterns-library.md) - Ready-to-use pattern
   library
+
+## Adversarial verification contract
+
+**Test contract for trigger modes:** Freeze a corpus of direct positive,
+indirect positive, similar near-miss, and unrelated negative prompts. For each
+trigger branch (keywords, intent regex, path glob, content regex), record the
+actual matcher and its flags, expected decision, observed decision, and source
+revision. Treat overlapping branches as a union only if the inspected code
+actually implements a union. A broad keyword such as "test" is not sufficient to
+activate a specific test-generation skill. Negative cases include CI triggers,
+browser hooks, and ordinary project skills unrelated to Agent Skills.
+
+**Release oracle:** A snippet matching in a standalone regex engine is static
+_proxy_ evidence, not proof of Claude Code hook activation. Only the configured
+host can establish actual selection/loading, and missing external hooks are NHR.
+Reject any unexpected matching negative before deploying a new rule.

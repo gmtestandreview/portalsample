@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Create a spec-conformant Agent Skill scaffold."""
 
 from __future__ import annotations
@@ -6,13 +6,21 @@ from __future__ import annotations
 import argparse
 import shutil
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-try:
-    from scripts.quick_validate import is_valid_skill_name
-except ModuleNotFoundError as exc:
-    if exc.name not in {'scripts', 'scripts.quick_validate'}:
-        raise
-    from quick_validate import is_valid_skill_name
+if TYPE_CHECKING:
+
+    def is_valid_skill_name(_skill_name: str) -> bool:
+        """Type-checking fallback for the runtime validator."""
+        return False
+
+else:
+    try:
+        from scripts.quick_validate import is_valid_skill_name
+    except ModuleNotFoundError as exc:
+        if exc.name not in {'scripts', 'scripts.quick_validate'}:
+            raise
+        from quick_validate import is_valid_skill_name
 
 
 SKILL_TEMPLATE = """---
@@ -36,7 +44,7 @@ TODO: State the reusable outcome this skill enables.
 - TODO: Add only non-obvious failure modes or boundaries that materially affect execution.
 """
 
-EXAMPLE_SCRIPT = '''#!/usr/bin/env python3
+EXAMPLE_SCRIPT = '''#!/usr/bin/env python3.14
 """Replace or delete this example helper."""
 
 def main() -> None:

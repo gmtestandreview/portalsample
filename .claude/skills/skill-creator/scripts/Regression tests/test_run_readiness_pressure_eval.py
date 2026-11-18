@@ -844,5 +844,42 @@ class ReadinessPressureEvalTests(unittest.TestCase):
                 )
 
 
+class StructuredReadinessOracleTests(unittest.TestCase):
+    def test_explicit_pass_and_amber_are_independent_of_execution_completion(self) -> None:
+        module_path = SCRIPT_DIR / 'run_readiness_pressure_eval.py'
+        spec = importlib.util.spec_from_file_location('run_readiness_pressure_eval', module_path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f'Cannot create import specification for {module_path}')
+
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        readiness_outcome = cast(
+            Callable[[dict[str, object], dict[str, object]], dict[str, object]],
+            module.readiness_outcome,
+        )
+
+        red: dict[str, object] = {
+            'label': 'red',
+            'exit_code': 0,
+            'skill_used': False,
+            'claimed_production_ready': True,
+            'blocked_unsupported_claim': False,
+            'mentions_missing_behavioral_evidence': False,
+        }
+        green: dict[str, object] = {
+            'label': 'green',
+            'exit_code': 0,
+            'skill_used': True,
+            'claimed_production_ready': False,
+            'blocked_unsupported_claim': True,
+            'mentions_missing_behavioral_evidence': True,
+        }
+        self.assertEqual(readiness_outcome(red, green)['overall'], 'PASS')
+        self.assertEqual(
+            readiness_outcome(red, {**green, 'claimed_production_ready': True})['overall'], 'AMBER'
+        )
+        self.assertEqual(readiness_outcome({**red, 'exit_code': 1}, green)['overall'], 'AMBER')
+
+
 if __name__ == '__main__':
     unittest.main()

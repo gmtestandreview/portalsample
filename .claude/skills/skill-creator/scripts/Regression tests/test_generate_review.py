@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import http.client
+import http.server
 import importlib.util
 import json
 import os
@@ -9,16 +10,90 @@ import sys
 import tempfile
 import threading
 import unittest
+from collections.abc import Callable
+from functools import partial
 from pathlib import Path
+from types import ModuleType
+from typing import Protocol, TypedDict, cast
 from unittest.mock import patch
 
+
+class OutputItem(TypedDict, total=False):
+    type: str
+    content: str
+
+
+class ReviewRun(TypedDict):
+    """Mirror the required fields returned by generate_review.build_run()."""
+
+    id: str
+    prompt: str
+    eval_id: int | str | None
+    outputs: list[OutputItem]
+    grading: dict[str, object] | None
+
+
+class ReviewModule(Protocol):
+    __file__: str
+    ReviewHandler: Callable[..., http.server.BaseHTTPRequestHandler]
+    ReviewHTTPServer: Callable[
+        [tuple[str, int], Callable[..., http.server.BaseHTTPRequestHandler]],
+        http.server.HTTPServer,
+    ]
+    webbrowser: ModuleType
+
+    def generate_html(self, runs: list[ReviewRun], skill_name: str) -> str: ...
+
+    def build_run(self, root: Path, run_dir: Path) -> ReviewRun: ...
+
+    def find_runs(self, root: Path) -> list[ReviewRun]: ...
+
+    def main(self, argv: list[str] | None = None) -> int: ...
+
+
+class GenerateEvalReviewModule(Protocol):
+    def generate_review(
+        self,
+        evals: list[dict[str, object]],
+        skill_path: Path,
+        template_path: Path,
+    ) -> str: ...
+
+
+def _load_module(name: str, path: Path, *, package: bool = False) -> ModuleType:
+    # The standalone trigger generator imports its sibling `utils` module.
+    # Package mode gives relative imports a stable root without mutating sys.path.
+    locations = [str(path.parent)] if package else None
+    spec = importlib.util.spec_from_file_location(name, path, submodule_search_locations=locations)
+    if spec is None or spec.loader is None:
+        raise ImportError(f'Unable to load {name!r} from {path}')
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    except BaseException:
+        # An incomplete import must not masquerade as a usable test module.
+        if sys.modules.get(spec.name) is module:
+            del sys.modules[spec.name]
+        raise
+    return module
+
+
 MODULE_PATH = Path(__file__).resolve().parents[2] / 'eval-viewer' / 'generate_review.py'
-SPEC = importlib.util.spec_from_file_location('generate_review', MODULE_PATH)
-assert SPEC is not None
-assert SPEC.loader is not None
-review = importlib.util.module_from_spec(SPEC)
-sys.modules[SPEC.name] = review
-SPEC.loader.exec_module(review)
+GENERATE_EVAL_REVIEW_PATH = Path(__file__).resolve().parents[1] / 'generate_eval_review.py'
+
+review = cast(ReviewModule, _load_module('generate_review', MODULE_PATH))
+_generate_eval_review: GenerateEvalReviewModule | None = None
+
+
+def _get_generate_eval_review() -> GenerateEvalReviewModule:
+    global _generate_eval_review
+    if _generate_eval_review is None:
+        _generate_eval_review = cast(
+            GenerateEvalReviewModule,
+            _load_module('generate_eval_review', GENERATE_EVAL_REVIEW_PATH, package=True),
+        )
+    return _generate_eval_review
 
 
 def write_metadata(eval_dir: Path, *, eval_id: object = 1, prompt: object = 'prompt') -> None:
@@ -29,6 +104,39 @@ def write_metadata(eval_dir: Path, *, eval_id: object = 1, prompt: object = 'pro
     if prompt is not None:
         data['prompt'] = prompt
     (eval_dir / 'eval_metadata.json').write_text(json.dumps(data), encoding='utf-8')
+
+
+class TriggerReviewSecurityTests(unittest.TestCase):
+    def test_duplicate_data_marker_is_rejected_before_writing_page(self) -> None:
+        generate_eval_review = _get_generate_eval_review()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill = root / 'skill'
+            skill.mkdir()
+            (skill / 'SKILL.md').write_text('---\nname: demo\ndescription: demo skill\n---\n')
+            source = root / 'template.html'
+            source.write_text('data=__REVIEW_DATA_PLACEHOLDER__;__REVIEW_DATA_PLACEHOLDER__')
+            with self.assertRaisesRegex(ValueError, 'exactly one'):
+                generate_eval_review.generate_review(
+                    [{'query': 'one', 'should_trigger': True}],
+                    skill,
+                    source,
+                )
+
+    def test_untrusted_query_is_json_script_escaped(self) -> None:
+        generate_eval_review = _get_generate_eval_review()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill = root / 'skill'
+            skill.mkdir()
+            (skill / 'SKILL.md').write_text('---\nname: demo\ndescription: demo skill\n---\n')
+            html = generate_eval_review.generate_review(
+                [{'query': '</script><script>alert(1)</script>', 'should_trigger': False}],
+                skill,
+                Path(__file__).resolve().parents[2] / 'assets/eval_review.html',
+            )
+            self.assertNotIn('</script><script>alert(1)', html)
+            self.assertIn('\\u003c/script\\u003e', html)
 
 
 class TriggerReviewCliTests(unittest.TestCase):
@@ -119,6 +227,35 @@ class TriggerReviewCliTests(unittest.TestCase):
 
 
 class GenerateReviewOptimizedTests(unittest.TestCase):
+    def test_direct_html_generator_rejects_duplicate_review_ids(self) -> None:
+        one: ReviewRun = {
+            'id': 'same-run',
+            'prompt': 'test',
+            'eval_id': 1,
+            'outputs': [],
+            'grading': None,
+        }
+        with self.assertRaisesRegex(ValueError, 'unique IDs'):
+            duplicate: ReviewRun = {
+                'id': one['id'],
+                'prompt': one['prompt'],
+                'eval_id': one['eval_id'],
+                'outputs': list(one['outputs']),
+                'grading': one['grading'],
+            }
+            review.generate_html([one, duplicate], 'demo')
+
+    def test_direct_html_generator_rejects_missing_review_id(self) -> None:
+        invalid: ReviewRun = {
+            'id': '',
+            'prompt': 'test',
+            'eval_id': 1,
+            'outputs': [],
+            'grading': None,
+        }
+        with self.assertRaisesRegex(ValueError, 'non-empty string'):
+            review.generate_html([invalid], 'demo')
+
     def test_metadata_fields_fallback_independently(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -217,7 +354,7 @@ class GenerateReviewOptimizedTests(unittest.TestCase):
 
             built = review.build_run(root, run)
 
-            self.assertEqual(built['outputs'][0]['type'], 'error')
+            self.assertEqual(built['outputs'][0].get('type'), 'error')
             self.assertNotIn('SECRET', built['outputs'][0].get('content', ''))
 
     @unittest.skipIf(not hasattr(os, 'symlink'), 'symlinks unavailable')
@@ -236,37 +373,116 @@ class GenerateReviewOptimizedTests(unittest.TestCase):
             serialized = json.dumps(built['outputs'])
             self.assertNotIn('SECRET', serialized)
 
-    def test_feedback_normalization_preserves_blank_as_no_comment(self) -> None:
-        normalized = review._normalize_feedback_payload(
-            {'reviews': [{'run_id': 'r1', 'feedback': ''}], 'status': 'complete'},
-            allowed_run_ids={'r1'},
+    def _post_feedback(
+        self, workspace: Path, payload: dict[str, object]
+    ) -> tuple[int, dict[str, object]]:
+        """Exercise feedback normalization through its supported HTTP interface."""
+        handler = partial(
+            review.ReviewHandler,
+            workspace,
+            'skill',
+            workspace / 'feedback.json',
+            {},
+            None,
         )
+        server = review.ReviewHTTPServer(('127.0.0.1', 0), handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+            connection = http.client.HTTPConnection('127.0.0.1', port, timeout=2)
+            try:
+                connection.request(
+                    'POST',
+                    '/api/feedback',
+                    body=json.dumps(payload),
+                    headers={'Content-Type': 'application/json'},
+                )
+                response = connection.getresponse()
+                status = response.status
+                raw_response: object = json.loads(response.read())
+                self.assertIsInstance(raw_response, dict)
+                return status, cast(dict[str, object], raw_response)
+            finally:
+                connection.close()
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
 
-        self.assertEqual(normalized['reviews'][0]['feedback'], '')
-        self.assertEqual(normalized['status'], 'complete')
-        self.assertTrue(normalized['reviews'][0]['timestamp'].endswith('Z'))
+    def test_feedback_normalization_preserves_blank_as_no_comment(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'run-1' / 'outputs').mkdir(parents=True)
+            run_id = review.find_runs(root)[0]['id']
+            status, response = self._post_feedback(
+                root,
+                {'reviews': [{'run_id': run_id, 'feedback': ''}], 'status': 'complete'},
+            )
+            self.assertEqual(status, 200)
+            self.assertEqual(response, {'ok': True})
+
+            raw_saved: object = json.loads((root / 'feedback.json').read_text(encoding='utf-8'))
+            self.assertIsInstance(raw_saved, dict)
+            saved = cast(dict[str, object], raw_saved)
+            self.assertEqual(saved.get('status'), 'complete')
+            reviews = saved.get('reviews')
+            self.assertIsInstance(reviews, list)
+            entries = cast(list[object], reviews)
+            self.assertEqual(len(entries), 1)
+            entry: object = entries[0]
+            self.assertIsInstance(entry, dict)
+            feedback_entry = cast(dict[str, object], entry)
+            self.assertEqual(feedback_entry.get('feedback'), '')
+            timestamp = feedback_entry.get('timestamp')
+            if isinstance(timestamp, str):
+                self.assertTrue(timestamp.endswith('Z'))
+            else:
+                self.fail(f'Expected a string timestamp, got {timestamp!r}')
 
     def test_feedback_rejects_duplicate_or_unknown_run_ids(self) -> None:
-        with self.assertRaises(ValueError):
-            review._normalize_feedback_payload(
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / 'run-1' / 'outputs').mkdir(parents=True)
+            run_id = review.find_runs(root)[0]['id']
+
+            status, response = self._post_feedback(
+                root,
                 {
                     'reviews': [
-                        {'run_id': 'r1', 'feedback': 'a'},
-                        {'run_id': 'r1', 'feedback': 'b'},
+                        {'run_id': run_id, 'feedback': 'a'},
+                        {'run_id': run_id, 'feedback': 'b'},
                     ]
                 },
-                allowed_run_ids={'r1'},
             )
-        with self.assertRaises(ValueError):
-            review._normalize_feedback_payload(
+            self.assertEqual(status, 400)
+            self.assertIn('duplicate', str(response.get('error')))
+            self.assertFalse((root / 'feedback.json').exists())
+
+            status, response = self._post_feedback(
+                root,
                 {'reviews': [{'run_id': 'other', 'feedback': 'a'}]},
-                allowed_run_ids={'r1'},
             )
+            self.assertEqual(status, 400)
+            self.assertIn('unknown', str(response.get('error')))
+            self.assertFalse((root / 'feedback.json').exists())
 
     def test_json_embedding_escapes_script_terminators(self) -> None:
-        encoded = review._json_for_script({'x': '</script><script>alert(1)</script>'})
-        self.assertNotIn('</script>', encoded)
-        self.assertIn('\\u003c', encoded)
+        untrusted_prompt = '</script><script>alert(1)</script>'
+        html = review.generate_html(
+            [
+                {
+                    'id': 'run-1',
+                    'prompt': untrusted_prompt,
+                    'eval_id': None,
+                    'outputs': [],
+                    'grading': None,
+                }
+            ],
+            'demo',
+        )
+        self.assertNotIn(untrusted_prompt, html)
+        self.assertIn('\\u003c/script\\u003e', html)
 
     def test_generate_html_requires_exactly_one_marker(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -290,7 +506,7 @@ class GenerateReviewOptimizedTests(unittest.TestCase):
             run_id = review.find_runs(root)[0]['id']
             feedback_path = root / 'feedback.json'
 
-            handler = review.partial(
+            handler = partial(
                 review.ReviewHandler,
                 root,
                 'skill',
@@ -378,9 +594,7 @@ class GenerateReviewOptimizedTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / 'run-1' / 'outputs').mkdir(parents=True)
-            handler = review.partial(
-                review.ReviewHandler, root, 'skill', root / 'feedback.json', {}, None
-            )
+            handler = partial(review.ReviewHandler, root, 'skill', root / 'feedback.json', {}, None)
             server = review.ReviewHTTPServer(('127.0.0.1', 0), handler)
             thread = threading.Thread(target=server.serve_forever, daemon=True)
             thread.start()

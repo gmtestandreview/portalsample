@@ -58,6 +58,12 @@ class FakeExecutor:
 
 
 class RunEvalOptimizedTests(unittest.TestCase):
+    def test_checkpoint_identity_depends_on_description_and_source(self) -> None:
+        first = run_eval._activation_attempt_digest('description v1', 'a' * 64)
+        self.assertNotEqual(first, run_eval._activation_attempt_digest('description v2', 'a' * 64))
+        self.assertNotEqual(first, run_eval._activation_attempt_digest('description v1', 'b' * 64))
+        self.assertEqual(first, run_eval._activation_attempt_digest('description v1', 'a' * 64))
+
     def test_compatibility_validator_alias(self) -> None:
         with self.assertRaises(ValueError):
             run_eval._validate_eval_set(

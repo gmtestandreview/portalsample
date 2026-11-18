@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Improve a skill description based on eval results.
 
 Takes eval results (from run_eval.py) and generates an improved description
@@ -10,6 +10,7 @@ uses the session's Claude Code auth, no separate ANTHROPIC_API_KEY needed).
 
 import argparse
 import hashlib
+import importlib
 import json
 import os
 import re
@@ -18,26 +19,96 @@ import subprocess
 import sys
 from collections.abc import Callable
 from pathlib import Path
-from typing import TypedDict, cast
+from typing import TYPE_CHECKING, TypedDict, cast
 
-try:
-    from scripts.eval_control import (
-        AttemptSpec,
-        CachedResult,
-        CheckpointStore,
-        EvaluationControl,
-        validate_model_id,
-    )
-    from scripts.utils import parse_skill_md
-except ModuleNotFoundError:
-    from eval_control import (
-        AttemptSpec,
-        CachedResult,
-        CheckpointStore,
-        EvaluationControl,
-        validate_model_id,
-    )
-    from utils import parse_skill_md
+if TYPE_CHECKING:
+
+    class AttemptSpec:
+        kind: str
+        query: str
+        run_index: int
+        skill_name: str
+        skill_content_sha256: str
+        model: str
+        claude_version: str
+        distractor_sha256: str
+        harness_version: int
+
+        def __init__(
+            self,
+            kind: str,
+            query: str,
+            run_index: int,
+            skill_name: str,
+            skill_content_sha256: str,
+            model: str,
+            claude_version: str,
+            distractor_sha256: str,
+            harness_version: int = 1,
+        ) -> None: ...
+
+    class CachedResult:
+        outcome: str
+        value: str | None
+        payload: dict[str, object] | None
+        artifacts: tuple[object, ...]
+
+        def __init__(
+            self,
+            outcome: str,
+            value: str | None = None,
+            payload: dict[str, object] | None = None,
+            artifacts: tuple[object, ...] = (),
+        ) -> None: ...
+
+    class CheckpointStore:
+        def __init__(self, path: Path) -> None: ...
+
+    class EvaluationControl:
+        stop_reason: str | None
+        max_calls: int
+        planned_calls: int
+        checkpoint: CheckpointStore | None
+        deadline_seconds: float | None
+
+        def __init__(
+            self,
+            *,
+            max_calls: int,
+            planned_calls: int,
+            checkpoint: CheckpointStore | None,
+            deadline_seconds: float | None,
+            clock: Callable[[], float] | None = None,
+        ) -> None: ...
+
+        def consume_cached(
+            self,
+            spec: object,
+            validate: Callable[[CachedResult], str | None] | None = None,
+        ) -> CachedResult | None: ...
+
+        def reserve_call(self, spec: object) -> bool: ...
+        def record_error(self, spec: object, error: BaseException) -> None: ...
+        def record_success(self, spec: object, result: CachedResult) -> None: ...
+
+    def validate_model_id(model: str) -> str: ...
+
+    def parse_skill_md(path: object) -> tuple[str, str, str]: ...
+
+else:
+    try:
+        _eval_control = importlib.import_module('scripts.eval_control')
+        _utils = importlib.import_module('scripts.utils')
+    except ModuleNotFoundError:
+        _eval_control = importlib.import_module('eval_control')
+        _utils = importlib.import_module('utils')
+
+    AttemptSpec = _eval_control.AttemptSpec
+    CachedResult = _eval_control.CachedResult
+    CheckpointStore = _eval_control.CheckpointStore
+    EvaluationControl = _eval_control.EvaluationControl
+    validate_model_id = _eval_control.validate_model_id
+    parse_skill_md = _utils.parse_skill_md
 
 
 _MAX_DESCRIPTION_CHARS = 1024
@@ -613,7 +684,7 @@ Here are some tips that we've found to work well in writing these descriptions:
 - The description competes with other skills for Claude's attention — make it distinctive and immediately recognizable.
 - If you're getting lots of failures after repeated attempts, change things up. Try different sentence structures or wordings.
 
-I'd encourage you to be creative and mix up the style in different iterations since you'll have multiple opportunities to try different approaches and we'll just grab the highest-scoring one at the end. 
+I'd encourage you to be creative and mix up the style in different iterations since you'll have multiple opportunities to try different approaches and we'll just grab the highest-scoring one at the end.
 
 Please respond with only the new description text in <new_description> tags, nothing else."""
     return prompt
@@ -630,9 +701,15 @@ def _extract_description(text: str) -> str:
             'claude response must contain only <new_description>...</new_description>'
         )
 
-    description = match.group(1).strip().strip('"')
+    description = match.group(1).strip()
+    if '<new_description>' in description or '</new_description>' in description:
+        raise RuntimeError('claude returned more than one description tag')
+    if description.startswith('"') and description.endswith('"') and len(description) >= 2:
+        description = description[1:-1].strip()
     if not description:
         raise RuntimeError('claude returned an empty description')
+    if any(ord(char) < 32 and char not in {'\n', '\t'} for char in description):
+        raise RuntimeError('claude returned a description with forbidden control characters')
     return description
 
 
@@ -661,14 +738,14 @@ def improve_description(
     model_identity = model or 'claude-configured'
     run_index = iteration if iteration is not None else 0
     rewrite_spec = AttemptSpec(
-        kind='description:rewrite',
-        query=prompt,
-        run_index=run_index,
-        skill_name=skill_name,
-        skill_content_sha256=content_digest,
-        model=model_identity,
-        claude_version='unknown',
-        distractor_sha256='',
+        'description:rewrite',
+        prompt,
+        run_index,
+        skill_name,
+        content_digest,
+        model_identity,
+        'unknown',
+        'unknown',
     )
     text = _call_claude(
         prompt,
@@ -699,14 +776,14 @@ def improve_description(
             f'the new description in <new_description> tags.'
         )
         shorten_spec = AttemptSpec(
-            kind='description:shorten',
-            query=shorten_prompt,
-            run_index=run_index,
-            skill_name=skill_name,
-            skill_content_sha256=content_digest,
-            model=model_identity,
-            claude_version='unknown',
-            distractor_sha256='',
+            'description:shorten',
+            shorten_prompt,
+            run_index,
+            skill_name,
+            content_digest,
+            model_identity,
+            'unknown',
+            'unknown',
         )
         shorten_text = _call_claude(
             shorten_prompt,

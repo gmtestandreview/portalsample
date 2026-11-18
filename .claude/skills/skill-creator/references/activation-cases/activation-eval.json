@@ -1,0 +1,102 @@
+[
+  {
+    "id": "activation-eval-01",
+    "query": "Turn our incident triage steps into a reusable SKILL.md with references.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-02",
+    "query": "Audit this existing Agent Skill for safety, scope, and missing instructions.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-03",
+    "query": "Compare these two SKILL.md files and propose a consolidation.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-04",
+    "query": "Write evaluation prompts to test whether this Agent Skill activates.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-05",
+    "query": "Revise my skill description to reduce accidental triggering.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-06",
+    "query": "Benchmark the output of the updated skill against its previous version.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-07",
+    "query": "Validate the frontmatter and package an Agent Skill directory.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-08",
+    "query": "Check the Claude Code skill-rules configuration for incorrect skill suggestions.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-09",
+    "query": "Assess the support files and scripts for my reusable Agent Skill.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-10",
+    "query": "Help convert this repeatable troubleshooting workflow into an Agent Skill.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-eval-11",
+    "query": "Please fix the ESLint warnings in this React component.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-12",
+    "query": "Optimize the trigger rules in a GitHub Actions CI workflow.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-13",
+    "query": "Review the packaging metadata for a Python distribution.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-14",
+    "query": "Compare two implementations of a REST API without any skills.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-15",
+    "query": "Rewrite this marketing email to sound warmer.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-16",
+    "query": "Create a skill-building lesson plan for an HR workshop.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-17",
+    "query": "Run an A/B test of two ecommerce landing pages.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-18",
+    "query": "Troubleshoot the browser extension hook that intercepts clicks.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-19",
+    "query": "Fix the webhook trigger on our customer relationship integration.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-eval-20",
+    "query": "Refactor this generic Markdown design document for clarity.",
+    "should_trigger": false
+  }
+]

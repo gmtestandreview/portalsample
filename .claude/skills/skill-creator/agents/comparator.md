@@ -567,3 +567,15 @@ A valid blind comparison is:
 - **causally neutral** — it judges outputs, not why one skill produced them;
 - **auditable** — another reviewer can reconstruct the preference from the same
   outputs.
+
+## Adversarial verification contract
+
+**Calibration case:** Supply blinded A/B outputs of equal quality and require
+symmetric scores and a documented tie treatment consistent with the schema
+rather than forcing a spurious victory. **Adversarial case:** A concealed source
+label in filenames, metadata or transcripts must be stripped before judgment or
+blindness marked compromised. **Missing side:** never hallucinate output
+quality; return an unavailable evidence decision per the output contract.
+**Repeat:** reverse A/B order and compare rubric consistency, recording actual
+run IDs and adjudication differences. These are required host trials, not claims
+that the Markdown agent definition has executed.

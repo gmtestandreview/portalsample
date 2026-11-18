@@ -103,6 +103,19 @@ class HostileFrontmatterTests(unittest.TestCase):
             (skill_dir / 'SKILL.md').write_bytes(raw)
             return self.mod.validate_skill(skill_dir)
 
+    def test_allowed_tools_requires_portable_space_separated_string(self) -> None:
+        valid, message = self.validate_raw(
+            self.VALID_HEAD + b'allowed-tools: "Bash(git:*) Read"\n---\n'
+        )
+        self.assertTrue(valid, message)
+        for value in (b'[Read, Write]', b'42', b'""'):
+            with self.subTest(value=value):
+                valid, message = self.validate_raw(
+                    self.VALID_HEAD + b'allowed-tools: ' + value + b'\n---\n'
+                )
+                self.assertFalse(valid)
+                self.assertIn('space-separated string', message)
+
     def test_baseline_is_valid(self) -> None:
         self.assertEqual(self.validate_raw(self.VALID_HEAD + b'---\n'), (True, 'Skill is valid'))
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.14
 """Regression tests for skill-creator helper scripts."""
 
 from __future__ import annotations
@@ -23,19 +24,35 @@ else:
 SCRIPTS_DIR = Path(__file__).resolve().parent
 
 
-class CompatibilityTests(unittest.TestCase):
-    def test_aggregate_benchmark_uses_python_310_compatible_utc(self) -> None:
-        tree = ast.parse((SCRIPTS_DIR / 'aggregate_benchmark.py').read_text(encoding='utf-8'))
+class PythonRuntimeTests(unittest.TestCase):
+    def test_runtime_is_python_314(self) -> None:
+        self.assertEqual(
+            sys.version_info[:2],
+            (3, 14),
+            'The skill-creator regression suite must run with Python 3.14.x',
+        )
 
-        datetime_imports = [
-            alias.name
-            for node in ast.walk(tree)
-            if isinstance(node, ast.ImportFrom) and node.module == 'datetime'
-            for alias in node.names
+    def test_source_entrypoints_use_python_314(self) -> None:
+        root = SCRIPTS_DIR.parent
+        sources = list(SCRIPTS_DIR.glob('*.py')) + [root / 'eval-viewer' / 'generate_review.py']
+        entrypoints = [
+            source for source in sources if source.read_text(encoding='utf-8').startswith('#!')
         ]
+        self.assertGreater(len(entrypoints), 0)
+        for source in entrypoints:
+            with self.subTest(source=source.name):
+                self.assertEqual(
+                    source.read_text(encoding='utf-8').splitlines()[0],
+                    '#!/usr/bin/env python3.14',
+                )
+        self.assertEqual((root / '.python-version').read_text(encoding='utf-8'), '3.14\n')
 
-        self.assertNotIn('UTC', datetime_imports)
-        self.assertIn('timezone', datetime_imports)
+    def test_all_active_python_sources_parse(self) -> None:
+        root = SCRIPTS_DIR.parent
+        sources = list(SCRIPTS_DIR.glob('*.py')) + [root / 'eval-viewer' / 'generate_review.py']
+        for source in sources:
+            with self.subTest(source=str(source.relative_to(root))):
+                ast.parse(source.read_text(encoding='utf-8'), filename=str(source))
 
 
 class ScriptEntrypointTests(unittest.TestCase):
@@ -397,6 +414,7 @@ class RedGreenEvalTests(unittest.TestCase):
             'duration_seconds': 0.1,
             'events': [{'type': 'result', 'result': 'rate limited'}],
             'stderr': '',
+            'usage': {},
         }
 
         with tempfile.TemporaryDirectory() as tmp:
