@@ -96,3 +96,126 @@ def test_main_allows_invalid_hook_input(monkeypatch: MonkeyPatch, scanner: Modul
 
     if result.value.code != 0:
         pytest.fail(f'expected invalid input to exit with code 0, got {result.value.code}')
+
+
+def test_auto_staged_files_returns_only_existing_files(
+    tmp_path: Path, monkeypatch: MonkeyPatch, scanner: ModuleType
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / 'present.txt').write_text('x', encoding='utf-8')
+    calls: list[object] = []
+
+    def fake_run(*args: object, **kwargs: object) -> SimpleNamespace:
+        calls.append(args[0])
+        return SimpleNamespace(stdout='present.txt\nmissing.txt\n')
+
+    monkeypatch.setattr(scanner.subprocess, 'run', fake_run)
+
+    result = scanner._auto_staged_files('git commit -am message')
+
+    if result != ['present.txt']:
+        pytest.fail(f'expected only existing files, got {result}')
+    if calls != [['git', 'diff', '--name-only']]:
+        pytest.fail(f'unexpected git invocation: {calls}')
+
+
+def test_auto_staged_files_skips_git_when_commit_has_no_all_flag(
+    monkeypatch: MonkeyPatch, scanner: ModuleType
+) -> None:
+    def fail_run(*args: object, **kwargs: object) -> SimpleNamespace:
+        pytest.fail('git must not run without a commit -a flag')
+
+    monkeypatch.setattr(scanner.subprocess, 'run', fail_run)
+
+    if scanner._auto_staged_files('git commit -m message') != []:
+        pytest.fail('expected no files when commit has no -a flag')
+
+
+def test_auto_staged_files_propagates_file_not_found(
+    monkeypatch: MonkeyPatch, scanner: ModuleType
+) -> None:
+    def missing_git(*args: object, **kwargs: object) -> SimpleNamespace:
+        raise FileNotFoundError('git')
+
+    monkeypatch.setattr(scanner.subprocess, 'run', missing_git)
+
+    with pytest.raises(FileNotFoundError):
+        scanner._auto_staged_files('git commit -am message')
+
+
+def test_all_added_files_strips_porcelain_prefix_and_keeps_existing(
+    tmp_path: Path, monkeypatch: MonkeyPatch, scanner: ModuleType
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / 'a.txt').write_text('x', encoding='utf-8')
+    (tmp_path / 'b.txt').write_text('x', encoding='utf-8')
+    calls: list[object] = []
+
+    def fake_run(*args: object, **kwargs: object) -> SimpleNamespace:
+        calls.append(args[0])
+        return SimpleNamespace(stdout='?? b.txt\n M a.txt\n D gone.txt\n')
+
+    monkeypatch.setattr(scanner.subprocess, 'run', fake_run)
+
+    result = scanner._all_added_files()
+
+    if result != ['b.txt', 'a.txt']:
+        pytest.fail(f'expected prefix-stripped existing files, got {result}')
+    if calls != [['git', 'status', '--porcelain']]:
+        pytest.fail(f'unexpected git invocation: {calls}')
+
+
+def test_all_added_files_propagates_file_not_found(
+    monkeypatch: MonkeyPatch, scanner: ModuleType
+) -> None:
+    def missing_git(*args: object, **kwargs: object) -> SimpleNamespace:
+        raise FileNotFoundError('git')
+
+    monkeypatch.setattr(scanner.subprocess, 'run', missing_git)
+
+    with pytest.raises(FileNotFoundError):
+        scanner._all_added_files()
+
+
+def test_main_currently_crashes_when_git_is_missing(
+    monkeypatch: MonkeyPatch, scanner: ModuleType
+) -> None:
+    """Characterisation: no caller catches FileNotFoundError today.
+
+    main() lets it escape as an uncaught exception rather than exiting 0 (fail
+    open) or 2 (block); it is not a SystemExit.
+    """
+    monkeypatch.setattr(
+        sys,
+        'stdin',
+        io.StringIO(json.dumps({'tool_input': {'command': 'git add . && git commit -m message'}})),
+    )
+
+    def no_staged_files() -> list[str]:
+        return []
+
+    def missing_git(*args: object, **kwargs: object) -> SimpleNamespace:
+        raise FileNotFoundError('git')
+
+    monkeypatch.setattr(scanner, 'get_staged_files', no_staged_files)
+    monkeypatch.setattr(scanner.subprocess, 'run', missing_git)
+
+    with pytest.raises(FileNotFoundError):
+        scanner.main()
+
+
+def test_all_added_files_loses_first_line_leading_space_quirk(
+    tmp_path: Path, monkeypatch: MonkeyPatch, scanner: ModuleType
+) -> None:
+    """Characterisation of a current quirk: stdout.strip() eats the first line's
+    leading status space, so the 3-char prefix strip cuts one char too many."""
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / 'a.txt').write_text('x', encoding='utf-8')
+
+    def fake_run(*args: object, **kwargs: object) -> SimpleNamespace:
+        return SimpleNamespace(stdout=' M a.txt\n')
+
+    monkeypatch.setattr(scanner.subprocess, 'run', fake_run)
+
+    if scanner._all_added_files() != []:
+        pytest.fail('first-line leading-space quirk no longer reproduces')
