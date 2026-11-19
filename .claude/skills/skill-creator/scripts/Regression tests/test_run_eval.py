@@ -10,7 +10,7 @@ from concurrent.futures import Future
 from pathlib import Path
 from types import TracebackType
 from typing import Literal
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 SCRIPTS_DIR = Path(__file__).resolve().parents[1]
 MODULE_PATH = SCRIPTS_DIR / 'run_eval.py'
@@ -185,7 +185,7 @@ class RunEvalOptimizedTests(unittest.TestCase):
             )
 
     def test_all_execution_failures_have_unavailable_trigger_rate(self) -> None:
-        FakeExecutor.errors = [RuntimeError('run-1 failed'), RuntimeError('run-2 failed')]
+        FakeExecutor.errors = [run_eval.EvalExecutionError('run-1 failed'), OSError('run-2 failed')]
         with (
             patch.object(run_eval, 'ProcessPoolExecutor', FakeExecutor),
             patch.object(run_eval, '_require_claude_cli', return_value='/usr/bin/claude'),
@@ -212,7 +212,7 @@ class RunEvalOptimizedTests(unittest.TestCase):
         )
 
     def test_partial_execution_keeps_rate_over_completed_but_fails_query(self) -> None:
-        FakeExecutor.errors = [True, RuntimeError('run-2 failed'), False]
+        FakeExecutor.errors = [True, TimeoutError('run-2 failed'), False]
         with (
             patch.object(run_eval, 'ProcessPoolExecutor', FakeExecutor),
             patch.object(run_eval, '_require_claude_cli', return_value='/usr/bin/claude'),
@@ -239,6 +239,58 @@ class RunEvalOptimizedTests(unittest.TestCase):
             path.write_text('[{"query":"x","should_trigger":true,"x":NaN}]', encoding='utf-8')
             with self.assertRaisesRegex(ValueError, 'invalid eval JSON'):
                 run_eval._load_eval_json(path)
+
+    def test_unexpected_worker_errors_propagate(self) -> None:
+        for error in (RuntimeError('unexpected runtime error'), ValueError('unexpected value')):
+            with (
+                self.subTest(error=error),
+                patch.object(FakeExecutor, 'errors', [error]),
+                patch.object(run_eval, 'ProcessPoolExecutor', FakeExecutor),
+                patch.object(run_eval, '_require_claude_cli', return_value='claude'),
+            ):
+                with self.assertRaises(type(error)) as raised:
+                    run_eval.run_eval(
+                        eval_set=[{'query': 'q', 'should_trigger': True}],
+                        skill_name='example',
+                        description='Use for examples.',
+                        num_workers=1,
+                        timeout=5,
+                        project_root=Path('.'),
+                    )
+                self.assertIs(raised.exception, error)
+
+    def test_unexpected_stream_reader_error_propagates(self) -> None:
+        stdout = Mock()
+        stdout.readline.return_value = b''
+        process = Mock(stdout=stdout, stderr=None)
+        error = RuntimeError('unexpected reader error')
+        with (
+            patch.object(run_eval, '_wait_for_trigger', side_effect=error),
+            patch.object(run_eval, '_terminate_process_tree') as terminate,
+        ):
+            with self.assertRaises(RuntimeError) as raised:
+                run_eval._evaluate_process(process, 'example-skill-12345678', timeout=1)
+
+        self.assertIs(raised.exception, error)
+        terminate.assert_called_once_with(process)
+        stdout.close.assert_called_once_with()
+
+    def test_rate_limit_stream_error_retains_status_and_stderr(self) -> None:
+        stdout = Mock()
+        stdout.readline.side_effect = (
+            b'{"type":"result","is_error":true,"api_error_status":429}\n',
+            b'',
+        )
+        process = Mock(stdout=stdout, stderr=None)
+        with (
+            patch.object(run_eval, '_terminate_process_tree'),
+            patch.object(run_eval, '_stderr_text', return_value='Rate limit details'),
+            self.assertRaises(run_eval.ClaudeCliError) as raised,
+        ):
+            run_eval._evaluate_process(process, 'example-skill-12345678', timeout=1)
+
+        self.assertEqual(raised.exception.status, 429)
+        self.assertIn('stderr: Rate limit details', str(raised.exception))
 
     def test_eof_without_result_is_not_no_trigger(self) -> None:
         class FakeStdout:

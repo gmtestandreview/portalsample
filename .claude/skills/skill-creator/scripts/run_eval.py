@@ -88,6 +88,10 @@ _SAFE_MODEL_RE = re.compile(r'[A-Za-z0-9][A-Za-z0-9._:/\[\]-]*')
 _YAML_ESCAPE_RE = re.compile('[\x7f-\x9f﻿￾￿]')
 
 
+class EvalExecutionError(RuntimeError):
+    """An expected failure to obtain a valid Claude CLI result."""
+
+
 class EvalItem(TypedDict):
     """Validated evaluation input."""
 
@@ -275,11 +279,11 @@ def _parse_stream_tool_input(
     except json.JSONDecodeError:
         return None
     except ValueError as exc:
-        raise RuntimeError(f'invalid streamed tool input: {exc}') from exc
+        raise EvalExecutionError(f'invalid streamed tool input: {exc}') from exc
 
     tool_input = _string_key_mapping(raw)
     if tool_input is None:
-        raise RuntimeError('streamed tool input must be a JSON object')
+        raise EvalExecutionError('streamed tool input must be a JSON object')
     return _tool_input_triggers(tool_name, tool_input, clean_name)
 
 
@@ -331,7 +335,7 @@ def _stream_block_stop(state: _StreamState, clean_name: str) -> bool:
 
     parsed = _parse_stream_tool_input(tool_name, accumulated, clean_name)
     if parsed is None:
-        raise RuntimeError('claude CLI ended a tool-use block with malformed JSON input')
+        raise EvalExecutionError('claude CLI ended a tool-use block with malformed JSON input')
     return parsed
 
 
@@ -374,7 +378,7 @@ def _normalize_stream_event(
 def _result_event_decision(event: Mapping[str, object]) -> _EventDecision:
     is_error = event.get('is_error')
     if is_error is not None and not isinstance(is_error, bool):
-        raise RuntimeError('claude CLI result event has non-boolean is_error')
+        raise EvalExecutionError('claude CLI result event has non-boolean is_error')
     if is_error is not True:
         return 'no_trigger'
 
@@ -618,7 +622,7 @@ def _raw_line_decision(
     event = _event_mapping(line)
     if event is None:
         preview = line[:200]
-        raise RuntimeError(f'claude CLI emitted malformed stream-json output: {preview!r}')
+        raise EvalExecutionError(f'claude CLI emitted malformed stream-json output: {preview!r}')
     return _process_event(event, stream_state, clean_name)
 
 
@@ -686,11 +690,15 @@ def _wait_for_trigger(
 def _format_process_error(
     message: str,
     stderr_buffer: bytearray,
-) -> RuntimeError:
+    *,
+    cause: ClaudeCliError | EvalExecutionError | None = None,
+) -> ClaudeCliError | EvalExecutionError:
     stderr = _stderr_text(stderr_buffer)
     if stderr:
-        return RuntimeError(f'{message}; stderr: {stderr}')
-    return RuntimeError(message)
+        message = f'{message}; stderr: {stderr}'
+    if isinstance(cause, ClaudeCliError):
+        return ClaudeCliError(cause.status, message)
+    return EvalExecutionError(message)
 
 
 def _close_process_streams(
@@ -746,7 +754,7 @@ def _evaluate_process(
     stdout = process.stdout
     if stdout is None:
         _terminate_process_tree(process)
-        raise RuntimeError('claude CLI stdout pipe was not created')
+        raise EvalExecutionError('claude CLI stdout pipe was not created')
 
     line_queue: queue.Queue[bytes | None] = queue.Queue()
     stdout_reader = threading.Thread(
@@ -767,7 +775,7 @@ def _evaluate_process(
         )
         stderr_reader.start()
 
-    wait_error: RuntimeError | None = None
+    wait_error: ClaudeCliError | EvalExecutionError | None = None
     try:
         result = _wait_for_trigger(
             process,
@@ -775,7 +783,7 @@ def _evaluate_process(
             clean_name,
             time.monotonic() + timeout,
         )
-    except RuntimeError as exc:
+    except (ClaudeCliError, EvalExecutionError) as exc:
         result = 'eof'
         wait_error = exc
     finally:
@@ -783,7 +791,7 @@ def _evaluate_process(
         _close_process_streams(stdout, stderr, stdout_reader, stderr_reader)
 
     if wait_error is not None:
-        raise _format_process_error(str(wait_error), stderr_buffer)
+        raise _format_process_error(str(wait_error), stderr_buffer, cause=wait_error) from wait_error
     if stdout_reader.is_alive() or (stderr_reader is not None and stderr_reader.is_alive()):
         raise _format_process_error(
             'claude CLI stream reader did not shut down cleanly',
@@ -1171,7 +1179,7 @@ def run_eval(
                 attempt, spec = future_to_attempt.pop(future)
                 try:
                     value = future.result()
-                except (OSError, RuntimeError, ValueError) as exc:
+                except (ClaudeCliError, EvalExecutionError, OSError) as exc:
                     message = _result_error_message(exc)
                     errors[attempt.item_index][attempt.run_index] = message
                     control.record_error(spec, exc)
