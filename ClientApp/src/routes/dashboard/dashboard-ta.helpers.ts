@@ -15,11 +15,11 @@ export interface FetchRequestsParams {
   sortOrder: string;
   currentPage: number;
   pageSize: number;
-  accountDetailsCrmGuid?: string | undefined;
-  filterSearchText?: string | undefined;
-  actualYear?: string | undefined;
-  actualStatus?: PatternApprovalStatusEnumDto | undefined;
-  signal?: AbortSignal | undefined;
+  accountDetailsCrmGuid: string | undefined;
+  filterSearchText: string | undefined;
+  actualYear: string | undefined;
+  actualStatus: PatternApprovalStatusEnumDto | undefined;
+  signal: AbortSignal | undefined;
 }
 
 export const fetchRequestsByTab = async ({

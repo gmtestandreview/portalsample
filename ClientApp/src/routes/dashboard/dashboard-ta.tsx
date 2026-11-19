@@ -268,6 +268,7 @@ const DashboardTA = () => {
           filterSearchText: initialFilters.filterSearchText,
           actualYear,
           actualStatus,
+          signal: undefined,
         });
         setRequests(requestsResponse.items ?? []);
         setCurrentPage(requestsResponse.currentPage ?? 1);
