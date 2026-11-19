@@ -113,6 +113,12 @@ class StartServerTests(unittest.TestCase):
         self.assertEqual(Path(launched), executable)
         self.assertEqual(arguments, ['app.js'])
 
+    @unittest.skipUnless(os.name == 'nt', 'Windows PATHEXT behavior')
+    def test_explicit_executable_launch_ignores_pathext(self) -> None:
+        with mock.patch.dict(os.environ, {'PATHEXT': '.CMD;.BAT'}):
+            out = run_for_output(f'"{sys.executable}" -V')
+        self.assertTrue(out.startswith(b'Python '), out)
+
     def test_real_process_receives_metacharacters_as_data(self) -> None:
         with tempfile.TemporaryDirectory() as root:
             marker = Path(root) / 'pwned'
@@ -221,9 +227,10 @@ class CleanupTests(unittest.TestCase):
 
 
 class FinalCommandTests(unittest.TestCase):
-    def test_final_command_uses_explicit_check_false_and_propagates_exit_code(self) -> None:
+    def test_final_command_ignores_pathext_for_explicit_path_and_propagates_exit_code(self) -> None:
         argv = ['with_server.py', '--server', 'a', '--port', '1', '--', sys.executable, '-V']
         with (
+            mock.patch.dict(os.environ, {'PATHEXT': '.CMD;.BAT'}),
             mock.patch.object(sys, 'argv', argv),
             mock.patch.object(ws, 'start_server', return_value=mock.Mock()),
             mock.patch.object(ws, 'is_server_ready', return_value=True),

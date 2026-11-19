@@ -98,10 +98,12 @@ def resolve_executable(name: str, *, cwd: str | None = None) -> str:
         path = os.path.join(caller_cwd, cwd or '', name)
         if not os.path.isabs(path):
             path = os.path.abspath(path)  # Windows drive-relative path
-        found = shutil.which(path)
-        if found is None:
+        # Check the exact path without applying Windows PATHEXT search rules.
+        if not os.path.isfile(path):
             raise FileNotFoundError(f'Executable not found at path: {path!r}')
-        return found
+        if os.name != 'nt' and not os.access(path, os.X_OK):
+            raise PermissionError(f'File is not executable: {path!r}')
+        return path
 
     found = shutil.which(name)
     if found is None:
