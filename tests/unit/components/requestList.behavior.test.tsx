@@ -263,12 +263,13 @@ describe('requestList behavior', () => {
     expect(trackGAEvent).toHaveBeenCalledWith('Viewreport');
   });
 
-  it('omits the report button test id when the report has no id', () => {
+  it('omits unavailable report identifiers from the button and action menu', async () => {
     expect.hasAssertions();
 
     resetRequestListMocks();
+    const user = userEvent.setup();
 
-    renderInDashboardList(
+    const { unmount } = renderInDashboardList(
       <RequestItem
         request={{
           ...baseRequest,
@@ -280,6 +281,17 @@ describe('requestList behavior', () => {
     expect(
       screen.getByRole('button', { name: 'View report' }),
     ).not.toHaveAttribute('data-testid');
+
+    unmount();
+    renderInDashboardList(
+      <RequestItem request={{ ...baseRequest, quote: undefined }} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    expect(
+      screen.queryByRole('menuitem', { name: 'View report' }),
+    ).not.toBeInTheDocument();
   });
 
   it('offers no report action when the issued report has no quotation id', () => {

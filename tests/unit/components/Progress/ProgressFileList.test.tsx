@@ -461,4 +461,25 @@ describe('progress file list', () => {
       progressValues: ['20', '30', '40'],
     });
   });
+
+  it('falls back safely when a file identity has no code point', () => {
+    expect.hasAssertions();
+
+    const codePointAt = vi
+      .spyOn(String.prototype, 'codePointAt')
+      .mockReturnValueOnce(undefined);
+
+    try {
+      renderList([
+        {
+          fileName: 'fallback.pdf',
+          status: FileStatus.Pending,
+        },
+      ]);
+
+      expect(screen.getByRole('listitem')).toBeInTheDocument();
+    } finally {
+      codePointAt.mockRestore();
+    }
+  });
 });

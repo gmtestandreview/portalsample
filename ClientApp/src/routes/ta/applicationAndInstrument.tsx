@@ -29,7 +29,6 @@ import InstrumentInfoPanel from './instrumentInfoPanel';
 import TextInput from '../../components/Inputs/TextInput';
 import { sortList } from '../common/helperFunctions';
 import SummaryDisplay from '../../components/SummaryDisplay';
-import BlockUISpinner from '../../components/BlockUISpinner';
 
 export {
   applicationTypes,
@@ -45,11 +44,16 @@ const ApplicationAndInstrument = (
   const getName = (localName: string) =>
     name ? `${name}.${localName}` : localName;
   const context = useFormikContext<ApplicationAndInstrumentStepDto>();
-  const [isDataLoading, setIsDataLoading] = useState(false);
-  const initialKey = context.getFieldMeta('patternApprovalType')
-    .initialValue as string | null;
+  const { setFieldValue } = context;
+  const patternApprovalFieldName = getName('patternApprovalType');
+  const patternApprovalType = context.getFieldMeta(patternApprovalFieldName)
+    .value as string | undefined;
   const [selectedApplication, setSelectedApplication] = useState<string | null>(
-    () => orIfEmpty(initialKey, 'new'),
+    () =>
+      orIfEmpty(
+        patternApprovalType,
+        PatternApprovalRequiredValues.NewCertificate,
+      ),
   );
   const [instrumentCategories, setInstrumentCategories] =
     useState<LookupResponse[]>();
@@ -106,68 +110,68 @@ const ApplicationAndInstrument = (
     [isSummary],
   );
 
-  // Sync selectedApplication with Formik's patternApprovalType value
+  // Sync the local selection with Formik after asynchronous step values load.
   useEffect(() => {
-    // Sync selectedApplication with initialKey, but only if initialKey is defined and different
-    if (!initialKey) {
-      setIsDataLoading(true);
-    } else if (initialKey !== selectedApplication) {
-      setIsDataLoading(true);
-      setSelectedApplication(initialKey);
-      setIsDataLoading(false);
-    } else {
-      setIsDataLoading(false);
+    if (patternApprovalType === undefined) {
+      if (!isSummary) {
+        void setFieldValue(
+          patternApprovalFieldName,
+          PatternApprovalRequiredValues.NewCertificate,
+          false,
+        );
+      }
+      return;
     }
-  }, [initialKey, selectedApplication]);
+    if (patternApprovalType !== selectedApplication) {
+      setSelectedApplication(patternApprovalType);
+    }
+  }, [
+    isSummary,
+    patternApprovalFieldName,
+    patternApprovalType,
+    selectedApplication,
+    setFieldValue,
+  ]);
 
   useEffect(() => {
-    const loadInstrumentCategories = () => {
-      try {
-        if (!instrumentCategories) {
-          const result = _categoryLookupField.value;
-          const artefactTypeResult = _typeLookupField.value;
-          if (result && artefactTypeResult) {
-            const [sorted, lastId] = sortList(
-              result,
-              'No measurement',
-              'label',
-            );
-            noInstrumentCategoriestId.current = lastId;
-            setInstrumentCategories(sorted);
-            setInstrumentTypes(artefactTypeResult);
-            if (_instrumentTypeField.value !== undefined || isSummary) {
-              setInstrumentTypesSelected(
-                getInstrumentTypes(
-                  artefactTypeResult,
-                  _instrumentCatField.value,
-                ),
-              );
-              if (
-                !isSummary &&
-                _instrumentCatField.value === noInstrumentCategoriestId.current
-              )
-                setIsInstrumentTypeDisabled(true);
-            } else {
-              setInstrumentTypesSelected([]);
-            }
-          } else {
-            setInstrumentTypesSelected([]);
-          }
-        }
-      } catch (e) {
-        AppLogger.error('Failed to retrieve look ups', e as Error);
+    const result = _categoryLookupField.value;
+    const artefactTypeResult = _typeLookupField.value;
+
+    // Formik starts with an empty step while the controller loads the saved
+    // values. Keep the controls empty until both lookup responses arrive, then
+    // derive them again when Formik rehydrates the step.
+    if (result === undefined || artefactTypeResult === undefined) {
+      setInstrumentCategories(undefined);
+      setInstrumentTypes(undefined);
+      setInstrumentTypesSelected([]);
+      setIsInstrumentTypeDisabled(false);
+      return;
+    }
+
+    try {
+      const [sorted, lastId] = sortList(result, 'No measurement', 'label');
+      noInstrumentCategoriestId.current = lastId;
+      setInstrumentCategories(sorted);
+      setInstrumentTypes(artefactTypeResult);
+      if (_instrumentTypeField.value !== undefined || isSummary) {
+        setInstrumentTypesSelected(
+          getInstrumentTypes(artefactTypeResult, _instrumentCatField.value),
+        );
+        setIsInstrumentTypeDisabled(
+          !isSummary &&
+            _instrumentCatField.value === noInstrumentCategoriestId.current,
+        );
+      } else {
+        setInstrumentTypesSelected([]);
       }
-    };
-    // if (!isLoadingInstrumentCategories.current) {
-    loadInstrumentCategories();
-    // }
-    // return () => { isLoadingInstrumentCategories.current = true; };
+    } catch (e) {
+      AppLogger.error('Failed to retrieve look ups', e as Error);
+    }
   }, [
     _categoryLookupField.value,
     _typeLookupField.value,
     _instrumentCatField.value,
     _instrumentTypeField.value,
-    instrumentCategories,
     getInstrumentTypes,
     isSummary,
   ]);
@@ -312,17 +316,6 @@ const ApplicationAndInstrument = (
     if (isSummary) {
       return renderApplTypeSummary();
     }
-    if (isDataLoading) {
-      return (
-        <Container>
-          <Row>
-            <BlockUISpinner partial>
-              <p>Loading data...</p>
-            </BlockUISpinner>
-          </Row>
-        </Container>
-      );
-    }
     return (
       <Container>
         <Row className='mb-5'>
@@ -347,6 +340,11 @@ const ApplicationAndInstrument = (
                       checked={selectedApplication === applicationType.value}
                       onChange={(_e: React.ChangeEvent<HTMLInputElement>) => {
                         setSelectedApplication(applicationType.value);
+                        void context.setFieldValue(
+                          getName('patternApprovalType'),
+                          applicationType.value,
+                          false,
+                        );
                         if (context.submitCount > 0) {
                           context.resetForm({
                             // values: {}, // Optionally reset values to initial or empty

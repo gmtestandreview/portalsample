@@ -126,6 +126,25 @@ When(
 );
 
 When(
+  'the user completes the required instrument and request details',
+  async ({ page }) => {
+    await page.getByRole('radio', { name: /Yes$/ }).check({ force: true });
+    await page.getByLabel('Serial number', { exact: true }).fill('SN123456');
+    await page.getByLabel('Number of items', { exact: true }).fill('1');
+    await page
+      .getByLabel('Measurement category', { exact: true })
+      .selectOption({ label: 'Mass' });
+    await page
+      .getByLabel('Instrument/artefact type', { exact: true })
+      .selectOption({ label: 'Analytical balance' });
+    await page
+      .getByLabel('Testing/calibration requirements', { exact: true })
+      .fill('Calibrate across the operating range.');
+    await page.getByRole('radio', { name: /Measurement report only$/ }).check();
+  },
+);
+
+When(
   'the user fills in the contact first name {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('First name', { exact: true }).fill(value);

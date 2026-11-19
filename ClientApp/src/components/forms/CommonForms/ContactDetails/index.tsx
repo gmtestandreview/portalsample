@@ -3,6 +3,7 @@ import { Col, Form, Row } from 'react-bootstrap';
 import { Title } from '../../../../api/web-api-client';
 import type { ContactDto } from '../../../../api/web-api-client';
 import { prefixedPropertyOf } from '../../../../utils';
+import { toTitle } from '../../../../utils/apiEnumMappings';
 import SelectInput from '../../../Inputs/SelectInput';
 import TextInput from '../../../Inputs/TextInput';
 import type { SelectInputOption } from '../../../Inputs/SelectInput/types';
@@ -34,7 +35,12 @@ interface ContactDetailsLabels {
 
 const getTitles = (): SelectInputOption<string>[] => {
   const options: SelectInputOption<string>[] = [];
-  for (const title of Object.values(Title)) {
+  for (const value of Object.values(Title)) {
+    const title = toTitle(value);
+    if (title === undefined) {
+      continue;
+    }
+
     options.push({
       displayText: title.replace(/([A-Z])/g, ' $1').trim(),
       value: title,

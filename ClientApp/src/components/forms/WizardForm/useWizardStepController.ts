@@ -160,7 +160,7 @@ export const useWizardStepController = (
 
   useEffect(() => {
     void loadData();
-  }, [loadData]);
+  }, [currentStepIndex, loadData]);
 
   useEffect(() => {
     if (errorState.kind === 'concurrency') {

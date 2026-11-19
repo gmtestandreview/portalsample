@@ -47,6 +47,7 @@ import {
   Heading as SheetHeading,
 } from '@/components/AriaComponents/Sheet/Sheet';
 import { Slider } from '@/components/AriaComponents/Slider/Slider';
+import { ColorSlider } from '@/components/AriaComponents/ColorSlider/ColorSlider';
 import { Switch } from '@/components/AriaComponents/Switch/Switch';
 import {
   Tab,
@@ -475,6 +476,20 @@ describe('react Aria evaluation wrappers', () => {
     expect(container.querySelector('.react-aria-SliderThumb')).toHaveClass(
       'indicator',
     );
+  });
+
+  it('renders the color slider checkerboard when the track has no default background', () => {
+    expect.hasAssertions();
+
+    render(
+      <ColorSlider
+        aria-label='Red opacity'
+        defaultValue='#f00'
+        channel='alpha'
+      />,
+    );
+
+    expect(screen.getByRole('slider', { name: 'Alpha' })).toBeInTheDocument();
   });
 
   it('renders text, textarea, number, search, time, and switch field content', () => {

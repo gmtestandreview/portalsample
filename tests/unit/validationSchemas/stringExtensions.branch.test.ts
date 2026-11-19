@@ -383,6 +383,12 @@ describe('yup string extension branch coverage', () => {
     expect(valid(Yup.string().email(), 12)).toBe(false);
   });
 
+  it('fails closed for a non-string value in strict mode', () => {
+    expect.hasAssertions();
+
+    expect(Yup.string().numbersOnly().strict().isValidSync(123)).toBe(false);
+  });
+
   it.each(fallbackMessageCases)(
     'uses fallback path messages for %s',
     async (_name, schema, value, message) => {

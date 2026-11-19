@@ -17,6 +17,7 @@ import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/Wiza
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
 import type { DiscardProps } from '../../../../../ClientApp/src/components/forms/types';
+import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
 import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
 import { type FormikValues } from 'formik';
 import { getDashboardNotification } from '../../../../../ClientApp/src/storage/notification';
@@ -375,6 +376,101 @@ describe('wizardRoutedStep — error navigation', () => {
 
     await waitFor(() => {
       expect(loadStepValues).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('rehydrates copied RFQ values when entering the instrument step', async () => {
+    expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
+
+    const currentStepIndex = { value: 0 };
+    const loadStepValues = vi.fn<LoadStepHandler>(() => ({
+      stepValues:
+        currentStepIndex.value === 1
+          ? { manufacturer: 'Original Manufacturer' }
+          : {},
+    }));
+
+    const CopiedRfqWizard = () => {
+      const [stepIndex, setStepIndex] = useState(0);
+      currentStepIndex.value = stepIndex;
+
+      return (
+        <AccountStateCtx.Provider value={mockStateValue}>
+          <AccountDispatchCtx.Provider value={mockDispatch}>
+            <button
+              type='button'
+              onClick={() => {
+                setStepIndex(1);
+              }}
+            >
+              Enter copied instrument step
+            </button>
+            <WizardRoutedStep
+              title='Instrument and request'
+              location='/instrument-and-request'
+              url='/request-for-quote/RFQ-2023-009012-COPY'
+              initialValues={{}}
+              stepStatuses={[
+                { status: FormStepStatus.Completed },
+                { status: FormStepStatus.NotStarted },
+              ]}
+              loadStepValues={loadStepValues}
+              allSteps={[
+                <WizardStep
+                  key='organisation'
+                  title='Organisation and contact'
+                  location='/organisation-and-contact'
+                  initialValues={{}}
+                  stepStatuses={[]}
+                  loadStepValues={() => Promise.resolve({ stepValues: {} })}
+                >
+                  <TextInput name='organisation' label='Organisation' />
+                </WizardStep>,
+                <WizardStep
+                  key='instrument'
+                  title='Instrument and request'
+                  location='/instrument-and-request'
+                  initialValues={{}}
+                  stepStatuses={[]}
+                  loadStepValues={() => Promise.resolve({ stepValues: {} })}
+                >
+                  <TextInput name='manufacturer' label='Manufacturer' />
+                </WizardStep>,
+              ]}
+              currentStepIndex={stepIndex}
+              locationOnCompletion='/done'
+              bannerTitle='Request for quote'
+            />
+          </AccountDispatchCtx.Provider>
+        </AccountStateCtx.Provider>
+      );
+    };
+
+    const router = createMemoryRouter(
+      [
+        { path: '*', element: <CopiedRfqWizard /> },
+        { path: '/done', element: <div>Done Page</div> },
+      ],
+      {
+        initialEntries: [
+          '/request-for-quote/RFQ-2023-009012-COPY/instrument-and-request',
+        ],
+      },
+    );
+    render(<RouterProvider router={router} />);
+
+    await screen.findByLabelText('Organisation');
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Enter copied instrument step' }),
+    );
+
+    await waitFor(() => {
+      expect(loadStepValues).toHaveBeenCalledTimes(2);
+      expect(screen.getByLabelText('Manufacturer')).toHaveValue(
+        'Original Manufacturer',
+      );
     });
   });
 

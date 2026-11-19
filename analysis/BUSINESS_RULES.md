@@ -265,7 +265,7 @@ never been submitted to CRM and have no `QuoteStatus` value **Confidence:** High
 ### RULE-007: Status → Downloadable Document Mapping
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:172-207` **Plain English:** The
+`ClientApp/src/routes/common/helperFunctions.ts:173-218` **Plain English:** The
 PDF document served to a customer for a given record depends entirely on its
 current status. Different statuses serve fundamentally different documents
 (offer vs acceptance vs report). **Specification:**
@@ -292,23 +292,22 @@ When   status is ReportInProgress
 Then   fetch getQuoteRequestAcceptedPDFByID
 
 When   status is any other value (including QuoteSubmitted, QuoteInProgress, ReportWithdrawn)
-Then   return a permanently-pending Promise (no document)
+Then   resolve without a downloadable document
 ```
 
 **Parameters:** All API method names are compile-time string literals in
-`web-api-client.ts` **Suspected defect:** The `default` branch returns a Promise
-that can never resolve or reject — any caller that `await`s it will hang
-indefinitely. See Debt #8 in ASSESSMENT.md. **Confidence:** High
+`web-api-client.ts`. The `default` branch resolves `undefined`, so callers can
+continue without a downloadable document. **Confidence:** High
 
 ---
 
 ### RULE-008: PDF Initial Page Number by Status
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:156-168` **Plain English:** The
-PDF viewer opens to a specific page depending on the quote's status, reflecting
-which section of the document is most relevant to the customer's current
-situation. **Specification:**
+`ClientApp/src/routes/common/helperFunctions.ts:299-311` **Plain English:** The
+`getQuoteOfferPageNumber` helper opens the PDF viewer to a specific page
+depending on the quote's status, reflecting which section of the document is
+most relevant to the customer's current situation. **Specification:**
 
 ```text
 Given  a QuoteStatus value
