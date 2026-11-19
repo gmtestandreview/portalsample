@@ -335,7 +335,7 @@ def main():
 
         # Run the command
         print(f'Running: {' '.join(args.command)}\n')
-        result = subprocess.run(prepare_argv(args.command), shell=False)
+        result = subprocess.run(prepare_argv(args.command), shell=False, check=False)
         sys.exit(result.returncode)
 
     finally:

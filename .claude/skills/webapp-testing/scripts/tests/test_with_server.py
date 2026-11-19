@@ -200,6 +200,25 @@ class CleanupTests(unittest.TestCase):
         stop.assert_called_once_with(started)
 
 
+class FinalCommandTests(unittest.TestCase):
+    def test_final_command_uses_explicit_check_false_and_propagates_exit_code(self) -> None:
+        argv = ['with_server.py', '--server', 'a', '--port', '1', '--', 'echo', 'hi']
+        with (
+            mock.patch.object(sys, 'argv', argv),
+            mock.patch.object(ws, 'start_server', return_value=mock.Mock()),
+            mock.patch.object(ws, 'is_server_ready', return_value=True),
+            mock.patch.object(ws, 'stop_server'),
+            mock.patch.object(ws.subprocess, 'run') as run,
+            self.assertRaises(SystemExit) as cm,
+        ):
+            run.return_value = mock.Mock(returncode=7)
+            ws.main()
+        self.assertEqual(cm.exception.code, 7)
+        run.assert_called_once()
+        self.assertIs(run.call_args.kwargs.get('check'), False)
+        self.assertIs(run.call_args.kwargs.get('shell'), False)
+
+
 class PipeDrainTests(unittest.TestCase):
     NOISY = (
         'import sys, pathlib, time\n'
