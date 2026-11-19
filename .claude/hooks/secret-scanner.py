@@ -6,6 +6,7 @@ Detects hardcoded secrets before git commits
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from typing import TypedDict
@@ -18,6 +19,9 @@ class Finding(TypedDict):
     severity: str
     match: str
 
+
+# Seconds before a git subprocess is abandoned (the hook then fails open)
+GIT_TIMEOUT_SECONDS = 10
 
 # Secret detection patterns with descriptions
 DETECTION_PATTERNS = [
@@ -327,20 +331,42 @@ def _existing_files(lines: list[str], prefix_length: int = 0) -> list[str]:
     return files
 
 
+def _git_executable() -> str | None:
+    """Resolve git at call time so the hook never runs a bare, PATH-shadowed name."""
+    return shutil.which('git')
+
+
+def _run_git(args: list[str]) -> str:
+    """Run git and return stdout; fail open (empty output) if git is unusable."""
+    git = _git_executable()
+    if git is None:
+        return ''
+
+    try:
+        result = subprocess.run(
+            [git, *args],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=GIT_TIMEOUT_SECONDS,
+        )
+    except (subprocess.TimeoutExpired, OSError):
+        return ''
+    return result.stdout
+
+
 def _auto_staged_files(command: str) -> list[str]:
     """Find files that ``git commit -a`` would stage."""
     commit_match = re.search(r'git\s+commit\s+(.+)', command)
     if not commit_match or not re.search(r'-\w*a', commit_match.group(1)):
         return []
 
-    result = subprocess.run(['git', 'diff', '--name-only'], capture_output=True, text=True)
-    return _existing_files(result.stdout.strip().split('\n'))
+    return _existing_files(_run_git(['diff', '--name-only']).strip().split('\n'))
 
 
 def _all_added_files() -> list[str]:
     """Find files that ``git add .`` would add."""
-    result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
-    return _existing_files(result.stdout.strip().split('\n'), prefix_length=3)
+    return _existing_files(_run_git(['status', '--porcelain']).strip().split('\n'), prefix_length=3)
 
 
 def _explicitly_added_files(args: str) -> list[str]:
