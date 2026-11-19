@@ -114,14 +114,14 @@ def convert_to_pdf(source_path, output_pdf_path):
     ):
         return True
 
-    # Fall back to LibreOffice on any platform
-    soffice = shutil.which('libreoffice') or shutil.which('soffice')
-    if not soffice and system == 'Windows':
-        soffice = _find_libreoffice_windows()
+    # Discover LibreOffice through the host's PATH or Windows install directories.
+    libreoffice_executable = shutil.which('libreoffice') or shutil.which('soffice')
+    if not libreoffice_executable and system == 'Windows':
+        libreoffice_executable = _find_libreoffice_windows()
     if (
-        soffice
+        libreoffice_executable
         and ext in ('.docx', '.doc', '.rtf', '.odt', '.html', '.htm')
-        and _convert_with_libreoffice(soffice, source_path, output_pdf_path)
+        and _convert_with_libreoffice(libreoffice_executable, source_path, output_pdf_path)
     ):
         return True
 
@@ -157,11 +157,11 @@ def _convert_with_word_mac(source_path, output_pdf_path):
 
 
 def _convert_with_libreoffice(soffice_path, source_path, output_pdf_path):
-    """Convert using LibreOffice headless mode."""
+    """Convert a source document using the LibreOffice executable found by the caller."""
     with tempfile.TemporaryDirectory() as tmpdir:
         try:
-            # An absolute path can never start with "-", so a --source value such as
-            # "--foo.docx" cannot be read by soffice as an option.
+            # A leading dash in the source filename cannot become a LibreOffice option.
+            source_abs = os.path.abspath(source_path)
             result = subprocess.run(
                 [
                     soffice_path,
@@ -170,8 +170,9 @@ def _convert_with_libreoffice(soffice_path, source_path, output_pdf_path):
                     'pdf',
                     '--outdir',
                     tmpdir,
-                    os.path.abspath(source_path),
+                    source_abs,
                 ],
+                shell=False,
                 capture_output=True,
                 text=True,
                 timeout=120,

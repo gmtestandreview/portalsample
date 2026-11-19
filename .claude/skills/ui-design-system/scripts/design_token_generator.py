@@ -92,7 +92,6 @@ class DesignTokenGenerator:
 
         for step in steps:
             # Adjust lightness based on step
-            (1000 - step) / 1000
             new_v = 0.95 if step < 500 else v * (1 - (step - 500) / 500)
             new_s = s * (0.3 + 0.7 * (step / 900))
 
