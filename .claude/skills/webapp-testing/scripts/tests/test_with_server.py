@@ -119,6 +119,16 @@ class StartServerTests(unittest.TestCase):
             out = run_for_output(f'"{sys.executable}" -V')
         self.assertTrue(out.startswith(b'Python '), out)
 
+    @unittest.skipUnless(os.name == 'nt', 'Windows PATHEXT behavior')
+    def test_missing_explicit_path_does_not_select_batch_sibling(self) -> None:
+        with (
+            tempfile.TemporaryDirectory() as root,
+            mock.patch.dict(os.environ, {'PATHEXT': '.CMD;.BAT'}),
+        ):
+            (Path(root) / 'tool.cmd').touch()
+            with self.assertRaises(FileNotFoundError):
+                ws.prepare_argv(['./tool'], cwd=root)
+
     def test_real_process_receives_metacharacters_as_data(self) -> None:
         with tempfile.TemporaryDirectory() as root:
             marker = Path(root) / 'pwned'
