@@ -41,7 +41,7 @@ const ContactDetailsSummary = ({
       <RhfSelectInput
         name={getName('title')}
         label={titleLabel}
-        options={getTitleOptions()}
+        options={TITLE_OPTIONS}
         isSummary
         addBlank
       />
@@ -115,7 +115,7 @@ const ContactDetailsEdit = ({
           <RhfSelectInput
             name={getName('title')}
             label={titleLabel}
-            options={getTitleOptions()}
+            options={TITLE_OPTIONS}
             addBlank
           />
         </Col>
