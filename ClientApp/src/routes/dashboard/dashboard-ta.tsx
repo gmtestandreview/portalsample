@@ -52,129 +52,20 @@ import {
   toDashboardTab,
   toPatternApprovalStatusEnumDto,
 } from '../common/helperFunctions';
+import {
+  DEFAULT_DASHBOARD_PAGESIZE,
+  handlePaginationScroll,
+  setInfoNotification,
+  setNotification,
+  showDashboardMessage,
+} from './dashboardShared';
+import {
+  classifyLoadError,
+  fetchRequestsByTab,
+  resolveFilterParams,
+} from './dashboard-ta.helpers';
 
-// TS Move this to a constants file if we need this setting app wide
-const DEFAULT_DASHBOARD_PAGESIZE = 10;
 const TAB_SAVE_DEBOUNCE_MS = 300;
-
-const showDashboardMessage = (message: React.JSX.Element | null) => (
-  <>
-    {message && (
-      <Container>
-        <Row>
-          <Col>{message}</Col>
-        </Row>
-      </Container>
-    )}
-  </>
-);
-
-const setNotification = () => {
-  const dashboardNotification = getDashboardNotification();
-  return dashboardNotification ? (
-    <NotificationMessage
-      id='notif-message-1'
-      canClose
-      onClose={clearDashboardNotification}
-      {...dashboardNotification}
-    />
-  ) : null;
-};
-
-const setInfoNotification = () => {
-  const dashboardInfoNotification = getDashboardInfoNotification();
-  return dashboardInfoNotification ? (
-    <NotificationMessage
-      id='notif-info-message-2'
-      canClose
-      onClose={clearDashboardInfoNotification}
-      {...dashboardInfoNotification}
-    />
-  ) : null;
-};
-
-const handlePaginationScroll = () => {
-  const titleElement = document.getElementById('dash-type-title');
-  titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
-interface FetchRequestsParams {
-  tab: DashboardTab;
-  client: PatternApprovalClient;
-  sortOrder: string;
-  currentPage: number;
-  pageSize: number;
-  accountDetailsCrmGuid?: string | undefined;
-  filterSearchText?: string | undefined;
-  actualYear?: string | undefined;
-  actualStatus?: PatternApprovalStatusEnumDto | undefined;
-  signal?: AbortSignal | undefined;
-}
-
-const fetchRequestsByTab = async ({
-  tab,
-  client,
-  sortOrder,
-  currentPage,
-  pageSize,
-  accountDetailsCrmGuid,
-  filterSearchText,
-  actualYear,
-  actualStatus,
-  signal,
-}: FetchRequestsParams): Promise<PagedListOfPatternApprovalDashboardDetailsDto> => {
-  switch (tab) {
-    case DashboardTab.Drafts:
-      return client.getPatternApprovalApplicationDrafts(
-        accountDetailsCrmGuid,
-        actualYear,
-        actualStatus,
-        sortOrder,
-        filterSearchText,
-        currentPage,
-        pageSize,
-        signal,
-      );
-    case DashboardTab.Requests:
-      return client.getPatternApprovalApplications(
-        accountDetailsCrmGuid,
-        actualYear,
-        actualStatus,
-        sortOrder,
-        filterSearchText,
-        currentPage,
-        pageSize,
-        signal,
-      );
-    default:
-      throw new Error(`Unsupported tab: ${tab}`);
-  }
-};
-
-const resolveFilterParams = (
-  filterYearType: string | undefined,
-  filterStatusType: string | undefined,
-) => ({
-  actualYear:
-    filterYearType === defaultFilter.filterYearType
-      ? undefined
-      : filterYearType,
-  actualStatus:
-    filterStatusType === defaultFilter.filterStatusType
-      ? undefined
-      : toPatternApprovalStatusEnumDto(filterStatusType),
-});
-
-const classifyLoadError = (error: ProblemDetails) => {
-  const statusCode = error.status ?? 0;
-  const status = statusCode > 0 ? { status: statusCode } : {};
-  if (error.status !== HttpStatusCode.Forbidden) {
-    return { ...status, hasError: true };
-  }
-  return error.title?.includes('No third-party access')
-    ? { ...status, noThirdPartyAccess: true }
-    : { ...status, forbidden: true };
-};
 
 const DashboardTA = () => {
   const services = useUserServices();
