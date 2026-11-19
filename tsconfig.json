@@ -18,7 +18,7 @@
     "noUnusedParameters": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    
+
     "noEmit": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
