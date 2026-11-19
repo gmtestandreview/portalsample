@@ -280,9 +280,11 @@ class PipelineTests(unittest.TestCase):
         run.assert_called_once()
 
     def test_runtime_loader_rejects_names_outside_the_allowlist(self) -> None:
-        with patch.object(importlib, 'import_module') as import_module:
-            with self.assertRaises(ImportError):
-                load_runtime_attr('json', 'loads')
+        with (
+            patch.object(importlib, 'import_module') as import_module,
+            self.assertRaises(ImportError),
+        ):
+            load_runtime_attr('json', 'loads')
         import_module.assert_not_called()
 
     def test_summary_validator_finds_counter_and_partial_readiness_errors(self) -> None:
@@ -406,9 +408,7 @@ class PipelineTests(unittest.TestCase):
             clean = self._all_green_release(workspace)
             changes: dict[str, Callable[[PipelineSummary], object]] = {
                 'all_cases_failed': lambda x: [
-                    _set_case_pass(case, False)
-                    for stage in x['stages']
-                    for case in stage['cases']
+                    _set_case_pass(case, False) for stage in x['stages'] for case in stage['cases']
                 ],
                 'one_case_failed': lambda x: _set_case_pass(x['stages'][0]['cases'][0], False),
                 'missing_stage': lambda x: x['stages'].pop(),

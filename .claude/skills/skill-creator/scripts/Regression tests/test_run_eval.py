@@ -267,9 +267,9 @@ class RunEvalOptimizedTests(unittest.TestCase):
         with (
             patch.object(run_eval, '_wait_for_trigger', side_effect=error),
             patch.object(run_eval, '_terminate_process_tree') as terminate,
+            self.assertRaises(RuntimeError) as raised,
         ):
-            with self.assertRaises(RuntimeError) as raised:
-                run_eval._evaluate_process(process, 'example-skill-12345678', timeout=1)
+            run_eval._evaluate_process(process, 'example-skill-12345678', timeout=1)
 
         self.assertIs(raised.exception, error)
         terminate.assert_called_once_with(process)

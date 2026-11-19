@@ -98,9 +98,11 @@ EvaluationControl = eval_control.EvaluationControl
 
 class ImproveDescriptionControlTests(unittest.TestCase):
     def test_module_loader_rejects_names_outside_the_allowlist(self) -> None:
-        with patch.object(importlib, 'import_module') as import_module:
-            with self.assertRaises(ImportError):
-                _load_module('json')
+        with (
+            patch.object(importlib, 'import_module') as import_module,
+            self.assertRaises(ImportError),
+        ):
+            _load_module('json')
         import_module.assert_not_called()
 
     @staticmethod

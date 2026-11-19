@@ -791,7 +791,9 @@ def _evaluate_process(
         _close_process_streams(stdout, stderr, stdout_reader, stderr_reader)
 
     if wait_error is not None:
-        raise _format_process_error(str(wait_error), stderr_buffer, cause=wait_error) from wait_error
+        raise _format_process_error(
+            str(wait_error), stderr_buffer, cause=wait_error
+        ) from wait_error
     if stdout_reader.is_alive() or (stderr_reader is not None and stderr_reader.is_alive()):
         raise _format_process_error(
             'claude CLI stream reader did not shut down cleanly',
