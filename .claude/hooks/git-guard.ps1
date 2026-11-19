@@ -11,9 +11,9 @@ function Block([string]$message) {
 }
 
 try {
-    $event = [Console]::In.ReadToEnd() | ConvertFrom-Json
-    $command = [string]$event.tool_input.command
-    $cwd = [string]$event.cwd
+    $hookInput = [Console]::In.ReadToEnd() | ConvertFrom-Json
+    $command = [string]$hookInput.tool_input.command
+    $cwd = [string]$hookInput.cwd
 } catch {
     exit 0
 }
@@ -62,7 +62,7 @@ if ($pushMatch.Success) {
         try {
             if ($cwd -and (Test-Path -LiteralPath $cwd)) { Push-Location -LiteralPath $cwd }
             $current = (& git branch --show-current 2>$null | Out-String).Trim()
-        } catch { } finally { Pop-Location -ErrorAction SilentlyContinue }
+        } catch { Write-Verbose "git-guard: branch lookup failed: $_" } finally { Pop-Location -ErrorAction SilentlyContinue }
         if ($current -ceq 'main' -or $current -ceq 'develop') { $targetsProtected = $true }
     }
     if ($targetsProtected) {
