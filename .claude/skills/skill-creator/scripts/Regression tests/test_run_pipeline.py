@@ -41,16 +41,12 @@ AttemptRecord = TypedDict(
     total=False,
 )
 
-_CaseRequired = TypedDict(
-    '_CaseRequired',
-    {
-        'id': str,
-        'query': str,
-        'status': str,
-        'pass': bool,
-        'attempts': list[AttemptRecord],
-    },
-)
+
+class _CaseRequired(TypedDict):
+    id: str
+    query: str
+    status: str
+    attempts: list[AttemptRecord]
 
 
 class CaseRecord(_CaseRequired, total=False):
@@ -168,6 +164,11 @@ def _require_case_flag(case: CaseRecord, key: Literal['should_trigger', 'should_
     return case['should_engage']
 
 
+def _set_case_pass(case: CaseRecord, passed: bool) -> None:
+    # The JSON key is a Python keyword, so it cannot be a class field.
+    cast(dict[str, object], case)['pass'] = passed
+
+
 def _require_source_manifest(summary: PipelineSummary) -> dict[str, str]:
     """Only a populated frozen-source summary supplies this optional field."""
     inputs = summary['inputs']
@@ -177,6 +178,7 @@ def _require_source_manifest(summary: PipelineSummary) -> dict[str, str]:
 
 
 _run_pipeline = importlib.import_module('run_pipeline')
+load_runtime_attr = cast(Callable[[str, str], object], _run_pipeline._load_attr)
 EVAL_ROOT = cast(Path, _run_pipeline.EVAL_ROOT)
 build_execution_plan = cast(
     Callable[[str], ExecutionPlan],
@@ -271,11 +273,17 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(main(['smoke', '--dry-run']), 2)
 
     def test_check_stops_after_first_failed_gate(self) -> None:
-        failed = subprocess.CompletedProcess([], 1, 'out', 'err')
+        failed = subprocess.CompletedProcess(['python'], 1, 'out', 'err')
         with patch.object(subprocess, 'run', return_value=failed) as run:
             result = run_check(Path('.'))
         self.assertFalse(result['passed'])
         run.assert_called_once()
+
+    def test_runtime_loader_rejects_names_outside_the_allowlist(self) -> None:
+        with patch.object(importlib, 'import_module') as import_module:
+            with self.assertRaises(ImportError):
+                load_runtime_attr('json', 'loads')
+        import_module.assert_not_called()
 
     def test_summary_validator_finds_counter_and_partial_readiness_errors(self) -> None:
         summary = build_pipeline_summary(
@@ -300,7 +308,7 @@ class PipelineTests(unittest.TestCase):
             stage['execution'] = {'status': 'complete', 'error_calls': 0, 'skipped_calls': 0}
             for case in stage['cases']:
                 case['status'] = 'complete'
-                case['pass'] = True
+                _set_case_pass(case, True)
                 case.pop('evidence_code', None)
                 case.pop('reason', None)
                 if stage['stage'] in ('activation', 'holdout'):
@@ -398,9 +406,11 @@ class PipelineTests(unittest.TestCase):
             clean = self._all_green_release(workspace)
             changes: dict[str, Callable[[PipelineSummary], object]] = {
                 'all_cases_failed': lambda x: [
-                    c.update({'pass': False}) for st in x['stages'] for c in st['cases']
+                    _set_case_pass(case, False)
+                    for stage in x['stages']
+                    for case in stage['cases']
                 ],
-                'one_case_failed': lambda x: x['stages'][0]['cases'][0].update({'pass': False}),
+                'one_case_failed': lambda x: _set_case_pass(x['stages'][0]['cases'][0], False),
                 'missing_stage': lambda x: x['stages'].pop(),
                 'missing_case': lambda x: x['stages'][0]['cases'].pop(),
                 'duplicate_case': lambda x: x['stages'][0]['cases'].append(

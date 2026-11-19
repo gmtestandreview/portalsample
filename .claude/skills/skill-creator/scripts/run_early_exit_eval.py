@@ -270,7 +270,8 @@ def _resume_cached_case(
     if cached is None or cached.payload is None:
         return False
     engaged = cast(bool, cached.payload['engaged'])
-    results.append({**case, 'engaged': engaged, 'status': 'resumed', 'pass': True})
+    passed = engaged is case['should_engage']
+    results.append({**case, 'engaged': engaged, 'status': 'resumed', 'pass': passed})
     return True
 
 

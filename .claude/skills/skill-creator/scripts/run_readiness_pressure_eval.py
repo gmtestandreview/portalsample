@@ -917,7 +917,7 @@ def _finalize_evaluation(
         assessment = readiness_outcome(red, green)
         write_report(output_dir, red, green)
     else:
-        assessment = {'red_pass': False, 'green_pass': False, 'overall': 'NHR'}
+        assessment = ReadinessOutcome(red_pass=False, green_pass=False, overall='NHR')
         _write_partial_report(output_dir, summaries)
     return {
         'status': 'complete' if completed else 'partial',

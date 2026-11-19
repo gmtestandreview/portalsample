@@ -68,8 +68,12 @@ class _ImproveDescriptionModule(Protocol):
 
 
 def _load_module(name: str) -> ModuleType:
-    """Import a sibling script after the runtime scripts directory is on sys.path."""
-    return importlib.import_module(name)
+    """Import one of the sibling scripts used by these tests."""
+    if name == 'eval_control':
+        return importlib.import_module('eval_control')
+    if name == 'improve_description':
+        return importlib.import_module('improve_description')
+    raise ImportError(f'Unsupported regression test module: {name!r}')
 
 
 eval_control = cast(_EvalControlModule, _load_module('eval_control'))
@@ -93,6 +97,12 @@ EvaluationControl = eval_control.EvaluationControl
 
 
 class ImproveDescriptionControlTests(unittest.TestCase):
+    def test_module_loader_rejects_names_outside_the_allowlist(self) -> None:
+        with patch.object(importlib, 'import_module') as import_module:
+            with self.assertRaises(ImportError):
+                _load_module('json')
+        import_module.assert_not_called()
+
     @staticmethod
     def _response(text: str) -> subprocess.CompletedProcess[str]:
         return subprocess.CompletedProcess(['claude'], 0, text, '')

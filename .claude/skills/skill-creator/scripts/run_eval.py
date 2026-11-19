@@ -1171,14 +1171,15 @@ def run_eval(
                 attempt, spec = future_to_attempt.pop(future)
                 try:
                     value = future.result()
-                    outcomes[attempt.item_index][attempt.run_index] = value
-                    control.record_success(spec, CachedResult('trigger' if value else 'no_trigger'))
-                except Exception as exc:
+                except (OSError, RuntimeError, ValueError) as exc:
                     message = _result_error_message(exc)
                     errors[attempt.item_index][attempt.run_index] = message
                     control.record_error(spec, exc)
                     if isinstance(exc, ClaudeCliError) and exc.status == 429:
                         circuit_seen = True
+                else:
+                    outcomes[attempt.item_index][attempt.run_index] = value
+                    control.record_success(spec, CachedResult('trigger' if value else 'no_trigger'))
                 if circuit_seen or control.circuit_open:
                     for pending_future, (queued_attempt, pending_spec) in list(
                         future_to_attempt.items()

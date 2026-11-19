@@ -20,7 +20,7 @@ import time
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Protocol, TypedDict, cast
+from typing import Protocol, TypedDict, TypeGuard, cast
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_ROOT = SCRIPT_DIR.parent
@@ -183,7 +183,29 @@ class CliArgs(TypedDict):
 
 
 def _load_attr(module_name: str, attribute: str) -> object:
-    module = importlib.import_module(module_name)
+    match module_name:
+        case 'eval_control':
+            module = importlib.import_module('eval_control')
+        case 'run_early_exit_eval':
+            module = importlib.import_module('run_early_exit_eval')
+        case 'run_eval':
+            module = importlib.import_module('run_eval')
+        case 'run_readiness_pressure_eval':
+            module = importlib.import_module('run_readiness_pressure_eval')
+        case 'utils':
+            module = importlib.import_module('utils')
+        case 'scripts.eval_control':
+            module = importlib.import_module('scripts.eval_control')
+        case 'scripts.run_early_exit_eval':
+            module = importlib.import_module('scripts.run_early_exit_eval')
+        case 'scripts.run_eval':
+            module = importlib.import_module('scripts.run_eval')
+        case 'scripts.run_readiness_pressure_eval':
+            module = importlib.import_module('scripts.run_readiness_pressure_eval')
+        case 'scripts.utils':
+            module = importlib.import_module('scripts.utils')
+        case _:
+            raise ImportError(f'Unsupported pipeline runtime module: {module_name!r}')
     try:
         return getattr(module, attribute)
     except AttributeError as exc:
@@ -266,6 +288,10 @@ def _required_bool(data: Mapping[str, object], key: str) -> bool:
     if not isinstance(value, bool):
         raise ValueError(f'{key} must be boolean')
     return value
+
+
+def _is_non_boolean_int(value: object) -> TypeGuard[int]:
+    return isinstance(value, int) and not isinstance(value, bool)
 
 
 def _stage(
@@ -430,12 +456,13 @@ def _case_matrix(
     status: str = NOT_RUN,
 ) -> list[JsonObject]:
     rows: list[JsonObject] = []
+    passed = False  # Rows start without an observed passing attempt.
     for case in cases:
         row: JsonObject = {
             **dict(case),
             'status': status,
             'attempts': [],
-            'pass': False,
+            'pass': passed,
         }
         if status == NOT_RUN:
             row.update({'evidence_code': 'NHR', 'reason': 'stage was not run'})
@@ -864,7 +891,7 @@ def _check_stage_header_valid(
     if commands is None or len(commands) != 3:
         return False
     return all(
-        type(command.get('exit_code')) is int
+        _is_non_boolean_int(command.get('exit_code'))
         and command.get('exit_code') == 0
         and isinstance(command.get('command'), list)
         for command in commands
@@ -954,7 +981,7 @@ def _readiness_observation_valid(
     expected_label = 'red' if identifier == 'readiness-red' else 'green'
     return (
         observed.get('label') == expected_label
-        and type(observed.get('exit_code')) is int
+        and _is_non_boolean_int(observed.get('exit_code'))
         and observed.get('exit_code') == 0
         and isinstance(observed.get('skill_used'), bool)
         and isinstance(observed.get('claimed_production_ready'), bool)
@@ -1236,7 +1263,7 @@ def _execution_findings(
     parsed: dict[str, int] = {}
     for key in keys:
         value = counters.get(key)
-        if type(value) is not int or value < 0:
+        if not _is_non_boolean_int(value) or value < 0:
             findings.append(
                 _finding('INVALID_COUNTERS', 'execution counters must be non-negative integers')
             )
@@ -1407,7 +1434,7 @@ def _validated_live_inputs(
         raise ValueError('workspace is required for live modes')
     if not isinstance(args.model, str) or not args.model:
         raise ValueError('model is required for live modes')
-    if type(args.num_workers) is not int or args.num_workers <= 0:
+    if not _is_non_boolean_int(args.num_workers) or args.num_workers <= 0:
         raise ValueError('num-workers must be positive')
 
     model = runtime.validate_model_id(args.model)
@@ -1419,7 +1446,7 @@ def _validated_live_inputs(
     max_calls = args.max_model_calls
     if max_calls is None:
         max_calls = plan.maximum_calls
-    if type(max_calls) is not int or max_calls <= 0:
+    if not _is_non_boolean_int(max_calls) or max_calls <= 0:
         raise ValueError('max-model-calls must be positive')
 
     checkpoint = (
