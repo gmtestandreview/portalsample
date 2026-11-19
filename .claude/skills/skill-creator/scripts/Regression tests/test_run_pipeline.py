@@ -157,9 +157,7 @@ def _require_preflight(summary: PipelineSummary) -> CheckResult:
     return preflight
 
 
-def _require_case_flag(
-    case: CaseRecord, key: Literal['should_trigger', 'should_engage']
-) -> bool:
+def _require_case_flag(case: CaseRecord, key: Literal['should_trigger', 'should_engage']) -> bool:
     """Require a stage-specific field without assuming every stage has it."""
     if key == 'should_trigger':
         if 'should_trigger' not in case:
@@ -179,38 +177,38 @@ def _require_source_manifest(summary: PipelineSummary) -> dict[str, str]:
 
 
 _run_pipeline = importlib.import_module('run_pipeline')
-EVAL_ROOT = cast(Path, getattr(_run_pipeline, 'EVAL_ROOT'))
+EVAL_ROOT = cast(Path, _run_pipeline.EVAL_ROOT)
 build_execution_plan = cast(
     Callable[[str], ExecutionPlan],
-    getattr(_run_pipeline, 'build_execution_plan'),
+    _run_pipeline.build_execution_plan,
 )
-main = cast(Callable[[list[str]], int], getattr(_run_pipeline, 'main'))
+main = cast(Callable[[list[str]], int], _run_pipeline.main)
 load_cases = cast(
     Callable[..., list[ActivationCase]],
-    getattr(_run_pipeline, '_load_cases'),
+    _run_pipeline._load_cases,
 )
-run_check = cast(Callable[..., CheckResult], getattr(_run_pipeline, 'run_check'))
+run_check = cast(Callable[..., CheckResult], _run_pipeline.run_check)
 build_pipeline_summary = cast(
     Callable[..., PipelineSummary],
-    getattr(_run_pipeline, 'build_pipeline_summary'),
+    _run_pipeline.build_pipeline_summary,
 )
 validate_pipeline_summary = cast(
     Callable[..., list[EvidenceFindingLike]],
-    getattr(_run_pipeline, 'validate_pipeline_summary'),
+    _run_pipeline.validate_pipeline_summary,
 )
 persist_stage_evidence = cast(
     Callable[[StageRecord, Path], object],
-    getattr(_run_pipeline, '_persist_stage_evidence'),
+    _run_pipeline._persist_stage_evidence,
 )
 write_pipeline_summary = cast(
     Callable[[PipelineSummary, Path], Path],
-    getattr(_run_pipeline, 'write_pipeline_summary'),
+    _run_pipeline.write_pipeline_summary,
 )
 activation_stage = cast(
     Callable[..., StageRecord],
-    getattr(_run_pipeline, '_activation_stage'),
+    _run_pipeline._activation_stage,
 )
-runtime_factory = cast(Callable[..., object], getattr(_run_pipeline, 'Runtime'))
+runtime_factory = cast(Callable[..., object], _run_pipeline.Runtime)
 
 
 class PipelineTests(unittest.TestCase):
@@ -233,9 +231,7 @@ class PipelineTests(unittest.TestCase):
         }
         for filename, count in expected.items():
             with self.subTest(filename=filename):
-                cases = load_cases(
-                    EVAL_ROOT / filename, expected_count=count
-                )
+                cases = load_cases(EVAL_ROOT / filename, expected_count=count)
                 self.assertEqual(len(cases), count)
                 self.assertTrue(any(case['should_trigger'] for case in cases))
                 self.assertTrue(any(not case['should_trigger'] for case in cases))
@@ -380,9 +376,7 @@ class PipelineTests(unittest.TestCase):
         return summary
 
     def test_zero_passing_cases_never_becomes_release_ready(self) -> None:
-        summary = build_pipeline_summary(
-            'release', execution_status='complete', verdict='pass'
-        )
+        summary = build_pipeline_summary('release', execution_status='complete', verdict='pass')
         self.assertFalse(summary['release_ready'])
         self.assertNotEqual(summary['verdict'], 'pass')
         self.assertTrue(validate_pipeline_summary(summary))

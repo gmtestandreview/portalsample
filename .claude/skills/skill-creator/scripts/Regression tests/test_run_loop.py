@@ -17,17 +17,16 @@ if str(SKILL_ROOT) not in sys.path:
 
 # Pylance must analyze this test with the skill-creator directory as its
 # workspace/import root; it does not execute the sys.path bootstrap above.
-from scripts import run_loop  # noqa: E402
 from scripts.eval_control import EvaluationControl  # noqa: E402
+
+from scripts import run_loop  # noqa: E402
 
 
 class RunLoopControlTests(unittest.TestCase):
     def test_split_is_stratified_and_frozen(self) -> None:
         cases: list[run_loop.EvalCase] = [
             {'query': f'positive-{i}', 'should_trigger': True} for i in range(4)
-        ] + [
-            {'query': f'negative-{i}', 'should_trigger': False} for i in range(4)
-        ]
+        ] + [{'query': f'negative-{i}', 'should_trigger': False} for i in range(4)]
         before = [item.copy() for item in cases]
         first_train, first_holdout = run_loop.split_eval_set(cases, 0.5)
         second_train, second_holdout = run_loop.split_eval_set(cases, 0.5)
@@ -52,9 +51,7 @@ class RunLoopControlTests(unittest.TestCase):
             'test_total': None,
             'test_evidence_status': 'not_run',
         }
-        result: tuple[
-            list[dict[str, object]], run_loop.EvalSummary, dict[str, object], float
-        ] = (
+        result: tuple[list[dict[str, object]], run_loop.EvalSummary, dict[str, object], float] = (
             [{'query': 'holdout', 'should_trigger': True, 'pass': False}],
             {'passed': 0, 'failed': 1, 'total': 1},
             {'execution': {'status': 'partial', 'stop_reason': 'rate_limited'}},

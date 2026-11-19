@@ -150,7 +150,7 @@ class ComparisonSchemaTests(unittest.TestCase):
                 structure_mean = sum(structure) / len(structure)
                 self.assertAlmostEqual(rubric['content_score'], round(content_mean, 1))
                 self.assertAlmostEqual(rubric['structure_score'], round(structure_mean, 1))
-                overall = round(content_mean + structure_mean, 1)
+                overall = round(content_mean, 1) + round(structure_mean, 1)
                 self.assertEqual(rubric['overall_score'], overall)
                 self.assertEqual(example['output_quality'][side]['score'], overall)
 
