@@ -7,6 +7,7 @@ import argparse
 import json
 import sys
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, cast
 
@@ -23,18 +24,10 @@ if TYPE_CHECKING:
         claude_version: str
         distractor_sha256: str
 
+    @dataclass(kw_only=True)
     class CachedResult:
         outcome: str
-        payload: dict[str, object] | None
-
-        def __init__(
-            self,
-            *,
-            outcome: str,
-            payload: dict[str, object] | None = None,
-        ) -> None:
-            self.outcome = outcome
-            self.payload = payload
+        payload: dict[str, object] | None = None
 
     class CheckpointStore:
         def __init__(self, path: str | Path) -> None: ...

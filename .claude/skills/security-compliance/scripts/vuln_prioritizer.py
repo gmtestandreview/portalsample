@@ -58,7 +58,8 @@ class VulnerabilityPrioritizer:
         """Calculate priority score based on CVSS + business context
 
         Formula:
-        Priority Score = CVSS × exploit_multiplier × asset_multiplier × exposure_multiplier × data_sensitivity_multiplier × controls_multiplier
+        Priority Score = CVSS × exploit_multiplier × asset_multiplier ×
+        exposure_multiplier × data_sensitivity_multiplier × controls_multiplier
         """
         # Base CVSS score (0-10)
         cvss_score = vuln.cvss_score
@@ -331,7 +332,9 @@ def interactive_mode():
             print('Vulnerability Prioritization Report')
             print('=' * 150)
             print(
-                f'{'CVE ID':<20} {'System':<25} {'CVSS':<6} {'Priority':<10} {'Level':<7} {'Due Date':<12} {'Rationale':<50}'
+                f'{'CVE ID':<20} {'System':<25} {'CVSS':<6} '
+                f'{'Priority':<10} {'Level':<7} {'Due Date':<12} '
+                f'{'Rationale':<50}'
             )
             print('-' * 150)
 
@@ -429,7 +432,8 @@ def main():
         print('Top Prioritized Vulnerabilities')
         print('=' * 150)
         print(
-            f'{'CVE ID':<20} {'System':<30} {'CVSS':<6} {'Priority':<10} {'Level':<7} {'Due Date':<12}'
+            f'{'CVE ID':<20} {'System':<30} {'CVSS':<6} '
+            f'{'Priority':<10} {'Level':<7} {'Due Date':<12}'
         )
         print('-' * 150)
 

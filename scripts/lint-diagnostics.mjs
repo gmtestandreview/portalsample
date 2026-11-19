@@ -23,7 +23,7 @@ export const LINT_PATTERNS = [
 
 const severityNames = ['off', 'warning', 'error'];
 
-const comparePaths = (left, right) => {
+const compareStrings = (left, right) => {
   if (left < right) return -1;
   if (left > right) return 1;
   return 0;
@@ -56,7 +56,7 @@ export function collectLintTargets({ projectRoot, patterns = LINT_PATTERNS }) {
       nodir: true,
     })
       .map((file) => path.resolve(resolvedRoot, file))
-      .sort(comparePaths);
+      .sort(compareStrings);
 
     const outsideRoot = files.find(
       (file) => !isWithinDirectory(resolvedRoot, file),
@@ -71,7 +71,7 @@ export function collectLintTargets({ projectRoot, patterns = LINT_PATTERNS }) {
   });
   const files = [
     ...new Set(matchesByPattern.flatMap(({ files: matches }) => matches)),
-  ].sort(comparePaths);
+  ].sort(compareStrings);
 
   return { matchesByPattern, files };
 }
@@ -92,12 +92,6 @@ export function createLintFileAudit({
   return { missingPatterns, transientFiles };
 }
 
-function compareKeys(left, right) {
-  if (left < right) return -1;
-  if (left > right) return 1;
-  return 0;
-}
-
 function countBy(values) {
   const counts = new Map();
   for (const value of values) {
@@ -107,7 +101,7 @@ function countBy(values) {
   return Object.fromEntries(
     [...counts.entries()].sort(
       ([leftKey, leftCount], [rightKey, rightCount]) =>
-        rightCount - leftCount || compareKeys(leftKey, rightKey),
+        rightCount - leftCount || compareStrings(leftKey, rightKey),
     ),
   );
 }
@@ -121,7 +115,7 @@ function compareDiagnosticValues(left, right) {
   if (left < right) return -1;
   if (left > right) return 1;
 
-  return compareKeys(
+  return compareStrings(
     String(JSON.stringify(left)),
     String(JSON.stringify(right)),
   );
@@ -136,7 +130,6 @@ function compareDiagnostics(left, right) {
     compareDiagnosticValues(left.endColumn, right.endColumn) ||
     compareDiagnosticValues(left.ruleId, right.ruleId) ||
     compareDiagnosticValues(left.message, right.message) ||
-    compareDiagnosticValues(left.nodeType, right.nodeType) ||
     compareDiagnosticValues(left.severity, right.severity) ||
     compareDiagnosticValues(left.fatal, right.fatal) ||
     compareDiagnosticValues(left.fixable, right.fixable)
@@ -164,7 +157,6 @@ export function createLintReport({
         severity: severityNames[message.severity] ?? 'unknown',
         ruleId: message.ruleId,
         message: message.message,
-        nodeType: message.nodeType,
         fatal: message.fatal === true,
         fixable: Boolean(message.fix),
       })),

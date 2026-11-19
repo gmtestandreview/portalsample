@@ -42,7 +42,7 @@ class FeatureEngineeringPipeline:
             self.validate_config()
 
             # Main processing
-            result = self._execute()
+            result = self._execute()  # noqa: F841 - preserve result lifetime
 
             self.results['status'] = 'completed'
             self.results['end_time'] = datetime.now().isoformat()

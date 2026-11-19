@@ -2,9 +2,9 @@
   "include": ["scripts", "tests", ".claude/skills/**/*.py", "."],
   "exclude": ["**/node_modules", "**/__pycache__", "**/.venv"],
   "extraPaths": ["scripts"],
-  "useDefaultExcludes": false,
-  "DEBUG": true,
-  "maxCodeComplexity": 12,
+  "defineConstant": {
+    "DEBUG": true
+  },
   "venvPath": ".",
   "venv": ".venv",
   "pythonVersion": "3.14",
@@ -16,5 +16,10 @@
   "typeCheckingMode": "strict",
   "reportMissingImports": "error",
   "reportMissingTypeStubs": true,
-  "reportUnknownParameterType": true
+  "reportUnknownParameterType": true,
+  "enableReachabilityAnalysis": true,
+  "strictDictionaryInference": true,
+  "strictParameterNoneValue": true,
+  "strictListInference": true,
+  "strictSetInference": true
 }

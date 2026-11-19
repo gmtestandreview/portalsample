@@ -74,11 +74,11 @@ EvaluationControl = cast(
 )
 validated_cases = cast(
     'Callable[[object], list[EarlyExitCase]]',
-    getattr(run_early_exit_eval, '_validated_cases'),
+    run_early_exit_eval._validated_cases,
 )
 engaged_from_run_data = cast(
     'Callable[[object], bool | None]',
-    getattr(run_early_exit_eval, '_engaged_from_run_data'),
+    run_early_exit_eval._engaged_from_run_data,
 )
 
 

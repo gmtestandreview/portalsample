@@ -121,7 +121,9 @@ def _make_uri_step(url: str, label: str) -> dict:
     return {
         'uri': url,
         'title': label,
-        'description': '[TODO: explain why this link is relevant and what the reader should notice]',
+        'description': (
+            '[TODO: explain why this link is relevant and what the reader should notice]'
+        ),
     }
 
 
@@ -158,7 +160,8 @@ def generate_skeleton(repo_root: str = '.', persona: str = 'new-joiner') -> dict
     steps.append(
         _make_content_step(
             'Welcome',
-            f"Introduce the repo: what it does, who this {persona} tour is for, what they'll understand after finishing.",
+            f'Introduce the repo: what it does, who this {persona} tour is '
+            "for, what they'll understand after finishing.",
         )
     )
 
@@ -225,7 +228,8 @@ def generate_skeleton(repo_root: str = '.', persona: str = 'new-joiner') -> dict
     steps.append(
         _make_content_step(
             'What to Explore Next',
-            'Summarize what the reader now understands. List 2–3 follow-up tours they should read next.',
+            'Summarize what the reader now understands. List 2–3 follow-up '
+            'tours they should read next.',
         )
     )
 

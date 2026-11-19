@@ -61,7 +61,7 @@ def is_valid_skill_name(name: str) -> bool:
 def load_candidate() -> InitSkillModule:
     """Load init_skill.py with an isolated validator dependency."""
     quick_validate = types.ModuleType('scripts.quick_validate')
-    setattr(quick_validate, 'is_valid_skill_name', is_valid_skill_name)
+    quick_validate.is_valid_skill_name = is_valid_skill_name
 
     scripts_package = types.ModuleType('scripts')
     scripts_package.__path__ = []

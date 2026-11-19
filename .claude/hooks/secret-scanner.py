@@ -228,7 +228,7 @@ def scan_file(file_path: str) -> list[Finding]:
         for line_num, line in enumerate(content.split('\n'), 1):
             for pattern, description, severity in DETECTION_PATTERNS:
                 matches = re.finditer(pattern, line)
-                for _match in matches:
+                for _ in matches:
                     # Skip if it looks like a comment or example
                     line_stripped = line.strip()
                     if line_stripped.startswith(('#', '//')) and (
@@ -350,7 +350,7 @@ def _run_git(args: list[str]) -> str:
             check=False,
             timeout=GIT_TIMEOUT_SECONDS,
         )
-    except (subprocess.TimeoutExpired, OSError):
+    except subprocess.TimeoutExpired, OSError:
         return ''
     return result.stdout
 

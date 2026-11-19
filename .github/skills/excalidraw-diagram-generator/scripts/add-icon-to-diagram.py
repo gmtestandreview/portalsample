@@ -11,7 +11,9 @@ Usage:
 Options:
     --library-path PATH    Path to the icon library directory (default: aws-architecture-icons)
     --label TEXT           Add a text label below the icon
-    --use-edit-suffix      Edit via .excalidraw.edit to avoid editor overwrite issues (enabled by default; use --no-use-edit-suffix to disable)
+    --use-edit-suffix      Edit via .excalidraw.edit to avoid editor overwrite
+                           issues (enabled by default; use --no-use-edit-suffix
+                           to disable)
 
 Examples:
     python add-icon-to-diagram.py diagram.excalidraw EC2 500 300
@@ -115,17 +117,23 @@ def transform_icon_elements(
             new_element['groupIds'] = [group_id_mapping[gid] for gid in new_element['groupIds']]
 
         # Update binding references if they exist
-        if 'startBinding' in new_element and new_element['startBinding']:
-            if 'elementId' in new_element['startBinding']:
-                old_id = new_element['startBinding']['elementId']
-                if old_id in id_mapping:
-                    new_element['startBinding']['elementId'] = id_mapping[old_id]
+        if (
+            'startBinding' in new_element
+            and new_element['startBinding']
+            and 'elementId' in new_element['startBinding']
+        ):
+            old_id = new_element['startBinding']['elementId']
+            if old_id in id_mapping:
+                new_element['startBinding']['elementId'] = id_mapping[old_id]
 
-        if 'endBinding' in new_element and new_element['endBinding']:
-            if 'elementId' in new_element['endBinding']:
-                old_id = new_element['endBinding']['elementId']
-                if old_id in id_mapping:
-                    new_element['endBinding']['elementId'] = id_mapping[old_id]
+        if (
+            'endBinding' in new_element
+            and new_element['endBinding']
+            and 'elementId' in new_element['endBinding']
+        ):
+            old_id = new_element['endBinding']['elementId']
+            if old_id in id_mapping:
+                new_element['endBinding']['elementId'] = id_mapping[old_id]
 
         # Update containerId if it exists
         if 'containerId' in new_element and new_element['containerId']:
@@ -281,7 +289,7 @@ def add_icon_to_diagram(
     if label and transformed_elements:
         min_x, min_y, max_x, max_y = calculate_bounding_box(transformed_elements)
         icon_width = max_x - min_x
-        icon_height = max_y - min_y
+        max_y - min_y
 
         # Position label below icon, centered
         label_x = min_x + (icon_width / 2) - (len(label) * 5)
@@ -303,7 +311,8 @@ def add_icon_to_diagram(
     original_count = len(diagram['elements'])
     diagram['elements'].extend(transformed_elements)
     print(
-        f'  Added {len(transformed_elements)} elements (total: {original_count} -> {len(diagram['elements'])})'
+        f'  Added {len(transformed_elements)} elements '
+        f'(total: {original_count} -> {len(diagram['elements'])})'
     )
 
     # Save diagram
@@ -322,7 +331,9 @@ def main():
         print('  --library-path PATH    Path to icon library directory')
         print('  --label TEXT           Add text label below icon')
         print(
-            '  --use-edit-suffix      Edit via .excalidraw.edit to avoid editor overwrite issues (enabled by default; use --no-use-edit-suffix to disable)'
+            '  --use-edit-suffix      Edit via .excalidraw.edit to avoid editor '
+            'overwrite issues (enabled by default; use --no-use-edit-suffix '
+            'to disable)'
         )
         print('\nExamples:')
         print('  python add-icon-to-diagram.py diagram.excalidraw EC2 500 300')

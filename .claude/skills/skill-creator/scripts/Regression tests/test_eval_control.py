@@ -246,9 +246,11 @@ class EvaluationControlTests(unittest.TestCase):
             def broken_validator(_: CachedResult) -> str | None:
                 raise ValueError('no')
 
-            with patch.object(store, 'append_invalidation') as invalidate:
-                with self.assertRaises(CacheValidationError):
-                    control.consume_cached(spec, broken_validator)
+            with (
+                patch.object(store, 'append_invalidation') as invalidate,
+                self.assertRaises(CacheValidationError),
+            ):
+                control.consume_cached(spec, broken_validator)
             invalidate.assert_not_called()
             self.assertEqual(path.read_text(encoding='utf-8'), before)
             self.assertEqual(control.resumed_calls, 0)

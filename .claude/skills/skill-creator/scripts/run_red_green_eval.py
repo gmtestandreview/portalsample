@@ -489,7 +489,7 @@ def validate_artifact_manifest(root: Path, artifacts: object) -> str | None:
 
 
 def cleanup_tree(path: Path) -> None:
-    for _attempt in range(10):
+    for _ in range(10):
         try:
             shutil.rmtree(path)
             return

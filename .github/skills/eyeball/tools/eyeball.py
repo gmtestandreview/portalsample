@@ -24,6 +24,7 @@ Usage (called by the Copilot CLI skill, not typically invoked directly):
 """
 
 import argparse
+import contextlib
 import io
 import json
 import os
@@ -71,7 +72,8 @@ def _check_core_deps():
     if missing:
         print(f'Missing dependencies: {', '.join(missing)}', file=sys.stderr)
         print(
-            f'Run setup.sh or: {sys.executable} -m pip install pymupdf pillow python-docx playwright',
+            f'Run setup.sh or: {sys.executable} -m pip install '
+            'pymupdf pillow python-docx playwright',
             file=sys.stderr,
         )
         sys.exit(1)
@@ -97,22 +99,31 @@ def convert_to_pdf(source_path, output_pdf_path):
     system = platform.system()
 
     # Try Microsoft Word first on the current platform
-    if system == 'Darwin' and ext in ('.docx', '.doc', '.rtf'):
-        if os.path.exists('/Applications/Microsoft Word.app'):
-            if _convert_with_word_mac(source_path, output_pdf_path):
-                return True
+    if (
+        system == 'Darwin'
+        and ext in ('.docx', '.doc', '.rtf')
+        and os.path.exists('/Applications/Microsoft Word.app')
+        and _convert_with_word_mac(source_path, output_pdf_path)
+    ):
+        return True
 
-    if system == 'Windows' and ext in ('.docx', '.doc', '.rtf'):
-        if _convert_with_word_windows(source_path, output_pdf_path):
-            return True
+    if (
+        system == 'Windows'
+        and ext in ('.docx', '.doc', '.rtf')
+        and _convert_with_word_windows(source_path, output_pdf_path)
+    ):
+        return True
 
     # Fall back to LibreOffice on any platform
     soffice = shutil.which('libreoffice') or shutil.which('soffice')
     if not soffice and system == 'Windows':
         soffice = _find_libreoffice_windows()
-    if soffice and ext in ('.docx', '.doc', '.rtf', '.odt', '.html', '.htm'):
-        if _convert_with_libreoffice(soffice, source_path, output_pdf_path):
-            return True
+    if (
+        soffice
+        and ext in ('.docx', '.doc', '.rtf', '.odt', '.html', '.htm')
+        and _convert_with_libreoffice(soffice, source_path, output_pdf_path)
+    ):
+        return True
 
     raise RuntimeError(
         f'Cannot convert {ext} to PDF. Install Microsoft Word (macOS/Windows) '
@@ -210,10 +221,8 @@ def _convert_with_word_windows(source_path, output_pdf_path):
 
         word.Visible = False
         word.DisplayAlerts = 0
-        try:
+        with contextlib.suppress(Exception):
             word.AutomationSecurity = 3  # msoAutomationSecurityForceDisable
-        except Exception:
-            pass
 
         doc = word.Documents.Open(
             FileName=source_abs,
@@ -232,15 +241,11 @@ def _convert_with_word_windows(source_path, output_pdf_path):
         return False
     finally:
         if doc is not None:
-            try:
+            with contextlib.suppress(Exception):
                 doc.Close(False)
-            except Exception:
-                pass
         if word is not None:
-            try:
+            with contextlib.suppress(Exception):
                 word.Quit()
-            except Exception:
-                pass
 
 
 def render_url_to_pdf(url, output_pdf_path):
@@ -252,7 +257,7 @@ def render_url_to_pdf(url, output_pdf_path):
             'Playwright is required for web URL support. '
             f'Run: {sys.executable} -m pip install playwright && '
             f'{sys.executable} -m playwright install chromium'
-        )
+        ) from None
 
     with sync_playwright() as p:
         browser = None
@@ -380,7 +385,7 @@ def _render_page_region(pdf_doc, pg_idx, hits_with_anchors, context_padding, zoo
     # Highlight each anchor hit
     draw = ImageDraw.Draw(img, 'RGBA')
     pad = max(2, round(2 * zoom))
-    for anchor, rect in hits_with_anchors:
+    for _, rect in hits_with_anchors:
         if rect.y0 >= crop_rect.y0 - 5 and rect.y1 <= crop_rect.y1 + 5:
             x0 = (rect.x0 - crop_rect.x0) * zoom
             y0 = (rect.y0 - crop_rect.y0) * zoom
@@ -653,13 +658,11 @@ def cmd_setup_check():
 
     print('')
     print('Source support:')
-    print(
-        f'  PDF files:   {'Ready' if all_core else 'Needs: pip3 install pymupdf pillow python-docx'}'
-    )
+    pdf_requirement = 'Needs: pip3 install pymupdf pillow python-docx'
+    web_requirement = 'Needs: pip3 install playwright && python3 -m playwright install chromium'
+    print(f'  PDF files:   {'Ready' if all_core else pdf_requirement}')
     print(f'  Word docs:   {'Ready' if has_converter else 'Needs: Microsoft Word or LibreOffice'}')
-    print(
-        f'  Web URLs:    {'Ready' if has_web else 'Needs: pip3 install playwright && python3 -m playwright install chromium'}'
-    )
+    print(f'  Web URLs:    {'Ready' if has_web else web_requirement}')
 
     return 0 if all_core else 1
 

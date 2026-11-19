@@ -480,9 +480,7 @@ def search_todos() -> list[str]:
     """Search for TODO/FIXME/HACK comments."""
     todos = []
     patterns = ['TODO', 'FIXME', 'HACK']
-    exclude_dirs_str = '|'.join(
-        EXCLUDE_DIRS | {'test', 'tests', '__tests__', 'spec', '__mocks__', 'fixtures'}
-    )
+    '|'.join(EXCLUDE_DIRS | {'test', 'tests', '__tests__', 'spec', '__mocks__', 'fixtures'})
 
     try:
         for root, dirs, files in os.walk(Path.cwd()):
@@ -801,7 +799,8 @@ def main():
     if args.output:
         output_dir = Path(args.output).parent
         output_dir.mkdir(parents=True, exist_ok=True)
-        output_file = open(args.output, 'w', encoding='utf-8')
+        # The file is closed in the main() finally block after all sections write.
+        output_file = open(args.output, 'w', encoding='utf-8')  # noqa: SIM115
         print(f'Writing output to: {args.output}', file=sys.stderr)
 
     try:
@@ -842,7 +841,8 @@ def main():
             print_section(
                 'ENTRY POINTS',
                 [
-                    "No common entry points found. Check 'main' or 'scripts.start' in manifest files above."
+                    "No common entry points found. Check 'main' or "
+                    "'scripts.start' in manifest files above."
                 ],
                 output_file,
             )
@@ -850,7 +850,7 @@ def main():
         # Linting config
         lint = find_lint_config()
         if lint:
-            lint_content = [f'Found: {l}' for l in lint]
+            lint_content = [f'Found: {line}' for line in lint]
             print_section('LINTING AND FORMATTING CONFIG', lint_content, output_file)
         else:
             print_section(
@@ -871,7 +871,9 @@ def main():
             print_section(
                 'ENVIRONMENT VARIABLE TEMPLATES',
                 [
-                    'No .env.example or .env.template found. Identify required environment variables by searching the code and config for environment variable reads.'
+                    'No .env.example or .env.template found. Identify required '
+                    'environment variables by searching the code and config for '
+                    'environment variable reads.'
                 ],
                 output_file,
             )

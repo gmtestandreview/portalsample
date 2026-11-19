@@ -37,7 +37,8 @@ from urllib.parse import urlsplit
 
 if sys.version_info[:2] != (3, 14):
     raise SystemExit(
-        f'generate_review requires Python 3.14.x (found {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro})'
+        'generate_review requires Python 3.14.x '
+        f'(found {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro})'
     )
 
 TEXT_ENCODING = 'utf-8'
@@ -65,7 +66,7 @@ SUPPORTED_FEEDBACK_STATUSES = frozenset({'in_progress', 'complete'})
 SKIP_DIRECTORIES = frozenset({'node_modules', '.git', '__pycache__', 'skill', 'inputs'})
 METADATA_FILES = frozenset({TRANSCRIPT_FILE, 'user_notes.md', 'metrics.json'})
 
-EvalId: TypeAlias = int | str
+type EvalId = int | str
 
 _feedback_write_lock = threading.Lock()
 

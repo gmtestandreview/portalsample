@@ -620,7 +620,8 @@ def sonar_gate(
                 root=root,
                 timeout=max(timeout, 300),
                 success_detail=(
-                    f'Sonar script `{name}` completed with quality-gate waiting enabled; server-side quality-profile assignment was not verified by this check.'
+                    f'Sonar script `{name}` completed with quality-gate waiting enabled; '
+                    'server-side quality-profile assignment was not verified by this check.'
                 ),
             )
 
@@ -636,7 +637,10 @@ def sonar_gate(
             command,
             root=root,
             timeout=max(timeout, 330),
-            success_detail='Sonar analysis and waited quality gate passed; server-side quality-profile assignment was not verified by this check.',
+            success_detail=(
+                'Sonar analysis and waited quality gate passed; server-side '
+                'quality-profile assignment was not verified by this check.'
+            ),
         )
 
     if sonar_scripts:
@@ -676,7 +680,8 @@ def build_parser() -> argparse.ArgumentParser:
             'Examples:\n'
             '  python scripts/ts_diagnostic.py --strict --typecheck --emit --lint\n'
             '  python scripts/ts_diagnostic.py --root packages/api --tool-root . --typecheck\n'
-            '  python scripts/ts_diagnostic.py --strict --allow-strict-exception noUncheckedIndexedAccess\n'
+            '  python scripts/ts_diagnostic.py --strict --allow-strict-exception '
+            'noUncheckedIndexedAccess\n'
             '  python scripts/ts_diagnostic.py --all --format json\n'
             '  python scripts/ts_diagnostic.py --sonar --timeout 300\n'
         ),

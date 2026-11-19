@@ -8,7 +8,9 @@ Options:
     --style {solid|dashed|dotted}    Arrow line style (default: solid)
     --color HEX                      Arrow color (default: #1e1e1e)
     --label TEXT                     Add text label on the arrow
-    --use-edit-suffix                Edit via .excalidraw.edit to avoid editor overwrite issues (enabled by default; use --no-use-edit-suffix to disable)
+    --use-edit-suffix                Edit via .excalidraw.edit to avoid editor
+                                     overwrite issues (enabled by default; use
+                                     --no-use-edit-suffix to disable)
 
 Examples:
     python add-arrow.py diagram.excalidraw 300 200 500 300
@@ -212,7 +214,8 @@ def add_arrow_to_diagram(
     original_count = len(diagram['elements'])
     diagram['elements'].extend(arrow_elements)
     print(
-        f'  Added {len(arrow_elements)} elements (total: {original_count} -> {len(diagram['elements'])})'
+        f'  Added {len(arrow_elements)} elements '
+        f'(total: {original_count} -> {len(diagram['elements'])})'
     )
 
     # Save diagram
@@ -232,7 +235,9 @@ def main():
         print('  --color HEX                      Color (default: #1e1e1e)')
         print('  --label TEXT                     Text label on arrow')
         print(
-            '  --use-edit-suffix                Edit via .excalidraw.edit to avoid editor overwrite issues (enabled by default; use --no-use-edit-suffix to disable)'
+            '  --use-edit-suffix                Edit via .excalidraw.edit to avoid '
+            'editor overwrite issues (enabled by default; use '
+            '--no-use-edit-suffix to disable)'
         )
         print('\nExamples:')
         print('  python add-arrow.py diagram.excalidraw 300 200 500 300')

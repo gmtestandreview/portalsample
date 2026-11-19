@@ -12,7 +12,8 @@ Usage:
     python split-excalidraw-library.py <path-to-library-directory>
 
 Example:
-    python split-excalidraw-library.py skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/
+    python split-excalidraw-library.py \
+        skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/
 """
 
 import json
@@ -140,7 +141,8 @@ def split_library(library_dir: str) -> None:
     with open(reference_path, 'w', encoding='utf-8') as f:
         f.write(f'# {library_name} Reference\n\n')
         f.write(
-            f'This directory contains {len(icon_list)} icons extracted from `{library_path.name}`.\n\n'
+            f'This directory contains {len(icon_list)} icons extracted from '
+            f'`{library_path.name}`.\n\n'
         )
         f.write('## Available Icons\n\n')
         f.write('| Icon Name | Filename |\n')
@@ -151,7 +153,8 @@ def split_library(library_dir: str) -> None:
 
         f.write('\n## Usage\n\n')
         f.write(
-            'Each icon JSON file contains the complete `elements` array needed to render that icon in Excalidraw.\n'
+            'Each icon JSON file contains the complete `elements` array '
+            'needed to render that icon in Excalidraw.\n'
         )
         f.write('You can copy the elements from these files into your Excalidraw diagrams.\n')
 
@@ -169,7 +172,8 @@ def main():
         print('Usage: python split-excalidraw-library.py <path-to-library-directory>')
         print('\nExample:')
         print(
-            '  python split-excalidraw-library.py skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/'
+            '  python split-excalidraw-library.py '
+            'skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/'
         )
         print('\nNote: The directory should contain a .excalidrawlib file.')
         sys.exit(1)

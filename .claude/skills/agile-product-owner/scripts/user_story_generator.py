@@ -3,14 +3,57 @@
 Creates well-formed user stories with acceptance criteria
 """
 
-import json
+from typing import TypedDict
+
+
+class PersonaData(TypedDict):
+    name: str
+    needs: list[str]
+    context: str
+
+
+class InvestCheck(TypedDict):
+    independent: bool
+    negotiable: bool
+    valuable: bool
+    estimable: bool
+    small: bool
+    testable: bool
+
+
+class UserStory(TypedDict):
+    id: str
+    type: str
+    title: str
+    narrative: str
+    acceptance_criteria: list[str]
+    estimation: int
+    priority: str
+    dependencies: list[str]
+    invest_check: InvestCheck
+
+
+class Epic(TypedDict, total=False):
+    name: str
+    description: str
+    personas: list[str]
+    scope: list[str]
+    technical_requirements: list[str]
+
+
+class SprintPlan(TypedDict):
+    capacity: int
+    committed: list[UserStory]
+    stretch: list[UserStory]
+    total_points: int
+    utilization: float
 
 
 class UserStoryGenerator:
     """Generate INVEST-compliant user stories"""
 
     def __init__(self):
-        self.personas = {
+        self.personas: dict[str, PersonaData] = {
             'end_user': {
                 'name': 'End User',
                 'needs': ['efficiency', 'simplicity', 'reliability', 'speed'],
@@ -33,27 +76,26 @@ class UserStoryGenerator:
             },
         }
 
-        self.story_templates = {
+        self.story_templates: dict[str, str] = {
             'feature': 'As a {persona}, I want to {action} so that {benefit}',
             'improvement': 'As a {persona}, I need {capability} to {achieve_goal}',
             'fix': 'As a {persona}, I expect {behavior} when {condition}',
             'integration': 'As a {persona}, I want to {integrate} so that {workflow}',
         }
 
-        self.acceptance_criteria_patterns = [
+        self.acceptance_criteria_patterns: list[str] = [
             'Given {precondition}, When {action}, Then {outcome}',
             'Should {behavior} when {condition}',
             'Must {requirement} to {achieve}',
             'Can {capability} without {negative_outcome}',
         ]
 
-    def generate_epic_stories(self, epic: dict) -> list[dict]:
+    def generate_epic_stories(self, epic: Epic) -> list[UserStory]:
         """Break down epic into user stories"""
         stories = []
 
         # Analyze epic for key components
         epic_name = epic.get('name', 'Feature')
-        epic_description = epic.get('description', '')
         personas = epic.get('personas', ['end_user'])
         scope = epic.get('scope', [])
 
@@ -73,7 +115,7 @@ class UserStoryGenerator:
 
         return stories
 
-    def generate_story(self, persona: str, feature: str, epic: str, index: int) -> dict:
+    def generate_story(self, persona: str, feature: str, epic: str, index: int) -> UserStory:
         """Generate a single user story"""
         persona_data = self.personas.get(persona, self.personas['end_user'])
 
@@ -92,7 +134,7 @@ class UserStoryGenerator:
 
         return story
 
-    def generate_enabler_story(self, requirement: str, epic: str) -> dict:
+    def generate_enabler_story(self, requirement: str, epic: str) -> UserStory:
         """Generate technical enabler story"""
         return {
             'id': f'{epic[:3].upper()}-E{len(requirement):02d}',
@@ -124,7 +166,7 @@ class UserStoryGenerator:
         words = feature.split()[:5]
         return ' '.join(words).title()
 
-    def _generate_narrative(self, persona: dict, feature: str) -> str:
+    def _generate_narrative(self, persona: PersonaData, feature: str) -> str:
         """Generate story narrative in standard format"""
         template = self.story_templates['feature']
 
@@ -138,21 +180,14 @@ class UserStoryGenerator:
         criteria = []
 
         # Happy path
-        criteria.append(
-            f'Given user has access, When they {self._extract_action(feature)}, Then {self._extract_outcome(feature)}'
-        )
-
-        # Validation
-        criteria.append('Should validate input before processing')
-
-        # Error handling
-        criteria.append('Must show clear error message when action fails')
-
-        # Performance
-        criteria.append('Should complete within 2 seconds')
-
-        # Accessibility
-        criteria.append('Must be accessible via keyboard navigation')
+        criteria.extend([
+            f'Given user has access, When they {self._extract_action(feature)}, '
+            f'Then {self._extract_outcome(feature)}',
+            'Should validate input before processing',
+            'Must show clear error message when action fails',
+            'Should complete within 2 seconds',
+            'Must be accessible via keyboard navigation',
+        ])
 
         return criteria
 
@@ -224,9 +259,10 @@ class UserStoryGenerator:
             return 'critical'
 
         # High priority for primary personas
-        if persona in ['end_user', 'admin']:
-            if any(word in feature_lower for word in ['core', 'essential', 'primary']):
-                return 'high'
+        if persona in ['end_user', 'admin'] and any(
+            word in feature_lower for word in ['core', 'essential', 'primary']
+        ):
+            return 'high'
 
         # Medium for improvements
         if any(word in feature_lower for word in ['improve', 'enhance', 'optimize']):
@@ -235,7 +271,7 @@ class UserStoryGenerator:
         # Low for nice-to-haves
         return 'low'
 
-    def _check_invest_criteria(self, feature: str) -> dict[str, bool]:
+    def _check_invest_criteria(self, feature: str) -> InvestCheck:
         """Check INVEST criteria compliance"""
         return {
             'independent': not any(
@@ -250,7 +286,7 @@ class UserStoryGenerator:
             ),
         }
 
-    def generate_sprint_stories(self, capacity: int, backlog: list[dict]) -> dict:
+    def generate_sprint_stories(self, capacity: int, backlog: list[UserStory]) -> SprintPlan:
         """Generate stories for a sprint based on capacity"""
         sprint = {
             'capacity': capacity,
@@ -281,32 +317,34 @@ class UserStoryGenerator:
 
         return sprint
 
-    def format_story_output(self, story: dict) -> str:
+    def format_story_output(self, story: UserStory) -> str:
         """Format story for display"""
-        output = []
-        output.append(f'USER STORY: {story['id']}')
-        output.append('=' * 40)
-        output.append(f'Title: {story['title']}')
-        output.append(f'Type: {story['type']}')
-        output.append(f'Priority: {story['priority'].upper()}')
-        output.append(f'Points: {story['estimation']}')
-        output.append('')
-        output.append('Story:')
-        output.append(story['narrative'])
-        output.append('')
-        output.append('Acceptance Criteria:')
-        for i, criterion in enumerate(story['acceptance_criteria'], 1):
-            output.append(f'  {i}. {criterion}')
-        output.append('')
-        output.append('INVEST Checklist:')
-        for criterion, passed in story['invest_check'].items():
-            status = '✓' if passed else '✗'
-            output.append(f'  {status} {criterion.capitalize()}')
+        output = [
+            f'USER STORY: {story['id']}',
+            '=' * 40,
+            f'Title: {story['title']}',
+            f'Type: {story['type']}',
+            f'Priority: {story['priority'].upper()}',
+            f'Points: {story['estimation']}',
+            '',
+            'Story:',
+            story['narrative'],
+            '',
+            'Acceptance Criteria:',
+        ]
+        output.extend(
+            f'  {i}. {criterion}' for i, criterion in enumerate(story['acceptance_criteria'], 1)
+        )
+        output.extend(['', 'INVEST Checklist:'])
+        output.extend(
+            f'  {'✓' if passed else '✗'} {criterion.capitalize()}'
+            for criterion, passed in story['invest_check'].items()
+        )
 
         return '\n'.join(output)
 
 
-def create_sample_epic():
+def create_sample_epic() -> Epic:
     """Create a sample epic for testing"""
     return {
         'name': 'User Dashboard',
@@ -326,6 +364,55 @@ def create_sample_epic():
     }
 
 
+def _print_sprint_planning(sprint: SprintPlan) -> None:
+    """Print the sprint planning summary and selected stories."""
+    print('=' * 60)
+    print('SPRINT PLANNING')
+    print('=' * 60)
+    print(f'Sprint Capacity: {sprint['capacity']} points')
+    print(f'Committed: {sprint['total_points']} points ({sprint['utilization']}%)')
+    print(f'Stories: {len(sprint['committed'])} committed + {len(sprint['stretch'])} stretch')
+    print('\n📋 COMMITTED STORIES:\n')
+
+    for story in sprint['committed']:
+        print(
+            f'  [{story['priority'][:1].upper()}] {story['id']}: '
+            f'{story['title']} ({story['estimation']}pts)'
+        )
+
+    if sprint['stretch']:
+        print('\n🎯 STRETCH GOALS:\n')
+        for story in sprint['stretch']:
+            print(
+                f'  [{story['priority'][:1].upper()}] {story['id']}: '
+                f'{story['title']} ({story['estimation']}pts)'
+            )
+
+
+def _print_epic_summary(
+    generator: UserStoryGenerator, epic: Epic, stories: list[UserStory]
+) -> None:
+    """Print story details followed by an epic backlog summary."""
+    print(f'Generated {len(stories)} stories from epic: {epic.get('name', 'Feature')}\n')
+
+    for story in stories[:3]:
+        print(generator.format_story_output(story))
+        print('\n')
+
+    print('=' * 60)
+    print('BACKLOG SUMMARY')
+    print('=' * 60)
+    total_points = sum(story['estimation'] for story in stories)
+    print(f'Total Stories: {len(stories)}')
+    print(f'Total Points: {total_points}')
+    print(f'Average Size: {total_points / len(stories):.1f} points')
+    print('\nPriority Breakdown:')
+    for priority in ['critical', 'high', 'medium', 'low']:
+        count = len([story for story in stories if story['priority'] == priority])
+        if count > 0:
+            print(f'  {priority.capitalize()}: {count} stories')
+
+
 def main():
     import sys
 
@@ -341,52 +428,13 @@ def main():
 
         # Plan sprint
         sprint = generator.generate_sprint_stories(capacity, backlog)
-
-        print('=' * 60)
-        print('SPRINT PLANNING')
-        print('=' * 60)
-        print(f'Sprint Capacity: {sprint['capacity']} points')
-        print(f'Committed: {sprint['total_points']} points ({sprint['utilization']}%)')
-        print(f'Stories: {len(sprint['committed'])} committed + {len(sprint['stretch'])} stretch')
-        print('\n📋 COMMITTED STORIES:\n')
-
-        for story in sprint['committed']:
-            print(
-                f'  [{story['priority'][:1].upper()}] {story['id']}: {story['title']} ({story['estimation']}pts)'
-            )
-
-        if sprint['stretch']:
-            print('\n🎯 STRETCH GOALS:\n')
-            for story in sprint['stretch']:
-                print(
-                    f'  [{story['priority'][:1].upper()}] {story['id']}: {story['title']} ({story['estimation']}pts)'
-                )
+        _print_sprint_planning(sprint)
 
     else:
         # Generate stories for epic
         epic = create_sample_epic()
         stories = generator.generate_epic_stories(epic)
-
-        print(f'Generated {len(stories)} stories from epic: {epic['name']}\n')
-
-        # Display first 3 stories in detail
-        for story in stories[:3]:
-            print(generator.format_story_output(story))
-            print('\n')
-
-        # Summary of all stories
-        print('=' * 60)
-        print('BACKLOG SUMMARY')
-        print('=' * 60)
-        total_points = sum(s['estimation'] for s in stories)
-        print(f'Total Stories: {len(stories)}')
-        print(f'Total Points: {total_points}')
-        print(f'Average Size: {total_points / len(stories):.1f} points')
-        print('\nPriority Breakdown:')
-        for priority in ['critical', 'high', 'medium', 'low']:
-            count = len([s for s in stories if s['priority'] == priority])
-            if count > 0:
-                print(f'  {priority.capitalize()}: {count} stories')
+        _print_epic_summary(generator, epic, stories)
 
 
 if __name__ == '__main__':

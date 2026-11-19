@@ -109,11 +109,9 @@ class PromptOptimizer:
             print(f'\nIteration {iteration + 1}/{max_iterations}')
 
             # Evaluate current prompt
-            # Bolt Optimization: Avoid re-evaluating if we already have metrics from previous iteration
-            if current_metrics:
-                metrics = current_metrics
-            else:
-                metrics = self.evaluate_prompt(current_prompt)
+            # Bolt Optimization: Avoid re-evaluating if we already have metrics
+            # from the previous iteration.
+            metrics = current_metrics or self.evaluate_prompt(current_prompt)
 
             print(
                 f'Accuracy: {metrics['avg_accuracy']:.2f}, Latency: {metrics['avg_latency']:.2f}s'

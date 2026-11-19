@@ -85,14 +85,16 @@ class RealProjectRegressionTests(unittest.TestCase):
         payload = json.dumps({'compilerOptions': {'strict': True}, 'files': files})
         self.assertGreater(len(payload), 8000)
         completed = subprocess.CompletedProcess([], 0, stdout=payload, stderr='')
-        with tempfile.TemporaryDirectory() as td:
-            with mock.patch.object(tsd.subprocess, 'run', return_value=completed):
-                result, config = tsd.show_config(
-                    'tsc',
-                    root=Path(td),
-                    tsconfig=Path(td) / 'tsconfig.json',
-                    timeout=1,
-                )
+        with (
+            tempfile.TemporaryDirectory() as td,
+            mock.patch.object(tsd.subprocess, 'run', return_value=completed),
+        ):
+            result, config = tsd.show_config(
+                'tsc',
+                root=Path(td),
+                tsconfig=Path(td) / 'tsconfig.json',
+                timeout=1,
+            )
         self.assertEqual(result.status, tsd.PASS)
         self.assertIsNotNone(config)
 

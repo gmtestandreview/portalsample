@@ -44,6 +44,35 @@ def resolved_git(monkeypatch: MonkeyPatch, scanner: ModuleType) -> str:
     return FAKE_GIT
 
 
+def install_subprocess_run_stub(
+    monkeypatch: MonkeyPatch, scanner: ModuleType, stdout: str
+) -> list[object]:
+    calls: list[object] = []
+
+    def fake_run(*args: object, **kwargs: object) -> SimpleNamespace:
+        calls.append(args[0])
+        return SimpleNamespace(stdout=stdout)
+
+    monkeypatch.setattr(scanner.subprocess, 'run', fake_run)
+    return calls
+
+
+def assert_git_helper_fails_open(
+    monkeypatch: MonkeyPatch,
+    scanner: ModuleType,
+    helper_name: str,
+    failure_message: str,
+    helper_args: tuple[object, ...] = (),
+) -> None:
+    def missing_git(*args: object, **kwargs: object) -> SimpleNamespace:
+        raise FileNotFoundError('git')
+
+    monkeypatch.setattr(scanner.subprocess, 'run', missing_git)
+
+    if getattr(scanner, helper_name)(*helper_args) != []:
+        pytest.fail(failure_message)
+
+
 def test_files_to_scan_resolves_explicit_git_add(
     tmp_path: Path, monkeypatch: MonkeyPatch, scanner: ModuleType
 ) -> None:
@@ -116,13 +145,7 @@ def test_auto_staged_files_returns_only_existing_files(
 ) -> None:
     monkeypatch.chdir(tmp_path)
     (tmp_path / 'present.txt').write_text('x', encoding='utf-8')
-    calls: list[object] = []
-
-    def fake_run(*args: object, **kwargs: object) -> SimpleNamespace:
-        calls.append(args[0])
-        return SimpleNamespace(stdout='present.txt\nmissing.txt\n')
-
-    monkeypatch.setattr(scanner.subprocess, 'run', fake_run)
+    calls = install_subprocess_run_stub(monkeypatch, scanner, 'present.txt\nmissing.txt\n')
 
     result = scanner._auto_staged_files('git commit -am message')
 
@@ -147,13 +170,13 @@ def test_auto_staged_files_skips_git_when_commit_has_no_all_flag(
 def test_auto_staged_files_fails_open_when_git_run_raises_oserror(
     monkeypatch: MonkeyPatch, scanner: ModuleType, resolved_git: str
 ) -> None:
-    def missing_git(*args: object, **kwargs: object) -> SimpleNamespace:
-        raise FileNotFoundError('git')
-
-    monkeypatch.setattr(scanner.subprocess, 'run', missing_git)
-
-    if scanner._auto_staged_files('git commit -am message') != []:
-        pytest.fail('expected [] (fail open) when git cannot be executed')
+    assert_git_helper_fails_open(
+        monkeypatch,
+        scanner,
+        '_auto_staged_files',
+        'expected [] (fail open) when git cannot be executed',
+        ('git commit -am message',),
+    )
 
 
 def test_all_added_files_strips_porcelain_prefix_and_keeps_existing(
@@ -162,13 +185,7 @@ def test_all_added_files_strips_porcelain_prefix_and_keeps_existing(
     monkeypatch.chdir(tmp_path)
     (tmp_path / 'a.txt').write_text('x', encoding='utf-8')
     (tmp_path / 'b.txt').write_text('x', encoding='utf-8')
-    calls: list[object] = []
-
-    def fake_run(*args: object, **kwargs: object) -> SimpleNamespace:
-        calls.append(args[0])
-        return SimpleNamespace(stdout='?? b.txt\n M a.txt\n D gone.txt\n')
-
-    monkeypatch.setattr(scanner.subprocess, 'run', fake_run)
+    calls = install_subprocess_run_stub(monkeypatch, scanner, '?? b.txt\n M a.txt\n D gone.txt\n')
 
     result = scanner._all_added_files()
 
@@ -181,18 +198,15 @@ def test_all_added_files_strips_porcelain_prefix_and_keeps_existing(
 def test_all_added_files_fails_open_when_git_run_raises_oserror(
     monkeypatch: MonkeyPatch, scanner: ModuleType, resolved_git: str
 ) -> None:
-    def missing_git(*args: object, **kwargs: object) -> SimpleNamespace:
-        raise FileNotFoundError('git')
+    assert_git_helper_fails_open(
+        monkeypatch,
+        scanner,
+        '_all_added_files',
+        'expected [] (fail open) when git cannot be executed',
+    )
 
-    monkeypatch.setattr(scanner.subprocess, 'run', missing_git)
 
-    if scanner._all_added_files() != []:
-        pytest.fail('expected [] (fail open) when git cannot be executed')
-
-
-def test_main_fails_open_when_git_is_missing(
-    monkeypatch: MonkeyPatch, scanner: ModuleType
-) -> None:
+def test_main_fails_open_when_git_is_missing(monkeypatch: MonkeyPatch, scanner: ModuleType) -> None:
     """D-01: with git missing, main() exits 0 (fail open) instead of crashing."""
     monkeypatch.setattr(
         sys,

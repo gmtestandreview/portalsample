@@ -1473,7 +1473,8 @@ def _run_live_mode(args: argparse.Namespace, plan: ExecutionPlan) -> int:
 
     if max_calls < plan.base_calls:
         print(
-            f'Warning: cap {max_calls} is below the {plan.base_calls}-call base; run may be partial.',
+            f'Warning: cap {max_calls} is below the {plan.base_calls}-call base; '
+            'run may be partial.',
             file=sys.stderr,
         )
 

@@ -242,7 +242,9 @@ class StrategyAnalyzer:
             options.append({
                 'name': 'Market Leadership Initiative',
                 'type': 'market_penetration',
-                'description': 'Aggressive market share capture through competitive pricing and marketing',
+                'description': (
+                    'Aggressive market share capture through competitive pricing and marketing'
+                ),
                 'investment': 'High',
                 'timeframe': '12-18 months',
                 'expected_impact': 'Increase market share by 10-15%',
@@ -280,7 +282,9 @@ class StrategyAnalyzer:
             options.append({
                 'name': 'Digital Transformation',
                 'type': 'innovation',
-                'description': 'Comprehensive digitalization of business processes and customer experience',
+                'description': (
+                    'Comprehensive digitalization of business processes and customer experience'
+                ),
                 'investment': 'Very High',
                 'timeframe': '24-36 months',
                 'expected_impact': 'Future-proof business model',
@@ -342,7 +346,9 @@ class StrategyAnalyzer:
         if risks['financial_risk'] > 60:
             risks['mitigation_strategies'].append({
                 'risk': 'Financial',
-                'strategy': 'Improve cash management, secure credit facilities, optimize working capital',
+                'strategy': (
+                    'Improve cash management, secure credit facilities, optimize working capital'
+                ),
             })
 
         return risks
@@ -488,7 +494,8 @@ class StrategyAnalyzer:
         score = results['strategic_health_score']
         if score < 40:
             list.extend(
-                '🚨 URGENT: Immediate turnaround required - consider bringing in crisis management team'
+                '🚨 URGENT: Immediate turnaround required - '
+                'consider bringing in crisis management team'
             )
             list.extend('Focus on cash preservation and core business stabilization')
         elif score < 60:
