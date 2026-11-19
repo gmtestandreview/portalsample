@@ -9,7 +9,7 @@ import { DashboardTab } from '../../components/SearchFilter/types';
 import { defaultFilter } from '../common/constants';
 import { toPatternApprovalStatusEnumDto } from '../common/helperFunctions';
 
-export interface FetchRequestsParams {
+interface FetchRequestsParams {
   tab: DashboardTab;
   client: PatternApprovalClient;
   sortOrder: string;

@@ -101,8 +101,9 @@ export const observed: { current: ModalObservations } = {
   current: emptyObservations(),
 };
 
-// Shared meta options for every Modals story file. Each file keeps its own
-// literal `title: 'Modals'` so story ids stay `modals--<story>`.
+// Shared meta options for `Modals.stories.tsx` (decorators, beforeEach
+// cleanup, parameters). The story file keeps the literal `title: 'Modals'`
+// so story ids stay `modals--<story>`.
 export const modalsMetaOptions = {
   decorators: [withPortalProviders],
   beforeEach() {
@@ -173,7 +174,7 @@ export const createBranchSelectorFetch =
 
 // Mirrors PreConditions: owns ModalState, mounts the modal only while it is shown
 // and provides a real trigger so focus restoration can be observed.
-export const ModalHost = ({
+const ModalHost = ({
   triggerLabel,
   openModal,
   children,
@@ -218,7 +219,7 @@ export const ModalHost = ({
   );
 };
 
-export const dashboardDestination = [
+const dashboardDestination = [
   { path: '/', element: <h1>Dashboard destination</h1> },
 ];
 

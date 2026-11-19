@@ -35,7 +35,7 @@ export const handleNotificationScroll = () => {
     ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-export interface FetchRequestsParams {
+interface FetchRequestsParams {
   tab: DashboardTab;
   client: DashboardClient;
   sortOrder: string;
