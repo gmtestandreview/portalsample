@@ -295,21 +295,22 @@ class TeamScalingCalculator:
     def _calculate_budget(self, hiring_plan: dict, location: str) -> dict:
         """Calculate budget projection"""
         # Average salaries by role and location (in USD)
+        us_bands = {
+            'engineering_manager': 200000,
+            'tech_lead': 180000,
+            'senior_engineer': 160000,
+            'mid_engineer': 120000,
+            'junior_engineer': 85000,
+            'devops': 150000,
+            'qa': 100000,
+            'product_manager': 150000,
+            'designer': 120000,
+            'data_engineer': 140000,
+        }
         salary_bands = {
-            'US': {
-                'engineering_manager': 200000,
-                'tech_lead': 180000,
-                'senior_engineer': 160000,
-                'mid_engineer': 120000,
-                'junior_engineer': 85000,
-                'devops': 150000,
-                'qa': 100000,
-                'product_manager': 150000,
-                'designer': 120000,
-                'data_engineer': 140000,
-            },
-            'EU': {k: v * 0.8 for k, v in salary_bands.get('US', {}).items()},
-            'APAC': {k: v * 0.6 for k, v in salary_bands.get('US', {}).items()},
+            'US': us_bands,
+            'EU': {k: v * 0.8 for k, v in us_bands.items()},
+            'APAC': {k: v * 0.6 for k, v in us_bands.items()},
         }
 
         location_salaries = salary_bands.get(location, salary_bands['US'])
