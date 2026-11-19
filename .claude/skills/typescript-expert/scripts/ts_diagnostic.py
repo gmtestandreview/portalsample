@@ -28,7 +28,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import cast
 
-PASS = 'PASS'
+STATUS_OK = 'PASS'
+PASS = STATUS_OK  # Preserve the existing module export.
 WARN = 'WARN'
 FAIL = 'FAIL'
 SKIP = 'SKIP'
@@ -263,7 +264,7 @@ def check_version(
         ), found
     return Result(
         'typescript-version',
-        PASS,
+        STATUS_OK,
         f'TypeScript {found}.',
         [tsc, '--version'],
         elapsed,
@@ -313,7 +314,7 @@ def show_config(
         ), None
     return Result(
         'tsconfig-resolution',
-        PASS,
+        STATUS_OK,
         f'Resolved {tsconfig.name} through TypeScript (JSONC/extends aware).',
         command,
         elapsed,
@@ -359,7 +360,7 @@ def check_strict(
         results.append(
             Result(
                 'strict-profile',
-                PASS,
+                STATUS_OK,
                 'All required strict baseline flags are enabled.',
             )
         )
@@ -377,7 +378,7 @@ def check_strict(
         results.append(
             Result(
                 'strict-performance',
-                PASS,
+                STATUS_OK,
                 'Recommended skipLibCheck/incremental defaults are enabled.',
             )
         )
@@ -393,7 +394,7 @@ def compiler_gate(
     success_detail: str,
 ) -> Result:
     code, output, elapsed = run_command(command, cwd=root, timeout=timeout)
-    status = PASS if code == 0 else FAIL
+    status = STATUS_OK if code == 0 else FAIL
     detail = success_detail if code == 0 else f'{name} failed with exit code {code}.'
     return Result(name, status, detail, command, elapsed, output or None)
 
@@ -434,7 +435,7 @@ def scoped_typecheck_result(
             elapsed,
             trim_output(output) or None,
         )
-    status = FAIL if in_scope else PASS
+    status = FAIL if in_scope else STATUS_OK
     detail = (
         f'{len(in_scope)} error(s) in scope; {outside} outside scope '
         f'(reported, not part of this gate).'
@@ -666,7 +667,7 @@ def print_results(results: list[Result]) -> None:
         print(f'{result.status:4}  {result.name:22}  {result.detail}')
         if result.command:
             print('      command:', ' '.join(result.command))
-        if result.output and result.status != PASS:
+        if result.output and result.status != STATUS_OK:
             for line in result.output.splitlines()[:20]:
                 print(f'      {line}')
     print('=' * 78)
