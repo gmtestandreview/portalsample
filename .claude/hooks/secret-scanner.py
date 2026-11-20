@@ -202,15 +202,21 @@ def should_skip_file(file_path: str) -> bool:
 
 def get_staged_files() -> list[str]:
     """Get list of staged files"""
+    git = _git_executable()
+    if git is None:
+        return []
+
     try:
-        result = subprocess.run(
-            ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
+        # The executable is resolved from PATH above and args are fixed git options.
+        result = subprocess.run(  # nosec B603
+            [git, 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
             capture_output=True,
             text=True,
             check=True,
+            timeout=GIT_TIMEOUT_SECONDS,
         )
         return [f.strip() for f in result.stdout.split('\n') if f.strip()]
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError:
         return []
 
 
@@ -343,7 +349,8 @@ def _run_git(args: list[str]) -> str:
         return ''
 
     try:
-        result = subprocess.run(
+        # The executable is resolved from PATH above and args are fixed git options.
+        result = subprocess.run(  # nosec B603
             [git, *args],
             capture_output=True,
             text=True,
