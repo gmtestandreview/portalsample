@@ -96,8 +96,8 @@ RFQDeleteModal stories (619-732).
 Steps:
 
 1. Move the shared helpers and mock data into
-   `ClientApp/src/components/modals/modalsStoryHelpers.ts(x)` (not a `.stories`
-   file, so Storybook does not index it).
+   `ClientApp/src/storybook/modalsStoryHelpers.tsx` (not a `.stories` file, so
+   Storybook does not index it).
 2. Split into `ConfirmationModal.stories.tsx`, `BranchSelectorModal.stories.tsx`
    and `RFQDeleteModal.stories.tsx`, each with its own `meta` that preserves the
    original `title` hierarchy so story ids stay stable (check the existing

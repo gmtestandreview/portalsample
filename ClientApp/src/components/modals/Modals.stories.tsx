@@ -18,7 +18,7 @@ import {
   observed,
   rfqDeleteHost,
   rfqDeletePortal,
-} from './modalsStoryHelpers';
+} from '../../storybook/modalsStoryHelpers';
 
 const meta = preview.meta({
   title: 'Modals',

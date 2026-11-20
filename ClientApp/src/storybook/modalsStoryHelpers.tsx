@@ -2,14 +2,20 @@ import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Button } from 'react-bootstrap';
 import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
-import ConfirmationModal from './ConfirmationModal';
-import BranchSelectorModal from './BranchSelectorModal';
-import RFQDeleteModal from './RFQDeleteModal';
-import { ModalDispatchCtx, ModalStateCtx } from './ModalContext';
-import type { ModalDispatch, ModalState } from './ModalContext';
-import { BranchSelectionModalMode } from './BranchSelectorModal/enums';
-import { clearDashboardNotification } from '../../storage/notification';
-import { withPortalProviders } from '../../storybook/storybookHarness';
+import ConfirmationModal from '../components/modals/ConfirmationModal';
+import BranchSelectorModal from '../components/modals/BranchSelectorModal';
+import RFQDeleteModal from '../components/modals/RFQDeleteModal';
+import {
+  ModalDispatchCtx,
+  ModalStateCtx,
+} from '../components/modals/ModalContext';
+import type {
+  ModalDispatch,
+  ModalState,
+} from '../components/modals/ModalContext';
+import { BranchSelectionModalMode } from '../components/modals/BranchSelectorModal/enums';
+import { clearDashboardNotification } from '../storage/notification';
+import { withPortalProviders } from './storybookHarness';
 
 const mockBranches = [
   {
