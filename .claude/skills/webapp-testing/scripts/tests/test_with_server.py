@@ -246,10 +246,10 @@ class FinalCommandTests(unittest.TestCase):
             mock.patch.object(ws, 'is_server_ready', return_value=True),
             mock.patch.object(ws, 'stop_server'),
             mock.patch.object(ws.subprocess, 'run') as run,
-            self.assertRaises(SystemExit) as cm,
         ):
             run.return_value = mock.Mock(returncode=7)
-            ws.main()
+            with self.assertRaises(SystemExit) as cm:
+                ws.main()
         self.assertEqual(cm.exception.code, 7)
         run.assert_called_once()
         self.assertIs(run.call_args.kwargs.get('check'), False)
