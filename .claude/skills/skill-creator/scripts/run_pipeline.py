@@ -370,7 +370,8 @@ def run_check(skill_root: Path, workspace: Path | None = None) -> JsonObject:
     )
     records: list[JsonObject] = []
     for command in commands:
-        result = subprocess.run(
+        # These command vectors are defined above and execute without a shell.
+        result = subprocess.run(  # nosec B603
             command,
             cwd=skill_root,
             capture_output=True,
@@ -596,12 +597,13 @@ def _case_observation_row(
     case: Mapping[str, object],
     observation: Mapping[str, object] | None,
 ) -> JsonObject:
+    case_passed = observation is not None and observation.get('pass') is True
     if observation is None:
         return {
             **dict(case),
             'status': NOT_RUN,
             'attempts': [],
-            'pass': False,
+            'pass': case_passed,
             'evidence_code': 'NHR',
             'reason': 'activation attempt was not completed',
         }
@@ -609,7 +611,7 @@ def _case_observation_row(
         **dict(case),
         'status': COMPLETE,
         'attempts': [dict(observation)],
-        'pass': observation.get('pass') is True,
+        'pass': case_passed,
     }
 
 

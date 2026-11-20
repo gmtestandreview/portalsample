@@ -193,7 +193,7 @@ def start_server(
     on_windows = os.name == 'nt'
     # The caller selects the executable. The parser and resolver validate it before
     # launch in a separate group or session so stop_server can end the whole tree.
-    process = subprocess.Popen(
+    process = subprocess.Popen(  # nosec B603
         validated_argv,
         cwd=cwd,
         shell=False,
@@ -220,7 +220,7 @@ def _taskkill_path() -> str:
 def _kill_tree(process: subprocess.Popen[bytes]) -> None:
     if os.name == 'nt':
         # The executable comes from the OS and the PID comes from the process we started.
-        subprocess.run(
+        subprocess.run(  # nosec B603
             [_taskkill_path(), '/PID', str(process.pid), '/T', '/F'],
             shell=False,
             stdout=subprocess.DEVNULL,
@@ -342,7 +342,11 @@ def main():
         # The caller supplies a separate argument vector after the server options.
         print(f'Running: {' '.join(args.command)}\n')
         validated_argv = prepare_argv(args.command)
-        result = subprocess.run(validated_argv, shell=False, check=False)
+        result = subprocess.run(  # nosec B603
+            validated_argv,
+            shell=False,
+            check=False,
+        )
         sys.exit(result.returncode)
 
     finally:
