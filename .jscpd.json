@@ -1,0 +1,15 @@
+{
+  "threshold": 3,
+  "path": ["ClientApp/src", "tests"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/*.min.js",
+    "**/coverage/**",
+    "**/web-api-client*"
+  ],
+  "format": ["javascript", "jsx", "typescript", "tsx", "python"],
+  "minTokens": 50,
+  "minLines": 5,
+  "reporters": ["console", "html", "json", "ai"],
+  "output": "report"
+}

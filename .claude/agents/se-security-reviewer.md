@@ -49,6 +49,7 @@ Select 3-5 most relevant check categories based on context.
 def get_profile(user_id):
     return User.get(user_id).to_json()
 
+
 # SECURE
 @app.route('/user/<user_id>/profile')
 @require_auth
@@ -66,6 +67,7 @@ password_hash = hashlib.md5(password.encode()).hexdigest()
 
 # SECURE
 from werkzeug.security import generate_password_hash
+
 password_hash = generate_password_hash(password, method='scrypt')
 ```
 
@@ -73,10 +75,10 @@ password_hash = generate_password_hash(password, method='scrypt')
 
 ```python
 # VULNERABILITY
-query = f"SELECT * FROM users WHERE id = {user_id}"
+query = f'SELECT * FROM users WHERE id = {user_id}'
 
 # SECURE
-query = "SELECT * FROM users WHERE id = %s"
+query = 'SELECT * FROM users WHERE id = %s'
 cursor.execute(query, (user_id,))
 ```
 
@@ -86,7 +88,7 @@ cursor.execute(query, (user_id,))
 
 ```python
 # VULNERABILITY
-prompt = f"Summarize: {user_input}"
+prompt = f'Summarize: {user_input}'
 return llm.complete(prompt)
 
 # SECURE
@@ -101,11 +103,11 @@ return llm.complete(prompt, max_tokens=500)
 
 ```python
 # VULNERABILITY
-response = llm.complete(f"Context: {sensitive_data}")
+response = llm.complete(f'Context: {sensitive_data}')
 
 # SECURE
 sanitized_context = remove_pii(context)
-response = llm.complete(f"Context: {sanitized_context}")
+response = llm.complete(f'Context: {sanitized_context}')
 filtered = filter_sensitive_output(response)
 return filtered
 ```
@@ -118,6 +120,7 @@ return filtered
 # VULNERABILITY
 def internal_api(data):
     return process(data)
+
 
 # ZERO TRUST
 def internal_api(data, auth_token):
@@ -144,7 +147,7 @@ for attempt in range(3):
             break
     except requests.RequestException as e:
         logger.warning(f'Attempt {attempt + 1} failed: {e}')
-        time.sleep(2 ** attempt)
+        time.sleep(2**attempt)
 ```
 
 ## Document Creation

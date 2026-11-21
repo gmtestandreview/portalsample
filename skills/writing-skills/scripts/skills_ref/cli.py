@@ -15,7 +15,7 @@ from .validator import validate
 
 def _is_skill_md_file(path: Path) -> bool:
     """Check if path points directly to an exact-cased SKILL.md file."""
-    return path.is_file() and path.name == "SKILL.md"
+    return path.is_file() and path.name == 'SKILL.md'
 
 
 def _skill_directory(path: Path) -> Path:
@@ -29,8 +29,8 @@ def main() -> None:
     """Reference library for Agent Skills."""
 
 
-@main.command("validate")
-@click.argument("skill_path", type=click.Path(exists=True, path_type=Path))
+@main.command('validate')
+@click.argument('skill_path', type=click.Path(exists=True, path_type=Path))
 def validate_cmd(skill_path: Path) -> None:
     """Validate a skill directory.
 
@@ -45,16 +45,16 @@ def validate_cmd(skill_path: Path) -> None:
     errors = validate(skill_path)
 
     if errors:
-        click.echo(f"Validation failed for {skill_path}:", err=True)
+        click.echo(f'Validation failed for {skill_path}:', err=True)
         for error in errors:
-            click.echo(f"  - {error}", err=True)
+            click.echo(f'  - {error}', err=True)
         sys.exit(1)
 
-    click.echo(f"Valid skill: {skill_path}")
+    click.echo(f'Valid skill: {skill_path}')
 
 
-@main.command("read-properties")
-@click.argument("skill_path", type=click.Path(exists=True, path_type=Path))
+@main.command('read-properties')
+@click.argument('skill_path', type=click.Path(exists=True, path_type=Path))
 def read_properties_cmd(skill_path: Path) -> None:
     """Read and print skill properties as JSON.
 
@@ -70,13 +70,13 @@ def read_properties_cmd(skill_path: Path) -> None:
         props = read_properties(skill_path)
         click.echo(json.dumps(props.to_dict(), indent=2))
     except SkillError as e:
-        click.echo(f"Error: {e}", err=True)
+        click.echo(f'Error: {e}', err=True)
         sys.exit(1)
 
 
-@main.command("to-prompt")
+@main.command('to-prompt')
 @click.argument(
-    "skill_paths", type=click.Path(exists=True, path_type=Path), nargs=-1, required=True
+    'skill_paths', type=click.Path(exists=True, path_type=Path), nargs=-1, required=True
 )
 def to_prompt_cmd(skill_paths: tuple[Path, ...]) -> None:
     """Generate <available_skills> XML for agent prompts.
@@ -92,19 +92,19 @@ def to_prompt_cmd(skill_paths: tuple[Path, ...]) -> None:
         output = to_prompt(resolved_paths)
         click.echo(output)
     except SkillError as e:
-        click.echo(f"Error: {e}", err=True)
+        click.echo(f'Error: {e}', err=True)
         sys.exit(1)
 
 
-@main.command("validate-evidence")
-@click.argument("record_path", type=click.Path(exists=True, path_type=Path))
+@main.command('validate-evidence')
+@click.argument('record_path', type=click.Path(exists=True, path_type=Path))
 @click.option(
-    "--root",
+    '--root',
     type=click.Path(exists=True, file_okay=False, path_type=Path),
-    help="Explicit evidence bundle/repository root; defaults to record directory.",
+    help='Explicit evidence bundle/repository root; defaults to record directory.',
 )
 @click.option(
-    "--dispatch", is_flag=True, help="Also check optional evaluation dispatch eligibility."
+    '--dispatch', is_flag=True, help='Also check optional evaluation dispatch eligibility.'
 )
 def validate_evidence_cmd(record_path: Path, root: Path | None, dispatch: bool) -> None:
     """Check frozen evidence consistency, not correctness or host readiness."""
@@ -112,8 +112,8 @@ def validate_evidence_cmd(record_path: Path, root: Path | None, dispatch: bool) 
         disposition = validate_evidence(record_path, root, dispatch)
     except (OSError, ValueError, RecursionError) as error:
         raise click.ClickException(str(error)) from error
-    click.echo(f"Evidence consistent: {disposition} (not an acceptance verdict)")
+    click.echo(f'Evidence consistent: {disposition} (not an acceptance verdict)')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

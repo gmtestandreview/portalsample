@@ -328,9 +328,10 @@ describe('application and instrument step', () => {
         values: baseValues({ patternApprovalType: undefined }),
       });
 
-      await waitFor(() => {
-        expect(screen.getByText('Loading data...')).toBeInTheDocument();
-      });
+      expect(
+        screen.getByLabelText('New Certificate of Approval (CoA)'),
+      ).toBeChecked();
+      expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
     });
 
     it('follows the stored type when it is a variation', async () => {
@@ -349,15 +350,7 @@ describe('application and instrument step', () => {
       ).toBeChecked();
     });
 
-    it('snaps the visible selection back to the stored type', async () => {
-      // DEFECT, characterized not fixed. The effect that claims to "sync selectedApplication
-      // with Formik's patternApprovalType" reads getFieldMeta(...).initialValue, which never
-      // changes once the step has loaded. So choosing another type sets selectedApplication,
-      // the effect sees it differ from initialValue, and puts it straight back. With a type
-      // already stored the radio cannot be moved - and because the real RadioButton is a
-      // Formik field it still writes the new value, so the stored answer and the highlighted
-      // one can disagree. Reading `.value` rather than `.initialValue` is the likely fix, but
-      // that changes form behaviour and wants a decision rather than a guess.
+    it('keeps the visible selection in sync with the stored type', async () => {
       expect.hasAssertions();
 
       resetApplicationAndInstrumentMocks();
@@ -367,10 +360,10 @@ describe('application and instrument step', () => {
 
       await user.click(screen.getByLabelText('Other options'));
 
-      expect(screen.getByLabelText('Other options')).not.toBeChecked();
+      expect(screen.getByLabelText('Other options')).toBeChecked();
       expect(
         screen.getByLabelText('New Certificate of Approval (CoA)'),
-      ).toBeChecked();
+      ).not.toBeChecked();
     });
 
     it('clears stale validation when the type changes after a failed submit', async () => {
@@ -518,6 +511,74 @@ describe('application and instrument step', () => {
       );
     });
 
+    it('keeps empty option fields when a category has no id and a matching type row has no id or label', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        values: baseValues({
+          instrumentCategory: 'cat-weighing',
+          instrumentType: 'type-beam',
+          // The category keeps a defined label (the raw category list is sorted
+          // by label, which throws on undefined) but drops its id.
+          instrumentCategoryLookup: [
+            ...categoryLookup(),
+            { id: undefined, label: 'Edge category', parentId: undefined },
+          ],
+          // The type list is mapped before it is sorted by displayText, so an
+          // id/label-less row flows through safely.
+          instrumentTypeLookup: [
+            ...typeLookup(),
+            { id: undefined, label: undefined, parentId: 'cat-weighing' },
+          ],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0);
+      });
+
+      // getInstrumentCategories maps the id-less row to an empty value.
+      expect(selectNamed('instrumentCategory').options).toContainEqual({
+        displayText: 'Edge category',
+        value: '',
+      });
+      // getInstrumentTypes' parent-id branch maps the id/label-less type row.
+      expect(selectNamed('instrumentType').options).toContainEqual({
+        displayText: '',
+        value: '',
+      });
+    });
+
+    it('keeps empty option fields in summary mode when a type row has no id or label', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        isSummary: true,
+        values: baseValues({
+          instrumentCategory: '',
+          instrumentType: '',
+          instrumentTypeLookup: [
+            ...typeLookup(),
+            { id: undefined, label: undefined, parentId: 'cat-weighing' },
+          ],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentType')).toBeDefined();
+      });
+
+      // Summary mode maps every type row, including the id/label-less one.
+      expect(selectNamed('instrumentType').options).toContainEqual({
+        displayText: '',
+        value: '',
+      });
+    });
+
     it('offers nothing when the lookups have not arrived', async () => {
       expect.hasAssertions();
 
@@ -536,6 +597,42 @@ describe('application and instrument step', () => {
 
       expect(selectNamed('instrumentType').options).toStrictEqual([]);
       expect(selectNamed('instrumentCategory').options).toStrictEqual([]);
+    });
+
+    it('rehydrates lookup options when the async step values arrive', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        values: baseValues({
+          instrumentCategoryLookup: undefined,
+          instrumentTypeLookup: undefined,
+        }),
+      });
+
+      await act(async () => {
+        await formik?.setValues(
+          baseValues({ instrumentCategory: 'cat-weighing' }),
+        );
+      });
+
+      await waitFor(() => {
+        expect(
+          selectNamed('instrumentCategory').options.map(
+            (option) => option.displayText,
+          ),
+        ).toStrictEqual([
+          'Length measures',
+          'Weighing instruments',
+          'No measurement instrument',
+        ]);
+        expect(
+          selectNamed('instrumentType').options.map(
+            (option) => option.displayText,
+          ),
+        ).toStrictEqual(['Automatic scale', 'Beam balance']);
+      });
     });
 
     it('offers no types when the instrument field has never been set', async () => {
@@ -606,6 +703,32 @@ describe('application and instrument step', () => {
           'Failed to retrieve look ups',
           expect.any(Error),
         );
+      });
+    });
+
+    it('keeps sparse category lookup entries selectable', async () => {
+      expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
+
+      await renderStep({
+        values: baseValues({
+          instrumentCategoryLookup: [
+            { id: undefined, label: 'Sparse category', parentId: undefined },
+          ],
+          instrumentTypeLookup: [],
+        }),
+      });
+
+      await waitFor(() => {
+        expect(captured.selects.get('instrumentCategory')).toBeDefined();
+      });
+
+      await waitFor(() => {
+        expect(selectNamed('instrumentCategory').options).toContainEqual({
+          displayText: 'Sparse category',
+          value: '',
+        });
       });
     });
   });
@@ -932,18 +1055,13 @@ describe('application and instrument step', () => {
       ).toBeDefined();
     });
 
-    it('reads the application type from the root even when nested', async () => {
-      // Every other field is prefixed through getName(), but the type is read with a bare
-      // getFieldMeta('patternApprovalType'). Nested under a name the radio therefore writes to
-      // `<name>.patternApprovalType` while the selection is read from the root. Harmless today
-      // because the only nested use is a summary, which never reaches the radio.
+    it('reads the application type from the nested field when named', async () => {
       expect.hasAssertions();
 
       resetApplicationAndInstrumentMocks();
 
       await renderStep({ name: 'applicationAndInstrument' });
 
-      // Selection came from the root value, not from applicationAndInstrument.*.
       expect(
         screen.getByLabelText('New Certificate of Approval (CoA)'),
       ).toBeChecked();

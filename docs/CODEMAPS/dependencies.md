@@ -37,7 +37,7 @@
 | `playwright-bdd` | Cucumber/Gherkin BDD layer on Playwright           |
 | `typescript`     | Strict TypeScript compilation                      |
 | `eslint`         | Linting (flat config, `eslint.config.mjs`)         |
-| `prettier`       | Formatting                                         |
+| `oxfmt`          | Formatting                                         |
 | `patch-package`  | Applies patches from `patches/` post-install       |
 
 ## CSP / Security

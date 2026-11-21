@@ -33,10 +33,11 @@ test('bad value not in output', () => {
 ```python
 # Python — WRONG: tests the validation mechanism, not the requirement
 def test_bad_value_rejected(fixture):
-    fixture.field = "invalid"  # Pydantic rejects this before processing!
+    fixture.field = 'invalid'  # Pydantic rejects this before processing!
     with pytest.raises(ValidationError):
         process(fixture)
     # Tells you nothing about the output
+
 
 # Python — RIGHT: tests the requirement using a schema-valid mutation
 def test_bad_value_not_in_output(fixture):

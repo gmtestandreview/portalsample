@@ -27,7 +27,7 @@ If not provided, check in order:
    - `pyproject.toml` → `black .` or `ruff format`
    - `go.mod` → `go fmt ./...`
    - `Cargo.toml` → `cargo fmt`
-   - `.prettierrc` → `npx prettier --write .`
+   - `.oxfmtrc.json` → `npx oxfmt --write .`
 
 ### 2. Run Lint Command
 
@@ -36,7 +36,7 @@ Execute the lint/format command.
 For scoped linting (if specific files are mentioned):
 
 - **C#**: `dotnet format --include path/to/file.cs`
-- **TypeScript**: `npx prettier --write path/to/file.ts`
+- **TypeScript**: `npx oxfmt --write path/to/file.ts`
 - **Python**: `black path/to/file.py`
 - **Go**: `go fmt path/to/file.go`
 
@@ -60,15 +60,15 @@ Error: [error message]
 
 ## Common Lint Commands
 
-| Language   | Tool          | Command                  |
-| ---------- | ------------- | ------------------------ |
-| C#         | dotnet format | `dotnet format`          |
-| TypeScript | Prettier      | `npx prettier --write .` |
-| TypeScript | ESLint        | `npm run lint:fix`       |
-| Python     | Black         | `black .`                |
-| Python     | Ruff          | `ruff format .`          |
-| Go         | gofmt         | `go fmt ./...`           |
-| Rust       | rustfmt       | `cargo fmt`              |
+| Language   | Tool          | Command               |
+| ---------- | ------------- | --------------------- |
+| C#         | dotnet format | `dotnet format`       |
+| TypeScript | Oxfmt         | `npx oxfmt --write .` |
+| TypeScript | ESLint        | `npm run lint:fix`    |
+| Python     | Black         | `black .`             |
+| Python     | Ruff          | `ruff format .`       |
+| Go         | gofmt         | `go fmt ./...`        |
+| Rust       | rustfmt       | `cargo fmt`           |
 
 ## Important
 

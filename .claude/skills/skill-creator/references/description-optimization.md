@@ -86,7 +86,7 @@ Save the trigger evals as a JSON array:
 Generate the review page safely from the skill root:
 
 ```bash
-python -m scripts.generate_eval_review   --eval-set <path/to/eval_set.json>   --skill-path <path/to/skill>   --output <path/to/eval_review.html>
+python3.14 -m scripts.generate_eval_review   --eval-set <path/to/eval_set.json>   --skill-path <path/to/skill>   --output <path/to/eval_review.html>
 ```
 
 The user can review and edit the query set before it is used for optimization.
@@ -114,7 +114,7 @@ unavailable rather than guessing.
 The default evaluator supports repeated runs:
 
 ```bash
-python -m scripts.run_eval   --eval-set <path/to/eval_set.json>   --skill-path <path/to/skill>   --runs-per-query 3
+python3.14 -m scripts.run_eval   --eval-set <path/to/eval_set.json>   --skill-path <path/to/skill>   --runs-per-query 3
 ```
 
 For should-trigger cases, the default pass rule is a trigger rate at or above
@@ -131,7 +131,7 @@ Execution errors must not be counted as successful non-triggers.
 When using the automated loop:
 
 ```bash
-python -m scripts.run_loop   --eval-set <path/to/eval_set.json>   --skill-path <path/to/skill>   --model <explicit-model-id>   --holdout 0.4   --max-iterations 5   --verbose
+python3.14 -m scripts.run_loop   --eval-set <path/to/eval_set.json>   --skill-path <path/to/skill>   --model <explicit-model-id>   --holdout 0.4   --max-iterations 5   --verbose
 ```
 
 The loop uses train failures to propose revisions and keeps validation results
@@ -177,3 +177,16 @@ Record:
 - execution errors separately from non-triggers;
 - the selected description and why it was selected;
 - any unresolved runtime limitations.
+
+## Adversarial verification contract
+
+**Frozen evaluation contract:** Record SHA-256 of the evaluated `SKILL.md` plus
+loaded references, case-set hash, model/host version, selected threshold,
+repeats and fixed train/validation split before tuning. Do not use a publicly
+shipped `activation-holdout.json` as an independent private holdout. Cases
+missing a successful host observation are NHR, not negative matches.
+**Positive:** an indirect Agent Skill revision request selects the skill; **near
+miss:** CI `trigger` configuration does not. **Regression:** neither
+false-positive nor false-negative rate worsens beyond predeclared limits. Output
+per-case attempt counts and source traces; report any unverified host selection
+separately from proxy string-matching tests.

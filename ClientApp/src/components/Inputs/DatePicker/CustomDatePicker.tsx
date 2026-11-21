@@ -60,14 +60,11 @@ const CustomDatePicker = (
   const [showCalendar, setShowCalendar] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    currentDate || startDate || null,
+    currentDate ?? startDate ?? null,
   );
 
-  // Impure during render: the argument is re-evaluated every render even though
-  // only the first value is kept. Replacing it (useId) changes the generated id,
-  // which Child Plan B's DatePicker characterization asserts against, so it is
-  // deferred to that plan rather than changed in a lint migration.
-  const wrapperUUID = useRef(crypto.randomUUID());
+  const [wrapperUUID] = useState(() => crypto.randomUUID());
+  const [today] = useState(() => new Date());
 
   const customInputControlRef = useRef<HTMLInputElement>(null);
   const customInputInlineHelpRef = useRef<HTMLDivElement>(null);
@@ -78,7 +75,7 @@ const CustomDatePicker = (
     setSelectedDate(currentDate ?? null);
   }, [currentDate]);
 
-  const showCalendarInvalid = hasError || isInvalid;
+  const showCalendarInvalid = hasError === true || isInvalid;
 
   const handleOpenCalendar = () => {
     setShowCalendar(true);
@@ -106,7 +103,7 @@ const CustomDatePicker = (
   };
 
   const handleSelectToday = () => {
-    handleOnChange(new Date());
+    handleOnChange(today);
     handleCloseCalendar();
   };
 
@@ -151,7 +148,7 @@ const CustomDatePicker = (
               customInputControlRef.current?.classList.contains('is-invalid');
             if (invalidInputRef) {
               const inputErrorClientHeight =
-                customInputFeedbackRef.current?.clientHeight || 0;
+                customInputFeedbackRef.current?.clientHeight ?? 0;
 
               distanceOffset = bottomOffset - inputErrorClientHeight;
             } else {
@@ -159,7 +156,7 @@ const CustomDatePicker = (
             }
           } else if (offsetArgs.placement.includes('top')) {
             const inlineHelpClientHeight =
-              customInputInlineHelpRef.current?.clientHeight || 0;
+              customInputInlineHelpRef.current?.clientHeight ?? 0;
 
             distanceOffset = topOffset - inlineHelpClientHeight;
           }
@@ -189,12 +186,12 @@ const CustomDatePicker = (
       forwardedControlRef={customInputControlRef}
       forwardedInlineHelpRef={customInputInlineHelpRef}
       forwardedFeedbackRef={customInputFeedbackRef}
-      wrapperUUID={wrapperUUID.current}
+      wrapperUUID={wrapperUUID}
     />
   );
 
   return (
-    <div id={wrapperUUID.current}>
+    <div id={wrapperUUID}>
       <ReactDatePicker
         autoComplete='off'
         calendarClassName={`custom-date-picker-calendar ${showCalendarInvalid ? 'custom-calendar-focus' : ''}`}
@@ -208,7 +205,7 @@ const CustomDatePicker = (
           startDate,
         })}
         // "today" semantics; owned by Child Plan B
-        highlightDates={[new Date()]}
+        highlightDates={[today]}
         locale={enAU}
         name={name}
         onBlur={handleOnBlur}
@@ -217,7 +214,7 @@ const CustomDatePicker = (
         onKeyDown={handleKeyDown}
         open={showCalendar}
         // "today" semantics; owned by Child Plan B
-        openToDate={selectedDate || new Date()}
+        openToDate={selectedDate ?? today}
         placeholderText={placeholder ?? ''}
         popperModifiers={[offSetModifier as never]}
         preventOpenOnFocus

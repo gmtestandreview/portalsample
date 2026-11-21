@@ -7,14 +7,20 @@ import type {
   Hideable,
   ValidationSchema,
 } from './types';
-export const isFieldPathHidden = <TValues>(
-  hidden: unknown,
-  values: TValues,
-): boolean =>
+/**
+ * Yup types `ValidationError.inner` as always present, but ValidationError-shaped
+ * errors can arrive without it. The parameter type admits that, so callers keep
+ * the guard instead of trusting the stricter Yup type.
+ */
+export const getInnerErrors = (error: {
+  inner?: ValidationError[] | undefined;
+}): ValidationError[] | undefined => error.inner;
+
+export const isFieldPathHidden = (hidden: unknown, values: unknown): boolean =>
   hidden !== undefined &&
   (hidden === true ||
     (typeof hidden === 'function' &&
-      (hidden as (currentValues: TValues) => boolean)(values)));
+      (hidden as (currentValues: unknown) => boolean)(values)));
 
 const parentPath = (path: string): string =>
   path.replace(/(?:\.[^.[]+|\[[^\]]+\])$/, '');
@@ -83,15 +89,16 @@ const toFormErrors = <T, TValues>(
   values: TValues,
 ): FormErrors<TValues> => {
   let errors: FormErrors<TValues> = {};
-  if (yupError.inner) {
+  const inner = getInnerErrors(yupError);
+  if (inner) {
     if (
-      yupError.inner.length === 0 &&
+      inner.length === 0 &&
       yupError.path &&
       !isHidden(yupError.path, hidden, values)
     ) {
       errors = setIn(errors, yupError.path, yupError.message);
-    } else if (yupError.inner.length > 0) {
-      yupError.inner.forEach((err) => {
+    } else if (inner.length > 0) {
+      inner.forEach((err) => {
         if (
           err.path &&
           !getIn(errors, err.path) &&

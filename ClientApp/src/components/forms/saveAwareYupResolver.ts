@@ -2,6 +2,7 @@ import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
 import { getIn, setIn } from './formPath';
 import type { ValidationSchema } from './types';
+import { getInnerErrors } from './utils';
 
 type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
 
@@ -9,7 +10,7 @@ function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
   error: ValidationError,
 ): FieldErrors<TFieldValues> {
   let fieldErrors = {};
-  const innerErrors = error.inner ?? [];
+  const innerErrors = getInnerErrors(error) ?? [];
 
   if (innerErrors.length > 0) {
     innerErrors.forEach((innerError) => {

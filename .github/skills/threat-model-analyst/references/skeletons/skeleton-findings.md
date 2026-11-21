@@ -174,7 +174,7 @@ repository._ [END-CONDITIONAL-EMPTY]
 At the END of `3-findings.md`, append the Threat Coverage Verification table:
 
 ```markdown
----
+***
 
 ## Threat Coverage Verification
 

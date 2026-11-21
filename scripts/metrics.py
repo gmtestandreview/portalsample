@@ -1,6 +1,6 @@
+#!/usr/bin/env python3.14
 # scripts/metrics.py
-"""
-Shared metrics module for A Team.
+"""Shared metrics module for A Team.
 Append-only log: .agent-sync/metrics/YYYY-MM-DD.log
 One event per line: ISO-timestamp EVENT_TYPE [args...]
 """
@@ -14,7 +14,7 @@ from typing import Any
 try:
     import importlib
 
-    _fcntl: Any = importlib.import_module("fcntl")
+    _fcntl: Any = importlib.import_module('fcntl')
 except ImportError:
     _fcntl = None
 
@@ -22,18 +22,18 @@ except ImportError:
 # append_metric() concurrently in the same process (the common case on Windows
 # where fcntl is unavailable).
 _write_lock = _threading.Lock()
-DEFAULT_BASE_DIR = Path(__file__).parent.parent / ".agent-sync"
+DEFAULT_BASE_DIR = Path(__file__).parent.parent / '.agent-sync'
 
 
 def append_metric(event: str, base_dir: Path | None = None) -> None:
     """Append a metric event to today's log file."""
     if base_dir is None:
         base_dir = DEFAULT_BASE_DIR
-    metrics_dir = base_dir / "metrics"
+    metrics_dir = base_dir / 'metrics'
     metrics_dir.mkdir(parents=True, exist_ok=True)
-    log_file = metrics_dir / f"{date.today()}.log"
-    line = f"{datetime.now().isoformat(timespec='seconds')} {event}\n"
-    with _write_lock, open(log_file, "a", encoding="utf-8") as f:
+    log_file = metrics_dir / f'{date.today()}.log'
+    line = f'{datetime.now().isoformat(timespec='seconds')} {event}\n'
+    with _write_lock, open(log_file, 'a', encoding='utf-8') as f:
         if _fcntl is not None:
             _fcntl.flock(f, _fcntl.LOCK_EX)
             f.write(line)
@@ -53,13 +53,13 @@ def read_events(days: int, base_dir: Path | None = None) -> list[str]:
     """
     if base_dir is None:
         base_dir = DEFAULT_BASE_DIR
-    metrics_dir = base_dir / "metrics"
+    metrics_dir = base_dir / 'metrics'
     events: list[str] = []
     for i in range(days):
         d = date.today() - timedelta(days=i)
-        log_file = metrics_dir / f"{d}.log"
+        log_file = metrics_dir / f'{d}.log'
         if log_file.exists():
-            with open(log_file, encoding="utf-8") as f:
+            with open(log_file, encoding='utf-8') as f:
                 for line in f:
                     line = line.strip()
                     if line:
@@ -67,7 +67,7 @@ def read_events(days: int, base_dir: Path | None = None) -> list[str]:
     return events
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Called directly from hooks: python metrics.py session_start
     if len(sys.argv) > 1:
-        append_metric(" ".join(sys.argv[1:]))
+        append_metric(' '.join(sys.argv[1:]))

@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useEffect, useRef } from 'react';
 import Form from 'react-bootstrap/Form';
 import { InputGroup } from 'react-bootstrap';
@@ -8,8 +9,50 @@ import { getPhoneNumberFormat } from './phoneFormat';
 import { NumericFormatFixed, PatternFormatFixed } from './types';
 import type { NumberInputProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 type NumberInputFieldValue = string | number | Date | null | undefined;
+
+const formatInputValue = (
+  type: string | undefined,
+  value: NumberInputFieldValue,
+): NumberInputFieldValue => {
+  if (
+    type !== 'date' ||
+    !value ||
+    !(typeof value === 'string' || value instanceof Date)
+  ) {
+    return value;
+  }
+
+  return formatDate(
+    typeof value === 'string' ? parseISO(value) : value,
+    'yyyy-MM-dd',
+  );
+};
+
+const getDisplayFormat = (
+  format: NumberInputProps['format'],
+  phoneFormatValue: string | undefined,
+): NumberInputProps['format'] =>
+  format === 'checkPhoneFormat'
+    ? getPhoneNumberFormat(phoneFormatValue)
+    : format;
+
+const renderInlineHelp = (
+  inlineHelp: NumberInputProps['inlineHelp'],
+  helpId: string | undefined,
+) => {
+  if (!inlineHelp) {
+    return null;
+  }
+
+  return (
+    <Form.Text as='p' id={helpId} className='contextual-help'>
+      {inlineHelp}
+    </Form.Text>
+  );
+};
 
 const NumberInput = ({
   label,
@@ -27,7 +70,7 @@ const NumberInput = ({
   append,
   as = 'span', // default props
   displayType = 'input', // default props
-  format = undefined, // default props
+  format,
   mask,
   minLength,
   maxLength,
@@ -46,19 +89,15 @@ const NumberInput = ({
   defaultValue,
 }: Readonly<NumberInputProps>) => {
   const [field, meta, helpers] = useField<NumberInputFieldValue>(name);
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
-  const inputPrependId = prepend ? `input-prepend-${id || name}` : undefined;
-  const inputAppendId = append ? `input-append-${id || name}` : undefined;
-  const getDate = (date: Date | string) =>
-    typeof date === 'string' ? parseISO(date) : date;
-  const formattedValue =
-    type === 'date' &&
-    meta.value &&
-    (typeof meta.value === 'string' || meta.value instanceof Date)
-      ? formatDate(getDate(meta.value), 'yyyy-MM-dd')
-      : meta.value;
+  const controlId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${controlId}` : undefined;
+  const inputPrependId = prepend ? `input-prepend-${controlId}` : undefined;
+  const inputAppendId = append ? `input-append-${controlId}` : undefined;
+  const formattedValue = formatInputValue(type, meta.value);
+  const displayValue = formattedValue ?? '';
   const phoneFormatValue =
     typeof formattedValue === 'string' ? formattedValue : undefined;
+  const displayFormat = getDisplayFormat(format, phoneFormatValue);
   const { setValue } = helpers;
   const lastAppliedDefaultValue =
     useRef<NumberInputProps['defaultValue']>(undefined);
@@ -90,15 +129,10 @@ const NumberInput = ({
         disabled,
         readOnly: readonly,
         'aria-describedby':
-          meta.touched && meta.error
-            ? `${id || name}-validation-msg`
-            : helpId || undefined,
+          meta.touched && meta.error ? `${controlId}-validation-msg` : helpId,
         autoComplete,
         placeholder,
-        format:
-          format === 'checkPhoneFormat'
-            ? getPhoneNumberFormat(phoneFormatValue)
-            : format,
+        format: displayFormat,
         mask,
         minLength,
         maxLength,
@@ -108,7 +142,7 @@ const NumberInput = ({
         allowemptyformatting,
         renderText,
       })}
-      value={formattedValue || ''}
+      value={displayValue}
       displayType={displayType}
     />
   );
@@ -124,9 +158,7 @@ const NumberInput = ({
         disabled,
         readOnly: readonly,
         'aria-describedby':
-          meta.touched && meta.error
-            ? `${id || name}-validation-msg`
-            : helpId || undefined,
+          meta.touched && meta.error ? `${controlId}-validation-msg` : helpId,
         autoComplete,
         placeholder,
         mask,
@@ -143,7 +175,7 @@ const NumberInput = ({
         allowedDecimalSeparators,
         decimalScale,
       })}
-      value={formattedValue || ''}
+      value={displayValue}
       displayType={displayType}
       allowLeadingZeros={allowLeadingZeros}
     />
@@ -155,17 +187,13 @@ const NumberInput = ({
         label={label}
         value={field.value == null ? undefined : String(field.value)}
         as={as}
-        id={id || name}
-        format={
-          format === 'checkPhoneFormat'
-            ? getPhoneNumberFormat(phoneFormatValue)
-            : format
-        }
+        id={controlId}
+        format={displayFormat}
         mask={mask}
         prepend={prepend}
         append={append}
-        prefix={prefix || prepend}
-        suffix={suffix || append}
+        prefix={orIfEmpty(prefix, prepend)}
+        suffix={orIfEmpty(suffix, append)}
         thousandSeparator={thousandSeparator}
         valueIsNumericString={valueIsNumericString}
         allowNegative={allowNegative}
@@ -179,15 +207,11 @@ const NumberInput = ({
   return (
     <Form.Group
       className={`form-field-container ${containerClassName}`}
-      controlId={id || name}
+      controlId={controlId}
     >
       {label && <Form.Label>{label}</Form.Label>}
-      {inlineHelp && (
-        <Form.Text as='p' id={helpId} className='contextual-help'>
-          {inlineHelp}
-        </Form.Text>
-      )}
-      {(prepend || append) && (
+      {renderInlineHelp(inlineHelp, helpId)}
+      {(!!prepend || !!append) && (
         <InputGroup>
           {prepend && (
             <InputGroup.Text id={inputPrependId}>{prepend}</InputGroup.Text>
@@ -205,7 +229,7 @@ const NumberInput = ({
       {meta.touched && meta.error ? (
         <Form.Control.Feedback
           type='invalid'
-          id={`${id || name}-validation-msg`}
+          id={`${controlId}-validation-msg`}
           className='form-validation-message'
         >
           {meta.error}

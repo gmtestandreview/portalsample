@@ -55,7 +55,7 @@ const AlertMessage = (props: Readonly<BaseAlertProps>) => {
       className={`d-flex ${className}`}
       onClose={closeAlert}
       show={show}
-      aria-live={ariaLive || 'polite'}
+      aria-live={ariaLive ?? 'polite'}
       tabIndex={-1}
     >
       {children}

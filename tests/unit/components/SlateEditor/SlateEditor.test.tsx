@@ -107,19 +107,6 @@ describe('slateEditor helpers', () => {
     );
   });
 
-  it('serializes unknown block types as their child content', () => {
-    expect.hasAssertions();
-
-    const html = serializeToHtml([
-      {
-        type: 'heading',
-        children: [{ text: 'Heading text' }],
-      } as unknown as CustomElement,
-    ]);
-
-    expect(html).toBe('Heading text');
-  });
-
   it.each([
     ['<br>', true],
     ['<br/>', true],

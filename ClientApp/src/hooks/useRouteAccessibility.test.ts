@@ -2,6 +2,7 @@ import { renderHook, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import React from 'react';
 import { vi, describe, it, expect } from 'vitest';
+import { defined } from '../../../tests/unit/helpers/defined';
 import { useRouteAccessibility } from './useRouteAccessibility';
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -13,12 +14,12 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 const setupRouteAccessibilityTest = () => {
-    vi.useFakeTimers();
-    document.title = 'Test Page | NMI Portal';
-    const main = document.createElement('div');
-    main.id = 'main';
-    main.tabIndex = -1;
-    document.body.appendChild(main);
+  vi.useFakeTimers();
+  document.title = 'Test Page | NMI Portal';
+  const main = document.createElement('div');
+  main.id = 'main';
+  main.tabIndex = -1;
+  document.body.appendChild(main);
 
   return () => {
     vi.useRealTimers();
@@ -27,7 +28,6 @@ const setupRouteAccessibilityTest = () => {
 };
 
 describe('route accessibility', () => {
-
   it('returns empty announcement before first route effect fires', () => {
     expect.assertions(1);
 
@@ -64,7 +64,9 @@ describe('route accessibility', () => {
 
     const cleanup = setupRouteAccessibilityTest();
     try {
-      const { unmount } = renderHook(() => useRouteAccessibility(), { wrapper });
+      const { unmount } = renderHook(() => useRouteAccessibility(), {
+        wrapper,
+      });
       const clearSpy = vi.spyOn(globalThis, 'clearTimeout');
       unmount();
 
@@ -79,7 +81,7 @@ describe('route accessibility', () => {
 
     const cleanup = setupRouteAccessibilityTest();
     try {
-      const main = document.getElementById('main')!;
+      const main = defined(document.getElementById('main'), '#main element');
       const focusSpy = vi.spyOn(main, 'focus');
       renderHook(() => useRouteAccessibility(), { wrapper });
       act(() => {

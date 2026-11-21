@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type React from 'react';
 import { Col, Row, Container } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
@@ -20,13 +21,13 @@ import HeaderIntroText from '../../components/HeaderIntroText';
 import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import ReportDetails from './reportDetails';
-import NMIContactDetails from './nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import ViewMeasurementReport from '../../components/Utilities/ViewMeasurementReport';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import { handleReportFileError } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -152,7 +153,10 @@ const MeasurementReport = () => {
           </div>
         </Col>
       </Row>
-      <NMIContactDetails quotationData={measurementReportData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if you have any questions about the report outcomes.'
+        quotationData={measurementReportData}
+      />
     </>
   );
 

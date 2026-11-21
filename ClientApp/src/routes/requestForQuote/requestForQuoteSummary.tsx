@@ -31,8 +31,9 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const { values } = formikContext;
   const status: unknown = formikContext.status as unknown;
   // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
-  const hidden: RfqSummarySectionProps['hidden'] =
-    (isRfqFormikStatus(status) && status.hidden) || {};
+  const hidden: RfqSummarySectionProps['hidden'] = isRfqFormikStatus(status)
+    ? (status.hidden ?? {})
+    : {};
   const details = useAccountState()?.details;
   const accountName = [details?.givenName, details?.familyName]
     .filter(Boolean)

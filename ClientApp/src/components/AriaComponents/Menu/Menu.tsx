@@ -1,4 +1,5 @@
 'use client';
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { Check, ChevronRight, Dot } from '../NmiIcon';
 import {
   Menu as AriaMenu,
@@ -40,9 +41,10 @@ export function MenuItem(
     Omit<MenuItemProps, 'children'> & { children?: React.ReactNode }
   >,
 ) {
-  const textValue =
-    props.textValue ||
-    (typeof props.children === 'string' ? props.children : undefined);
+  const textValue = orIfEmpty(
+    props.textValue,
+    typeof props.children === 'string' ? props.children : undefined,
+  );
   return (
     <AriaMenuItem {...props} {...omitUndefined({ textValue })}>
       {({ hasSubmenu, isSelected, selectionMode }) => (

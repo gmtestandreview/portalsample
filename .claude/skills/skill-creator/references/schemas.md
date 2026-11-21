@@ -102,10 +102,25 @@ distinct. The accounting invariant is:
 
 Pipeline summaries expose `execution_status` (`complete`, `short_circuited`,
 `partial`, or `not_run`), `evidence_status` (`complete` or `incomplete`),
-`verdict` (`pass`, `fail`, `unavailable`, or `not_applicable`), `mode_ready`,
-and `release_ready`. Every applicable case appears once. A `not_run` case
-carries `evidence_code: "NHR"` and a reason; it must not disappear from the
-summary.
+`verdict` (`pass`, `fail`, or `unavailable`), `mode_ready`, and `release_ready`.
+Pipeline schema version 2 derives all four decision fields independently of the
+caller's suggested verdict. An `execution_status=complete` does not imply a
+`pass` verdict. `release_ready` is true only for `release` when all bundled case
+and stage oracles pass and the deterministic preflight, call counters, source
+manifest, and checkpoint validate. It is **not** evidence of broad production
+readiness without independent private holdout evidence.
+
+`inputs.source_manifest` records SHA-256 hashes of each first-party source file
+before the live run, excluding generated caches, and the validator compares
+those values with the source still present at summary creation. `preflight`
+records the actual three-command deterministic check. Live checkpoint paths must
+remain under the evidence workspace, and their hashes must match on
+verification. `plan` and `stages` must match the frozen source fixture set, with
+exactly one completed and observed PASS result per case.
+`readiness-pressure.overall` must be `PASS`; neither missing nor AMBER outcomes
+can be promoted to success. A `not_run` case carries `evidence_code: "NHR"` and
+a reason; it must not disappear from the summary. Synthetic all-green controls
+inside tests prove only validator logic, not host execution or model behaviour.
 
 ## Schema catalog
 
@@ -124,8 +139,7 @@ summary.
 
 ## `evals.json`
 
-**Location:** `evals/evals.json`  
-**Schema:** `schemas/evals.schema.json`
+**Location:** `evals/evals.json` **Schema:** `schemas/evals.schema.json`
 
 Defines the frozen representative eval set for an iteration.
 
@@ -144,8 +158,8 @@ The JSON Schema validates individual IDs but cannot enforce uniqueness of the
 
 ## `eval_metadata.json`
 
-**Location:** `<eval-dir>/eval_metadata.json`  
-**Schema:** `schemas/eval-metadata.schema.json`
+**Location:** `<eval-dir>/eval_metadata.json` **Schema:**
+`schemas/eval-metadata.schema.json`
 
 Binds workspace evidence to the exact eval contract.
 
@@ -160,8 +174,7 @@ Rules:
 
 ## `history.json`
 
-**Location:** workspace root  
-**Schema:** `schemas/history.schema.json`
+**Location:** workspace root **Schema:** `schemas/history.schema.json`
 
 Tracks iteration lineage.
 
@@ -181,8 +194,7 @@ Those lineage constraints require semantic validation.
 
 ## `grading.json`
 
-**Location:** `<run-dir>/grading.json`  
-**Schema:** `schemas/grading.schema.json`
+**Location:** `<run-dir>/grading.json` **Schema:** `schemas/grading.schema.json`
 
 Contains run-level expectation verdicts.
 
@@ -223,8 +235,8 @@ evidence to add or replace it.
 
 ## `metrics.json`
 
-**Location:** `<run-dir>/outputs/metrics.json`  
-**Schema:** `schemas/metrics.schema.json`
+**Location:** `<run-dir>/outputs/metrics.json` **Schema:**
+`schemas/metrics.schema.json`
 
 Contains only executor-observed counts and sizes.
 
@@ -242,8 +254,7 @@ Rules:
 
 ## `timing.json`
 
-**Location:** `<run-dir>/timing.json`  
-**Schema:** `schemas/timing.schema.json`
+**Location:** `<run-dir>/timing.json` **Schema:** `schemas/timing.schema.json`
 
 Contains only runtime-observed token and timing data.
 
@@ -260,8 +271,8 @@ Rules:
 
 ## `benchmark.json`
 
-**Location:** iteration/benchmark output directory  
-**Schema:** `schemas/benchmark.schema.json`
+**Location:** iteration/benchmark output directory **Schema:**
+`schemas/benchmark.schema.json`
 
 Aggregates valid run-level grading and execution evidence.
 
@@ -301,8 +312,8 @@ Semantic checks required in code:
 
 ## `comparison.json`
 
-**Location:** `<grading-dir>/comparison-N.json`  
-**Schema:** `schemas/comparison.schema.json`
+**Location:** `<grading-dir>/comparison-N.json` **Schema:**
+`schemas/comparison.schema.json`
 
 Stores blind comparator output.
 
@@ -339,8 +350,8 @@ a deliberate schema change rather than silently emitting a new winner value.
 
 ## `analysis.json`
 
-**Location:** `<grading-dir>/analysis.json`  
-**Schema:** `schemas/analysis.schema.json`
+**Location:** `<grading-dir>/analysis.json` **Schema:**
+`schemas/analysis.schema.json`
 
 Stores post-hoc analysis after the comparison has been unblinded.
 
@@ -355,8 +366,7 @@ Rules:
 
 ## `feedback.json`
 
-**Location:** iteration workspace  
-**Schema:** `schemas/feedback.schema.json`
+**Location:** iteration workspace **Schema:** `schemas/feedback.schema.json`
 
 Stores explicit human review feedback.
 
@@ -398,15 +408,15 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-schema_dir = Path("references/schemas")
-schema = json.loads((schema_dir / "evals.schema.json").read_text(encoding="utf-8"))
-instance = json.loads(Path("evals/evals.json").read_text(encoding="utf-8"))
+schema_dir = Path('references/schemas')
+schema = json.loads((schema_dir / 'evals.schema.json').read_text(encoding='utf-8'))
+instance = json.loads(Path('evals/evals.json').read_text(encoding='utf-8'))
 
 registry = Registry()
-for path in schema_dir.glob("*.schema.json"):
-    resource_data = json.loads(path.read_text(encoding="utf-8"))
+for path in schema_dir.glob('*.schema.json'):
+    resource_data = json.loads(path.read_text(encoding='utf-8'))
     registry = registry.with_resource(
-        resource_data["$id"],
+        resource_data['$id'],
         Resource.from_contents(resource_data),
     )
 
@@ -458,3 +468,19 @@ for:
 - duplicate/colliding `run_id` values;
 - current versus previous-iteration feedback;
 - schema-valid payloads that are semantically inconsistent across files.
+
+## Adversarial verification contract
+
+**Schema evidence freshness:** See `schema-validation-2026-11-17-py313.json` for
+the new diagnostic definition/fixture snapshot, which is **not** the required
+Python 3.14 release gate. `references/validation-results.json` records a
+historical 2026-10-05 check; never change its old SHA values to manufacture a
+current PASS. For the present release, generate a **separate** revision-stamped
+report with current hashes, runtime version, installed `jsonschema` version and
+actual exit status. If a checksum differs, mark the historical observation stale
+for that file. Tests must distinguish meta-schema validity, valid/invalid
+instance fixtures, and cross-field semantic invariants such as
+`summary.passed + summary.failed == summary.total` and the implied `pass_rate`.
+JSON Schema syntax validity alone does not satisfy those semantic checks. Record
+resource mapping from `schema-manifest.json` and test all its consumers or
+report NHR.

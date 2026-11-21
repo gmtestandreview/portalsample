@@ -4,12 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eval Set Review</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
     <style>
       * {
         box-sizing: border-box;
@@ -130,7 +124,7 @@
         background: #b0aea5;
         border-radius: 24px;
         cursor: pointer;
-        transition: 0.2s;
+        transition: background-color 0.2s ease;
       }
       .toggle .slider::before {
         content: '';
@@ -141,7 +135,7 @@
         bottom: 3px;
         background: white;
         border-radius: 50%;
-        transition: 0.2s;
+        transition: transform 0.2s ease;
       }
       .toggle input:checked + .slider {
         background: #a84f31;
@@ -176,8 +170,10 @@
     </p>
 
     <div class="controls">
-      <button class="btn btn-add" onclick="addRow()">+ Add Query</button>
-      <button class="btn btn-export" onclick="exportEvalSet()">
+      <button type="button" class="btn btn-add" onclick="addRow()">
+        + Add Query
+      </button>
+      <button type="button" class="btn btn-export" onclick="exportEvalSet()">
         Export Eval Set
       </button>
     </div>
@@ -193,7 +189,7 @@
       <tbody id="eval-body"></tbody>
     </table>
 
-    <p class="summary" id="summary"></p>
+    <output class="summary" id="summary" aria-live="polite"></output>
 
     <script>
       const REVIEW_DATA = __REVIEW_DATA_PLACEHOLDER__;
@@ -239,7 +235,7 @@
             </label>
             <span style="margin-left:8px;font-size:0.8rem;color:#b0aea5">${item.should_trigger ? 'Yes' : 'No'}</span>
           </td>
-          <td><button class="btn-delete" onclick="deleteRow(${idx})">Delete</button></td>
+          <td><button type="button" class="btn-delete" aria-label="Delete query ${idx + 1}" onclick="deleteRow(${idx})">Delete</button></td>
         `;
           tbody.appendChild(tr);
         });

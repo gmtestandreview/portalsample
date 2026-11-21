@@ -11,20 +11,13 @@
  * project's baseURL setting.
  */
 
-import {
-  expect,
-  type ConsoleMessage,
-  type Page,
-  type Request,
-  type Response as PlaywrightResponse,
-} from '@playwright/test';
+import { expect, type ConsoleMessage, type Page } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import {
   STORYBOOK_BASE,
   STORYBOOK_MCP,
   STORY_RENDER_TIMEOUT_MS,
-  MCP_HEADERS,
-  executeMcpTestRun,
+  initializeMcpSession,
   readMcpEvent,
   loadStoryIframe,
   loadDocsIframe,
@@ -32,9 +25,15 @@ import {
   visibleSource,
 } from '../support/storybookHelpers';
 import {
-  parseMcpMarkdownReport,
-  type StorybookMcpMarkdownReport,
-} from '../support/storybookMcpReport';
+  executeAndAssertMcpTestRun,
+  type NormalizedReceipt,
+} from '../support/storybookMcpExecution';
+import {
+  ACCEPT_QUOTE_DOCS_ID,
+  docsIsolationResults,
+  expectAcceptQuotePaymentFrames,
+  runDocsIsolationProbe,
+} from '../support/storybookDocsIsolation';
 
 const { Given, When, Then, After } = createBdd();
 
@@ -42,7 +41,6 @@ const REPRESENTATIVE_DOCS_ID = 'components-pill--documentation';
 const REPRESENTATIVE_STORY_ID = 'components-pill--dashboard-statuses';
 const STYLE_GUIDE_DOCS_ID = 'documentation-style-guide--documentation';
 const AUTOSUGGEST_DOCS_ID = 'components-inputs-autosuggest--documentation';
-const ACCEPT_QUOTE_DOCS_ID = 'routes-acceptquote--documentation';
 const ROUTE_LEAVING_GUARD_DOCS_ID =
   'components-routeleavingguard--documentation';
 
@@ -56,41 +54,19 @@ const storybookPageIssueMonitors = new WeakMap<
   Page,
   StorybookPageIssueMonitor
 >();
-interface DocsIsolationProbe {
-  endpointRequests: string[];
-  mockedResponses: string[];
-  liveSends: string[];
-  unmatchedRequests: string[];
-  failedRequests: string[];
-}
-
-interface ProviderLifecycleEvent {
-  type: 'storybook-portal-provider';
-  phase: 'mounted' | 'cleaned';
-  sentinel: string;
-}
-
-interface AccountContextLifecycleEvent {
-  type: 'storybook-account-context';
-  phase: 'active' | 'cleaned';
-  sentinel: string;
-  targetOrganisationName: string | null;
-}
-
-const docsIsolationResults = new WeakMap<Page, { completed: boolean }>();
 const LATE_UNMOUNT_SIGNAL =
   /(?:can't perform a React state update on an unmounted component|state update on an unmounted component|update(?:d)? after unmount)/i;
-const MSW_FAILURE_SIGNAL =
-  /(?:unhandled request|without a matching request handler|network request failed|cannot bypass)/iu;
-const PAYMENT_DETAILS_ENDPOINT = '/api/accept-quote/123/payment-details';
-const PAYMENT_DETAILS_STEP_FRAME =
-  '#iframe--routes-acceptquote--payment-details-step';
-const PAYMENT_DETAILS_POSTPAID_FRAME =
-  '#iframe--routes-acceptquote--payment-details-postpaid';
-const PAYMENT_DETAILS_PREPAID_SESSION_KEY =
-  'storybook:accept-quote:payment-details:prepaid';
-const PAYMENT_DETAILS_POSTPAID_SESSION_KEY =
-  'storybook:accept-quote:payment-details:postpaid';
+const expectVisibleStatusPill = async (page: Page) => {
+  const root = storybookPreviewFrame(page).locator('#storybook-root');
+
+  await expect(root).toBeVisible({ timeout: 10_000 });
+
+  const pills = root.locator(
+    'span, .badge, [class*="pill"], [class*="status"]',
+  );
+
+  await expect(pills.first()).toBeVisible({ timeout: 10_000 });
+};
 
 const captureLateUnmountSignal = (
   messages: string[],
@@ -137,42 +113,15 @@ Given('the Storybook MCP server is running', async ({ page, request }) => {
 Then(
   'the Storybook MCP endpoint should initialize and list configured tools',
   async ({ request }) => {
-    const initialize = await request.post(STORYBOOK_MCP, {
-      headers: MCP_HEADERS,
-      data: {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'initialize',
-        params: {
-          protocolVersion: '2025-03-26',
-          capabilities: {},
-          clientInfo: { name: 'dependency-security-test', version: '1.0.0' },
-        },
-      },
+    const { initializeEnvelope, sessionHeaders } = await initializeMcpSession({
+      clientInfo: { name: 'dependency-security-test', version: '1.0.0' },
+      initializeId: 1,
+      request,
     });
-
-    expect(initialize.status()).toBe(200);
-
-    const sessionId = initialize.headers()['mcp-session-id'];
-    if (sessionId === undefined) {
-      throw new Error('MCP initialize response did not provide a session ID');
-    }
-    const initializeEnvelope = await readMcpEvent(initialize, 1);
 
     expect(initializeEnvelope.result?.serverInfo?.name).toBe(
       '@storybook/addon-mcp',
     );
-
-    const sessionHeaders = {
-      ...MCP_HEADERS,
-      'mcp-session-id': sessionId,
-    };
-    const initialized = await request.post(STORYBOOK_MCP, {
-      headers: sessionHeaders,
-      data: { jsonrpc: '2.0', method: 'notifications/initialized' },
-    });
-
-    expect(initialized.status()).toBe(202);
 
     const toolsList = await request.post(STORYBOOK_MCP, {
       headers: sessionHeaders,
@@ -196,147 +145,15 @@ Then(
   },
 );
 
-interface NormalizedReceipt {
-  ok: boolean;
-  errors: { code: string; message: string }[];
-  report?: StorybookMcpMarkdownReport;
-  receipt?: {
-    requestedStoryIds: string[];
-    executedStoryIds: string[];
-    componentTestStatuses: { storyId: string; status: string }[];
-    a11yStatuses: { storyId: string; status: string }[];
-  };
-}
-
-interface McpStatus {
-  storyId: string;
-  status: string;
-}
-
 let latestMcpExecution: NormalizedReceipt | undefined;
 
 When(
   'I execute the native MCP test-run for stories {string}',
   async ({ request }, storyIdsText: string) => {
-    const storyIds = storyIdsText
-      .split(',')
-      .map((storyId) => storyId.trim())
-      .filter(Boolean);
-    const testRun = await executeMcpTestRun(request, storyIds);
-
-    expect(testRun.status()).toBe(200);
-
-    const envelope = await readMcpEvent(testRun, 11);
-
-    expect(envelope.error).toBeUndefined();
-
-    const contentText = envelope.result?.content
-      ?.filter((block) => block.type === 'text' && block.text !== undefined)
-      .map((block) => block.text!)
-      .join('\n');
-    const contentStructured = envelope.result?.content
-      ?.filter((block) => block.type === 'text' && block.text !== undefined)
-      .map((block) => {
-        try {
-          return JSON.parse(block.text!) as unknown;
-        } catch {
-          return undefined;
-        }
-      })
-      .find(
-        (value) =>
-          value !== undefined &&
-          typeof value === 'object' &&
-          value !== null &&
-          'status' in value,
-      );
-    const structuredContent =
-      envelope.result?.structuredContent ?? contentStructured;
-    let componentTestStatuses: McpStatus[];
-    let a11yStatuses: McpStatus[];
-    let reportEvidence: StorybookMcpMarkdownReport | undefined;
-
-    if (structuredContent !== undefined) {
-      const completedContent = structuredContent as {
-        status?: string;
-        result?: {
-          componentTestStatuses?: McpStatus[];
-          a11yStatuses?: McpStatus[];
-          counts?: {
-            requested?: number;
-            executed?: number;
-            component?: number;
-            a11y?: number;
-          };
-          unhandledErrors?: unknown[];
-        };
-      };
-      const execution = completedContent.result;
-      componentTestStatuses = execution?.componentTestStatuses ?? [];
-      a11yStatuses = execution?.a11yStatuses ?? [];
-
-      expect(completedContent.status).toBe('completed');
-      expect(
-        componentTestStatuses
-          .map(({ storyId }) => storyId)
-          .sort((a, b) => a.localeCompare(b)),
-      ).toEqual([...storyIds].sort((a, b) => a.localeCompare(b)));
-      expect(
-        a11yStatuses
-          .map(({ storyId }) => storyId)
-          .sort((a, b) => a.localeCompare(b)),
-      ).toEqual([...storyIds].sort((a, b) => a.localeCompare(b)));
-      expect(
-        componentTestStatuses.every(
-          ({ status }) => status === 'status-value:success',
-        ),
-      ).toBe(true);
-      expect(
-        a11yStatuses.every(({ status }) => status === 'status-value:success'),
-      ).toBe(true);
-      expect(execution?.counts).toEqual({
-        requested: storyIds.length,
-        executed: storyIds.length,
-        component: storyIds.length,
-        a11y: storyIds.length,
-      });
-      expect(execution?.unhandledErrors).toEqual([]);
-    } else {
-      const report = parseMcpMarkdownReport(contentText ?? '');
-      reportEvidence = report;
-      const passingStoryIds = [...new Set(report.passingStoryIds)].sort(
-        (a, b) => a.localeCompare(b),
-      );
-      const requestedStoryIds = [...storyIds].sort((a, b) =>
-        a.localeCompare(b),
-      );
-
-      expect(report.missingSections).not.toContain('Passing Stories');
-      expect(passingStoryIds).toEqual(requestedStoryIds);
-      expect(
-        report.failingStoryIds.filter((storyId) => storyIds.includes(storyId)),
-      ).toEqual([]);
-      expect(report.accessibilityViolationStoryIds).toEqual([]);
-      expect(report.unhandledErrors).toEqual([]);
-
-      componentTestStatuses = [];
-      a11yStatuses = [];
-    }
-
-    const componentStoryIds =
-      reportEvidence?.passingStoryIds ??
-      componentTestStatuses.map(({ storyId }) => storyId);
-    latestMcpExecution = {
-      ok: true,
-      errors: [],
-      ...(reportEvidence === undefined ? {} : { report: reportEvidence }),
-      receipt: {
-        requestedStoryIds: storyIds,
-        executedStoryIds: componentStoryIds,
-        componentTestStatuses,
-        a11yStatuses,
-      },
-    };
+    latestMcpExecution = await executeAndAssertMcpTestRun(
+      request,
+      storyIdsText,
+    );
   },
 );
 
@@ -484,543 +301,11 @@ When(
 
 When(
   'I exercise overlapping request story frames on the generated AcceptQuote documentation page',
-  async ({ page }) => {
-    const probe: DocsIsolationProbe = {
-      endpointRequests: [],
-      mockedResponses: [],
-      liveSends: [],
-      unmatchedRequests: [],
-      failedRequests: [],
-    };
-    const requestHandler = (request: Request) => {
-      // Playwright's request event is observation only; it does not replace or
-      // bypass the browser transport used by the story's MSW worker.
-      if (request.url().includes(PAYMENT_DETAILS_ENDPOINT)) {
-        probe.endpointRequests.push(request.url());
-      }
-    };
-    const requestFailedHandler = (request: Request) => {
-      if (request.url().includes(PAYMENT_DETAILS_ENDPOINT)) {
-        probe.failedRequests.push(request.url());
-      }
-    };
-    const responseHandler = (response: PlaywrightResponse) => {
-      if (!response.url().includes(PAYMENT_DETAILS_ENDPOINT)) {
-        return;
-      }
-
-      const mockName = response.headers()['x-storybook-mock'];
-      if (mockName === undefined) {
-        probe.liveSends.push(response.url());
-      } else {
-        probe.mockedResponses.push(mockName);
-      }
-    };
-    const consoleErrorHandler = (message: ConsoleMessage) => {
-      if (
-        message.type() === 'error' &&
-        MSW_FAILURE_SIGNAL.test(message.text())
-      ) {
-        probe.unmatchedRequests.push(message.text());
-      }
-    };
-    const readProviderEvents = () =>
-      page.evaluate(() => {
-        const events = (
-          globalThis as typeof globalThis & {
-            __storybookPortalProviderEvents?: ProviderLifecycleEvent[];
-          }
-        ).__storybookPortalProviderEvents;
-        return events ?? [];
-      });
-    const readAccountEvents = () =>
-      page.evaluate(() => {
-        const events = (
-          globalThis as typeof globalThis & {
-            __storybookAccountLifecycleEvents?: AccountContextLifecycleEvent[];
-          }
-        ).__storybookAccountLifecycleEvents;
-        return events ?? [];
-      });
-    const readSessionSentinel = (key: string) =>
-      page.evaluate(
-        (sessionKey) => globalThis.sessionStorage.getItem(sessionKey),
-        key,
-      );
-    const expectSessionSentinel = async (
-      key: string,
-      expected: string | null,
-    ) => {
-      await expect.poll(() => readSessionSentinel(key)).toBe(expected);
-    };
-    const expectMountedProviderPair = async () => {
-      await expect
-        .poll(async () => {
-          const events = await readProviderEvents();
-          return events
-            .filter((event) => event.phase === 'mounted')
-            .map((event) => event.sentinel)
-            .sort((a, b) => a.localeCompare(b));
-        })
-        .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
-    };
-    const expectActiveAccountPair = async () => {
-      await expect
-        .poll(async () => {
-          const events = await readAccountEvents();
-          return events
-            .filter((event) => event.phase === 'active')
-            .map((event) => event.sentinel)
-            .sort((a, b) => a.localeCompare(b));
-        })
-        .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
-    };
-    const findStoryFrame = (storyId: string) => {
-      const frame = page
-        .frames()
-        .find((candidate) => candidate.url().includes(`id=${storyId}`));
-      if (!frame) {
-        throw new Error(`Story frame ${storyId} was not found`);
-      }
-      return frame;
-    };
-    const fetchPaymentDetails = async (storyId: string) =>
-      findStoryFrame(storyId).evaluate(async (endpoint) => {
-        const response = await globalThis.fetch(endpoint);
-        return {
-          status: response.status,
-          body: (await response.json()) as {
-            acceptQuotePreInfo?: { paymentTerms?: string };
-          },
-        };
-      }, PAYMENT_DETAILS_ENDPOINT);
-    const readAccountTargetOrganisation = (storyId: string) =>
-      findStoryFrame(storyId).evaluate(
-        () =>
-          globalThis.document.body.dataset[
-            'storybookAccountTargetOrganisation'
-          ] ?? null,
-      );
-    const removeFrame = async (selector: string) => {
-      await page
-        .locator(selector)
-        .first()
-        .evaluate((element) => {
-          element.remove();
-        });
-      await expect(page.locator(selector)).toHaveCount(0);
-    };
-
-    page.on('request', requestHandler);
-    page.on('requestfailed', requestFailedHandler);
-    page.on('response', responseHandler);
-    page.on('console', consoleErrorHandler);
-
-    let completed = false;
-    try {
-      await page.addInitScript(() => {
-        const target = globalThis as typeof globalThis & {
-          __storybookPortalProviderEvents?: ProviderLifecycleEvent[];
-          __storybookAccountLifecycleEvents?: AccountContextLifecycleEvent[];
-        };
-        target.__storybookPortalProviderEvents = [];
-        target.__storybookAccountLifecycleEvents = [];
-      });
-      expect(
-        await readSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY),
-      ).toBeNull();
-      expect(
-        await readSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY),
-      ).toBeNull();
-      await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
-      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
-      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
-      ).toContainText('Prepayment required', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
-      ).toContainText('Invoices must be paid within 30 days', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expectMountedProviderPair();
-      await expectActiveAccountPair();
-      await expect
-        .poll(() =>
-          readAccountTargetOrganisation(
-            'routes-acceptquote--payment-details-step',
-          ),
-        )
-        .toBe('payment-details-prepaid:active');
-      await expect
-        .poll(() =>
-          readAccountTargetOrganisation(
-            'routes-acceptquote--payment-details-postpaid',
-          ),
-        )
-        .toBe('payment-details-postpaid:active');
-      await expectSessionSentinel(
-        PAYMENT_DETAILS_PREPAID_SESSION_KEY,
-        `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
-      );
-      await expectSessionSentinel(
-        PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
-        `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
-      );
-      const sessionBefore = await page.evaluate(() =>
-        globalThis.sessionStorage.getItem('targetOrganisation'),
-      );
-      expect(probe.endpointRequests).toHaveLength(2);
-
-      await removeFrame(PAYMENT_DETAILS_STEP_FRAME);
-      await expect.poll(readProviderEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-          },
-          {
-            type: 'storybook-portal-provider',
-            phase: 'mounted',
-            sentinel: 'payment-details-postpaid',
-          },
-        ]),
-      );
-      expect(await readProviderEvents()).not.toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-          },
-        ]),
-      );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-            targetOrganisationName: 'payment-details-prepaid:active',
-          },
-        ]),
-      );
-      await expect
-        .poll(() =>
-          readAccountTargetOrganisation(
-            'routes-acceptquote--payment-details-postpaid',
-          ),
-        )
-        .toBe('payment-details-postpaid:active');
-      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
-      await expectSessionSentinel(
-        PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
-        `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
-      );
-      const postpaidAfterStepCleanup = await fetchPaymentDetails(
-        'routes-acceptquote--payment-details-postpaid',
-      );
-      expect(postpaidAfterStepCleanup).toEqual({
-        status: 200,
-        body: {
-          acceptQuotePreInfo: {
-            paymentTerms: 'Invoice',
-            quotationIdNum: 'Q-2024-000456',
-          },
-        },
-      });
-
-      await removeFrame(PAYMENT_DETAILS_POSTPAID_FRAME);
-      await expect
-        .poll(
-          () =>
-            page
-              .frames()
-              .filter((frame) => frame.url().includes('payment-details-'))
-              .length,
-        )
-        .toBe(0);
-      expect(await readProviderEvents()).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-          },
-        ]),
-      );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-            targetOrganisationName: 'payment-details-postpaid:active',
-          },
-        ]),
-      );
-      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
-      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
-
-      await page.goto(
-        `${STORYBOOK_BASE}/iframe.html?id=${ACCEPT_QUOTE_DOCS_ID}&viewMode=docs`,
-      );
-      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
-      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
-      ).toContainText('Prepayment required', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expect(
-        page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
-      ).toContainText('Invoices must be paid within 30 days', {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-      });
-      await expectMountedProviderPair();
-      await expectActiveAccountPair();
-      await expectSessionSentinel(
-        PAYMENT_DETAILS_PREPAID_SESSION_KEY,
-        `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
-      );
-      await expectSessionSentinel(
-        PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
-        `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
-      );
-      // Two initial requests from the first A/B pair, one explicit B request
-      // after A cleanup, then two initial requests from the reversed pair.
-      expect(probe.endpointRequests).toHaveLength(5);
-
-      await removeFrame(PAYMENT_DETAILS_POSTPAID_FRAME);
-      await expect.poll(readProviderEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-          },
-          {
-            type: 'storybook-portal-provider',
-            phase: 'mounted',
-            sentinel: 'payment-details-prepaid',
-          },
-        ]),
-      );
-      expect(await readProviderEvents()).not.toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-          },
-        ]),
-      );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-postpaid',
-            targetOrganisationName: 'payment-details-postpaid:active',
-          },
-          {
-            type: 'storybook-account-context',
-            phase: 'active',
-            sentinel: 'payment-details-prepaid',
-            targetOrganisationName: 'payment-details-prepaid:active',
-          },
-        ]),
-      );
-      await expect
-        .poll(() =>
-          readAccountTargetOrganisation(
-            'routes-acceptquote--payment-details-step',
-          ),
-        )
-        .toBe('payment-details-prepaid:active');
-      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
-      await expectSessionSentinel(
-        PAYMENT_DETAILS_PREPAID_SESSION_KEY,
-        `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
-      );
-      const stepAfterPostpaidCleanup = await fetchPaymentDetails(
-        'routes-acceptquote--payment-details-step',
-      );
-      expect(stepAfterPostpaidCleanup).toEqual({
-        status: 200,
-        body: {
-          acceptQuotePreInfo: {
-            paymentTerms: 'Prepaid',
-            quotationIdNum: 'Q-2024-000456',
-          },
-        },
-      });
-
-      await removeFrame(PAYMENT_DETAILS_STEP_FRAME);
-      await expect
-        .poll(
-          () =>
-            page
-              .frames()
-              .filter((frame) => frame.url().includes('payment-details-'))
-              .length,
-        )
-        .toBe(0);
-      expect(await readProviderEvents()).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-portal-provider',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-          },
-        ]),
-      );
-      await expect.poll(readAccountEvents).toEqual(
-        expect.arrayContaining([
-          {
-            type: 'storybook-account-context',
-            phase: 'cleaned',
-            sentinel: 'payment-details-prepaid',
-            targetOrganisationName: 'payment-details-prepaid:active',
-          },
-        ]),
-      );
-      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
-      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
-
-      expect(probe.endpointRequests).toHaveLength(6);
-      expect(probe.mockedResponses).toHaveLength(6);
-      expect(
-        probe.mockedResponses.filter(
-          (name) => name === 'payment-details-prepaid',
-        ),
-      ).toHaveLength(3);
-      expect(
-        probe.mockedResponses.filter(
-          (name) => name === 'payment-details-postpaid',
-        ),
-      ).toHaveLength(3);
-      expect(probe.liveSends).toEqual([]);
-      expect(probe.unmatchedRequests).toEqual([]);
-      expect(probe.failedRequests).toEqual([]);
-      const providerEvents = await readProviderEvents();
-      expect(
-        providerEvents
-          .filter((event) => event.phase === 'mounted')
-          .map((event) => event.sentinel)
-          .sort((a, b) => a.localeCompare(b)),
-      ).toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
-      expect(
-        providerEvents.filter((event) => event.phase === 'cleaned'),
-      ).toEqual([
-        {
-          type: 'storybook-portal-provider',
-          phase: 'cleaned',
-          sentinel: 'payment-details-postpaid',
-        },
-        {
-          type: 'storybook-portal-provider',
-          phase: 'cleaned',
-          sentinel: 'payment-details-prepaid',
-        },
-      ]);
-      const accountEvents = await readAccountEvents();
-      expect(
-        accountEvents
-          .filter((event) => event.phase === 'active')
-          .sort((left, right) => left.sentinel.localeCompare(right.sentinel)),
-      ).toEqual([
-        {
-          type: 'storybook-account-context',
-          phase: 'active',
-          sentinel: 'payment-details-postpaid',
-          targetOrganisationName: 'payment-details-postpaid:active',
-        },
-        {
-          type: 'storybook-account-context',
-          phase: 'active',
-          sentinel: 'payment-details-prepaid',
-          targetOrganisationName: 'payment-details-prepaid:active',
-        },
-      ]);
-      expect(
-        accountEvents.filter((event) => event.phase === 'cleaned'),
-      ).toEqual([
-        {
-          type: 'storybook-account-context',
-          phase: 'cleaned',
-          sentinel: 'payment-details-postpaid',
-          targetOrganisationName: 'payment-details-postpaid:active',
-        },
-        {
-          type: 'storybook-account-context',
-          phase: 'cleaned',
-          sentinel: 'payment-details-prepaid',
-          targetOrganisationName: 'payment-details-prepaid:active',
-        },
-      ]);
-      expect(
-        await page.evaluate(() =>
-          globalThis.sessionStorage.getItem('targetOrganisation'),
-        ),
-      ).toBe(sessionBefore);
-      expect(storybookPageIssueMonitors.get(page)?.messages).toEqual([]);
-      completed = true;
-    } finally {
-      docsIsolationResults.set(page, { completed });
-      page.off('request', requestHandler);
-      page.off('requestfailed', requestFailedHandler);
-      page.off('response', responseHandler);
-      page.off('console', consoleErrorHandler);
-      // Keep any remaining frame cleanup inside the browser page, so the next
-      // scenario starts without a provider/session owner from this probe.
-      await page.evaluate(
-        ([stepSelector, postpaidSelector]) => {
-          for (const frame of document.querySelectorAll(
-            `${stepSelector ?? ''}, ${postpaidSelector ?? ''}`,
-          )) {
-            frame.remove();
-          }
-        },
-        [PAYMENT_DETAILS_STEP_FRAME, PAYMENT_DETAILS_POSTPAID_FRAME],
-      );
-      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(0);
-      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(0);
-      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
-      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
-      await expect
-        .poll(async () => {
-          const events = await readProviderEvents();
-          const mounted = new Set(
-            events
-              .filter((event) => event.phase === 'mounted')
-              .map((event) => event.sentinel),
-          );
-          events
-            .filter((event) => event.phase === 'cleaned')
-            .forEach((event) => mounted.delete(event.sentinel));
-          return [...mounted].sort((a, b) => a.localeCompare(b));
-        })
-        .toEqual([]);
-      await expect
-        .poll(async () => {
-          const events = await readAccountEvents();
-          const active = new Set(
-            events
-              .filter((event) => event.phase === 'active')
-              .map((event) => event.sentinel),
-          );
-          events
-            .filter((event) => event.phase === 'cleaned')
-            .forEach((event) => active.delete(event.sentinel));
-          return [...active].sort((a, b) => a.localeCompare(b));
-        })
-        .toEqual([]);
-    }
-  },
+  async ({ page }) =>
+    runDocsIsolationProbe(
+      page,
+      () => storybookPageIssueMonitors.get(page)?.messages,
+    ),
 );
 
 Then('the generated Docs isolation probe should pass', ({ page }) => {
@@ -1058,18 +343,7 @@ When('I open the AcceptQuote documentation', async ({ page }) => {
 Then(
   'the generated AcceptQuote Docs page should render independent request frames',
   async ({ page }) => {
-    await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
-    await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
-    await expect(
-      page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
-    ).toContainText('Prepayment required', {
-      timeout: STORY_RENDER_TIMEOUT_MS,
-    });
-    await expect(
-      page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
-    ).toContainText('Invoices must be paid within 30 days', {
-      timeout: STORY_RENDER_TIMEOUT_MS,
-    });
+    await expectAcceptQuotePaymentFrames(page);
   },
 );
 
@@ -1433,34 +707,12 @@ Then(
 
 Then(
   'the story iframe should contain text matching a dashboard status label',
-  async ({ page }) => {
-    // The pill renders status text; assert at least one span/badge is visible
-    const root = storybookPreviewFrame(page).locator('#storybook-root');
-
-    await expect(root).toBeVisible({ timeout: 10_000 });
-
-    // At least one pill should be rendered
-    const pills = root.locator(
-      'span, .badge, [class*="pill"], [class*="status"]',
-    );
-
-    await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-  },
+  async ({ page }) => expectVisibleStatusPill(page),
 );
 
 Then(
   'the story iframe should contain text matching a quote status label',
-  async ({ page }) => {
-    const root = storybookPreviewFrame(page).locator('#storybook-root');
-
-    await expect(root).toBeVisible({ timeout: 10_000 });
-
-    const pills = root.locator(
-      'span, .badge, [class*="pill"], [class*="status"]',
-    );
-
-    await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-  },
+  async ({ page }) => expectVisibleStatusPill(page),
 );
 
 // ---------------------------------------------------------------------------
@@ -1535,7 +787,9 @@ Then(
     try {
       await expect(storybookPreviewFrame(page).locator('body')).toHaveClass(
         /\bsb-show-main\b/u,
-        { timeout: STORY_RENDER_TIMEOUT_MS },
+        {
+          timeout: STORY_RENDER_TIMEOUT_MS,
+        },
       );
       expect(monitor.messages).toEqual([]);
     } finally {

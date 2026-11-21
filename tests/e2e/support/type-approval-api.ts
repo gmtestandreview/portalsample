@@ -488,9 +488,15 @@ const handleDeleteDocument = async ({ route, state }: MockContext) => {
     await notFound(route, referenceId);
     return;
   }
-  application.supportingDocuments.form!.documents = (
-    application.supportingDocuments.form?.documents ?? []
-  ).filter((document) => document.id !== documentReference);
+  const { form } = application.supportingDocuments;
+  if (!form) {
+    throw new Error(
+      `Application ${referenceId} has no supporting documents form to delete from`,
+    );
+  }
+  form.documents = (form.documents ?? []).filter(
+    (document) => document.id !== documentReference,
+  );
   await json(route, supportingDocumentsResponse(application));
 };
 

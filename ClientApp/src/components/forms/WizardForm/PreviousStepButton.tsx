@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import React from 'react';
 import type { FormikValues } from 'formik';
 import { Link } from 'react-router';
@@ -26,7 +27,7 @@ const PreviousStepButton = ({
       className={`btn btn-tertiary ${className}`}
     >
       <i className='icon-back me-1' aria-hidden='true' />
-      {title || 'Back'}
+      {orIfEmpty(title, 'Back')}
     </Link>
   );
 };

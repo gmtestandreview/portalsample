@@ -122,7 +122,7 @@ Clearly visible in source but not yet exercised.
 Example:
 
 ```python
-sorted({1, "2"})
+sorted({1, '2'})
 ```
 
 when the program's declared type permits both.
@@ -349,7 +349,7 @@ when mutation is not required.
 Prefer:
 
 ```python
-type MetricName = Literal["pass_rate", "time_seconds"]
+type MetricName = Literal['pass_rate', 'time_seconds']
 ```
 
 over:
@@ -391,7 +391,7 @@ Explicitly annotate:
 Usually allow inference for:
 
 ```python
-label = name.replace("_", " ").title()
+label = name.replace('_', ' ').title()
 count = len(values)
 ```
 
@@ -637,8 +637,8 @@ Prefer explicit relationships:
 
 ```python
 COMPARISON_PAIRS = (
-    ("with_skill", "without_skill"),
-    ("new_skill", "old_skill"),
+    ('with_skill', 'without_skill'),
+    ('new_skill', 'old_skill'),
 )
 ```
 
@@ -656,7 +656,7 @@ If synthetic data is inserted into the same namespace as discovered user/domain
 keys:
 
 ```python
-summary["delta"] = ...
+summary['delta'] = ...
 ```
 
 ask:
@@ -755,7 +755,7 @@ tokens   = primary tokens   or fallback tokens
 Avoid:
 
 ```python
-name.split("-")[1]
+name.split('-')[1]
 ```
 
 when the expected grammar is stricter.
@@ -821,7 +821,7 @@ when the project enables Ruff's `PTH` family.
 Always specify:
 
 ```python
-encoding="utf-8"
+encoding = 'utf-8'
 ```
 
 for text unless another encoding is intentional.
@@ -867,7 +867,7 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())
 ```
 

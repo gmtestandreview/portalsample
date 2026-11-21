@@ -1,10 +1,14 @@
 import { execFileSync } from 'node:child_process';
-import { realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
-import { readTextFile, realPath, writeTextFile } from './safe-file-io.mjs';
+import {
+  readTextFile,
+  realFilePath,
+  realPath,
+  writeTextFile,
+} from './safe-file-io.mjs';
 
 const slash = (value) => value.replaceAll('\\', '/');
 const isFunction = (node) =>
@@ -221,7 +225,7 @@ function resolveExistingPath(candidate) {
     // The candidate is one of the fixed executable paths or an explicit
     // operator-provided absolute path; it is not repository input.
     // executable path is constrained by the fixed allowlist or explicit configuration.
-    return realpathSync(candidate);
+    return realFilePath(candidate);
   } catch {
     return null;
   }
@@ -394,33 +398,47 @@ function applyReplacements(root, replacements, originals) {
   }
 }
 
-export async function main(args = process.argv.slice(2), root = process.cwd()) {
-  const flags = new Set(args.filter((arg) => arg.startsWith('--')));
+function validateFlags(flags) {
   for (const flag of flags) {
     if (!['--write', '--check', '--audit-parameters', '--help'].includes(flag))
       throw new Error(`Unknown option: ${flag}`);
   }
+}
+
+function validateMode(flags) {
+  const modes = ['--write', '--check', '--audit-parameters'].filter((flag) =>
+    flags.has(flag),
+  );
+  if (modes.length > 1)
+    throw new Error(
+      'Choose only one of --write, --check and --audit-parameters',
+    );
+}
+
+function validateRoot(root) {
+  if (
+    path.resolve(git(root, ['rev-parse', '--show-toplevel']).trim()) !== root
+  ) {
+    throw new Error('Run this command from the repository root');
+  }
+}
+
+function checkOrPreview(flags, total, skipped) {
+  return flags.has('--check') && (total || skipped) ? 1 : 0;
+}
+
+export async function main(args = process.argv.slice(2), root = process.cwd()) {
+  const flags = new Set(args.filter((arg) => arg.startsWith('--')));
+  validateFlags(flags);
   if (flags.has('--help')) {
     process.stdout.write(
       'Usage: node scripts/readonly-props.mjs [--check | --write | --audit-parameters] [ClientApp/src/path ...]\nDefault: preview eligible React props; --check exits 1 when changes or manual review remain.\n--write requires clean target files and a clean baseline/candidate TypeScript check.\n--audit-parameters reports the existing ESLint rule without changing files.\n',
     );
     return 0;
   }
-  if (
-    ['--write', '--check', '--audit-parameters'].filter((flag) =>
-      flags.has(flag),
-    ).length > 1
-  ) {
-    throw new Error(
-      'Choose only one of --write, --check and --audit-parameters',
-    );
-  }
+  validateMode(flags);
   root = path.resolve(root);
-  if (
-    path.resolve(git(root, ['rev-parse', '--show-toplevel']).trim()) !== root
-  ) {
-    throw new Error('Run this command from the repository root');
-  }
+  validateRoot(root);
   const files = resolveCandidateFiles(root, args, flags);
   if (flags.has('--audit-parameters')) return auditParameters(root, files);
 
@@ -428,8 +446,7 @@ export async function main(args = process.argv.slice(2), root = process.cwd()) {
     root,
     files,
   );
-  if (!flags.has('--write'))
-    return flags.has('--check') && (total || skipped) ? 1 : 0;
+  if (!flags.has('--write')) return checkOrPreview(flags, total, skipped);
   if (!replacements.size) return skipped ? 1 : 0;
 
   applyReplacements(root, replacements, originals);

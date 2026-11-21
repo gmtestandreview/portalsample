@@ -39,7 +39,7 @@ export interface NumberInputProps {
   allowedDecimalSeparators?: string[];
   decimalScale?: number;
   isSummary?: boolean | undefined;
-  defaultValue?: number;
+  defaultValue?: number | null;
   role?: string;
   children?: React.ReactNode;
 }

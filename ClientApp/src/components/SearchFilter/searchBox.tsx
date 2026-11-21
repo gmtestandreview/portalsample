@@ -29,7 +29,7 @@ const SearchBox = (props: Readonly<SearchBoxProps>) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && onSearchSubmit) {
+    if (e.key === 'Enter') {
       e.preventDefault();
       onSearchSubmit(searchValue);
     }

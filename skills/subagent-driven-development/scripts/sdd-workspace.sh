@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# Resolve and ensure the working-tree directory SDD uses for one plan's
+# short-lived artifacts: task briefs, implementer reports, review packages,
+# and the progress ledger. Print the plan directory's absolute path.
+#
+# One directory per plan (.agent-sync/sdd/<plan-basename>/) so a follow-up
+# plan in the same working tree can never read or overwrite another plan's
+# artifacts. A stale ledger misread as current progress makes controllers
+# skip whole task sequences — plan-scoping removes that failure structurally.
+#
+# Basename slugs collide when two plans share a filename (docs/alpha/plan.md
+# vs docs/beta/plan.md), so each workspace records its owning plan's path in
+# a plan-path marker (repo-relative in-repo, absolute outside). A workspace
+# owned by a different plan is skipped and the slug disambiguated with the
+# plan's parent-directory name, then a counter. A workspace with no marker
+# predates the marker scheme and is adopted for the current plan so in-flight
+# workspaces keep resolving — which means the first collision on such a
+# legacy workspace adopts instead of detecting; acceptable, marker-less
+# workspaces age out as plans finish.
+#
+# The workspace lives in the working tree (not under .git/) because Claude Code
+# treats .git/ as a protected path and denies agent writes there — which blocks
+# an implementer subagent from writing its report file. A self-ignoring
+# .gitignore at .agent-sync/sdd/ keeps every plan's workspace out of
+# `git status` and out of accidental commits without modifying any tracked file.
+#
+# Single source of truth for the workspace location, so task-brief.sh and
+# review-package.sh cannot drift to different directories.
+#
+# The repository is the current directory's (see sdd-repo.sh). -C DIR runs as
+# if started in DIR, the way git -C does: a caller working on another
+# checkout or worktree needs no `cd DIR ;` prefix, a compound that harnesses
+# cannot allowlist because DIR differs on every run.
+#
+# Usage: sdd-workspace.sh [-C DIR] PLAN_FILE
+set -euo pipefail
+
+here=$(cd "$(dirname "$0")" && pwd)
+if [[ "${1:-}" == "-C" ]]; then
+  [[ -d "${2:-}" ]] || { echo "bad -C directory: ${2:-}" >&2; exit 2; }
+  cd "$2"
+  shift 2
+fi
+
+if (($# != 1)); then
+  echo "usage: sdd-workspace.sh [-C DIR] PLAN_FILE" >&2
+  exit 2
+fi
+
+plan=$1
+[[ -f "$plan" ]] || { echo "no such plan file: $plan" >&2; exit 2; }
+
+slug=$(basename "$plan" .md)
+if [[ -z "$slug" || "$slug" == "." || "$slug" == ".." ]]; then
+  echo "cannot derive a workspace name from: $plan" >&2
+  exit 2
+fi
+
+# Physical path, spelled the way pwd -P spells the plan path below: on Git
+# Bash, rev-parse prints C:/Users/... while pwd prints /c/Users/..., and the
+# repo-relative marker check needs both in the same form. Two steps, so a
+# failing sdd-repo.sh stops the script instead of handing cd an empty path.
+# Invoke via bash rather than direct exec: some extractors strip Unix exec
+# bits when unpacking packages.
+toplevel=$("${BASH:-bash}" "$here/sdd-repo.sh")
+root=$(CDPATH='' cd -- "$toplevel" && pwd -P)
+base="$root/.agent-sync/sdd"
+
+# Normalize the plan path (physical directory, so relative/absolute/../
+# spellings of one plan compare equal) and express it as the marker value:
+# repo-relative when the plan lives under the repo root, absolute otherwise.
+plan_dir=$(CDPATH='' cd -- "$(dirname "$plan")" && pwd -P)
+plan_abs="$plan_dir/$(basename "$plan")"
+case "$plan_abs" in
+  "$root"/*) plan_id=${plan_abs#"$root"/} ;;
+  *)         plan_id=$plan_abs ;;
+esac
+
+# owns WORKSPACE: true when WORKSPACE is (or becomes) this plan's. An existing
+# marker must name this plan; a missing marker means a new workspace or a
+# pre-marker legacy one, and either way the plan claims it by writing one.
+owns() {
+  local workspace=$1
+  local marker="$workspace/plan-path"
+  if [[ -e "$marker" ]]; then
+    [[ "$(cat "$marker")" == "$plan_id" ]]
+  else
+    mkdir -p "$workspace"
+    printf '%s\n' "$plan_id" > "$marker"
+  fi
+}
+
+dir="$base/$slug"
+if ! owns "$dir"; then
+  parent=$(basename "$plan_dir")
+  dir="$base/$slug-$parent"
+  if ! owns "$dir"; then
+    n=2
+    while ! owns "$base/$slug-$parent-$n"; do n=$((n + 1)); done
+    dir="$base/$slug-$parent-$n"
+  fi
+fi
+
+# Create-only: a repo may commit its own .gitignore here (e.g. to version
+# progress.md ledgers); overwriting it would revert that on every run.
+[[ -e "$base/.gitignore" ]] || printf '*\n' > "$base/.gitignore"
+
+# On Windows (Git Bash, MSYS2, Cygwin) print C:/Users/... rather than
+# /c/Users/... or /tmp/...: the caller may be PowerShell or another native
+# tool, which can't resolve MSYS paths, and bash accepts this form too.
+# Only the printed path changes; the plan-path markers above keep pwd -P's
+# spelling, so existing workspaces still match their plans.
+CDPATH='' cd -- "$dir"
+if command -v cygpath >/dev/null 2>&1; then cygpath -m "$PWD"; else pwd; fi

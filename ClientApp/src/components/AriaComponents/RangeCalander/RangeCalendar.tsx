@@ -24,7 +24,7 @@ export function RangeCalendar<T extends DateValue>({
   errorMessage,
   ...props
 }: Readonly<RangeCalendarProps<T>>) {
-  const months = props.visibleDuration?.months || 1;
+  const months = props.visibleDuration?.months ?? 1;
   return (
     <AriaRangeCalendar {...props}>
       <div className='months'>
@@ -79,7 +79,7 @@ export function CalendarCell(props: Readonly<CalendarCellProps>) {
             data-selected={isSelectionStart || isSelectionEnd || undefined}
             data-disabled={isDisabled || undefined}
           >
-            {children || defaultChildren}
+            {children ?? defaultChildren}
           </span>
         ),
       )}

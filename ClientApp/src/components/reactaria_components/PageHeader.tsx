@@ -20,7 +20,7 @@ export function PageHeader({
         <h1>{title}</h1>
         {description && <p className='portal-page-summary'>{description}</p>}
       </div>
-      {actions && <div className='portal-button-group'>{actions}</div>}
+      {actions ? <div className='portal-button-group'>{actions}</div> : null}
     </header>
   );
 }

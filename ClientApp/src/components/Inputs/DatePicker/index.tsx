@@ -13,6 +13,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 type DateFieldValue = string | Date | null | undefined;
 
@@ -89,7 +90,7 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
     return (
       <SummaryDisplay
         as='p'
-        id={id || name}
+        id={getControlId(id, name)}
         label={label}
         value={displayValue}
       />
@@ -106,7 +107,7 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
         inlineHelp,
         label,
       })}
-      containerClassName={`custom-date-picker-div ${containerClassName || ''}`}
+      containerClassName={`custom-date-picker-div ${containerClassName ?? ''}`}
       currentDate={currentDate}
       dateOnBlur={(event) => {
         void dateOnBlur(event);
@@ -114,7 +115,7 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
       dateOnChange={dateOnChange}
       hasError={!!(_meta.touched && _meta.error)}
       name={name}
-      placeholder={placeholder || 'dd/mm/yyyy'}
+      placeholder={placeholder ?? 'dd/mm/yyyy'}
     />
   );
 };

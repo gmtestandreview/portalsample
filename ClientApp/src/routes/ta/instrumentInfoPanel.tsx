@@ -30,8 +30,8 @@ interface InstrumentInfoPanelProps {
 
 const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
   name,
-  selectedInstrumentCategoryId = undefined,
-  selectedInstrumentTypeId = undefined,
+  selectedInstrumentCategoryId,
+  selectedInstrumentTypeId,
   isNewCustomer = true,
 }) => {
   const { accounts, instance } = useMsal();

@@ -784,7 +784,7 @@ const saveUserProfile = useCallback(
     accountDispatch
       ?.setUserProfile({ patternApprovalDashboard: profile })
       .catch((error) => {
-        AppLogger.error(
+        Applogging.exception(
           'T & C Dashboard failed to save user profile.',
           error as Error,
         );

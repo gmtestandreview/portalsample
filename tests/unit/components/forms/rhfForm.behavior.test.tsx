@@ -151,6 +151,24 @@ describe('rhfForm shell behavior', () => {
     expect(onSubmit).toHaveBeenCalledWith({ name: 'abc' });
   });
 
+  it('uses updated hidden rules after the form rerenders', async () => {
+    expect.hasAssertions();
+
+    const { user, onSubmit, rerenderShell, baseProps } = setup({
+      hidingFields: {},
+    });
+
+    rerenderShell({ ...baseProps, hidingFields: { other: true } });
+    await user.type(screen.getByLabelText('Name'), 'abc');
+    await user.click(screen.getByTestId('next'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(onSubmit).toHaveBeenCalledWith({ name: 'abc' });
+  });
+
   it('save and exit validates softly and calls onSaveAndExit with the payload', async () => {
     expect.hasAssertions();
 

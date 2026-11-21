@@ -17,6 +17,7 @@ import type {
 } from '@/routes/common/helperFunctions';
 import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import type AppLogger from '@/instrumentation/AppLogger';
+import { defined } from '../../helpers/defined';
 import ViewPdfQuoteTerms from '@/components/Utilities/ViewPdfQuoteTerms';
 import type { ViewPdfQuoteTermsProps } from '@/components/Utilities/ViewPdfQuoteTerms';
 
@@ -182,7 +183,7 @@ const mockTokenResult = {
 // InTextLink renders <a> without href when only onClick is supplied.
 // An <a> without href has no ARIA "link" role, so queries use the element directly.
 const getTermsAnchor = (container: HTMLElement) =>
-  container.querySelector('a.nmi-in-text-link')!;
+  defined(container.querySelector('a.nmi-in-text-link'), 'terms anchor');
 
 const resetViewPdfQuoteTermsMocks = () => {
   vi.clearAllMocks();
@@ -292,5 +293,34 @@ describe('view pdf quote terms', () => {
     await waitFor(() => {
       expect(helperMocks.openPdfPageInNewTab).not.toHaveBeenCalled();
     });
+  });
+
+  it('returns from the handler before any work when quotationData is undefined', async () => {
+    expect.hasAssertions();
+
+    resetViewPdfQuoteTermsMocks();
+
+    const user = userEvent.setup();
+    const setIsLoading = vi.fn<ViewPdfQuoteTermsProps['setIsLoading']>();
+    const { container } = render(
+      <ViewPdfQuoteTerms
+        {...defaultProps}
+        quotationData={undefined}
+        setIsLoading={setIsLoading}
+      />,
+    );
+
+    // The Terms link always renders, so the click reaches the handler, which
+    // hits `if (!quotationData) return;` before any loading/token/fetch work.
+    await user.click(getTermsAnchor(container));
+
+    // The GA event still fires (it runs after the early-returning handler).
+    await waitFor(() => {
+      expect(trackGAEventMock).toHaveBeenCalledWith('Terms', 'download');
+    });
+
+    expect(setIsLoading).not.toHaveBeenCalled();
+    expect(acquireTokenSilentMock).not.toHaveBeenCalled();
+    expect(helperMocks.getQuotationFileDetails).not.toHaveBeenCalled();
   });
 });

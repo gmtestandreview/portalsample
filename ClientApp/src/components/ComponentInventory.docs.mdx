@@ -179,7 +179,8 @@ evaluation-react-aria-colorswatchpicker--example | |
 | direct | ColorSwatchPickerItem | 1 |
 evaluation-react-aria-colorswatchpicker--example | |
 `ClientApp/src/components/AriaComponents/ColorThumb/ColorThumb.tsx#ColorThumb` |
-forwarding | ColorThumb | 1 | evaluation-react-aria-colorwheel--example | |
+forwarding | ColorThumb | 2 | evaluation-react-aria-colorwheel--example,
+evaluation-react-aria-colorwheel--keyboard-adjusts-hue | |
 `ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.tsx#ColorWheel` |
 direct | ColorWheel | 1 | evaluation-react-aria-colorwheel--example | |
 `ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.tsx#ColorWheelProps`
@@ -198,9 +199,10 @@ nonvisual | ComboBoxProps | 0 | none | |
 `ClientApp/src/components/AriaComponents/CommandPalette/CommandPalette.tsx#CommandPaletteProps`
 | nonvisual | CommandPaletteProps | 0 | none | |
 `ClientApp/src/components/AriaComponents/Content/Content.tsx#Heading` | consumer
-| Heading | 1 | evaluation-react-aria-calendar--default | |
+| Heading | 2 | evaluation-react-aria-dialog--example,
+evaluation-react-aria-popover--example | |
 `ClientApp/src/components/AriaComponents/Content/Content.tsx#Text` | consumer |
-Text | 1 | evaluation-react-aria-calendar--default | |
+Text | 1 | evaluation-react-aria-calendar--invalid | |
 `ClientApp/src/components/AriaComponents/DateField/DateField.tsx#DateField` |
 direct | DateField | 1 | evaluation-react-aria-datefield--example | |
 `ClientApp/src/components/AriaComponents/DateField/DateField.tsx#DateFieldProps`
@@ -314,7 +316,7 @@ nonvisual | PopoverProps | 0 | none | |
 `ClientApp/src/components/AriaComponents/ProgressBar/ProgressBar.tsx#ProgressBarProps`
 | nonvisual | ProgressBarProps | 0 | none | |
 `ClientApp/src/components/AriaComponents/ProgressCircle/ProgressCircle.tsx#ProgressCircle`
-| consumer | ProgressCircle | 1 | components-ariacomponents-ariabutton--disabled
+| consumer | ProgressCircle | 1 | components-ariacomponents-ariabutton--pending
 | |
 `ClientApp/src/components/AriaComponents/ProgressCircle/ProgressCircle.tsx#ProgressCircleProps`
 | nonvisual | ProgressCircleProps | 0 | none | |
@@ -464,13 +466,14 @@ direct | default | 1 | components-buttons-backtodashboardbutton--default | |
 `ClientApp/src/components/Buttons/ButtonGroup/index.tsx#ButtonGroupProps` |
 nonvisual | ButtonGroupProps | 0 | none | |
 `ClientApp/src/components/Buttons/ButtonGroup/index.tsx#default` | direct |
-Breadth | 1 | components-buttons-breadth--edit-section | |
+Breadth | 1 | components-buttons-breadth--grouped-actions | |
 `ClientApp/src/components/Buttons/EditButton/index.tsx#EditButtonProps` |
 nonvisual | EditButtonProps | 0 | none | |
 `ClientApp/src/components/Buttons/EditButton/index.tsx#default` | direct |
 Breadth | 1 | components-buttons-breadth--edit-section | |
 `ClientApp/src/components/Buttons/LinkButton/index.tsx#default` | direct |
-Breadth | 1 | components-buttons-breadth--edit-section | |
+Breadth | 2 | components-buttons-breadth--grouped-actions,
+components-buttons-breadth--grouped-actions-keyboard-navigation | |
 `ClientApp/src/components/Buttons/PrimaryButton/index.tsx#PrimaryButtonProps` |
 nonvisual | PrimaryButtonProps | 0 | none | |
 `ClientApp/src/components/Buttons/PrimaryButton/index.tsx#default` | direct |
@@ -733,6 +736,8 @@ SearchBox | 1 | components-searchfilter-searchbox--empty | |
 nonvisual | SearchBoxProps | 0 | none | |
 `ClientApp/src/components/SearchFilter/types.ts#DashboardTab` | nonvisual |
 DashboardTab | 0 | none | |
+`ClientApp/src/components/SearchFilter/types.ts#FilterMenuProps` | nonvisual |
+FilterMenuProps | 0 | none | |
 `ClientApp/src/components/SearchFilter/types.ts#Filters` | nonvisual | Filters |
 0 | none | | `ClientApp/src/components/SearchFilter/types.ts#InitialFilters` |
 nonvisual | InitialFilters | 0 | none | |
@@ -746,6 +751,10 @@ UserProfile | 0 | none | |
 | CustomElement | 0 | none | |
 `ClientApp/src/components/SlateEditor/SlateEditor.tsx#default` | direct |
 SlateEditor | 1 | components-slateeditor--default | |
+`ClientApp/src/components/SlateEditor/SlateEditor.tsx#isBreakTag` | nonvisual |
+isBreakTag | 0 | none | |
+`ClientApp/src/components/SlateEditor/SlateEditor.tsx#isEmptyParagraphContent` |
+nonvisual | isEmptyParagraphContent | 0 | none | |
 `ClientApp/src/components/SlateEditor/SlateEditor.tsx#serializeToHtml` | direct
 | serializeToHtml | 1 | components-slateeditor--default | |
 `ClientApp/src/components/SteppedNavigation/index.tsx#default` | direct |
@@ -869,17 +878,35 @@ components-forms-errorsummary--conflict-error | |
 `ClientApp/src/components/forms/RhfHidableField/index.tsx#default` | consumer |
 default | 1 | routes-acceptquote--delivery-and-return-step | |
 `ClientApp/src/components/forms/SaveAndExitButton/index.tsx#default` | consumer
-| default | 1 | components-forms-formbanner--go-to-dashboard | |
+| default | 3 | components-forms-formbanner--save-and-exit,
+forms-wizardform--save-and-exit-waits-for-save,
+forms-wizardform--save-and-exit-failure-stays-on-step | |
 `ClientApp/src/components/forms/SubmitFormButton/index.tsx#default` | consumer |
-default | 1 | forms-wizardform--step-1-contact-details | |
+default | 4 | components-forms-submitformbutton--valid-submit,
+components-forms-submitformbutton--invalid-submit,
+forms-wizardform--invalid-step-blocks-submit,
+forms-wizardform--step-2-with-previous-completed | |
 `ClientApp/src/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt.tsx#default`
-| direct | default | 1 | routes-exportcoverage--unsaved-form-prompt | |
+| direct | default | 4 | forms-unsavedformprompt--rhf-clean-navigates,
+forms-unsavedformprompt--rhf-dirty-blocked,
+forms-unsavedformprompt--rhf-cancel-retains-value,
+forms-unsavedformprompt--rhf-confirm-proceeds | |
 `ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedChangesPrompt.tsx#UnsavedChangesPromptProps`
 | nonvisual | UnsavedChangesPromptProps | 0 | none | |
 `ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedChangesPrompt.tsx#default`
-| consumer | default | 1 | forms-wizardform--step-1-contact-details | |
-`ClientApp/src/components/forms/UnsavedFormPrompt/index.tsx#default` | consumer
-| default | 1 | forms-wizardform--step-1-contact-details | |
+| direct | default | 8 | forms-unsavedformprompt--formik-clean-navigates,
+forms-unsavedformprompt--formik-dirty-blocked,
+forms-unsavedformprompt--formik-cancel-retains-value,
+forms-unsavedformprompt--formik-confirm-proceeds,
+forms-unsavedformprompt--rhf-clean-navigates,
+forms-unsavedformprompt--rhf-dirty-blocked,
+forms-unsavedformprompt--rhf-cancel-retains-value,
+forms-unsavedformprompt--rhf-confirm-proceeds | |
+`ClientApp/src/components/forms/UnsavedFormPrompt/index.tsx#default` | direct |
+default | 4 | forms-unsavedformprompt--formik-clean-navigates,
+forms-unsavedformprompt--formik-dirty-blocked,
+forms-unsavedformprompt--formik-cancel-retains-value,
+forms-unsavedformprompt--formik-confirm-proceeds | |
 `ClientApp/src/components/forms/WizardForm/NextStepButton.tsx#default` |
 consumer | default | 1 | forms-wizardform--step-1-contact-details | |
 `ClientApp/src/components/forms/WizardForm/PreviousStepButton.tsx#default` |
@@ -952,11 +979,13 @@ default | 1 | components-home--public-landing | |
 `ClientApp/src/components/modals/BranchSelectorModal/enums.ts#BranchSelectionModalMode`
 | nonvisual | BranchSelectionModalMode | 0 | none | |
 `ClientApp/src/components/modals/BranchSelectorModal/index.tsx#default` | direct
-| Modals | 1 | modals--confirmation-closed | |
+| Modals | 3 | modals--branch-selector-save-selection,
+modals--branch-selector-save-selection,
+modals--branch-selector-cancel-discards-selection | |
 `ClientApp/src/components/modals/ConfirmationModal/index.tsx#ConfirmationModalProps`
 | nonvisual | ConfirmationModalProps | 0 | none | |
 `ClientApp/src/components/modals/ConfirmationModal/index.tsx#default` | direct |
-Modals | 1 | modals--confirmation-closed | |
+Modals | 2 | modals--confirmation-closed, modals--confirmation-closed | |
 `ClientApp/src/components/modals/ContentModal/index.tsx#ContentModalProps` |
 nonvisual | ContentModalProps | 0 | none | |
 `ClientApp/src/components/modals/ContentModal/index.tsx#default` | direct |
@@ -974,9 +1003,12 @@ useModalDispatch | 1 | components-actions--icon-button | |
 `ClientApp/src/components/modals/ModalContext.tsx#useModalState` | consumer |
 useModalState | 1 | components-actions--icon-button | |
 `ClientApp/src/components/modals/RFQDeleteModal/index.tsx#default` | direct |
-Modals | 1 | modals--confirmation-closed | |
+Modals | 3 | modals--rfq-delete-confirmed, modals--rfq-delete-confirmed,
+modals--rfq-delete-cancel-restores-focus | |
 `ClientApp/src/components/modals/TermsAndCondition/index.tsx#default` | consumer
-| default | 1 | routes-preconditions--renders-protected-content | |
+| default | 3 | routes-preconditions--terms-of-use-agree,
+routes-preconditions--terms-of-use-agree,
+routes-preconditions--terms-of-use-save-fails | |
 `ClientApp/src/components/reactaria_components/AlertMessage.tsx#AlertMessage` |
 direct | AlertMessage | 1 | components-react-aria-alertmessage--default | |
 `ClientApp/src/components/reactaria_components/PageHeader.tsx#PageHeader` |

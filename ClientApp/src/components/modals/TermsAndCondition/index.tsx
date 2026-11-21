@@ -2,6 +2,7 @@ import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
+import type React from 'react';
 import { Alert, Button } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import {
@@ -76,7 +77,7 @@ const SavingTermsAndConditionError = (
   return null;
 };
 
-const AnchorLinkToNmi = (): JSX.Element => (
+const AnchorLinkToNmi = (): React.JSX.Element => (
   <Button
     data-testid='exit-portal-button'
     href='/sign-out'
@@ -92,7 +93,7 @@ interface AgreeButtonProps {
   onClick: () => void;
 }
 
-const AgreeButton = (props: Readonly<AgreeButtonProps>): JSX.Element => {
+const AgreeButton = (props: Readonly<AgreeButtonProps>): React.JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton

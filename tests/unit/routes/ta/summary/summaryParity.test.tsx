@@ -14,6 +14,7 @@ import OrganisationAndContact from '../../../../../ClientApp/src/routes/ta/organ
 import appDetailsProps from '../../../../../ClientApp/src/routes/ta/manage/appDetailsProps';
 import ApplicationSummary from '../../../../../ClientApp/src/routes/ta/summary/ApplicationSummary';
 import OrganisationSummary from '../../../../../ClientApp/src/routes/ta/summary/OrganisationSummary';
+import { defined } from '../../../helpers/defined';
 import { resetMsalMock } from '../../../helpers/mockMsal';
 
 vi.mock(import('@azure/msal-react') as unknown as string, async () => {
@@ -210,7 +211,10 @@ describe('form-free TA summary parity with the Formik summary', () => {
 
     const { container } = render(
       <ApplicationSummary
-        values={fixtures['new certificate by a manufacturer']!}
+        values={defined(
+          fixtures['new certificate by a manufacturer'],
+          'the new-certificate-by-a-manufacturer fixture',
+        )}
         hidden={hidden}
       />,
     );

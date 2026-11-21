@@ -1,4 +1,5 @@
 import { useMsal } from '@azure/msal-react';
+import type React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { useModalState, useModalDispatch } from '../ModalContext';
@@ -20,7 +21,7 @@ interface SaveButtonProps {
   onClick: () => void;
 }
 
-const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
+const SaveButton = (props: Readonly<SaveButtonProps>): React.JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton

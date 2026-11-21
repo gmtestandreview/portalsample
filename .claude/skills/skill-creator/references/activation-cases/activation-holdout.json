@@ -1,0 +1,42 @@
+[
+  {
+    "id": "activation-holdout-01",
+    "query": "Our support-team checklist is repeated each day. Make it an Agent Skill others can install.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-holdout-02",
+    "query": "Find which supplemental reference causes this SKILL.md to contradict itself.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-holdout-03",
+    "query": "Can we establish observable acceptance tests before shipping this skill?",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-holdout-04",
+    "query": "Help my Claude Code skill stop activating for unrelated repository changes.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-holdout-05",
+    "query": "Create an internal skills matrix for employee performance reviews.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-holdout-06",
+    "query": "Draft a test plan for our browser extension event triggers.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-holdout-07",
+    "query": "Audit the release readiness of our Docker image, not an Agent Skill.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-holdout-08",
+    "query": "Consolidate two overlapping React hooks into a shared utility.",
+    "should_trigger": false
+  }
+]

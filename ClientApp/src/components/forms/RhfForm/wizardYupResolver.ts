@@ -1,17 +1,19 @@
 import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
 import { getIn, setIn } from '../formPath';
-import { isHidden } from '../utils';
+import { getInnerErrors, isHidden } from '../utils';
 import type { Hideable, ValidationSchema } from '../types';
 
 /** Which schema validates: `saveAndExit` is the soft one, `next` the hard one. */
 export type SubmitMode = 'next' | 'saveAndExit';
 
+export interface WizardYupResolverContext {
+  submitMode: SubmitMode;
+}
+
 interface WizardYupResolverOptions {
   softSchema: ValidationSchema | undefined;
   hardSchema: ValidationSchema | undefined;
-  /** Read at validation time; the mode is not stored in the form values. */
-  getMode: () => SubmitMode;
   /** Read at validation time so rule changes apply without a new resolver. */
   getHidden: () => Hideable;
 }
@@ -23,7 +25,7 @@ const toFieldErrors = <TFieldValues extends FieldValues>(
 ): FieldErrors<TFieldValues> => {
   let fieldErrors = {};
   const isVisible = (path: string) => !isHidden(path, hidden, values);
-  const inner = error.inner ?? [];
+  const inner = getInnerErrors(error) ?? [];
 
   if (inner.length > 0) {
     inner.forEach((innerError) => {
@@ -53,11 +55,14 @@ export const createWizardYupResolver =
   <TFieldValues extends FieldValues>({
     softSchema,
     hardSchema,
-    getMode,
     getHidden,
   }: WizardYupResolverOptions): Resolver<TFieldValues> =>
-  async (values) => {
-    const schema = getMode() === 'saveAndExit' ? softSchema : hardSchema;
+  async (values, context) => {
+    const schema =
+      (context as WizardYupResolverContext | undefined)?.submitMode ===
+      'saveAndExit'
+        ? softSchema
+        : hardSchema;
     if (!schema) {
       return { values, errors: {} };
     }

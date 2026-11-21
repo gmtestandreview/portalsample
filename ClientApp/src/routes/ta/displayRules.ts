@@ -29,27 +29,22 @@ export const DisplayRules = {
     }
     // if no matching content is found, default to showing the OIML option (return true for hidden)
     const isNotEligible = !content.eligibleForOiml;
-    return isTicked && !isNotEligible;
+    return !isNotEligible;
   },
 
   isApplOtherHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval
     );
   },
 
   isVariationHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
-    return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.Variation ||
-      x.patternApprovalType === undefined
-    );
+    return x.patternApprovalType !== PatternApprovalRequiredValues.Variation;
   },
 
   isNewCertificateHiddenP(x: Partial<ApplicationAndInstrumentStep>): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate
     );
   },
 
@@ -57,15 +52,12 @@ export const DisplayRules = {
     x: Partial<ApplicationAndInstrumentStep>,
   ): boolean {
     if (
-      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate
     ) {
       return true;
     }
-    if (!x.instrumentCategory && !x.instrumentType) {
-      return true;
-    }
-    return false;
+
+    return !x.instrumentCategory && !x.instrumentType;
   },
 
   isOIMLHidden(x: Partial<ApplicationAndInstrumentStep>): boolean {
@@ -79,22 +71,17 @@ export const DisplayRules = {
 
   isApplOtherHidden(x: ApplicationAndInstrumentStep): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.OtherApproval
     );
   },
 
   isVariationHidden(x: ApplicationAndInstrumentStep): boolean {
-    return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.Variation ||
-      x.patternApprovalType === undefined
-    );
+    return x.patternApprovalType !== PatternApprovalRequiredValues.Variation;
   },
 
   isNewCertificateHidden(x: ApplicationAndInstrumentStep): boolean {
     return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
-      x.patternApprovalType === undefined
+      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate
     );
   },
 

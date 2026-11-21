@@ -12,14 +12,14 @@ from .models import SkillProperties
 
 # Opening and closing delimiters must each be a whole line of exactly ``---``.
 _FRONTMATTER_RE = re.compile(
-    r"\A---\r?\n(?P<frontmatter>.*?)^---(?:\r?\n|\Z)(?P<body>.*)",
+    r'\A---\r?\n(?P<frontmatter>.*?)^---(?:\r?\n|\Z)(?P<body>.*)',
     re.DOTALL | re.MULTILINE,
 )
 
 # XML 1.0 text must also be UTF-8 encodable. Reject escaped YAML values that
 # decode to controls, surrogate code points, or the two forbidden BMP values.
-_FORBIDDEN_UNICODE_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\ufffe\uffff]")
-_RAW_YAML_CONTROL_RE = re.compile(r"[\x7f-\x84\x86-\x9f]")
+_FORBIDDEN_UNICODE_RE = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\ufffe\uffff]')
+_RAW_YAML_CONTROL_RE = re.compile(r'[\x7f-\x84\x86-\x9f]')
 
 
 def ensure_safe_unicode(value: object) -> None:
@@ -28,7 +28,7 @@ def ensure_safe_unicode(value: object) -> None:
     while pending:
         item = pending.pop()
         if isinstance(item, str) and _FORBIDDEN_UNICODE_RE.search(item):
-            raise ParseError("Invalid YAML: forbidden Unicode character in skill text")
+            raise ParseError('Invalid YAML: forbidden Unicode character in skill text')
         if isinstance(item, dict):
             mapping = cast(Mapping[object, object], item)
             pending.extend(mapping.keys())
@@ -52,19 +52,19 @@ def find_skill_md(skill_dir: Path) -> Path | None:
             return None
 
         for child in skill_dir.iterdir():
-            if child.is_file() and child.name == "SKILL.md":
+            if child.is_file() and child.name == 'SKILL.md':
                 return child
     except OSError as e:
-        raise ParseError(f"Cannot inspect skill directory {skill_dir}: {e}") from e
+        raise ParseError(f'Cannot inspect skill directory {skill_dir}: {e}') from e
     return None
 
 
 def read_skill_text(skill_md: Path) -> str:
     """Read SKILL.md as UTF-8, reporting I/O and decoding failures as ParseError."""
     try:
-        return skill_md.read_text(encoding="utf-8")
+        return skill_md.read_text(encoding='utf-8')
     except (OSError, UnicodeDecodeError) as e:
-        raise ParseError(f"Cannot read {skill_md} as UTF-8: {e}") from e
+        raise ParseError(f'Cannot read {skill_md} as UTF-8: {e}') from e
 
 
 def parse_frontmatter(content: str) -> tuple[dict[str, object], str]:
@@ -79,43 +79,43 @@ def parse_frontmatter(content: str) -> tuple[dict[str, object], str]:
     Raises:
         ParseError: If frontmatter is missing or invalid
     """
-    first_line = next(iter(content.splitlines()), "")
-    if first_line != "---":
-        raise ParseError("SKILL.md must start with YAML frontmatter (---)")
+    first_line = next(iter(content.splitlines()), '')
+    if first_line != '---':
+        raise ParseError('SKILL.md must start with YAML frontmatter (---)')
 
     match = _FRONTMATTER_RE.match(content)
     if match is None:
-        raise ParseError("SKILL.md frontmatter not properly closed with ---")
+        raise ParseError('SKILL.md frontmatter not properly closed with ---')
 
-    frontmatter_str = match.group("frontmatter")
-    body = match.group("body").strip()
+    frontmatter_str = match.group('frontmatter')
+    body = match.group('body').strip()
 
     # Strictyaml's raw ReaderError branch can itself raise AttributeError for
     # these characters. Reject them before entering the third-party parser.
     ensure_safe_unicode(frontmatter_str)
     if _RAW_YAML_CONTROL_RE.search(frontmatter_str):
-        raise ParseError("Invalid YAML: forbidden raw control character in frontmatter")
+        raise ParseError('Invalid YAML: forbidden raw control character in frontmatter')
 
     try:
         parsed_data: object = strictyaml.load(frontmatter_str).data
     except strictyaml.YAMLError as e:
-        raise ParseError(f"Invalid YAML in frontmatter: {e}") from e
+        raise ParseError(f'Invalid YAML in frontmatter: {e}') from e
     except (ValueError, OverflowError) as e:
         # The YAML scanner's chr() may reject an out-of-range \U escape before
         # it creates a YAMLError. Python 3.11 can raise OverflowError here.
-        raise ParseError("Invalid YAML value in frontmatter") from e
+        raise ParseError('Invalid YAML value in frontmatter') from e
     except RecursionError as e:
-        raise ParseError("Invalid YAML: frontmatter nesting is too deep") from e
+        raise ParseError('Invalid YAML: frontmatter nesting is too deep') from e
 
     if not isinstance(parsed_data, dict):
-        raise ParseError("SKILL.md frontmatter must be a YAML mapping")
+        raise ParseError('SKILL.md frontmatter must be a YAML mapping')
 
     parsed_mapping = cast(Mapping[object, object], parsed_data)
     ensure_safe_unicode(parsed_mapping)
     metadata: dict[str, object] = {}
     for key, value in parsed_mapping.items():
         if not isinstance(key, str):
-            raise ParseError("SKILL.md frontmatter keys must be strings")
+            raise ParseError('SKILL.md frontmatter keys must be strings')
         metadata[key] = value
     return metadata, body
 
@@ -162,27 +162,27 @@ def read_properties(skill_dir: Path) -> SkillProperties:
     skill_md = find_skill_md(skill_dir)
 
     if skill_md is None:
-        raise ParseError(f"SKILL.md not found in {skill_dir}")
+        raise ParseError(f'SKILL.md not found in {skill_dir}')
 
     metadata, _ = parse_frontmatter(read_skill_text(skill_md))
 
-    if "name" not in metadata:
-        raise ValidationError("Missing required field in frontmatter: name")
-    if "description" not in metadata:
-        raise ValidationError("Missing required field in frontmatter: description")
+    if 'name' not in metadata:
+        raise ValidationError('Missing required field in frontmatter: name')
+    if 'description' not in metadata:
+        raise ValidationError('Missing required field in frontmatter: description')
 
-    name = metadata["name"]
-    description = metadata["description"]
+    name = metadata['name']
+    description = metadata['description']
 
     if not isinstance(name, str) or not name.strip():
         raise ValidationError("Field 'name' must be a non-empty string")
     if not isinstance(description, str) or not description.strip():
         raise ValidationError("Field 'description' must be a non-empty string")
 
-    license_value = _optional_string(metadata, "license")
-    compatibility = _optional_string(metadata, "compatibility")
-    allowed_tools = _optional_string(metadata, "allowed-tools")
-    extra_metadata = _string_metadata(metadata.get("metadata", {}))
+    license_value = _optional_string(metadata, 'license')
+    compatibility = _optional_string(metadata, 'compatibility')
+    allowed_tools = _optional_string(metadata, 'allowed-tools')
+    extra_metadata = _string_metadata(metadata.get('metadata', {}))
 
     return SkillProperties(
         name=name.strip(),

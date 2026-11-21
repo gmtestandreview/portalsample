@@ -112,15 +112,14 @@ vi.mock(
   import('../../../ClientApp/src/instrumentation/AppLogger'),
   async (importOriginal) => {
     const original = await importOriginal();
-    class MockAppLogger extends original.default {
-      static override error = providerMocks.appLoggerError;
-      static override verbose =
-        vi.fn<(typeof AppLoggerModule)['default']['verbose']>();
-    }
 
     return {
       ...original,
-      default: MockAppLogger,
+      default: {
+        ...original.default,
+        error: providerMocks.appLoggerError,
+        verbose: vi.fn<(typeof AppLoggerModule)['default']['verbose']>(),
+      },
     } satisfies Partial<typeof AppLoggerModule>;
   },
 );
@@ -374,7 +373,7 @@ describe('accountProvider dispatch callbacks', () => {
     await user.click(screen.getByRole('button', { name: 'set org branch' }));
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
-    const details = screen.getByTestId('details').textContent ?? '';
+    const details = screen.getByTestId('details').textContent;
 
     expectDetailsToContain(details, [
       '"userAcceptedTermsOfUse":true',
@@ -610,7 +609,7 @@ describe('accountProvider dispatch callbacks', () => {
       expect(screen.getByTestId('details')).toHaveTextContent('minimal-id');
     });
 
-    const details = screen.getByTestId('details').textContent ?? '';
+    const details = screen.getByTestId('details').textContent;
 
     expectDetailsToContain(details, [
       '"organisation":""',
@@ -620,6 +619,7 @@ describe('accountProvider dispatch callbacks', () => {
       '"userAcceptedTermsOfUse":false',
       '"accountCreationCompleted":false',
       '"accountContactCompleted":false',
+      '"isDefaultOrganisation":false',
       '"targetOrganisationAbn":"stored-abn"',
       '"targetOrganisationName":"Stored Org"',
       '"organisationIsCompleted":false',
@@ -658,6 +658,7 @@ describe('accountProvider dispatch callbacks', () => {
       targetOrganisationAbn: '',
       targetOrganisationName: '',
     });
+    expect(providerMocks.setUserProfileApi).not.toHaveBeenCalled();
   });
 
   it('falls back to empty trading and branch names for explicit empty values', async () => {
@@ -680,7 +681,7 @@ describe('accountProvider dispatch callbacks', () => {
       screen.getByRole('button', { name: 'set fallback org branch' }),
     );
 
-    const details = screen.getByTestId('details').textContent ?? '';
+    const details = screen.getByTestId('details').textContent;
 
     expect(details).toContain('"organisation":"Fallback Org"');
     expect(details).toContain('"trading":""');
@@ -708,7 +709,7 @@ describe('accountProvider dispatch callbacks', () => {
       screen.getByRole('button', { name: 'set nullish org branch' }),
     );
 
-    const nullishDetails = screen.getByTestId('details').textContent ?? '';
+    const nullishDetails = screen.getByTestId('details').textContent;
 
     expect(nullishDetails).toContain('"organisation":"Nullish Org"');
     expect(nullishDetails).toContain('"trading":""');

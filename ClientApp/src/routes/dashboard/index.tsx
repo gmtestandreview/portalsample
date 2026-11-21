@@ -1,23 +1,12 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Navigate, Link } from 'react-router';
 import { Col, Row, Container, Tab, Nav } from 'react-bootstrap';
-import { InteractionStatus } from '@azure/msal-browser';
-import { useMsal } from '@azure/msal-react';
 import { PatternFormat } from 'react-number-format';
-import { omitUndefined } from '../../utils/omitUndefined';
 import Welcome from '../../components/Welcome';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import {
-  getDashboardNotification,
-  clearDashboardNotification,
-  setDashboardNotification,
-  getDashboardInfoNotification,
-  clearDashboardInfoNotification,
-} from '../../storage/notification';
-import NotificationMessage from '../../components/Alert/NotificationMessage';
+import { clearDashboardInfoNotification } from '../../storage/notification';
 import useHtmlTitle from '../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../components/Utilities/useBodyClass';
-import useDebounce from '../../components/Utilities/useDebounce';
 import {
   useAccountState,
   useAccountDispatch,
@@ -26,281 +15,51 @@ import {
   useModalState,
   useModalDispatch,
 } from '../../components/modals/ModalContext';
-import StandardPathway from '../../components/tiles/StandardPathway';
-import { DashboardClient } from '../../api/web-api-client';
-import type {
-  DashboardItemDto,
-  PagedListOfDashboardItemDto,
-  ProblemDetails,
-  StatusEnumDto,
-} from '../../api/web-api-client';
-import { silentRequestFor } from '../../authentication/silentRequest';
-import AppLogger from '../../instrumentation/AppLogger';
+import type { DashboardItemDto } from '../../api/web-api-client';
 import getUnexpectedErrorRoute from '../common/errorRoutes';
-import { HttpStatusCode } from '../../types';
-import { DashBoardNotifications } from '../common/dashboardNotifications';
 import SearchFilter from '../../components/SearchFilter';
 import RequestItem from '../../components/RequestList/requestItem';
 import InstrumentItem from '../../components/RequestList/instrumentItem';
 import NoRequests from '../../components/RequestList/noRequests';
 import { DashboardTab } from '../../components/SearchFilter/types';
-import type { UserProfile } from '../../components/SearchFilter/types';
 import CustomPagination from '../../components/Pagination';
 import CustomPaginationHeader from '../../components/PaginationHeader';
-import { defaultFilter } from '../common/constants';
-import { mapToUserProfile } from '../common/helperFunctions';
-import SessionStorageCache from '../../storage/sessionStorageCache';
-import { DashboardItemStatus } from '../common/enums';
+import { selectDashboardTab } from '../common/helperFunctions';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
-import { BranchSelectionModalMode } from '../../components/modals/BranchSelectorModal/enums';
-
-// TS Move this to a constants file if we need this setting app wide
-const DEFAULT_DASHBOARD_PAGESIZE = 10;
-const DEFAULT_SEARCH_PLACEHOLDER = 'Search by manufacturer, model, serial...';
-
-const showDashboardMessage = (message: React.JSX.Element | null) => (
-  <>
-    {message && (
-      <Container>
-        <Row>
-          <Col>{message}</Col>
-        </Row>
-      </Container>
-    )}
-  </>
-);
-
-const setNotification = () => {
-  const dashboardNotification = getDashboardNotification();
-  return dashboardNotification ? (
-    <NotificationMessage
-      id='notif-message-1'
-      canClose
-      onClose={clearDashboardNotification}
-      {...dashboardNotification}
-    />
-  ) : null;
-};
-
-const setInfoNotification = () => {
-  const dashboardInfoNotification = getDashboardInfoNotification();
-  return dashboardInfoNotification ? (
-    <NotificationMessage
-      id='notif-info-message-2'
-      canClose
-      onClose={clearDashboardInfoNotification}
-      {...dashboardInfoNotification}
-    />
-  ) : null;
-};
-
-const handlePaginationScroll = () => {
-  const titleElement = document.getElementById('dash-type-title');
-  titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
-const handleNotificationScroll = () => {
-  document
-    .querySelector('[id^="notif-"]')
-    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
-interface FetchRequestsParams {
-  tab: DashboardTab;
-  client: DashboardClient;
-  sortOrder: string;
-  currentPage: number;
-  pageSize: number;
-  accountDetailsCrmGuid?: string | undefined;
-  filterSearchText?: string | undefined;
-  actualYear?: string | undefined;
-  actualStatus?: StatusEnumDto | undefined;
-  signal?: AbortSignal | undefined;
-}
-
-const fetchRequestsByTab = async ({
-  tab,
-  client,
-  sortOrder,
-  currentPage,
-  pageSize,
-  accountDetailsCrmGuid,
-  filterSearchText,
-  actualYear,
-  actualStatus,
-  signal,
-}: FetchRequestsParams): Promise<PagedListOfDashboardItemDto> => {
-  switch (tab) {
-    case DashboardTab.Requests:
-      return client.getDashboardQuotesByPortalID(
-        accountDetailsCrmGuid,
-        actualYear,
-        actualStatus,
-        sortOrder,
-        filterSearchText,
-        currentPage,
-        pageSize,
-        signal,
-      );
-    case DashboardTab.Instruments:
-      return client.getDashboardArtefactsByPortalID(
-        accountDetailsCrmGuid,
-        actualYear,
-        actualStatus,
-        sortOrder,
-        filterSearchText,
-        currentPage,
-        pageSize,
-        signal,
-      );
-    default:
-      return client.getDashboardDraftsByPortalID(
-        accountDetailsCrmGuid,
-        actualYear,
-        actualStatus,
-        sortOrder,
-        filterSearchText,
-        currentPage,
-        pageSize,
-        signal,
-      );
-  }
-};
-
-const checkAcceptedQuoteStatus = (
-  requestsResponse: PagedListOfDashboardItemDto,
-) => {
-  const newlyAcceptedQuoteId =
-    SessionStorageCache().getItem('accepted-quote-id');
-  if (newlyAcceptedQuoteId) {
-    const items = requestsResponse.items;
-    if (!items) {
-      SessionStorageCache().removeItem('accepted-quote-id');
-      return;
-    }
-
-    const requestResponse = items.find(
-      (x) => x.referenceId === newlyAcceptedQuoteId,
-    );
-    if (requestResponse?.status === DashboardItemStatus.QuoteAvailable) {
-      requestResponse.status = DashboardItemStatus.QuoteAccepted;
-      if (requestResponse.quote) {
-        requestResponse.quote.artefactName =
-          requestResponse.requestForQuote?.artefactName;
-      }
-      requestResponse.lastUpdated = new Date();
-
-      const index = items.findIndex(
-        (x) => x.referenceId === newlyAcceptedQuoteId,
-      );
-      items.unshift(...items.splice(index, 1));
-
-      // Non-null assertion required: property is typed nullable but guaranteed non-null here
-      SessionStorageCache().setItem(
-        requestResponse.referenceId ?? '',
-        'view-quote-id',
-      );
-    }
-    SessionStorageCache().removeItem('accepted-quote-id');
-  }
-};
-
-const handleDashboardLoadError = (
-  error: unknown,
-  setErrorStatus: React.Dispatch<
-    React.SetStateAction<{
-      hasError: boolean;
-      status: number;
-      forbidden: boolean;
-      noThirdPartyAccess: boolean;
-    }>
-  >,
-) => {
-  const problemDetails = error as ProblemDetails;
-  if ((problemDetails.status ?? 0) > 0) {
-    // Non-null assertion required: property is typed nullable but guaranteed non-null here
-    setErrorStatus((prevState) => ({
-      ...prevState,
-      status: problemDetails.status ?? 0,
-    }));
-  }
-  if (
-    problemDetails.status === HttpStatusCode.Forbidden &&
-    problemDetails.title?.includes('No third-party access')
-  ) {
-    setErrorStatus((prevState) => ({ ...prevState, noThirdPartyAccess: true }));
-  } else if (problemDetails.status === HttpStatusCode.Forbidden) {
-    setErrorStatus((prevState) => ({ ...prevState, forbidden: true }));
-  } else {
-    setErrorStatus((prevState) => ({ ...prevState, hasError: true }));
-  }
-  AppLogger.info('Dashboard load error values', problemDetails);
-};
-
-const applyErrorNotifications = (
-  forbidden: boolean,
-  noThirdPartyAccess: boolean,
-  orgName: string | undefined,
-  abn: string | undefined,
-  organisation: string | undefined,
-  accountDispatch: ReturnType<typeof useAccountDispatch>,
-  setErrorStatus: React.Dispatch<
-    React.SetStateAction<{
-      hasError: boolean;
-      status: number;
-      forbidden: boolean;
-      noThirdPartyAccess: boolean;
-    }>
-  >,
-) => {
-  if (forbidden) {
-    setDashboardNotification(DashBoardNotifications.getForbiddenNotification());
-  }
-  if (noThirdPartyAccess) {
-    setDashboardNotification(
-      DashBoardNotifications.getThirdPartyAccessNotification(orgName ?? ''),
-    );
-    if (accountDispatch) {
-      accountDispatch.setTargetOrganisation(abn ?? '', organisation ?? '');
-    }
-    setErrorStatus((prevState) => ({
-      ...prevState,
-      noThirdPartyAccess: false,
-    }));
-  }
-};
+import {
+  DEFAULT_DASHBOARD_PAGESIZE,
+  showDashboardMessage,
+  setNotification,
+  setInfoNotification,
+  handlePaginationScroll,
+} from './dashboardShared';
+import {
+  DEFAULT_SEARCH_PLACEHOLDER,
+  applyErrorNotifications,
+  handleNotificationScroll,
+} from './dashboard.helpers';
+import type { DashboardErrorStatus } from './dashboard.helpers';
+import { DashboardQuickLinks } from './dashboard.sections';
+import { useDashboardFilters } from './useDashboardFilters';
+import { useDashboardRequests } from './useDashboardRequests';
 
 const Dashboard = () => {
-  const { inProgress, accounts, instance } = useMsal();
-  const [requests, setRequests] = useState<DashboardItemDto[]>([]);
-  const [isDataLoading, setIsDataLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reload, setReload] = useState(false);
   const accountState = useAccountState();
   const accountDispatch = useAccountDispatch();
   const accountDetails = accountState?.details;
   const modalState = useModalState();
   const modalDispatch = useModalDispatch();
-  const [errorStatus, setErrorStatus] = useState({
+  const [errorStatus, setErrorStatus] = useState<DashboardErrorStatus>({
     hasError: false,
     status: 0,
     forbidden: false,
     noThirdPartyAccess: false,
   });
 
-  // Seed the debounce with the saved search so mounting does not fetch once without it
-  // and then fetch again when the initial profile reaches the debounce timer.
-  const [initialFilters, setInitialFilters] = useState<UserProfile | undefined>(
-    () =>
-      accountDetails?.userProfile
-        ? mapToUserProfile(accountDetails.userProfile)
-        : undefined,
-  );
   const dashboardMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();
   const orgName =
     accountState?.details?.targetOrganisation?.targetOrganisationName;
-  const savedUserProfile = accountDetails?.userProfile;
   const organisationCRMGuid = accountDetails?.organisationCRMGuid;
   const userAcceptedTermsOfUse = accountDetails?.userAcceptedTermsOfUse;
   const accountHomeAccountId = accountDetails?.homeAccountId;
@@ -308,15 +67,20 @@ const Dashboard = () => {
   const showBranchSelector = !!modalState?.showBranchSelector;
   const showRFQDeleteModal = !!modalState?.showRFQDeleteModal;
 
-  // Paging
-  const [currentPage, setCurrentPage] = useState(
-    initialFilters?.filterCurrentPage ?? 1,
-  );
-  const [totalPages, setTotalPages] = useState(1);
-  const [activeTab, setActiveTab] = useState(
-    initialFilters?.filterActiveTab ?? DashboardTab.Drafts,
-  );
-  const [totalCount, setTotalCount] = useState(0);
+  const {
+    initialFilters,
+    setInitialFilters,
+    currentPage,
+    setCurrentPage,
+    activeTab,
+    changeTab: applyTabChange,
+    changePage,
+    stableFilters,
+  } = useDashboardFilters({
+    accountDetails,
+    accountDispatch,
+    branchSelectionModalMode,
+  });
   const searchPlaceholder = useMemo(
     () =>
       activeTab === DashboardTab.Instruments
@@ -341,208 +105,28 @@ const Dashboard = () => {
     clearDashboardInfoNotification();
   }, []);
 
-  const saveUserProfile = (userProfile: UserProfile) => {
-    void accountDispatch?.setUserProfile({
-      testingCalibrationDashboard: omitUndefined(userProfile),
-    });
-  };
+  const {
+    requests,
+    setRequests,
+    isDataLoading,
+    isModalOpen,
+    totalPages,
+    totalCount,
+  } = useDashboardRequests({
+    stableFilters,
+    organisationCRMGuid,
+    accountHomeAccountId,
+    userAcceptedTermsOfUse,
+    showBranchSelector,
+    showRFQDeleteModal,
+    setCurrentPage,
+    setErrorStatus,
+  });
 
   const changeTab = (tab: DashboardTab) => {
     setRequests([]);
-    setActiveTab(tab);
-    setCurrentPage(1);
-    if (initialFilters) {
-      const profile = {
-        ...initialFilters,
-        filterActiveTab: tab,
-        filterCurrentPage: 1,
-      };
-      setInitialFilters(profile);
-      saveUserProfile(profile);
-    }
+    applyTabChange(tab);
   };
-
-  const changePage = (page: number) => {
-    setCurrentPage(page);
-    if (initialFilters) {
-      const profile = {
-        ...initialFilters,
-        filterCurrentPage: page,
-      };
-      setInitialFilters(profile);
-      saveUserProfile(profile);
-    }
-  };
-
-  // Set values from the userprofile
-  useEffect(() => {
-    if (savedUserProfile) {
-      const p = mapToUserProfile(savedUserProfile);
-      setActiveTab(p.filterActiveTab ?? DashboardTab.Drafts);
-      setCurrentPage(p.filterCurrentPage ?? defaultFilter.filterCurrentPage);
-      setInitialFilters((prevState) => prevState ?? p);
-    }
-  }, [savedUserProfile]);
-
-  // Set to default userprofile page number when the branch is changed.
-  // The reset fires once per branch selection. Keying on the selection itself
-  // rather than on the profile's current page matters twice over: writing the
-  // profile replaces `savedUserProfile`, which this effect depends on, so a
-  // value-free guard would loop; and comparing the saved page against the
-  // default skipped the whole reset - tab and filters included - whenever the
-  // user already sat on page 1, which is the common case.
-  const branchResetKeyRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    const branchResetKey = `${branchSelectionModalMode ?? ''}:${accountDetails?.defaultOrganisationId ?? ''}`;
-
-    if (
-      savedUserProfile &&
-      branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg &&
-      branchResetKeyRef.current !== branchResetKey
-    ) {
-      branchResetKeyRef.current = branchResetKey;
-      const tcDash = savedUserProfile.testingCalibrationDashboard;
-      const profile = {
-        filterYearType: tcDash?.filterYearType,
-        filterStatusType: tcDash?.filterStatusType,
-        filtersChanged: tcDash?.filtersChanged,
-        filterSortOrder: tcDash?.filterSortOrder,
-        filterCurrentPage: defaultFilter.filterCurrentPage,
-        filterActiveTab: tcDash?.filterActiveTab as DashboardTab | undefined,
-        filterSearchText: tcDash?.filterSearchText,
-      };
-      setActiveTab(profile.filterActiveTab ?? DashboardTab.Drafts);
-      // profile.filterCurrentPage is assigned defaultFilter.filterCurrentPage a few lines
-      // above, so it can never be nullish and the fallback here was unreachable.
-      setCurrentPage(profile.filterCurrentPage);
-      void accountDispatch?.setUserProfile({
-        testingCalibrationDashboard: omitUndefined(profile),
-      });
-      setInitialFilters(profile);
-    }
-  }, [
-    accountDispatch,
-    accountDetails?.defaultOrganisationId,
-    branchSelectionModalMode,
-    savedUserProfile,
-  ]);
-
-  const debouncedSearchText = useDebounce(
-    initialFilters?.filterSearchText,
-    300,
-  );
-  const stableFilters = useMemo(
-    () => ({
-      filterActiveTab: initialFilters?.filterActiveTab,
-      filterCurrentPage: initialFilters?.filterCurrentPage,
-      filterYearType: initialFilters?.filterYearType,
-      filterStatusType: initialFilters?.filterStatusType,
-      filterSortOrder: initialFilters?.filterSortOrder,
-      filterSearchText: debouncedSearchText,
-    }),
-    [
-      initialFilters?.filterActiveTab,
-      initialFilters?.filterCurrentPage,
-      initialFilters?.filterYearType,
-      initialFilters?.filterStatusType,
-      initialFilters?.filterSortOrder,
-      debouncedSearchText,
-    ],
-  );
-
-  const resolveFilterParams = (
-    filterYearType: string | undefined,
-    filterStatusType: string | undefined,
-  ) => ({
-    actualYear:
-      filterYearType === defaultFilter.filterYearType
-        ? undefined
-        : filterYearType,
-    actualStatus:
-      filterStatusType === defaultFilter.filterStatusType
-        ? undefined
-        : (filterStatusType as StatusEnumDto),
-  });
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const loadDataForDisplay = async () => {
-      if (!organisationCRMGuid || !stableFilters.filterActiveTab) {
-        return;
-      }
-      if (inProgress !== InteractionStatus.None || accounts.length === 0) {
-        return;
-      }
-
-      try {
-        AppLogger.verbose('Dashboard.loadDataForDisplay', {
-          homeAccountId: accountHomeAccountId,
-        });
-        const client = new DashboardClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
-        );
-        client.setAuthToken(tokenResult.accessToken);
-        setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
-        setIsModalOpen(
-          showBranchSelector || showRFQDeleteModal || !userAcceptedTermsOfUse,
-        );
-        setIsDataLoading(true);
-        const { actualYear, actualStatus } = resolveFilterParams(
-          stableFilters.filterYearType,
-          stableFilters.filterStatusType,
-        );
-        // SEC-010 (IDOR): Verified by backend team 2026-06-04. Finding identified in
-        // pentest prior to go-live and remediated before production deployment. Server-side
-        // org-scoping enforcement confirmed. SEC-010 CLOSED — see docs/sec/SEC-010-idor-backend-verification.md.
-        const requestsResponse = await fetchRequestsByTab({
-          tab: stableFilters.filterActiveTab,
-          client,
-          sortOrder: 'descending',
-          currentPage: stableFilters.filterCurrentPage ?? 1,
-          pageSize: DEFAULT_DASHBOARD_PAGESIZE,
-          accountDetailsCrmGuid: organisationCRMGuid,
-          filterSearchText: stableFilters.filterSearchText,
-          actualYear,
-          actualStatus,
-          signal: controller.signal,
-        });
-
-        checkAcceptedQuoteStatus(requestsResponse);
-        setRequests(requestsResponse.items ?? []);
-        setCurrentPage(
-          requestsResponse.currentPage ?? defaultFilter.filterCurrentPage,
-        );
-        setTotalPages(requestsResponse.totalPages ?? 0);
-        setTotalCount(requestsResponse.totalCount ?? 0);
-        // trackGAPii(); // Keep this here for later when we track pii-data
-      } catch (error) {
-        if ((error as { name?: string }).name === 'AbortError') return;
-        AppLogger.error('Failed to load dashboard.', error as Error);
-        handleDashboardLoadError(error, setErrorStatus);
-      } finally {
-        setIsDataLoading(false);
-        setReload(false);
-      }
-    };
-    void loadDataForDisplay();
-
-    return () => {
-      controller.abort();
-    };
-  }, [
-    accounts,
-    accountHomeAccountId,
-    inProgress,
-    instance,
-    organisationCRMGuid,
-    reload,
-    showBranchSelector,
-    showRFQDeleteModal,
-    stableFilters,
-    userAcceptedTermsOfUse,
-  ]);
 
   useEffect(() => {
     applyErrorNotifications(
@@ -604,9 +188,7 @@ const Dashboard = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
             <RequestItem request={r} key={r.referenceId} />
@@ -623,9 +205,7 @@ const Dashboard = () => {
     userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
-      {requests !== undefined &&
-      requests.length > 0 &&
-      userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
+      {requests.length > 0 && userAcceptedTermsOfUse ? ( // Check user has accepted terms of use before showing the request list
         <ol className='list-unstyled'>
           {trequests.map((r: DashboardItemDto) => (
             <InstrumentItem request={r} key={r.referenceId} />
@@ -714,9 +294,10 @@ const Dashboard = () => {
           id='dashboard-type'
           activeKey={activeTab}
           onSelect={(key) => {
-            const tab = key as DashboardTab;
-            changeTab(tab);
-            trackGAEvent(tab);
+            selectDashboardTab(key, (tab) => {
+              changeTab(tab);
+              trackGAEvent(tab);
+            });
           }}
         >
           <Nav
@@ -848,37 +429,7 @@ const Dashboard = () => {
         {renderDashTypeTitle()}
         {renderDashTCSubView()}
 
-        <Row className='mb-5'>
-          <h2 className='pt-md-4 mb-3'>Quick links</h2>
-          <Col md>
-            <StandardPathway
-              type='internal'
-              title='Services we offer'
-              linkDescription=' '
-              bodyText='The National Measurement Institute (NMI) offers a range of service. Find out more...'
-              to='/services-we-offer'
-            />
-          </Col>
-          <Col md>
-            <StandardPathway
-              type='internal'
-              title='Help guide'
-              linkDescription=' '
-              bodyText='View help guides for common issues and troubleshooting tips'
-              to='/help-guide'
-            />
-          </Col>
-          <Col md>
-            <StandardPathway
-              type='external'
-              title='Give us your feedback'
-              linkDescription=' '
-              bodyText='Your feedback about using the portal is important to us. Please take the time to let us know your experience.'
-              linkHref='https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu'
-              target='_blank'
-            />
-          </Col>
-        </Row>
+        <DashboardQuickLinks />
       </Container>
     </>
   );

@@ -105,8 +105,9 @@ the main version of the project."
 **Plain English:** When two people changed the same part of the same file, and
 the computer can't automatically figure out which version to keep. **Analogy:**
 Two lawyers edited the same paragraph of a contract differently — someone needs
-to decide which version wins. **Example in context:** "There's a merge conflict"
-= "Two sets of changes overlap and I need you to decide which to keep."
+to decide which version wins. **Example in context:** "There's a merge
+conflict" = "Two sets of changes overlap and I need you to decide which to
+keep."
 
 ### Stash
 
@@ -145,8 +146,8 @@ your terminal" = "Open the app where you type commands."
 
 **Plain English:** The program that runs inside your terminal and interprets the
 commands you type. **Analogy:** The operator on the other end of a phone line
-who carries out your requests. **Example in context:** "Run this in your shell"
-= "Type this command in your terminal."
+who carries out your requests. **Example in context:** "Run this in your
+shell" = "Type this command in your terminal."
 
 ### CLI (Command Line Interface)
 

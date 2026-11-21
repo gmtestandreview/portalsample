@@ -51,9 +51,9 @@ pip install uv
 
 ```python
 agent = Agent(
-    role="...",
+    role='...',
     max_iter=10,  # Limit iterations
-    max_rpm=5     # Rate limit
+    max_rpm=5,  # Rate limit
 )
 ```
 
@@ -61,15 +61,15 @@ agent = Agent(
 
 ```python
 task = Task(
-    description="Research AI trends. Return EXACTLY 5 bullet points.",
-    expected_output="A list of 5 bullet points, nothing more."
+    description='Research AI trends. Return EXACTLY 5 bullet points.',
+    expected_output='A list of 5 bullet points, nothing more.',
 )
 ```
 
 1. **Enable verbose to debug**:
 
 ```python
-agent = Agent(role="...", verbose=True)
+agent = Agent(role='...', verbose=True)
 ```
 
 ### Agent Not Using Tools
@@ -82,17 +82,19 @@ agent = Agent(role="...", verbose=True)
 
 ```python
 class MyTool(BaseTool):
-    name: str = "Calculator"
-    description: str = "Use this to perform mathematical calculations. Input: math expression like '2+2'"
+    name: str = 'Calculator'
+    description: str = (
+        "Use this to perform mathematical calculations. Input: math expression like '2+2'"
+    )
 ```
 
 1. **Include tool in goal/backstory**:
 
 ```python
 agent = Agent(
-    role="Data Analyst",
-    goal="Calculate metrics using the Calculator tool",
-    backstory="You are skilled at using calculation tools."
+    role='Data Analyst',
+    goal='Calculate metrics using the Calculator tool',
+    backstory='You are skilled at using calculation tools.',
 )
 ```
 
@@ -100,8 +102,8 @@ agent = Agent(
 
 ```python
 agent = Agent(
-    role="...",
-    tools=[tool1, tool2, tool3]  # Don't overload with tools
+    role='...',
+    tools=[tool1, tool2, tool3],  # Don't overload with tools
 )
 ```
 
@@ -113,10 +115,10 @@ agent = Agent(
 
 ```python
 search_tool = SerperDevTool()
-search_tool.description = "Search the web for current news and information. Use for recent events."
+search_tool.description = 'Search the web for current news and information. Use for recent events.'
 
 pdf_tool = PDFSearchTool()
-pdf_tool.description = "Search within PDF documents. Use for document-specific queries."
+pdf_tool.description = 'Search within PDF documents. Use for document-specific queries.'
 ```
 
 ## Task Issues
@@ -128,17 +130,13 @@ pdf_tool.description = "Search within PDF documents. Use for document-specific q
 **Fix**: Explicitly pass context:
 
 ```python
-task1 = Task(
-    description="Research AI trends",
-    expected_output="List of trends",
-    agent=researcher
-)
+task1 = Task(description='Research AI trends', expected_output='List of trends', agent=researcher)
 
 task2 = Task(
-    description="Write about the research findings",
-    expected_output="Blog post",
+    description='Write about the research findings',
+    expected_output='Blog post',
     agent=writer,
-    context=[task1]  # Must explicitly reference
+    context=[task1],  # Must explicitly reference
 )
 ```
 
@@ -152,13 +150,13 @@ task2 = Task(
 
 ```python
 task = Task(
-    description="...",
+    description='...',
     expected_output="""
     A JSON object with:
     - 'title': string
     - 'points': array of 5 strings
     - 'summary': string under 100 words
-    """
+    """,
 )
 ```
 
@@ -167,16 +165,14 @@ task = Task(
 ```python
 from pydantic import BaseModel
 
+
 class Report(BaseModel):
     title: str
     points: list[str]
     summary: str
 
-task = Task(
-    description="...",
-    expected_output="Structured report",
-    output_pydantic=Report
-)
+
+task = Task(description='...', expected_output='Structured report', output_pydantic=Report)
 ```
 
 ### Task Timeout
@@ -186,16 +182,12 @@ task = Task(
 **Fix**: Set timeouts and limits:
 
 ```python
-agent = Agent(
-    role="...",
-    max_iter=15,
-    max_rpm=10
-)
+agent = Agent(role='...', max_iter=15, max_rpm=10)
 
 crew = Crew(
     agents=[agent],
     tasks=[task],
-    max_rpm=20  # Crew-level limit
+    max_rpm=20,  # Crew-level limit
 )
 ```
 
@@ -211,12 +203,12 @@ crew = Crew(
 from crewai import LLM
 
 # Use cloud API instead of local
-llm = LLM(model="gpt-4o")
+llm = LLM(model='gpt-4o')
 
 # Or smaller local model
-llm = LLM(model="ollama/llama3.1:7b")
+llm = LLM(model='ollama/llama3.1:7b')
 
-agent = Agent(role="...", llm=llm)
+agent = Agent(role='...', llm=llm)
 ```
 
 ### Rate Limiting
@@ -227,13 +219,13 @@ agent = Agent(role="...", llm=llm)
 
 ```python
 agent = Agent(
-    role="...",
-    max_rpm=5  # 5 requests per minute
+    role='...',
+    max_rpm=5,  # 5 requests per minute
 )
 
 crew = Crew(
     agents=[agent1, agent2],
-    max_rpm=10  # Total crew limit
+    max_rpm=10,  # Total crew limit
 )
 ```
 
@@ -245,14 +237,11 @@ crew = Crew(
 
 ```python
 import os
-os.environ["CREWAI_STORAGE_DIR"] = "./my_storage"
+
+os.environ['CREWAI_STORAGE_DIR'] = './my_storage'
 
 # Or disable memory
-crew = Crew(
-    agents=[...],
-    tasks=[...],
-    memory=False
-)
+crew = Crew(agents=[...], tasks=[...], memory=False)
 ```
 
 ## Flow Issues
@@ -267,7 +256,7 @@ crew = Crew(
 class MyFlow(Flow[MyState]):
     @start()
     def init(self):
-        self.state.data = "initialized"  # Correct
+        self.state.data = 'initialized'  # Correct
         return {}
 
     @listen(init)
@@ -284,9 +273,10 @@ class MyFlow(Flow[MyState]):
 ```python
 @router(analyze)
 def decide(self):
-    return "high_confidence"  # Must match exactly
+    return 'high_confidence'  # Must match exactly
 
-@listen("high_confidence")  # Match the router return value
+
+@listen('high_confidence')  # Match the router return value
 def handle_high(self):
     pass
 ```
@@ -300,11 +290,13 @@ def handle_high(self):
 ```python
 @start()
 def start_a(self):
-    return "A"
+    return 'A'
+
 
 @start()
 def start_b(self):  # Runs parallel with start_a
-    return "B"
+    return 'B'
+
 
 @listen(and_(start_a, start_b))
 def after_both(self):  # Waits for both
@@ -347,9 +339,11 @@ TAVILY_API_KEY=...
 ```python
 # Or in code
 import os
-os.environ["SERPER_API_KEY"] = "your-key"
+
+os.environ['SERPER_API_KEY'] = 'your-key'
 
 from crewai_tools import SerperDevTool
+
 search = SerperDevTool()
 ```
 
@@ -364,8 +358,9 @@ from crewai_tools import SerperDevTool
 
 # Test tool directly
 tool = SerperDevTool()
-result = tool._run("test query")
+result = tool._run('test query')
 print(result)  # Check output
+
 
 # Add error handling
 class SafeTool(BaseTool):
@@ -373,7 +368,7 @@ class SafeTool(BaseTool):
         try:
             return actual_operation(query)
         except Exception as e:
-            return f"Error: {str(e)}"
+            return f'Error: {str(e)}'
 ```
 
 ## Performance Issues
@@ -387,13 +382,13 @@ class SafeTool(BaseTool):
 1. **Use faster model**:
 
 ```python
-llm = LLM(model="gpt-4o-mini")  # Faster than gpt-4o
+llm = LLM(model='gpt-4o-mini')  # Faster than gpt-4o
 ```
 
 1. **Reduce iterations**:
 
 ```python
-agent = Agent(role="...", max_iter=10)
+agent = Agent(role='...', max_iter=10)
 ```
 
 1. **Enable caching**:
@@ -401,7 +396,7 @@ agent = Agent(role="...", max_iter=10)
 ```python
 crew = Crew(
     agents=[...],
-    cache=True  # Cache tool results
+    cache=True,  # Cache tool results
 )
 ```
 
@@ -422,22 +417,22 @@ task2 = Task(..., async_execution=True)
 
 ```python
 task = Task(
-    description="Brief research on X",  # Keep descriptions short
-    expected_output="3 bullet points"    # Limit output
+    description='Brief research on X',  # Keep descriptions short
+    expected_output='3 bullet points',  # Limit output
 )
 ```
 
 1. **Disable verbose in production**:
 
 ```python
-agent = Agent(role="...", verbose=False)
+agent = Agent(role='...', verbose=False)
 crew = Crew(agents=[...], verbose=False)
 ```
 
 1. **Use cheaper models**:
 
 ```python
-llm = LLM(model="gpt-4o-mini")  # Cheaper than gpt-4o
+llm = LLM(model='gpt-4o-mini')  # Cheaper than gpt-4o
 ```
 
 ## Debugging Tips
@@ -445,38 +440,34 @@ llm = LLM(model="gpt-4o-mini")  # Cheaper than gpt-4o
 ### Enable Verbose Output
 
 ```python
-agent = Agent(role="...", verbose=True)
+agent = Agent(role='...', verbose=True)
 crew = Crew(agents=[...], verbose=True)
 ```
 
 ### Check Crew Output
 
 ```python
-result = crew.kickoff(inputs={"topic": "AI"})
+result = crew.kickoff(inputs={'topic': 'AI'})
 
 # Check all outputs
-print(result.raw)            # Final output
-print(result.tasks_output)   # All task outputs
-print(result.token_usage)    # Token consumption
+print(result.raw)  # Final output
+print(result.tasks_output)  # All task outputs
+print(result.token_usage)  # Token consumption
 
 # Check individual tasks
 for task_output in result.tasks_output:
-    print(f"Task: {task_output.description}")
-    print(f"Output: {task_output.raw}")
-    print(f"Agent: {task_output.agent}")
+    print(f'Task: {task_output.description}')
+    print(f'Output: {task_output.raw}')
+    print(f'Agent: {task_output.agent}')
 ```
 
 ### Test Agents Individually
 
 ```python
 # Test single agent
-agent = Agent(role="Researcher", goal="...", verbose=True)
+agent = Agent(role='Researcher', goal='...', verbose=True)
 
-task = Task(
-    description="Simple test task",
-    expected_output="Test output",
-    agent=agent
-)
+task = Task(description='Simple test task', expected_output='Test output', agent=agent)
 
 crew = Crew(agents=[agent], tasks=[task], verbose=True)
 result = crew.kickoff()
@@ -489,7 +480,7 @@ import logging
 
 # Enable CrewAI logging
 logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger("crewai")
+logger = logging.getLogger('crewai')
 logger.setLevel(logging.DEBUG)
 ```
 

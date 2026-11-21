@@ -15,6 +15,7 @@ test-code reviews.
 ```python
 from typing import TypedDict
 
+
 class UserPayload(TypedDict):
     id: str
     email: str

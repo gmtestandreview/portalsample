@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useMsal } from '@azure/msal-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -20,7 +21,7 @@ import { formatDateTimeToString } from '../../../utils';
 import CustomPagination from '../../../components/Pagination';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import CustomPaginationHeader from '../../../components/PaginationHeader';
-import { sanitiseHtml } from '../../common/helperFunctions';
+import { sanitiseHtml, toFilterMessages } from '../../common/helperFunctions';
 
 const SlateEditor = lazy(
   () => import('../../../components/SlateEditor/SlateEditor'),
@@ -167,7 +168,10 @@ const ApplicationMessages = () => {
           value={messageView}
           disabled={isDataLoading}
           onChange={(e) => {
-            setMessageView(e.target.value as FilterMessages);
+            const nextMessageView = toFilterMessages(e.target.value);
+            if (nextMessageView !== undefined) {
+              setMessageView(nextMessageView);
+            }
             setCurrentPage(1); // reset paging when filter changes
             setRefreshTick((prev) => prev + 1); // force refetch if already on page 1
           }}
@@ -207,7 +211,9 @@ const ApplicationMessages = () => {
       className='d-flex align-items-center justify-content-center rounded-circle bg-primary mb-3 mb-sm-0 me-3'
       style={{ width: 36, height: 36 }}
     >
-      <span className='fs-6 capitalized text-white'>{avatar || '?'}</span>
+      <span className='fs-6 capitalized text-white'>
+        {orIfEmpty(avatar, '?')}
+      </span>
     </div>
   );
 

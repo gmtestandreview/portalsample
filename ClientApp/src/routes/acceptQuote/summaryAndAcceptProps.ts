@@ -13,7 +13,7 @@ import type {
   FormStepStatusDto,
   SummaryAndAcceptStep,
 } from '../../api/web-api-client';
-import { silentRequestFor } from '../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import { ErrorType } from '../../components/forms/WizardForm/types';
 import type {
   WizardFormStepValues,
@@ -35,11 +35,11 @@ const loadSummary =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
-      const client = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
+      const client = await createAuthenticatedClient(
+        AcceptQuoteClient,
+        accounts,
+        instance,
       );
-      client.setAuthToken(tokenResult.accessToken);
       const summaryStep = await client.getSummaryAndAccept(id, abortSignal);
       const wizardStepValues: WizardFormStepValues<SummaryAndAcceptStep> = {
         stepValues: { ...summaryStep },
@@ -63,11 +63,11 @@ const saveStep =
     abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
-      const client = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
+      const client = await createAuthenticatedClient(
+        AcceptQuoteClient,
+        accounts,
+        instance,
       );
-      client.setAuthToken(tokenResult.accessToken);
       await client.saveSummaryAndAccept(
         id,
         {

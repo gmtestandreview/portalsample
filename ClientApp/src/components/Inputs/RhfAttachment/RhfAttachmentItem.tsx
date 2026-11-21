@@ -101,7 +101,9 @@ const RhfAttachmentItem = ({
     setValue(
       `${name}.${currentIndex}.attachmentCategory`,
       lastSavedCategory.current,
-      { shouldDirty: true },
+      {
+        shouldDirty: true,
+      },
     );
   };
 

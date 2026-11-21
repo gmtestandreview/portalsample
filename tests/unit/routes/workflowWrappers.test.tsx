@@ -306,7 +306,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/quotation/nMIContactDetails') as unknown as string,
+  import('../../../ClientApp/src/routes/common/NMIContactDetails') as unknown as string,
   () =>
     ({
       default: () => <div>NMI contact details</div>,
@@ -816,6 +816,27 @@ describe('workflow route wrappers', () => {
     );
   });
 
+  it('renders request-for-quote success content with an empty reference when the id is absent', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    const RequestForQuoteCreated = (
+      await import('../../../ClientApp/src/routes/requestForQuote/created')
+    ).default;
+
+    renderAt(
+      '/request-for-quote-success',
+      <RequestForQuoteCreated />,
+      '/request-for-quote-success',
+    );
+
+    expect(screen.getByTestId('form-banner')).toHaveAttribute(
+      'data-ref-title',
+      'Ref ID: ',
+    );
+  });
+
   it('renders the submitted request-for-quote summary view after loading statuses', async () => {
     expect.hasAssertions();
 
@@ -1111,6 +1132,31 @@ describe('workflow route wrappers', () => {
     });
   });
 
+  it('skips the payment lookup and shows an empty quotation id when no id is in the route', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    const SubmittedSuccess = (
+      await import('../../../ClientApp/src/routes/acceptQuote/submittedSuccess')
+    ).default;
+
+    renderAt('/submitted-success', <SubmittedSuccess />, '/submitted-success');
+
+    expect(screen.getByTestId('form-banner')).toHaveAttribute(
+      'data-ref-title',
+      'Quotation ID: ',
+    );
+
+    // The effect still authenticates, then bails at the missing-id guard
+    // before requesting payment details.
+    await waitFor(() => {
+      expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
+    });
+
+    expect(mocks.getPaymentDetails).not.toHaveBeenCalled();
+  });
+
   it('loads quotation summary details and exposes quote actions', async () => {
     expect.hasAssertions();
 
@@ -1179,5 +1225,30 @@ describe('workflow route wrappers', () => {
       'Failed to get Quotedetails: CRM-FAIL',
       expect.any(Error),
     );
+  });
+
+  it('logs quote loading failures with an empty id when none is supplied', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+
+    mocks.getQuoteRequestDetails.mockRejectedValueOnce(
+      new Error('quote failed'),
+    );
+    const QuotationSummary = (
+      await import('../../../ClientApp/src/routes/acceptQuote/quotationSummary')
+    ).default;
+
+    renderAt(
+      '/quotation-summary',
+      <QuotationSummary cRMQuoteRequestId={undefined} isSummary />,
+    );
+
+    await waitFor(() => {
+      expect(mocks.appLoggerError).toHaveBeenCalledWith(
+        'Failed to get Quotedetails: ',
+        expect.any(Error),
+      );
+    });
   });
 });

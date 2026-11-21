@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../../utils/orIfEmpty';
 import Row from 'react-bootstrap/Row';
 import { Container } from 'react-bootstrap';
 import {
@@ -59,7 +60,7 @@ const TextSummary = ({
     label={label}
     id={id}
     as='p'
-    value={value || emptyValue}
+    value={orIfEmpty(value, emptyValue)}
     {...(multiline ? { className: 'pre-wrap' } : {})}
   />
 );

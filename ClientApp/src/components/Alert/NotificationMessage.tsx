@@ -1,3 +1,4 @@
+import { orIfEmpty } from '../../utils/orIfEmpty';
 import { NotificationSeverity } from '../../storage/types';
 import { AlertSuccess, AlertInfo, AlertWarning, AlertError } from '.';
 import type { NotificationMessageProps } from './types';
@@ -32,7 +33,7 @@ const NotificationMessage = (props: Readonly<NotificationMessageProps>) => {
     case NotificationSeverity.Success:
       return (
         <AlertSuccess
-          id={id || 'notif-success-message'}
+          id={orIfEmpty(id, 'notif-success-message')}
           role={role}
           ariaLive={ariaLive}
           canClose={canClose}
@@ -49,7 +50,7 @@ const NotificationMessage = (props: Readonly<NotificationMessageProps>) => {
     case NotificationSeverity.Information:
       return (
         <AlertInfo
-          id={id || 'notif-info-message'}
+          id={orIfEmpty(id, 'notif-info-message')}
           role={role}
           ariaLive={ariaLive}
           canClose={canClose}
@@ -66,7 +67,7 @@ const NotificationMessage = (props: Readonly<NotificationMessageProps>) => {
     case NotificationSeverity.Warning:
       return (
         <AlertWarning
-          id={id || 'notif-warning-message'}
+          id={orIfEmpty(id, 'notif-warning-message')}
           role={role}
           ariaLive={ariaLive}
           canClose={canClose}
@@ -84,7 +85,7 @@ const NotificationMessage = (props: Readonly<NotificationMessageProps>) => {
     default:
       return (
         <AlertError
-          id={id || 'notif-error-message'}
+          id={orIfEmpty(id, 'notif-error-message')}
           role={role}
           ariaLive={ariaLive}
           canClose={canClose}

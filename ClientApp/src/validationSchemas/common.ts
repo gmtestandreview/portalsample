@@ -78,7 +78,7 @@ export const nullableDate = (label: string) =>
     .label(label)
     .nullable();
 
-export const oneOfEnum = <T extends NonNullable<unknown>>(
+export const oneOfEnum = <T extends string | number>(
   enumObject: Record<string, T> | ArrayLike<T>,
 ) => yup.mixed<T>().oneOf(Object.values(enumObject));
 
@@ -130,11 +130,11 @@ const isValidWebsiteUrl = (value: string): boolean => {
 
 // To do - Explore create new Schema or stringExtensions Methods to support this
 export const serialNumMatchRegEx =
-  /^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}\[\]]+$/;
+  /^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]]+$/;
 export const extAlphaNumSingleLineMatchRegex =
-  /^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}\[\]]+$/;
+  /^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]]+$/;
 export const extAlphaNumMultiLineMatchRegex =
-  /^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}\[\]<>\r\n]+$/;
+  /^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]<>\r\n]+$/;
 
 export const websiteUrlSchema = (message: string, excludeEmpty = true) =>
   yup.string().test('websiteUrl', message, (value) => {
@@ -166,7 +166,8 @@ export const isValidAbn = (value: string) => {
   return sum % 89 === 0;
 };
 
-const DIGIT_WORDS: Readonly<Record<number, string>> = {
+// Partial: only 1-10 are spelled out, so any other number has no entry.
+const DIGIT_WORDS: Readonly<Partial<Record<number, string>>> = {
   1: 'one',
   2: 'two',
   3: 'three',

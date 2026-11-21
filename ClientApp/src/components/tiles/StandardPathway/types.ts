@@ -22,4 +22,5 @@ export interface StandardExternalPathwayProps extends StandardBasePathwayProps {
 }
 
 export type StandardPathwayProps =
-  StandardInternalPathwayProps | StandardExternalPathwayProps;
+  | StandardInternalPathwayProps
+  | StandardExternalPathwayProps;

@@ -113,7 +113,9 @@ describe(InstrumentInfoPanel, () => {
 
     let resolveInfoPanelContent: (
       value: { requirements: string; requirementsLink: string }[],
-    ) => void;
+    ) => void = () => {
+      throw new Error('The info panel promise executor has not run');
+    };
     const infoPanelContent = new Promise<
       { requirements: string; requirementsLink: string }[]
     >((resolve) => {
@@ -135,7 +137,7 @@ describe(InstrumentInfoPanel, () => {
     ).resolves.toBeInTheDocument();
 
     await act(async () => {
-      resolveInfoPanelContent!([
+      resolveInfoPanelContent([
         {
           requirements: 'Pattern approval evidence checklist',
           requirementsLink:

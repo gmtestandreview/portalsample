@@ -152,15 +152,15 @@ const SummaryDisplay = (props: Readonly<SummaryDisplayProps>) => {
 
   return (
     <div className={`mb-4 ${containerClassName}`}>
-      {label && <div className='form-label mb-0'>{label}</div>}
+      {label ? <div className='form-label mb-0'>{label}</div> : null}
       {renderFieldValue()}
-      {!!descriptor && (
+      {descriptor ? (
         <>
           {' '}
           <br />
           <span className='text-break'>{descriptor}</span>
         </>
-      )}
+      ) : null}
     </div>
   );
 };

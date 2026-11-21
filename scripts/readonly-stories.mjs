@@ -1,11 +1,15 @@
 import { execFileSync } from 'node:child_process';
-import { realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 import { projectDiagnostics } from './readonly-props.mjs';
-import { readTextFile, realPath, writeTextFile } from './safe-file-io.mjs';
+import {
+  readTextFile,
+  realFilePath,
+  realPath,
+  writeTextFile,
+} from './safe-file-io.mjs';
 
 const slash = (value) => value.replaceAll('\\', '/');
 const isFunctionLike = (node) =>
@@ -94,7 +98,7 @@ function functionStoryChanges(name, initializer) {
     changes: parameterChanges(
       initializer.parameters,
       name,
-      (index) => `Parameters<Story>[${index}]`,
+      (index) => 'Parameters<Story>[' + index + ']',
     ),
     skipped: [],
   };
@@ -126,7 +130,8 @@ function objectStoryChanges(name, initializer) {
       ...parameterChanges(
         property.initializer.parameters,
         `${name}.${propName}`,
-        (index) => `Parameters<NonNullable<Story['${propName}']>>[${index}]`,
+        (index) =>
+          "Parameters<NonNullable<Story['" + propName + "']>>[" + index + ']',
       ),
     );
   }
@@ -194,7 +199,7 @@ function resolveExistingPath(candidate) {
     // The candidate is one of the fixed executable paths or an explicit
     // operator-provided absolute path; it is not repository input.
     // executable path is constrained by the fixed allowlist or explicit configuration.
-    return realpathSync(candidate);
+    return realFilePath(candidate);
   } catch {
     return null;
   }

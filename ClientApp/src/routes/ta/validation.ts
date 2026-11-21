@@ -4,6 +4,7 @@ import {
   authorisedAgentSchemaSoft,
   contactSchema,
   contactSchemaSoft,
+  whenAnswerIsNo,
 } from '../../validationSchemas/contactValidation';
 import '../../validationSchemas/yupExtensions';
 import {
@@ -30,11 +31,7 @@ export const organisationAndContactSubmitValidation = yup.object<
     .label('Business website address')
     .maxLength(100)
     .optional(),
-  contact: yup.mixed().when('isPrincipalContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchema(),
-    otherwise: () => yup.mixed(),
-  }),
+  contact: whenAnswerIsNo('isPrincipalContact', contactSchema),
   isManufacturer: yup
     .mixed<keyof typeof YesNo>()
     .label('Organisation type')
@@ -71,11 +68,7 @@ export const organisationAndContactSaveValidation = yup.object<
     .label('Business website address')
     .nullable()
     .maxLength(100),
-  contact: yup.mixed().when('isPrincipalContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchemaSoft(),
-    otherwise: () => yup.mixed(),
-  }),
+  contact: whenAnswerIsNo('isPrincipalContact', contactSchemaSoft),
 });
 
 export const supportingDocsSaveValidation = yup.object().shape({
@@ -115,41 +108,20 @@ export const patternApprovalOrgAndContactSubmitValidation = yup.object<
         .label('Business website address')
         .maxLength(100)
         .optional(), */
-  contact: yup.mixed().when('isPrincipalContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchema(),
-    otherwise: () => yup.mixed(),
-  }),
-  invoiceContact: yup.mixed().when('isPrincipalInvoiceContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchema(),
-    otherwise: () => yup.mixed(),
-  }),
-  authorisedAgent: yup.mixed().when('isManufacturer', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => authorisedAgentSchema(),
-    otherwise: () => yup.mixed(),
-  }),
+  contact: whenAnswerIsNo('isPrincipalContact', contactSchema),
+  invoiceContact: whenAnswerIsNo('isPrincipalInvoiceContact', contactSchema),
+  authorisedAgent: whenAnswerIsNo('isManufacturer', authorisedAgentSchema),
 });
 
 export const patternApprovalOrgAndContactSaveValidation = yup.object<
   Validation<PatternApprovalOrgAndContact>
 >({
-  contact: yup.mixed().when('isPrincipalContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchemaSoft(),
-    otherwise: () => yup.mixed(),
-  }),
-  invoiceContact: yup.mixed().when('isPrincipalInvoiceContact', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => contactSchemaSoft(),
-    otherwise: () => yup.mixed(),
-  }),
-  authorisedAgent: yup.mixed().when('isManufacturer', {
-    is: (x: YesNo | undefined) => x === YesNo.No,
-    then: () => authorisedAgentSchemaSoft(),
-    otherwise: () => yup.mixed(),
-  }),
+  contact: whenAnswerIsNo('isPrincipalContact', contactSchemaSoft),
+  invoiceContact: whenAnswerIsNo(
+    'isPrincipalInvoiceContact',
+    contactSchemaSoft,
+  ),
+  authorisedAgent: whenAnswerIsNo('isManufacturer', authorisedAgentSchemaSoft),
 });
 
 export const applicationAndInstrumentSubmitValidation = yup.object<

@@ -25,9 +25,9 @@ This directory contains Architecture Decision Records (ADRs) for [Project Name].
 
 ## Index
 
-| ADR   | Title   | Status                              | Date       |
-| ----- | ------- | ----------------------------------- | ---------- |
-| <ref> | <title> | <canonical status>                 | YYYY-MM-DD |
+| ADR   | Title   | Status             | Date       |
+| ----- | ------- | ------------------ | ---------- |
+| <ref> | <title> | <canonical status> | YYYY-MM-DD |
 
 ## Creating a New ADR
 
@@ -75,8 +75,8 @@ adr link 2 "Complements" 1 "Is complemented by"
 
 ## Review checklist (confirm; do not assert)
 
-Use these as prompts to confirm with the people involved. **Never write a review,
-consultation, or approval into an ADR unless it actually happened.**
+Use these as prompts to confirm with the people involved. **Never write a
+review, consultation, or approval into an ADR unless it actually happened.**
 
 Before submission:
 

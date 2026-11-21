@@ -7,6 +7,7 @@ import type {
   ServicesOffered,
 } from '../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClient from '../../../ClientApp/src/api/web-api-client';
+import { toServiceType } from '../../../ClientApp/src/utils/apiEnumMappings';
 
 import {
   DEFAULT_ACCESS_TOKEN,
@@ -20,6 +21,10 @@ import {
 import type { ClientMockOf } from '../helpers/mockApiClient';
 import { renderWithRouter } from '../helpers/renderWithRouter';
 import { defined } from '../helpers/defined';
+
+type ServiceFixture = Omit<ServicesOffered, 'service'> & {
+  service?: ServiceType | string;
+};
 
 const mocks = vi.hoisted(() => ({
   accountContext: vi.fn<(...args: unknown[]) => unknown>(),
@@ -98,7 +103,7 @@ const serviceDtos: ServiceDto[] = [
   },
 ];
 
-const accountWith = (services?: ServicesOffered[]) => ({
+const accountWith = (services?: ServiceFixture[]) => ({
   details: { userProfile: { email: 'tester@example.gov.au', services } },
 });
 
@@ -450,12 +455,14 @@ describe('services we offer', () => {
 
       resetServicesWeOfferMocks();
 
+      expect(toServiceType('Unknown')).toBeUndefined();
+
       // The API can return a service the client build predates. The switch has a default arm
       // for exactly that, and without it the user would be stranded on a blank page.
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
-            service: 'Unknown' as ServiceType,
+            service: 'Unknown',
             isActive: true,
             isDefault: true,
           },
@@ -747,7 +754,7 @@ describe('services we offer', () => {
       // `service.icon || 'icon-file'` default - are on this one path.
       clients.lookup.methods.getServices.mockResolvedValue([
         {
-          serviceType: 'Unknown' as ServiceType,
+          serviceType: 'Unknown',
           title: 'Future service',
           description: 'Something this build predates',
           meta: 'New',
@@ -756,7 +763,7 @@ describe('services we offer', () => {
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
-            service: 'Unknown' as ServiceType,
+            service: 'Unknown',
             isActive: true,
             isDefault: true,
           },
@@ -797,6 +804,85 @@ describe('services we offer', () => {
       await user.click(screen.getByTestId('go-to-dashboard-button'));
 
       expect(screen.getByTestId('form-error-summary')).toBeInTheDocument();
+    });
+  });
+
+  describe('a service whose type is undefined', () => {
+    it('hydrates, toggles and saves it through every typeless fallback', async () => {
+      expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
+
+      const user = userEvent.setup();
+      // A lookup row with no serviceType drives every `serviceType ?? ''`
+      // fallback on one path: the hydrate keyed-write (and its `isActive ??
+      // false`), the rendered radio/checkbox ids and the checked lookup, the
+      // toggle handler, and the `: {}` arm of the save mapper. A matching
+      // profile row (also typeless) is what makes the hydrate find a dbService.
+      clients.lookup.methods.getServices.mockResolvedValue([
+        {
+          serviceType: ServiceType.TestingCalibration,
+          title: 'Testing and calibration',
+          description: 'Calibration of measuring instruments',
+          icon: 'icon-calibration',
+          meta: 'Most common',
+        },
+        {
+          serviceType: undefined,
+          title: 'Service without a type',
+          description: 'A lookup row the build cannot key',
+          meta: 'Edge',
+        },
+      ]);
+      mocks.accountContext.mockReturnValue(
+        accountWith([
+          {
+            service: ServiceType.TestingCalibration,
+            isActive: true,
+            isDefault: false,
+          },
+          // Omit `service`/`isActive` (exactOptionalPropertyTypes forbids an
+          // explicit `undefined`); the absent keys drive the same typeless arm.
+          { isDefault: false },
+        ]),
+      );
+
+      const { currentPath } = await renderRoute();
+
+      await waitFor(() => {
+        expect(screen.getByText('Service without a type')).toBeInTheDocument();
+      });
+
+      // Toggle the typeless row's checkbox -> setCheckedServicesFn(_, undefined).
+      const [, typelessCheckbox] = screen.getAllByRole('checkbox', {
+        hidden: true,
+      });
+      await user.click(defined(typelessCheckbox));
+
+      // A real default lets the save guard pass so the mapper runs over both
+      // rows, including the typeless one.
+      const [testingRadio] = screen.getAllByRole('radio', { hidden: true });
+      await user.click(defined(testingRadio));
+      await user.click(screen.getByTestId('save-button'));
+
+      await waitFor(() => {
+        expect(mocks.setUserProfile).toHaveBeenCalledWith({
+          email: 'tester@example.gov.au',
+          services: [
+            {
+              service: ServiceType.TestingCalibration,
+              isActive: true,
+              isDefault: true,
+            },
+            // No `service` key: the typeless row took the `: {}` arm.
+            { isActive: true, isDefault: false },
+          ],
+        });
+      });
+
+      await waitFor(() => {
+        expect(currentPath()).toBe('/dashboard');
+      });
     });
   });
 });

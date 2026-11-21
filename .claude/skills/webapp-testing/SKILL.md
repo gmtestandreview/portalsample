@@ -60,6 +60,53 @@ python scripts/with_server.py \
   -- python your_automation.py
 ```
 
+### `--server` command syntax
+
+`with_server.py` never starts a shell. Each `--server` value is parsed into an
+argument list and the program is launched directly.
+
+- **Supported:** `COMMAND ARG...`, optionally preceded by one or more
+  `cd DIR &&` prefixes. The `cd` prefixes set the working directory (relative to
+  where you run the script, cumulative across prefixes). Quote any argument or
+  directory that contains spaces: `--server 'cd "my app" && npm run dev'`.
+- **Quoted text is data.** `'a;b'` or `'x && y'` inside a longer quoted argument
+  is passed unchanged to the program, never interpreted.
+- **Rejected with an error (not executed):** pipes, `;`, `||`, a lone `&`,
+  redirects (`>`, `<`), `$(...)` and backticks, any `&&` segment other than
+  `cd DIR`, and a command that ends in `cd`. A standalone operator such as `';'`
+  is rejected even when quoted. Environment assignments (`FOO=1 cmd`), variable
+  expansion and globbing are not performed. A trailing `# comment` is dropped,
+  as in a shell.
+- **Need a pipeline or compound command?** Put it in a script file and pass
+  `--server "python start.py"`.
+- **Executables:** a bare name (`npm`, `python`) is resolved through `PATH` (so
+  `npm.cmd` shims work on Windows). On Windows, a bare name that exists only in
+  the current directory is refused. Give an explicit path to choose a specific
+  binary.
+- **Windows batch files (`.cmd`/`.bat`, including npm/pnpm shims):** `cmd.exe`
+  re-parses their arguments, so only letters, digits and `_ @ + = : , . / \ -`
+  and spaces are accepted; anything else (`& | < > ^ % ! " ( )`) is rejected.
+  Use the underlying `node`/`python` executable if you need other characters.
+- **Shutdown:** servers and their child processes are stopped when the command
+  finishes or startup fails. On Windows the whole tree is force-killed with
+  `taskkill`; on POSIX the process group gets SIGTERM, then SIGKILL.
+- **Server output:** stdout and stderr (merged) are drained continuously into a
+  bounded in-memory tail (64 KiB per server). Nothing is written to disk and
+  output is not shown live, so a chatty server can neither block nor fill the
+  disk. If a server does not become ready in time, the last 2000 bytes are
+  printed. Earlier versions piped the output without reading it.
+- **Trust model:** the `--server` and post-`--` commands are chosen by the
+  person running the CLI and execute with their authority; this is intentional.
+  Do not expose `with_server.py` to lower-trust callers (web requests, issue
+  text, untrusted config).
+- **Windows limitation:** a server that exits before cleanup can leave child
+  processes running, because `taskkill /T` only reaches descendants of a live
+  parent. This is a local development utility, not a process supervisor.
+- **Compatibility change:** earlier versions ran the string through a shell, so
+  pipelines, `;` chains and env-var prefixes worked. They now fail fast.
+- The command after `--` is run directly with the same executable rules, not
+  through a shell.
+
 To create an automation script, include only Playwright logic (servers are
 managed automatically):
 
@@ -67,10 +114,10 @@ managed automatically):
 from playwright.sync_api import sync_playwright
 
 with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True) # Always launch chromium in headless mode
+    browser = p.chromium.launch(headless=True)  # Always launch chromium in headless mode
     page = browser.new_page()
-    page.goto('http://localhost:5173') # Server already running and ready
-    page.wait_for_load_state('networkidle') # CRITICAL: Wait for JS to execute
+    page.goto('http://localhost:5173')  # Server already running and ready
+    page.wait_for_load_state('networkidle')  # CRITICAL: Wait for JS to execute
     # ... your automation logic
     browser.close()
 ```

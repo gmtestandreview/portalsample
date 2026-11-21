@@ -34,6 +34,10 @@ const coverageConfig: CoverageOptions = {
   include: ['ClientApp/src/**/*.{ts,tsx}', 'vite.config.mts'],
   exclude: [
     '**/*.d.ts',
+    // Untracked `.remember` plugin scratch files (e.g. tmp/last-ndc.ts) land
+    // under ClientApp/src and match the include glob, but are tooling state,
+    // not source, and can never be covered.
+    '**/.remember/**',
     'ClientApp/src/api/web-api-client.ts',
     'ClientApp/src/external/**',
     'ClientApp/src/parent/**',
@@ -78,6 +82,9 @@ export default defineConfig({
     watch: false,
     environment: 'jsdom',
     pool: 'forks',
+    // Preserve test-file isolation so jsdom, module and global state cannot leak
+    // between files in the unit suite.
+    isolate: true,
     execArgv: ['--max-old-space-size=8192'],
     maxWorkers: 2,
     globals: true,

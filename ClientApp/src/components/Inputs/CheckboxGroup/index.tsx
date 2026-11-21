@@ -8,6 +8,7 @@ import type { CheckboxGroupProps } from './types';
 import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { getControlId } from '../getControlId';
 
 const CheckboxGroup = <T,>(
   props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>,
@@ -30,8 +31,8 @@ const CheckboxGroup = <T,>(
     ...rest
   } = props;
 
-  const helpId = inlineHelp ? `help-${id || name}` : undefined;
-  const legendId = id || name;
+  const legendId = getControlId(id, name);
+  const helpId = inlineHelp ? `help-${legendId}` : undefined;
   const [_field, _meta] = useField<T>(name);
 
   if (isSummary) {
@@ -45,7 +46,7 @@ const CheckboxGroup = <T,>(
         <SummaryDisplay
           label={legend}
           value={selectedOption.label}
-          id={id || name}
+          id={legendId}
           as='span'
           containerClassName={containerClassName}
           className={className}
@@ -60,9 +61,7 @@ const CheckboxGroup = <T,>(
     <fieldset
       data-testid={`fs-${legendId}`}
       aria-describedby={
-        _meta.touched && _meta.error
-          ? `${id || name}-validation-msg`
-          : helpId || undefined
+        _meta.touched && _meta.error ? `${legendId}-validation-msg` : helpId
       }
     >
       <legend id={legendId} className={legendClassName}>
@@ -120,7 +119,7 @@ const CheckboxGroup = <T,>(
         {_meta.touched && _meta.error ? (
           <Form.Control.Feedback
             type='invalid'
-            id={`${id || name}-validation-msg`}
+            id={`${legendId}-validation-msg`}
             className='form-validation-message'
           >
             {_meta.error}

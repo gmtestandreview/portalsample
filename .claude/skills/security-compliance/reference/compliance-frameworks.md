@@ -211,43 +211,49 @@ import subprocess
 import json
 from datetime import datetime
 
+
 def collect_access_review_evidence():
     evidence = {
-        "collection_date": datetime.now().isoformat(),
-        "control_id": "CC6.2",
-        "control_name": "Quarterly Access Review"
+        'collection_date': datetime.now().isoformat(),
+        'control_id': 'CC6.2',
+        'control_name': 'Quarterly Access Review',
     }
 
     # Collect list of all users with production access
     okta_users = subprocess.check_output([
-        "okta", "user", "list",
-        "--groups", "production-access",
-        "--format", "json"
+        'okta',
+        'user',
+        'list',
+        '--groups',
+        'production-access',
+        '--format',
+        'json',
     ])
-    evidence["users"] = json.loads(okta_users)
+    evidence['users'] = json.loads(okta_users)
 
     # Collect AWS IAM users
-    aws_users = subprocess.check_output([
-        "aws", "iam", "list-users",
-        "--output", "json"
-    ])
-    evidence["aws_iam_users"] = json.loads(aws_users)
+    aws_users = subprocess.check_output(['aws', 'iam', 'list-users', '--output', 'json'])
+    evidence['aws_iam_users'] = json.loads(aws_users)
 
     # Collect MFA enrollment status
     mfa_status = subprocess.check_output([
-        "okta", "user", "list",
-        "--mfa-status",
-        "--format", "json"
+        'okta',
+        'user',
+        'list',
+        '--mfa-status',
+        '--format',
+        'json',
     ])
-    evidence["mfa_enrollment"] = json.loads(mfa_status)
+    evidence['mfa_enrollment'] = json.loads(mfa_status)
 
     # Save evidence to repository
-    filename = f"access_review_{datetime.now().strftime('%Y_%m_%d')}.json"
-    with open(f"/evidence/access_reviews/{filename}", "w") as f:
+    filename = f'access_review_{datetime.now().strftime('%Y_%m_%d')}.json'
+    with open(f'/evidence/access_reviews/{filename}', 'w') as f:
         json.dump(evidence, indent=2, fp=f)
 
-    print(f"Evidence collected: {filename}")
+    print(f'Evidence collected: {filename}')
     return evidence
+
 
 # Run quarterly
 collect_access_review_evidence()
@@ -471,6 +477,7 @@ Related Risks: N/A
 ```python
 # Example risk assessment framework for ISO 27001
 
+
 class RiskAssessment:
     def __init__(self):
         self.assets = []
@@ -490,22 +497,22 @@ class RiskAssessment:
 
         # Determine risk category
         if risk_level >= 15:
-            category = "Critical"
+            category = 'Critical'
         elif risk_level >= 10:
-            category = "High"
+            category = 'High'
         elif risk_level >= 5:
-            category = "Medium"
+            category = 'Medium'
         else:
-            category = "Low"
+            category = 'Low'
 
         risk = {
-            "asset": asset,
-            "threat": threat,
-            "vulnerability": vulnerability,
-            "likelihood": likelihood,
-            "impact": impact,
-            "risk_level": risk_level,
-            "category": category
+            'asset': asset,
+            'threat': threat,
+            'vulnerability': vulnerability,
+            'likelihood': likelihood,
+            'impact': impact,
+            'risk_level': risk_level,
+            'category': category,
         }
 
         self.risks.append(risk)
@@ -514,23 +521,23 @@ class RiskAssessment:
     def calculate_likelihood(self, threat, vulnerability):
         # Likelihood based on threat capability and vulnerability exploitability
         threat_levels = {
-            "nation-state": 5,
-            "organized_crime": 4,
-            "hacktivist": 3,
-            "insider": 3,
-            "script_kiddie": 2
+            'nation-state': 5,
+            'organized_crime': 4,
+            'hacktivist': 3,
+            'insider': 3,
+            'script_kiddie': 2,
         }
 
         vuln_levels = {
-            "critical": 5,  # Easily exploitable, public exploit available
-            "high": 4,
-            "medium": 3,
-            "low": 2,
-            "minimal": 1
+            'critical': 5,  # Easily exploitable, public exploit available
+            'high': 4,
+            'medium': 3,
+            'low': 2,
+            'minimal': 1,
         }
 
-        threat_score = threat_levels.get(threat.get("actor"), 3)
-        vuln_score = vuln_levels.get(vulnerability.get("severity"), 3)
+        threat_score = threat_levels.get(threat.get('actor'), 3)
+        vuln_score = vuln_levels.get(vulnerability.get('severity'), 3)
 
         # Average of threat capability and vulnerability exploitability
         return round((threat_score + vuln_score) / 2)
@@ -538,47 +545,42 @@ class RiskAssessment:
     def calculate_impact(self, asset):
         # Impact based on asset criticality and data sensitivity
         criticality = {
-            "critical": 5,  # Business-critical, revenue-generating
-            "high": 4,
-            "medium": 3,
-            "low": 2,
-            "minimal": 1
+            'critical': 5,  # Business-critical, revenue-generating
+            'high': 4,
+            'medium': 3,
+            'low': 2,
+            'minimal': 1,
         }
 
         data_sensitivity = {
-            "highly_confidential": 5,  # PII, PHI, financial data
-            "confidential": 4,
-            "internal": 3,
-            "public": 1
+            'highly_confidential': 5,  # PII, PHI, financial data
+            'confidential': 4,
+            'internal': 3,
+            'public': 1,
         }
 
-        crit_score = criticality.get(asset.get("criticality"), 3)
-        data_score = data_sensitivity.get(asset.get("data_classification"), 3)
+        crit_score = criticality.get(asset.get('criticality'), 3)
+        data_score = data_sensitivity.get(asset.get('data_classification'), 3)
 
         # Take maximum of criticality or data sensitivity
         return max(crit_score, data_score)
+
 
 # Example usage
 ra = RiskAssessment()
 
 asset = {
-    "name": "Customer Database",
-    "criticality": "critical",
-    "data_classification": "highly_confidential"
+    'name': 'Customer Database',
+    'criticality': 'critical',
+    'data_classification': 'highly_confidential',
 }
 
-threat = {
-    "name": "SQL Injection Attack",
-    "actor": "organized_crime"
-}
+threat = {'name': 'SQL Injection Attack', 'actor': 'organized_crime'}
 
-vulnerability = {
-    "name": "Unvalidated user input in search function",
-    "severity": "high"
-}
+vulnerability = {'name': 'Unvalidated user input in search function', 'severity': 'high'}
 
 risk = ra.assess_risk(asset, threat, vulnerability)
-print(f"Risk: {risk['category']} ({risk['risk_level']})")
+print(f'Risk: {risk['category']} ({risk['risk_level']})')
 # Output: Risk: Critical (20)
 ```
 
@@ -1342,6 +1344,7 @@ from cryptography.fernet import Fernet
 import hashlib
 import re
 
+
 class PCICompliantPaymentProcessor:
     def __init__(self, encryption_key):
         self.cipher = Fernet(encryption_key)
@@ -1372,7 +1375,7 @@ class PCICompliantPaymentProcessor:
     def encrypt_pan(self, pan):
         """Encrypt PAN for storage (PCI Req 3.4)"""
         if not self.validate_pan(pan):
-            raise ValueError("Invalid PAN")
+            raise ValueError('Invalid PAN')
 
         # Encrypt PAN
         encrypted = self.cipher.encrypt(pan.encode())
@@ -1400,25 +1403,27 @@ class PCICompliantPaymentProcessor:
     def log_access(self, user_id, action, result):
         """Log all access to cardholder data (PCI Req 10)"""
         import datetime
+
         log_entry = {
-            "timestamp": datetime.datetime.utcnow().isoformat(),
-            "user_id": user_id,
-            "action": action,
-            "result": result,
-            "ip_address": self.get_client_ip()  # Implement this
+            'timestamp': datetime.datetime.utcnow().isoformat(),
+            'user_id': user_id,
+            'action': action,
+            'result': result,
+            'ip_address': self.get_client_ip(),  # Implement this
         }
         # Write to tamper-proof log storage
         self.write_to_audit_log(log_entry)
+
 
 # Usage
 processor = PCICompliantPaymentProcessor(encryption_key=Fernet.generate_key())
 
 # Process payment
-pan = "4532015112830366"  # Test Visa card
+pan = '4532015112830366'  # Test Visa card
 encrypted = processor.encrypt_pan(pan)
 masked = processor.mask_pan(pan)
 
-print(f"Masked PAN: {masked}")  # Output: 453201******0366
+print(f'Masked PAN: {masked}')  # Output: 453201******0366
 # NEVER log or display full PAN
 ```
 

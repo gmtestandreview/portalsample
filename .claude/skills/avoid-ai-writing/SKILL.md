@@ -1386,8 +1386,8 @@ appear in the author's own prose, not in cited examples of bad writing.
 ## Context profiles
 
 Pass an optional context hint to adjust rule strictness. If no context is
-specified, auto-detect from content cues (short + hashtags = social, code blocks
-= technical, salutation = email, default = blog).
+specified, auto-detect from content cues (short + hashtags = social, code
+blocks = technical, salutation = email, default = blog).
 
 ### Profile definitions
 

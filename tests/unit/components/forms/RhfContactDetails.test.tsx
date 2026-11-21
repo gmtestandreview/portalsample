@@ -7,6 +7,7 @@ import { Title } from '@/api/web-api-client';
 import RhfContactDetails from '@/components/forms/CommonForms/RhfContactDetails';
 import { RhfHiddenRulesProvider } from '@/components/forms/RhfHidableField';
 import type { Hideable } from '@/components/forms/types';
+import { renderTitleOptionTexts } from '../../helpers/titleOptions';
 
 interface ContactValues {
   title: string;
@@ -88,7 +89,7 @@ const Harness = ({ contact, children, rules = {} }: HarnessProps) => {
 };
 
 const contactValue = (): ContactValues =>
-  (JSON.parse(screen.getByTestId('values').textContent ?? '') as FormValues)
+  (JSON.parse(screen.getByTestId('values').textContent) as FormValues)
     .organisationAndContact.contact;
 
 const renderDetails = (
@@ -146,12 +147,26 @@ describe('rhfContactDetails edit mode', () => {
       .map((option) => [option.textContent, option.getAttribute('value')]);
 
     expect(options[0]).toStrictEqual(['Please select', '']);
+    expect(options.slice(1).map(([, value]) => value)).toStrictEqual(
+      Object.values(Title),
+    );
     expect(options).toContainEqual([
       'Associate Professor',
       'AssociateProfessor',
     ]);
     expect(options).toContainEqual(['Other', 'Other']);
     expect(options).toHaveLength(Object.keys(Title).length + 1);
+  });
+
+  it('skips title options that do not map to a display title', () => {
+    expect.hasAssertions();
+
+    const options = renderTitleOptionTexts(Title.Dr, () =>
+      renderDetails(EMPTY_CONTACT),
+    );
+
+    expect(options).not.toContain('Dr');
+    expect(options).toContain('Mr');
   });
 
   it('writes typed and chosen values into the form', async () => {

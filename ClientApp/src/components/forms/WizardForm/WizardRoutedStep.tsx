@@ -94,7 +94,7 @@ const WizardRoutedStep = (
       isLoading={isLoading}
       promptPath={`${url}${location}`}
       onSaveAndExit={saveAndExitStep}
-      showBanner={showBanner || showBanner === undefined}
+      showBanner={showBanner !== false}
       {...omitUndefined({
         validateHard,
         validateSoft,

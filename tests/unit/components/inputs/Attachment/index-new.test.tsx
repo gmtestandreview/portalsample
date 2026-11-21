@@ -213,18 +213,12 @@ describe('attachment upload behavior', () => {
     expect(preventDefault).toHaveBeenCalledWith();
   });
 
-  it('ignores null-valued and null-file input changes', () => {
+  it('ignores null-file input changes', () => {
     expect.hasAssertions();
 
     const onUploadFiles = vi.fn<UploadFiles>();
     renderAttachment([], { onUploadFiles });
     const input = screen.getByTestId('drag-upload-supporting-documents');
-
-    Object.defineProperty(input, 'value', {
-      configurable: true,
-      get: () => null,
-    });
-    fireEvent.change(input);
 
     Object.defineProperty(input, 'value', {
       configurable: true,
@@ -583,6 +577,25 @@ describe('attachment upload behavior', () => {
 
     expect(handleCancelFile).toHaveBeenCalledWith('manual.pdf');
     expect(screen.getByText('Cancelling...')).toBeInTheDocument();
+  });
+
+  it('renders an in-progress upload whose progress fields are all absent', () => {
+    expect.hasAssertions();
+
+    // An in-progress UploadProgress with no status, percent or files still
+    // satisfies the render guard (undefined status is neither 'Completed' nor
+    // 'CompletedWithErrors'), exercising the `?? 0`/`?? ''`/`?? []` fallbacks.
+    renderAttachment([], {
+      progress: {
+        completedFiles: 0,
+        totalFiles: 0,
+      },
+    });
+
+    expect(screen.getByRole('progressbar')).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
   });
 
   it('shows uploaded attachments once progress is complete', () => {

@@ -254,6 +254,26 @@ describe('header chrome', () => {
     });
   });
 
+  it('keeps the organisation link usable when its account id is absent', async () => {
+    expect.hasAssertions();
+
+    resetHeaderState();
+    msalState.authenticated = true;
+    vi.mocked(useAccountState).mockReturnValue({
+      details: { ...accountState.details, defaultOrganisationId: undefined },
+    } as unknown as ReturnType<typeof useAccountState>);
+
+    const user = userEvent.setup();
+    renderWithRouter(<AuthenticatedNavbarItems />);
+    await user.click(
+      screen.getByRole('button', { name: /Current user settings menu/i }),
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'Manage organisation' }),
+    ).toHaveAttribute('href', '/update-organisation/');
+  });
+
   it('does not render authenticated menu content until account email is available', () => {
     expect.hasAssertions();
 

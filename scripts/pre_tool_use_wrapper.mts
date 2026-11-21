@@ -76,4 +76,4 @@ if (result.status !== EXIT_SUCCESS && result.status !== EXIT_BLOCKED) {
   process.exit(EXIT_BLOCKED);
 }
 
-process.exit(result.status ?? EXIT_BLOCKED);
+process.exit(result.status);

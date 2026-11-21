@@ -13,10 +13,16 @@ Given(
 When(
   'the user opens the instrument report history',
   async ({ page, scenarioState }) => {
+    const { activeReferenceId } = scenarioState;
+
+    if (activeReferenceId === undefined) {
+      throw new Error(
+        'Expected an instrument to be selected by a preceding Given step',
+      );
+    }
+
     await page.goto(
-      `/instrument-reports/${encodeURIComponent(
-        scenarioState.activeReferenceId!,
-      )}`,
+      `/instrument-reports/${encodeURIComponent(activeReferenceId)}`,
     );
   },
 );
@@ -62,7 +68,10 @@ Given(
   ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey('GET', '/api/dashboard/get-quote-report-pdf'),
-      { status, once: false },
+      {
+        status,
+        once: false,
+      },
     );
   },
 );

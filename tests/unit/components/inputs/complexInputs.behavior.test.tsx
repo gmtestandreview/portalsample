@@ -297,6 +297,41 @@ describe('complex input behavior slice', () => {
     ).toBeInTheDocument();
   });
 
+  it('preserves an existing manual address when returning to search', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+
+    render(
+      <FormikHarness
+        initialValues={{
+          address: {
+            line1: '15 Lab Street',
+            suburb: 'Lindfield',
+            state: State.NSW,
+            postcode: '2070',
+            isManuallyEntered: true,
+            searchText: '15 Lab Street, Lindfield NSW 2070',
+          },
+        }}
+      >
+        <AddressLookup name='address' label='Service address' />
+        <ValuesProbe />
+      </FormikHarness>,
+    );
+
+    await user.click(screen.getByRole('button', { name: /Find an address/i }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"line1":"15 Lab Street"',
+      );
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"isManuallyEntered":false',
+      );
+    });
+  });
+
   it('switches to manual entry from an undefined field value without throwing', async () => {
     expect.hasAssertions();
 
@@ -369,8 +404,8 @@ describe('complex input behavior slice', () => {
           displayText: undefined,
           unqiueId: undefined,
           addressLine1: undefined,
-          addressLine2: 'Suite 2',
-          addressLine3: 'Building A',
+          addressLine2: undefined,
+          addressLine3: undefined,
           suburb: undefined,
           postCode: undefined,
           state: State.NSW,
@@ -399,6 +434,8 @@ describe('complex input behavior slice', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent('"line1":""');
+      expect(screen.getByTestId('values')).toHaveTextContent('"line2":""');
+      expect(screen.getByTestId('values')).toHaveTextContent('"line3":""');
       expect(screen.getByTestId('values')).toHaveTextContent('"suburb":""');
       expect(screen.getByTestId('values')).toHaveTextContent('"postcode":""');
     });

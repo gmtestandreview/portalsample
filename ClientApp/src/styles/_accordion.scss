@@ -18,10 +18,7 @@
         }
       }
       &:after {
-        background: tint-color(
-          $disr-light-blue,
-          30%
-        ); //$nmi-coastline-bay-primary
+        background: tint-color($disr-light-blue, 30%); //$nmi-coastline-bay-primary
       }
       &:focus,
       &:hover {

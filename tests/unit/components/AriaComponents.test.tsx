@@ -5,6 +5,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ResizableTableContainer } from 'react-aria-components/Table';
+import { defined } from '../helpers/defined';
 import { DialogTrigger } from '@/components/AriaComponents/Dialog/Dialog';
 import { Button } from '@/components/AriaComponents/Button/Button';
 import { Heading, Text } from '@/components/AriaComponents/Content/Content';
@@ -46,6 +47,7 @@ import {
   Heading as SheetHeading,
 } from '@/components/AriaComponents/Sheet/Sheet';
 import { Slider } from '@/components/AriaComponents/Slider/Slider';
+import { ColorSlider } from '@/components/AriaComponents/ColorSlider/ColorSlider';
 import { Switch } from '@/components/AriaComponents/Switch/Switch';
 import {
   Tab,
@@ -86,7 +88,8 @@ import {
   TreeSection,
 } from '@/components/AriaComponents/Tree/Tree';
 
-if (!Element.prototype.getAnimations) {
+const getAnimations: unknown = Reflect.get(Element.prototype, 'getAnimations');
+if (!getAnimations) {
   Object.defineProperty(Element.prototype, 'getAnimations', {
     configurable: true,
     value: vi.fn<() => Animation[]>(() => []),
@@ -117,7 +120,10 @@ class TestIntersectionObserver implements IntersectionObserver {
   }
 }
 
-globalThis.IntersectionObserver ??= TestIntersectionObserver;
+const intersectionObserver: unknown = globalThis.IntersectionObserver;
+if (intersectionObserver === null || intersectionObserver === undefined) {
+  globalThis.IntersectionObserver = TestIntersectionObserver;
+}
 
 const expectAnything = (): unknown => expect.anything();
 const expectStringContaining = (value: string): unknown =>
@@ -333,7 +339,10 @@ describe('react Aria evaluation wrappers', () => {
         screen.getByRole('meter', { name: 'Storage used' }),
       ).toHaveTextContent(`${value}%`);
 
-      const fill = container.querySelector('.fill')!;
+      const fill = defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      );
 
       expect(fill.style.width).toBe(`${value}%`);
       expect(fill.style.getPropertyValue('--fill-color')).toBe(fillColor);
@@ -356,13 +365,19 @@ describe('react Aria evaluation wrappers', () => {
       screen.getByRole('progressbar', { name: 'Upload progress' }),
     ).toHaveTextContent('30%');
     expect(
-      container.querySelector('.fill')!.style.getPropertyValue('--percent'),
+      defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      ).style.getPropertyValue('--percent'),
     ).toBe('30%');
 
     rerender(<ProgressBar label='Upload progress' isIndeterminate />);
 
     expect(
-      container.querySelector('.fill')!.style.getPropertyValue('--percent'),
+      defined(
+        container.querySelector<HTMLElement>('.fill'),
+        'progress fill element',
+      ).style.getPropertyValue('--percent'),
     ).toBe('100%');
   });
 
@@ -463,6 +478,20 @@ describe('react Aria evaluation wrappers', () => {
     );
   });
 
+  it('renders the color slider checkerboard when the track has no default background', () => {
+    expect.hasAssertions();
+
+    render(
+      <ColorSlider
+        aria-label='Red opacity'
+        defaultValue='#f00'
+        channel='alpha'
+      />,
+    );
+
+    expect(screen.getByRole('slider', { name: 'Alpha' })).toBeInTheDocument();
+  });
+
   it('renders text, textarea, number, search, time, and switch field content', () => {
     expect.hasAssertions();
 
@@ -551,10 +580,10 @@ describe('react Aria evaluation wrappers', () => {
     });
   });
 
-  it('renders toggle and segmented controls with their configured variants', () => {
+  it('renders toggle and segmented controls with their configured variants', async () => {
     expect.hasAssertions();
 
-    act(() => {
+    await act(async () => {
       render(
         <>
           <ToggleButton variant='secondary'>Pin</ToggleButton>
@@ -574,6 +603,7 @@ describe('react Aria evaluation wrappers', () => {
           </SegmentedControl>
         </>,
       );
+      await Promise.resolve();
     });
 
     expect({

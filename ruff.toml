@@ -1,30 +1,76 @@
-target-version = "py310"
+target-version = 'py314'
 line-length = 100
 
 # .claude/skills/** and .github/skills/** are vendored/marketplace skill
 # packages, not first-party code (they account for 877 of 933 baseline lint
 # findings). Excluding them keeps ruff focused on code this team maintains:
 # scripts/, analysis/, templates/, tests/hooks/, .claude/hooks/, skills/**.
-extend-exclude = [
-    ".claude/skills",
-    ".github/skills",
-]
+
+extend-exclude = ['.claude/skills', '.github/skills']
+
+# Treat '.mdx' and '.qmd' files as Markdown
+extension = { mdx = 'markdown', qmd = 'markdown' }
 
 [lint]
-select = ["E", "F", "I", "UP", "B", "SIM"]
-ignore = []
+preview = true
+select = ['E', 'F', 'I', 'UP', 'B', 'SIM', 'Q']
+ignore = [
+  'F401',
+  'Q000',
+  'Q001',
+  'Q002',
+  'Q003',
+  'Q004',
+  'W191',
+  'E111',
+  'E114',
+  'E117',
+  'D203',
+  'D206',
+  'D300',
+  'COM812',
+  'COM819',
+  'ISC002',
+  'ISC001',
+]
+fixable = ['ALL']
+extend-unsafe-fixes = ['E', 'F401']
+extend-fixable = ['B', 'Q']
+extend-safe-fixes = ['E', 'F401']
+dummy-variable-rgx = '^_$'
+allowed-confusables = ['−', 'ρ', '∗']
+flake8-implicit-str-concat.allow-multiline = false
 
 [per-file-target-version]
-"scripts/pre_tool_use.py" = "py314"
-"scripts/post_tool_use.py" = "py314"
-"scripts/watcher.py" = "py314"
-"scripts/process_utils.py" = "py314"
-"templates/watcher.py" = "py314"
-".claude/hooks/secret-scanner.py" = "py314"
-"tests/hooks/*.py" = "py314"
+'scripts/pre_tool_use.py' = 'py314'
+'scripts/post_tool_use.py' = 'py314'
+'scripts/watcher.py' = 'py314'
+'scripts/process_utils.py' = 'py314'
+'templates/watcher.py' = 'py314'
+'.claude/hooks/secret-scanner.py' = 'py314'
+'tests/hooks/*.py' = 'py314'
 
 [lint.isort]
-known-first-party = ["skills_ref"]
+known-first-party = ['skills_ref']
+
+[lint.pydocstyle]
+convention = 'google'
+
+[analyze]
+detect-string-imports = true
+string-imports-min-dots = 2
+direction = 'dependencies'
+
+[analyze.include-dependencies]
+"foo/bar.py" = ["foo/baz/*.py"]
+"foo/baz/reader.py" = ["configs/bar.json"]
 
 [format]
-quote-style = "double"
+preview = true
+quote-style = 'single'
+indent-style = 'space'
+docstring-code-format = true
+docstring-code-line-length = 'dynamic'
+line-ending = 'auto'
+nested-string-quote-style = 'preferred'
+skip-magic-trailing-comma = false

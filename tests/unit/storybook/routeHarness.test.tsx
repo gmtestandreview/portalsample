@@ -401,13 +401,15 @@ describe(PortalStoryRouter, () => {
 
     const originalFetch = globalThis.fetch;
     const originalWindowFetch = Reflect.get(globalThis.window, 'fetch') as
-      typeof globalThis.fetch | undefined;
+      | typeof globalThis.fetch
+      | undefined;
     const expectActiveFetch = (
       expectedFetch: typeof globalThis.fetch | undefined,
       expectedWindowFetch: typeof globalThis.fetch | undefined = expectedFetch,
     ) => {
       const activeWindowFetch = Reflect.get(globalThis.window, 'fetch') as
-        typeof globalThis.fetch | undefined;
+        | typeof globalThis.fetch
+        | undefined;
 
       expect(globalThis.fetch).toBe(expectedFetch);
       expect(activeWindowFetch).toBe(expectedWindowFetch);
@@ -425,7 +427,9 @@ describe(PortalStoryRouter, () => {
     );
     const secondView = render(
       withPortalProviders(Story, contextFor(secondFetch)),
-      { container: document.createElement('div') },
+      {
+        container: document.createElement('div'),
+      },
     );
 
     expectActiveFetch(secondFetch);

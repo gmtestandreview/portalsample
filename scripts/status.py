@@ -1,6 +1,6 @@
+#!/usr/bin/env python3.14
 # scripts/status.py
-"""
-A Team status line script.
+"""A Team status line script.
 Reads: .agent-sync/TEAM.md, current-task.json, watcher.pid
 Output: single line of text. Always exits 0.
 
@@ -12,62 +12,62 @@ import json
 import re
 import sys
 from contextlib import suppress
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from process_utils import pid_is_running
 
-DEFAULT_BASE_DIR = Path(__file__).parent.parent / ".agent-sync"
+DEFAULT_BASE_DIR = Path(__file__).parent.parent / '.agent-sync'
 
 
 def count_agents(base_dir: Path) -> int | None:
     """Count active agents from TEAM.md. Returns None if file missing or empty."""
-    team_file = base_dir / "TEAM.md"
+    team_file = base_dir / 'TEAM.md'
     if not team_file.exists():
         return None
     count = 0
     in_active_agents_section = False
     try:
-        with open(team_file, encoding="utf-8") as f:
+        with open(team_file, encoding='utf-8') as f:
             for line in f:
                 stripped = line.strip()
-                if re.match(r"^#{1,6}(?:\s|$)", stripped):
+                if re.match(r'^#{1,6}(?:\s|$)', stripped):
                     in_active_agents_section = bool(
-                        re.fullmatch(r"## Active Agents \(\d+\)", stripped)
+                        re.fullmatch(r'## Active Agents \(\d+\)', stripped)
                     )
                     continue
                 if not in_active_agents_section:
                     continue
-                if not stripped.startswith("|"):
+                if not stripped.startswith('|'):
                     continue
-                cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+                cells = [cell.strip() for cell in stripped.strip('|').split('|')]
                 if (
                     len(cells) >= 2
-                    and cells[0] not in {"", "Agent"}
-                    and not re.fullmatch(r":?-+:?", cells[0])
+                    and cells[0] not in {'', 'Agent'}
+                    and not re.fullmatch(r':?-+:?', cells[0])
                 ):
                     count += 1
-    except (OSError, UnicodeError):
+    except OSError, UnicodeError:
         return None
     return count if count > 0 else None
 
 
 def get_current_task(base_dir: Path) -> tuple[str | None, bool]:
     """Returns (task_id, is_stale). Returns (None, False) if no task or on error."""
-    task_file = base_dir / "current-task.json"
+    task_file = base_dir / 'current-task.json'
     if not task_file.exists():
         return None, False
     try:
-        with open(task_file, encoding="utf-8") as f:
+        with open(task_file, encoding='utf-8') as f:
             data = json.load(f)
-        task_id = data.get("task", "")
-        started_at = data.get("started_at", "")
-        stale_minutes = data.get("stale_after_minutes", 120)
+        task_id = data.get('task', '')
+        started_at = data.get('started_at', '')
+        stale_minutes = data.get('stale_after_minutes', 120)
         if started_at and task_id:
             start = datetime.fromisoformat(started_at)
             now = datetime.now()
             if start.tzinfo is not None:
-                now = datetime.now(timezone.utc)
+                now = datetime.now(UTC)
             elapsed_minutes = (now - start).total_seconds() / 60
             if elapsed_minutes > stale_minutes:
                 return task_id, True
@@ -78,7 +78,7 @@ def get_current_task(base_dir: Path) -> tuple[str | None, bool]:
 
 def is_watcher_running(base_dir: Path) -> bool:
     """Check if watcher process is alive via PID file. Cleans up stale PID file."""
-    pid_file = base_dir / "watcher.pid"
+    pid_file = base_dir / 'watcher.pid'
     if not pid_file.exists():
         return False
     try:
@@ -100,40 +100,40 @@ def main(base_dir: Path | None = None) -> None:
     if base_dir is None:
         base_dir = DEFAULT_BASE_DIR
         # Ensure UTF-8 output on Windows terminals
-        reconfigure = getattr(sys.stdout, "reconfigure", None)
+        reconfigure = getattr(sys.stdout, 'reconfigure', None)
         if callable(reconfigure):
             with suppress(Exception):
-                reconfigure(encoding="utf-8")
+                reconfigure(encoding='utf-8')
 
-    team_file = base_dir / "TEAM.md"
-    init_md = base_dir.parent / "INIT.md"
+    team_file = base_dir / 'TEAM.md'
+    init_md = base_dir.parent / 'INIT.md'
 
     if not team_file.exists():
         if not init_md.exists():
-            print("⚡ A Team · sem projecto configurado")
+            print('⚡ A Team · sem projecto configurado')
         else:
-            print("⚡ A Team · não iniciado — corre /orchestrate init")
+            print('⚡ A Team · não iniciado — corre /orchestrate init')
         return
 
     task_id, stale = get_current_task(base_dir)
 
     if stale:
-        print("⚡ A Team · tarefa pendente — verifica DAILY.md")
+        print('⚡ A Team · tarefa pendente — verifica DAILY.md')
         return
 
     agents = count_agents(base_dir)
     watcher = is_watcher_running(base_dir)
 
-    parts = ["⚡ A Team"]
+    parts = ['⚡ A Team']
     if agents:
-        parts.append(f"· {agents} agentes")
+        parts.append(f'· {agents} agentes')
     if task_id:
-        parts.append(f"· {task_id} a correr")
+        parts.append(f'· {task_id} a correr')
     if watcher:
-        parts.append("· ⟳")
+        parts.append('· ⟳')
 
-    print(" ".join(parts))
+    print(' '.join(parts))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

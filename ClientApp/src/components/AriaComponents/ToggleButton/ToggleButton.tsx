@@ -20,7 +20,7 @@ export function ToggleButton(props: Readonly<ToggleButtonProps>) {
     <RACToggleButton
       {...props}
       className='react-aria-ToggleButton button-base'
-      data-variant={props.variant || 'primary'}
+      data-variant={props.variant ?? 'primary'}
     >
       {composeRenderProps(props.children, (children) => (
         <span>{children}</span>

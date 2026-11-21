@@ -11,7 +11,7 @@ import {
   RequestForPatternApprovalClient,
   YesNo,
 } from '../../../api/web-api-client';
-import { silentRequestFor } from '../../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../../authentication/authenticatedClient';
 import { DisplayRules } from '../displayRules';
 
 type AppDetailsHidingValues = Partial<RequestForPatternApprovalAppDetails>;
@@ -28,11 +28,11 @@ const loadAppDetails =
     }
     if (accounts.length > 0) {
       try {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          RequestForPatternApprovalClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
         const instrumentAndRequest = await client.getAppDetails(
           id,
           abortSignal,
@@ -95,16 +95,13 @@ const appDetailsProps = (
     applicationAndInstrument: {
       isApplNewHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.NewCertificate ||
-        x.applicationAndInstrument.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.NewCertificate,
       isApplVariationHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.Variation ||
-        x.applicationAndInstrument.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.Variation,
       isApplOtherHide: (x: AppDetailsHidingValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
-          PatternApprovalRequiredValues.OtherApproval ||
-        x.applicationAndInstrument.patternApprovalType === undefined,
+        PatternApprovalRequiredValues.OtherApproval,
       isApplOIMLHide: (x: AppDetailsHidingValues) =>
         DisplayRules.isOIMLHidden(x.applicationAndInstrument ?? {}),
     },

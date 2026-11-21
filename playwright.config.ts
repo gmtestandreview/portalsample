@@ -35,7 +35,7 @@ export default defineConfig({
   timeout: 60_000,
   fullyParallel: true,
   forbidOnly: isCi,
-  retries: isCi ? 2 : 0,
+  retries: isCi ? 1 : 0,
   // The single local Vite dev server is not reliable under parallel app E2E load.
   workers: 1,
   reporter: [

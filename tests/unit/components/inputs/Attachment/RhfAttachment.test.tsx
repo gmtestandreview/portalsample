@@ -21,6 +21,7 @@ type DeleteFile = NonNullable<AttachmentProps['onDeleteFile']>;
 type CancelFile = NonNullable<AttachmentProps['handleCancelFile']>;
 type CategoryUpdate = NonNullable<AttachmentProps['onCategoryUpdate']>;
 import { FileStatus } from '@/routes/ta/types';
+import { defined } from '../../../helpers/defined';
 
 interface AttachmentHarnessProps {
   readonly initialAttachmentValue: AttachmentDto[] | AttachmentDto | null;
@@ -479,6 +480,25 @@ describe('rhfAttachment', () => {
     ).toBeInTheDocument();
   });
 
+  it('renders an in-progress upload whose progress fields are all absent', () => {
+    expect.hasAssertions();
+
+    // An in-progress UploadProgress with no status, percent or files still
+    // satisfies the render guard (undefined status is neither 'Completed' nor
+    // 'CompletedWithErrors'), exercising the `?? 0`/`?? ''`/`?? []` fallbacks.
+    renderAttachment(null, {
+      progress: {
+        completedFiles: 0,
+        totalFiles: 0,
+      },
+    });
+
+    expect(screen.getByRole('progressbar')).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
+  });
+
   it('points the control at its validation message once the form is submitted', async () => {
     // Until the form is submitted the control is described by its help text; afterwards the
     // error takes over, so assistive tech announces the problem rather than the hint.
@@ -903,7 +923,10 @@ describe('rhfAttachment', () => {
         attachmentCategory: '',
       }) satisfies AttachmentDto;
     const rowOf = (fileName: string) =>
-      screen.getByText(fileName).closest('.attachment')!;
+      defined(
+        screen.getByText(fileName).closest<HTMLElement>('.attachment'),
+        `attachment row for ${fileName}`,
+      );
     const touchCategory = async (
       user: ReturnType<typeof userEvent.setup>,
       fileName: string,
@@ -1039,9 +1062,12 @@ describe('rhfAttachment', () => {
       .mockReturnValue(savePromise);
     renderAttachment([uploadedAttachment, second], { onCategoryUpdate });
 
-    const secondRow = screen.getByText('second.pdf').closest('.attachment')!;
+    const secondRow = defined(
+      screen.getByText('second.pdf').closest<HTMLElement>('.attachment'),
+      'attachment row for second.pdf',
+    );
     await user.selectOptions(
-      within(secondRow as HTMLElement).getByRole('combobox', {
+      within(secondRow).getByRole('combobox', {
         name: 'Category',
       }),
       'Other',
@@ -1061,9 +1087,9 @@ describe('rhfAttachment', () => {
         'Certificate',
       );
     });
-    const values = JSON.parse(
-      screen.getByTestId('values').textContent ?? '{}',
-    ) as { attachments: AttachmentDto[] };
+    const values = JSON.parse(screen.getByTestId('values').textContent) as {
+      attachments: AttachmentDto[];
+    };
 
     expect(values.attachments).toHaveLength(1);
     expect(values.attachments[0]).toMatchObject({

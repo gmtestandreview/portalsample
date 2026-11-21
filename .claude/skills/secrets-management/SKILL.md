@@ -255,6 +255,7 @@ deploy:
 import boto3
 import json
 
+
 def lambda_handler(event, context):
     client = boto3.client('secretsmanager')
 
@@ -271,10 +272,7 @@ def lambda_handler(event, context):
     # Update secret
     client.put_secret_value(
         SecretId='my-secret',
-        SecretString=json.dumps({
-            'username': current_secret['username'],
-            'password': new_password
-        })
+        SecretString=json.dumps({'username': current_secret['username'], 'password': new_password}),
     )
 
     return {'statusCode': 200}

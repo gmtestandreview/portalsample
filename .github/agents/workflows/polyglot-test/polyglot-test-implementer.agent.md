@@ -156,6 +156,7 @@ describe('ClassName', () => {
 import pytest
 from module import ClassName
 
+
 class TestClassName:
     def test_method_name_valid_input_returns_expected(self):
         # Arrange

@@ -17,6 +17,7 @@ ${PROJECT_TYPE="Auto-detect|.NET|Java|JavaScript|TypeScript|React|Angular|Python
 <!-- Primary technology --> ${SCAN_DEPTH="Basic|Standard|Comprehensive"}
 <!-- How deeply to analyze the codebase --> ${INCLUDE_CODE_SNIPPETS=true|false}
 <!-- Include actual code snippets in addition to file references -->
+
 ${CATEGORIZATION="Pattern Type|Architecture Layer|File Type"}
 <!-- How to organize exemplars --> ${MAX_EXAMPLES_PER_CATEGORY=3}
 <!-- Maximum number of examples per category --> ${INCLUDE_COMMENTS=true|false}
@@ -68,9 +69,9 @@ ${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" ? `#### .NET Exemplars
 - **Unit Test Patterns**: Well-structured tests with proper arrangement and
   assertions` : ""}
 
-${(PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "TypeScript" || PROJECT_TYPE
-== "React" || PROJECT_TYPE == "Angular" || PROJECT_TYPE == "Auto-detect") ?
-`#### Frontend Exemplars (if detected)
+${(PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "TypeScript" ||
+PROJECT_TYPE == "React" || PROJECT_TYPE == "Angular" || PROJECT_TYPE ==
+"Auto-detect") ? `#### Frontend Exemplars (if detected)
 
 - **Component Structure**: Clean, well-structured components
 - **State Management**: Good examples of state handling

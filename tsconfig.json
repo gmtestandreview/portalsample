@@ -1,10 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "target": "ES2024",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
 
     "strict": true,
@@ -58,6 +58,8 @@
     "*.mjs",
     "ClientApp/src/**/*.ts",
     "ClientApp/src/**/*.tsx",
+    "ClientApp/packages/**/*.ts",
+    "ClientApp/packages/**/*.tsx",
     "scripts/**/*",
     "scripts/**/*.tsx",
     "scripts/**/*.ts",

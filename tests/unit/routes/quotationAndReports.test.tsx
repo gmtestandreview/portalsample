@@ -23,6 +23,7 @@ import type {
 import { ApplicationType } from '../../../ClientApp/src/api/web-api-client';
 import { QuoteStatus } from '../../../ClientApp/src/routes/common/enums';
 import { NotificationSeverity } from '../../../ClientApp/src/storage/types';
+import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
@@ -569,6 +570,10 @@ const resetQuotationAndReportsMocks = () => {
         tmasStatus: 'Withdrawn',
         tmasPortalRequestId: 'RFQ-101',
       },
+      {
+        tmasTcReportName: 'RPT-102',
+        tmasStatus: 'Report available',
+      },
     ],
   });
 };
@@ -597,7 +602,10 @@ describe('quotation and measurement report routes', () => {
 
     fireEvent.click(screen.getByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
+      defined(
+        screen.getAllByRole('button', { name: 'Decline quote' }).at(-1),
+        'confirm Decline quote button',
+      ),
     );
 
     await waitFor(() => {
@@ -627,7 +635,10 @@ describe('quotation and measurement report routes', () => {
     });
     fireEvent.click(screen.getByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
+      defined(
+        screen.getAllByRole('button', { name: 'Decline quote' }).at(-1),
+        'confirm Decline quote button',
+      ),
     );
 
     await waitFor(() => {
@@ -653,6 +664,21 @@ describe('quotation and measurement report routes', () => {
       severity: NotificationSeverity.Error,
       messageContains: true,
     });
+  });
+
+  it('links the proceed action to an id-less accept route when the quotation route has no id', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
+    const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
+      .default;
+
+    renderRoute('/quotation', <Quotation />, '/quotation');
+
+    await expect(
+      screen.findByTestId('new-request-button'),
+    ).resolves.toHaveAttribute('href', '/accept-quote-create/');
   });
 
   it('closes the decline confirmation without submitting', async () => {
@@ -813,8 +839,6 @@ describe('quotation and measurement report routes', () => {
         <QuoteDetails
           quotationData={{ ...quoteDetails, receiptandDispatchNA: true }}
           isSummary={false}
-          firstName='Alex'
-          lastName='Tester'
           fileError
         />
       </MemoryRouter>,
@@ -928,10 +952,9 @@ describe('quotation and measurement report routes', () => {
       expect(screen.getByText('RPT-100')).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('link', { name: 'View report' })).toHaveAttribute(
-      'href',
-      '/report/AQ-100',
-    );
+    expect(
+      screen.getAllByRole('link', { name: 'View report' })[0],
+    ).toHaveAttribute('href', '/report/AQ-100');
     expect(
       screen.getAllByRole('link', {
         name: 'Request recalibration for this instrument/artefact',
@@ -1052,8 +1075,6 @@ describe('quotation and measurement report routes', () => {
           }}
           isSummary
           fileError
-          firstName={undefined}
-          lastName={undefined}
         />
       </MemoryRouter>,
     );
@@ -1086,8 +1107,6 @@ describe('quotation and measurement report routes', () => {
             receiptandDispatchNA: true,
           }}
           isSummary
-          firstName='Alex'
-          lastName='Tester'
           fileError={false}
         />
       </MemoryRouter>,
@@ -1111,8 +1130,6 @@ describe('quotation and measurement report routes', () => {
             receiptandDispatchNA: false,
           }}
           isSummary={false}
-          firstName='Alex'
-          lastName='Tester'
           fileError={false}
         />
       </MemoryRouter>,
@@ -1166,7 +1183,10 @@ describe('quotation and measurement report routes', () => {
 
     fireEvent.click(await screen.findByTestId('decline-button'));
     fireEvent.click(
-      screen.getAllByRole('button', { name: 'Decline quote' }).at(-1)!,
+      defined(
+        screen.getAllByRole('button', { name: 'Decline quote' }).at(-1),
+        'confirm Decline quote button',
+      ),
     );
 
     await waitFor(() => {

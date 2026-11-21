@@ -19,7 +19,9 @@ const dispatchContext: AccountDispatchContext = {
   setOrganisationAndBranch: vi.fn<(...args: unknown[]) => void>(),
   setShowBranchSelector: vi.fn<(...args: unknown[]) => void>(),
   setShowRFQSelectModal: vi.fn<(...args: unknown[]) => void>(),
-  setUserProfile: vi.fn<(...args: unknown[]) => Promise<boolean>>().mockResolvedValue(true),
+  setUserProfile: vi
+    .fn<(...args: unknown[]) => Promise<boolean>>()
+    .mockResolvedValue(true),
 };
 
 const ServicesProbe = () => {

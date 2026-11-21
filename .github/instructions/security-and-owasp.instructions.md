@@ -522,7 +522,7 @@ Use masked secrets in CI. Never echo environment variables containing secrets.
 ```typescript
 // GOOD — generic error to client, details only in logs
 app.use((err, req, res, _next) => {
-  logger.error({ err, path: req.path, method: req.method });
+  logging.exception({ err, path: req.path, method: req.method });
   const isDev = process.env.NODE_ENV === 'development';
   res.status(500).json({
     error: 'Internal Server Error',

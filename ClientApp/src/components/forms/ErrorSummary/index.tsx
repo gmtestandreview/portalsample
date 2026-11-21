@@ -1,6 +1,7 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
 import { useEffect, useRef, useState } from 'react';
+import type React from 'react';
 import { Alert } from 'react-bootstrap';
 import { useFormState } from 'react-hook-form';
 import { Link } from 'react-router';
@@ -37,7 +38,7 @@ const renderErrorListItem = (
   key: string,
   text: string,
   disableLinkedError?: boolean,
-): JSX.Element => {
+): React.JSX.Element => {
   if (disableLinkedError) {
     return (
       <li key={key}>
@@ -112,7 +113,7 @@ const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
   </Alert>
 );
 
-const renderServerError = (error: string | JSX.Element) => (
+const renderServerError = (error: string | React.JSX.Element) => (
   <Alert
     variant='danger'
     role='alert'

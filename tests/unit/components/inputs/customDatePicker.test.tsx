@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -16,6 +16,7 @@ type MockDatePickerFocusEvent = Pick<React.FocusEvent, 'type'>;
 interface MockDatePickerProps {
   customInput: React.ReactElement;
   disabled?: boolean;
+  highlightDates?: Date[];
   onBlur?: (event: MockDatePickerFocusEvent) => void;
   onChange: (date: Date | null) => void;
   onClickOutside: () => void;
@@ -38,6 +39,10 @@ type MockDatePickerShape = 'with-open-state' | 'without-open-state';
 const mockDatePickerRef = vi.hoisted((): { shape: MockDatePickerShape } => ({
   shape: 'with-open-state',
 }));
+
+// The real input only renders its feedback and inline-help elements when it has
+// something to show, so their refs can be unattached while the popper measures.
+const mockInputHelpRefs = vi.hoisted(() => ({ attached: true }));
 
 const expectDatePickerOffsetsAfterReopen = (nextDate: Date) => {
   expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-49');
@@ -85,8 +90,14 @@ vi.mock(
             onKeyDown={onKeyDown}
             required
           />
-          <div ref={forwardedInlineHelpRef} data-testid='inline-help-ref' />
-          <div ref={forwardedFeedbackRef} data-testid='feedback-ref' />
+          <div
+            ref={mockInputHelpRefs.attached ? forwardedInlineHelpRef : null}
+            data-testid='inline-help-ref'
+          />
+          <div
+            ref={mockInputHelpRefs.attached ? forwardedFeedbackRef : null}
+            data-testid='feedback-ref'
+          />
           <button type='button' onClick={handleOpenCalendar}>
             Open calendar
           </button>
@@ -110,6 +121,16 @@ vi.mock(import('react-datepicker'), (() => {
     MockDatePickerRef,
     MockDatePickerProps
   >((props, ref) => {
+    const offsetFor = (placement: string) => {
+      const [modifier] = props.popperModifiers;
+
+      if (!modifier) {
+        throw new Error('Expected a popper offset modifier');
+      }
+
+      return modifier.options.offset({ placement })[1];
+    };
+
     React.useImperativeHandle(ref, () =>
       mockDatePickerRef.shape === 'with-open-state'
         ? {
@@ -122,6 +143,9 @@ vi.mock(import('react-datepicker'), (() => {
 
     return (
       <div data-testid='mock-datepicker'>
+        <output data-testid='highlight-date'>
+          {props.highlightDates?.[0]?.toISOString() ?? ''}
+        </output>
         {React.cloneElement(props.customInput, {
           disabled: props.disabled,
           onBlur: props.onBlur,
@@ -216,31 +240,19 @@ vi.mock(import('react-datepicker'), (() => {
               Other key
             </button>
             <output data-testid='selected-date'>
-              {props.selected?.toISOString() || ''}
+              {props.selected?.toISOString() ?? ''}
             </output>
             <output data-testid='open-date'>
-              {props.openToDate?.toISOString() || ''}
+              {props.openToDate?.toISOString() ?? ''}
             </output>
             <output data-testid='bottom-offset'>
-              {String(
-                props.popperModifiers[0]!.options.offset({
-                  placement: 'bottom-start',
-                })[1],
-              )}
+              {String(offsetFor('bottom-start'))}
             </output>
             <output data-testid='top-offset'>
-              {String(
-                props.popperModifiers[0]!.options.offset({
-                  placement: 'top-start',
-                })[1],
-              )}
+              {String(offsetFor('top-start'))}
             </output>
             <output data-testid='side-offset'>
-              {String(
-                props.popperModifiers[0]!.options.offset({
-                  placement: 'right-start',
-                })[1],
-              )}
+              {String(offsetFor('right-start'))}
             </output>
             {props.children}
           </div>
@@ -303,6 +315,63 @@ describe('custom date picker', () => {
     expect(
       screen.getByRole('button', { name: 'Open calendar' }),
     ).toBeInTheDocument();
+  });
+
+  it('initializes the wrapper id and today values once across rerenders', async () => {
+    expect.hasAssertions();
+
+    const randomUUID = vi
+      .spyOn(globalThis.crypto, 'randomUUID')
+      .mockReturnValue('00000000-0000-4000-8000-000000000000');
+    const user = userEvent.setup();
+
+    try {
+      const { rerender } = render(
+        <CustomDatePicker
+          calendarButtonTitle='Date'
+          dateOnBlur={vi.fn<() => void>()}
+          dateOnChange={vi.fn<() => void>()}
+          name='stableDate'
+        />,
+      );
+
+      const initialWrapper =
+        screen.getByTestId('mock-datepicker').parentElement;
+      if (!initialWrapper) {
+        throw new Error('Expected the date picker wrapper to be rendered');
+      }
+
+      await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+      const initialToday = screen.getByTestId('highlight-date').textContent;
+      const initialOpenDate = screen.getByTestId('open-date').textContent;
+
+      rerender(
+        <CustomDatePicker
+          calendarButtonTitle='Date'
+          dateOnBlur={vi.fn<() => void>()}
+          dateOnChange={vi.fn<() => void>()}
+          name='stableDate'
+        />,
+      );
+
+      expect(randomUUID).toHaveBeenCalledTimes(1);
+      expect(initialWrapper).toHaveAttribute(
+        'id',
+        '00000000-0000-4000-8000-000000000000',
+      );
+      expect(screen.getByTestId('mock-datepicker').parentElement).toBe(
+        initialWrapper,
+      );
+      expect(screen.getByTestId('highlight-date')).toHaveTextContent(
+        initialToday,
+      );
+      expect(screen.getByTestId('open-date')).toHaveTextContent(
+        initialOpenDate,
+      );
+    } finally {
+      randomUUID.mockRestore();
+    }
   });
 
   it('supports the Today action through the current open/close flow', async () => {
@@ -476,6 +545,33 @@ describe('custom date picker', () => {
     }
   });
 
+  it('measures the offsets as zero-height when the help and feedback elements are not rendered', async () => {
+    expect.hasAssertions();
+
+    mockInputHelpRefs.attached = false;
+
+    try {
+      const user = userEvent.setup();
+      render(
+        <CustomDatePicker
+          calendarButtonTitle='Date'
+          currentDate={new Date('2026-06-01T00:00:00.000Z')}
+          dateOnBlur={vi.fn<() => void>()}
+          dateOnChange={vi.fn<() => void>()}
+          hasError
+          name='unmeasuredDate'
+        />,
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+      expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-53');
+      expect(screen.getByTestId('top-offset')).toHaveTextContent('-48');
+    } finally {
+      mockInputHelpRefs.attached = true;
+    }
+  });
+
   it('synchronizes current dates and calculates bottom, top, and neutral offsets', async () => {
     expect.hasAssertions();
 
@@ -520,5 +616,67 @@ describe('custom date picker', () => {
     );
 
     expectDatePickerOffsetsAfterReopen(nextDate);
+  });
+
+  it('accounts for rendered feedback and inline-help heights in offsets', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    render(
+      <CustomDatePicker
+        calendarButtonTitle='Date'
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
+        hasError
+        inlineHelp='Date help'
+        name='sizedOffsetDate'
+      />,
+    );
+
+    Object.defineProperty(screen.getByTestId('feedback-ref'), 'clientHeight', {
+      configurable: true,
+      value: 12,
+    });
+    Object.defineProperty(
+      screen.getByTestId('inline-help-ref'),
+      'clientHeight',
+      { configurable: true, value: 8 },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+    expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-65');
+    expect(screen.getByTestId('top-offset')).toHaveTextContent('-56');
+  });
+
+  it('uses zero heights when feedback and inline-help refs report undefined', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    render(
+      <CustomDatePicker
+        calendarButtonTitle='Date'
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
+        hasError
+        inlineHelp='Date help'
+        name='undefinedOffsetDate'
+      />,
+    );
+
+    Object.defineProperty(screen.getByTestId('feedback-ref'), 'clientHeight', {
+      configurable: true,
+      value: undefined,
+    });
+    Object.defineProperty(
+      screen.getByTestId('inline-help-ref'),
+      'clientHeight',
+      { configurable: true, value: undefined },
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+    expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-53');
+    expect(screen.getByTestId('top-offset')).toHaveTextContent('-48');
   });
 });

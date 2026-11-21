@@ -1,24 +1,16 @@
 import { Col, Form, Row } from 'react-bootstrap';
 import { useWatch } from 'react-hook-form';
-import { Title } from '../../../../api/web-api-client';
 import type { ContactDto } from '../../../../api/web-api-client';
 import { prefixedPropertyOf } from '../../../../utils';
 import RhfSelectInput from '../../../Inputs/RhfSelectInput';
 import RhfTextInput from '../../../Inputs/RhfTextInput';
 import RhfNumberInput from '../../../Inputs/RhfNumberInput';
-import type { SelectInputOption } from '../../../Inputs/SelectInput/types';
 import RhfHidableField from '../../RhfHidableField';
 import type { ContactDetailsProps } from '../ContactDetails';
+import { getTitles } from '../titleOptions';
 
 const PHONE_FORMAT = 'checkPhoneFormat';
 const MOBILE_FORMAT = '#### ### ###';
-
-const TITLE_OPTIONS: SelectInputOption<string>[] = Object.keys(Title).map(
-  (key) => ({
-    displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
-    value: key,
-  }),
-);
 
 type FieldProps = Readonly<Required<Omit<ContactDetailsProps, 'isSummary'>>>;
 type RhfFormValues = Record<string, unknown>;
@@ -41,7 +33,7 @@ const ContactDetailsSummary = ({
       <RhfSelectInput
         name={getName('title')}
         label={titleLabel}
-        options={TITLE_OPTIONS}
+        options={getTitles()}
         isSummary
         addBlank
       />
@@ -115,7 +107,7 @@ const ContactDetailsEdit = ({
           <RhfSelectInput
             name={getName('title')}
             label={titleLabel}
-            options={TITLE_OPTIONS}
+            options={getTitles()}
             addBlank
           />
         </Col>

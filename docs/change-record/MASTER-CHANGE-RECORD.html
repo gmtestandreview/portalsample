@@ -493,7 +493,8 @@
         <strong>Security findings resolved:</strong> SEC-001 (devAuth bypass
         path in production bundle), SEC-002 (mock account injection via env
         vars) <strong>Tests added:</strong> 0 (type-check verification only;
-        auth flow covered by MSAL integration) <strong>Files changed:</strong>
+        auth flow covered by MSAL integration)
+        <strong>Files changed:</strong>
       </p>
       <ul>
         <li>
@@ -506,7 +507,8 @@
           <p>
             <code>ClientApp/src/authentication/AuthenticatedElement.tsx</code> —
             removed <code>isAuthBypassEnabled</code> import; replaced bypass
-            ternary with direct <code>MsalAuthenticationTemplate</code>
+            ternary with direct
+            <code>MsalAuthenticationTemplate</code>
           </p>
         </li>
         <li>
@@ -522,8 +524,8 @@
         <li>
           <p>
             <code>ClientApp/src/env.ts</code> — removed 6 auth-bypass/mock
-            variables (<code>REACT_APP_AUTH_BYPASS</code> and 5 mock-account
-            vars); env object now declares exactly 11 vars
+            variables (<code>REACT_APP_AUTH_BYPASS</code>
+            and 5 mock-account vars); env object now declares exactly 11 vars
           </p>
         </li>
         <li>
@@ -802,7 +804,8 @@
           >
           — <code>callingPath.startsWith('/')</code> guard added before use in
           <code>navigate()</code>; paths that do not begin with
-          <code>/</code> fall back to <code>'/'</code>
+          <code>/</code> fall back to
+          <code>'/'</code>
         </li>
       </ul>
       <p>
@@ -1059,7 +1062,8 @@
           <p>
             <code>ClientApp/src/authentication/AccountProvider.tsx</code> —
             errored state now surfaces <code>&lt;BlockUISpinner&gt;</code>;
-            children rendered only when <code>!errored</code>
+            children rendered only when
+            <code>!errored</code>
           </p>
         </li>
         <li>
@@ -1153,7 +1157,8 @@
         <li>
           <p>
             <code>tests/unit/routes/errorRoutes.test.ts</code> — 9 tests (Gap 6
-            resolved) <strong>Files changed:</strong>
+            resolved)
+            <strong>Files changed:</strong>
           </p>
         </li>
         <li>
@@ -1568,7 +1573,8 @@
         after minification <strong>Status:</strong> COMPLETE
         <strong>Security findings resolved:</strong> None
         <strong>Tests added:</strong> 0 (build config only; 165 Storybook tests
-        continue to pass) <strong>Files changed:</strong>
+        continue to pass)
+        <strong>Files changed:</strong>
       </p>
       <ul>
         <li>
@@ -1609,7 +1615,8 @@
         CRD-020/CRD-021 <strong>Status:</strong> COMPLETE
         <strong>Security findings resolved:</strong> None
         <strong>Tests added:</strong> 0 (test-environment setup only;
-        verification command rerun) <strong>Files changed:</strong>
+        verification command rerun)
+        <strong>Files changed:</strong>
       </p>
       <ul>
         <li>
@@ -1793,7 +1800,8 @@
         subsequently verified by CRD-019
         <strong>Security findings resolved:</strong> None
         <strong>Tests added:</strong> 0 (play function assertion corrections; no
-        new Vitest unit tests) <strong>Files changed:</strong>
+        new Vitest unit tests)
+        <strong>Files changed:</strong>
       </p>
       <ul>
         <li>
@@ -1852,9 +1860,10 @@
         <li>
           <p>
             Source-code fixes for B1 category issues (#1, #2, #3, #9) are
-            present at their <code>ClientApp/src/</code> paths (progress
-            tracking documents incorrectly cited <code>static/js/</code> paths —
-            documentation error, not a source error)
+            present at their
+            <code>ClientApp/src/</code> paths (progress tracking documents
+            incorrectly cited <code>static/js/</code> paths — documentation
+            error, not a source error)
           </p>
         </li>
         <li>
@@ -1985,7 +1994,8 @@
           <ul>
             <li>
               Priority 1: <code>SEC-MOD-003</code>, <code>SEC-MOD-009</code>,
-              and <code>RUNTIME-ENV-001</code>
+              and
+              <code>RUNTIME-ENV-001</code>
             </li>
             <li>
               Priority 2: top-level <code>await</code> target-platform
@@ -2031,7 +2041,8 @@
             </li>
             <li>
               Priority 3: <code>AUTH-OPS-003</code>,
-              <code>DASHBOARD-DEBT-001</code>, and <code>AUTH-CONTEXT-001</code>
+              <code>DASHBOARD-DEBT-001</code>, and
+              <code>AUTH-CONTEXT-001</code>
             </li>
           </ul>
         </li>
@@ -2066,7 +2077,8 @@
         <strong>Status:</strong> COMPLETE — documentation reconciliation
         <strong>Security findings resolved:</strong> None (tracking-only
         reconciliation) <strong>Tests added:</strong> 0 (documentation-only
-        change) <strong>Evidence reconciled:</strong>
+        change)
+        <strong>Evidence reconciled:</strong>
       </p>
       <ul>
         <li>
@@ -2228,7 +2240,8 @@
         </li>
         <li>
           The brief's Phase 1 P0 entry criterion for backend IDOR remains
-          tracked as <code>SEC-010</code>.
+          tracked as
+          <code>SEC-010</code>.
         </li>
         <li>
           The brief's Phase 2 and later SME/approval questions are now explicit
@@ -2599,7 +2612,8 @@
             <td>2 — Typography</td>
             <td>
               Retain Public Sans. Already declared in design system. Remove
-              source <code>@font-face</code> declarations.
+              source
+              <code>@font-face</code> declarations.
             </td>
           </tr>
           <tr>
@@ -2723,7 +2737,8 @@
             <td>BATCH-E-PREREQ-002</td>
             <td>
               Icon audit: confirm all <code>nmi-icon-*</code> usages have SVG
-              equivalents in <code>packages/icons</code>
+              equivalents in
+              <code>packages/icons</code>
             </td>
             <td>Design Lead / Frontend Lead</td>
           </tr>

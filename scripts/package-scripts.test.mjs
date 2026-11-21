@@ -19,13 +19,12 @@ test('canonical validation workflows are present', () => {
 test('canonical commands do not retain redundant aliases', () => {
   assert.equal(
     scripts['test:all'],
-    'npm run test:unit && npm run test:storybook',
+    'npm run check && npm run test:unit:coverage && npm run test:storybook && npm run build && npm run verify:vite && npm run test:quality:regression && npm run test:e2e && npm run test:api-contract',
   );
   for (const removedAlias of [
     'start',
     'format:source',
     'format:source:check',
-    'lint:prettier',
     'test:unit-and-storybook',
     'build-storybook-docs',
     'storybook-docs',
