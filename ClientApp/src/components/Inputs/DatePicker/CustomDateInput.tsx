@@ -44,7 +44,7 @@ const CustomDateInput = React.forwardRef<
     ...theRest
   } = customInputProps;
 
-  const [_field, _meta] = useField(name);
+  const [, _meta] = useField(name);
   const helpId = inlineHelp ? `help-${name}` : undefined;
   const [focused, setFocused] = useState(false);
 

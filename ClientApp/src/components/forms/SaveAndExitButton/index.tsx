@@ -13,10 +13,8 @@ const FormikSaveAndExitButton = ({
   children,
 }: Readonly<SaveAndExitButtonProps>) => {
   const { submitForm } = useFormikContext();
-  const [_field, _meta, saveAndExitHelper] = useField<boolean | undefined>(
-    'saveAndExit',
-  );
-  const [saveAndExitClickField, _m, saveAndExitClickHelper] = useField<
+  const [, , saveAndExitHelper] = useField<boolean | undefined>('saveAndExit');
+  const [saveAndExitClickField, , saveAndExitClickHelper] = useField<
     boolean | undefined
   >('saveAndExitClick');
 

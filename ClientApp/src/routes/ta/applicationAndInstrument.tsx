@@ -276,18 +276,18 @@ const ApplicationAndInstrument = (
 
   // Lookup values are loaded in the parent component and passed through Formik context, so we can access them via context.values
   // without needing to make separate API calls here. We just need to transform them into the format needed for the dropdowns.
-  const [_instrumentTypeField, _instrumentTypeMeta] = useField<
-    string | undefined
-  >(getName('instrumentType'));
-  const [_instrumentCatField, _instrumentCatMeta] = useField<
-    string | undefined
-  >(getName('instrumentCategory'));
-  const [_typeLookupField, _typeLookupMeta] = useField<
-    LookupResponse[] | undefined
-  >(getName('instrumentTypeLookup'));
-  const [_categoryLookupField, _categoryLookupMeta] = useField<
-    LookupResponse[] | undefined
-  >(getName('instrumentCategoryLookup'));
+  const [_instrumentTypeField] = useField<string | undefined>(
+    getName('instrumentType'),
+  );
+  const [_instrumentCatField] = useField<string | undefined>(
+    getName('instrumentCategory'),
+  );
+  const [_typeLookupField] = useField<LookupResponse[] | undefined>(
+    getName('instrumentTypeLookup'),
+  );
+  const [_categoryLookupField] = useField<LookupResponse[] | undefined>(
+    getName('instrumentCategoryLookup'),
+  );
 
   const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
     useState(false);
@@ -400,22 +400,22 @@ const ApplicationAndInstrument = (
   // function getNameForUse(cname: string | keyof ApplicationAndInstrumentStep): string { return getName2(cname, isSummary); }
 
   // TO DO - move this and Radio + CheckboxGroup into a new component
-  const [_field, _meta] = useField<PatternApprovalRequiredValues | undefined>(
+  const [_field] = useField<PatternApprovalRequiredValues | undefined>(
     getName('patternApprovalType'),
   );
   // console.log('Selected application type: ', _field.value);
 
-  const [_newField, _newMeta] = useField<
+  const [_newField] = useField<
     PatternApprovalRequiredValueOptions[] | undefined
   >(getName('newSubOptions'));
   // console.log('Selected application new options: ', _newField.value);
 
-  const [_varField, _varMeta] = useField<
+  const [_varField] = useField<
     PatternApprovalRequiredValueOptions[] | undefined
   >(getName('varSubOptions'));
   // console.log('Selected application var options: ', _varField.value);
 
-  const [_othField, _othMeta] = useField<
+  const [_othField] = useField<
     PatternApprovalRequiredValueOptions[] | undefined
   >(getName('othSubOptions'));
   // console.log('Selected application oth options: ', _othField.value);

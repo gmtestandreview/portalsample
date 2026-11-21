@@ -13,12 +13,10 @@ const FormikSubmitFormButton = ({
   children,
 }: Readonly<SubmitFormButtonProps>) => {
   const { submitForm } = useFormikContext();
-  const [_field, _meta, saveAndExitHelper] = useField<boolean | undefined>(
-    'saveAndExit',
+  const [, , saveAndExitHelper] = useField<boolean | undefined>('saveAndExit');
+  const [submitClickField, , submitClickHelper] = useField<boolean | undefined>(
+    'submitClick',
   );
-  const [submitClickField, _m, submitClickHelper] = useField<
-    boolean | undefined
-  >('submitClick');
 
   useEffect(() => {
     if (submitClickField.value === true) {
