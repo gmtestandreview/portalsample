@@ -329,7 +329,7 @@ file_path="$(printf '%s' "$payload" | jq -r '.toolArgs' | jq -r '.path // ""')"
 
 # Run the project's formatter — adapt to your stack
 if command -v npx >/dev/null 2>&1 && [[ -f "package.json" ]]; then
-  npx prettier --write "$file_path" 2>/dev/null || true
+  npx oxfmt --write "$file_path" 2>/dev/null || true
 elif command -v dotnet >/dev/null 2>&1 && [[ "$file_path" == *.cs ]]; then
   dotnet format --include "$file_path" 2>/dev/null || true
 fi
@@ -338,11 +338,11 @@ exit 0
 
 **What happens at runtime:**
 
-| Scenario                              | What the hook does                 | exit |
-| ------------------------------------- | ---------------------------------- | ---- |
-| Agent edits `src/app.ts` successfully | Runs `prettier --write src/app.ts` | `0`  |
-| Agent runs `bash ls`                  | Skips (not a file-writing tool)    | `0`  |
-| Prettier not installed                | Silently skips formatting          | `0`  |
+| Scenario                              | What the hook does              | exit |
+| ------------------------------------- | ------------------------------- | ---- |
+| Agent edits `src/app.ts` successfully | Runs `oxfmt --write src/app.ts` | `0`  |
+| Agent runs `bash ls`                  | Skips (not a file-writing tool) | `0`  |
+| Oxfmt not installed                   | Silently skips formatting       | `0`  |
 
 ### Example 3: Block dangerous commands with structured deny
 

@@ -1,63 +1,80 @@
-# Worktree cleanup mechanics
+# Linked-worktree cleanup: safe execution guide
 
-Concrete bash for detecting a linked worktree and removing it safely. Load this
-when the branch you are finishing lives in a git worktree and the user has asked
-you to merge or discard it (workflow step 7, "Perform requested repository
-actions").
+**Load only** when the user separately requests removal of a linked worktree and
+its integration/discard disposition has been decided. Read-only branch closeout
+or PR creation **never** authorizes checkout removal. Worktree removal is a
+destructive filesystem operation, not routine housekeeping.
 
-## Detect the worktree environment
+## 1. Discover target, ownership, and host constraints
 
-Capture these values **while still inside the worktree**, before any `cd` — a
-later directory change loses them:
-
-```bash
-GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
-GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
-WORKTREE_PATH=$(git rev-parse --show-toplevel)
-```
-
-| State                                      | Meaning                                 | Cleanup                                                          |
-| ------------------------------------------ | --------------------------------------- | ---------------------------------------------------------------- |
-| `GIT_DIR == GIT_COMMON`                    | Primary checkout, not a linked worktree | Nothing to remove                                                |
-| `GIT_DIR != GIT_COMMON`, on a named branch | Linked worktree                         | Remove it after the branch is merged or the discard is confirmed |
-| `GIT_DIR != GIT_COMMON`, detached HEAD     | Externally managed workspace            | Leave it in place — the host owns it                             |
-
-## Remove the worktree
-
-Worktree removal must run from **outside** the worktree, so `cd` to the main
-repo root first and use the values captured above:
-
-```bash
-git worktree remove "$WORKTREE_PATH"
-git worktree prune   # clears any stale registrations
-```
-
-Only remove a worktree you created for this task (typically under `.worktrees/`
-or `worktrees/`). A worktree the host environment set up is not yours to remove
-— leave it and, if your platform provides a workspace-exit tool, use that
-instead.
-
-## If removal is refused
-
-`contains modified or untracked files` means the worktree holds files that exist
-nowhere else — uncommitted plans, notes, or scratch work. **Never `--force` on
-your own initiative** (see the parent skill's "Common Rationalizations"). Show
-the user what is at stake and ask:
-
-```bash
-git -C "$WORKTREE_PATH" status --porcelain -uall
-```
+From the candidate checkout, issue these **individual cross-shell Git commands**
+(no Bash-only assignment or pipeline):
 
 ```text
-Worktree removal refused — these files were never committed:
-
-<file list>
-
-1. Commit them to <branch> before cleanup
-2. Move them into <main repo root>
-3. Delete them (unrecoverable)
-
-Which?
+git rev-parse --show-toplevel
+git rev-parse --git-dir
+git rev-parse --git-common-dir && pwd -P
+git worktree list --porcelain
+git status --porcelain=v1 --untracked-files=all
+git status --ignored --short
 ```
 
-Carry out the choice, then remove the worktree.
+Use the worktree registry and canonical paths to establish whether the target is
+the primary checkout or a linked checkout; the primary must **not** be removed.
+The Git directory and common directory may be printed as relative paths, so
+resolve them against the actual checkout before comparing. A detached HEAD is
+**not** proof of host ownership, and a named branch is **not** proof of user
+ownership. Confirm task origin and host/workspace policy. Leave host-managed
+worktrees to their host-specific removal mechanism; unknown ownership is
+`BLOCKED` until resolved.
+
+## 2. Check data and authorized end state
+
+Confirm the exact absolute checkout path, intended base/branch, verified
+integration or approved discard result, and expected post-cleanup status. Do not
+infer that a PR creation means a merge. Branch deletion is a **separate**
+request; before deletion ensure correct target reachability and retain a
+recovery ref/checkpoint.
+
+Inventory staged/unstaged/untracked **and ignored** files. Ignored paths may
+contain irreplaceable local secrets; record paths/types without copying their
+contents to logs. The following is dry-run only (substitute a previously
+verified absolute path and run from a safe registered checkout):
+
+```text
+git -C "<approved-target>" clean -ndx
+```
+
+Do not replace `-n` with `-f`. Confirm absence or explicit preservation of
+valuable local-only data. Locks and submodules may prohibit safe removal; stop
+rather than force. Never `git clean -fdx`, `git worktree remove --force` or
+routine `git worktree prune` to overcome a refusal.
+
+## 3. Remove only the explicitly approved checkout
+
+Choose `OTHER_WORKTREE` using the registry: an existing registered checkout
+**outside** the target, never just its parent filesystem directory. Run the
+following individually in the actual shell, substituting verified absolute paths
+in place of `<...>`:
+
+```text
+git -C "<other-checkout>" worktree remove -- "<approved-target>"
+git -C "<other-checkout>" worktree list --porcelain
+```
+
+Require success exit status **and** absence of the registered target in the
+post-operation registry; verify the primary and unrelated linked worktrees
+remain intact. Do not treat success of a directory deletion as evidence of safe
+branch deletion or a completed integration.
+
+## 4. Stop, recover, and report
+
+If removal refuses or state differs, **stop** and keep the branch/worktree.
+Report the exact refusal and paths at risk; offer reversible next steps: commit
+authorised work, move local-only content to a user-approved destination, leave
+the checkout registered, or seek separately informed approval about specific
+disposable files. Re-inventory and redo the pre-execution gate before any retry.
+Never auto-force. Capture action and verified result in the handoff ledger,
+including preserved worktrees and unverified host-managed state.
+
+Official command semantics: <https://git-scm.com/docs/git-worktree>

@@ -35,11 +35,11 @@ accessibility compliance, protect privacy, and create inclusive experiences.
 ```python
 # Test names from different cultures
 test_names = [
-    "John Smith",      # Anglo
-    "José García",     # Hispanic
-    "Lakshmi Patel",   # Indian
-    "Ahmed Hassan",    # Arabic
-    "李明",            # Chinese
+    'John Smith',  # Anglo
+    'José García',  # Hispanic
+    'Lakshmi Patel',  # Indian
+    'Ahmed Hassan',  # Arabic
+    '李明',  # Chinese
 ]
 
 # Test ages that matter
@@ -47,10 +47,10 @@ test_ages = [18, 25, 45, 65, 75]  # Young to elderly
 
 # Test edge cases
 test_edge_cases = [
-    "",              # Empty input
-    "O'Brien",       # Apostrophe
-    "José-María",    # Hyphen + accent
-    "X Æ A-12",      # Special characters
+    '',  # Empty input
+    "O'Brien",  # Apostrophe
+    'José-María',  # Hyphen + accent
+    'X Æ A-12',  # Special characters
 ]
 ```
 
@@ -117,18 +117,18 @@ test_edge_cases = [
 ```python
 # GOOD: Minimal data collection
 user_data = {
-    "email": email,           # Needed for login
-    "preferences": prefs      # Needed for functionality
+    'email': email,  # Needed for login
+    'preferences': prefs,  # Needed for functionality
 }
 
 # BAD: Excessive data collection
 user_data = {
-    "email": email,
-    "name": name,
-    "age": age,              # Do you actually need this?
-    "location": location,     # Do you actually need this?
-    "browser": browser,       # Do you actually need this?
-    "ip_address": ip         # Do you actually need this?
+    'email': email,
+    'name': name,
+    'age': age,  # Do you actually need this?
+    'location': location,  # Do you actually need this?
+    'browser': browser,  # Do you actually need this?
+    'ip_address': ip,  # Do you actually need this?
 }
 ```
 

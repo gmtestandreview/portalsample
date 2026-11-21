@@ -439,4 +439,15 @@ describe('yup string extension branch coverage', () => {
     expect(valid(schema, 'ab1a')).toBe(true);
     expect(valid(schema, 'ab1aa')).toBe(false);
   });
+
+  it('fails closed when a non-string value reaches a registered test', () => {
+    expect.hasAssertions();
+
+    const config = Yup.string()
+      .numbersOnly()
+      .tests.find((t) => t.OPTIONS?.name === 'numbersOnly')?.OPTIONS;
+    const context = { schema: Yup.string() } as unknown as Yup.TestContext;
+
+    expect(config?.test.call(context, 123, context)).toBe(false);
+  });
 });

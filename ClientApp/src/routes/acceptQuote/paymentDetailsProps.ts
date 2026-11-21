@@ -11,24 +11,19 @@ import type {
   FormStepStatusDto,
   PaymentDetailsStep,
 } from '../../api/web-api-client';
-import { silentRequestFor } from '../../authentication/silentRequest';
-import { ErrorType } from '../../components/forms/WizardForm/types';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import type {
   WizardFormStepValues,
   WizardStepProps,
 } from '../../components/forms/WizardForm/types';
-import { setDashboardNotification } from '../../storage/notification';
-import { NotificationSeverity } from '../../storage/types';
 import { discardChanges } from '../common/constants';
-import { HttpStatusCode } from '../../types';
 import type { AccountDetails } from '../../authentication/accountContext';
 import {
   paymentDetailsSaveValidation,
   paymentDetailsSubmitValidation,
 } from './validation';
 
-const preconditionFailedStatus: number = HttpStatusCode.PreconditionFailed;
-const notFoundStatus: number = HttpStatusCode.NotFound;
+import { acceptQuoteRedirectionOnError } from './redirection';
 import { formatBannerTitle } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
@@ -37,11 +32,11 @@ const loadPaymentDetails =
   async (abortSignal?: AbortSignal) => {
     try {
       if (accounts.length > 0) {
-        const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          AcceptQuoteClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
         const paymentDetails = await client.getPaymentDetails(id, abortSignal);
         const wizardStepValues: WizardFormStepValues<PaymentDetailsStep> = {
           stepValues: { ...paymentDetails },
@@ -70,11 +65,11 @@ const saveStep =
   ) => {
     if (accounts.length > 0) {
       try {
-        const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          AcceptQuoteClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
         await client.savePaymentDetails(
           id,
           {
@@ -95,27 +90,6 @@ const saveStep =
     } else {
       throw new Error('No authenticated account available to save form.');
     }
-  };
-
-const getRedirectionLocationOnError =
-  (id: string) => (errorCode: number, errorType: ErrorType) => {
-    if (
-      errorCode === preconditionFailedStatus &&
-      errorType === ErrorType.Load
-    ) {
-      return `/accept-quote/${id}/view-summary`;
-    }
-
-    if (errorCode === notFoundStatus && errorType === ErrorType.Update) {
-      setDashboardNotification({
-        message:
-          'Another person has deleted this request. Your changes have not been saved.',
-        severity: NotificationSeverity.Error,
-      });
-      return '/';
-    }
-
-    return undefined;
   };
 
 const paymentDetailsProps = (
@@ -145,7 +119,7 @@ const paymentDetailsProps = (
   bannerTitle,
   bannerRefTitle: `Quotation ID: ${id}`,
   bannerSubTitle: formatBannerTitle(accountDetails),
-  getRedirectionLocationOnError: getRedirectionLocationOnError(id),
+  getRedirectionLocationOnError: acceptQuoteRedirectionOnError(id),
   discard: discardChanges,
 });
 

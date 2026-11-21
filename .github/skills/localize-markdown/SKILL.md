@@ -170,7 +170,7 @@ not to.
 The disclaimer should preserve this meaning:
 
 ```markdown
----
+***
 
 **DISCLAIMER**: This document was localized by GitHub Copilot and may contain
 mistakes. If you find an inappropriate or incorrect translation, please create

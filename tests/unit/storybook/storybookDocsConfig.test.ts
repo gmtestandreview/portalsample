@@ -347,11 +347,11 @@ describe('storybook documentation architecture', () => {
     );
   });
 
-  it('records Storybook 10.6.5 provenance and upstream wording ownership', () => {
+  it('records Storybook 10.6.7 provenance and upstream wording ownership', () => {
     expect.hasAssertions();
 
     expect([
-      componentDocsGuide.includes('Storybook 10.6.5'),
+      componentDocsGuide.includes('Storybook 10.6.7'),
       componentDocsGuide.includes('Storybook 9 Essential Changes'),
       componentDocsGuide.includes('upstream'),
       /not a local\s+wording fix/.test(componentDocsGuide),
@@ -392,14 +392,14 @@ describe('storybook documentation architecture', () => {
       '@storybook/addon-docs',
       '@storybook/addon-links',
       '@storybook/addon-vitest',
-      'eslint-plugin-storybook',
     ];
 
     for (const packageName of storybookPackages) {
-      expect(declaredVersion(packageName)).toBe('10.6.5');
+      expect(declaredVersion(packageName)).toBe('10.6.7');
     }
 
-    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.5');
+    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.7');
+    expect(declaredVersion('eslint-plugin-storybook')).toBe('10.6.7');
     expect(declaredVersion('@chromatic-com/storybook')).toBe('5.6.0');
     expect(declaredVersion('msw-storybook-addon')).toBe('3.0.3');
   });

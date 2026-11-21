@@ -15,7 +15,7 @@ from typing import Protocol, cast
 from unittest import mock
 
 PathInput = str | Path
-MODULE_PATH = Path(__file__).resolve().parent.parent / "package_skill.py"
+MODULE_PATH = Path(__file__).resolve().parent.parent / 'package_skill.py'
 
 
 class PackageSkillModule(Protocol):
@@ -33,30 +33,30 @@ class PackageSkillModule(Protocol):
 
 
 def _validate_skill_stub(_skill_path: Path) -> tuple[bool, str]:
-    return True, "ok"
+    return True, 'ok'
 
 
 def load_module() -> PackageSkillModule:
     """Load package_skill.py with its validator dependency stubbed."""
-    scripts = types.ModuleType("scripts")
-    quick_validate = types.ModuleType("scripts.quick_validate")
-    setattr(quick_validate, "validate_skill", _validate_skill_stub)  # noqa: B010
+    scripts = types.ModuleType('scripts')
+    quick_validate = types.ModuleType('scripts.quick_validate')
+    setattr(quick_validate, 'validate_skill', _validate_skill_stub)  # noqa: B010
 
     spec = importlib.util.spec_from_file_location(
-        "package_skill_under_test",
+        'package_skill_under_test',
         MODULE_PATH,
     )
     if spec is None:
-        raise RuntimeError(f"Unable to create import spec for {MODULE_PATH}")
+        raise RuntimeError(f'Unable to create import spec for {MODULE_PATH}')
     if spec.loader is None:
-        raise RuntimeError(f"Import spec has no loader for {MODULE_PATH}")
+        raise RuntimeError(f'Import spec has no loader for {MODULE_PATH}')
 
     module = importlib.util.module_from_spec(spec)
     with mock.patch.dict(
         sys.modules,
         {
-            "scripts": scripts,
-            "scripts.quick_validate": quick_validate,
+            'scripts': scripts,
+            'scripts.quick_validate': quick_validate,
         },
     ):
         spec.loader.exec_module(module)
@@ -65,16 +65,16 @@ def load_module() -> PackageSkillModule:
 
 
 def make_skill(root: Path) -> Path:
-    skill = root / "demo"
+    skill = root / 'demo'
     skill.mkdir()
-    (skill / "SKILL.md").write_text("# demo", encoding="utf-8")
-    (skill / "ok.txt").write_text("ok", encoding="utf-8")
+    (skill / 'SKILL.md').write_text('# demo', encoding='utf-8')
+    (skill / 'ok.txt').write_text('ok', encoding='utf-8')
     return skill
 
 
 def require_path(value: Path | None) -> Path:
     if value is None:
-        raise AssertionError("Expected package_skill() to return an archive path")
+        raise AssertionError('Expected package_skill() to return an archive path')
     return value
 
 
@@ -91,177 +91,183 @@ class PackageSkillTests(unittest.TestCase):
 
     def test_external_file_symlink_is_rejected(self) -> None:
         skill = make_skill(self.root)
-        outside = self.root / "secret.txt"
-        outside.write_text("TOP-SECRET", encoding="utf-8")
-        link = skill / "linked.txt"
+        outside = self.root / 'secret.txt'
+        outside.write_text('TOP-SECRET', encoding='utf-8')
+        link = skill / 'linked.txt'
         try:
             link.symlink_to(outside)
         except OSError:
-            self.skipTest("symlinks unavailable on this platform")
+            self.skipTest('symlinks unavailable on this platform')
 
-        output = self.root / "out"
+        output = self.root / 'out'
         with contextlib.redirect_stdout(io.StringIO()):
             result = self.module.package_skill(skill, output)
 
         self.assertIsNone(result)
-        self.assertFalse((output / "demo.skill").exists())
+        self.assertFalse((output / 'demo.skill').exists())
 
     def test_external_skill_md_symlink_is_rejected(self) -> None:
-        skill = self.root / "demo"
+        skill = self.root / 'demo'
         skill.mkdir()
-        outside = self.root / "outside-skill.md"
-        outside.write_text("# external", encoding="utf-8")
+        outside = self.root / 'outside-skill.md'
+        outside.write_text('# external', encoding='utf-8')
         try:
-            (skill / "SKILL.md").symlink_to(outside)
+            (skill / 'SKILL.md').symlink_to(outside)
         except OSError:
-            self.skipTest("symlinks unavailable on this platform")
+            self.skipTest('symlinks unavailable on this platform')
 
         with contextlib.redirect_stdout(io.StringIO()):
-            result = self.module.package_skill(skill, self.root / "out")
+            result = self.module.package_skill(skill, self.root / 'out')
 
         self.assertIsNone(result)
 
     def test_internal_file_symlink_is_preserved(self) -> None:
         skill = make_skill(self.root)
-        target = skill / "target.txt"
-        target.write_text("inside", encoding="utf-8")
-        link = skill / "alias.txt"
+        target = skill / 'target.txt'
+        target.write_text('inside', encoding='utf-8')
+        link = skill / 'alias.txt'
         try:
             link.symlink_to(target)
         except OSError:
-            self.skipTest("symlinks unavailable on this platform")
+            self.skipTest('symlinks unavailable on this platform')
 
         with contextlib.redirect_stdout(io.StringIO()):
-            result = self.module.package_skill(skill, self.root / "out")
+            result = self.module.package_skill(skill, self.root / 'out')
 
         archive_path = require_path(result)
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertEqual(archive.read("demo/alias.txt"), b"inside")
+            self.assertEqual(archive.read('demo/alias.txt'), b'inside')
 
     def test_root_evals_excluded_but_nested_evals_kept(self) -> None:
         skill = make_skill(self.root)
-        (skill / "evals").mkdir()
-        (skill / "evals" / "drop.txt").write_text("drop", encoding="utf-8")
-        nested = skill / "nested" / "evals"
+        (skill / 'evals').mkdir()
+        (skill / 'evals' / 'drop.txt').write_text('drop', encoding='utf-8')
+        nested = skill / 'nested' / 'evals'
         nested.mkdir(parents=True)
-        (nested / "keep.txt").write_text("keep", encoding="utf-8")
+        (nested / 'keep.txt').write_text('keep', encoding='utf-8')
 
         with contextlib.redirect_stdout(io.StringIO()):
-            result = self.module.package_skill(skill, self.root / "out")
+            result = self.module.package_skill(skill, self.root / 'out')
 
         archive_path = require_path(result)
         with zipfile.ZipFile(archive_path) as archive:
             names = archive.namelist()
 
-        self.assertNotIn("demo/evals/drop.txt", names)
-        self.assertIn("demo/nested/evals/keep.txt", names)
+        self.assertNotIn('demo/evals/drop.txt', names)
+        self.assertIn('demo/nested/evals/keep.txt', names)
 
     def test_execution_state_directories_are_not_distributed(self) -> None:
         skill = make_skill(self.root)
-        for prefix in (Path(), Path("nested")):
-            for state_dir in (".venv", "venv", ".git", ".tokensave"):
+        for prefix in (Path(), Path('nested')):
+            for state_dir in ('.venv', 'venv', '.git', '.tokensave'):
                 directory = skill / prefix / state_dir
                 directory.mkdir(parents=True)
-                (directory / "state.txt").write_text("local state", encoding="utf-8")
+                (directory / 'state.txt').write_text('local state', encoding='utf-8')
 
-        archive_path = self._package_quietly(skill, self.root / "out")
+        archive_path = self._package_quietly(skill, self.root / 'out')
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertEqual(sorted(archive.namelist()), ["demo/SKILL.md", "demo/ok.txt"])
+            self.assertEqual(sorted(archive.namelist()), ['demo/SKILL.md', 'demo/ok.txt'])
 
     def test_git_worktree_pointer_file_is_not_distributed(self) -> None:
         skill = make_skill(self.root)
-        (skill / ".git").write_text("gitdir: ../worktrees/demo", encoding="utf-8")
+        (skill / '.git').write_text('gitdir: ../worktrees/demo', encoding='utf-8')
 
-        archive_path = self._package_quietly(skill, self.root / "out")
+        archive_path = self._package_quietly(skill, self.root / 'out')
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertNotIn("demo/.git", archive.namelist())
+            self.assertNotIn('demo/.git', archive.namelist())
 
     def test_internal_alias_to_excluded_execution_state_is_omitted(self) -> None:
         skill = make_skill(self.root)
-        for state_dir in (".git", ".venv", ".tokensave", "evals"):
+        for state_dir in ('.git', '.venv', '.tokensave', 'evals'):
             directory = skill / state_dir
             directory.mkdir()
-            target = directory / "state.txt"
-            target.write_text("local execution state", encoding="utf-8")
+            target = directory / 'state.txt'
+            target.write_text('local execution state', encoding='utf-8')
             try:
-                (skill / f"{state_dir[1:]}-alias.txt").symlink_to(target)
+                (skill / f'{state_dir[1:]}-alias.txt').symlink_to(target)
             except OSError:
-                self.skipTest("symlinks unavailable on this platform")
+                self.skipTest('symlinks unavailable on this platform')
 
-        archive_path = self._package_quietly(skill, self.root / "out")
+        archive_path = self._package_quietly(skill, self.root / 'out')
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertEqual(sorted(archive.namelist()), ["demo/SKILL.md", "demo/ok.txt"])
+            self.assertEqual(sorted(archive.namelist()), ['demo/SKILL.md', 'demo/ok.txt'])
 
     def test_required_entrypoint_cannot_alias_excluded_state(self) -> None:
         skill = make_skill(self.root)
-        (skill / ".git").mkdir()
-        source = skill / ".git" / "entry.md"
+        (skill / '.git').mkdir()
+        source = skill / '.git' / 'entry.md'
         source.write_text(
-            "---\nname: demo\ndescription: Use when testing packaging.\n---\n# Body\n",
-            encoding="utf-8",
+            '---\nname: demo\ndescription: Use when testing packaging.\n---\n# Body\n',
+            encoding='utf-8',
         )
-        (skill / "SKILL.md").unlink()
+        (skill / 'SKILL.md').unlink()
         try:
-            (skill / "SKILL.md").symlink_to(source)
+            (skill / 'SKILL.md').symlink_to(source)
         except OSError:
-            self.skipTest("symlinks unavailable on this platform")
+            self.skipTest('symlinks unavailable on this platform')
 
         for existing in (False, True):
             with self.subTest(existing=existing):
-                output = self.root / ("existing-out" if existing else "new-out")
-                archive = output / "demo.skill"
+                output = self.root / ('existing-out' if existing else 'new-out')
+                archive = output / 'demo.skill'
                 if existing:
                     output.mkdir()
-                    archive.write_bytes(b"previous valid package")
+                    archive.write_bytes(b'previous valid package')
                 log = io.StringIO()
                 with contextlib.redirect_stdout(log):
                     result = self.module.package_skill(skill, output)
                 self.assertIsNone(result)
-                self.assertNotIn("Successfully packaged", log.getvalue())
-                self.assertIn("SKILL.md", log.getvalue())
+                self.assertNotIn('Successfully packaged', log.getvalue())
+                self.assertIn('SKILL.md', log.getvalue())
                 self.assertEqual(self._run_main(str(skill), str(output)), 1)
                 if existing:
-                    self.assertEqual(archive.read_bytes(), b"previous valid package")
+                    self.assertEqual(archive.read_bytes(), b'previous valid package')
                 else:
                     self.assertFalse(output.exists())
 
     def test_required_entrypoint_can_alias_legitimate_internal_source(self) -> None:
         skill = make_skill(self.root)
-        source = skill / "entry.md"
-        source.write_text("# internal entrypoint", encoding="utf-8")
-        (skill / "SKILL.md").unlink()
+        source = skill / 'entry.md'
+        source.write_text('# internal entrypoint', encoding='utf-8')
+        (skill / 'SKILL.md').unlink()
         try:
-            (skill / "SKILL.md").symlink_to(source)
+            (skill / 'SKILL.md').symlink_to(source)
         except OSError:
-            self.skipTest("symlinks unavailable on this platform")
+            self.skipTest('symlinks unavailable on this platform')
 
-        archive_path = self._package_quietly(skill, self.root / "out")
+        archive_path = self._package_quietly(skill, self.root / 'out')
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertEqual(archive.read("demo/SKILL.md"), b"# internal entrypoint")
+            self.assertEqual(archive.read('demo/SKILL.md'), b'# internal entrypoint')
 
     def test_execution_state_exclusions_follow_platform_case_rules(self) -> None:
         skill = make_skill(self.root)
-        (skill / ".GIT").write_text("gitdir: ../local-worktree", encoding="utf-8")
-        (skill / ".VENV").mkdir()
-        (skill / ".VENV" / "config.txt").write_text("local state", encoding="utf-8")
+        (skill / '.GIT').write_text('gitdir: ../local-worktree', encoding='utf-8')
+        (skill / '.VENV').mkdir()
+        (skill / '.VENV' / 'config.txt').write_text('local state', encoding='utf-8')
 
-        archive_path = self._package_quietly(skill, self.root / "out")
+        archive_path = self._package_quietly(skill, self.root / 'out')
         with zipfile.ZipFile(archive_path) as archive:
             names = sorted(archive.namelist())
-        if os.name == "nt":
-            self.assertEqual(names, ["demo/SKILL.md", "demo/ok.txt"])
+        if os.name == 'nt':
+            self.assertEqual(names, ['demo/SKILL.md', 'demo/ok.txt'])
         else:
-            self.assertEqual(names, [
-                "demo/.GIT", "demo/.VENV/config.txt", "demo/SKILL.md", "demo/ok.txt",
-            ])
+            self.assertEqual(
+                names,
+                [
+                    'demo/.GIT',
+                    'demo/.VENV/config.txt',
+                    'demo/SKILL.md',
+                    'demo/ok.txt',
+                ],
+            )
 
     def test_archive_members_are_sorted_deterministically(self) -> None:
         skill = make_skill(self.root)
-        for name in ("z.txt", "a.txt", "m.txt"):
-            (skill / name).write_text(name, encoding="utf-8")
+        for name in ('z.txt', 'a.txt', 'm.txt'):
+            (skill / name).write_text(name, encoding='utf-8')
 
         with contextlib.redirect_stdout(io.StringIO()):
-            result = self.module.package_skill(skill, self.root / "out")
+            result = self.module.package_skill(skill, self.root / 'out')
 
         archive_path = require_path(result)
         with zipfile.ZipFile(archive_path) as archive:
@@ -271,7 +277,7 @@ class PackageSkillTests(unittest.TestCase):
 
     def test_output_inside_skill_is_rejected_without_side_effect(self) -> None:
         skill = make_skill(self.root)
-        output = skill / "dist"
+        output = skill / 'dist'
 
         with contextlib.redirect_stdout(io.StringIO()):
             result = self.module.package_skill(skill, output)
@@ -283,49 +289,49 @@ class PackageSkillTests(unittest.TestCase):
         self,
     ) -> None:
         skill = make_skill(self.root)
-        output = self.root / "out"
+        output = self.root / 'out'
         output.mkdir()
-        existing = output / "demo.skill"
-        existing.write_bytes(b"existing archive")
+        existing = output / 'demo.skill'
+        existing.write_bytes(b'existing archive')
 
         with (
             mock.patch.object(
                 zipfile.ZipFile,
-                "open",
-                side_effect=OSError("simulated write failure"),
+                'open',
+                side_effect=OSError('simulated write failure'),
             ),
             contextlib.redirect_stdout(io.StringIO()),
         ):
             result = self.module.package_skill(skill, output)
 
         self.assertIsNone(result)
-        self.assertEqual(existing.read_bytes(), b"existing archive")
-        self.assertEqual(list(output.glob(".*.skill.tmp")), [])
+        self.assertEqual(existing.read_bytes(), b'existing archive')
+        self.assertEqual(list(output.glob('.*.skill.tmp')), [])
 
     def test_skill_folder_named_like_excluded_dir_keeps_its_files(self) -> None:
-        parent = self.root / "parent"
+        parent = self.root / 'parent'
         parent.mkdir()
-        skill = parent / "node_modules"
+        skill = parent / 'node_modules'
         skill.mkdir()
-        (skill / "SKILL.md").write_text("# demo", encoding="utf-8")
+        (skill / 'SKILL.md').write_text('# demo', encoding='utf-8')
 
         with contextlib.redirect_stdout(io.StringIO()):
-            result = self.module.package_skill(skill, self.root / "out")
+            result = self.module.package_skill(skill, self.root / 'out')
 
         archive_path = require_path(result)
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertIn("node_modules/SKILL.md", archive.namelist())
+            self.assertIn('node_modules/SKILL.md', archive.namelist())
 
     def test_pre_1980_mtime_does_not_crash_packaging(self) -> None:
         skill = make_skill(self.root)
-        os.utime(skill / "ok.txt", (0, 0))
+        os.utime(skill / 'ok.txt', (0, 0))
 
         with contextlib.redirect_stdout(io.StringIO()):
-            result = self.module.package_skill(skill, self.root / "out")
+            result = self.module.package_skill(skill, self.root / 'out')
 
         archive_path = require_path(result)
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertEqual(archive.read("demo/ok.txt"), b"ok")
+            self.assertEqual(archive.read('demo/ok.txt'), b'ok')
 
     def _package_quietly(self, skill: Path, output: Path) -> Path:
         with contextlib.redirect_stdout(io.StringIO()):
@@ -333,7 +339,7 @@ class PackageSkillTests(unittest.TestCase):
 
     def _run_main(self, *argv: str) -> int:
         with (
-            mock.patch.object(sys, "argv", ["package_skill.py", *argv]),
+            mock.patch.object(sys, 'argv', ['package_skill.py', *argv]),
             contextlib.redirect_stdout(io.StringIO()),
             self.assertRaises(SystemExit) as raised,
         ):
@@ -343,37 +349,37 @@ class PackageSkillTests(unittest.TestCase):
 
     def test_generated_and_junk_files_are_excluded(self) -> None:
         skill = make_skill(self.root)
-        (skill / "__pycache__").mkdir()
-        (skill / "__pycache__" / "a.txt").write_text("x", encoding="utf-8")
-        (skill / "sub" / "node_modules").mkdir(parents=True)
-        (skill / "sub" / "node_modules" / "n.js").write_text("x", encoding="utf-8")
-        (skill / "mod.pyc").write_text("x", encoding="utf-8")
-        (skill / ".DS_Store").write_text("x", encoding="utf-8")
+        (skill / '__pycache__').mkdir()
+        (skill / '__pycache__' / 'a.txt').write_text('x', encoding='utf-8')
+        (skill / 'sub' / 'node_modules').mkdir(parents=True)
+        (skill / 'sub' / 'node_modules' / 'n.js').write_text('x', encoding='utf-8')
+        (skill / 'mod.pyc').write_text('x', encoding='utf-8')
+        (skill / '.DS_Store').write_text('x', encoding='utf-8')
 
-        archive_path = self._package_quietly(skill, self.root / "out")
+        archive_path = self._package_quietly(skill, self.root / 'out')
 
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertEqual(sorted(archive.namelist()), ["demo/SKILL.md", "demo/ok.txt"])
+            self.assertEqual(sorted(archive.namelist()), ['demo/SKILL.md', 'demo/ok.txt'])
 
     def test_tool_caches_and_session_memory_are_excluded_at_any_depth(self) -> None:
         skill = make_skill(self.root)
-        for junk in (".remember", ".mypy_cache", ".pytest_cache", ".ruff_cache"):
-            (skill / junk / "logs").mkdir(parents=True)
-            (skill / junk / "logs" / "a.log").write_text("x", encoding="utf-8")
-            (skill / "sub" / junk).mkdir(parents=True)
-            (skill / "sub" / junk / "b.log").write_text("x", encoding="utf-8")
+        for junk in ('.remember', '.mypy_cache', '.pytest_cache', '.ruff_cache'):
+            (skill / junk / 'logs').mkdir(parents=True)
+            (skill / junk / 'logs' / 'a.log').write_text('x', encoding='utf-8')
+            (skill / 'sub' / junk).mkdir(parents=True)
+            (skill / 'sub' / junk / 'b.log').write_text('x', encoding='utf-8')
 
-        archive_path = self._package_quietly(skill, self.root / "out")
+        archive_path = self._package_quietly(skill, self.root / 'out')
 
         with zipfile.ZipFile(archive_path) as archive:
-            self.assertEqual(sorted(archive.namelist()), ["demo/SKILL.md", "demo/ok.txt"])
+            self.assertEqual(sorted(archive.namelist()), ['demo/SKILL.md', 'demo/ok.txt'])
 
     def test_validator_failure_returns_none_and_writes_nothing(self) -> None:
         skill = make_skill(self.root)
-        output = self.root / "out"
+        output = self.root / 'out'
 
         with (
-            mock.patch.object(self.module, "validate_skill", return_value=(False, "bad")),
+            mock.patch.object(self.module, 'validate_skill', return_value=(False, 'bad')),
             contextlib.redirect_stdout(io.StringIO()),
         ):
             result = self.module.package_skill(skill, output)
@@ -382,52 +388,52 @@ class PackageSkillTests(unittest.TestCase):
         self.assertFalse(output.exists())
 
     def test_missing_and_non_directory_skill_paths_are_rejected(self) -> None:
-        not_a_dir = self.root / "file.txt"
-        not_a_dir.write_text("x", encoding="utf-8")
+        not_a_dir = self.root / 'file.txt'
+        not_a_dir.write_text('x', encoding='utf-8')
 
         with contextlib.redirect_stdout(io.StringIO()):
-            missing = self.module.package_skill(self.root / "nope", self.root / "o")
-            non_dir = self.module.package_skill(not_a_dir, self.root / "o")
+            missing = self.module.package_skill(self.root / 'nope', self.root / 'o')
+            non_dir = self.module.package_skill(not_a_dir, self.root / 'o')
 
         self.assertIsNone(missing)
         self.assertIsNone(non_dir)
 
     def test_cli_exit_codes(self) -> None:
         skill = make_skill(self.root)
-        output = self.root / "out"
+        output = self.root / 'out'
 
         self.assertEqual(self._run_main(str(skill), str(output)), 0)
-        self.assertTrue((output / "demo.skill").exists())
-        self.assertEqual(self._run_main(str(self.root / "nope")), 1)
+        self.assertTrue((output / 'demo.skill').exists())
+        self.assertEqual(self._run_main(str(self.root / 'nope')), 1)
         with contextlib.redirect_stderr(io.StringIO()):
             self.assertEqual(self._run_main(), 2)
 
     def test_dangling_and_directory_symlinks_are_reported_as_skipped(self) -> None:
         skill = make_skill(self.root)
-        target_dir = self.root / "elsewhere"
+        target_dir = self.root / 'elsewhere'
         target_dir.mkdir()
         try:
-            (skill / "dangling").symlink_to(self.root / "missing")
-            (skill / "dirlink").symlink_to(target_dir, target_is_directory=True)
+            (skill / 'dangling').symlink_to(self.root / 'missing')
+            (skill / 'dirlink').symlink_to(target_dir, target_is_directory=True)
         except OSError:
-            self.skipTest("symlinks unavailable on this platform")
+            self.skipTest('symlinks unavailable on this platform')
 
         log = io.StringIO()
         with contextlib.redirect_stdout(log):
-            result = self.module.package_skill(skill, self.root / "out")
+            result = self.module.package_skill(skill, self.root / 'out')
 
         with zipfile.ZipFile(require_path(result)) as archive:
-            self.assertEqual(sorted(archive.namelist()), ["demo/SKILL.md", "demo/ok.txt"])
-        self.assertIn("Skipped: demo", log.getvalue())
-        self.assertIn("dangling", log.getvalue())
-        self.assertIn("dirlink", log.getvalue())
+            self.assertEqual(sorted(archive.namelist()), ['demo/SKILL.md', 'demo/ok.txt'])
+        self.assertIn('Skipped: demo', log.getvalue())
+        self.assertIn('dangling', log.getvalue())
+        self.assertIn('dirlink', log.getvalue())
 
-    @unittest.skipIf(os.name == "nt", "POSIX permission bits are not meaningful")
+    @unittest.skipIf(os.name == 'nt', 'POSIX permission bits are not meaningful')
     def test_archive_file_mode_follows_umask(self) -> None:
         skill = make_skill(self.root)
         previous = os.umask(0o022)
         try:
-            archive_path = self._package_quietly(skill, self.root / "out")
+            archive_path = self._package_quietly(skill, self.root / 'out')
         finally:
             os.umask(previous)
 
@@ -435,24 +441,24 @@ class PackageSkillTests(unittest.TestCase):
 
     def test_archive_bytes_do_not_depend_on_file_mtimes(self) -> None:
         skill = make_skill(self.root)
-        first = self._package_quietly(skill, self.root / "out1").read_bytes()
-        for name in ("SKILL.md", "ok.txt"):
+        first = self._package_quietly(skill, self.root / 'out1').read_bytes()
+        for name in ('SKILL.md', 'ok.txt'):
             os.utime(skill / name, (1_700_000_000, 1_700_000_000))
-        second = self._package_quietly(skill, self.root / "out2").read_bytes()
+        second = self._package_quietly(skill, self.root / 'out2').read_bytes()
 
         self.assertEqual(first, second)
 
     def test_accepts_string_paths_for_compatibility(self) -> None:
         skill = make_skill(self.root)
-        output = self.root / "out"
+        output = self.root / 'out'
 
         with contextlib.redirect_stdout(io.StringIO()):
             result = self.module.package_skill(str(skill), str(output))
 
-        self.assertEqual(result, output / "demo.skill")
+        self.assertEqual(result, output / 'demo.skill')
 
     def test_empty_string_output_dir_preserves_legacy_behavior(self) -> None:
-        skill_parent = self.root / "skills"
+        skill_parent = self.root / 'skills'
         skill_parent.mkdir()
         skill = make_skill(skill_parent)
         original_cwd = Path.cwd()
@@ -460,14 +466,14 @@ class PackageSkillTests(unittest.TestCase):
         try:
             os.chdir(self.root)
             with contextlib.redirect_stdout(io.StringIO()):
-                result = self.module.package_skill(skill, "")
+                result = self.module.package_skill(skill, '')
         finally:
             os.chdir(original_cwd)
 
         archive_path = require_path(result)
-        self.assertEqual(archive_path, skill_parent / "demo.skill")
+        self.assertEqual(archive_path, skill_parent / 'demo.skill')
         self.assertTrue(archive_path.exists())
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

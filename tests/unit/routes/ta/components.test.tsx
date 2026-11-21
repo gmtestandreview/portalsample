@@ -469,6 +469,37 @@ describe(SummaryAndSubmit, () => {
     expect(screen.getByText('Application type')).toBeInTheDocument();
   });
 
+  it('builds edit links with an empty id when the route carries no id', () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
+    render(
+      <MemoryRouter initialEntries={['/summary']}>
+        <Formik initialValues={formValues} onSubmit={vi.fn<() => void>()}>
+          <Form>
+            <Routes>
+              <Route
+                path='/summary'
+                element={<SummaryAndSubmit name='summaryAndSubmit' />}
+              />
+            </Routes>
+          </Form>
+        </Formik>
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen
+        .getAllByTestId('edit-link')
+        .map((link) => link.getAttribute('href')),
+    ).toStrictEqual([
+      '/ta//organisation-details',
+      '/ta//application-details',
+      '/ta//supporting-documents',
+    ]);
+  });
+
   it('renders editable summary sections with edit links and declaration fields', async () => {
     expect.hasAssertions();
 

@@ -192,7 +192,7 @@ Leaf nodes:
 
 ```python
 class AttackTreeNode:
-    def __init__(self, name, likelihood=0, cost=0, impact=0, node_type="OR"):
+    def __init__(self, name, likelihood=0, cost=0, impact=0, node_type='OR'):
         self.name = name
         self.likelihood = likelihood  # 0-1 scale
         self.cost = cost  # Attacker cost (low, medium, high)
@@ -208,7 +208,7 @@ class AttackTreeNode:
         if not self.children:
             return self.likelihood
 
-        if self.node_type == "OR":
+        if self.node_type == 'OR':
             # OR node: Probability that at least one child succeeds
             # P(A OR B) = P(A) + P(B) - P(A)*P(B)
             combined = 0
@@ -217,7 +217,7 @@ class AttackTreeNode:
                 combined = combined + child_likelihood - (combined * child_likelihood)
             return combined
 
-        elif self.node_type == "AND":
+        elif self.node_type == 'AND':
             # AND node: Probability that all children succeed
             # P(A AND B) = P(A) * P(B)
             combined = 1.0
@@ -225,30 +225,33 @@ class AttackTreeNode:
                 combined *= child.calculate_likelihood()
             return combined
 
+
 # Example attack tree
-root = AttackTreeNode("Steal Customer Data", node_type="OR")
+root = AttackTreeNode('Steal Customer Data', node_type='OR')
 
 # Network attacks
-network = AttackTreeNode("Network Attack", node_type="OR")
-network.add_child(AttackTreeNode("MITM", likelihood=0.1, cost="medium", impact=9))
-network.add_child(AttackTreeNode("Packet Sniffing", likelihood=0.05, cost="low", impact=9))
+network = AttackTreeNode('Network Attack', node_type='OR')
+network.add_child(AttackTreeNode('MITM', likelihood=0.1, cost='medium', impact=9))
+network.add_child(AttackTreeNode('Packet Sniffing', likelihood=0.05, cost='low', impact=9))
 
 # Application vulnerabilities
-app = AttackTreeNode("Exploit Application", node_type="OR")
-app.add_child(AttackTreeNode("SQL Injection", likelihood=0.3, cost="low", impact=10))
-app.add_child(AttackTreeNode("XSS", likelihood=0.4, cost="low", impact=6))
+app = AttackTreeNode('Exploit Application', node_type='OR')
+app.add_child(AttackTreeNode('SQL Injection', likelihood=0.3, cost='low', impact=10))
+app.add_child(AttackTreeNode('XSS', likelihood=0.4, cost='low', impact=6))
 
 # Physical access
-physical = AttackTreeNode("Physical Access", node_type="AND")
-physical.add_child(AttackTreeNode("Bypass Physical Security", likelihood=0.2, cost="medium", impact=10))
-physical.add_child(AttackTreeNode("Access Database Server", likelihood=0.5, cost="low", impact=10))
+physical = AttackTreeNode('Physical Access', node_type='AND')
+physical.add_child(
+    AttackTreeNode('Bypass Physical Security', likelihood=0.2, cost='medium', impact=10)
+)
+physical.add_child(AttackTreeNode('Access Database Server', likelihood=0.5, cost='low', impact=10))
 
 root.add_child(network)
 root.add_child(app)
 root.add_child(physical)
 
 overall_likelihood = root.calculate_likelihood()
-print(f"Overall likelihood of successful attack: {overall_likelihood:.2%}")
+print(f'Overall likelihood of successful attack: {overall_likelihood:.2%}')
 # Output: Overall likelihood of successful attack: 60.94%
 ```
 
@@ -335,38 +338,39 @@ class QuantitativeRiskAssessment:
         net_benefit = annual_savings - control_cost
 
         return {
-            "ale_before": ale_before,
-            "ale_after": ale_after,
-            "annual_savings": annual_savings,
-            "control_cost": control_cost,
-            "net_benefit": net_benefit,
-            "roi_percent": (net_benefit / control_cost * 100) if control_cost > 0 else 0,
-            "recommendation": "Implement" if net_benefit > 0 else "Do not implement"
+            'ale_before': ale_before,
+            'ale_after': ale_after,
+            'annual_savings': annual_savings,
+            'control_cost': control_cost,
+            'net_benefit': net_benefit,
+            'roi_percent': (net_benefit / control_cost * 100) if control_cost > 0 else 0,
+            'recommendation': 'Implement' if net_benefit > 0 else 'Do not implement',
         }
+
 
 # Example: Assess risk of ransomware attack
 ra = QuantitativeRiskAssessment(
     asset_value=10_000_000,  # Value of systems + downtime cost
-    exposure_factor=0.6,     # 60% impact (some data recoverable from backups)
-    aro=0.15                 # 15% chance per year (once every 6-7 years)
+    exposure_factor=0.6,  # 60% impact (some data recoverable from backups)
+    aro=0.15,  # 15% chance per year (once every 6-7 years)
 )
 
-print(f"SLE: ${ra.calculate_sle():,.0f}")
-print(f"ALE: ${ra.calculate_ale():,.0f}")
+print(f'SLE: ${ra.calculate_sle():,.0f}')
+print(f'ALE: ${ra.calculate_ale():,.0f}')
 
 # Evaluate EDR solution that reduces ARO from 0.15 to 0.02
 result = ra.cost_benefit_analysis(
-    control_cost=200_000,    # Annual cost of EDR
-    new_aro=0.02            # Reduced to 2% chance per year
+    control_cost=200_000,  # Annual cost of EDR
+    new_aro=0.02,  # Reduced to 2% chance per year
 )
 
-print(f"\nControl Cost-Benefit Analysis:")
-print(f"ALE Before: ${result['ale_before']:,.0f}")
-print(f"ALE After: ${result['ale_after']:,.0f}")
-print(f"Annual Savings: ${result['annual_savings']:,.0f}")
-print(f"Net Benefit: ${result['net_benefit']:,.0f}")
-print(f"ROI: {result['roi_percent']:.1f}%")
-print(f"Recommendation: {result['recommendation']}")
+print(f'\nControl Cost-Benefit Analysis:')
+print(f'ALE Before: ${result['ale_before']:,.0f}')
+print(f'ALE After: ${result['ale_after']:,.0f}')
+print(f'Annual Savings: ${result['annual_savings']:,.0f}')
+print(f'Net Benefit: ${result['net_benefit']:,.0f}')
+print(f'ROI: {result['roi_percent']:.1f}%')
+print(f'Recommendation: {result['recommendation']}')
 
 # Output:
 # SLE: $6,000,000
@@ -482,11 +486,31 @@ Risk Levels:
 class QualitativeRiskAssessment:
     def __init__(self):
         self.risk_matrix = {
-            (1, 1): "Low", (1, 2): "Low", (1, 3): "Low", (1, 4): "Medium", (1, 5): "Medium",
-            (2, 1): "Low", (2, 2): "Low", (2, 3): "Medium", (2, 4): "High", (2, 5): "High",
-            (3, 1): "Low", (3, 2): "Medium", (3, 3): "Medium", (3, 4): "High", (3, 5): "Critical",
-            (4, 1): "Medium", (4, 2): "High", (4, 3): "High", (4, 4): "Critical", (4, 5): "Critical",
-            (5, 1): "Medium", (5, 2): "High", (5, 3): "Critical", (5, 4): "Critical", (5, 5): "Critical"
+            (1, 1): 'Low',
+            (1, 2): 'Low',
+            (1, 3): 'Low',
+            (1, 4): 'Medium',
+            (1, 5): 'Medium',
+            (2, 1): 'Low',
+            (2, 2): 'Low',
+            (2, 3): 'Medium',
+            (2, 4): 'High',
+            (2, 5): 'High',
+            (3, 1): 'Low',
+            (3, 2): 'Medium',
+            (3, 3): 'Medium',
+            (3, 4): 'High',
+            (3, 5): 'Critical',
+            (4, 1): 'Medium',
+            (4, 2): 'High',
+            (4, 3): 'High',
+            (4, 4): 'Critical',
+            (4, 5): 'Critical',
+            (5, 1): 'Medium',
+            (5, 2): 'High',
+            (5, 3): 'Critical',
+            (5, 4): 'Critical',
+            (5, 5): 'Critical',
         }
 
     def assess_risk(self, likelihood, impact):
@@ -494,55 +518,56 @@ class QualitativeRiskAssessment:
         likelihood: 1-5 (Rare to Almost Certain)
         impact: 1-5 (Minimal to Catastrophic)
         """
-        risk_level = self.risk_matrix.get((likelihood, impact), "Unknown")
+        risk_level = self.risk_matrix.get((likelihood, impact), 'Unknown')
 
         risk_score = likelihood * impact
 
-        if risk_level == "Critical":
-            action = "Immediate mitigation required"
-            timeline = "24-48 hours"
-        elif risk_level == "High":
-            action = "Mitigate within 30 days"
-            timeline = "30 days"
-        elif risk_level == "Medium":
-            action = "Mitigate within 90 days"
-            timeline = "90 days"
+        if risk_level == 'Critical':
+            action = 'Immediate mitigation required'
+            timeline = '24-48 hours'
+        elif risk_level == 'High':
+            action = 'Mitigate within 30 days'
+            timeline = '30 days'
+        elif risk_level == 'Medium':
+            action = 'Mitigate within 90 days'
+            timeline = '90 days'
         else:  # Low
-            action = "Accept risk, monitor"
-            timeline = "Ongoing monitoring"
+            action = 'Accept risk, monitor'
+            timeline = 'Ongoing monitoring'
 
         return {
-            "likelihood": likelihood,
-            "impact": impact,
-            "risk_score": risk_score,
-            "risk_level": risk_level,
-            "action": action,
-            "timeline": timeline
+            'likelihood': likelihood,
+            'impact': impact,
+            'risk_score': risk_score,
+            'risk_level': risk_level,
+            'action': action,
+            'timeline': timeline,
         }
+
 
 # Example assessments
 qra = QualitativeRiskAssessment()
 
 # Scenario 1: Unpatched critical vulnerability in public-facing web server
 risk1 = qra.assess_risk(likelihood=5, impact=4)
-print("Risk 1: Unpatched critical vulnerability")
-print(f"  Risk Level: {risk1['risk_level']}")
-print(f"  Action: {risk1['action']}")
-print(f"  Timeline: {risk1['timeline']}\n")
+print('Risk 1: Unpatched critical vulnerability')
+print(f'  Risk Level: {risk1['risk_level']}')
+print(f'  Action: {risk1['action']}')
+print(f'  Timeline: {risk1['timeline']}\n')
 
 # Scenario 2: Phishing attack targeting employees
 risk2 = qra.assess_risk(likelihood=4, impact=3)
-print("Risk 2: Phishing attack")
-print(f"  Risk Level: {risk2['risk_level']}")
-print(f"  Action: {risk2['action']}")
-print(f"  Timeline: {risk2['timeline']}\n")
+print('Risk 2: Phishing attack')
+print(f'  Risk Level: {risk2['risk_level']}')
+print(f'  Action: {risk2['action']}')
+print(f'  Timeline: {risk2['timeline']}\n')
 
 # Scenario 3: Laptop theft with encrypted data
 risk3 = qra.assess_risk(likelihood=2, impact=2)
-print("Risk 3: Laptop theft (encrypted)")
-print(f"  Risk Level: {risk3['risk_level']}")
-print(f"  Action: {risk3['action']}")
-print(f"  Timeline: {risk3['timeline']}")
+print('Risk 3: Laptop theft (encrypted)')
+print(f'  Risk Level: {risk3['risk_level']}')
+print(f'  Action: {risk3['action']}')
+print(f'  Timeline: {risk3['timeline']}')
 ```
 
 ---
@@ -868,135 +893,127 @@ Impact Score: 6.0
 ```python
 class VulnerabilityPrioritization:
     def __init__(self):
-        self.severity_weights = {
-            "critical": 10,
-            "high": 7,
-            "medium": 4,
-            "low": 1
-        }
+        self.severity_weights = {'critical': 10, 'high': 7, 'medium': 4, 'low': 1}
 
     def calculate_priority_score(self, vuln):
         """
         Calculate priority score based on CVSS + business context
         """
         # Base CVSS score (0-10)
-        cvss_score = vuln.get("cvss_score", 0)
+        cvss_score = vuln.get('cvss_score', 0)
 
         # Exploitability factors
-        exploit_available = 1.5 if vuln.get("exploit_available") else 1.0
-        exploit_in_wild = 2.0 if vuln.get("exploit_in_wild") else 1.0
+        exploit_available = 1.5 if vuln.get('exploit_available') else 1.0
+        exploit_in_wild = 2.0 if vuln.get('exploit_in_wild') else 1.0
 
         # Asset criticality (1-5 scale)
-        asset_criticality = vuln.get("asset_criticality", 3)
+        asset_criticality = vuln.get('asset_criticality', 3)
 
         # Exposure (1-3 scale)
-        exposure_map = {
-            "internet_facing": 3,
-            "internal": 2,
-            "isolated": 1
-        }
-        exposure = exposure_map.get(vuln.get("exposure", "internal"), 2)
+        exposure_map = {'internet_facing': 3, 'internal': 2, 'isolated': 1}
+        exposure = exposure_map.get(vuln.get('exposure', 'internal'), 2)
 
         # Data sensitivity (1-3 scale)
         data_sensitivity_map = {
-            "highly_confidential": 3,  # PII, PHI, financial
-            "confidential": 2,          # Internal data
-            "public": 1
+            'highly_confidential': 3,  # PII, PHI, financial
+            'confidential': 2,  # Internal data
+            'public': 1,
         }
-        data_sensitivity = data_sensitivity_map.get(vuln.get("data_sensitivity", "confidential"), 2)
+        data_sensitivity = data_sensitivity_map.get(vuln.get('data_sensitivity', 'confidential'), 2)
 
         # Compensating controls (0.5-1.0 multiplier)
-        has_controls = 0.5 if vuln.get("compensating_controls") else 1.0
+        has_controls = 0.5 if vuln.get('compensating_controls') else 1.0
 
         # Calculate weighted priority score
         priority_score = (
-            cvss_score *
-            exploit_available *
-            exploit_in_wild *
-            (asset_criticality / 3) *
-            (exposure / 2) *
-            (data_sensitivity / 2) *
-            has_controls
+            cvss_score
+            * exploit_available
+            * exploit_in_wild
+            * (asset_criticality / 3)
+            * (exposure / 2)
+            * (data_sensitivity / 2)
+            * has_controls
         )
 
         # Determine priority level and SLA
         if priority_score >= 14:
-            priority = "P0"
+            priority = 'P0'
             sla_days = 1
         elif priority_score >= 10:
-            priority = "P1"
+            priority = 'P1'
             sla_days = 7
         elif priority_score >= 6:
-            priority = "P2"
+            priority = 'P2'
             sla_days = 30
         else:
-            priority = "P3"
+            priority = 'P3'
             sla_days = 90
 
         return {
-            "priority_score": round(priority_score, 2),
-            "priority_level": priority,
-            "sla_days": sla_days,
-            "rationale": self._generate_rationale(vuln, priority_score)
+            'priority_score': round(priority_score, 2),
+            'priority_level': priority,
+            'sla_days': sla_days,
+            'rationale': self._generate_rationale(vuln, priority_score),
         }
 
     def _generate_rationale(self, vuln, priority_score):
         factors = []
-        if vuln.get("cvss_score", 0) >= 9.0:
-            factors.append("Critical CVSS score")
-        if vuln.get("exploit_in_wild"):
-            factors.append("Active exploitation in wild")
-        if vuln.get("exploit_available"):
-            factors.append("Public exploit available")
-        if vuln.get("exposure") == "internet_facing":
-            factors.append("Internet-facing system")
-        if vuln.get("asset_criticality", 0) >= 4:
-            factors.append("Critical business system")
-        if vuln.get("data_sensitivity") == "highly_confidential":
-            factors.append("Contains sensitive data")
+        if vuln.get('cvss_score', 0) >= 9.0:
+            factors.append('Critical CVSS score')
+        if vuln.get('exploit_in_wild'):
+            factors.append('Active exploitation in wild')
+        if vuln.get('exploit_available'):
+            factors.append('Public exploit available')
+        if vuln.get('exposure') == 'internet_facing':
+            factors.append('Internet-facing system')
+        if vuln.get('asset_criticality', 0) >= 4:
+            factors.append('Critical business system')
+        if vuln.get('data_sensitivity') == 'highly_confidential':
+            factors.append('Contains sensitive data')
 
-        return "; ".join(factors) if factors else "Standard risk assessment"
+        return '; '.join(factors) if factors else 'Standard risk assessment'
+
 
 # Example vulnerability assessments
 vp = VulnerabilityPrioritization()
 
 # Scenario 1: Log4Shell on internet-facing application server
 vuln1 = {
-    "cve": "CVE-2021-44228",
-    "cvss_score": 10.0,
-    "exploit_available": True,
-    "exploit_in_wild": True,
-    "asset_criticality": 5,
-    "exposure": "internet_facing",
-    "data_sensitivity": "highly_confidential",
-    "compensating_controls": False
+    'cve': 'CVE-2021-44228',
+    'cvss_score': 10.0,
+    'exploit_available': True,
+    'exploit_in_wild': True,
+    'asset_criticality': 5,
+    'exposure': 'internet_facing',
+    'data_sensitivity': 'highly_confidential',
+    'compensating_controls': False,
 }
 
 result1 = vp.calculate_priority_score(vuln1)
-print("Vulnerability 1: Log4Shell on production web server")
-print(f"  Priority Score: {result1['priority_score']}")
-print(f"  Priority Level: {result1['priority_level']}")
-print(f"  SLA: Patch within {result1['sla_days']} day(s)")
-print(f"  Rationale: {result1['rationale']}\n")
+print('Vulnerability 1: Log4Shell on production web server')
+print(f'  Priority Score: {result1['priority_score']}')
+print(f'  Priority Level: {result1['priority_level']}')
+print(f'  SLA: Patch within {result1['sla_days']} day(s)')
+print(f'  Rationale: {result1['rationale']}\n')
 
 # Scenario 2: Medium severity vuln on internal dev server with WAF protection
 vuln2 = {
-    "cve": "CVE-2023-12345",
-    "cvss_score": 6.5,
-    "exploit_available": False,
-    "exploit_in_wild": False,
-    "asset_criticality": 2,
-    "exposure": "internal",
-    "data_sensitivity": "confidential",
-    "compensating_controls": True  # WAF blocking exploit
+    'cve': 'CVE-2023-12345',
+    'cvss_score': 6.5,
+    'exploit_available': False,
+    'exploit_in_wild': False,
+    'asset_criticality': 2,
+    'exposure': 'internal',
+    'data_sensitivity': 'confidential',
+    'compensating_controls': True,  # WAF blocking exploit
 }
 
 result2 = vp.calculate_priority_score(vuln2)
-print("Vulnerability 2: Medium CVSS on internal dev server")
-print(f"  Priority Score: {result2['priority_score']}")
-print(f"  Priority Level: {result2['priority_level']}")
-print(f"  SLA: Patch within {result2['sla_days']} days")
-print(f"  Rationale: {result2['rationale']}")
+print('Vulnerability 2: Medium CVSS on internal dev server')
+print(f'  Priority Score: {result2['priority_score']}')
+print(f'  Priority Level: {result2['priority_level']}')
+print(f'  SLA: Patch within {result2['sla_days']} days')
+print(f'  Rationale: {result2['rationale']}')
 ```
 
 ---

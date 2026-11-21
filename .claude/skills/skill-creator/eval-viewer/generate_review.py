@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Generate and serve a review page for eval results.
 
 The viewer is an evidence-presentation layer. It discovers current run evidence,
 embeds task-relevant outputs into a self-contained HTML page, optionally adds a
 benchmark and previous-iteration context, and persists explicit human feedback.
 
-The module is stdlib-only and supports Python 3.10+.
+The module is stdlib-only and targets Python 3.14.x.
 """
 
 from __future__ import annotations
@@ -25,6 +25,7 @@ import threading
 import time
 import webbrowser
 from dataclasses import dataclass
+from datetime import UTC
 from email.message import Message
 from functools import partial
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -34,18 +35,24 @@ from socketserver import BaseServer
 from typing import TypeAlias, TypedDict, cast
 from urllib.parse import urlsplit
 
-TEXT_ENCODING = "utf-8"
-JSON_CONTENT_TYPE = "application/json"
-TRANSCRIPT_FILE = "transcript.md"
-OUTPUTS_DIR_NAME = "outputs"
-GRADING_FILE = "grading.json"
-TIMING_FILE = "timing.json"
-FEEDBACK_FILE = "feedback.json"
-ERROR_READING_FILE = "(Error reading file)"
-UNSAFE_PATH_MESSAGE = "(Skipped path that resolves outside the workspace)"
-FILE_TOO_LARGE_MESSAGE = "(File too large to embed)"
-EMBEDDED_DATA_MARKER = "/*__EMBEDDED_DATA__*/"
-CSP_NONCE_MARKER = "__CSP_NONCE__"
+if sys.version_info[:2] != (3, 14):
+    raise SystemExit(
+        'generate_review requires Python 3.14.x '
+        f'(found {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro})'
+    )
+
+TEXT_ENCODING = 'utf-8'
+JSON_CONTENT_TYPE = 'application/json'
+TRANSCRIPT_FILE = 'transcript.md'
+OUTPUTS_DIR_NAME = 'outputs'
+GRADING_FILE = 'grading.json'
+TIMING_FILE = 'timing.json'
+FEEDBACK_FILE = 'feedback.json'
+ERROR_READING_FILE = '(Error reading file)'
+UNSAFE_PATH_MESSAGE = '(Skipped path that resolves outside the workspace)'
+FILE_TOO_LARGE_MESSAGE = '(File too large to embed)'
+EMBEDDED_DATA_MARKER = '/*__EMBEDDED_DATA__*/'
+CSP_NONCE_MARKER = '__CSP_NONCE__'
 
 MAX_FEEDBACK_BYTES = 1_000_000
 # Bounds for draining unread request data after an early rejection.
@@ -55,11 +62,11 @@ LINGER_SECONDS = 2.0
 UNKNOWN_LENGTH_LINGER_SECONDS = 0.05
 MAX_EMBED_FILE_BYTES = 50 * 1024 * 1024
 REQUEST_TIMEOUT_SECONDS = 15.0
-SUPPORTED_FEEDBACK_STATUSES = frozenset({"in_progress", "complete"})
-SKIP_DIRECTORIES = frozenset({"node_modules", ".git", "__pycache__", "skill", "inputs"})
-METADATA_FILES = frozenset({TRANSCRIPT_FILE, "user_notes.md", "metrics.json"})
+SUPPORTED_FEEDBACK_STATUSES = frozenset({'in_progress', 'complete'})
+SKIP_DIRECTORIES = frozenset({'node_modules', '.git', '__pycache__', 'skill', 'inputs'})
+METADATA_FILES = frozenset({TRANSCRIPT_FILE, 'user_notes.md', 'metrics.json'})
 
-EvalId: TypeAlias = int | str
+type EvalId = int | str
 
 _feedback_write_lock = threading.Lock()
 
@@ -97,47 +104,47 @@ class CliOptions:
 
 
 TEXT_EXTENSIONS = {
-    ".txt",
-    ".md",
-    ".json",
-    ".csv",
-    ".py",
-    ".js",
-    ".ts",
-    ".tsx",
-    ".jsx",
-    ".yaml",
-    ".yml",
-    ".xml",
-    ".html",
-    ".css",
-    ".sh",
-    ".rb",
-    ".go",
-    ".rs",
-    ".java",
-    ".c",
-    ".cpp",
-    ".h",
-    ".hpp",
-    ".sql",
-    ".r",
-    ".toml",
+    '.txt',
+    '.md',
+    '.json',
+    '.csv',
+    '.py',
+    '.js',
+    '.ts',
+    '.tsx',
+    '.jsx',
+    '.yaml',
+    '.yml',
+    '.xml',
+    '.html',
+    '.css',
+    '.sh',
+    '.rb',
+    '.go',
+    '.rs',
+    '.java',
+    '.c',
+    '.cpp',
+    '.h',
+    '.hpp',
+    '.sql',
+    '.r',
+    '.toml',
 }
 
-IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"}
+IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'}
 
 MIME_OVERRIDES = {
-    ".svg": "image/svg+xml",
-    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    '.svg': 'image/svg+xml',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 }
 
 
 def _reject_non_standard_json_constant(value: str) -> object:
     """Reject Python json's non-standard NaN/Infinity extensions."""
-    raise ValueError(f"non-standard JSON numeric constant: {value}")
+    raise ValueError(f'non-standard JSON numeric constant: {value}')
 
 
 def _as_object_dict(value: object) -> dict[str, object] | None:
@@ -157,7 +164,7 @@ def _read_json_object(path: Path) -> dict[str, object] | None:
             path.read_text(encoding=TEXT_ENCODING),
             parse_constant=_reject_non_standard_json_constant,
         )
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return None
     return _as_object_dict(value)
 
@@ -165,21 +172,21 @@ def _read_json_object(path: Path) -> dict[str, object] | None:
 def _read_required_json_object(path: Path, *, label: str) -> dict[str, object]:
     """Read a required strict JSON object with a controlled error."""
     if not path.is_file():
-        raise ValueError(f"{label} not found or not a file: {path}")
+        raise ValueError(f'{label} not found or not a file: {path}')
     data = _read_json_object(path)
     if data is None:
-        raise ValueError(f"{label} must contain a valid JSON object: {path}")
+        raise ValueError(f'{label} must contain a valid JSON object: {path}')
     return data
 
 
 def _extract_prompt(text: str) -> str:
     """Extract the Eval Prompt section without a complex regular expression."""
-    marker = "## Eval Prompt\n\n"
+    marker = '## Eval Prompt\n\n'
     start = text.find(marker)
     if start < 0:
-        return ""
+        return ''
     body = text[start + len(marker) :]
-    end = body.find("\n##")
+    end = body.find('\n##')
     return (body if end < 0 else body[:end]).strip()
 
 
@@ -200,7 +207,7 @@ def _is_within(path: Path, boundary: Path, *, strict: bool = True) -> bool:
         resolved_path = path.resolve(strict=strict)
         resolved_boundary = boundary.resolve(strict=True)
         resolved_path.relative_to(resolved_boundary)
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return False
     return True
 
@@ -218,7 +225,7 @@ def _iter_ancestors_to_root(path: Path, root: Path) -> list[Path]:
 
 
 def _metadata_prompt(metadata: dict[str, object]) -> str | None:
-    value = metadata.get("prompt")
+    value = metadata.get('prompt')
     return value if isinstance(value, str) and value.strip() else None
 
 
@@ -226,13 +233,13 @@ def _load_metadata_fields(root: Path, run_dir: Path) -> tuple[str | None, EvalId
     prompt: str | None = None
     eval_id: EvalId | None = None
     for directory in _iter_ancestors_to_root(run_dir, root):
-        metadata = _read_json_object(directory / "eval_metadata.json")
+        metadata = _read_json_object(directory / 'eval_metadata.json')
         if metadata is None:
             continue
         if prompt is None:
             prompt = _metadata_prompt(metadata)
         if eval_id is None:
-            eval_id = _coerce_eval_id(metadata.get("eval_id"))
+            eval_id = _coerce_eval_id(metadata.get('eval_id'))
         if prompt is not None and eval_id is not None:
             break
     return prompt, eval_id
@@ -260,7 +267,7 @@ def _load_prompt_and_eval_id(root: Path, run_dir: Path) -> tuple[str, EvalId | N
     prompt, eval_id = _load_metadata_fields(root, run_dir)
     if prompt is None:
         prompt = _load_transcript_prompt(root, run_dir)
-    return prompt or "(No prompt found)", eval_id
+    return prompt or '(No prompt found)', eval_id
 
 
 def get_mime_type(path: Path) -> str:
@@ -268,11 +275,11 @@ def get_mime_type(path: Path) -> str:
     if ext in MIME_OVERRIDES:
         return MIME_OVERRIDES[ext]
     mime, _ = mimetypes.guess_type(str(path))
-    return mime or "application/octet-stream"
+    return mime or 'application/octet-stream'
 
 
 def _error_file(name: str, message: str = ERROR_READING_FILE) -> EmbeddedFile:
-    return {"name": name, "type": "error", "content": message}
+    return {'name': name, 'type': 'error', 'content': message}
 
 
 def _safe_file_size(path: Path) -> int | None:
@@ -287,13 +294,13 @@ def _read_base64(path: Path) -> str | None:
     if size is None or size > MAX_EMBED_FILE_BYTES:
         return None
     try:
-        return base64.b64encode(path.read_bytes()).decode("ascii")
+        return base64.b64encode(path.read_bytes()).decode('ascii')
     except OSError:
         return None
 
 
 def _make_data_uri(mime: str, b64: str) -> str:
-    return f"data:{mime};base64,{b64}"
+    return f'data:{mime};base64,{b64}'
 
 
 def embed_file(
@@ -319,10 +326,10 @@ def embed_file(
 
     if ext in TEXT_EXTENSIONS:
         try:
-            content = path.read_text(encoding=TEXT_ENCODING, errors="replace")
+            content = path.read_text(encoding=TEXT_ENCODING, errors='replace')
         except OSError:
             return _error_file(name)
-        return {"name": name, "type": "text", "content": content}
+        return {'name': name, 'type': 'text', 'content': content}
 
     b64 = _read_base64(path)
     if b64 is None:
@@ -330,25 +337,25 @@ def embed_file(
 
     if ext in IMAGE_EXTENSIONS:
         return {
-            "name": name,
-            "type": "image",
-            "mime": mime,
-            "data_uri": _make_data_uri(mime, b64),
+            'name': name,
+            'type': 'image',
+            'mime': mime,
+            'data_uri': _make_data_uri(mime, b64),
         }
-    if ext == ".pdf":
+    if ext == '.pdf':
         return {
-            "name": name,
-            "type": "pdf",
-            "data_uri": _make_data_uri(mime, b64),
+            'name': name,
+            'type': 'pdf',
+            'data_uri': _make_data_uri(mime, b64),
         }
-    if ext == ".xlsx":
-        return {"name": name, "type": "xlsx", "data_b64": b64}
+    if ext == '.xlsx':
+        return {'name': name, 'type': 'xlsx', 'data_b64': b64}
 
     return {
-        "name": name,
-        "type": "binary",
-        "mime": mime,
-        "data_uri": _make_data_uri(mime, b64),
+        'name': name,
+        'type': 'binary',
+        'mime': mime,
+        'data_uri': _make_data_uri(mime, b64),
     }
 
 
@@ -459,7 +466,7 @@ def _load_grading(run_dir: Path) -> dict[str, object] | None:
 
 
 def _parse_prefixed_index(name: str, prefix: str) -> int | None:
-    expected = f"{prefix}-"
+    expected = f'{prefix}-'
     if not name.startswith(expected):
         return None
     suffix = name[len(expected) :]
@@ -468,7 +475,7 @@ def _parse_prefixed_index(name: str, prefix: str) -> int | None:
 
 def _looks_like_run_dir(path: Path) -> bool:
     """Recognize normal run-N directories and legacy evidence directories."""
-    if _parse_prefixed_index(path.name, "run") is not None:
+    if _parse_prefixed_index(path.name, 'run') is not None:
         return True
     return (
         (path / OUTPUTS_DIR_NAME).is_dir()
@@ -511,7 +518,7 @@ def _discover_run_dirs(root: Path) -> list[Path]:
 def _base_run_id(root: Path, run_dir: Path) -> str:
     """Preserve the historical flattened ID for ordinary non-colliding paths."""
     relative = run_dir.relative_to(root)
-    return str(relative).replace("/", "-").replace("\\", "-")
+    return str(relative).replace('/', '-').replace('\\', '-')
 
 
 def _assign_run_ids(root: Path, run_dirs: list[Path]) -> dict[Path, str]:
@@ -533,10 +540,10 @@ def _assign_run_ids(root: Path, run_dirs: list[Path]) -> dict[Path, str]:
         for path in paths:
             relative = path.relative_to(root).as_posix()
             digest = hashlib.sha256(relative.encode(TEXT_ENCODING)).hexdigest()[:12]
-            candidate = f"{base}--{digest}"
+            candidate = f'{base}--{digest}'
             counter = 2
             while candidate in used:
-                candidate = f"{base}--{digest}-{counter}"
+                candidate = f'{base}--{digest}-{counter}'
                 counter += 1
             assigned[path] = candidate
             used.add(candidate)
@@ -553,11 +560,11 @@ def build_run(
     """Build one viewer run while preserving independent evidence fallbacks."""
     prompt, eval_id = _load_prompt_and_eval_id(root, run_dir)
     return {
-        "id": run_id if run_id is not None else _base_run_id(root, run_dir),
-        "prompt": prompt,
-        "eval_id": eval_id,
-        "outputs": _collect_output_files(run_dir / OUTPUTS_DIR_NAME, root),
-        "grading": _load_grading(run_dir),
+        'id': run_id if run_id is not None else _base_run_id(root, run_dir),
+        'prompt': prompt,
+        'eval_id': eval_id,
+        'outputs': _collect_output_files(run_dir / OUTPUTS_DIR_NAME, root),
+        'grading': _load_grading(run_dir),
     }
 
 
@@ -566,15 +573,15 @@ def _eval_id_sort_key(eval_id: EvalId | None) -> tuple[int, object]:
         return 0, eval_id
     if isinstance(eval_id, str):
         return 1, eval_id
-    return 2, ""
+    return 2, ''
 
 
 def _config_sort_key(name: str) -> tuple[int, str]:
     priority = {
-        "with_skill": 0,
-        "new_skill": 0,
-        "without_skill": 1,
-        "old_skill": 1,
+        'with_skill': 0,
+        'new_skill': 0,
+        'without_skill': 1,
+        'old_skill': 1,
     }
     return priority.get(name, 2), name
 
@@ -582,10 +589,10 @@ def _config_sort_key(name: str) -> tuple[int, str]:
 def _run_sort_key(root: Path, run_dir: Path, run: Run) -> tuple[object, ...]:
     relative = run_dir.relative_to(root)
     parts = relative.parts
-    config = run_dir.parent.name if len(parts) >= 2 else ""
-    run_number = _parse_prefixed_index(run_dir.name, "run")
+    config = run_dir.parent.name if len(parts) >= 2 else ''
+    run_number = _parse_prefixed_index(run_dir.name, 'run')
     return (
-        *_eval_id_sort_key(run["eval_id"]),
+        *_eval_id_sort_key(run['eval_id']),
         *_config_sort_key(config),
         run_number is None,
         run_number if run_number is not None else 0,
@@ -603,8 +610,7 @@ def find_runs(workspace: Path) -> list[Run]:
     run_ids = _assign_run_ids(root, run_dirs)
 
     entries: list[tuple[Path, Run]] = [
-        (run_dir, build_run(root, run_dir, run_id=run_ids[run_dir]))
-        for run_dir in run_dirs
+        (run_dir, build_run(root, run_dir, run_id=run_ids[run_dir])) for run_dir in run_dirs
     ]
     entries.sort(key=lambda item: _run_sort_key(root, item[0], item[1]))
     return [run for _, run in entries]
@@ -616,7 +622,7 @@ def _load_feedback_map(path: Path) -> dict[str, str]:
     if data is None:
         return {}
 
-    reviews = data.get("reviews")
+    reviews = data.get('reviews')
     if not isinstance(reviews, list):
         return {}
 
@@ -625,8 +631,8 @@ def _load_feedback_map(path: Path) -> dict[str, str]:
         review = _as_object_dict(item)
         if review is None:
             continue
-        run_id = review.get("run_id")
-        text = review.get("feedback")
+        run_id = review.get('run_id')
+        text = review.get('feedback')
         if isinstance(run_id, str) and run_id and isinstance(text, str) and text.strip():
             feedback[run_id] = text
     return feedback
@@ -638,13 +644,13 @@ def load_previous_iteration(workspace: Path) -> dict[str, PreviousRun]:
     result: dict[str, PreviousRun] = {}
 
     for run in find_runs(workspace):
-        result[run["id"]] = {
-            "feedback": feedback_map.get(run["id"], ""),
-            "outputs": run["outputs"],
+        result[run['id']] = {
+            'feedback': feedback_map.get(run['id'], ''),
+            'outputs': run['outputs'],
         }
 
     for run_id, feedback in feedback_map.items():
-        result.setdefault(run_id, {"feedback": feedback, "outputs": []})
+        result.setdefault(run_id, {'feedback': feedback, 'outputs': []})
 
     return result
 
@@ -652,13 +658,21 @@ def load_previous_iteration(workspace: Path) -> dict[str, PreviousRun]:
 def _json_for_script(data: object) -> str:
     """Serialize JSON so data cannot terminate the surrounding script element."""
     return (
-        json.dumps(data, allow_nan=False)
-        .replace("<", "\\u003c")
-        .replace(">", "\\u003e")
-        .replace("&", "\\u0026")
-        .replace("\u2028", "\\u2028")
-        .replace("\u2029", "\\u2029")
+        json
+        .dumps(data, allow_nan=False)
+        .replace('<', '\\u003c')
+        .replace('>', '\\u003e')
+        .replace('&', '\\u0026')
+        .replace('\u2028', '\\u2028')
+        .replace('\u2029', '\\u2029')
     )
+
+
+def _validated_run_id(value: object) -> str:
+    """Validate runtime-supplied run IDs independently of TypedDict hints."""
+    if not isinstance(value, str) or not value:
+        raise ValueError('viewer runs require non-empty string IDs')
+    return value
 
 
 def generate_html(
@@ -668,38 +682,43 @@ def generate_html(
     benchmark: dict[str, object] | None = None,
 ) -> str:
     """Generate a self-contained review page from the viewer template."""
-    template_path = Path(__file__).parent / "viewer.html"
+    # Direct API callers must not bypass find_runs()'s collision handling:
+    # feedback is keyed by run ID, so duplicate IDs could misattribute reviews.
+    identifiers = [_validated_run_id(run.get('id')) for run in runs]
+    if len(identifiers) != len(set(identifiers)):
+        raise ValueError('viewer runs must have unique IDs for feedback attribution')
+    template_path = Path(__file__).parent / 'viewer.html'
     template = template_path.read_text(encoding=TEXT_ENCODING)
 
     marker_count = template.count(EMBEDDED_DATA_MARKER)
     if marker_count != 1:
         raise ValueError(
-            f"viewer template must contain exactly one {EMBEDDED_DATA_MARKER!r}; "
-            f"found {marker_count}"
+            f'viewer template must contain exactly one {EMBEDDED_DATA_MARKER!r}; '
+            f'found {marker_count}'
         )
 
     previous_feedback: dict[str, str] = {}
     previous_outputs: dict[str, list[EmbeddedFile]] = {}
     if previous:
         for run_id, data in previous.items():
-            if data["feedback"].strip():
-                previous_feedback[run_id] = data["feedback"]
-            if data["outputs"]:
-                previous_outputs[run_id] = data["outputs"]
+            if data['feedback'].strip():
+                previous_feedback[run_id] = data['feedback']
+            if data['outputs']:
+                previous_outputs[run_id] = data['outputs']
 
     embedded: dict[str, object] = {
-        "skill_name": skill_name,
-        "runs": runs,
-        "previous_feedback": previous_feedback,
-        "previous_outputs": previous_outputs,
+        'skill_name': skill_name,
+        'runs': runs,
+        'previous_feedback': previous_feedback,
+        'previous_outputs': previous_outputs,
     }
     if benchmark is not None:
-        embedded["benchmark"] = benchmark
+        embedded['benchmark'] = benchmark
 
     nonce = secrets.token_urlsafe(16)
     return template.replace(CSP_NONCE_MARKER, nonce).replace(
         EMBEDDED_DATA_MARKER,
-        f"const EMBEDDED_DATA = {_json_for_script(embedded)};",
+        f'const EMBEDDED_DATA = {_json_for_script(embedded)};',
     )
 
 
@@ -707,7 +726,7 @@ def _parse_iso_datetime(value: str) -> bool:
     """Validate an ISO-8601 date-time string without adding dependencies."""
     from datetime import datetime
 
-    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    normalized = value[:-1] + '+00:00' if value.endswith('Z') else value
     try:
         parsed = datetime.fromisoformat(normalized)
     except ValueError:
@@ -716,13 +735,13 @@ def _parse_iso_datetime(value: str) -> bool:
 
 
 def _utc_now_iso() -> str:
-    from datetime import datetime, timezone
+    from datetime import datetime
 
-    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+    return datetime.now(UTC).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
 def _feedback_status(data: dict[str, object]) -> str:
-    status = data.get("status", "in_progress")
+    status = data.get('status', 'in_progress')
     if not isinstance(status, str) or status not in SUPPORTED_FEEDBACK_STATUSES:
         raise ValueError("feedback status must be 'in_progress' or 'complete'")
     return status
@@ -732,7 +751,7 @@ def _feedback_timestamp(value: object) -> str:
     if value is None:
         return _utc_now_iso()
     if not isinstance(value, str) or not _parse_iso_datetime(value):
-        raise ValueError("review.timestamp must be an offset-aware ISO-8601 date-time")
+        raise ValueError('review.timestamp must be an offset-aware ISO-8601 date-time')
     return value
 
 
@@ -744,28 +763,28 @@ def _normalize_feedback_review(
 ) -> dict[str, object]:
     review = _as_object_dict(item)
     if review is None:
-        raise ValueError("each feedback review must be a JSON object")
+        raise ValueError('each feedback review must be a JSON object')
 
-    unexpected = set(review).difference({"run_id", "feedback", "timestamp"})
+    unexpected = set(review).difference({'run_id', 'feedback', 'timestamp'})
     if unexpected:
-        raise ValueError(f"unexpected review fields: {sorted(unexpected)}")
+        raise ValueError(f'unexpected review fields: {sorted(unexpected)}')
 
-    run_id = review.get("run_id")
-    feedback = review.get("feedback")
+    run_id = review.get('run_id')
+    feedback = review.get('feedback')
     if not isinstance(run_id, str) or not run_id:
-        raise ValueError("review.run_id must be a non-empty string")
+        raise ValueError('review.run_id must be a non-empty string')
     if run_id in seen_run_ids:
-        raise ValueError(f"duplicate review.run_id: {run_id}")
+        raise ValueError(f'duplicate review.run_id: {run_id}')
     if allowed_run_ids is not None and run_id not in allowed_run_ids:
-        raise ValueError(f"unknown review.run_id for this workspace: {run_id}")
+        raise ValueError(f'unknown review.run_id for this workspace: {run_id}')
     if not isinstance(feedback, str):
-        raise ValueError("review.feedback must be a string")
+        raise ValueError('review.feedback must be a string')
 
     seen_run_ids.add(run_id)
     return {
-        "run_id": run_id,
-        "feedback": feedback,
-        "timestamp": _feedback_timestamp(review.get("timestamp")),
+        'run_id': run_id,
+        'feedback': feedback,
+        'timestamp': _feedback_timestamp(review.get('timestamp')),
     }
 
 
@@ -775,11 +794,11 @@ def _normalize_feedback_payload(
     allowed_run_ids: set[str] | None,
 ) -> dict[str, object]:
     """Validate feedback and normalize legacy omissions conservatively."""
-    unexpected = set(data).difference({"reviews", "status"})
+    unexpected = set(data).difference({'reviews', 'status'})
     if unexpected:
-        raise ValueError(f"unexpected feedback fields: {sorted(unexpected)}")
+        raise ValueError(f'unexpected feedback fields: {sorted(unexpected)}')
 
-    reviews_value = data.get("reviews")
+    reviews_value = data.get('reviews')
     if not isinstance(reviews_value, list):
         raise ValueError("feedback must contain a 'reviews' list")
 
@@ -792,26 +811,26 @@ def _normalize_feedback_payload(
         )
         for item in cast(list[object], reviews_value)
     ]
-    return {"reviews": normalized_reviews, "status": _feedback_status(data)}
+    return {'reviews': normalized_reviews, 'status': _feedback_status(data)}
 
 
 def _default_feedback_payload() -> dict[str, object]:
-    return {"reviews": [], "status": "in_progress"}
+    return {'reviews': [], 'status': 'in_progress'}
 
 
 def _atomic_write_json(path: Path, data: dict[str, object]) -> None:
     """Atomically replace a JSON file so concurrent readers never see a partial write."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    payload = json.dumps(data, indent=2, allow_nan=False) + "\n"
+    payload = json.dumps(data, indent=2, allow_nan=False) + '\n'
 
     temp_name: str | None = None
     try:
         with tempfile.NamedTemporaryFile(
-            mode="w",
+            mode='w',
             encoding=TEXT_ENCODING,
             dir=path.parent,
-            prefix=f".{path.name}.",
-            suffix=".tmp",
+            prefix=f'.{path.name}.',
+            suffix='.tmp',
             delete=False,
         ) as stream:
             temp_name = stream.name
@@ -833,15 +852,15 @@ def _origin_allowed(origin: str | None) -> bool:
         parsed = urlsplit(origin)
     except ValueError:
         return False
-    return parsed.scheme in {"http", "https"} and parsed.hostname in {
-        "localhost",
-        "127.0.0.1",
-        "::1",
+    return parsed.scheme in {'http', 'https'} and parsed.hostname in {
+        'localhost',
+        '127.0.0.1',
+        '::1',
     }
 
 
 def _declared_content_length(headers: Message[str, str]) -> int | None:
-    raw_length = headers.get("Content-Length")
+    raw_length = headers.get('Content-Length')
     if raw_length is None:
         return None
     try:
@@ -853,16 +872,16 @@ def _declared_content_length(headers: Message[str, str]) -> int | None:
 def _load_benchmark(path: Path | None) -> dict[str, object] | None:
     if path is None:
         return None
-    data = _read_required_json_object(path, label="benchmark")
+    data = _read_required_json_object(path, label='benchmark')
     # Minimal shape check: keep the renderer permissive for legacy benchmark fields,
     # but reject a wrong-root or unrelated JSON object supplied as --benchmark.
-    for required in ("metadata", "runs", "run_summary"):
+    for required in ('metadata', 'runs', 'run_summary'):
         if required not in data:
-            raise ValueError(f"benchmark missing required field: {required}")
-    if not isinstance(data["runs"], list):
-        raise ValueError("benchmark.runs must be a list")
-    if not isinstance(data["metadata"], dict) or not isinstance(data["run_summary"], dict):
-        raise ValueError("benchmark metadata/run_summary must be JSON objects")
+            raise ValueError(f'benchmark missing required field: {required}')
+    if not isinstance(data['runs'], list):
+        raise ValueError('benchmark.runs must be a list')
+    if not isinstance(data['metadata'], dict) or not isinstance(data['run_summary'], dict):
+        raise ValueError('benchmark metadata/run_summary must be JSON objects')
     return data
 
 
@@ -894,7 +913,7 @@ class ReviewHandler(BaseHTTPRequestHandler):
     def handle(self) -> None:
         try:
             super().handle()
-        except (BrokenPipeError, ConnectionResetError, TimeoutError):
+        except BrokenPipeError, ConnectionResetError, TimeoutError:
             return
 
     def _send_bytes(
@@ -906,12 +925,12 @@ class ReviewHandler(BaseHTTPRequestHandler):
     ) -> None:
         try:
             self.send_response(status)
-            self.send_header("Content-Type", content_type)
-            self.send_header("Content-Length", str(len(content)))
-            self.send_header("Cache-Control", "no-store")
+            self.send_header('Content-Type', content_type)
+            self.send_header('Content-Length', str(len(content)))
+            self.send_header('Cache-Control', 'no-store')
             self.end_headers()
             self.wfile.write(content)
-        except (BrokenPipeError, ConnectionResetError, TimeoutError):
+        except BrokenPipeError, ConnectionResetError, TimeoutError:
             return
 
     def _send_json(self, payload: dict[str, object], *, status: int = 200) -> None:
@@ -919,7 +938,7 @@ class ReviewHandler(BaseHTTPRequestHandler):
         self._send_bytes(content, content_type=JSON_CONTENT_TYPE, status=status)
 
     def do_GET(self) -> None:
-        if self.path in {"/", "/index.html"}:
+        if self.path in {'/', '/index.html'}:
             try:
                 benchmark = _load_benchmark(self.benchmark_path)
                 html = generate_html(
@@ -929,21 +948,21 @@ class ReviewHandler(BaseHTTPRequestHandler):
                     benchmark,
                 )
             except (OSError, ValueError) as exc:
-                self._send_json({"error": str(exc)}, status=500)
+                self._send_json({'error': str(exc)}, status=500)
                 return
             self._send_bytes(
                 html.encode(TEXT_ENCODING),
-                content_type="text/html; charset=utf-8",
+                content_type='text/html; charset=utf-8',
             )
             return
 
-        if self.path == "/api/feedback":
+        if self.path == '/api/feedback':
             try:
-                allowed_run_ids = {run["id"] for run in find_runs(self.workspace)}
+                allowed_run_ids = {run['id'] for run in find_runs(self.workspace)}
                 if self.feedback_path.is_file():
                     data = _read_required_json_object(
                         self.feedback_path,
-                        label="feedback",
+                        label='feedback',
                     )
                     normalized = _normalize_feedback_payload(
                         data,
@@ -956,7 +975,7 @@ class ReviewHandler(BaseHTTPRequestHandler):
                     allow_nan=False,
                 ).encode(TEXT_ENCODING)
             except ValueError as exc:
-                self._send_json({"error": str(exc)}, status=500)
+                self._send_json({'error': str(exc)}, status=500)
                 return
             self._send_bytes(content, content_type=JSON_CONTENT_TYPE)
             return
@@ -997,7 +1016,7 @@ class ReviewHandler(BaseHTTPRequestHandler):
         close the write side and drain leftover input, bounded by bytes and
         time, before the connection is closed (RFC 7230 section 6.6).
         """
-        self._send_json({"error": message}, status=status)
+        self._send_json({'error': message}, status=status)
         self.close_connection = True
         try:
             self.wfile.flush()
@@ -1014,13 +1033,13 @@ class ReviewHandler(BaseHTTPRequestHandler):
             self._drain_request_body(remaining_body_bytes, seconds=LINGER_SECONDS)
 
     def do_POST(self) -> None:
-        if self.path != "/api/feedback":
+        if self.path != '/api/feedback':
             self.send_error(404)
             return
 
-        if not _origin_allowed(self.headers.get("Origin")):
+        if not _origin_allowed(self.headers.get('Origin')):
             self._reject(
-                "Origin is not allowed",
+                'Origin is not allowed',
                 403,
                 remaining_body_bytes=_declared_content_length(self.headers),
             )
@@ -1028,30 +1047,30 @@ class ReviewHandler(BaseHTTPRequestHandler):
 
         if self.headers.get_content_type() != JSON_CONTENT_TYPE:
             self._reject(
-                "Content-Type must be application/json",
+                'Content-Type must be application/json',
                 415,
                 remaining_body_bytes=_declared_content_length(self.headers),
             )
             return
 
-        raw_length = self.headers.get("Content-Length")
+        raw_length = self.headers.get('Content-Length')
         if raw_length is None:
-            self._reject("Content-Length is required", 411)
+            self._reject('Content-Length is required', 411)
             return
 
         try:
             length = int(raw_length)
         except ValueError:
-            self._reject("Invalid Content-Length", 400)
+            self._reject('Invalid Content-Length', 400)
             return
 
         if length < 0:
-            self._reject("Content-Length must be non-negative", 400)
+            self._reject('Content-Length must be non-negative', 400)
             return
         if length > MAX_FEEDBACK_BYTES:
             self._drain_request_body(length, seconds=LINGER_SECONDS)
             self._reject(
-                "Feedback payload is too large",
+                'Feedback payload is too large',
                 413,
                 remaining_body_bytes=0,
             )
@@ -1065,9 +1084,9 @@ class ReviewHandler(BaseHTTPRequestHandler):
             )
             data = _as_object_dict(raw)
             if data is None:
-                raise ValueError("feedback payload must be a JSON object")
+                raise ValueError('feedback payload must be a JSON object')
 
-            allowed_run_ids = {run["id"] for run in find_runs(self.workspace)}
+            allowed_run_ids = {run['id'] for run in find_runs(self.workspace)}
             normalized = _normalize_feedback_payload(
                 data,
                 allowed_run_ids=allowed_run_ids,
@@ -1075,10 +1094,10 @@ class ReviewHandler(BaseHTTPRequestHandler):
             with _feedback_write_lock:
                 _atomic_write_json(self.feedback_path, normalized)
         except (OSError, ValueError) as exc:
-            self._send_json({"error": str(exc)}, status=400)
+            self._send_json({'error': str(exc)}, status=400)
             return
 
-        self._send_json({"ok": True})
+        self._send_json({'ok': True})
 
     def log_message(self, format: str, *args: object) -> None:
         """Suppress normal request logging to keep CLI output focused."""
@@ -1094,47 +1113,47 @@ def _port_number(value: str) -> int:
     try:
         port = int(value)
     except ValueError as exc:
-        raise argparse.ArgumentTypeError("port must be an integer") from exc
+        raise argparse.ArgumentTypeError('port must be an integer') from exc
     if not 0 <= port <= 65535:
-        raise argparse.ArgumentTypeError("port must be between 0 and 65535")
+        raise argparse.ArgumentTypeError('port must be between 0 and 65535')
     return port
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Generate and serve eval review")
-    parser.add_argument("workspace", type=Path, help="Path to workspace directory")
+    parser = argparse.ArgumentParser(description='Generate and serve eval review')
+    parser.add_argument('workspace', type=Path, help='Path to workspace directory')
     parser.add_argument(
-        "--port",
-        "-p",
+        '--port',
+        '-p',
         type=_port_number,
         default=3117,
-        help="Server port (default: 3117; 0 asks the OS for an ephemeral port)",
+        help='Server port (default: 3117; 0 asks the OS for an ephemeral port)',
     )
     parser.add_argument(
-        "--skill-name",
-        "-n",
+        '--skill-name',
+        '-n',
         type=str,
         default=None,
-        help="Skill name for header",
+        help='Skill name for header',
     )
     parser.add_argument(
-        "--previous-workspace",
+        '--previous-workspace',
         type=Path,
         default=None,
-        help="Previous iteration workspace used only as historical context",
+        help='Previous iteration workspace used only as historical context',
     )
     parser.add_argument(
-        "--benchmark",
+        '--benchmark',
         type=Path,
         default=None,
-        help="Path to benchmark.json to show in the Benchmark tab",
+        help='Path to benchmark.json to show in the Benchmark tab',
     )
     parser.add_argument(
-        "--static",
-        "-s",
+        '--static',
+        '-s',
         type=Path,
         default=None,
-        help="Write standalone HTML to this path instead of starting a server",
+        help='Write standalone HTML to this path instead of starting a server',
     )
     return parser
 
@@ -1156,7 +1175,7 @@ def _load_previous_workspace(path: Path | None) -> tuple[Path | None, dict[str, 
         return None, {}
     resolved = path.resolve()
     if not resolved.is_dir():
-        raise ValueError(f"previous workspace is not a directory: {resolved}")
+        raise ValueError(f'previous workspace is not a directory: {resolved}')
     return resolved, load_previous_iteration(resolved)
 
 
@@ -1172,10 +1191,10 @@ def _write_static_viewer(
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(html, encoding=TEXT_ENCODING)
     except (OSError, ValueError) as exc:
-        print(f"Error writing static viewer: {exc}", file=sys.stderr)
+        print(f'Error writing static viewer: {exc}', file=sys.stderr)
         return 1
 
-    print(f"\n  Static viewer written to: {path}\n")
+    print(f'\n  Static viewer written to: {path}\n')
     return 0
 
 
@@ -1196,15 +1215,15 @@ def _create_server(
         benchmark_path,
     )
     try:
-        return ReviewHTTPServer(("127.0.0.1", port), handler)
+        return ReviewHTTPServer(('127.0.0.1', port), handler)
     except OSError as exc:
         if exc.errno not in {errno.EADDRINUSE, errno.EACCES}:
             raise
         print(
-            f"Warning: unable to bind requested port {port}; using an ephemeral port",
+            f'Warning: unable to bind requested port {port}; using an ephemeral port',
             file=sys.stderr,
         )
-        return ReviewHTTPServer(("127.0.0.1", 0), handler)
+        return ReviewHTTPServer(('127.0.0.1', 0), handler)
 
 
 def _print_server_banner(
@@ -1216,16 +1235,16 @@ def _print_server_banner(
     previous_count: int,
     benchmark_path: Path | None,
 ) -> None:
-    print("\n  Eval Viewer")
-    print("  ─────────────────────────────────")
-    print(f"  URL:       {url}")
-    print(f"  Workspace: {workspace}")
-    print(f"  Feedback:  {feedback_path}")
+    print('\n  Eval Viewer')
+    print('  ─────────────────────────────────')
+    print(f'  URL:       {url}')
+    print(f'  Workspace: {workspace}')
+    print(f'  Feedback:  {feedback_path}')
     if previous_workspace is not None:
-        print(f"  Previous:  {previous_workspace} ({previous_count} runs)")
+        print(f'  Previous:  {previous_workspace} ({previous_count} runs)')
     if benchmark_path is not None:
-        print(f"  Benchmark: {benchmark_path}")
-    print("\n  Press Ctrl+C to stop.\n")
+        print(f'  Benchmark: {benchmark_path}')
+    print('\n  Press Ctrl+C to stop.\n')
 
 
 def _serve_review(
@@ -1247,12 +1266,12 @@ def _serve_review(
             port,
         )
     except OSError as exc:
-        print(f"Unable to start review server: {exc}", file=sys.stderr)
+        print(f'Unable to start review server: {exc}', file=sys.stderr)
         return 1
 
     bound_address = cast(tuple[str, int], server.server_address)
     bound_port = bound_address[1]
-    url = f"http://localhost:{bound_port}"
+    url = f'http://localhost:{bound_port}'
 
     _print_server_banner(
         url=url,
@@ -1267,7 +1286,7 @@ def _serve_review(
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\nStopped.")
+        print('\nStopped.')
     finally:
         server.server_close()
     return 0
@@ -1277,29 +1296,23 @@ def main(argv: list[str] | None = None) -> int:
     options = _parse_cli_options(argv)
     workspace = options.workspace.resolve()
     if not workspace.is_dir():
-        print(f"Error: {workspace} is not a directory", file=sys.stderr)
+        print(f'Error: {workspace} is not a directory', file=sys.stderr)
         return 1
 
     runs = find_runs(workspace)
     if not runs:
-        print(f"No runs found in {workspace}", file=sys.stderr)
+        print(f'No runs found in {workspace}', file=sys.stderr)
         return 1
 
-    skill_name = options.skill_name or workspace.name.replace("-workspace", "")
+    skill_name = options.skill_name or workspace.name.replace('-workspace', '')
     feedback_path = workspace / FEEDBACK_FILE
 
     try:
-        previous_workspace, previous = _load_previous_workspace(
-            options.previous_workspace
-        )
-        benchmark_path = (
-            options.benchmark.resolve()
-            if options.benchmark is not None
-            else None
-        )
+        previous_workspace, previous = _load_previous_workspace(options.previous_workspace)
+        benchmark_path = options.benchmark.resolve() if options.benchmark is not None else None
         benchmark = _load_benchmark(benchmark_path)
     except ValueError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        print(f'Error: {exc}', file=sys.stderr)
         return 1
 
     if options.static_path is not None:
@@ -1322,5 +1335,5 @@ def main(argv: list[str] | None = None) -> int:
     )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

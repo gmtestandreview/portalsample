@@ -7,7 +7,7 @@ import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import type { QuotationSummaryProps } from './types';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import QuoteDetails from '../quotation/quoteDetails';
-import NMIContactDetails from '../quotation/nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { silentRequestFor } from '../../authentication/silentRequest';
@@ -82,7 +82,10 @@ const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
           </div>
         </Col>
       </Row>
-      <NMIContactDetails quotationData={quotationData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if any of the details are not correct before proceeding.'
+        quotationData={quotationData}
+      />
     </>
   );
 

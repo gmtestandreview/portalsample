@@ -109,10 +109,10 @@ def remove_unused_element(file_path, element):
 
     if syntax_valid and tests_pass:
         apply_change()
-        return "✓ Removed"
+        return '✓ Removed'
     else:
         rollback()
-        return "✗ Preserved (safety)"
+        return '✗ Preserved (safety)'
 ```
 
 ### 4. Validation Commands

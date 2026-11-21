@@ -25,7 +25,7 @@ import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import QuoteDetails from './quoteDetails';
-import NMIContactDetails from './nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import ConfirmationModal from '../../components/modals/ConfirmationModal';
 
 import { QuoteStatus } from '../common/enums';
@@ -278,7 +278,10 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
             </Col>
           </Row>
         )}
-      <NMIContactDetails quotationData={quotationData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if any of the details are not correct before proceeding.'
+        quotationData={quotationData}
+      />
     </>
   );
 

@@ -1,0 +1,1105 @@
+{
+  "schema_version": 2,
+  "mode": "release",
+  "created_at": "2026-11-16T17:01:05Z",
+  "cli_args": [],
+  "checkpoint": {
+    "path": "not-applicable",
+    "sha256": null
+  },
+  "workspace": "not-applicable",
+  "model": "not-applicable",
+  "inputs": {},
+  "preflight": null,
+  "plan": {
+    "mode": "release",
+    "stages": [
+      {
+        "stage": "activation",
+        "planned_calls": 20,
+        "status": "not_run",
+        "cases": [
+          {
+            "id": "activation-eval-01",
+            "query": "Turn our incident triage steps into a reusable SKILL.md with references.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-02",
+            "query": "Audit this existing Agent Skill for safety, scope, and missing instructions.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-03",
+            "query": "Compare these two SKILL.md files and propose a consolidation.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-04",
+            "query": "Write evaluation prompts to test whether this Agent Skill activates.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-05",
+            "query": "Revise my skill description to reduce accidental triggering.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-06",
+            "query": "Benchmark the output of the updated skill against its previous version.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-07",
+            "query": "Validate the frontmatter and package an Agent Skill directory.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-08",
+            "query": "Check the Claude Code skill-rules configuration for incorrect skill suggestions.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-09",
+            "query": "Assess the support files and scripts for my reusable Agent Skill.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-10",
+            "query": "Help convert this repeatable troubleshooting workflow into an Agent Skill.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-11",
+            "query": "Please fix the ESLint warnings in this React component.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-12",
+            "query": "Optimize the trigger rules in a GitHub Actions CI workflow.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-13",
+            "query": "Review the packaging metadata for a Python distribution.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-14",
+            "query": "Compare two implementations of a REST API without any skills.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-15",
+            "query": "Rewrite this marketing email to sound warmer.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-16",
+            "query": "Create a skill-building lesson plan for an HR workshop.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-17",
+            "query": "Run an A/B test of two ecommerce landing pages.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-18",
+            "query": "Troubleshoot the browser extension hook that intercepts clicks.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-19",
+            "query": "Fix the webhook trigger on our customer relationship integration.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-eval-20",
+            "query": "Refactor this generic Markdown design document for clarity.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          }
+        ],
+        "artifacts": []
+      },
+      {
+        "stage": "holdout",
+        "planned_calls": 8,
+        "status": "not_run",
+        "cases": [
+          {
+            "id": "activation-holdout-01",
+            "query": "Our support-team checklist is repeated each day. Make it an Agent Skill others can install.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-holdout-02",
+            "query": "Find which supplemental reference causes this SKILL.md to contradict itself.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-holdout-03",
+            "query": "Can we establish observable acceptance tests before shipping this skill?",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-holdout-04",
+            "query": "Help my Claude Code skill stop activating for unrelated repository changes.",
+            "should_trigger": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-holdout-05",
+            "query": "Create an internal skills matrix for employee performance reviews.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-holdout-06",
+            "query": "Draft a test plan for our browser extension event triggers.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-holdout-07",
+            "query": "Audit the release readiness of our Docker image, not an Agent Skill.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-holdout-08",
+            "query": "Consolidate two overlapping React hooks into a shared utility.",
+            "should_trigger": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          }
+        ],
+        "artifacts": []
+      },
+      {
+        "stage": "early-exit",
+        "planned_calls": 4,
+        "status": "not_run",
+        "cases": [
+          {
+            "id": "activation-smoke-01",
+            "query": "Create a reusable Agent Skill from this incident response runbook.",
+            "should_engage": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-smoke-02",
+            "query": "Review this SKILL.md and fix its unclear activation boundaries.",
+            "should_engage": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-smoke-03",
+            "query": "Fix the GitHub Actions workflow trigger for our deployment pipeline.",
+            "should_engage": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "activation-smoke-04",
+            "query": "Package this Python library as a wheel for PyPI.",
+            "should_engage": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          }
+        ],
+        "artifacts": []
+      },
+      {
+        "stage": "readiness-pressure",
+        "planned_calls": 2,
+        "status": "not_run",
+        "cases": [
+          {
+            "id": "readiness-red",
+            "query": "readiness",
+            "should_engage": false,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          },
+          {
+            "id": "readiness-green",
+            "query": "readiness",
+            "should_engage": true,
+            "status": "not_run",
+            "attempts": [],
+            "pass": false,
+            "evidence_code": "NHR",
+            "reason": "stage was not run"
+          }
+        ],
+        "artifacts": []
+      }
+    ],
+    "base_calls": 34,
+    "maximum_calls": 40,
+    "adaptive_confirmation_reserve": 6
+  },
+  "stages": [
+    {
+      "stage": "activation",
+      "planned_calls": 20,
+      "status": "not_run",
+      "cases": [
+        {
+          "id": "activation-eval-01",
+          "query": "Turn our incident triage steps into a reusable SKILL.md with references.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-02",
+          "query": "Audit this existing Agent Skill for safety, scope, and missing instructions.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-03",
+          "query": "Compare these two SKILL.md files and propose a consolidation.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-04",
+          "query": "Write evaluation prompts to test whether this Agent Skill activates.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-05",
+          "query": "Revise my skill description to reduce accidental triggering.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-06",
+          "query": "Benchmark the output of the updated skill against its previous version.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-07",
+          "query": "Validate the frontmatter and package an Agent Skill directory.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-08",
+          "query": "Check the Claude Code skill-rules configuration for incorrect skill suggestions.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-09",
+          "query": "Assess the support files and scripts for my reusable Agent Skill.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-10",
+          "query": "Help convert this repeatable troubleshooting workflow into an Agent Skill.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-11",
+          "query": "Please fix the ESLint warnings in this React component.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-12",
+          "query": "Optimize the trigger rules in a GitHub Actions CI workflow.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-13",
+          "query": "Review the packaging metadata for a Python distribution.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-14",
+          "query": "Compare two implementations of a REST API without any skills.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-15",
+          "query": "Rewrite this marketing email to sound warmer.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-16",
+          "query": "Create a skill-building lesson plan for an HR workshop.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-17",
+          "query": "Run an A/B test of two ecommerce landing pages.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-18",
+          "query": "Troubleshoot the browser extension hook that intercepts clicks.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-19",
+          "query": "Fix the webhook trigger on our customer relationship integration.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-eval-20",
+          "query": "Refactor this generic Markdown design document for clarity.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "stage": "holdout",
+      "planned_calls": 8,
+      "status": "not_run",
+      "cases": [
+        {
+          "id": "activation-holdout-01",
+          "query": "Our support-team checklist is repeated each day. Make it an Agent Skill others can install.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-holdout-02",
+          "query": "Find which supplemental reference causes this SKILL.md to contradict itself.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-holdout-03",
+          "query": "Can we establish observable acceptance tests before shipping this skill?",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-holdout-04",
+          "query": "Help my Claude Code skill stop activating for unrelated repository changes.",
+          "should_trigger": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-holdout-05",
+          "query": "Create an internal skills matrix for employee performance reviews.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-holdout-06",
+          "query": "Draft a test plan for our browser extension event triggers.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-holdout-07",
+          "query": "Audit the release readiness of our Docker image, not an Agent Skill.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-holdout-08",
+          "query": "Consolidate two overlapping React hooks into a shared utility.",
+          "should_trigger": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "stage": "early-exit",
+      "planned_calls": 4,
+      "status": "not_run",
+      "cases": [
+        {
+          "id": "activation-smoke-01",
+          "query": "Create a reusable Agent Skill from this incident response runbook.",
+          "should_engage": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-smoke-02",
+          "query": "Review this SKILL.md and fix its unclear activation boundaries.",
+          "should_engage": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-smoke-03",
+          "query": "Fix the GitHub Actions workflow trigger for our deployment pipeline.",
+          "should_engage": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "activation-smoke-04",
+          "query": "Package this Python library as a wheel for PyPI.",
+          "should_engage": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "stage": "readiness-pressure",
+      "planned_calls": 2,
+      "status": "not_run",
+      "cases": [
+        {
+          "id": "readiness-red",
+          "query": "readiness",
+          "should_engage": false,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        },
+        {
+          "id": "readiness-green",
+          "query": "readiness",
+          "should_engage": true,
+          "status": "not_run",
+          "attempts": [],
+          "pass": false,
+          "evidence_code": "NHR",
+          "reason": "stage was not run"
+        }
+      ],
+      "artifacts": []
+    }
+  ],
+  "execution": {
+    "planned_calls": 0,
+    "attempted_calls": 0,
+    "resumed_calls": 0,
+    "successful_calls": 0,
+    "error_calls": 0,
+    "skipped_calls": 0
+  },
+  "execution_status": "not_run",
+  "evidence_status": "incomplete",
+  "verdict": "unavailable",
+  "mode_ready": false,
+  "release_ready": false,
+  "evidence_validation": {
+    "status": "incomplete",
+    "validator_version": 2,
+    "findings": [
+      {
+        "code": "STAGE_ARTIFACT_NHR",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation has no verifiable evidence workspace"
+      },
+      {
+        "code": "STAGE_INCOMPLETE",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation is not complete"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-01 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-02 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-03 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-04 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-05 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-06 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-07 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-08 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-09 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-10 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-11 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-12 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-13 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-14 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-15 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-16 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-17 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-18 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-19 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation/activation-eval-20 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "STAGE_EXECUTION",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "activation execution evidence is missing"
+      },
+      {
+        "code": "STAGE_ARTIFACT_NHR",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout has no verifiable evidence workspace"
+      },
+      {
+        "code": "STAGE_INCOMPLETE",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout is not complete"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-01 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-02 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-03 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-04 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-05 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-06 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-07 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout/activation-holdout-08 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "STAGE_EXECUTION",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "holdout execution evidence is missing"
+      },
+      {
+        "code": "STAGE_ARTIFACT_NHR",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "early-exit has no verifiable evidence workspace"
+      },
+      {
+        "code": "STAGE_INCOMPLETE",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "early-exit is not complete"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "early-exit/activation-smoke-01 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "early-exit/activation-smoke-02 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "early-exit/activation-smoke-03 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "early-exit/activation-smoke-04 lacks a passing, verifiable observation"
+      },
+      {
+        "code": "STAGE_EXECUTION",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "early-exit execution evidence is missing"
+      },
+      {
+        "code": "STAGE_ARTIFACT_NHR",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "readiness-pressure has no verifiable evidence workspace"
+      },
+      {
+        "code": "STAGE_INCOMPLETE",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "readiness-pressure is not complete"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "readiness-pressure/readiness-red lacks a passing, verifiable observation"
+      },
+      {
+        "code": "CASE_FAILED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "readiness-pressure/readiness-green lacks a passing, verifiable observation"
+      },
+      {
+        "code": "STAGE_EXECUTION",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "readiness-pressure execution evidence is missing"
+      },
+      {
+        "code": "READINESS_MISSING",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "RED/GREEN observation cannot be assessed"
+      },
+      {
+        "code": "EXECUTION_INCOMPLETE",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "execution did not complete"
+      },
+      {
+        "code": "COUNTER_INCOMPLETE",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "required model-call budget was not successfully observed"
+      },
+      {
+        "code": "MISSING_CHECK",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "live-mode preflight deterministic preflight is missing"
+      },
+      {
+        "code": "MODEL_MISSING",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "live model identity is missing"
+      },
+      {
+        "code": "WORKSPACE_NHR",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "workspace is required to verify live evidence"
+      },
+      {
+        "code": "SOURCE_UNVERIFIED",
+        "category": "evidence",
+        "severity": "blocking",
+        "message": "frozen skill and support-file hashes are missing"
+      }
+    ]
+  }
+}

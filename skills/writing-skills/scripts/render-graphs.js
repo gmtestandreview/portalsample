@@ -217,9 +217,13 @@ function resolveDotExecutable() {
   ];
   for (const candidate of candidates) {
     try {
-      const executable = fs.realpathSync(candidate);
-      if (runDot(executable, 'digraph probe {}').includes('<svg'))
-        return executable;
+      // Verify that the candidate resolves, but invoke the original launcher
+      // path: some Graphviz installations dispatch by argv[0] (e.g. dot is a
+      // symlink to libgvc6-config-update). Executing its realpath loses that
+      // selector and falsely reports Graphviz as unavailable.
+      fs.realpathSync(candidate);
+      if (runDot(candidate, 'digraph probe {}').includes('<svg'))
+        return candidate;
     } catch {
       // Try the next configured/standard Graphviz location.
     }
@@ -317,12 +321,14 @@ function combineSvgs(svgs) {
     const opening = /<svg\b[^>]*>/.exec(svg)?.[0] ?? '';
     const graphWidth = Number(/\bwidth="([\d.]+)pt"/.exec(opening)?.[1]);
     const graphHeight = Number(/\bheight="([\d.]+)pt"/.exec(opening)?.[1]);
-    if (!(
-      graphWidth > 0 &&
-      graphHeight > 0 &&
-      Number.isFinite(graphWidth) &&
-      Number.isFinite(graphHeight)
-    )) {
+    if (
+      !(
+        graphWidth > 0 &&
+        graphHeight > 0 &&
+        Number.isFinite(graphWidth) &&
+        Number.isFinite(graphHeight)
+      )
+    ) {
       throw new Error(
         'Graphviz returned SVG without supported finite dimensions.',
       );

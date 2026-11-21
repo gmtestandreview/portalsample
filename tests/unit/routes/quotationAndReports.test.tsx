@@ -666,6 +666,21 @@ describe('quotation and measurement report routes', () => {
     });
   });
 
+  it('links the proceed action to an id-less accept route when the quotation route has no id', async () => {
+    expect.hasAssertions();
+
+    resetQuotationAndReportsMocks();
+
+    const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
+      .default;
+
+    renderRoute('/quotation', <Quotation />, '/quotation');
+
+    await expect(
+      screen.findByTestId('new-request-button'),
+    ).resolves.toHaveAttribute('href', '/accept-quote-create/');
+  });
+
   it('closes the decline confirmation without submitting', async () => {
     expect.hasAssertions();
 

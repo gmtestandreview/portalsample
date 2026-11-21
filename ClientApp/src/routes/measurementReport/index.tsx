@@ -21,7 +21,7 @@ import HeaderIntroText from '../../components/HeaderIntroText';
 import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import ReportDetails from './reportDetails';
-import NMIContactDetails from './nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import ViewMeasurementReport from '../../components/Utilities/ViewMeasurementReport';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import { handleReportFileError } from '../common/helperFunctions';
@@ -153,7 +153,10 @@ const MeasurementReport = () => {
           </div>
         </Col>
       </Row>
-      <NMIContactDetails quotationData={measurementReportData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if you have any questions about the report outcomes.'
+        quotationData={measurementReportData}
+      />
     </>
   );
 

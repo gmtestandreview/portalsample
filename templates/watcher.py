@@ -46,32 +46,33 @@ class Task(TypedDict):
     context_files: NotRequired[list[str]]
     branch: NotRequired[str]
 
+
 # ── CONFIGURE THESE FOR YOUR PROJECT ──────────────────────────────────────────
 
 # Command to invoke your secondary CLI (e.g. "codex", "opencode", "aider")
-SECONDARY_CLI = "codex"
+SECONDARY_CLI = 'codex'
 
 # Extra flags passed before the prompt (e.g. "--approval-mode auto-edit")
-CLI_FLAGS = ["--approval-mode", "auto-edit"]
+CLI_FLAGS = ['--approval-mode', 'auto-edit']
 
 # How often to poll the queue folder (seconds)
 POLL_INTERVAL = 5
 
 # ──────────────────────────────────────────────────────────────────────────────
 
-BASE     = Path(__file__).parent
-QUEUE    = BASE / "queue"
-PROC     = BASE / "processing"
-RESULTS  = BASE / "results"
-LOG      = BASE / "watcher.log"
-PID_FILE = BASE / "watcher.pid"
+BASE = Path(__file__).parent
+QUEUE = BASE / 'queue'
+PROC = BASE / 'processing'
+RESULTS = BASE / 'results'
+LOG = BASE / 'watcher.log'
+PID_FILE = BASE / 'watcher.pid'
 
 
 def log(msg: str) -> None:
-    line = f"[{datetime.now().isoformat(timespec='seconds')}] {msg}\n"
-    with LOG.open("a", encoding="utf-8") as f:
+    line = f'[{datetime.now().isoformat(timespec='seconds')}] {msg}\n'
+    with LOG.open('a', encoding='utf-8') as f:
         f.write(line)
-    print(line, end="")
+    print(line, end='')
 
 
 def pid_is_running(pid: int) -> bool:
@@ -90,11 +91,11 @@ def pid_is_running(pid: int) -> bool:
     is scripts/process_utils.py — change both, and tests/hooks/test_watcher_pid.py
     fails if they drift apart.
     """
-    if os.name == "nt":
+    if os.name == 'nt':
         import ctypes
         from ctypes import wintypes
 
-        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
         kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
         kernel32.OpenProcess.restype = wintypes.HANDLE
         kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
@@ -135,7 +136,7 @@ def is_already_running() -> bool:
             return True
         PID_FILE.unlink(missing_ok=True)
         return False
-    except (ValueError, OSError):
+    except ValueError, OSError:
         PID_FILE.unlink(missing_ok=True)
         return False
 
@@ -146,21 +147,21 @@ def write_pid() -> None:
 
 def cleanup(signum: int | None = None, frame: FrameType | None = None) -> NoReturn:
     PID_FILE.unlink(missing_ok=True)
-    log("=== Watcher stopped ===")
+    log('=== Watcher stopped ===')
     sys.exit(0)
 
 
 def build_prompt(task: Task) -> str:
-    agent       = task.get("agent", "assistant")
-    description = task.get("description", "")
-    context     = " ".join(f"@{f}" for f in task.get("context_files", []))
+    agent = task.get('agent', 'assistant')
+    description = task.get('description', '')
+    context = ' '.join(f'@{f}' for f in task.get('context_files', []))
     return (
-        f"You are the {agent} agent. "
-        f"Task: {description}. "
-        f"{'Context: ' + context + '.' if context else ''} "
-        f"REQUIRED: end your response with a ```json block containing exactly: "
-        f"commit (string|null), files_changed (list), "
-        f"tests ({{passed:N, failed:N}}), decisions_made (list), blockers (list)."
+        f'You are the {agent} agent. '
+        f'Task: {description}. '
+        f'{'Context: ' + context + '.' if context else ''} '
+        f'REQUIRED: end your response with a ```json block containing exactly: '
+        f'commit (string|null), files_changed (list), '
+        f'tests ({{passed:N, failed:N}}), decisions_made (list), blockers (list).'
     )
 
 
@@ -171,10 +172,10 @@ def invoke_cli(task: Task) -> subprocess.CompletedProcess[str]:
 
 def extract_structured(stdout: str) -> Any:
     # Preserve every JSON shape returned by the existing unvalidated decoder.
-    if "```json" not in stdout:
+    if '```json' not in stdout:
         return None
     try:
-        raw = stdout.split("```json")[1].split("```")[0].strip()
+        raw = stdout.split('```json')[1].split('```')[0].strip()
         return json.loads(raw)
     except Exception:
         return None
@@ -182,47 +183,45 @@ def extract_structured(stdout: str) -> Any:
 
 def notify_orchestrator(task_id: str) -> None:
     subprocess.Popen(
-        ["claude", "-c", "/orchestrate tick"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
+        ['claude', '-c', '/orchestrate tick'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
-    log(f"NOTIFY  orchestrator tick → {task_id}")
+    log(f'NOTIFY  orchestrator tick → {task_id}')
 
 
 def run_task(task_file: Path) -> None:
     proc_file = PROC / task_file.name
     task_file.rename(proc_file)
     task: Task = json.loads(proc_file.read_text())
-    log(f"START   {task['id']} → {task.get('agent', '?')} (branch: {task.get('branch', 'main')})")
+    log(f'START   {task['id']} → {task.get('agent', '?')} (branch: {task.get('branch', 'main')})')
 
-    result  = invoke_cli(task)
+    result = invoke_cli(task)
     success = result.returncode == 0
-    parsed  = extract_structured(result.stdout) if success else None
+    parsed = extract_structured(result.stdout) if success else None
 
     receipt: dict[str, object] = {
-        "id":             task["id"],
-        "status":         "complete" if success else "failed",
-        "branch":         task.get("branch", "main"),
-        "commit":         None,
-        "files_changed":  [],
-        "tests":          {"passed": 0, "failed": 0},
-        "decisions_made": [],
-        "blockers":       [],
-        "completed_at":   datetime.now().isoformat(),
+        'id': task['id'],
+        'status': 'complete' if success else 'failed',
+        'branch': task.get('branch', 'main'),
+        'commit': None,
+        'files_changed': [],
+        'tests': {'passed': 0, 'failed': 0},
+        'decisions_made': [],
+        'blockers': [],
+        'completed_at': datetime.now().isoformat(),
     }
 
     if parsed:
         receipt.update(parsed)
     elif success:
-        receipt["decisions_made"] = ["Could not parse structured output from CLI"]
-        receipt["raw_output"]     = result.stdout[-2000:]
+        receipt['decisions_made'] = ['Could not parse structured output from CLI']
+        receipt['raw_output'] = result.stdout[-2000:]
     else:
-        receipt["blockers"] = [result.stderr[-2000:]]
+        receipt['blockers'] = [result.stderr[-2000:]]
 
-    (RESULTS / f"{task['id']}-result.json").write_text(json.dumps(receipt, indent=2))
+    (RESULTS / f'{task['id']}-result.json').write_text(json.dumps(receipt, indent=2))
     proc_file.unlink()
-    log(f"DONE    {task['id']} — {receipt['status']}")
-    notify_orchestrator(task["id"])
+    log(f'DONE    {task['id']} — {receipt['status']}')
+    notify_orchestrator(task['id'])
 
 
 def recover_stale_queue_files() -> None:
@@ -231,13 +230,13 @@ def recover_stale_queue_files() -> None:
     If the watcher crashed mid-task the file was already renamed to PROC/.
     Moving it back to QUEUE/ ensures it is retried on the next poll cycle.
     """
-    for stale in sorted(PROC.glob("*.json")):
+    for stale in sorted(PROC.glob('*.json')):
         dest = QUEUE / stale.name
         try:
             stale.rename(dest)
-            log(f"RECOVER stale queue file: {stale.name} → queue/")
+            log(f'RECOVER stale queue file: {stale.name} → queue/')
         except Exception as e:
-            log(f"WARN    could not recover stale queue file {stale.name}: {e}")
+            log(f'WARN    could not recover stale queue file {stale.name}: {e}')
 
 
 def watch() -> NoReturn:
@@ -245,7 +244,7 @@ def watch() -> NoReturn:
         d.mkdir(parents=True, exist_ok=True)
 
     if is_already_running():
-        print(f"[Watcher] Already running (PID {PID_FILE.read_text().strip()}). Exiting.")
+        print(f'[Watcher] Already running (PID {PID_FILE.read_text().strip()}). Exiting.')
         sys.exit(0)
 
     write_pid()
@@ -255,18 +254,18 @@ def watch() -> NoReturn:
     # Move any stale queue files left in processing/ from a previous crashed run
     recover_stale_queue_files()
 
-    log(f"=== A Team Watcher started (CLI: {SECONDARY_CLI}) ===")
+    log(f'=== A Team Watcher started (CLI: {SECONDARY_CLI}) ===')
     try:
         while True:
-            for f in sorted(QUEUE.glob("*.json")):
+            for f in sorted(QUEUE.glob('*.json')):
                 try:
                     run_task(f)
                 except Exception as e:
-                    log(f"ERROR   {f.name}: {e}")
+                    log(f'ERROR   {f.name}: {e}')
             time.sleep(POLL_INTERVAL)
     finally:
         cleanup()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     watch()

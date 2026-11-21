@@ -32,7 +32,7 @@ export default defineConfig({
   // parallel BDD workers make docs and MCP scenarios race that state.
   fullyParallel: false,
   forbidOnly: isCi,
-  retries: isCi ? 2 : 0,
+  retries: isCi ? 1 : 0,
   workers: 1,
   reporter: [
     ['html', { open: 'never', outputFolder: 'reports/playwright/storybook' }],

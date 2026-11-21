@@ -12,6 +12,11 @@ ClientApp/css/main.*.css
 ClientApp/css/main.*.css.map
 ClientApp/src/main.*.js
 ClientApp/src/main.*.js.map
+/example-codeql-db/
+/report/
+/esprint.json
+/eslint-*-effective.json
+
 
 # TypeScript
 *.tsbuildinfo
@@ -22,6 +27,9 @@ ClientApp/src/main.*.js.map
 # traversable. Same correction already applied to `quality/`.
 reports/*
 coverage/
+# Authored route-coverage stories share a directory name with generated
+# coverage output; keep them tracked.
+!ClientApp/src/routes/coverage/
 .vitest/
 tmp/
 

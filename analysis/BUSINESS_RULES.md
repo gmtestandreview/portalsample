@@ -62,7 +62,7 @@ SEC-011 closed 2026-06-01 (CRD-029, CRD-031).
 | RULE-008 | PDF page number by status            | Lifecycle   | P1       | `helperFunctions.ts`                                              | Medium                                  |
 | RULE-009 | Proceed/decline button eligibility   | Lifecycle   | P1       | `quoteStatus.ts`, `quotation/index.tsx`                           | High                                    |
 | RULE-010 | Dashboard action menu by status      | Lifecycle   | P0       | `requestItem.tsx`, `instrumentItem.tsx` _(corrected CRD-045)_     | High                                    |
-| RULE-011 | Optimistic UI status override        | Lifecycle   | P1       | `dashboard/index.tsx`                                             | High                                    |
+| RULE-011 | Optimistic UI status override        | Lifecycle   | P1       | `dashboard.helpers.ts`                                            | High                                    |
 | RULE-012 | Decline is irreversible              | Policy      | P0       | `quotation/index.tsx` _(corrected CRD-045)_                       | High                                    |
 | RULE-013 | RFQ submission is irreversible       | Policy      | P0       | `requestForQuote/index.tsx`                                       | High                                    |
 | RULE-014 | Quote acceptance is irreversible     | Policy      | P0       | `acceptQuote/index.tsx`                                           | High                                    |
@@ -104,7 +104,7 @@ SEC-011 closed 2026-06-01 (CRD-029, CRD-031).
 | RULE-050 | NMI ABN hardcoded                    | Policy      | P0       | `summaryAndAccept.tsx` _(corrected CRD-044)_                      | High                                    |
 | RULE-051 | NMI address hardcoded                | Policy      | P1       | `summaryAndAccept.tsx` _(corrected CRD-044)_                      | High _(detail section written CRD-045)_ |
 | RULE-052 | Terms version config                 | Policy      | P0       | `terms-config.json`                                               | High                                    |
-| RULE-053 | Dashboard/report page size           | Policy      | P2       | `dashboard/index.tsx`                                             | High                                    |
+| RULE-053 | Dashboard/report page size           | Policy      | P2       | `dashboardShared.tsx`                                             | High                                    |
 
 ---
 
@@ -203,8 +203,8 @@ And    on acceptance, call AccountLoginClient.acceptTerms; setAgree() in Account
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
 `ClientApp/src/routes/preConditions/PreConditions.tsx:84-88`,
-`ClientApp/src/components/modals/BranchSelectorModal/index.tsx:154-162` **Plain
-English:** After accepting T&C, if the user has no default organisation
+`ClientApp/src/components/modals/BranchSelectorModal/branchSelectorHelpers.tsx:51-84`
+**Plain English:** After accepting T&C, if the user has no default organisation
 selected, a blocking branch-selector modal is shown. The user cannot dismiss it
 without selecting an organisation. **Specification:**
 
@@ -265,7 +265,7 @@ never been submitted to CRM and have no `QuoteStatus` value **Confidence:** High
 ### RULE-007: Status → Downloadable Document Mapping
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:39-74` **Plain English:** The
+`ClientApp/src/routes/common/helperFunctions.ts:173-218` **Plain English:** The
 PDF document served to a customer for a given record depends entirely on its
 current status. Different statuses serve fundamentally different documents
 (offer vs acceptance vs report). **Specification:**
@@ -292,23 +292,22 @@ When   status is ReportInProgress
 Then   fetch getQuoteRequestAcceptedPDFByID
 
 When   status is any other value (including QuoteSubmitted, QuoteInProgress, ReportWithdrawn)
-Then   return a permanently-pending Promise (no document)
+Then   resolve without a downloadable document
 ```
 
 **Parameters:** All API method names are compile-time string literals in
-`web-api-client.ts` **Suspected defect:** The `default` branch returns a Promise
-that can never resolve or reject — any caller that `await`s it will hang
-indefinitely. See Debt #8 in ASSESSMENT.md. **Confidence:** High
+`web-api-client.ts`. The `default` branch resolves `undefined`, so callers can
+continue without a downloadable document. **Confidence:** High
 
 ---
 
 ### RULE-008: PDF Initial Page Number by Status
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:156-168` **Plain English:** The
-PDF viewer opens to a specific page depending on the quote's status, reflecting
-which section of the document is most relevant to the customer's current
-situation. **Specification:**
+`ClientApp/src/routes/common/helperFunctions.ts:299-311` **Plain English:** The
+`getQuoteOfferPageNumber` helper opens the PDF viewer to a specific page
+depending on the quote's status, reflecting which section of the document is
+most relevant to the customer's current situation. **Specification:**
 
 ```text
 Given  a QuoteStatus value
@@ -356,8 +355,8 @@ perspective **Confidence:** High
 ### RULE-010: Dashboard Action Menu by Status
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:439-523`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:281-345` _(corrected
+`ClientApp/src/components/RequestList/requestItem.tsx:451-557`,
+`ClientApp/src/components/RequestList/instrumentItem.tsx:306-379` _(corrected
 2026-09-02, CRD-045 - previous citation was past end of file)_ **Plain
 English:** Each dashboard card exposes a specific subset of actions depending on
 the record's status. This is the master gating table for all customer-initiated
@@ -402,7 +401,7 @@ Implementation status identifiers include `QuoteDrafted`, `QuoteAvailable`,
 ### RULE-011: Optimistic UI Status Override Post-Acceptance
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/dashboard/index.tsx:176-203`,
+`ClientApp/src/routes/dashboard/dashboard.helpers.ts:114-148`,
 `ClientApp/src/routes/quotation/index.tsx:192-199` **Plain English:**
 Immediately after a customer accepts a quote and returns to the dashboard, the
 portal optimistically shows the record as accepted before CRM has propagated the
@@ -496,8 +495,8 @@ Then   status transitions to QuoteAccepted (optimistically shown immediately)
 ### RULE-015: Recalibration Request Eligibility
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:454-469`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:303-330` _(corrected
+`ClientApp/src/components/RequestList/requestItem.tsx:528-547`,
+`ClientApp/src/components/RequestList/instrumentItem.tsx:341-363` _(corrected
 2026-09-02, CRD-045 - previous citation was past end of file)_ **Plain
 English:** A customer can copy a completed or withdrawn RFQ as a recalibration
 request only when the original has reached specific end states.
@@ -525,7 +524,7 @@ is complete.
 ### RULE-016: Dashboard Item Suppression
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/components/RequestList/requestItem.tsx:535` **Plain English:** An
+`ClientApp/src/components/RequestList/requestItem.tsx:403` **Plain English:** An
 RFQ record with `hideFromDashboard = true` is completely hidden from the
 customer's view, even if it exists in CRM. **Specification:**
 
@@ -545,7 +544,7 @@ state.
 ### RULE-017: Payment Terms — Prepaid vs 30-Day Invoice
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/acceptQuote/paymentDetails.tsx:86-97`,
+`ClientApp/src/routes/acceptQuote/paymentDetails.tsx:112-126`,
 `ClientApp/src/routes/acceptQuote/submittedSuccess.tsx:50-91` **Plain English:**
 After accepting a quote, customers on "Prepaid" terms must pay before
 calibration commences. All other customers receive standard 30-day invoice
@@ -622,7 +621,7 @@ Then   "View report" link is hidden
 
 **Category:** Lifecycle **Priority:** P2 **Source:**
 `ClientApp/src/routes/common/quoteStatus.ts:35-40`,
-`ClientApp/src/components/RequestList/requestItem.tsx:415-422` **Plain
+`ClientApp/src/components/RequestList/requestItem.tsx:424-433` **Plain
 English:** Once NMI receives the physical instrument, the dashboard card heading
 switches from the customer's make/model entry to NMI's formal artefact name.
 **Specification:**
@@ -704,8 +703,8 @@ Example: "51824753556"
 ### RULE-026: AUD Currency Formatting
 
 **Category:** Calculation **Priority:** P1 **Source:**
-`ClientApp/src/utils/index.ts:301-310` **Plain English:** All monetary amounts
-are displayed in Australian dollars with locale-correct symbol, thousands
+`ClientApp/src/utils/index.ts:320` **Plain English:** All monetary amounts are
+displayed in Australian dollars with locale-correct symbol, thousands
 separators, and two decimal places. **Specification:**
 
 ```text
@@ -724,7 +723,7 @@ Example: 12500.5 → "$12,500.50"
 ### RULE-027: Date Parsing Dispatch
 
 **Category:** Calculation **Priority:** P1 **Source:**
-`ClientApp/src/utils/index.ts:92-115` **Plain English:** The portal accepts
+`ClientApp/src/utils/index.ts:98-124` **Plain English:** The portal accepts
 dates in two formats — Australian short form (dd/MM/yyyy) and ISO 8601 — and
 selects the parser based on string length. **Specification:**
 
@@ -749,7 +748,7 @@ Implementation constants: `DATE_DDMMYYY_FORMAT`, `DATE_TIME_LOCALE_FORMAT`
 ### RULE-028: Reporting Period Abbreviation
 
 **Category:** Calculation **Priority:** P2 **Source:**
-`ClientApp/src/utils/index.ts:241-258` **Plain English:** Financial year strings
+`ClientApp/src/utils/index.ts:245-248` **Plain English:** Financial year strings
 are shortened to a compact form for display. **Specification:**
 
 ```text
@@ -770,7 +769,7 @@ malformed strings **Confidence:** High
 ### RULE-031: Australian Postcode Range
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:389-434`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:452-480`
 **Plain English:** Postcodes must be exactly 4 digits and fall within valid
 Australian ranges. **Specification:**
 
@@ -824,7 +823,7 @@ some `+61`-prefixed variants with spaces?
 ### RULE-033: Email Address Format
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:594-628`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:612-628`
 **Plain English:** Email addresses must match a custom RFC 5321-aligned regex
 and cannot exceed 100 characters. **Specification:**
 
@@ -844,9 +843,9 @@ Max length: 100 chars (common.ts:131)
 ### RULE-034: Name Field Charset (No Accented Characters)
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:833-876`
-**Plain English:** Person name fields (first name, last name, title) only accept
-ASCII letters, hyphen, space, and apostrophe — accented characters are rejected.
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:94` **Plain
+English:** Person name fields (first name, last name, title) only accept ASCII
+letters, hyphen, space, and apostrophe — accented characters are rejected.
 **Specification:**
 
 ```text
@@ -870,7 +869,7 @@ normal case — **SME question: Should person names accept diacritical character
 ### RULE-035: Business Name Charset (ASIC-Aligned)
 
 **Category:** Validation **Priority:** P0 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:878-916`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:202-220`
 _(corrected 2026-09-02, CRD-043 — the previously cited 678-707 range is a
 different validator)_ **Plain English:** Business and trading names must conform
 to the character set defined in the ASIC CompanyName Business Rules message
@@ -1363,12 +1362,12 @@ To trigger re-acceptance for all users:
 ### RULE-053: Dashboard and Report Page Size
 
 **Category:** Policy **Priority:** P2 **Source:**
-`ClientApp/src/routes/dashboard/index.tsx:51`,
+`ClientApp/src/routes/dashboard/dashboardShared.tsx:11`,
 `ClientApp/src/routes/measurementReport/indexList.tsx:36` **Plain English:** All
 paginated lists in the portal show 10 items per page. **Specification:**
 
 ```text
-Dashboard (all 3 tabs): DEFAULT_DASHBOARD_PAGESIZE = 10 (dashboard/index.tsx:51)
+Dashboard (all 3 tabs): DEFAULT_DASHBOARD_PAGESIZE = 10 (dashboard/dashboardShared.tsx:11)
 Measurement report list: pageSize = 10 (measurementReport/indexList.tsx:36)
 These are separate constants — changing one does NOT change the other.
 ```

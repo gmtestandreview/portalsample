@@ -114,17 +114,18 @@ def process_user(user_id):
     except:
         pass
 
+
 # ✅ GOOD: Explicit error handling
 def process_user(user_id):
     if not user_id or user_id <= 0:
-        raise ValueError(f"Invalid user_id: {user_id}")
+        raise ValueError(f'Invalid user_id: {user_id}')
 
     try:
         user = db.get(user_id)
     except UserNotFoundError:
-        raise UserNotFoundError(f"User {user_id} not found in database")
+        raise UserNotFoundError(f'User {user_id} not found in database')
     except DatabaseError as e:
-        raise ProcessingError(f"Failed to retrieve user {user_id}: {e}")
+        raise ProcessingError(f'Failed to retrieve user {user_id}: {e}')
 
     return user.process()
 ```

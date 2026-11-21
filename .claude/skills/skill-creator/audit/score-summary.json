@@ -1,0 +1,26 @@
+{
+  "file_count": 79,
+  "score_gt95": 65,
+  "score_le95": 14,
+  "score_min": 84,
+  "score_max": 99,
+  "changed": 43,
+  "new": 5,
+  "mean": 96.2,
+  "remaining": [
+    ["references/activation-cases/README.md", 94],
+    ["references/activation-cases/activation-eval.json", 94],
+    ["references/activation-cases/activation-holdout.json", 89],
+    ["references/activation-cases/activation-smoke.json", 93],
+    ["references/authoring-craft.md", 94],
+    ["references/claude-code-advanced.md", 91],
+    ["references/claude-code-hook-mechanisms.md", 91],
+    ["references/claude-code-patterns-library.md", 93],
+    ["references/claude-code-skill-rules-reference.md", 91],
+    ["references/claude-code-trigger-types.md", 93],
+    ["references/claude-code-troubleshooting.md", 93],
+    ["references/independent-holdout-protocol.md", 94],
+    ["references/schema-validation-2026-11-17-py313.json", 92],
+    ["references/validation-results.json", 84]
+  ]
+}

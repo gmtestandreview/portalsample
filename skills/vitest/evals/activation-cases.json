@@ -1,0 +1,62 @@
+[
+  {
+    "id": "unit-positive",
+    "prompt": "Write a Vitest test for a React hook under tests/unit",
+    "expected_activation": "activate",
+    "expected_behavior": "unit / jsdom"
+  },
+  {
+    "id": "unit-indirect",
+    "prompt": "Fix the flaky mocked timer assertion in tests/unit/profile.test.tsx",
+    "expected_activation": "activate",
+    "expected_behavior": "unit / mocks"
+  },
+  {
+    "id": "storybook-positive",
+    "prompt": "Debug a Storybook story play-function failure in Chromium",
+    "expected_activation": "activate",
+    "expected_behavior": "Vitest Storybook Browser Mode"
+  },
+  {
+    "id": "addon-positive",
+    "prompt": "Storybook Test panel hangs launching Vitest",
+    "expected_activation": "activate",
+    "expected_behavior": "addon child and compatibility"
+  },
+  {
+    "id": "coverage-positive",
+    "prompt": "Why did Vitest unit coverage exclude a TSX file?",
+    "expected_activation": "activate",
+    "expected_behavior": "unit coverage policy"
+  },
+  {
+    "id": "near-playwright",
+    "prompt": "Add a playwright-bdd feature for account login",
+    "expected_activation": "exclude",
+    "expected_behavior": "Playwright E2E owner"
+  },
+  {
+    "id": "near-api",
+    "prompt": "Fix the @playwright/test API contract suite retries",
+    "expected_activation": "exclude",
+    "expected_behavior": "Playwright API owner"
+  },
+  {
+    "id": "near-framework",
+    "prompt": "What makes a good unit test?",
+    "expected_activation": "exclude",
+    "expected_behavior": "framework-agnostic"
+  },
+  {
+    "id": "ambiguous-story",
+    "prompt": "Test a Storybook button interaction",
+    "expected_activation": "conditional",
+    "expected_behavior": "inspect desired play function versus BDD"
+  },
+  {
+    "id": "boundary-cross",
+    "prompt": "Add both play function and Storybook BDD coverage",
+    "expected_activation": "activate-partial",
+    "expected_behavior": "split by runner"
+  }
+]

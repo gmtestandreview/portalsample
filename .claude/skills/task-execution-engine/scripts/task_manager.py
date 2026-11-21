@@ -10,44 +10,44 @@ import argparse
 import json
 import re
 import sys
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from dataclasses import dataclass, field, asdict
 from typing import Optional
 
 
 @dataclass
 class Task:
     """Represents a task parsed from markdown."""
+
     title: str
     status: str  # pending, completed, failed
     priority: int = 5
-    phase: str = "implementation"
+    phase: str = 'implementation'
     dependencies: list = field(default_factory=list)
     files: list = field(default_factory=list)
     criteria: list = field(default_factory=list)
     criteria_status: list = field(default_factory=list)  # True/False for each criterion
     line_number: int = 0
-    failure_reason: str = ""
+    failure_reason: str = ''
 
 
-def parse_task_line(line: str) -> Optional[dict]:
+def parse_task_line(line: str) -> dict | None:
     """Parse a task line like: - [ ] **Task Title** `priority:1` `phase:model`"""
-
     # Match checkbox task
     match = re.match(r'^- \[([ xX])\] \*\*(.+?)\*\*(.*)$', line.strip())
     if not match:
         return None
 
     checkbox, title, rest = match.groups()
-    status = "completed" if checkbox.lower() == 'x' else "pending"
+    status = 'completed' if checkbox.lower() == 'x' else 'pending'
 
     # Check for failure marker
-    if "❌" in rest or "FAILED" in rest:
-        status = "failed"
+    if '❌' in rest or 'FAILED' in rest:
+        status = 'failed'
 
     # Parse inline attributes
     priority = 5
-    phase = "implementation"
+    phase = 'implementation'
     dependencies = []
 
     # Extract priority
@@ -66,17 +66,16 @@ def parse_task_line(line: str) -> Optional[dict]:
         dependencies = [d.strip() for d in deps_match.group(1).split(',')]
 
     return {
-        "title": title.strip(),
-        "status": status,
-        "priority": priority,
-        "phase": phase,
-        "dependencies": dependencies
+        'title': title.strip(),
+        'status': status,
+        'priority': priority,
+        'phase': phase,
+        'dependencies': dependencies,
     }
 
 
 def parse_tasks_from_markdown(content: str) -> list[Task]:
     """Parse all tasks from markdown content."""
-
     lines = content.split('\n')
     tasks = []
     current_task = None
@@ -103,12 +102,12 @@ def parse_tasks_from_markdown(content: str) -> list[Task]:
                 tasks.append(current_task)
 
             current_task = Task(
-                title=task_data["title"],
-                status=task_data["status"],
-                priority=task_data["priority"],
-                phase=task_data["phase"],
-                dependencies=task_data["dependencies"],
-                line_number=i + 1
+                title=task_data['title'],
+                status=task_data['status'],
+                priority=task_data['priority'],
+                phase=task_data['phase'],
+                dependencies=task_data['dependencies'],
+                line_number=i + 1,
             )
             continue
 
@@ -141,15 +140,14 @@ def parse_tasks_from_markdown(content: str) -> list[Task]:
     return tasks
 
 
-def get_next_task(tasks: list[Task]) -> Optional[Task]:
+def get_next_task(tasks: list[Task]) -> Task | None:
     """Get the next task to execute based on priority and dependencies."""
-
-    completed_titles = {t.title for t in tasks if t.status == "completed"}
+    completed_titles = {t.title for t in tasks if t.status == 'completed'}
 
     # Find pending tasks with satisfied dependencies
     available = []
     for task in tasks:
-        if task.status != "pending":
+        if task.status != 'pending':
             continue
 
         # Check dependencies
@@ -165,9 +163,8 @@ def get_next_task(tasks: list[Task]) -> Optional[Task]:
     return available[0]
 
 
-def update_task_status(content: str, task_title: str, new_status: str, reason: str = "") -> str:
+def update_task_status(content: str, task_title: str, new_status: str, reason: str = '') -> str:
     """Update a task's status in the markdown content."""
-
     lines = content.split('\n')
     result = []
     in_target_task = False
@@ -176,49 +173,49 @@ def update_task_status(content: str, task_title: str, new_status: str, reason: s
     for line in lines:
         # Check if this is the target task
         task_data = parse_task_line(line)
-        if task_data and task_data["title"] == task_title:
+        if task_data and task_data['title'] == task_title:
             in_target_task = True
             task_indent = len(line) - len(line.lstrip())
 
             # Update the checkbox
-            if new_status == "completed":
+            if new_status == 'completed':
                 line = re.sub(r'^(\s*- )\[[ ]\]', r'\1[x]', line)
                 # Add completion marker if not present
-                if "✅" not in line:
-                    line = line.rstrip() + " ✅"
-            elif new_status == "failed":
+                if '✅' not in line:
+                    line = line.rstrip() + ' ✅'
+            elif new_status == 'failed':
                 line = re.sub(r'^(\s*- )\[[ ]\]', r'\1[x]', line)
                 # Add failure marker
-                if "❌" not in line:
-                    line = line.rstrip() + " ❌"
-            elif new_status == "pending":
+                if '❌' not in line:
+                    line = line.rstrip() + ' ❌'
+            elif new_status == 'pending':
                 line = re.sub(r'^(\s*- )\[[xX]\]', r'\1[ ]', line)
                 # Remove markers
-                line = line.replace(" ✅", "").replace(" ❌", "")
+                line = line.replace(' ✅', '').replace(' ❌', '')
 
             result.append(line)
             continue
 
         # Check if we've moved to a different task
-        if task_data and task_data["title"] != task_title:
+        if task_data and task_data['title'] != task_title:
             in_target_task = False
 
         # Update criteria checkboxes within the task
         if in_target_task and re.match(r'^\s*- \[[ xX]\] ', line):
             current_indent = len(line) - len(line.lstrip())
             if current_indent > task_indent:
-                if new_status == "completed":
+                if new_status == 'completed':
                     line = re.sub(r'^(\s*- )\[[ ]\]', r'\1[x]', line)
-                elif new_status == "pending":
+                elif new_status == 'pending':
                     line = re.sub(r'^(\s*- )\[[xX]\]', r'\1[ ]', line)
 
         result.append(line)
 
         # Add failure reason after the task line if failed
-        if in_target_task and task_data and new_status == "failed" and reason:
-            indent = "  " * (task_indent // 2 + 1)
+        if in_target_task and task_data and new_status == 'failed' and reason:
+            indent = '  ' * (task_indent // 2 + 1)
             # Check if next line already has a reason
-            result.append(f"{indent}- reason: {reason}")
+            result.append(f'{indent}- reason: {reason}')
             in_target_task = False  # Prevent adding reason multiple times
 
     return '\n'.join(result)
@@ -226,29 +223,22 @@ def update_task_status(content: str, task_title: str, new_status: str, reason: s
 
 def get_status_summary(tasks: list[Task]) -> dict:
     """Get a summary of task statuses."""
+    summary = {'total': len(tasks), 'completed': 0, 'pending': 0, 'failed': 0, 'blocked': 0}
 
-    summary = {
-        "total": len(tasks),
-        "completed": 0,
-        "pending": 0,
-        "failed": 0,
-        "blocked": 0
-    }
-
-    completed_titles = {t.title for t in tasks if t.status == "completed"}
+    completed_titles = {t.title for t in tasks if t.status == 'completed'}
 
     for task in tasks:
-        if task.status == "completed":
-            summary["completed"] += 1
-        elif task.status == "failed":
-            summary["failed"] += 1
-        elif task.status == "pending":
+        if task.status == 'completed':
+            summary['completed'] += 1
+        elif task.status == 'failed':
+            summary['failed'] += 1
+        elif task.status == 'pending':
             # Check if blocked by dependencies
             deps_satisfied = all(dep in completed_titles for dep in task.dependencies)
             if deps_satisfied:
-                summary["pending"] += 1
+                summary['pending'] += 1
             else:
-                summary["blocked"] += 1
+                summary['blocked'] += 1
 
     return summary
 
@@ -262,29 +252,31 @@ def cmd_next(args):
 
     if args.json:
         if next_task:
-            print(json.dumps({
-                "status": "found",
-                "task": asdict(next_task)
-            }, indent=2))
+            print(json.dumps({'status': 'found', 'task': asdict(next_task)}, indent=2))
         else:
             summary = get_status_summary(tasks)
-            print(json.dumps({
-                "status": "no_tasks",
-                "summary": summary,
-                "message": "No pending tasks available"
-            }, indent=2))
+            print(
+                json.dumps(
+                    {
+                        'status': 'no_tasks',
+                        'summary': summary,
+                        'message': 'No pending tasks available',
+                    },
+                    indent=2,
+                )
+            )
     else:
         if next_task:
-            print(f"Next task: {next_task.title}")
-            print(f"Priority: {next_task.priority} | Phase: {next_task.phase}")
+            print(f'Next task: {next_task.title}')
+            print(f'Priority: {next_task.priority} | Phase: {next_task.phase}')
             if next_task.files:
-                print(f"Files: {', '.join(next_task.files)}")
+                print(f'Files: {', '.join(next_task.files)}')
             if next_task.criteria:
-                print("Criteria:")
+                print('Criteria:')
                 for c in next_task.criteria:
-                    print(f"  - {c}")
+                    print(f'  - {c}')
         else:
-            print("No pending tasks available")
+            print('No pending tasks available')
 
 
 def cmd_done(args):
@@ -292,11 +284,11 @@ def cmd_done(args):
     file_path = Path(args.file)
     content = file_path.read_text()
 
-    updated = update_task_status(content, args.task, "completed")
+    updated = update_task_status(content, args.task, 'completed')
     file_path.write_text(updated)
 
     if args.json:
-        print(json.dumps({"status": "success", "task": args.task, "new_status": "completed"}))
+        print(json.dumps({'status': 'success', 'task': args.task, 'new_status': 'completed'}))
     else:
         print(f"✅ Marked '{args.task}' as completed")
 
@@ -306,15 +298,22 @@ def cmd_fail(args):
     file_path = Path(args.file)
     content = file_path.read_text()
 
-    updated = update_task_status(content, args.task, "failed", args.reason or "")
+    updated = update_task_status(content, args.task, 'failed', args.reason or '')
     file_path.write_text(updated)
 
     if args.json:
-        print(json.dumps({"status": "success", "task": args.task, "new_status": "failed", "reason": args.reason}))
+        print(
+            json.dumps({
+                'status': 'success',
+                'task': args.task,
+                'new_status': 'failed',
+                'reason': args.reason,
+            })
+        )
     else:
         print(f"❌ Marked '{args.task}' as failed")
         if args.reason:
-            print(f"   Reason: {args.reason}")
+            print(f'   Reason: {args.reason}')
 
 
 def cmd_status(args):
@@ -324,28 +323,29 @@ def cmd_status(args):
     summary = get_status_summary(tasks)
 
     if args.json:
-        print(json.dumps({
-            "file": args.file,
-            "summary": summary,
-            "tasks": [asdict(t) for t in tasks]
-        }, indent=2))
+        print(
+            json.dumps(
+                {'file': args.file, 'summary': summary, 'tasks': [asdict(t) for t in tasks]},
+                indent=2,
+            )
+        )
     else:
-        total = summary["total"]
-        completed = summary["completed"]
+        total = summary['total']
+        completed = summary['completed']
         pct = round(completed / total * 100, 1) if total > 0 else 0
 
-        print(f"File: {args.file}")
-        print(f"Progress: {completed}/{total} ({pct}%)")
+        print(f'File: {args.file}')
+        print(f'Progress: {completed}/{total} ({pct}%)')
         print()
-        print(f"  Completed: {summary['completed']}")
-        print(f"  Pending:   {summary['pending']}")
-        print(f"  Blocked:   {summary['blocked']}")
-        print(f"  Failed:    {summary['failed']}")
+        print(f'  Completed: {summary['completed']}')
+        print(f'  Pending:   {summary['pending']}')
+        print(f'  Blocked:   {summary['blocked']}')
+        print(f'  Failed:    {summary['failed']}')
 
         # Show next task
         next_task = get_next_task(tasks)
         if next_task:
-            print(f"\nNext: {next_task.title}")
+            print(f'\nNext: {next_task.title}')
 
 
 def cmd_list(args):
@@ -357,45 +357,45 @@ def cmd_list(args):
         print(json.dumps([asdict(t) for t in tasks], indent=2))
     else:
         for task in tasks:
-            status_icon = {"completed": "✅", "failed": "❌", "pending": "⬜"}.get(task.status, "?")
-            print(f"{status_icon} [{task.priority}] {task.title}")
+            status_icon = {'completed': '✅', 'failed': '❌', 'pending': '⬜'}.get(task.status, '?')
+            print(f'{status_icon} [{task.priority}] {task.title}')
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Markdown task manager")
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    parser = argparse.ArgumentParser(description='Markdown task manager')
+    subparsers = parser.add_subparsers(dest='command', required=True)
 
     # next command
-    next_parser = subparsers.add_parser("next", help="Get next task")
-    next_parser.add_argument("--file", required=True, help="Markdown file path")
-    next_parser.add_argument("--json", action="store_true", help="Output as JSON")
+    next_parser = subparsers.add_parser('next', help='Get next task')
+    next_parser.add_argument('--file', required=True, help='Markdown file path')
+    next_parser.add_argument('--json', action='store_true', help='Output as JSON')
     next_parser.set_defaults(func=cmd_next)
 
     # done command
-    done_parser = subparsers.add_parser("done", help="Mark task as completed")
-    done_parser.add_argument("--file", required=True, help="Markdown file path")
-    done_parser.add_argument("--task", required=True, help="Task title")
-    done_parser.add_argument("--json", action="store_true", help="Output as JSON")
+    done_parser = subparsers.add_parser('done', help='Mark task as completed')
+    done_parser.add_argument('--file', required=True, help='Markdown file path')
+    done_parser.add_argument('--task', required=True, help='Task title')
+    done_parser.add_argument('--json', action='store_true', help='Output as JSON')
     done_parser.set_defaults(func=cmd_done)
 
     # fail command
-    fail_parser = subparsers.add_parser("fail", help="Mark task as failed")
-    fail_parser.add_argument("--file", required=True, help="Markdown file path")
-    fail_parser.add_argument("--task", required=True, help="Task title")
-    fail_parser.add_argument("--reason", default="", help="Failure reason")
-    fail_parser.add_argument("--json", action="store_true", help="Output as JSON")
+    fail_parser = subparsers.add_parser('fail', help='Mark task as failed')
+    fail_parser.add_argument('--file', required=True, help='Markdown file path')
+    fail_parser.add_argument('--task', required=True, help='Task title')
+    fail_parser.add_argument('--reason', default='', help='Failure reason')
+    fail_parser.add_argument('--json', action='store_true', help='Output as JSON')
     fail_parser.set_defaults(func=cmd_fail)
 
     # status command
-    status_parser = subparsers.add_parser("status", help="Show status summary")
-    status_parser.add_argument("--file", required=True, help="Markdown file path")
-    status_parser.add_argument("--json", action="store_true", help="Output as JSON")
+    status_parser = subparsers.add_parser('status', help='Show status summary')
+    status_parser.add_argument('--file', required=True, help='Markdown file path')
+    status_parser.add_argument('--json', action='store_true', help='Output as JSON')
     status_parser.set_defaults(func=cmd_status)
 
     # list command
-    list_parser = subparsers.add_parser("list", help="List all tasks")
-    list_parser.add_argument("--file", required=True, help="Markdown file path")
-    list_parser.add_argument("--json", action="store_true", help="Output as JSON")
+    list_parser = subparsers.add_parser('list', help='List all tasks')
+    list_parser.add_argument('--file', required=True, help='Markdown file path')
+    list_parser.add_argument('--json', action='store_true', help='Output as JSON')
     list_parser.set_defaults(func=cmd_list)
 
     args = parser.parse_args()
@@ -403,12 +403,12 @@ def main():
     try:
         args.func(args)
     except FileNotFoundError:
-        print(f"Error: File not found: {args.file}", file=sys.stderr)
+        print(f'Error: File not found: {args.file}', file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
+        print(f'Error: {e}', file=sys.stderr)
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

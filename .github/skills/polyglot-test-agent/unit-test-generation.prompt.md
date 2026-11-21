@@ -144,16 +144,20 @@ describe('Calculator', () => {
 import pytest
 from calculator import Calculator
 
+
 class TestCalculator:
     @pytest.fixture
     def sut(self):
         return Calculator()
 
-    @pytest.mark.parametrize("a,b,expected", [
-        (2, 3, 5),
-        (-1, 1, 0),
-        (0, 0, 0),
-    ])
+    @pytest.mark.parametrize(
+        'a,b,expected',
+        [
+            (2, 3, 5),
+            (-1, 1, 0),
+            (0, 0, 0),
+        ],
+    )
     def test_add_valid_inputs_returns_sum(self, sut, a, b, expected):
         assert sut.add(a, b) == expected
 

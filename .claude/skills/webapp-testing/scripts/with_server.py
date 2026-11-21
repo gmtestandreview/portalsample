@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Start one or more servers, wait for them to be ready, run a command, then clean up.
+"""Start one or more servers, wait for them to be ready, run a command, then clean up.
 
 Usage:
     # Single server
@@ -14,92 +13,360 @@ Usage:
       -- python test.py
 """
 
-import subprocess
-import socket
-import time
-import sys
-import argparse
+from __future__ import annotations
 
-def is_server_ready(port, timeout=30):
+import argparse
+import contextlib
+import io
+import os
+import re
+import shlex
+import shutil
+import signal
+import socket
+import subprocess
+import sys
+import threading
+import time
+from typing import IO, TypedDict, cast
+
+# Shell punctuation that must never reach an executed command. `&&` is the only
+# operator supported, and only to chain `cd DIR && ...` prefixes.
+_SHELL_PUNCTUATION = set('();<>|&')
+
+
+class ServerConfig(TypedDict):
+    cmd: str
+    port: int
+
+
+def _split_segments(command: str) -> list[list[str]]:
+    """Tokenise `command` into `&&`-separated segments, rejecting every other operator."""
+    lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
+    if os.name == 'nt':
+        lexer.escape = ''  # backslashes are path separators on Windows, not escapes
+    segments: list[list[str]] = [[]]
+    for part in lexer:
+        if part == '&&':
+            segments.append([])
+        elif set(part) <= _SHELL_PUNCTUATION:
+            raise ValueError(f'Unsupported shell operator in server command: {part!r}')
+        elif '$(' in part or '`' in part:
+            raise ValueError('Command substitution is not supported in server commands')
+        else:
+            segments[-1].append(part)
+    if any(not segment for segment in segments):
+        raise ValueError("Server command is empty or has an empty '&&' segment")
+    return segments
+
+
+def _apply_cd_prefixes(prefixes: list[list[str]], base: str | None) -> str | None:
+    """Resolve successive `cd DIR` prefixes to one working directory."""
+    cwd: str | None = None
+    for prefix in prefixes:
+        if len(prefix) != 2 or prefix[0] != 'cd':
+            raise ValueError("Only 'cd DIR' may precede '&&' in a server command")
+        target = os.path.join(cwd or base or os.getcwd(), prefix[1])
+        if not os.path.isdir(target):
+            raise ValueError(f'cd target is not a directory: {prefix[1]!r}')
+        cwd = target
+    return cwd
+
+
+def parse_server_command(command: str, base: str | None = None) -> tuple[str | None, list[str]]:
+    """Turn a `[cd DIR && ]... COMMAND ARGS` string into (cwd, argv) without a shell.
+
+    Anything else a shell would interpret (`;`, `|`, `||`, `&`, redirects, `$(...)`,
+    backticks) is rejected instead of executed. Quoted text is passed as data.
+    """
+    *prefixes, argv = _split_segments(command)
+    if argv[0] == 'cd':
+        raise ValueError("A server command cannot end with 'cd'")
+    return _apply_cd_prefixes(prefixes, base), argv
+
+
+# cmd.exe re-parses the arguments of .cmd/.bat targets even with shell=False, so
+# only a conservative character set may reach them.
+_BATCH_SUFFIXES = ('.cmd', '.bat')
+_SAFE_BATCH_ARGUMENT = re.compile(r'[A-Za-z0-9_@+=:,./\\ -]*')
+
+
+def resolve_executable(name: str, *, cwd: str | None = None) -> str:
+    """Find an executable by explicit path or through PATH for a bare name.
+
+    Explicit relative paths are based on the command's working directory. Bare names
+    use the caller's PATH and reject implicit Windows current-directory matches.
+    """
+    caller_cwd = os.getcwd()
+    if os.path.dirname(name):
+        path = os.path.join(caller_cwd, cwd or '', name)
+        if not os.path.isabs(path):
+            path = os.path.abspath(path)  # Windows drive-relative path
+        # Check the exact path without applying Windows PATHEXT search rules.
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f'Executable not found at path: {path!r}')
+        if os.name != 'nt' and not os.access(path, os.X_OK):
+            raise PermissionError(f'File is not executable: {path!r}')
+        return path
+
+    found = shutil.which(name)
+    if found is None:
+        # Never hand a bare name to CreateProcess, which may search the current directory.
+        raise FileNotFoundError(f'Executable not found on PATH: {name!r}')
+    found = os.path.join(caller_cwd, found)
+    here = os.path.normcase(os.path.realpath(caller_cwd))
+    parent = os.path.normcase(os.path.realpath(os.path.dirname(found)))
+    on_path = {
+        os.path.normcase(os.path.realpath(entry or caller_cwd))
+        for entry in os.environ.get('PATH', '').split(os.pathsep)
+    }
+    if parent == here and here not in on_path:
+        raise ValueError(f'Refusing to run {name!r} from the current directory')
+    return found
+
+
+def prepare_argv(argv: list[str], *, cwd: str | None = None) -> list[str]:
+    """Resolve argv[0] and validate arguments passed to batch-file targets."""
+    argv = [resolve_executable(argv[0], cwd=cwd), *argv[1:]]
+    if argv[0].lower().endswith(_BATCH_SUFFIXES):
+        for argument in argv[1:]:
+            if not _SAFE_BATCH_ARGUMENT.fullmatch(argument):
+                raise ValueError(
+                    f'Argument {argument!r} is not allowed for batch-file target {argv[0]!r}'
+                )
+    return argv
+
+
+class OutputTail:
+    """Continuously drains a server's output, keeping only the last `limit` bytes.
+
+    Memory is bounded and nothing is written to disk, so a server that prints without
+    end can neither block on a full pipe nor exhaust disk space.
+    """
+
+    def __init__(self, limit: int = 65536) -> None:
+        if limit < 1:
+            raise ValueError('limit must be at least 1 byte')
+        self._limit = limit
+        self._buffer = bytearray()
+        self._lock = threading.Lock()
+        self._stream: IO[bytes] | None = None
+        self._thread: threading.Thread | None = None
+
+    def attach(self, stream: IO[bytes]) -> None:
+        self._stream = stream
+        self._thread = threading.Thread(target=self._pump, args=(stream,), daemon=True)
+        self._thread.start()
+
+    def _pump(self, stream: IO[bytes]) -> None:
+        # read1 returns as soon as any data is available; read(n) would wait for n bytes.
+        reader = cast(io.BufferedReader, stream)
+        try:
+            while chunk := reader.read1(8192):
+                with self._lock:
+                    self._buffer.extend(chunk)
+                    if len(self._buffer) > self._limit:
+                        del self._buffer[: len(self._buffer) - self._limit]
+        except OSError, ValueError:
+            pass  # stream closed underneath us
+
+    def read(self) -> bytes:
+        with self._lock:
+            return bytes(self._buffer)
+
+    def close(self) -> None:
+        """Wait for end-of-output, then release the pipe. Safe to call repeatedly."""
+        if self._thread is not None:
+            self._thread.join(timeout=5)
+            # A surviving descendant can keep the pipe open; leave it to the daemon thread.
+            if not self._thread.is_alive() and self._stream is not None:
+                self._stream.close()
+
+
+def start_server(
+    command: str, base: str | None = None, tail: OutputTail | None = None
+) -> subprocess.Popen[bytes]:
+    """Start one server process directly (shell=False) from a validated command.
+
+    Output (stderr merged into stdout) is drained into `tail` when given, otherwise
+    discarded. It is never left in an unread pipe, which would block a chatty server.
+    """
+    cwd, argv = parse_server_command(command, base=base)
+    validated_argv = prepare_argv(argv, cwd=cwd)
+    output = subprocess.PIPE if tail is not None else subprocess.DEVNULL
+    on_windows = os.name == 'nt'
+    # The caller selects the executable. The parser and resolver validate it before
+    # launch in a separate group or session so stop_server can end the whole tree.
+    process = subprocess.Popen(  # nosec B603
+        validated_argv,
+        cwd=cwd,
+        shell=False,
+        stdout=output,
+        stderr=subprocess.STDOUT,
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if on_windows else 0,
+        start_new_session=not on_windows,
+    )
+    if tail is not None and process.stdout is not None:
+        tail.attach(process.stdout)
+    return process
+
+
+def _taskkill_path() -> str:
+    """Absolute taskkill.exe path from the OS (not from SYSTEMROOT/WINDIR/PATH)."""
+    import ctypes
+
+    buffer = ctypes.create_unicode_buffer(260)
+    if not ctypes.windll.kernel32.GetSystemWindowsDirectoryW(buffer, 260):
+        raise OSError('Cannot determine the Windows system directory')
+    return os.path.join(buffer.value, 'System32', 'taskkill.exe')
+
+
+def _kill_tree(process: subprocess.Popen[bytes]) -> None:
+    if os.name == 'nt':
+        # The executable comes from the OS and the PID comes from the process we started.
+        subprocess.run(  # nosec B603
+            [_taskkill_path(), '/PID', str(process.pid), '/T', '/F'],
+            shell=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    else:
+        with contextlib.suppress(ProcessLookupError):
+            os.killpg(process.pid, signal.SIGKILL)
+
+
+def stop_server(process: subprocess.Popen[bytes]) -> None:
+    """Stop a server and its descendants.
+
+    POSIX: SIGTERM the process group, then SIGKILL whatever remains. Windows: console
+    servers cannot be asked to exit, and descendants are only reachable while their
+    parent is alive, so the tree is force-killed first.
+
+    A process that had already exited and been reaped on entry is not signalled: its PID
+    (and process-group id) may have been reused by an unrelated process.
+    """
+    if process.poll() is None:
+        if os.name != 'nt':
+            try:
+                os.killpg(process.pid, signal.SIGTERM)
+                process.wait(timeout=5)
+            except ProcessLookupError, PermissionError, subprocess.TimeoutExpired:
+                pass
+        _kill_tree(process)
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait()
+
+
+def is_server_ready(port: int, timeout: int = 30) -> bool:
     """Wait for server to be ready by polling the port."""
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
             with socket.create_connection(('localhost', port), timeout=1):
                 return True
-        except (socket.error, ConnectionRefusedError):
+        except OSError:
             time.sleep(0.5)
     return False
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description='Run command with one or more servers')
-    parser.add_argument('--server', action='append', dest='servers', required=True, help='Server command (can be repeated)')
-    parser.add_argument('--port', action='append', dest='ports', type=int, required=True, help='Port for each server (must match --server count)')
-    parser.add_argument('--timeout', type=int, default=30, help='Timeout in seconds per server (default: 30)')
-    parser.add_argument('command', nargs=argparse.REMAINDER, help='Command to run after server(s) ready')
+    parser.add_argument(
+        '--server',
+        action='append',
+        dest='servers',
+        required=True,
+        help='Server command (can be repeated)',
+    )
+    parser.add_argument(
+        '--port',
+        action='append',
+        dest='ports',
+        type=int,
+        required=True,
+        help='Port for each server (must match --server count)',
+    )
+    parser.add_argument(
+        '--timeout', type=int, default=30, help='Timeout in seconds per server (default: 30)'
+    )
+    parser.add_argument(
+        'command', nargs=argparse.REMAINDER, help='Command to run after server(s) ready'
+    )
 
     args = parser.parse_args()
+    server_commands = cast(list[str], args.servers)
+    server_ports = cast(list[int], args.ports)
+    command = cast(list[str], args.command)
+    timeout = cast(int, args.timeout)
 
     # Remove the '--' separator if present
-    if args.command and args.command[0] == '--':
-        args.command = args.command[1:]
+    if command and command[0] == '--':
+        command = command[1:]
 
-    if not args.command:
-        print("Error: No command specified to run")
+    if not command:
+        print('Error: No command specified to run')
         sys.exit(1)
 
     # Parse server configurations
-    if len(args.servers) != len(args.ports):
-        print("Error: Number of --server and --port arguments must match")
+    if len(server_commands) != len(server_ports):
+        print('Error: Number of --server and --port arguments must match')
         sys.exit(1)
 
-    servers = []
-    for cmd, port in zip(args.servers, args.ports):
+    servers: list[ServerConfig] = []
+    for cmd, port in zip(server_commands, server_ports, strict=False):
         servers.append({'cmd': cmd, 'port': port})
 
-    server_processes = []
+    server_processes: list[subprocess.Popen[bytes]] = []
+    tails: list[OutputTail] = []
 
     try:
         # Start all servers
         for i, server in enumerate(servers):
-            print(f"Starting server {i+1}/{len(servers)}: {server['cmd']}")
+            print(f'Starting server {i + 1}/{len(servers)}: {server['cmd']}')
 
-            # Use shell=True to support commands with cd and &&
-            process = subprocess.Popen(
-                server['cmd'],
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
+            # No shell: `cd DIR &&` prefixes become cwd; other operators are rejected.
+            # Output is drained into a bounded in-memory tail kept for diagnostics.
+            tail = OutputTail()
+            tails.append(tail)
+            process = start_server(server['cmd'], tail=tail)
             server_processes.append(process)
 
             # Wait for this server to be ready
-            print(f"Waiting for server on port {server['port']}...")
-            if not is_server_ready(server['port'], timeout=args.timeout):
-                raise RuntimeError(f"Server failed to start on port {server['port']} within {args.timeout}s")
+            print(f'Waiting for server on port {server['port']}...')
+            if not is_server_ready(server['port'], timeout=timeout):
+                print(tail.read()[-2000:].decode('utf-8', errors='replace'))
+                raise RuntimeError(
+                    f'Server failed to start on port {server['port']} within {args.timeout}s'
+                )
 
-            print(f"Server ready on port {server['port']}")
+            print(f'Server ready on port {server['port']}')
 
-        print(f"\nAll {len(servers)} server(s) ready")
+        print(f'\nAll {len(servers)} server(s) ready')
 
-        # Run the command
-        print(f"Running: {' '.join(args.command)}\n")
-        result = subprocess.run(args.command)
+        # The caller supplies a separate argument vector after the server options.
+        print(f'Running: {' '.join(command)}\n')
+        validated_argv = prepare_argv(command)
+        result = subprocess.run(  # nosec B603
+            validated_argv,
+            shell=False,
+            check=False,
+        )
         sys.exit(result.returncode)
 
     finally:
         # Clean up all servers
-        print(f"\nStopping {len(server_processes)} server(s)...")
+        print(f'\nStopping {len(server_processes)} server(s)...')
         for i, process in enumerate(server_processes):
-            try:
-                process.terminate()
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                process.kill()
-                process.wait()
-            print(f"Server {i+1} stopped")
-        print("All servers stopped")
+            stop_server(process)
+            print(f'Server {i + 1} stopped')
+        for tail in tails:
+            tail.close()
+        print('All servers stopped')
 
 
 if __name__ == '__main__':

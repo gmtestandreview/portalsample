@@ -1419,8 +1419,8 @@ invent alternatives.
 multiple prerequisites)
 
 **STRIDE + Abuse Categories:** `S` Spoofing | `T` Tampering | `R` Repudiation |
-`I` Information Disclosure | `D` Denial of Service | `E` Elevation of Privilege
-| `A` Abuse
+`I` Information Disclosure | `D` Denial of Service | `E` Elevation of
+Privilege | `A` Abuse
 
 **SDL Bugbar Severity:** `Critical` | `Important` | `Moderate` | `Low`
 

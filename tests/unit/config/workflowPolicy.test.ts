@@ -138,7 +138,7 @@ const UPLOAD_ARTIFACT_PIN =
 const DOWNLOAD_ARTIFACT_PIN =
   'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333';
 const CHROMATIC_ACTION_PIN =
-  'chromaui/action@38afd264ef2241136f12d039093c2724748bec08';
+  'chromaui/action@2b75e3340bcec86b4ae38c6a10f14831114e8137';
 
 const testCommands = [
   { name: 'unit', command: 'npm run test:ci:unit' },
@@ -157,6 +157,7 @@ const declaredJobs = [
   'vitest',
   'e2e-node24',
   'lower-bound-node24',
+  'webapp-testing-python',
 ];
 
 const evidenceJobs = [
@@ -629,7 +630,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toStrictEqual([
-      'd209202bc7d53ff1cc128f7f907dac145c9d6ae9',
+      '59202af334b4ba7b5db01b701b8e79f8b3bef0f4',
     ]);
     expect(
       scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference)),

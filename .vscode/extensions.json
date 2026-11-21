@@ -7,7 +7,7 @@
     "ms-python.vscode-pylance",
     "dbaeumer.vscode-eslint",
     "sonarsource.sonarlint-vscode",
-    "esbenp.prettier-vscode",
+    "oxc.oxc-vscode",
     "ms-vscode.vscode-typescript-next",
     "usernamehw.errorlens"
   ],

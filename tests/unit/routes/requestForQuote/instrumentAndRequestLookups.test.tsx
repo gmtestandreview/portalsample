@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
-import type { ReactNode } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import type {
@@ -96,6 +96,56 @@ describe(useInstrumentAndRequestLookups, () => {
     expect(result.current.isLoading).toBe(true);
   });
 
+  it('skips measurement categories that lack an id', async () => {
+    expect.hasAssertions();
+
+    resetMsalMock();
+    clients.lookup.methods.getLookup.mockReset();
+    wrapperInitialValues.value = {};
+
+    grantToken();
+    clients.lookup.methods.getLookup
+      .mockResolvedValueOnce([
+        { id: 'mass', label: 'Mass' },
+        { label: 'No id' },
+      ])
+      .mockResolvedValueOnce([]);
+
+    const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
+      wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.getMeasurementCategories()).toStrictEqual([
+        { displayText: 'Mass', value: 'mass' },
+      ]);
+    });
+  });
+
+  it('leaves the artefact types untouched when a category changes before they load', async () => {
+    expect.hasAssertions();
+
+    resetMsalMock();
+    clients.lookup.methods.getLookup.mockReset();
+    wrapperInitialValues.value = {};
+
+    signOut();
+
+    const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
+      wrapper,
+    });
+
+    await act(async () => {
+      result.current.onMeasurementCategoryChange({
+        target: { value: 'mass' },
+      } as unknown as ChangeEvent<HTMLSelectElement>);
+      await Promise.resolve();
+    });
+
+    expect(result.current.artefactTypesSelected).toBeUndefined();
+    expect(result.current.isInstrumentOrArtefactTypeDisabled).toBe(false);
+  });
+
   it('applies a reinitialized measurement category after pending lookups settle', async () => {
     expect.hasAssertions();
 
@@ -177,10 +227,11 @@ describe(useInstrumentAndRequestLookups, () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    act(() => {
+    await act(async () => {
       result.current.onMeasurementCategoryChange({
         target: { value: 'category-1' },
       } as React.ChangeEvent<HTMLSelectElement>);
+      await Promise.resolve();
     });
 
     expect(result.current.artefactTypesSelected).toStrictEqual([

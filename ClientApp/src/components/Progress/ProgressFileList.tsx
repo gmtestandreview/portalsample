@@ -15,10 +15,8 @@ const formatBytes = (bytes: number): string => {
 };
 
 const toDomSafeIdentity = (identity: string) =>
-  Array.from(
-    identity,
-    (character) =>
-      character.codePointAt(0)?.toString(16).padStart(6, '0') ?? '',
+  Array.from(identity, (character) =>
+    Number(character.codePointAt(0)).toString(16).padStart(6, '0'),
   ).join('');
 
 /**

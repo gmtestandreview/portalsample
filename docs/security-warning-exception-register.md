@@ -12,7 +12,7 @@ risk.
 ## Remediation result
 
 The diagnostics were regenerated after remediation. The current report covers
-952 files and contains 0 errors and 0 warnings. No lint threshold was changed.
+959 files and contains 0 errors and 0 warnings. No lint threshold was changed.
 
 The remediation:
 
@@ -32,7 +32,11 @@ not a blanket suppression and is not owner acceptance of residual risk.
 
 ## Evidence
 
-- `npm run lint:diagnostics`: 0 warnings, 0 errors across 952 files.
+- `npm run lint:diagnostics`: 0 warnings, 0 errors across 959 files.
+- `npm run lint:eslint`: passed with 0 warnings and 0 errors.
+- `npm run test:lint:diagnostics`: 14/14 passed.
+- `npm run test:lint:baseline`: 3/3 passed.
+- `node --test scripts/safe-file-io.test.mjs`: 14/14 passed.
 - `node --test scripts/lint-diagnostics.test.mjs scripts/safe-file-io.test.mjs`:
   28/28 passed.
 - Focused filesystem-related Vitest suites: 104/104 passed.

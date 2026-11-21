@@ -199,7 +199,7 @@ considered the performance impact with 100k users?"
 
 ### Technique 3: Suggest, Don't Command
 
-````markdown
+```markdown
 ## Use Collaborative Language
 
 ❌ "You must change this to use async/await" ✅ "Suggestion: async/await might
@@ -209,7 +209,7 @@ What do you think?"
 
 ❌ "Extract this into a function" ✅ "This logic appears in 3 places. Would it
 make sense to extract it into a shared utility function?"
-````
+```
 
 ### Technique 4: Differentiate Severity
 
@@ -241,12 +241,14 @@ def add_item(item, items=[]):  # Bug! Shared across calls
     items.append(item)
     return items
 
+
 # ✅ Use None as default
 def add_item(item, items=None):
     if items is None:
         items = []
     items.append(item)
     return items
+
 
 # ❌ Catching too broad
 try:
@@ -258,12 +260,14 @@ except:  # Catches everything, even KeyboardInterrupt!
 try:
     result = risky_operation()
 except ValueError as e:
-    logger.error(f"Invalid value: {e}")
+    logging.exception(f'Invalid value: {e}')
     raise
+
 
 # ❌ Using mutable class attributes
 class User:
     permissions = []  # Shared across all instances!
+
 
 # ✅ Initialize in __init__
 class User:

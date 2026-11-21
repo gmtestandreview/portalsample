@@ -30,7 +30,7 @@ the AI-fix attachment into the coding assistant.
 
 ## Markdown
 
-`MD013/line-length` is disabled. Wrap only for readability or Prettier. Use real
+`MD013/line-length` is disabled. Wrap only for readability or Oxfmt. Use real
 Markdown headings; do not use emphasis as headings or weaken
 `MD036/no-emphasis-as-heading`.
 

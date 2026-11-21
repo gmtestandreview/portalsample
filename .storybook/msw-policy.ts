@@ -28,6 +28,8 @@ export const STORYBOOK_LOCAL_BYPASS_PATHS = [
   '/mockServiceWorker.js',
   '/favicon.ico',
   '/NMI-tile.png',
+  // Vite serves the shared Storybook runtime-env fixture as a root module.
+  '/runtime-env-fixtures.ts',
 ] as const;
 
 export interface StorybookMswStartOptions {

@@ -873,6 +873,10 @@ describe('workflow step components', () => {
       '/accept-quote/*',
     );
 
+    await act(async () => {
+      await Promise.resolve();
+    });
+
     expect({
       hasSummary: Boolean(screen.queryByTestId('info-summary')),
       calls: mocks.getDeliveryAndReturn.mock.calls.length,

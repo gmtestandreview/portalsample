@@ -12,11 +12,11 @@ import sys
 from collections.abc import Mapping
 from typing import cast
 
-FILE_TOOLS = {"apply_patch", "edit", "write", "multiedit"}
-SUCCESS_RESULTS = {"ok", "success", "succeeded"}
+FILE_TOOLS = {'apply_patch', 'edit', 'write', 'multiedit'}
+SUCCESS_RESULTS = {'ok', 'success', 'succeeded'}
 REMINDER = (
-    "[A Team] File modified. Use code-reviewer agent before committing. "
-    "Use verification-before-completion before claiming done."
+    '[A Team] File modified. Use code-reviewer agent before committing. '
+    'Use verification-before-completion before claiming done.'
 )
 
 
@@ -44,19 +44,19 @@ def _as_object(value: object) -> Mapping[str, object] | None:
 
 
 def _is_successful_file_tool(payload: Mapping[str, object]) -> bool:
-    tool_name = _first(payload, "tool_name", "toolName")
+    tool_name = _first(payload, 'tool_name', 'toolName')
     if not isinstance(tool_name, str) or tool_name.casefold() not in FILE_TOOLS:
         return False
 
     result = _as_object(
-        _first(payload, "tool_response", "toolResponse", "tool_result", "toolResult")
+        _first(payload, 'tool_response', 'toolResponse', 'tool_result', 'toolResult')
     )
     if result is not None:
-        error_flag = _first(result, "is_error", "isError")
+        error_flag = _first(result, 'is_error', 'isError')
         if error_flag is True:
             return False
 
-        result_type = _first(result, "resultType", "result_type", "status")
+        result_type = _first(result, 'resultType', 'result_type', 'status')
         if isinstance(result_type, str) and result_type.casefold() not in SUCCESS_RESULTS:
             return False
 
@@ -69,16 +69,14 @@ def main() -> None:
         return
 
     print(
-        json.dumps(
-            {
-                "hookSpecificOutput": {
-                    "hookEventName": "PostToolUse",
-                    "additionalContext": REMINDER,
-                }
+        json.dumps({
+            'hookSpecificOutput': {
+                'hookEventName': 'PostToolUse',
+                'additionalContext': REMINDER,
             }
-        )
+        })
     )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -1,12 +1,12 @@
 ---
 name: vitest-performance-profiling-revised
 description:
-  Use when diagnosing or improving slow Vitest 4 test runs, startup, imports,
+  Use when diagnosing or improving slow Vitest 5 test runs, startup, imports,
   transforms, setup, environments, memory, coverage, discovery, worker usage,
   repeated runs, or CI scaling; profile first, then test one targeted
   optimization at a time.
 compatibility:
-  Designed for Vitest 4 projects using Node.js; some diagnostics and
+  Designed for Vitest 5 projects using Node.js; some diagnostics and
   optimizations are version-sensitive or experimental.
 ---
 
@@ -26,8 +26,8 @@ managers or download a different Vitest version during a benchmark.
 
 ## Workflow
 
-1. Confirm the installed Vitest major version is 4 before using
-   version-sensitive or experimental options; if it is not 4, stop using these
+1. Confirm the installed Vitest major version is 5 before using
+   version-sensitive or experimental options; if it is not 5, stop using these
    examples and switch to the matching version documentation.
 2. Capture a reproducible baseline with coverage disabled unless coverage is the
    target. Record the exact command, package-manager/Vitest/Node versions, test
@@ -128,7 +128,7 @@ Low `Self` with high `Total` points toward descendants. High `Self` and `Total`
 points toward the module's own loading work.
 
 `experimental.importDurations` is version-sensitive. Verify it against the
-installed Vitest 4 release before using it in automation.
+installed Vitest 5 release before using it in automation.
 
 ## Optimize confirmed module overhead
 
