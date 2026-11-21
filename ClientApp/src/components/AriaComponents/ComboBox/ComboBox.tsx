@@ -35,6 +35,9 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
   placeholder,
   ...props
 }: Readonly<ComboBoxProps<T, M>>) {
+  // Widened so the comparison below is not narrowed to the generic default.
+  const selectionMode: 'single' | 'multiple' | undefined = props.selectionMode;
+
   return (
     <AriaComboBox {...props}>
       {label && <Label>{label}</Label>}
@@ -56,7 +59,7 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
           <ChevronDown />
         </FieldButton>
       </Group>
-      {props.selectionMode === 'multiple' && (
+      {selectionMode === 'multiple' && (
         <ComboBoxValue placeholder='No items selected' />
       )}
       {description && <Description>{description}</Description>}

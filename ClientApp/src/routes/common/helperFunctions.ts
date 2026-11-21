@@ -575,7 +575,8 @@ export function sortList<T>(
       .startsWith(lastItem.toLocaleLowerCase()),
   );
 
-  if (displayFieldName === 'displayText') {
+  const displayField: PropertyKey = displayFieldName;
+  if (displayField === 'displayText') {
     const item =
       indexOfItemToRemove >= 0 ? list.at(indexOfItemToRemove) : undefined;
     removeId = (item as SelectInputOption<string> | undefined)?.value ?? '';

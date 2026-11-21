@@ -186,7 +186,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
 
         // TS - This is to fix azure board issue 489452
         const newlyAcceptedQuoteId =
-          SessionStorageCache().getItem('view-quote-id');
+          SessionStorageCache().getItem<string>('view-quote-id');
         if (newlyAcceptedQuoteId) {
           if (
             quoteData.quoteRequestIdNum === newlyAcceptedQuoteId &&

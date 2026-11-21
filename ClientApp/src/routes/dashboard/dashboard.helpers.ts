@@ -115,7 +115,7 @@ export const checkAcceptedQuoteStatus = (
   requestsResponse: PagedListOfDashboardItemDto,
 ) => {
   const newlyAcceptedQuoteId =
-    SessionStorageCache().getItem('accepted-quote-id');
+    SessionStorageCache().getItem<string>('accepted-quote-id');
   if (newlyAcceptedQuoteId) {
     const items = requestsResponse.items;
     if (!items) {
