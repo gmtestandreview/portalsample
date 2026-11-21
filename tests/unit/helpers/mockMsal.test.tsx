@@ -46,9 +46,9 @@ const TokenProbe = () => {
           setToken(result.accessToken);
         }
       })
-      .catch((reason: Error) => {
+      .catch((reason: unknown) => {
         if (isMounted) {
-          setError(reason.message);
+          setError(reason instanceof Error ? reason.message : String(reason));
         }
       });
 

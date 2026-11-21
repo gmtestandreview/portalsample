@@ -371,6 +371,31 @@ describe('application documents', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('does not commit once the application id has left the route', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
+      const { router } = await renderRoute(
+        '/ta/manage/APP-1/documents',
+        '/ta/manage/:id?/documents',
+      );
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Commit' })).toBeVisible();
+      });
+
+      await act(async () => {
+        await router.navigate('/ta/manage/documents');
+      });
+      await userEvent
+        .setup()
+        .click(screen.getByRole('button', { name: 'Commit' }));
+
+      expect(
+        clients.patternApproval.methods.commitAppDocuments,
+      ).not.toHaveBeenCalled();
+    });
+
     it('does not fetch without an application id', async () => {
       expect.hasAssertions();
 
@@ -437,6 +462,23 @@ describe('application documents', () => {
       clients.patternApproval.methods.addDocuments.mockResolvedValue({
         uploadId: 'upload-3',
       });
+
+      let attachments: AttachmentDto[] | undefined;
+      await act(async () => {
+        attachments = await documentsStep.props.onUploadAttachment('token', []);
+      });
+
+      expect(attachments).toStrictEqual([]);
+      expect(mocks.appLoggerError).not.toHaveBeenCalled();
+    });
+
+    it('returns an empty list when the response carries neither a form nor an upload id', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
+      await renderLoaded();
+      clients.patternApproval.methods.addDocuments.mockResolvedValue({});
 
       let attachments: AttachmentDto[] | undefined;
       await act(async () => {

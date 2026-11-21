@@ -1,26 +1,25 @@
 # Vitest 5.0.5 compatibility guard
 
-**Load when:** a request is about Vitest 5 (including the supplied
-`nmi-portal` project), migration, concurrency, Browser Mode, coverage, or any
-possibly obsolete API in an older reference. Check the actual installed
-version where available; the package manifest pins `5.0.5` but cannot prove
-installation. This file records version-specific *constraints*, not current
-project policy.
+**Load when:** a request is about Vitest 5 (including the supplied `nmi-portal`
+project), migration, concurrency, Browser Mode, coverage, or any possibly
+obsolete API in an older reference. Check the actual installed version where
+available; the package manifest pins `5.0.5` but cannot prove installation. This
+file records version-specific _constraints_, not current project policy.
 
 ## Reject known removed constructs
 
-| Do not recommend for Vitest 5.0.5 | Supported replacement / decision |
-| --- | --- |
-| `test.sequential(...)`, `describe.sequential(...)`, or `sequential: true` | `test(name, { concurrent: false }, fn)` or `describe(name, { concurrent: false }, fn)` to opt out of inherited concurrency |
-| `test.poolOptions` / `poolOptions.threads.maxThreads`, `poolOptions.forks.maxForks` | Top-level `test.maxWorkers` and `test.pool`; use `test.isolate` when needed |
-| `test.minWorkers` | Removed in Vitest 4; `maxWorkers` is supported |
-| `coverage.all` / `coverage.extensions` | Explicit `coverage.include` and `coverage.exclude`; an include glob can report uncovered eligible files |
-| `browser: { name: 'chromium', provider: 'playwright' }` | Browser Mode `provider: playwright({})` imported from `@vitest/browser-playwright`, `instances: [{ browser: 'chromium' }]`, and `enabled: true` |
+| Do not recommend for Vitest 5.0.5                                                                                                     | Supported replacement / decision                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test.sequential(...)`, `describe.sequential(...)`, or `sequential: true`                                                             | `test(name, { concurrent: false }, fn)` or `describe(name, { concurrent: false }, fn)` to opt out of inherited concurrency                              |
+| `test.poolOptions` / `poolOptions.threads.maxThreads`, `poolOptions.forks.maxForks`                                                   | Top-level `test.maxWorkers` and `test.pool`; use `test.isolate` when needed                                                                             |
+| `test.minWorkers`                                                                                                                     | Removed in Vitest 4; `maxWorkers` is supported                                                                                                          |
+| `coverage.all` / `coverage.extensions`                                                                                                | Explicit `coverage.include` and `coverage.exclude`; an include glob can report uncovered eligible files                                                 |
+| `browser: { name: 'chromium', provider: 'playwright' }`                                                                               | Browser Mode `provider: playwright({})` imported from `@vitest/browser-playwright`, `instances: [{ browser: 'chromium' }]`, and `enabled: true`         |
 | Removed entrypoints `vitest/coverage`, `vitest/reporters`, `vitest/environments`, `vitest/snapshot`, `vitest/runners`, `vitest/suite` | Use current documented `vitest/node`, `vitest/runtime`, or `vitest` exports **only for the specific API**; verify the actual replacement before editing |
 
-These removals are supported by the official Vitest 4 and 5 migration guides.
-Do not take a removed API appearing in a generated January 2026 reference
-as evidence that it works in the supplied November 2026 dependency set.
+These removals are supported by the official Vitest 4 and 5 migration guides. Do
+not take a removed API appearing in a generated January 2026 reference as
+evidence that it works in the supplied November 2026 dependency set.
 
 ## Other Vitest 5 behavior changes worth checking
 
@@ -40,18 +39,18 @@ as evidence that it works in the supplied November 2026 dependency set.
   unawaited async assertions rather than merely warning.
 - **Browser text assertions:** Vitest Browser Mode's
   `expect.element(...).toHaveTextContent(...)` uses exact text equality;
-  `toMatchTextContent` covers partial text and regex matching. Do not
-  conflate this with jsdom plus jest-dom's matchers.
+  `toMatchTextContent` covers partial text and regex matching. Do not conflate
+  this with jsdom plus jest-dom's matchers.
 - **Browser locator matching:** Browser Mode locators default to exact matching.
 - **Coverage globs:** `coverage.include` and `exclude` match relative to the
-  project root more precisely; inspect the actual included-file set.
-  Top-level `thresholds.perFile` does not automatically apply to glob-specific
-  thresholds in Vitest 5.
+  project root more precisely; inspect the actual included-file set. Top-level
+  `thresholds.perFile` does not automatically apply to glob-specific thresholds
+  in Vitest 5.
 - **Config discovery:** Vitest 5 does not search parent directories for config
   files when launched from a subdirectory; select the intended config.
 - **Version fallback:** when a detail is not established by the 5.0.5 API or
-  installed typings, consult official version-appropriate docs and report
-  an unresolved gap if unavailable. Current *latest* docs may include APIs
+  installed typings, consult official version-appropriate docs and report an
+  unresolved gap if unavailable. Current _latest_ docs may include APIs
   introduced after 5.0.5 (for example pages marked `5.1.0+`).
 
 ## Minimal verified configuration shapes
@@ -108,7 +107,7 @@ Generic examples above are **not** replacements for project configurations.
 - [Test context and fixtures](https://vitest.dev/guide/test-context)
 - [Test projects](https://vitest.dev/guide/projects)
 
-The linked live guide and migration pages were reviewed on 2026-11-06.
-Any source documented as newer than the target version must be gated.
-The installed Vitest 5.0.5 package and typings were not available for
-executable confirmation; API examples remain subject to runtime validation.
+The linked live guide and migration pages were reviewed on 2026-11-06. Any
+source documented as newer than the target version must be gated. The installed
+Vitest 5.0.5 package and typings were not available for executable confirmation;
+API examples remain subject to runtime validation.

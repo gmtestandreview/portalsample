@@ -1,6 +1,6 @@
 import preview from '../../../../.storybook/preview';
 import ReportDetails from './reportDetails';
-import NMIContactDetails from './nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import { requestForQuoteDetailsFixture } from '../../storybook/storybookFixtures';
 
@@ -24,7 +24,10 @@ export const ReportView = meta.story({
         reportData={requestForQuoteDetailsFixture}
         fileError={false}
       />
-      <NMIContactDetails quotationData={requestForQuoteDetailsFixture} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if you have any questions about the report outcomes.'
+        quotationData={requestForQuoteDetailsFixture}
+      />
     </>
   ),
 });
@@ -37,7 +40,10 @@ export const FileError = meta.story({
   render: (args) => (
     <>
       <ReportDetails {...args} />
-      <NMIContactDetails quotationData={args.reportData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if you have any questions about the report outcomes.'
+        quotationData={args.reportData}
+      />
     </>
   ),
 });

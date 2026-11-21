@@ -114,7 +114,7 @@ const CustomDateInput = React.forwardRef<
       controlId={name}
     >
       {label && <Form.Label>{label}</Form.Label>}
-      {inlineHelp && (
+      {inlineHelp ? (
         <Form.Text
           as='p'
           id={helpId}
@@ -123,7 +123,7 @@ const CustomDateInput = React.forwardRef<
         >
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
 
       <InputGroup className={`w-md-50 ${focused ? 'custom-focus' : ''}`}>
         <Form.Control

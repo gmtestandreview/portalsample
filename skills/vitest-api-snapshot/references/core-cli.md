@@ -5,11 +5,14 @@ description: Command line interface commands and options
 
 # Command Line Interface
 
-**Load when:** Select Vitest CLI commands, flags, reporting or project invocation. **Boundary:** Do not replace known repository test scripts with a generic vitest invocation.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Select Vitest CLI commands, flags, reporting or project
+invocation. **Boundary:** Do not replace known repository test scripts with a
+generic vitest invocation. These are generic Vitest examples; inspect the
+installed version and applicable project config before applying them.
 
-**Expected outcome:** The command selects intended tests and exits in the requested run/watch mode. **Acceptance check:** Check flags against installed CLI and preserve existing project scripts.
+**Expected outcome:** The command selects intended tests and exits in the
+requested run/watch mode. **Acceptance check:** Check flags against installed
+CLI and preserve existing project scripts.
 
 ## Commands
 

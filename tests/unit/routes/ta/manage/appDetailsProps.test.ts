@@ -319,4 +319,15 @@ describe(appDetailsProps, () => {
       organisationAndContact: { isManufacturer: YesNo.Yes },
     });
   });
+
+  it('throws when no application id is provided', async () => {
+    expect.hasAssertions();
+
+    resetAppDetailsPropsMocks();
+
+    await expect(
+      appDetailsProps(undefined, accounts, instance).loadStepValues(),
+    ).rejects.toThrow('No application id is available to load app details.');
+    expect(mocks.getAppDetails).not.toHaveBeenCalled();
+  });
 });

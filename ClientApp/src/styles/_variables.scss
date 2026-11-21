@@ -327,10 +327,7 @@ $accordion-border-width: 0;
 $accordion-border-radius: $border-radius;
 
 $accordion-button-color: $nmi-primary;
-$accordion-button-active-color: rgba(
-  $nmi-primary,
-  0.8
-); //shade-color($accordion-icon-color, 10%);
+$accordion-button-active-color: rgba($nmi-primary, 0.8); //shade-color($accordion-icon-color, 10%);
 
 $accordion-icon-color: $nmi-primary;
 $accordion-icon-active-color: $accordion-button-active-color;

@@ -11,6 +11,7 @@ import {
   LookupClient,
 } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import type {
   WizardFormStepValues,
   WizardStepProps,
@@ -71,11 +72,15 @@ const loadApplicationAndInstrument =
         AppLogger.error(
           'Failed to load PA application and instrument details',
           error as Error,
-          { Id: id },
+          {
+            Id: id,
+          },
         );
         throw new Error(
           `Failed to load PA application and instrument details. Id: ${id}`,
-          { cause: error },
+          {
+            cause: error,
+          },
         );
       }
     } else {
@@ -103,11 +108,11 @@ const saveStep =
   ) => {
     if (accounts.length > 0) {
       try {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          RequestForPatternApprovalClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
 
         const valuesToSave = { ...values };
 
@@ -129,11 +134,15 @@ const saveStep =
         AppLogger.error(
           'Failed to save PA application and instrument details',
           error as Error,
-          { Id: id },
+          {
+            Id: id,
+          },
         );
         throw new Error(
           `Failed to save PA application and instrument details. Id: ${id}`,
-          { cause: error },
+          {
+            cause: error,
+          },
         );
       }
     } else {

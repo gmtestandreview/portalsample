@@ -65,7 +65,9 @@ describe('save aware yup resolver', () => {
     expect(result.errors).toHaveProperty('carrierAccountNumber');
     expect(
       (result.errors as Record<string, { type: string }>)['carrierName'],
-    ).toMatchObject({ type: 'validation' });
+    ).toMatchObject({
+      type: 'validation',
+    });
   });
 
   it('keeps the first Yup error when one field fails multiple rules', async () => {

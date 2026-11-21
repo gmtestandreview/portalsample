@@ -14,6 +14,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | `authConfig.ts`            | MSAL configuration, scopes, and token request setup                                       |
 | `redirectBridge.ts`        | Dedicated MSAL v5 redirect response bridge entry                                          |
 | `silentRequest.ts`         | Builds the silent token request for an account, omitting `account` when none is signed in |
+| `authenticatedClient.ts`   | Builds an API client and authenticates it with a silent token for the first account       |
 | `accountContext.tsx`       | Account state and dispatch contracts                                                      |
 | `AccountProvider.tsx`      | Provider that loads and mutates authenticated user state                                  |
 | `AuthenticatedElement.tsx` | Route guard wrapping `PreConditions`, MSAL auth template, and `ErrorBoundary`             |

@@ -12,10 +12,9 @@ only within their stated scope, and this file takes precedence when instructions
 conflict unless the task explicitly requires a policy change. Policy-sensitive
 files may be edited only when the task explicitly requests that policy change;
 For application-code tasks, leave them unchanged unless the task explicitly
-requests that policy change. Markdown formatting follows Prettier where
-applicable, while fenced code blocks retain a language identifier when the
-language is known and normal Markdown links use the form
-`[descriptive text](target)`.
+requests that policy change. Markdown formatting follows Oxfmt where applicable,
+while fenced code blocks retain a language identifier when the language is known
+and normal Markdown links use the form `[descriptive text](target)`.
 
 ## Language
 
@@ -60,8 +59,8 @@ Codex, Claude, or another coding assistant.
 ## Markdown line length
 
 `MD013/line-length` is disabled. Do not spend effort wrapping Markdown to meet
-an 80-character limit. Wrap text only when it improves readability or when
-Prettier formats it automatically.
+an 80-character limit. Wrap text only when it improves readability or when Oxfmt
+formats it automatically.
 
 ## Markdown headings
 

@@ -5,9 +5,14 @@
 Use this reference when assigning a numeric quality score, severity, QAQ/RMI
 result, or final audit verdict to a `SKILL.md` or skill directory.
 
-This file defines **how to score**. Use `best-practices-evaluations.md` for
-**what good looks like**, the current Agent Skills specification for mandatory
-compliance, and `SKILL-testing-checklist.md` for final validation.
+This file defines the **fallback whole-skill score** and supporting audit
+mechanics. **Before numeric scoring, check for a user-supplied rubric; it alone
+governs within its stated scope.** For file-level review outside an applicable
+user rubric use `file-review-rubric.md`; for an explicitly selected six-area
+review use `devils-advocate-rubric.md`. Never blend their weighted totals. Use
+`best-practices-evaluations.md` for unscored quality diagnostics, the current
+Agent Skills specification for mandatory compliance, and
+`SKILL-testing-checklist.md` for final validation.
 
 For iterative campaigns, load [bounded optimisation](bounded-optimisation.md)
 before evaluation/publication. Bind every score to frozen candidate, oracle,
@@ -24,8 +29,9 @@ Apply this precedence when sources conflict:
 
 `safety/trust/permissions > mandatory current spec > explicit user requirements>  applicable skill/project/domain requirements > current audit policy >  best-practice defaults > examples/legacy material`
 
-Treat legacy Doctor rubrics or score bands as historical evidence only when they
-conflict with the current rubric below.
+Treat the rubric below as a **fallback**, not a competing authority over a
+user-selected rubric. Preserve historical score provenance and do not compare
+numeric totals from incompatible scoring schemes as though like-for-like.
 
 Score only from evidence that is actually available.
 

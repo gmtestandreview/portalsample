@@ -119,22 +119,23 @@ const CertificateNumberLookup = (
                     matchType,
                   ),
                 )
-                .filter((item) =>
-                  matchesLookupValue(
-                    getLookupFieldValue(item, optionsFieldName),
-                    inputValue.toLowerCase(),
-                    matchType,
-                  ),
+                .map((item) => ({
+                  item,
+                  value: getLookupFieldValue(item, optionsFieldName),
+                }))
+                // The guard narrows `value` to a string, so the sort below needs
+                // no `?? ''` fallback (matchesLookupValue is false for undefined).
+                .filter(
+                  (entry): entry is { item: LookupResponse; value: string } =>
+                    matchesLookupValue(
+                      entry.value,
+                      inputValue.toLowerCase(),
+                      matchType,
+                    ),
                 )
                 .slice(0, maxResults)
-                .map((item) => item)
-                .sort((left, right) =>
-                  (
-                    getLookupFieldValue(left, optionsFieldName) ?? ''
-                  ).localeCompare(
-                    getLookupFieldValue(right, optionsFieldName) ?? '',
-                  ),
-                ),
+                .sort((left, right) => left.value.localeCompare(right.value))
+                .map((entry) => entry.item),
             ),
           ];
           setFilteredSuggestions(filteredParentOptions);
@@ -143,22 +144,23 @@ const CertificateNumberLookup = (
           const filteredOptions = [
             ...new Set(
               options
-                .filter((item) =>
-                  matchesLookupValue(
-                    getLookupFieldValue(item, optionsFieldName),
-                    inputValue.toLowerCase(),
-                    matchType,
-                  ),
+                .map((item) => ({
+                  item,
+                  value: getLookupFieldValue(item, optionsFieldName),
+                }))
+                // The guard narrows `value` to a string, so the sort below needs
+                // no `?? ''` fallback (matchesLookupValue is false for undefined).
+                .filter(
+                  (entry): entry is { item: LookupResponse; value: string } =>
+                    matchesLookupValue(
+                      entry.value,
+                      inputValue.toLowerCase(),
+                      matchType,
+                    ),
                 )
                 .slice(0, maxResults)
-                .map((item) => item)
-                .sort((left, right) =>
-                  (
-                    getLookupFieldValue(left, optionsFieldName) ?? ''
-                  ).localeCompare(
-                    getLookupFieldValue(right, optionsFieldName) ?? '',
-                  ),
-                ),
+                .sort((left, right) => left.value.localeCompare(right.value))
+                .map((entry) => entry.item),
             ),
           ];
           setFilteredSuggestions(filteredOptions);
@@ -348,7 +350,7 @@ const CertificateNumberLookup = (
                 {filteredSuggestions.map((item, index) => (
                   <ListGroup.Item
                     id={item.id}
-                    key={item.lookupName}
+                    key={item.lookupName ?? ''}
                     as='li'
                     role='option'
                     aria-label={`${item.lookupName ?? ''} (${index + 1} of ${filteredSuggestions.length})`}

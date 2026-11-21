@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Aggregate graded benchmark runs into JSON and Markdown summaries.
 
 The aggregator preserves observed evidence only:
@@ -19,29 +19,29 @@ import math
 import sys
 from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import fmean, stdev
 from typing import TypeAlias, TypedDict, TypeGuard, cast
 
-JsonScalar: TypeAlias = str | int | float | bool | None
-JsonValue: TypeAlias = JsonScalar | list["JsonValue"] | dict[str, "JsonValue"]
-JsonObject: TypeAlias = dict[str, JsonValue]
-EvalId: TypeAlias = int | str
-ComparisonPair: TypeAlias = tuple[str, str]
+type JsonScalar = str | int | float | bool | None
+type JsonValue = JsonScalar | list['JsonValue'] | dict[str, 'JsonValue']
+type JsonObject = dict[str, JsonValue]
+type EvalId = int | str
+type ComparisonPair = tuple[str, str]
 
 SUPPORTED_COMPARISON_PAIRS: tuple[ComparisonPair, ...] = (
-    ("with_skill", "without_skill"),
-    ("new_skill", "old_skill"),
+    ('with_skill', 'without_skill'),
+    ('new_skill', 'old_skill'),
 )
 SUPPORTED_CONFIG_NAMES: frozenset[str] = frozenset(
     name for pair in SUPPORTED_COMPARISON_PAIRS for name in pair
 )
-RESERVED_CONFIG_NAMES: frozenset[str] = frozenset({"delta"})
-REQUIRED_EXPECTATION_FIELDS: frozenset[str] = frozenset({"text", "passed", "evidence"})
+RESERVED_CONFIG_NAMES: frozenset[str] = frozenset({'delta'})
+REQUIRED_EXPECTATION_FIELDS: frozenset[str] = frozenset({'text', 'passed', 'evidence'})
 PASS_RATE_TOLERANCE = 1e-9
-EVAL_DIR_GLOB = "eval-*"
-RUN_DIR_GLOB = "run-*"
+EVAL_DIR_GLOB = 'eval-*'
+RUN_DIR_GLOB = 'run-*'
 MAX_INDEX_DIGITS = 18
 
 
@@ -71,8 +71,8 @@ class DeltaSummary(DeltaSummaryRequired, total=False):
     tokens: str
 
 
-RunSummaryValue: TypeAlias = ConfigSummary | DeltaSummary
-RunSummary: TypeAlias = dict[str, RunSummaryValue]
+type RunSummaryValue = ConfigSummary | DeltaSummary
+type RunSummary = dict[str, RunSummaryValue]
 
 
 class RunResultRequired(TypedDict):
@@ -162,7 +162,7 @@ class WorkspaceEvidence:
 
 def warn(message: str) -> None:
     """Write a warning to stderr without mixing it with normal output."""
-    print(f"Warning: {message}", file=sys.stderr)
+    print(f'Warning: {message}', file=sys.stderr)
 
 
 def is_number(value: object) -> TypeGuard[int | float]:
@@ -181,15 +181,15 @@ def require_number(
 ) -> float:
     """Validate and return a finite numeric field."""
     if not is_number(value):
-        raise ValueError(f"{field} must be a finite number")
+        raise ValueError(f'{field} must be a finite number')
     try:
         result = float(value)
     except OverflowError as exc:
-        raise ValueError(f"{field} must be a finite number") from exc
+        raise ValueError(f'{field} must be a finite number') from exc
     if minimum is not None and result < minimum:
-        raise ValueError(f"{field} must be >= {minimum}")
+        raise ValueError(f'{field} must be >= {minimum}')
     if maximum is not None and result > maximum:
-        raise ValueError(f"{field} must be <= {maximum}")
+        raise ValueError(f'{field} must be <= {maximum}')
     return result
 
 
@@ -208,15 +208,15 @@ def optional_number(
 def require_int(value: object, *, field: str, minimum: int = 0) -> int:
     """Validate an integer field without accepting booleans or fractional floats."""
     if isinstance(value, bool):
-        raise ValueError(f"{field} must be an integer")
+        raise ValueError(f'{field} must be an integer')
     if isinstance(value, int):
         result = value
     elif isinstance(value, float) and math.isfinite(value) and value.is_integer():
         result = int(value)
     else:
-        raise ValueError(f"{field} must be an integer")
+        raise ValueError(f'{field} must be an integer')
     if result < minimum:
-        raise ValueError(f"{field} must be >= {minimum}")
+        raise ValueError(f'{field} must be >= {minimum}')
     return result
 
 
@@ -235,24 +235,24 @@ def calculate_stats(values: Sequence[float]) -> Stats | None:
     if not values:
         return None
     if not all(math.isfinite(value) for value in values):
-        raise ValueError("statistics require finite values")
+        raise ValueError('statistics require finite values')
     try:
         mean = fmean(values)
         stddev = stdev(values) if len(values) > 1 else 0.0
     except OverflowError as exc:
-        raise ValueError("statistics overflow for observed values") from exc
+        raise ValueError('statistics overflow for observed values') from exc
     return {
-        "count": len(values),
-        "mean": round(mean, 4),
-        "stddev": round(stddev, 4),
-        "min": round(min(values), 4),
-        "max": round(max(values), 4),
+        'count': len(values),
+        'mean': round(mean, 4),
+        'stddev': round(stddev, 4),
+        'min': round(min(values), 4),
+        'max': round(max(values), 4),
     }
 
 
 def parse_prefixed_index(name: str, prefix: str) -> int | None:
     """Parse an exact ``<prefix>-<non-negative integer>`` name."""
-    expected_prefix = f"{prefix}-"
+    expected_prefix = f'{prefix}-'
     if not name.startswith(expected_prefix):
         return None
     suffix = name[len(expected_prefix) :]
@@ -267,19 +267,19 @@ def numeric_path_sort_key(path: Path, prefix: str) -> tuple[int, int, str]:
 
 
 def run_sort_key(run_dir: Path) -> tuple[int, int, str]:
-    return numeric_path_sort_key(run_dir, "run")
+    return numeric_path_sort_key(run_dir, 'run')
 
 
 def eval_sort_key(eval_dir: Path) -> tuple[int, int, str]:
-    return numeric_path_sort_key(eval_dir, "eval")
+    return numeric_path_sort_key(eval_dir, 'eval')
 
 
 def config_name_sort_key(name: str) -> tuple[int, str]:
     priority = {
-        "with_skill": 0,
-        "new_skill": 0,
-        "without_skill": 1,
-        "old_skill": 1,
+        'with_skill': 0,
+        'new_skill': 0,
+        'without_skill': 1,
+        'old_skill': 1,
     }
     return priority.get(name, 2), name
 
@@ -290,21 +290,21 @@ def config_sort_key(config_dir: Path) -> tuple[int, str]:
 
 def eval_id_sort_key(eval_id: EvalId) -> tuple[int, int, str]:
     if isinstance(eval_id, int):
-        return 0, eval_id, ""
+        return 0, eval_id, ''
     return 1, 0, eval_id
 
 
 def load_json_object(path: Path) -> JsonObject:
     """Load a strict JSON object from path."""
-    with path.open(encoding="utf-8") as stream:
+    with path.open(encoding='utf-8') as stream:
         data: object = json.load(stream, parse_constant=_reject_non_finite)
     if not isinstance(data, dict):
-        raise ValueError(f"expected JSON object in {path}")
+        raise ValueError(f'expected JSON object in {path}')
     return cast(JsonObject, data)
 
 
 def _reject_non_finite(token: str) -> object:
-    raise ValueError(f"non-finite JSON number is not allowed: {token}")
+    raise ValueError(f'non-finite JSON number is not allowed: {token}')
 
 
 def has_eval_dirs(path: Path) -> bool:
@@ -312,7 +312,7 @@ def has_eval_dirs(path: Path) -> bool:
 
 
 def find_search_dir(benchmark_dir: Path) -> Path | None:
-    runs_dir = benchmark_dir / "runs"
+    runs_dir = benchmark_dir / 'runs'
     if runs_dir.is_dir() and has_eval_dirs(runs_dir):
         return runs_dir
     if has_eval_dirs(benchmark_dir):
@@ -322,8 +322,8 @@ def find_search_dir(benchmark_dir: Path) -> Path | None:
 
 def load_eval_metadata(eval_dir: Path, eval_idx: int) -> tuple[EvalId, str]:
     """Load eval identity, preserving independently valid metadata fields."""
-    metadata_path = eval_dir / "eval_metadata.json"
-    parsed_id = parse_prefixed_index(eval_dir.name, "eval")
+    metadata_path = eval_dir / 'eval_metadata.json'
+    parsed_id = parse_prefixed_index(eval_dir.name, 'eval')
     fallback_id: EvalId = parsed_id if parsed_id is not None else eval_idx
     fallback_name = eval_dir.name
 
@@ -333,10 +333,10 @@ def load_eval_metadata(eval_dir: Path, eval_idx: int) -> tuple[EvalId, str]:
     try:
         metadata = load_json_object(metadata_path)
     except (OSError, ValueError) as exc:
-        warn(f"unable to load {metadata_path}: {exc}")
+        warn(f'unable to load {metadata_path}: {exc}')
         return fallback_id, fallback_name
 
-    raw_eval_id = metadata.get("eval_id")
+    raw_eval_id = metadata.get('eval_id')
     if (
         isinstance(raw_eval_id, (int, str))
         and not isinstance(raw_eval_id, bool)
@@ -345,22 +345,22 @@ def load_eval_metadata(eval_dir: Path, eval_idx: int) -> tuple[EvalId, str]:
         eval_id: EvalId = raw_eval_id
     else:
         eval_id = fallback_id
-        warn(f"invalid eval_id in {metadata_path}; using {fallback_id!r}")
+        warn(f'invalid eval_id in {metadata_path}; using {fallback_id!r}')
 
-    raw_eval_name = metadata.get("eval_name")
+    raw_eval_name = metadata.get('eval_name')
     if isinstance(raw_eval_name, str) and raw_eval_name.strip():
         eval_name = raw_eval_name
     else:
         eval_name = fallback_name
-        warn(f"invalid eval_name in {metadata_path}; using {fallback_name!r}")
+        warn(f'invalid eval_name in {metadata_path}; using {fallback_name!r}')
 
     return eval_id, eval_name
 
 
 def parse_run_number(run_dir: Path) -> int | None:
-    run_number = parse_prefixed_index(run_dir.name, "run")
+    run_number = parse_prefixed_index(run_dir.name, 'run')
     if run_number is None:
-        warn(f"skipping malformed run directory: {run_dir}")
+        warn(f'skipping malformed run directory: {run_dir}')
     return run_number
 
 
@@ -371,23 +371,23 @@ def validate_expectation(
 ) -> JsonValue:
     """Validate one expectation object from an untrusted JSON array."""
     if not isinstance(expectation, dict):
-        raise ValueError(f"expectations[{index}] in {grading_file} must be an object")
+        raise ValueError(f'expectations[{index}] in {grading_file} must be an object')
     obj = cast(JsonObject, expectation)
     missing = REQUIRED_EXPECTATION_FIELDS.difference(obj)
     if missing:
         raise ValueError(
-            f"expectations[{index}] in {grading_file} missing fields {sorted(missing)}"
+            f'expectations[{index}] in {grading_file} missing fields {sorted(missing)}'
         )
 
-    text = obj.get("text")
-    passed = obj.get("passed")
-    evidence = obj.get("evidence")
+    text = obj.get('text')
+    passed = obj.get('passed')
+    evidence = obj.get('evidence')
     if not isinstance(text, str) or not text.strip():
-        raise ValueError(f"expectations[{index}].text in {grading_file} must be non-empty")
+        raise ValueError(f'expectations[{index}].text in {grading_file} must be non-empty')
     if not isinstance(passed, bool):
-        raise ValueError(f"expectations[{index}].passed in {grading_file} must be boolean")
+        raise ValueError(f'expectations[{index}].passed in {grading_file} must be boolean')
     if not isinstance(evidence, str) or not evidence.strip():
-        raise ValueError(f"expectations[{index}].evidence in {grading_file} must be non-empty")
+        raise ValueError(f'expectations[{index}].evidence in {grading_file} must be non-empty')
     return cast(JsonValue, dict(obj))
 
 
@@ -398,15 +398,15 @@ def validate_expectations(
     """Validate expectation results, accepting summary-only legacy grading artifacts."""
     if raw_expectations is None:
         warn(
-            f"legacy grading artifact {grading_file} has no expectations array; "
-            "summary statistics remain usable but expectation-level auditability is unavailable"
+            f'legacy grading artifact {grading_file} has no expectations array; '
+            'summary statistics remain usable but expectation-level auditability is unavailable'
         )
         return [], False
     if not isinstance(raw_expectations, list):
-        raise ValueError(f"expectations in {grading_file} must be an array")
+        raise ValueError(f'expectations in {grading_file} must be an array')
     expectations = cast(list[object], raw_expectations)
     if not expectations:
-        raise ValueError(f"expectations in {grading_file} must not be empty")
+        raise ValueError(f'expectations in {grading_file} must not be empty')
 
     return [
         validate_expectation(grading_file, index, expectation)
@@ -416,48 +416,48 @@ def validate_expectations(
 
 def extract_notes(grading: JsonObject, grading_file: Path) -> list[str]:
     """Flatten validated user-note collections from grading data."""
-    raw_summary = grading.get("user_notes_summary")
+    raw_summary = grading.get('user_notes_summary')
     if raw_summary is None:
         return []
     summary = as_object(raw_summary)
     if summary is None:
-        warn(f"user_notes_summary in {grading_file} is not an object; ignoring it")
+        warn(f'user_notes_summary in {grading_file} is not an object; ignoring it')
         return []
 
     notes: list[str] = []
-    for key in ("uncertainties", "needs_review", "workarounds"):
+    for key in ('uncertainties', 'needs_review', 'workarounds'):
         raw_values = summary.get(key)
         if raw_values is None:
             continue
         if not isinstance(raw_values, list):
-            warn(f"user_notes_summary.{key} in {grading_file} is not an array; ignoring it")
+            warn(f'user_notes_summary.{key} in {grading_file} is not an array; ignoring it')
             continue
         for value in raw_values:
             if isinstance(value, str):
                 notes.append(value)
             else:
-                warn(f"non-string user note in {grading_file} ignored: {value!r}")
+                warn(f'non-string user note in {grading_file} ignored: {value!r}')
     return notes
 
 
 def load_timing_file(run_dir: Path) -> tuple[float | None, int | None]:
     """Load independently available duration and token observations."""
-    timing_file = run_dir / "timing.json"
+    timing_file = run_dir / 'timing.json'
     if not timing_file.is_file():
         return None, None
 
     try:
         timing = load_json_object(timing_file)
     except (OSError, ValueError) as exc:
-        warn(f"unable to load {timing_file}: {exc}")
+        warn(f'unable to load {timing_file}: {exc}')
         return None, None
 
     duration: float | None = None
     tokens: int | None = None
     try:
         duration = optional_number(
-            timing.get("total_duration_seconds"),
-            field=f"{timing_file}: total_duration_seconds",
+            timing.get('total_duration_seconds'),
+            field=f'{timing_file}: total_duration_seconds',
             minimum=0,
         )
     except ValueError as exc:
@@ -465,12 +465,12 @@ def load_timing_file(run_dir: Path) -> tuple[float | None, int | None]:
 
     try:
         tokens = optional_int(
-            timing.get("total_tokens"),
-            field=f"{timing_file}: total_tokens",
+            timing.get('total_tokens'),
+            field=f'{timing_file}: total_tokens',
             minimum=0,
         )
         if tokens is not None:
-            require_number(tokens, field=f"{timing_file}: total_tokens")
+            require_number(tokens, field=f'{timing_file}: total_tokens')
     except ValueError as exc:
         warn(str(exc))
         tokens = None
@@ -480,16 +480,16 @@ def load_timing_file(run_dir: Path) -> tuple[float | None, int | None]:
 def extract_timing(grading: JsonObject, run_dir: Path) -> tuple[float | None, int | None]:
     """Resolve duration and tokens independently without replacing absence with zero."""
     duration: float | None = None
-    raw_timing = grading.get("timing")
+    raw_timing = grading.get('timing')
     if raw_timing is not None:
         timing = as_object(raw_timing)
         if timing is None:
-            warn(f"timing in {run_dir / 'grading.json'} is not an object; ignoring it")
+            warn(f'timing in {run_dir / 'grading.json'} is not an object; ignoring it')
         else:
             try:
                 duration = optional_number(
-                    timing.get("total_duration_seconds"),
-                    field=f"{run_dir / 'grading.json'}: timing.total_duration_seconds",
+                    timing.get('total_duration_seconds'),
+                    field=f'{run_dir / 'grading.json'}: timing.total_duration_seconds',
                     minimum=0,
                 )
             except ValueError as exc:
@@ -508,39 +508,39 @@ def validate_summary(
     expectations_present: bool,
 ) -> tuple[float, int, int, int]:
     """Validate grading arithmetic and return the canonical summary values."""
-    passed = require_int(summary.get("passed"), field=f"{grading_file}: summary.passed")
-    failed = require_int(summary.get("failed"), field=f"{grading_file}: summary.failed")
-    total = require_int(summary.get("total"), field=f"{grading_file}: summary.total", minimum=1)
+    passed = require_int(summary.get('passed'), field=f'{grading_file}: summary.passed')
+    failed = require_int(summary.get('failed'), field=f'{grading_file}: summary.failed')
+    total = require_int(summary.get('total'), field=f'{grading_file}: summary.total', minimum=1)
     pass_rate = require_number(
-        summary.get("pass_rate"),
-        field=f"{grading_file}: summary.pass_rate",
+        summary.get('pass_rate'),
+        field=f'{grading_file}: summary.pass_rate',
         minimum=0,
         maximum=1,
     )
 
     if passed + failed != total:
         raise ValueError(
-            f"{grading_file}: summary.passed + summary.failed must equal summary.total"
+            f'{grading_file}: summary.passed + summary.failed must equal summary.total'
         )
     if expectations_present and total != len(expectations):
         raise ValueError(
-            f"{grading_file}: summary.total ({total}) does not match "
-            f"expectations length ({len(expectations)})"
+            f'{grading_file}: summary.total ({total}) does not match '
+            f'expectations length ({len(expectations)})'
         )
     if expectations_present:
         observed_passed = sum(
-            cast(JsonObject, expectation)["passed"] is True for expectation in expectations
+            cast(JsonObject, expectation)['passed'] is True for expectation in expectations
         )
         if passed != observed_passed:
             raise ValueError(
-                f"{grading_file}: summary.passed ({passed}) does not match "
-                f"passed expectation verdicts ({observed_passed})"
+                f'{grading_file}: summary.passed ({passed}) does not match '
+                f'passed expectation verdicts ({observed_passed})'
             )
     expected_rate = passed / total
     if not math.isclose(pass_rate, expected_rate, rel_tol=0.0, abs_tol=PASS_RATE_TOLERANCE):
         raise ValueError(
-            f"{grading_file}: summary.pass_rate ({pass_rate}) does not match "
-            f"passed/total ({expected_rate})"
+            f'{grading_file}: summary.pass_rate ({pass_rate}) does not match '
+            f'passed/total ({expected_rate})'
         )
     return pass_rate, passed, failed, total
 
@@ -549,27 +549,27 @@ def extract_optional_metrics(
     grading: JsonObject,
     grading_file: Path,
 ) -> tuple[int | None, int | None]:
-    raw_metrics = grading.get("execution_metrics")
+    raw_metrics = grading.get('execution_metrics')
     if raw_metrics is None:
         return None, None
     metrics = as_object(raw_metrics)
     if metrics is None:
-        warn(f"execution_metrics in {grading_file} is not an object; ignoring it")
+        warn(f'execution_metrics in {grading_file} is not an object; ignoring it')
         return None, None
 
     tool_calls: int | None = None
     errors: int | None = None
     try:
         tool_calls = optional_int(
-            metrics.get("total_tool_calls"),
-            field=f"{grading_file}: execution_metrics.total_tool_calls",
+            metrics.get('total_tool_calls'),
+            field=f'{grading_file}: execution_metrics.total_tool_calls',
         )
     except ValueError as exc:
         warn(str(exc))
     try:
         errors = optional_int(
-            metrics.get("errors_encountered"),
-            field=f"{grading_file}: execution_metrics.errors_encountered",
+            metrics.get('errors_encountered'),
+            field=f'{grading_file}: execution_metrics.errors_encountered',
         )
     except ValueError as exc:
         warn(str(exc))
@@ -585,16 +585,16 @@ def build_run_result(
     run_number: int,
 ) -> RunResult:
     """Build one validated run result without synthetic metric defaults."""
-    if "expectations" in grading and grading["expectations"] is None:
-        raise ValueError(f"expectations in {grading_file} must be an array")
+    if 'expectations' in grading and grading['expectations'] is None:
+        raise ValueError(f'expectations in {grading_file} must be an array')
     expectations, expectations_present = validate_expectations(
         grading_file,
-        grading.get("expectations"),
+        grading.get('expectations'),
     )
-    raw_summary = grading.get("summary")
+    raw_summary = grading.get('summary')
     summary = as_object(raw_summary)
     if summary is None:
-        raise ValueError(f"summary in {grading_file} must be an object")
+        raise ValueError(f'summary in {grading_file} must be an object')
     pass_rate, passed, failed, total = validate_summary(
         grading_file,
         summary,
@@ -603,28 +603,28 @@ def build_run_result(
     )
 
     result: RunResult = {
-        "eval_id": eval_id,
-        "eval_name": eval_name,
-        "run_number": run_number,
-        "pass_rate": pass_rate,
-        "passed": passed,
-        "failed": failed,
-        "total": total,
-        "expectations": expectations,
-        "notes": extract_notes(grading, grading_file),
+        'eval_id': eval_id,
+        'eval_name': eval_name,
+        'run_number': run_number,
+        'pass_rate': pass_rate,
+        'passed': passed,
+        'failed': failed,
+        'total': total,
+        'expectations': expectations,
+        'notes': extract_notes(grading, grading_file),
     }
 
     duration, tokens = extract_timing(grading, run_dir)
     if duration is not None:
-        result["time_seconds"] = duration
+        result['time_seconds'] = duration
     if tokens is not None:
-        result["tokens"] = tokens
+        result['tokens'] = tokens
 
     tool_calls, errors = extract_optional_metrics(grading, grading_file)
     if tool_calls is not None:
-        result["tool_calls"] = tool_calls
+        result['tool_calls'] = tool_calls
     if errors is not None:
-        result["errors"] = errors
+        result['errors'] = errors
     return result
 
 
@@ -634,9 +634,9 @@ def load_run_result(run_dir: Path, eval_id: EvalId, eval_name: str) -> RunResult
     if run_number is None:
         return None
 
-    grading_file = run_dir / "grading.json"
+    grading_file = run_dir / 'grading.json'
     if not grading_file.is_file():
-        warn(f"grading.json not found in {run_dir}")
+        warn(f'grading.json not found in {run_dir}')
         return None
 
     try:
@@ -650,7 +650,7 @@ def load_run_result(run_dir: Path, eval_id: EvalId, eval_name: str) -> RunResult
             run_number,
         )
     except (OSError, ValueError) as exc:
-        warn(f"skipping invalid grading evidence in {grading_file}: {exc}")
+        warn(f'skipping invalid grading evidence in {grading_file}: {exc}')
         return None
 
 
@@ -671,18 +671,18 @@ def _sorted_eval_dirs(search_dir: Path) -> list[Path]:
         key=eval_sort_key,
     )
     if not eval_dirs:
-        raise ValueError(f"no eval directories found in {search_dir}")
+        raise ValueError(f'no eval directories found in {search_dir}')
     return eval_dirs
 
 
 def _validated_config_name(config_dir: Path) -> str:
     config = config_dir.name
     if config in RESERVED_CONFIG_NAMES:
-        raise ValueError(f"configuration name is reserved: {config!r}")
+        raise ValueError(f'configuration name is reserved: {config!r}')
     if config not in SUPPORTED_CONFIG_NAMES:
         raise ValueError(
-            f"unsupported configuration {config!r}; expected one of "
-            f"{sorted(SUPPORTED_CONFIG_NAMES)}"
+            f'unsupported configuration {config!r}; expected one of '
+            f'{sorted(SUPPORTED_CONFIG_NAMES)}'
         )
     return config
 
@@ -724,7 +724,7 @@ def discover_workspace(benchmark_dir: Path) -> WorkspaceEvidence:
     search_dir = find_search_dir(benchmark_dir)
     if search_dir is None:
         raise ValueError(
-            f"no eval directories found in {benchmark_dir} or {benchmark_dir / 'runs'}"
+            f'no eval directories found in {benchmark_dir} or {benchmark_dir / 'runs'}'
         )
 
     results: dict[str, list[RunResult]] = {}
@@ -737,7 +737,7 @@ def discover_workspace(benchmark_dir: Path) -> WorkspaceEvidence:
         eval_id, eval_results, valid_configs = _load_workspace_eval(eval_dir, eval_idx)
         if eval_id in seen_eval_ids:
             raise ValueError(
-                f"duplicate eval_id {eval_id!r} in {seen_eval_ids[eval_id]} and {eval_dir}"
+                f'duplicate eval_id {eval_id!r} in {seen_eval_ids[eval_id]} and {eval_dir}'
             )
         seen_eval_ids[eval_id] = eval_dir
         eval_ids.append(eval_id)
@@ -746,7 +746,7 @@ def discover_workspace(benchmark_dir: Path) -> WorkspaceEvidence:
         _merge_eval_results(results, eval_results)
 
     if not results or not any(results.values()):
-        raise ValueError("no valid graded runs found")
+        raise ValueError('no valid graded runs found')
 
     ordered_configs = tuple(sorted(config_names, key=config_name_sort_key))
     validate_configuration_set(ordered_configs)
@@ -768,7 +768,7 @@ def load_run_results(benchmark_dir: Path) -> dict[str, list[RunResult]]:
     """Compatibility helper returning discovered runs without requiring a full benchmark."""
     search_dir = find_search_dir(benchmark_dir)
     if search_dir is None:
-        warn(f"no eval directories found in {benchmark_dir} or {benchmark_dir / 'runs'}")
+        warn(f'no eval directories found in {benchmark_dir} or {benchmark_dir / 'runs'}')
         return {}
 
     results: dict[str, list[RunResult]] = {}
@@ -795,13 +795,13 @@ def validate_configuration_set(config_names: Collection[str]) -> None:
     """Allow one supported configuration or exactly one supported comparison pair."""
     names = set(config_names)
     if not names:
-        raise ValueError("no configurations with run evidence found")
+        raise ValueError('no configurations with run evidence found')
 
     unsupported = names.difference(SUPPORTED_CONFIG_NAMES)
     if unsupported:
         raise ValueError(
-            f"unsupported configuration(s) {sorted(unsupported)}; expected one of "
-            f"{sorted(SUPPORTED_CONFIG_NAMES)}"
+            f'unsupported configuration(s) {sorted(unsupported)}; expected one of '
+            f'{sorted(SUPPORTED_CONFIG_NAMES)}'
         )
 
     if len(names) == 1:
@@ -810,8 +810,8 @@ def validate_configuration_set(config_names: Collection[str]) -> None:
         tuple(sorted(pair)) for pair in SUPPORTED_COMPARISON_PAIRS
     }:
         raise ValueError(
-            "configuration set must be a single supported configuration or exactly one "
-            f"supported pair; found {sorted(names)}"
+            'configuration set must be a single supported configuration or exactly one '
+            f'supported pair; found {sorted(names)}'
         )
 
 
@@ -819,36 +819,36 @@ def select_comparison_pair(config_names: Collection[str]) -> ComparisonPair | No
     names = set(config_names)
     matched = [pair for pair in SUPPORTED_COMPARISON_PAIRS if set(pair) == names]
     if len(matched) > 1:
-        raise ValueError(f"ambiguous supported comparison pairs: {matched}")
+        raise ValueError(f'ambiguous supported comparison pairs: {matched}')
     return matched[0] if matched else None
 
 
 def summarize_config(runs: Sequence[RunResult]) -> ConfigSummary:
     if not runs:
-        raise ValueError("cannot summarize a configuration with no valid runs")
+        raise ValueError('cannot summarize a configuration with no valid runs')
 
-    pass_stats = calculate_stats([run["pass_rate"] for run in runs])
+    pass_stats = calculate_stats([run['pass_rate'] for run in runs])
     if pass_stats is None:
-        raise ValueError("pass-rate observations unexpectedly missing")
+        raise ValueError('pass-rate observations unexpectedly missing')
 
-    summary: ConfigSummary = {"pass_rate": pass_stats}
+    summary: ConfigSummary = {'pass_rate': pass_stats}
 
-    times = [run["time_seconds"] for run in runs if "time_seconds" in run]
+    times = [run['time_seconds'] for run in runs if 'time_seconds' in run]
     time_stats = calculate_stats(times)
     if time_stats is not None:
-        summary["time_seconds"] = time_stats
+        summary['time_seconds'] = time_stats
 
-    tokens = [float(run["tokens"]) for run in runs if "tokens" in run]
+    tokens = [float(run['tokens']) for run in runs if 'tokens' in run]
     token_stats = calculate_stats(tokens)
     if token_stats is not None:
-        summary["tokens"] = token_stats
+        summary['tokens'] = token_stats
     return summary
 
 
 def aggregate_results(results: dict[str, list[RunResult]]) -> RunSummary:
     """Aggregate valid observations without synthesizing empty configurations."""
     if not results or not any(results.values()):
-        raise ValueError("no valid graded runs found")
+        raise ValueError('no valid graded runs found')
 
     validate_configuration_set(results)
     run_summary: RunSummary = {}
@@ -866,18 +866,18 @@ def aggregate_results(results: dict[str, list[RunResult]]) -> RunSummary:
     baseline = cast(ConfigSummary, run_summary[comparison[1]])
 
     delta: DeltaSummary = {
-        "pass_rate": (
-            f"{(primary['pass_rate']['mean'] - baseline['pass_rate']['mean']) * 100:+.1f} pp"
+        'pass_rate': (
+            f'{(primary['pass_rate']['mean'] - baseline['pass_rate']['mean']) * 100:+.1f} pp'
         )
     }
-    if "time_seconds" in primary and "time_seconds" in baseline:
-        delta["time_seconds"] = (
-            f"{primary['time_seconds']['mean'] - baseline['time_seconds']['mean']:+.1f}"
+    if 'time_seconds' in primary and 'time_seconds' in baseline:
+        delta['time_seconds'] = (
+            f'{primary['time_seconds']['mean'] - baseline['time_seconds']['mean']:+.1f}'
         )
-    if "tokens" in primary and "tokens" in baseline:
-        delta["tokens"] = f"{primary['tokens']['mean'] - baseline['tokens']['mean']:+.0f}"
+    if 'tokens' in primary and 'tokens' in baseline:
+        delta['tokens'] = f'{primary['tokens']['mean'] - baseline['tokens']['mean']:+.0f}'
 
-    run_summary["delta"] = delta
+    run_summary['delta'] = delta
     return run_summary
 
 
@@ -895,8 +895,8 @@ def calculate_runs_per_configuration(
     for config in configs:
         by_eval: dict[EvalId, int] = dict.fromkeys(eval_ids, 0)
         for run in results.get(config, ()):
-            if run["eval_id"] in by_eval:
-                by_eval[run["eval_id"]] += 1
+            if run['eval_id'] in by_eval:
+                by_eval[run['eval_id']] += 1
         counts.extend(by_eval.values())
 
     if not counts or 0 in counts or len(set(counts)) != 1:
@@ -907,7 +907,7 @@ def calculate_runs_per_configuration(
 def build_coverage_notes(evidence: WorkspaceEvidence) -> list[str]:
     notes: list[str] = []
     for config, eval_id in evidence.missing_cells:
-        notes.append(f"Missing valid graded run evidence for {config} / eval {eval_id}.")
+        notes.append(f'Missing valid graded run evidence for {config} / eval {eval_id}.')
     return notes
 
 
@@ -915,27 +915,27 @@ def benchmark_run_sort_key(
     run: BenchmarkRun,
 ) -> tuple[tuple[int, int, str], tuple[int, str], int]:
     return (
-        eval_id_sort_key(run["eval_id"]),
-        config_name_sort_key(run["configuration"]),
-        run["run_number"],
+        eval_id_sort_key(run['eval_id']),
+        config_name_sort_key(run['configuration']),
+        run['run_number'],
     )
 
 
 def _build_run_metrics(result: RunResult) -> RunMetrics:
     metrics: RunMetrics = {
-        "pass_rate": result["pass_rate"],
-        "passed": result["passed"],
-        "failed": result["failed"],
-        "total": result["total"],
+        'pass_rate': result['pass_rate'],
+        'passed': result['passed'],
+        'failed': result['failed'],
+        'total': result['total'],
     }
-    if "time_seconds" in result:
-        metrics["time_seconds"] = result["time_seconds"]
-    if "tokens" in result:
-        metrics["tokens"] = result["tokens"]
-    if "tool_calls" in result:
-        metrics["tool_calls"] = result["tool_calls"]
-    if "errors" in result:
-        metrics["errors"] = result["errors"]
+    if 'time_seconds' in result:
+        metrics['time_seconds'] = result['time_seconds']
+    if 'tokens' in result:
+        metrics['tokens'] = result['tokens']
+    if 'tool_calls' in result:
+        metrics['tool_calls'] = result['tool_calls']
+    if 'errors' in result:
+        metrics['errors'] = result['errors']
     return metrics
 
 
@@ -943,17 +943,15 @@ def _build_benchmark_runs(evidence: WorkspaceEvidence) -> list[BenchmarkRun]:
     runs: list[BenchmarkRun] = []
     for config in evidence.config_names:
         for result in evidence.results.get(config, []):
-            runs.append(
-                {
-                    "eval_id": result["eval_id"],
-                    "eval_name": result["eval_name"],
-                    "configuration": config,
-                    "run_number": result["run_number"],
-                    "result": _build_run_metrics(result),
-                    "expectations": result["expectations"],
-                    "notes": result["notes"],
-                }
-            )
+            runs.append({
+                'eval_id': result['eval_id'],
+                'eval_name': result['eval_name'],
+                'configuration': config,
+                'run_number': result['run_number'],
+                'result': _build_run_metrics(result),
+                'expectations': result['expectations'],
+                'notes': result['notes'],
+            })
     runs.sort(key=benchmark_run_sort_key)
     return runs
 
@@ -964,13 +962,13 @@ def _build_metadata(
     skill_path: str,
 ) -> Metadata:
     metadata: Metadata = {
-        "skill_name": skill_name or "<skill-name>",
-        "skill_path": skill_path or "<path/to/skill>",
-        "executor_model": "<model-name>",
-        "analyzer_model": "<model-name>",
-        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "evals_run": list(evidence.eval_ids),
-        "runs_per_configuration": calculate_runs_per_configuration(
+        'skill_name': skill_name or '<skill-name>',
+        'skill_path': skill_path or '<path/to/skill>',
+        'executor_model': '<model-name>',
+        'analyzer_model': '<model-name>',
+        'timestamp': datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'evals_run': list(evidence.eval_ids),
+        'runs_per_configuration': calculate_runs_per_configuration(
             evidence.results,
             evidence.eval_ids,
             evidence.config_names,
@@ -978,25 +976,25 @@ def _build_metadata(
     }
     comparison = select_comparison_pair(evidence.config_names)
     if comparison is not None:
-        metadata["comparison_pair"] = {
-            "candidate": comparison[0],
-            "baseline": comparison[1],
+        metadata['comparison_pair'] = {
+            'candidate': comparison[0],
+            'baseline': comparison[1],
         }
     return metadata
 
 
 def generate_benchmark(
     benchmark_dir: Path,
-    skill_name: str = "",
-    skill_path: str = "",
+    skill_name: str = '',
+    skill_path: str = '',
 ) -> Benchmark:
     """Generate benchmark data from validated run evidence."""
     evidence = discover_workspace(benchmark_dir)
     benchmark: Benchmark = {
-        "metadata": _build_metadata(evidence, skill_name, skill_path),
-        "runs": _build_benchmark_runs(evidence),
-        "run_summary": aggregate_results(evidence.results),
-        "notes": build_coverage_notes(evidence),
+        'metadata': _build_metadata(evidence, skill_name, skill_path),
+        'runs': _build_benchmark_runs(evidence),
+        'run_summary': aggregate_results(evidence.results),
+        'notes': build_coverage_notes(evidence),
     }
     validate_benchmark_semantics(benchmark)
     return benchmark
@@ -1005,22 +1003,22 @@ def generate_benchmark(
 def _validate_run_semantics(runs: Sequence[BenchmarkRun]) -> None:
     seen: set[tuple[str, EvalId, int]] = set()
     for run in runs:
-        identity = (run["configuration"], run["eval_id"], run["run_number"])
+        identity = (run['configuration'], run['eval_id'], run['run_number'])
         if identity in seen:
-            raise ValueError(f"duplicate run identity: {identity}")
+            raise ValueError(f'duplicate run identity: {identity}')
         seen.add(identity)
 
-        result = run["result"]
-        if result["passed"] + result["failed"] != result["total"]:
-            raise ValueError(f"invalid run summary arithmetic for {identity}")
-        expected_rate = result["passed"] / result["total"]
+        result = run['result']
+        if result['passed'] + result['failed'] != result['total']:
+            raise ValueError(f'invalid run summary arithmetic for {identity}')
+        expected_rate = result['passed'] / result['total']
         if not math.isclose(
-            result["pass_rate"],
+            result['pass_rate'],
             expected_rate,
             rel_tol=0.0,
             abs_tol=PASS_RATE_TOLERANCE,
         ):
-            raise ValueError(f"invalid pass rate for {identity}")
+            raise ValueError(f'invalid pass rate for {identity}')
 
 
 def _validate_comparison_metadata(
@@ -1028,99 +1026,99 @@ def _validate_comparison_metadata(
     configs: set[str],
 ) -> None:
     comparison = select_comparison_pair(configs)
-    pair = metadata.get("comparison_pair")
+    pair = metadata.get('comparison_pair')
     if pair is not None:
-        pair_names = {pair["candidate"], pair["baseline"]}
+        pair_names = {pair['candidate'], pair['baseline']}
         if not configs.issubset(pair_names):
-            raise ValueError("run_summary contains a configuration outside comparison_pair")
-        supported_pair = (pair["candidate"], pair["baseline"])
+            raise ValueError('run_summary contains a configuration outside comparison_pair')
+        supported_pair = (pair['candidate'], pair['baseline'])
         if supported_pair not in SUPPORTED_COMPARISON_PAIRS:
-            raise ValueError("metadata.comparison_pair is not a supported pair")
+            raise ValueError('metadata.comparison_pair is not a supported pair')
 
     if comparison is None:
         return
 
-    expected_pair = {"candidate": comparison[0], "baseline": comparison[1]}
+    expected_pair = {'candidate': comparison[0], 'baseline': comparison[1]}
     if pair != expected_pair:
-        raise ValueError("metadata.comparison_pair does not match the complete comparison")
+        raise ValueError('metadata.comparison_pair does not match the complete comparison')
 
 
 def validate_benchmark_semantics(benchmark: Benchmark) -> None:
     """Validate cross-field invariants before serialization."""
-    runs = benchmark["runs"]
+    runs = benchmark['runs']
     if not runs:
-        raise ValueError("benchmark must contain at least one valid run")
+        raise ValueError('benchmark must contain at least one valid run')
 
     _validate_run_semantics(runs)
-    configs = {key for key in benchmark["run_summary"] if key != "delta"}
+    configs = {key for key in benchmark['run_summary'] if key != 'delta'}
     validate_configuration_set(configs)
-    _validate_comparison_metadata(benchmark["metadata"], configs)
+    _validate_comparison_metadata(benchmark['metadata'], configs)
 
 
 def get_config_summary(run_summary: RunSummary, config: str) -> ConfigSummary:
     value = run_summary.get(config)
-    if value is None or config == "delta":
-        raise ValueError(f"configuration summary not found: {config!r}")
+    if value is None or config == 'delta':
+        raise ValueError(f'configuration summary not found: {config!r}')
     return cast(ConfigSummary, value)
 
 
 def get_delta_summary(run_summary: RunSummary) -> DeltaSummary | None:
-    value = run_summary.get("delta")
+    value = run_summary.get('delta')
     return cast(DeltaSummary, value) if value is not None else None
 
 
 def _format_time_stats(summary: ConfigSummary) -> str:
-    stats = summary.get("time_seconds")
+    stats = summary.get('time_seconds')
     if stats is None:
-        return "—"
-    return f"{stats['mean']:.1f}s ± {stats['stddev']:.1f}s"
+        return '—'
+    return f'{stats['mean']:.1f}s ± {stats['stddev']:.1f}s'
 
 
 def _format_token_stats(summary: ConfigSummary) -> str:
-    stats = summary.get("tokens")
+    stats = summary.get('tokens')
     if stats is None:
-        return "—"
-    return f"{stats['mean']:.0f} ± {stats['stddev']:.0f}"
+        return '—'
+    return f'{stats['mean']:.0f} ± {stats['stddev']:.0f}'
 
 
 def _format_pass_rate_delta(delta: DeltaSummary | None) -> str:
     if delta is None:
-        return "—"
-    return delta.get("pass_rate", "—")
+        return '—'
+    return delta.get('pass_rate', '—')
 
 
 def _format_time_delta(delta: DeltaSummary | None) -> str:
     if delta is None:
-        return "—"
-    value = delta.get("time_seconds")
-    return f"{value}s" if value is not None else "—"
+        return '—'
+    value = delta.get('time_seconds')
+    return f'{value}s' if value is not None else '—'
 
 
 def _format_token_delta(delta: DeltaSummary | None) -> str:
     if delta is None:
-        return "—"
-    return delta.get("tokens", "—")
+        return '—'
+    return delta.get('tokens', '—')
 
 
 def _single_config_summary_lines(
     run_summary: RunSummary,
     config: str,
 ) -> list[str]:
-    label = config.replace("_", " ").title()
+    label = config.replace('_', ' ').title()
     summary = get_config_summary(run_summary, config)
     lines = [
-        f"| Metric | {label} |",
-        "|--------|------------|",
+        f'| Metric | {label} |',
+        '|--------|------------|',
         (
-            f"| Pass Rate | "
-            f"{summary['pass_rate']['mean'] * 100:.0f}% ± "
-            f"{summary['pass_rate']['stddev'] * 100:.0f}% |"
+            f'| Pass Rate | '
+            f'{summary['pass_rate']['mean'] * 100:.0f}% ± '
+            f'{summary['pass_rate']['stddev'] * 100:.0f}% |'
         ),
     ]
-    if "time_seconds" in summary:
-        lines.append(f"| Time | {_format_time_stats(summary)} |")
-    if "tokens" in summary:
-        lines.append(f"| Tokens | {_format_token_stats(summary)} |")
+    if 'time_seconds' in summary:
+        lines.append(f'| Time | {_format_time_stats(summary)} |')
+    if 'tokens' in summary:
+        lines.append(f'| Tokens | {_format_token_stats(summary)} |')
     return lines
 
 
@@ -1132,61 +1130,61 @@ def _comparison_summary_lines(
     config_a, config_b = configs
     a = get_config_summary(run_summary, config_a)
     b = get_config_summary(run_summary, config_b)
-    label_a = config_a.replace("_", " ").title()
-    label_b = config_b.replace("_", " ").title()
+    label_a = config_a.replace('_', ' ').title()
+    label_b = config_b.replace('_', ' ').title()
     lines = [
-        f"| Metric | {label_a} | {label_b} | Delta |",
-        "|--------|------------|------------|-------|",
+        f'| Metric | {label_a} | {label_b} | Delta |',
+        '|--------|------------|------------|-------|',
         (
-            f"| Pass Rate | {a['pass_rate']['mean'] * 100:.0f}% ± "
-            f"{a['pass_rate']['stddev'] * 100:.0f}% | "
-            f"{b['pass_rate']['mean'] * 100:.0f}% ± "
-            f"{b['pass_rate']['stddev'] * 100:.0f}% | "
-            f"{_format_pass_rate_delta(delta)} |"
+            f'| Pass Rate | {a['pass_rate']['mean'] * 100:.0f}% ± '
+            f'{a['pass_rate']['stddev'] * 100:.0f}% | '
+            f'{b['pass_rate']['mean'] * 100:.0f}% ± '
+            f'{b['pass_rate']['stddev'] * 100:.0f}% | '
+            f'{_format_pass_rate_delta(delta)} |'
         ),
     ]
-    if "time_seconds" in a or "time_seconds" in b:
+    if 'time_seconds' in a or 'time_seconds' in b:
         lines.append(
-            f"| Time | {_format_time_stats(a)} | {_format_time_stats(b)} | "
-            f"{_format_time_delta(delta)} |"
+            f'| Time | {_format_time_stats(a)} | {_format_time_stats(b)} | '
+            f'{_format_time_delta(delta)} |'
         )
-    if "tokens" in a or "tokens" in b:
+    if 'tokens' in a or 'tokens' in b:
         lines.append(
-            f"| Tokens | {_format_token_stats(a)} | {_format_token_stats(b)} | "
-            f"{_format_token_delta(delta)} |"
+            f'| Tokens | {_format_token_stats(a)} | {_format_token_stats(b)} | '
+            f'{_format_token_delta(delta)} |'
         )
     return lines
 
 
 def _run_description(run_count: int | None) -> str:
     if run_count is None:
-        return "variable or incomplete runs per configuration"
-    return f"{run_count} runs each per configuration"
+        return 'variable or incomplete runs per configuration'
+    return f'{run_count} runs each per configuration'
 
 
 def generate_markdown(benchmark: Benchmark) -> str:
     """Generate a human-readable summary without synthetic comparison columns."""
-    metadata = benchmark["metadata"]
-    run_summary = benchmark["run_summary"]
+    metadata = benchmark['metadata']
+    run_summary = benchmark['run_summary']
     configs = sorted(
-        (key for key in run_summary if key != "delta"),
+        (key for key in run_summary if key != 'delta'),
         key=config_name_sort_key,
     )
     if not configs:
-        raise ValueError("benchmark has no configuration summaries")
+        raise ValueError('benchmark has no configuration summaries')
 
     lines = [
-        f"# Skill Benchmark: {metadata['skill_name']}",
-        "",
-        f"**Model**: {metadata['executor_model']}",
-        f"**Date**: {metadata['timestamp']}",
+        f'# Skill Benchmark: {metadata['skill_name']}',
+        '',
+        f'**Model**: {metadata['executor_model']}',
+        f'**Date**: {metadata['timestamp']}',
         (
-            f"**Evals**: {', '.join(map(str, metadata['evals_run']))} "
-            f"({_run_description(metadata['runs_per_configuration'])})"
+            f'**Evals**: {', '.join(map(str, metadata['evals_run']))} '
+            f'({_run_description(metadata['runs_per_configuration'])})'
         ),
-        "",
-        "## Summary",
-        "",
+        '',
+        '## Summary',
+        '',
     ]
 
     delta = get_delta_summary(run_summary)
@@ -1195,24 +1193,24 @@ def generate_markdown(benchmark: Benchmark) -> str:
     else:
         lines.extend(_comparison_summary_lines(run_summary, configs, delta))
 
-    if benchmark["notes"]:
-        lines.extend(["", "## Notes", ""])
-        lines.extend(f"- {note}" for note in benchmark["notes"])
-    return "\n".join(lines)
+    if benchmark['notes']:
+        lines.extend(['', '## Notes', ''])
+        lines.extend(f'- {note}' for note in benchmark['notes'])
+    return '\n'.join(lines)
 
 
 def parse_cli_args(argv: Sequence[str] | None = None) -> CliArgs:
     parser = argparse.ArgumentParser(
-        description="Aggregate benchmark run results into summary statistics"
+        description='Aggregate benchmark run results into summary statistics'
     )
-    parser.add_argument("benchmark_dir", type=Path, help="Path to the benchmark directory")
-    parser.add_argument("--skill-name", default="", help="Name of the skill being benchmarked")
-    parser.add_argument("--skill-path", default="", help="Path of the skill being benchmarked")
+    parser.add_argument('benchmark_dir', type=Path, help='Path to the benchmark directory')
+    parser.add_argument('--skill-name', default='', help='Name of the skill being benchmarked')
+    parser.add_argument('--skill-path', default='', help='Path of the skill being benchmarked')
     parser.add_argument(
-        "--output",
-        "-o",
+        '--output',
+        '-o',
         type=Path,
-        help="Output path for benchmark.json (default: <benchmark_dir>/benchmark.json)",
+        help='Output path for benchmark.json (default: <benchmark_dir>/benchmark.json)',
     )
     namespace = parser.parse_args(argv)
     return CliArgs(
@@ -1226,20 +1224,20 @@ def parse_cli_args(argv: Sequence[str] | None = None) -> CliArgs:
 def markdown_output_path(output_json: Path) -> Path:
     """Return the Markdown sibling of output_json, refusing paths that would collide."""
     if not output_json.name:
-        raise ValueError(f"output path has no file name: {output_json}")
-    output_md = output_json.with_suffix(".md")
+        raise ValueError(f'output path has no file name: {output_json}')
+    output_md = output_json.with_suffix('.md')
     if output_md == output_json:
-        raise ValueError(f"output path must not use the .md suffix: {output_json}")
+        raise ValueError(f'output path must not use the .md suffix: {output_json}')
     return output_md
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_cli_args(argv)
     if not args.benchmark_dir.is_dir():
-        print(f"Directory not found: {args.benchmark_dir}", file=sys.stderr)
+        print(f'Directory not found: {args.benchmark_dir}', file=sys.stderr)
         return 2
 
-    output_json = args.output or (args.benchmark_dir / "benchmark.json")
+    output_json = args.output or (args.benchmark_dir / 'benchmark.json')
     try:
         output_md = markdown_output_path(output_json)
         benchmark = generate_benchmark(
@@ -1249,35 +1247,35 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         markdown = generate_markdown(benchmark)
     except ValueError as exc:
-        print(f"Unable to aggregate benchmark: {exc}", file=sys.stderr)
+        print(f'Unable to aggregate benchmark: {exc}', file=sys.stderr)
         return 2
 
     try:
         output_json.parent.mkdir(parents=True, exist_ok=True)
-        with output_json.open("w", encoding="utf-8", newline="\n") as stream:
+        with output_json.open('w', encoding='utf-8', newline='\n') as stream:
             json.dump(benchmark, stream, indent=2, allow_nan=False)
-            stream.write("\n")
-        output_md.write_text(f"{markdown}\n", encoding="utf-8", newline="\n")
+            stream.write('\n')
+        output_md.write_text(f'{markdown}\n', encoding='utf-8', newline='\n')
     except (OSError, ValueError) as exc:
-        print(f"Unable to write benchmark output: {exc}", file=sys.stderr)
+        print(f'Unable to write benchmark output: {exc}', file=sys.stderr)
         return 1
 
-    print(f"Generated: {output_json}")
-    print(f"Generated: {output_md}")
-    print("\nSummary:")
-    for config in (key for key in benchmark["run_summary"] if key != "delta"):
-        summary = get_config_summary(benchmark["run_summary"], config)
+    print(f'Generated: {output_json}')
+    print(f'Generated: {output_md}')
+    print('\nSummary:')
+    for config in (key for key in benchmark['run_summary'] if key != 'delta'):
+        summary = get_config_summary(benchmark['run_summary'], config)
         print(
-            f"  {config.replace('_', ' ').title()}: "
-            f"{summary['pass_rate']['mean'] * 100:.1f}% pass rate"
+            f'  {config.replace('_', ' ').title()}: '
+            f'{summary['pass_rate']['mean'] * 100:.1f}% pass rate'
         )
-    delta = get_delta_summary(benchmark["run_summary"])
+    delta = get_delta_summary(benchmark['run_summary'])
     if delta is not None:
-        print(f"  Delta: {delta.get('pass_rate', '—')}")
+        print(f'  Delta: {delta.get('pass_rate', '—')}')
     else:
-        print("  Delta: unavailable (no complete comparison pair)")
+        print('  Delta: unavailable (no complete comparison pair)')
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

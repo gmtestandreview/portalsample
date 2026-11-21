@@ -165,10 +165,9 @@ export const MyComponent: React.FC = () => {
 
 ```typescript
 // Entity list
-['entities', blogId][
-  ('entities', blogId, 'summary')
-] // With view mode
-[('entities', blogId, 'flat')][
+['entities', blogId][('entities', blogId, 'summary')][ // With view mode
+  ('entities', blogId, 'flat')
+][
   // Single entity
   ('entity', blogId, entityId)
 ][

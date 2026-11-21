@@ -5,15 +5,18 @@ description: Test TypeScript types with expectTypeOf and assertType
 
 # Type Testing
 
-**Load when:** Write or troubleshoot Vitest TypeScript typechecking and expectTypeOf. **Boundary:** Do not treat type assertions as runtime test evidence.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Write or troubleshoot Vitest TypeScript typechecking and
+expectTypeOf. **Boundary:** Do not treat type assertions as runtime test
+evidence. These are generic Vitest examples; inspect the installed version and
+applicable project config before applying them.
 
-**Expected outcome:** A type assertion is checked by the typecheck runner rather than presented as runtime evidence. **Acceptance check:** Check checker, file inclusion, and separate type/runtime outcomes.
+**Expected outcome:** A type assertion is checked by the typecheck runner rather
+than presented as runtime evidence. **Acceptance check:** Check checker, file
+inclusion, and separate type/runtime outcomes.
 
-Test TypeScript types with Vitest's typechecking runner. `expectTypeOf` is
-also usable in normal TS tests but its type assertions do not themselves
-provide runtime behavior verification.
+Test TypeScript types with Vitest's typechecking runner. `expectTypeOf` is also
+usable in normal TS tests but its type assertions do not themselves provide
+runtime behavior verification.
 
 ## Setup
 
@@ -216,7 +219,8 @@ vitest --typecheck.only
 ## Mixed Test Files
 
 Type-level expectations in a `.test.ts` file do not replace running the
-configured `typecheck` command; report runtime and type-check results separately.
+configured `typecheck` command; report runtime and type-check results
+separately.
 
 Combine runtime and type tests:
 

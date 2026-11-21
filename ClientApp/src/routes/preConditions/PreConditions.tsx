@@ -116,13 +116,12 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   const showTermsAndConditions =
     isAuthenticated && account?.details?.userAcceptedTermsOfUse === false;
 
-  const autoShowBranchSelector = !!(
+  const autoShowBranchSelector =
     isAuthenticated &&
     account?.details?.userAcceptedTermsOfUse === true &&
     account.details.defaultOrganisationId == null &&
     account.details.accountContactCompleted &&
-    !path.includes('success-creating-account')
-  );
+    !path.includes('success-creating-account');
 
   const showBranchSelector =
     autoShowBranchSelector || modalState.showBranchSelector;
@@ -146,7 +145,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
 
   useEffect(() => {
     setIsModalOpen(
-      !!(showBranchSelector || showRFQDelete || showTermsAndConditions),
+      showBranchSelector || showRFQDelete || showTermsAndConditions,
     );
   }, [showBranchSelector, showRFQDelete, showTermsAndConditions, isModalOpen]);
 

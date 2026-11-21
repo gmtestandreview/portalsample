@@ -79,7 +79,7 @@ ecosystems provide tools that auto-resolve dependencies at runtime.
 - **State prerequisites** in your `SKILL.md` (e.g., "Requires Node.js 18+")
   rather than assuming the agent's environment has them. For runtime-level
   requirements, use the
-  [`compatibility` frontmatter field](/specification#compatibility-field).
+  [`compatibility` frontmatter field](specification.md#compatibility-field).
 - **Move complex commands into scripts.** A one-off command works well when
   you're invoking a tool with a few flags. When a command grows complex enough
   that it's hard to get right on the first try, a tested script in `scripts/` is

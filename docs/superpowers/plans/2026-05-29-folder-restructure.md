@@ -855,20 +855,21 @@ Route modules | `static/js/routes/**` | | Reusable UI |
 `static/js/env.ts` | | API client | `static/js/api/web-api-client.ts` | | Shared
 types | `static/js/types.ts` | | Validation schemas |
 `static/js/validationSchemas/**` | | Yup custom methods |
-`static/js/validationSchemas/yupExtensions/stringExtensions.ts` | | App Insights
-| `static/js/instrumentation/AppInsightsService.ts` | | Session storage |
-`static/js/storage/**` | | Utilities | `static/js/utils/index.ts` |
+`static/js/validationSchemas/yupExtensions/stringExtensions.ts` | | App
+Insights | `static/js/instrumentation/AppInsightsService.ts` | | Session
+storage | `static/js/storage/**` | | Utilities | `static/js/utils/index.ts` |
 
 <!-- AFTER -->
 
-| App bootstrap | `ClientApp/src/index.tsx` | | Router | `ClientApp/src/App.tsx`
-| | Route modules | `ClientApp/src/routes/**` | | Reusable UI |
-`ClientApp/src/components/**` | | Auth config (MSAL) |
+| App bootstrap | `ClientApp/src/index.tsx` | | Router |
+`ClientApp/src/App.tsx` | | Route modules | `ClientApp/src/routes/**` | |
+Reusable UI | `ClientApp/src/components/**` | | Auth config (MSAL) |
 `ClientApp/src/authentication/authConfig.ts` | | Auth context / hooks |
 `ClientApp/src/authentication/accountContext.tsx`, `hooks.tsx` | | Auth guard |
 `ClientApp/src/authentication/AuthenticatedElement.tsx` | | Runtime env vars |
-`ClientApp/src/env.ts` | | API client | `ClientApp/src/api/web-api-client.ts` |
-| Shared types | `ClientApp/src/types.ts` | | Validation schemas |
+`ClientApp/src/env.ts` | | API client |
+`ClientApp/src/api/web-api-client.ts` | | Shared types |
+`ClientApp/src/types.ts` | | Validation schemas |
 `ClientApp/src/validationSchemas/**` | | Yup custom methods |
 `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` | | App
 Insights | `ClientApp/src/instrumentation/AppInsightsService.ts` | | Session

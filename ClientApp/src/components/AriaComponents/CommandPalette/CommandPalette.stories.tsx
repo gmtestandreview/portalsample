@@ -4,7 +4,7 @@ import { Button } from '../Button/Button.tsx';
 import { CommandPalette } from './CommandPalette';
 import { MenuItem } from '../Menu/Menu.tsx';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 
 const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
@@ -19,38 +19,40 @@ const meta = preview.meta({
   },
 });
 
-export const Example = meta.story({
-  render: (args) => {
-    const [isOpen, setIsOpen] = useState(false);
+const CommandPaletteStory = (args: ComponentProps<typeof CommandPalette>) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-    return (
-      <>
-        <Button
-          onPress={() => {
-            setIsOpen(true);
-          }}
-        >
-          Open Command Palette <kbd>⌘ J</kbd>
-        </Button>
-        <CommandPalette
-          {...args}
-          isOpen={isOpen}
-          onOpenChange={(nextIsOpen = false) => {
-            setIsOpen(nextIsOpen);
-          }}
-        >
-          <MenuItem>Create new file...</MenuItem>
-          <MenuItem>Create new folder...</MenuItem>
-          <MenuItem>Assign to...</MenuItem>
-          <MenuItem>Assign to me</MenuItem>
-          <MenuItem>Change status...</MenuItem>
-          <MenuItem>Change priority...</MenuItem>
-          <MenuItem>Add label...</MenuItem>
-          <MenuItem>Remove label...</MenuItem>
-        </CommandPalette>
-      </>
-    );
-  },
+  return (
+    <>
+      <Button
+        onPress={() => {
+          setIsOpen(true);
+        }}
+      >
+        Open Command Palette <kbd>⌘ J</kbd>
+      </Button>
+      <CommandPalette
+        {...args}
+        isOpen={isOpen}
+        onOpenChange={(nextIsOpen = false) => {
+          setIsOpen(nextIsOpen);
+        }}
+      >
+        <MenuItem>Create new file...</MenuItem>
+        <MenuItem>Create new folder...</MenuItem>
+        <MenuItem>Assign to...</MenuItem>
+        <MenuItem>Assign to me</MenuItem>
+        <MenuItem>Change status...</MenuItem>
+        <MenuItem>Change priority...</MenuItem>
+        <MenuItem>Add label...</MenuItem>
+        <MenuItem>Remove label...</MenuItem>
+      </CommandPalette>
+    </>
+  );
+};
+
+export const Example = meta.story({
+  render: CommandPaletteStory,
   play: async ({ canvas, canvasElement }) => {
     const trigger = canvas.getByRole('button', {
       name: /Open Command Palette/,

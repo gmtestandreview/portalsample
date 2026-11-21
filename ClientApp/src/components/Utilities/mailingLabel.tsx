@@ -48,12 +48,9 @@ const MailingLabel = ({
       .writeText(textToCopy)
       .then(() => {
         setIsCopyClipboard(true);
-        console.log('Copied to clipboard:');
-        console.log(textToCopy);
       })
-      .catch((err) => {
+      .catch(() => {
         setIsCopyClipboard(false);
-        console.log('Failed to copy: ', err);
       });
   };
 

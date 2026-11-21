@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
@@ -368,5 +368,62 @@ describe('acceptQuote container', () => {
     });
 
     expect(mocks.getStepStatuses).not.toHaveBeenCalled();
+  });
+
+  it('renders with blank ids when the route carries no id and the quote has no number', async () => {
+    expect.hasAssertions();
+
+    resetAcceptQuoteMocks();
+
+    // A quote request that resolves without a number exercises the
+    // `quoteRequestIdNum ?? ''` fallback.
+    mocks.getQuoteRequestDetails.mockResolvedValue({});
+
+    const AcceptQuote = (
+      await import('../../../../ClientApp/src/routes/acceptQuote/index')
+    ).default;
+    // No `:id` segment -> useParams().id is undefined, so every `id ?? ''`
+    // fallback (completion location, getStepStatuses, each WizardStep prop)
+    // takes its empty-string path.
+    render(
+      <MemoryRouter initialEntries={['/accept-quote']}>
+        <Routes>
+          <Route path='/accept-quote' element={<AcceptQuote />} />
+          <Route path='/not-found' element={<div data-testid='not-found' />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    });
+
+    expect(mocks.getStepStatuses).toHaveBeenCalledWith('');
+    expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
+  });
+
+  it('renders nothing until the signed-in account has details', async () => {
+    expect.hasAssertions();
+
+    resetAcceptQuoteMocks();
+
+    // No account context yet -> the `!account?.details` guard returns null, so
+    // neither the spinner nor the wizard is mounted.
+    mocks.useAccountState.mockReturnValue(null);
+
+    const { container } = await renderAcceptQuote();
+
+    // The guard returns null, but the load effect still runs and settles its
+    // state after the render. Flushing it inside act owns those updates rather
+    // than letting them land outside any act scope (the act(...) warning).
+    await act(async () => {
+      await new Promise<void>((r) => {
+        setTimeout(r, 0);
+      });
+    });
+
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('wizard-form')).not.toBeInTheDocument();
   });
 });

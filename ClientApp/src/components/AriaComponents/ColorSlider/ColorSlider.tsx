@@ -20,8 +20,12 @@ export function ColorSlider({ label, ...props }: Readonly<ColorSliderProps>) {
       <SliderOutput />
       <SliderTrack
         style={({ defaultStyle }) => ({
-          background: `${defaultStyle.background ?? ''},
-            repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`,
+          background: [
+            defaultStyle.background,
+            'repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px',
+          ]
+            .filter(Boolean)
+            .join(', '),
         })}
       >
         <ColorThumb />

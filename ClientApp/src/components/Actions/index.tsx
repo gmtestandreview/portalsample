@@ -71,7 +71,7 @@ type ActionMenuButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const ActionMenuButton = forwardRef<HTMLButtonElement, ActionMenuButtonProps>(
   ({ 'aria-selected': _ariaSelected, ...props }, ref) => (
-    <button ref={ref} {...props} />
+    <button type='button' ref={ref} {...props} />
   ),
 );
 

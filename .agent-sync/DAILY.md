@@ -25,24 +25,24 @@ task list was dictated, so intent is derived from the governed backlog per
 
 - [x] **TASK-001**: Record the unrecorded coverage-scope change as a backlog
       item <!-- COMPLETE 01:4x — COVERAGE-SCOPE-001 opened; CRD-042 -->
-- [x] **TASK-002**: Annotate the STRUCTURAL business rules with CI grep markers
-      <!-- COMPLETE 01:4x — 3 of 4 applied (16/17/21); item 18 BLOCKED; type-check + lint clean; CRD-042 -->
-- [x] **AMB-001**: `TYPE-APPROVAL-E2E-001`
-      <!-- RESOLVED — operator chose Option B (accept residual gap); CRD-042 -->
-- [x] **DEC-001**: `infra-reviewer` kept, CI/CD-scoped
-      <!-- APPROVED by operator -->
-- [ ] **TASK-003**: `COVERAGE-GATE-001` — close the unit coverage gate
-      <!-- BLOCKED (depends_on: external-coverage) — NOT dispatchable -->
-- [x] **TASK-004**: P2 item 18 — RULE-042 annotation
-      <!-- COMPLETE — operator supplied analysis/BUSINESS_RULES.md; RULE-042 annotated; RULE-035 register defect found and corrected; CRD-043 -->
-- [x] **TASK-005**: `.gitignore` — ignore A Team runtime output
-      <!-- COMPLETE — .agent-sync/logs/ + scripts/__pycache__/; verified via git check-ignore -->
-- [x] **TASK-006**: Verification pass over all 53 business rules
-      <!-- COMPLETE — DEC-002 approved; 18/21 citations miscited, 6 rules undefined, RULE-022 dead code, RULE-042 double-implemented; RULES-REGISTER-001 opened; CRD-044 -->
-- [x] **TASK-007**: CI gate for business-rule citations
-      <!-- COMPLETE - scripts/verify-rule-citations.mjs, npm run lint:rules, wired into pr.yml static-quality-node24; negative-tested; CRD-045 -->
-- [x] **TASK-008**: Write RULE-051 (unblock Legal)
-      <!-- COMPLETE - detail section authored; suburb discrepancy found between production and Storybook fixture; CRD-045 -->
+- [x] **TASK-002**: Annotate the STRUCTURAL business rules with CI grep
+      markers <!-- COMPLETE 01:4x — 3 of 4 applied (16/17/21); item 18 BLOCKED; type-check + lint clean; CRD-042 -->
+- [x] **AMB-001**:
+      `TYPE-APPROVAL-E2E-001` <!-- RESOLVED — operator chose Option B (accept residual gap); CRD-042 -->
+- [x] **DEC-001**: `infra-reviewer` kept,
+      CI/CD-scoped <!-- APPROVED by operator -->
+- [ ] **TASK-003**: `COVERAGE-GATE-001` — close the unit coverage
+      gate <!-- BLOCKED (depends_on: external-coverage) — NOT dispatchable -->
+- [x] **TASK-004**: P2 item 18 — RULE-042
+      annotation <!-- COMPLETE — operator supplied analysis/BUSINESS_RULES.md; RULE-042 annotated; RULE-035 register defect found and corrected; CRD-043 -->
+- [x] **TASK-005**: `.gitignore` — ignore A Team runtime
+      output <!-- COMPLETE — .agent-sync/logs/ + scripts/__pycache__/; verified via git check-ignore -->
+- [x] **TASK-006**: Verification pass over all 53 business
+      rules <!-- COMPLETE — DEC-002 approved; 18/21 citations miscited, 6 rules undefined, RULE-022 dead code, RULE-042 double-implemented; RULES-REGISTER-001 opened; CRD-044 -->
+- [x] **TASK-007**: CI gate for business-rule
+      citations <!-- COMPLETE - scripts/verify-rule-citations.mjs, npm run lint:rules, wired into pr.yml static-quality-node24; negative-tested; CRD-045 -->
+- [x] **TASK-008**: Write RULE-051 (unblock
+      Legal) <!-- COMPLETE - detail section authored; suburb discrepancy found between production and Storybook fixture; CRD-045 -->
 
 ### TASK-006 — Business rules register verification (operator-requested, DEC-002)
 

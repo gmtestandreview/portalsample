@@ -91,13 +91,17 @@ describe('resolveErrorState', () => {
     it('returns notFound for 404', () => {
       expect(
         resolveErrorState(makeError(404), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'notFound' });
+      ).toEqual({
+        kind: 'notFound',
+      });
     });
 
     it('returns gone for 410', () => {
       expect(
         resolveErrorState(makeError(410), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'gone' });
+      ).toEqual({
+        kind: 'gone',
+      });
     });
 
     it('returns noThirdPartyAccess for 403 with third-party title', () => {
@@ -122,13 +126,17 @@ describe('resolveErrorState', () => {
     it('returns loading for unrecognised HTTP status — restores the previously silent failure', () => {
       expect(
         resolveErrorState(makeError(500), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'loading' });
+      ).toEqual({
+        kind: 'loading',
+      });
     });
 
     it('returns loading for a network error with no status property', () => {
       expect(
         resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'loading' });
+      ).toEqual({
+        kind: 'loading',
+      });
     });
 
     it('returns none for an aborted request — stays silent', () => {
@@ -632,7 +640,7 @@ const loadData = useCallback(async () => {
     setStepState({ values });
   } catch (error) {
     const err = error as Error;
-    AppLogger.error('Could not load data for form step.', err);
+    Applogging.exception('Could not load data for form step.', err);
     const loadServerError = error as ProblemDetails;
     AppLogger.trace('Could not load data for form step.', SeverityLevel.Error, {
       problemDetails: loadServerError,
@@ -641,7 +649,7 @@ const loadData = useCallback(async () => {
     setErrorState(
       resolveErrorState(error, getRedirectionLocationOnError, ErrorType.Load),
     );
-    AppLogger.error('Failed to Load step values', err);
+    Applogging.exception('Failed to Load step values', err);
   } finally {
     setIsLoading(false);
   }
@@ -709,7 +717,7 @@ const onSubmitStep = async (
       }
     } catch (error) {
       const err = error as Error;
-      AppLogger.error('Could not submit form step.', error as Error, {
+      Applogging.exception('Could not submit form step.', error as Error, {
         stepIndex: currentStepIndex,
       });
       const saveServerError = error as ProblemDetails;
@@ -755,7 +763,7 @@ const onSaveAndExitStep = async (
       navigate(locationAfterExit || '/');
     } catch (error) {
       const err = error as Error;
-      AppLogger.error('Could not save form step.', err, {
+      Applogging.exception('Could not save form step.', err, {
         stepIndex: currentStepIndex,
       });
       const saveServerError = error as ProblemDetails;

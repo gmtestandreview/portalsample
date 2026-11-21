@@ -5,11 +5,14 @@ description: Configure Vitest with vite.config.ts or vitest.config.ts
 
 # Configuration
 
-**Load when:** Modify Vitest or Vite test configuration and runner options. **Boundary:** Do not override project policy or copy examples across independent configs.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Modify Vitest or Vite test configuration and runner options.
+**Boundary:** Do not override project policy or copy examples across independent
+configs. These are generic Vitest examples; inspect the installed version and
+applicable project config before applying them.
 
-**Expected outcome:** Config changes implement the requested behavior without changing unrelated test policy. **Acceptance check:** Check actual config load path, supported options, and inherited/project-specific settings.
+**Expected outcome:** Config changes implement the requested behavior without
+changing unrelated test policy. **Acceptance check:** Check actual config load
+path, supported options, and inherited/project-specific settings.
 
 Vitest reads configuration from `vitest.config.ts` or `vite.config.ts`. It
 shares the same config format as Vite.

@@ -5,11 +5,14 @@ description: Configure environments like jsdom, happy-dom for browser APIs
 
 # Test Environments
 
-**Load when:** Choose jsdom/happy-dom, custom environments, or Vitest Browser Mode. **Boundary:** Do not use for standalone Playwright E2E or assume jsdom is a real browser.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Choose jsdom/happy-dom, custom environments, or Vitest Browser
+Mode. **Boundary:** Do not use for standalone Playwright E2E or assume jsdom is
+a real browser. These are generic Vitest examples; inspect the installed version
+and applicable project config before applying them.
 
-**Expected outcome:** The chosen simulation or Browser Mode matches the DOM/browser behavior under test. **Acceptance check:** Check required browser APIs, environment packages, and suite ownership; no jsdom-as-browser claim.
+**Expected outcome:** The chosen simulation or Browser Mode matches the
+DOM/browser behavior under test. **Acceptance check:** Check required browser
+APIs, environment packages, and suite ownership; no jsdom-as-browser claim.
 
 ## Available Environments
 
@@ -263,8 +266,8 @@ defineConfig({
 ## Key Points
 
 - Default is `node` - no browser APIs
-- Use `jsdom` for DOM simulation, not real browser layout, navigation,
-  or a substitute for Browser Mode
+- Use `jsdom` for DOM simulation, not real browser layout, navigation, or a
+  substitute for Browser Mode
 - Use `happy-dom` for faster tests with basic DOM
 - Per-file environment via `// @vitest-environment` comment
 - Use projects for multiple environment configurations

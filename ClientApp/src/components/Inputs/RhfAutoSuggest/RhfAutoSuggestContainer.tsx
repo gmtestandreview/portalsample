@@ -65,7 +65,9 @@ const RhfAutoSuggestContainer = <T,>(
   } = props;
 
   const {
-    field,
+    fieldName,
+    fieldRef,
+    onFieldBlur,
     controlId,
     helpId,
     validationMessageId,
@@ -101,7 +103,7 @@ const RhfAutoSuggestContainer = <T,>(
           items={options}
           inputValue={searchTerm ?? ''}
           onInputChange={(value) => {
-            field.onBlur();
+            onFieldBlur();
             void onSearchTermChange(value);
           }}
           onChange={(key) => {
@@ -141,11 +143,11 @@ const RhfAutoSuggestContainer = <T,>(
           >
             {label}
           </Label>
-          {inlineHelp && (
+          {inlineHelp ? (
             <p id={helpId} className='contextual-help'>
               {inlineHelp}
             </p>
-          )}
+          ) : null}
           {/*
            * React Aria's `Group`, not a bare wrapper: `ComboBox`
            * exposes its group ref through `GroupContext`, and once a
@@ -161,8 +163,8 @@ const RhfAutoSuggestContainer = <T,>(
           <Group>
             <Input
               id={controlId}
-              name={field.name}
-              ref={field.ref}
+              name={fieldName}
+              ref={fieldRef}
               autoComplete='off'
               spellCheck={false}
               onKeyDown={onKeyDown}

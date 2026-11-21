@@ -48,5 +48,6 @@
       }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$comment": "Schema checks eval definitions only; duplicate IDs across cases and a sufficient negative corpus require semantic tests."
 }

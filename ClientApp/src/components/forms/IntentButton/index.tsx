@@ -3,7 +3,8 @@ import { orIfEmpty } from '../../../utils/orIfEmpty';
 import PrimaryButton from '../../Buttons/PrimaryButton';
 
 export type IntentButtonChildren =
-  string | ((onClick: MouseEventHandler<HTMLButtonElement>) => ReactNode);
+  | string
+  | ((onClick: MouseEventHandler<HTMLButtonElement>) => ReactNode);
 
 interface IntentButtonProps {
   children?: IntentButtonChildren | undefined;

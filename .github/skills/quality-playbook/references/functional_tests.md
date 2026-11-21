@@ -200,10 +200,11 @@ These patterns look like tests but don't catch real bugs:
 ```python
 # WRONG: tests the validation mechanism
 def test_bad_value_rejected(fixture):
-    fixture.field = "invalid"  # Schema rejects this!
+    fixture.field = 'invalid'  # Schema rejects this!
     with pytest.raises(ValidationError):
         process(fixture)
     # Tells you nothing about output
+
 
 # RIGHT: tests the requirement
 def test_bad_value_not_in_output(fixture):

@@ -13471,8 +13471,8 @@ Alternate 3Alt 3
 **Value**
 
 Criterion 11Rank = 1*33Rank = 1*55Rank = 1*22 Criterion 21Rank = 1*55Rank =
-1*44Rank = 1*38 Criterion 33Rank = 3*515Rank = 3*13Rank = 3*515 Criterion 45Rank
-= 5*15Rank = 5*525Rank = 5*315
+1*44Rank = 1*38 Criterion 33Rank = 3*515Rank = 3*13Rank = 3*515 Criterion
+45Rank = 5*15Rank = 5*525Rank = 5*315
 
 **Weighted**
 
@@ -14232,8 +14232,8 @@ recommend the one with the higher IRR. The IRR is internal to one organization
 since it does not consider external influencers such as inflation or fluctuating
 interest rates or a changing business context. The IRR calculation is based on
 the interest rate at which the NPV is 0: Net Present Value = (-1 x Original
-Investment) + Sum of (net benefit for that period / (1 + IRR) for all periods)
-= 0.
+Investment) + Sum of (net benefit for that period / (1 + IRR) for all
+periods) = 0.
 
 **Payback Period**
 

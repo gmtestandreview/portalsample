@@ -17,7 +17,7 @@ import { omitUndefined } from '../../../utils/omitUndefined';
 
 const isAllowedFile = (file: File, allowedTypes: string[]) =>
   file.name.includes('.') &&
-  allowedTypes.includes(`.${file.name.split('.').pop() ?? ''}`);
+  allowedTypes.includes(`.${String(file.name.split('.').pop())}`);
 
 /** Returns one message per disallowed file, plus one if too many files were chosen. */
 const getUploadValidationErrors = (
@@ -147,7 +147,8 @@ const AttachmentNew = (
           addErrors(
             Object.values(
               (problemDetails['errors'] as
-                Record<string, string[]> | undefined) ?? {},
+                | Record<string, string[]>
+                | undefined) ?? {},
             ).flat(),
           );
         }

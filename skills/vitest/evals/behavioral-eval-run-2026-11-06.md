@@ -27,17 +27,17 @@ over-attributed to the snapshot (addressed by REFINE, re-run below = PASS).
 
 ## Governance — RED vs GREEN
 
-| Case | RED (no skill) | GREEN (skill) | Verdict |
-| --- | --- | --- | --- |
-| P01 unit mock/reset | passes, no coverage note | hoisted `vi.mock`, preserves 100% thresholds | PASS |
-| P02 Storybook play() | passes | adds "Browser-Mode provider != standalone Playwright" guard | PASS |
-| P04 unit coverage | `coverage.all` + 80% (removed API + policy drift) | explicit `include`, keeps 100% + LCOV, flags exclusion drift | PASS (RED FAIL fixed) |
-| P05 Storybook JSON | generic exclude | cites runtime-plugin `ClientApp/src/**/*.json` rule; does not copy unit thresholds | PASS (RED partial fixed) |
-| P06 sequential | `{ sequential: true }` (removed) | `{ concurrent: false }` | PASS (RED FAIL fixed) |
-| P08 browser provider | string `'playwright'` (removed) | `playwright({})` + `instances` from `@vitest/browser-playwright` | PASS (RED FAIL fixed) |
-| P09 addon timeout | roughly ok | preserves `VITEST_STORYBOOK==='true'` direct-leaf branch; keeps historical measurements | PASS |
-| P12 new project | correct intent but `coverage.all` | no nmi-portal policy export; explicit include/exclude; no removed API | PASS (improved) |
-| P15 policy-weakening pressure | refuses | refuses + cites script shape, thresholds, VITEST_STORYBOOK branch | PASS |
+| Case                          | RED (no skill)                                    | GREEN (skill)                                                                           | Verdict                  |
+| ----------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------ |
+| P01 unit mock/reset           | passes, no coverage note                          | hoisted `vi.mock`, preserves 100% thresholds                                            | PASS                     |
+| P02 Storybook play()          | passes                                            | adds "Browser-Mode provider != standalone Playwright" guard                             | PASS                     |
+| P04 unit coverage             | `coverage.all` + 80% (removed API + policy drift) | explicit `include`, keeps 100% + LCOV, flags exclusion drift                            | PASS (RED FAIL fixed)    |
+| P05 Storybook JSON            | generic exclude                                   | cites runtime-plugin `ClientApp/src/**/*.json` rule; does not copy unit thresholds      | PASS (RED partial fixed) |
+| P06 sequential                | `{ sequential: true }` (removed)                  | `{ concurrent: false }`                                                                 | PASS (RED FAIL fixed)    |
+| P08 browser provider          | string `'playwright'` (removed)                   | `playwright({})` + `instances` from `@vitest/browser-playwright`                        | PASS (RED FAIL fixed)    |
+| P09 addon timeout             | roughly ok                                        | preserves `VITEST_STORYBOOK==='true'` direct-leaf branch; keeps historical measurements | PASS                     |
+| P12 new project               | correct intent but `coverage.all`                 | no nmi-portal policy export; explicit include/exclude; no removed API                   | PASS (improved)          |
+| P15 policy-weakening pressure | refuses                                           | refuses + cites script shape, thresholds, VITEST_STORYBOOK branch                       | PASS                     |
 
 GREEN materially improves P04/P05/P06/P08/P12 and regresses nothing — the
 comparative-improvement criterion is met. Governance deployment-blocking set:
@@ -46,8 +46,8 @@ comparative-improvement criterion is met. Governance deployment-blocking set:
 ## Snapshot routing (S01-S21)
 
 19 PASS. Originally: S12 FAIL (sharding -> `core-cli` vs expected
-`features-concurrency`), S21 AMBER (bare "no file applies" vs check-then-report).
-Both addressed by REFINE and re-run below.
+`features-concurrency`), S21 AMBER (bare "no file applies" vs
+check-then-report). Both addressed by REFINE and re-run below.
 
 ## Refinements applied this run
 
@@ -63,11 +63,11 @@ Both addressed by REFINE and re-run below.
 
 ## Refined-case re-run (skill injected, revised content)
 
-| Case | Retrieved file(s) | Verdict |
-| --- | --- | --- |
-| S12 shard across CI | `features-concurrency.md` primary; `core-cli.md` co-ref | PASS |
-| S21 undocumented flag | `core-cli.md` -> `core-config.md` -> evidence gap | PASS |
-| ACT-12 version-validity | `vitest/references/vitest-5-compatibility.md` | PASS |
+| Case                    | Retrieved file(s)                                       | Verdict |
+| ----------------------- | ------------------------------------------------------- | ------- |
+| S12 shard across CI     | `features-concurrency.md` primary; `core-cli.md` co-ref | PASS    |
+| S21 undocumented flag   | `core-cli.md` -> `core-config.md` -> evidence gap       | PASS    |
+| ACT-12 version-validity | `vitest/references/vitest-5-compatibility.md`           | PASS    |
 
 File existence confirmed for all referenced paths; no invented files or flags.
 
@@ -75,15 +75,16 @@ File existence confirmed for all referenced paths; no invented files or flags.
 
 - **Activation:** PASS (case-12 AMBER resolved on re-run).
 - **Governance (P01,P02,P04,P05,P06,P08,P09,P12,P15):** 9/9 PASS.
-- **Snapshot routing:** 21/21 PASS after REFINE (was 19 PASS / 1 FAIL / 1 AMBER).
+- **Snapshot routing:** 21/21 PASS after REFINE (was 19 PASS / 1 FAIL / 1
+  AMBER).
 
 ### NHR (blocks a full runtime `deploy` claim)
 
 Runtime-execution evals are **not** executed here and remain NHR until online
 mode: actual `vitest run` (5.0.5), `npm run type-check`, Storybook Test-panel,
 and `npm run test:ci`. Governance cases not in the deployment-blocking subset
-(P03, P07, P10, P11, P13, P14, P16-P22) and the activation comparative baseline /
-R01-R04 were not executed this run -> NHR.
+(P03, P07, P10, P11, P13, P14, P16-P22) and the activation comparative baseline
+/ R01-R04 were not executed this run -> NHR.
 
 ### Recommendation
 
@@ -93,11 +94,12 @@ evals.
 
 ## Lesson — behavioral PASS does not substitute for the type-check gate
 
-When the runtime-execution NHR was cleared later this session, `npm run type-check`
-surfaced 8 pre-existing `tsc` errors (in `tests/` and `ClientApp/src`) while the
-unit suite ran green — because Vitest transpiles via esbuild and does **not**
-type-check. A fully-GREEN behavioral/agent eval therefore does **not** imply the
-unit lane's definition-of-done is met. The skill now encodes this as an
-independent required gate (see `SKILL.md` "Vitest does not type-check" and the
-strict-TS test-authoring note in `references/project-nmi-portal.md`). Future
-runs: treat `vitest run` green and `tsc --noEmit` green as separate evidence.
+When the runtime-execution NHR was cleared later this session,
+`npm run type-check` surfaced 8 pre-existing `tsc` errors (in `tests/` and
+`ClientApp/src`) while the unit suite ran green — because Vitest transpiles via
+esbuild and does **not** type-check. A fully-GREEN behavioral/agent eval
+therefore does **not** imply the unit lane's definition-of-done is met. The
+skill now encodes this as an independent required gate (see `SKILL.md` "Vitest
+does not type-check" and the strict-TS test-authoring note in
+`references/project-nmi-portal.md`). Future runs: treat `vitest run` green and
+`tsc --noEmit` green as separate evidence.

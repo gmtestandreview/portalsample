@@ -1,388 +1,64 @@
-import { Link, useNavigate } from 'react-router';
-import { InteractionStatus } from '@azure/msal-browser';
-import { useMsal } from '@azure/msal-react';
-import { useEffect, useState } from 'react';
-import type { ChangeEvent, ReactElement } from 'react';
-import { Alert, Button, Modal, Row, Col, Table } from 'react-bootstrap';
-import {
-  useAccountState,
-  useAccountDispatch,
-} from '../../../authentication/hooks';
+import { useState } from 'react';
+import { Link } from 'react-router';
+import { Button, Modal, Row, Col, Table } from 'react-bootstrap';
+import { useAccountState } from '../../../authentication/hooks';
 import { useModalState, useModalDispatch } from '../ModalContext';
 import BlockUISpinner from '../../BlockUISpinner';
-import PrimaryButton from '../../Buttons/PrimaryButton';
-import { OrganisationsClient, UsersClient } from '../../../api/web-api-client';
-import type { OrganisationDto } from '../../../api/web-api-client';
-import { silentRequestFor } from '../../../authentication/silentRequest';
-import NotificationMessage from '../../Alert/NotificationMessage';
-import {
-  clearBranchModalNotification,
-  getBranchModalNotification,
-} from '../../../storage/notification';
-import AppLogger from '../../../instrumentation/AppLogger';
+import { clearBranchModalNotification } from '../../../storage/notification';
 import { BranchSelectionModalMode } from './enums';
 import { omitUndefined } from '../../../utils/omitUndefined';
-
-interface SavingBranchSelectorErrorProps {
-  showError: boolean;
-}
-
-const showBranchModalMessage = (message: JSX.Element | null) => (
-  <>
-    {message && (
-      <Row className='mb-4'>
-        <Col>{message}</Col>
-      </Row>
-    )}
-  </>
-);
-
-const setNotification = () => {
-  const branchModalNotification = getBranchModalNotification();
-  return branchModalNotification ? (
-    <NotificationMessage
-      id='notif-message-1'
-      canClose
-      onClose={clearBranchModalNotification}
-      {...branchModalNotification}
-    />
-  ) : null;
-};
-
-const SavingBranchSelectorError = (
-  props: Readonly<SavingBranchSelectorErrorProps>,
-): ReactElement | null => {
-  const { showError } = props;
-  if (showError) {
-    return (
-      <Row className='mb-4'>
-        <Col>
-          <Alert
-            variant='danger'
-            className='d-flex'
-            role='alert'
-            aria-live='assertive'
-          >
-            <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
-              <div className='bgCircle me-3'>
-                <i className='icon-warning' aria-hidden='true' />
-              </div>
-            </div>
-            <div>
-              <p className='mb-3'>
-                Error trying to save default branch/location. Try again later!
-              </p>
-            </div>
-          </Alert>
-        </Col>
-      </Row>
-    );
-  }
-  return null;
-};
-
-interface SaveButtonProps {
-  onClick: () => void;
-}
-
-const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
-  const { onClick } = props;
-  return (
-    <PrimaryButton
-      data-testid='save-button'
-      onClick={onClick}
-      className='ms-md-auto'
-    >
-      Save and continue
-    </PrimaryButton>
-  );
-};
-
-interface BranchSelectorButtonsProps {
-  showCloseButton: boolean;
-  onClose: () => void;
-  onSave: () => void;
-}
-
-type SortableBranchKey =
-  | 'abn'
-  | 'branchOrLocationName'
-  | 'businessListName'
-  | 'businessOrTradingName'
-  | 'crmGuid'
-  | 'name';
-
-const BranchSelectorButtons = (
-  props: Readonly<BranchSelectorButtonsProps>,
-): JSX.Element => {
-  const { showCloseButton, onClose, onSave } = props;
-  return (
-    <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
-      {showCloseButton && (
-        <Button
-          data-testid='exit-portal-button'
-          onClick={onClose}
-          variant='tertiary'
-          className='me-md-auto order-2 order-md-0'
-        >
-          {/* Fix 10 — S6772: JSX spacing fix for icon followed by text */}
-          <i className='icon-close me-1' aria-hidden='true' />
-          {' Cancel'}
-        </Button>
-      )}
-      <SaveButton onClick={onSave} />
-    </div>
-  );
-};
-
-const hasDefaultOrganisationId = (defaultOrganisationId?: number | null) =>
-  defaultOrganisationId != null;
-
-const toSortableText = (value: string | undefined) =>
-  value?.toLowerCase() ?? '';
-
-// Fix 11 — S3776: Module-scope helper 1
-const applyAccountDispatchUpdates = (
-  accountDispatch: ReturnType<typeof useAccountDispatch>,
-  selectedBranch: number | undefined,
-  selectedCRMGuid: string | undefined,
-  selectedOrganisation: string | undefined,
-  selectedTradingName: string | undefined,
-  selectedBranchName: string | undefined,
-) => {
-  if (!accountDispatch) return;
-  accountDispatch.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
-  if (selectedOrganisation !== undefined) {
-    accountDispatch.setOrganisationAndBranch(
-      selectedOrganisation,
-      selectedTradingName ?? '',
-      selectedBranchName ?? '',
-    );
-  }
-};
-
-// Fix 11 — S3776: Module-scope helper 2 (Fix 6 absorbed here)
-const finaliseAccountCreation = (
-  accountState: ReturnType<typeof useAccountState>,
-  accountDispatch: ReturnType<typeof useAccountDispatch>,
-  selectedBranch: number | undefined,
-  selectedCRMGuid: string | undefined,
-  selectedOrganisation: string | undefined,
-  selectedABN: string | undefined,
-) => {
-  const accountCreationIncomplete =
-    !accountState?.details?.accountCreationCompleted;
-  if (accountCreationIncomplete) {
-    accountDispatch?.setCompleted();
-    accountDispatch?.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
-    accountDispatch?.setTargetOrganisation(
-      selectedOrganisation ?? '',
-      selectedABN ?? '',
-    );
-  }
-};
+import BranchSelectorButtons from './BranchSelectorButtons';
+import SavingBranchSelectorError from './SavingBranchSelectorError';
+import { useBranchSelection } from './useBranchSelection';
+import { useSaveBranchSelection } from './useSaveBranchSelection';
+import {
+  hasDefaultOrganisationId,
+  setNotification,
+  showBranchModalMessage,
+} from './branchSelectorHelpers';
+import type { SortableBranchKey } from './branchSelectorHelpers';
 
 const BranchSelectorModal = () => {
-  const [isModalDataLoading, setIsModalDataLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [savingBranchSelectorError, setSavingBranchSelectorError] =
     useState(false);
-  const { inProgress, accounts, instance } = useMsal();
-  const [selectedBranch, setSelectedBranch] = useState<number | undefined>();
-  const [selectedOrganisation, setSelectedOrganisation] = useState<
-    string | undefined
-  >();
-  const [selectedTradingName, setSelectedTradingName] = useState<
-    string | undefined
-  >();
-  const [selectedBranchName, setSelectedBranchName] = useState<
-    string | undefined
-  >();
-  const [selectedABN, setSelectedABN] = useState<string | undefined>();
-  const [selectedCRMGuid, setSelectedCRMGuid] = useState<string | undefined>();
-  const [branches, setBranches] = useState<OrganisationDto[] | undefined>();
   const branchModalMessage = setNotification();
   const accountState = useAccountState();
-  const accountDispatch = useAccountDispatch();
   const modalState = useModalState();
   const modalDispatch = useModalDispatch();
-  const [sortConfig, setSortConfig] = useState<{
-    key: SortableBranchKey | null;
-    direction: 'asc' | 'desc';
-  }>({ key: 'branchOrLocationName', direction: 'asc' });
+  const {
+    isModalDataLoading,
+    hasLoadError,
+    branches,
+    sortConfig,
+    sortData,
+    handleChange,
+    selectedBranch,
+    selectedOrganisation,
+    selectedTradingName,
+    selectedBranchName,
+    selectedABN,
+    selectedCRMGuid,
+  } = useBranchSelection();
+  const { isSaving, onContinueBranchSelectorModal } = useSaveBranchSelection(
+    {
+      selectedBranch,
+      selectedOrganisation,
+      selectedTradingName,
+      selectedBranchName,
+      selectedABN,
+      selectedCRMGuid,
+    },
+    setSavingBranchSelectorError,
+  );
 
   const defaultOrganisationIdSet = hasDefaultOrganisationId(
     accountState?.details?.defaultOrganisationId,
   );
   const branchSelectionModalMode = modalState?.branchSelectionModalMode;
 
-  const navigate = useNavigate();
-
-  const onContinueBranchSelectorModal = async () => {
-    if (inProgress === InteractionStatus.None && accounts.length > 0) {
-      setIsSaving(true);
-      let reloadAfterSave = false;
-      const client = new UsersClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      client.setAuthToken(tokenResult.accessToken);
-      try {
-        if (
-          branchSelectionModalMode === BranchSelectionModalMode.RFQSelectOrg
-        ) {
-          await client.setDefaultOrganisation(
-            omitUndefined({
-              defaultOrganisationId: selectedBranch,
-              rfqId: modalState?.rfqId,
-            }),
-          );
-        } else if (
-          branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg
-        ) {
-          await client.setDefaultOrganisation(
-            omitUndefined({ defaultOrganisationId: selectedBranch }),
-          );
-        }
-        // Fix 11 — S3776: replaced inline accountDispatch guard with helper (Fix 4 absorbed)
-        applyAccountDispatchUpdates(
-          accountDispatch,
-          selectedBranch,
-          selectedCRMGuid,
-          selectedOrganisation,
-          selectedTradingName,
-          selectedBranchName,
-        );
-        // Fix 11 — S3776: replaced inline accountCreationCompleted block with helper (Fix 6 absorbed)
-        finaliseAccountCreation(
-          accountState,
-          accountDispatch,
-          selectedBranch,
-          selectedCRMGuid,
-          selectedOrganisation,
-          selectedABN,
-        );
-        reloadAfterSave =
-          branchSelectionModalMode === BranchSelectionModalMode.RFQSelectOrg;
-      } catch (error) {
-        AppLogger.error('Failed to select organisation', error as Error);
-        setSavingBranchSelectorError(true);
-      } finally {
-        setIsSaving(false);
-        modalDispatch?.setShowBranchSelector(false);
-        clearBranchModalNotification();
-        if (reloadAfterSave) {
-          globalThis.location.reload();
-        } else {
-          void navigate('/');
-        }
-      }
-    }
-  };
-
-  const handleChange = (
-    _event: ChangeEvent<HTMLInputElement>,
-    branchId: number | undefined,
-    organisationName: string | undefined,
-    tradingName: string | undefined,
-    branchName: string | undefined,
-    abn: string | undefined,
-    crmGuid: string | undefined,
-  ) => {
-    setSelectedBranch(branchId);
-    setSelectedOrganisation(organisationName);
-    setSelectedTradingName(tradingName);
-    setSelectedBranchName(branchName);
-    setSelectedABN(abn);
-    setSelectedCRMGuid(crmGuid);
-  };
-
-  useEffect(() => {
-    let isActive = true;
-
-    const loadBranches = async () => {
-      // Fix 5 — S6582: Optional chain collapse
-      if (accountState?.details?.abn) {
-        const client = new OrganisationsClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
-        );
-        client.setAuthToken(tokenResult.accessToken);
-
-        try {
-          setIsModalDataLoading(true); // Modal data
-          const result = await client.getOrganisationsByABN(
-            accountState.details.abn,
-            true,
-          );
-          if (!isActive) return;
-
-          setBranches(result);
-          const firstBranch = result[0];
-          if (!firstBranch) {
-            throw new Error('No branches returned for organisation');
-          }
-          if (
-            hasDefaultOrganisationId(accountState.details.defaultOrganisationId)
-          ) {
-            setSelectedBranch(accountState.details.defaultOrganisationId);
-            setSelectedCRMGuid(accountState.details.organisationCRMGuid);
-            setSelectedTradingName(accountState.details.trading);
-            setSelectedBranchName(accountState.details.branch);
-          } else {
-            setSelectedBranch(firstBranch.organisationId);
-            setSelectedTradingName(firstBranch.businessOrTradingName);
-            setSelectedBranchName(firstBranch.branchOrLocationName);
-            setSelectedABN(firstBranch.abn);
-            setSelectedCRMGuid(firstBranch.crmGuid);
-          }
-          setSelectedOrganisation(firstBranch.name);
-        } catch (error) {
-          if (!isActive) return;
-
-          AppLogger.error('Failed to load branches', error as Error);
-          setSavingBranchSelectorError(true);
-        } finally {
-          if (isActive) {
-            setIsModalDataLoading(false);
-          }
-        }
-      }
-    };
-
-    void loadBranches();
-
-    return () => {
-      isActive = false;
-    };
-  }, [
-    accountState,
-    accounts,
-    instance,
-    accountState?.details?.defaultOrganisationId,
-  ]);
-
   const handleClose = () => {
     modalDispatch?.setShowBranchSelector(false);
     clearBranchModalNotification();
-  };
-
-  const sortData = (key: SortableBranchKey) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-
-    const sorted = branches?.sort((a, b) => {
-      const aValue = toSortableText(Reflect.get(a, key));
-      const bValue = toSortableText(Reflect.get(b, key));
-
-      const comparison = aValue.localeCompare(bValue);
-      return direction === 'asc' ? comparison : -comparison;
-    });
-
-    setBranches(sorted);
-    setSortConfig({ key, direction });
   };
 
   const getArrow = (key: SortableBranchKey) => {
@@ -471,11 +147,13 @@ const BranchSelectorModal = () => {
             </Col>
           </Row>
         )}
-        <SavingBranchSelectorError showError={savingBranchSelectorError} />
+        <SavingBranchSelectorError
+          showError={savingBranchSelectorError || hasLoadError}
+        />
         {showBranchModalMessage(branchModalMessage)}
         <Row className='mb-4'>
           <Col>
-            <div aria-labelledby='caption-org-select-list'>
+            <div>
               {/* Fix 9 — S6842: role='radiogroup' removed from fieldset (implicit group semantics) */}
               <fieldset className='w-100'>
                 <legend className='h4 visually-hidden'>
@@ -552,94 +230,90 @@ const BranchSelectorModal = () => {
                         </td>
                       </tr>
                     </tbody>
-                  ) : (
-                    <>
-                      {branches !== undefined && branches.length > 0 ? (
-                        <tbody key='tBodyKey'>
-                          {branches.map((branch, index) => (
-                            <tr key={branch.organisationId}>
-                              <td className='pe-0' data-header='Set as default'>
-                                {/* To do - replace this with RadioButton component */}
-                                <div
-                                  className='form-field-container mb-0'
-                                  tabIndex={-1}
+                  ) : branches !== undefined && branches.length > 0 ? (
+                    <tbody key='tBodyKey'>
+                      {branches.map((branch, index) => (
+                        <tr key={branch.organisationId}>
+                          <td className='pe-0' data-header='Set as default'>
+                            {/* To do - replace this with RadioButton component */}
+                            <div
+                              className='form-field-container mb-0'
+                              tabIndex={-1}
+                            >
+                              <div className='radio-button'>
+                                <input
+                                  type='radio'
+                                  id={`branch${index}`}
+                                  name='branchSelector'
+                                  value={branch.organisationId}
+                                  checked={
+                                    branch.organisationId === selectedBranch
+                                  }
+                                  onChange={(e) => {
+                                    handleChange(
+                                      e,
+                                      branch.organisationId,
+                                      branch.name,
+                                      branch.businessOrTradingName,
+                                      branch.branchOrLocationName,
+                                      branch.abn,
+                                      branch.crmGuid,
+                                    );
+                                  }}
+                                />
+                                <label
+                                  htmlFor={`branch${index}`}
+                                  className='form-field flex-column'
+                                  title='Set as default'
                                 >
-                                  <div className='radio-button'>
-                                    <input
-                                      type='radio'
-                                      id={`branch${index}`}
-                                      name='branchSelector'
-                                      value={branch.organisationId}
-                                      checked={
-                                        branch.organisationId === selectedBranch
-                                      }
-                                      onChange={(e) => {
-                                        handleChange(
-                                          e,
-                                          branch.organisationId,
-                                          branch.name,
-                                          branch.businessOrTradingName,
-                                          branch.branchOrLocationName,
-                                          branch.abn,
-                                          branch.crmGuid,
-                                        );
-                                      }}
-                                    />
-                                    <label
-                                      htmlFor={`branch${index}`}
-                                      className='form-field flex-column'
-                                      title='Set as default'
-                                    >
-                                      {/* <span className='visually-hidden'>
+                                  {/* <span className='visually-hidden'>
                                                                                     {'Set as default '}
                                                                                 </span> */}
-                                      <span className='text-break'>
-                                        {branch.businessListName}
-                                      </span>
-                                    </label>
-                                  </div>
-                                </div>
-                              </td>
-                              <td data-header='Location' className='text-break'>
-                                <span>
-                                  {[
-                                    branch.streetAddress?.suburb,
-                                    branch.streetAddress?.state,
-                                  ]
-                                    .filter(Boolean)
-                                    .join(', ')}
-                                </span>
-                              </td>
-                              {branchSelectionModalMode ===
-                                BranchSelectionModalMode.SelectAndEditOrg && (
-                                <td>
-                                  <span>
-                                    {branch.organisationId !== undefined && (
-                                      <Link
-                                        to={`/update-organisation/${branch.organisationId}`}
-                                        onClick={handleClose}
-                                        aria-label='Edit details for this branch/location'
-                                      >
-                                        Edit
-                                      </Link>
-                                    )}
+                                  <span className='text-break'>
+                                    {branch.businessListName}
                                   </span>
-                                </td>
-                              )}
-                            </tr>
-                          ))}
-                        </tbody>
-                      ) : (
-                        <tbody key='tBodyKey'>
-                          <tr>
-                            <td colSpan={3}>
-                              No branch/locations available. Please create a new
-                              one.
+                                </label>
+                              </div>
+                            </div>
+                          </td>
+                          <td data-header='Location' className='text-break'>
+                            <span>
+                              {[
+                                branch.streetAddress?.suburb,
+                                branch.streetAddress?.state,
+                              ]
+                                .filter(Boolean)
+                                .join(', ')}
+                            </span>
+                          </td>
+                          {branchSelectionModalMode ===
+                            BranchSelectionModalMode.SelectAndEditOrg && (
+                            <td>
+                              <span>
+                                {branch.organisationId !== undefined && (
+                                  <Link
+                                    to={`/update-organisation/${branch.organisationId}`}
+                                    onClick={handleClose}
+                                    aria-label='Edit details for this branch/location'
+                                  >
+                                    Edit
+                                  </Link>
+                                )}
+                              </span>
                             </td>
-                          </tr>
-                        </tbody>
-                      )}
-                    </>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  ) : (
+                    <tbody key='tBodyKey'>
+                      <tr>
+                        <td colSpan={3}>
+                          No branch/locations available. Please create a new
+                          one.
+                        </td>
+                      </tr>
+                    </tbody>
                   )}
                 </Table>
               </fieldset>

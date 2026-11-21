@@ -42,7 +42,11 @@ const RhfNumberInput = (props: Readonly<RhfNumberInputProps>) => {
   } = props;
 
   const {
-    field,
+    fieldValue: controlledValue,
+    fieldRef,
+    fieldName,
+    onFieldChange,
+    onFieldBlur,
     controlId,
     helpId,
     validationMessageId,
@@ -51,8 +55,8 @@ const RhfNumberInput = (props: Readonly<RhfNumberInputProps>) => {
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
 
   const fieldValue =
-    typeof field.value === 'string' || typeof field.value === 'number'
-      ? String(field.value)
+    typeof controlledValue === 'string' || typeof controlledValue === 'number'
+      ? String(controlledValue)
       : '';
 
   const resolvedFormat =
@@ -78,12 +82,12 @@ const RhfNumberInput = (props: Readonly<RhfNumberInputProps>) => {
     customInput: Form.Control,
     type: 'text',
     className: `form-field form-text-input mb-0 ${className}`,
-    name: field.name,
-    getInputRef: field.ref,
+    name: fieldName,
+    getInputRef: fieldRef,
     isInvalid: !!errorMessage,
-    onBlur: field.onBlur,
+    onBlur: onFieldBlur,
     onChange: (event: { target: { value: string } }) => {
-      field.onChange(event.target.value);
+      onFieldChange(event.target.value);
     },
     value: fieldValue,
     displayType: 'input' as const,
@@ -122,12 +126,12 @@ const RhfNumberInput = (props: Readonly<RhfNumberInputProps>) => {
       className={`form-field-container ${containerClassName}`}
       controlId={controlId}
     >
-      {label && <Form.Label>{label}</Form.Label>}
-      {inlineHelp && (
+      {label ? <Form.Label>{label}</Form.Label> : null}
+      {inlineHelp ? (
         <Form.Text as='p' id={helpId} className='contextual-help'>
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
       {prepend ? (
         <InputGroup>
           <InputGroup.Text id={`input-prepend-${controlId}`}>

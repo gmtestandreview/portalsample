@@ -49,7 +49,11 @@ export const useRhfFieldA11y = ({
       .join(' ') || undefined;
 
   return {
-    field,
+    fieldName: field.name,
+    fieldValue: field.value as unknown,
+    fieldRef: field.ref,
+    onFieldChange: field.onChange,
+    onFieldBlur: field.onBlur,
     controlId,
     helpId,
     validationMessageId,

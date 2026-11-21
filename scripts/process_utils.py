@@ -6,11 +6,11 @@ import os
 
 def pid_is_running(pid: int) -> bool:
     """Return whether a process is running without sending it a signal."""
-    if os.name == "nt":
+    if os.name == 'nt':
         import ctypes
         from ctypes import wintypes
 
-        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
         kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
         kernel32.OpenProcess.restype = wintypes.HANDLE
         kernel32.CloseHandle.argtypes = [wintypes.HANDLE]

@@ -5,15 +5,19 @@ description: Multi-project configuration for monorepos and different test types
 
 # Projects
 
-**Load when:** Set up or debug Vitest multi-project configuration, inheritance, or project selection. **Boundary:** Do not use for unrelated @playwright/test projects; referenced config files do not inherit root options.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Set up or debug Vitest multi-project configuration, inheritance,
+or project selection. **Boundary:** Do not use for unrelated @playwright/test
+projects; referenced config files do not inherit root options. These are generic
+Vitest examples; inspect the installed version and applicable project config
+before applying them.
 
-**Expected outcome:** The right Vitest project receives the right config without accidental inheritance. **Acceptance check:** Check inline-vs-referenced inheritance, project names, and selected scripts.
+**Expected outcome:** The right Vitest project receives the right config without
+accidental inheritance. **Acceptance check:** Check inline-vs-referenced
+inheritance, project names, and selected scripts.
 
-Run different Vitest test configurations under one invocation. For local
-runner ownership and the cost of cross-project startup, inspect project policy;
-do not silently fold standalone Playwright suites into a Vitest project.
+Run different Vitest test configurations under one invocation. For local runner
+ownership and the cost of cross-project startup, inspect project policy; do not
+silently fold standalone Playwright suites into a Vitest project.
 
 ## Basic Projects Setup
 
@@ -138,10 +142,10 @@ export default defineConfig({
 
 ## Shared Configuration
 
-**Vitest 5 boundary:** inline projects default to `extends: true` and merge
-root options (arrays such as `setupFiles` append); a referenced config file
-or directory retains its own configuration and does not inherit root options.
-The supplied nmi-portal workspace uses two referenced leaf configs.
+**Vitest 5 boundary:** inline projects default to `extends: true` and merge root
+options (arrays such as `setupFiles` append); a referenced config file or
+directory retains its own configuration and does not inherit root options. The
+supplied nmi-portal workspace uses two referenced leaf configs.
 
 ```ts
 // vitest.shared.ts
@@ -265,8 +269,8 @@ test('uses injected url', ({ apiUrl }) => {
 
 ## Project Isolation
 
-Projects can use separate worker pools. Use a project-specific `pool` only
-when supported by that project configuration; do not assume thread ownership:
+Projects can use separate worker pools. Use a project-specific `pool` only when
+supported by that project configuration; do not assume thread ownership:
 
 ```ts
 defineConfig({

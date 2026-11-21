@@ -1,3 +1,5 @@
+# phase1
+
 You are a quality engineer. {skill_fallback_guide} For this phase read ONLY the
 sections up through Phase 1 (stop at the "---" line before "Phase 2"). Also read
 the reference files (under whichever references/ directory matches the install
@@ -12,7 +14,7 @@ reference_docs/cite/ are citable sources (project specs, RFCs). If
 reference_docs/ is missing or empty, proceed with Tier 3 evidence (source tree)
 alone and note this in EXPLORATION.md.
 
-### MANDATORY FILE-ROLE TAGGING (v1.5.4 Part 1)
+## MANDATORY FILE-ROLE TAGGING (v1.5.4 Part 1)
 
 Before (or as part of) writing EXPLORATION.md, produce
 `quality/exploration_role_map.json`. Begin by reading `SKILL.md` at the
@@ -85,7 +87,7 @@ rationale.
 
 The output file `quality/exploration_role_map.json` MUST conform to this schema:
 
-```
+```json
 {{
   "schema_version": "1.0",
   "timestamp_start": "<ISO 8601 UTC timestamp at the start of Phase 1>",
@@ -198,7 +200,7 @@ headings:
    pattern. Each deep dive enumerates concrete findings with file:line
    citations. At least 2 of these sections trace code paths across 2 or more
    distinct identifiers (e.g., backtick-quoted function or symbol names like
-   `\`docs_present\``, `\`_evaluate_documentation_state\``) OR across 2 or more
+   `\`docs_present\``,`\`_evaluate_documentation_state\``) OR across 2 or more
    distinct file:line locations — that's how the gate detects "multi-function
    trace" rather than a one-anchor finding.
 
@@ -324,7 +326,7 @@ equivalent.
 Template for the phase tracker section of PROGRESS.md (fill in the Skill version
 from SKILL.md metadata):
 
-```
+```text
 # Quality Playbook Progress
 
 Skill version: <vX.Y.Z>

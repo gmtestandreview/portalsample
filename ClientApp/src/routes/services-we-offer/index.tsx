@@ -122,7 +122,13 @@ const ServicesWeOffer = () => {
       }
     };
     void loadServices();
-  }, [accounts, instance, accountDetails, accountDetails?.userProfile]);
+  }, [
+    accounts,
+    instance,
+    accountDetails,
+    accountDetails?.userProfile,
+    services.length,
+  ]);
 
   useEffect(() => {
     if (shouldRedirect) {
@@ -199,7 +205,7 @@ const ServicesWeOffer = () => {
           : {}),
         isActive:
           Object.hasOwn(checkedServices, serviceKey) &&
-          Boolean(Reflect.get(checkedServices, serviceKey)),
+          Reflect.get(checkedServices, serviceKey),
         isDefault: defaultService === serviceKey,
       };
     });
@@ -342,7 +348,7 @@ const ServicesWeOffer = () => {
               </legend>
               {services.map((service) => (
                 <Card
-                  key={service.serviceType}
+                  key={service.serviceType ?? ''}
                   className={`mb-4 border border-3 border-light ${
                     orIfEmpty(selectedService, defaultService) ===
                     service.serviceType
@@ -466,33 +472,26 @@ const ServicesWeOffer = () => {
   }
 
   return (
-    <>
-      {/*   {isLoading && (
-                <BlockUISpinner partial>
-                    <p>Loading...</p>
-                </BlockUISpinner>
-            )} */}
-      <div aria-busy={isLoading} aria-live='off'>
-        <Container fluid className='default-banner-background mb-5'>
-          <Container>
-            <Row>
-              <Col hidden={!originalDefaultService}>
-                <CustomBreadcrumb breadcrumbs={breadcrumbs} />
-              </Col>
-            </Row>
-            <Row className='gs-wrapper'>
-              <Col md={12} lg={9}>
-                <h1 id='page-title' tabIndex={-1} className='banner-title mb-4'>
-                  Services we offer
-                </h1>
-                {/* <HeaderIntroText>NMI offers a range of services, please choose your services below</HeaderIntroText> */}
-              </Col>
-            </Row>
-          </Container>
+    <div aria-busy={isLoading} aria-live='off'>
+      <Container fluid className='default-banner-background mb-5'>
+        <Container>
+          <Row>
+            <Col hidden={!originalDefaultService}>
+              <CustomBreadcrumb breadcrumbs={breadcrumbs} />
+            </Col>
+          </Row>
+          <Row className='gs-wrapper'>
+            <Col md={12} lg={9}>
+              <h1 id='page-title' tabIndex={-1} className='banner-title mb-4'>
+                Services we offer
+              </h1>
+              {/* <HeaderIntroText>NMI offers a range of services, please choose your services below</HeaderIntroText> */}
+            </Col>
+          </Row>
         </Container>
-        {renderServicesSelector()}
-      </div>
-    </>
+      </Container>
+      {renderServicesSelector()}
+    </div>
   );
 };
 

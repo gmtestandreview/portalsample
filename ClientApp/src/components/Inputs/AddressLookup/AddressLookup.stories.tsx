@@ -22,7 +22,7 @@ const addressSearchHandler = http.get('/api/address/*', () =>
 );
 
 const AddressValueProbe = () => {
-  const { values } = useFormikContext<{
+  const { values, setFieldValue } = useFormikContext<{
     streetAddress: {
       line1: string;
       suburb: string;
@@ -33,9 +33,23 @@ const AddressValueProbe = () => {
   const { line1, suburb, state, postcode } = values.streetAddress;
 
   return (
-    <output aria-label='Selected address'>
-      {[line1, suburb, state, postcode].filter(Boolean).join(', ')}
-    </output>
+    <>
+      <output aria-label='Selected address'>
+        {[line1, suburb, state, postcode].filter(Boolean).join(', ')}
+      </output>
+      <button
+        type='button'
+        onClick={() =>
+          void setFieldValue('streetAddress', {
+            ...values.streetAddress,
+            line1: '2 External Street',
+            isManuallyEntered: true,
+          })
+        }
+      >
+        Set address from Formik
+      </button>
+    </>
   );
 };
 
@@ -143,5 +157,47 @@ export const ManualEntry = meta.story({
     const suburb = canvas.getByLabelText(/suburb/i);
 
     await expect(suburb).toBeVisible();
+  },
+});
+
+export const ExternalFormikUpdate = meta.story({
+  args: {
+    name: 'streetAddress',
+    label: 'Street address',
+  },
+  parameters: {
+    portal: {
+      formik: {
+        initialValues: {
+          streetAddress: {
+            line1: '',
+            line2: '',
+            line3: '',
+            suburb: '',
+            state: '',
+            postcode: '',
+            searchText: '',
+            isManuallyEntered: false,
+          },
+        },
+      },
+    },
+  },
+  render: () => (
+    <>
+      <AddressLookup name='streetAddress' label='Street address' />
+      <AddressValueProbe />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    await user.click(
+      canvas.getByRole('button', { name: 'Set address from Formik' }),
+    );
+    await expect(canvas.getByLabelText(/address line 1/i)).toHaveValue(
+      '2 External Street',
+    );
   },
 });

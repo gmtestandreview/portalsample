@@ -41,11 +41,11 @@ const RhfTextField = ({
   return (
     <Form.Group className='form-field-container' controlId={name}>
       <Form.Label>{label}</Form.Label>
-      {inlineHelp && (
+      {inlineHelp ? (
         <Form.Text as='p' id={helpId} className='contextual-help'>
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
       <Form.Control
         {...field}
         className='form-field form-text-input'

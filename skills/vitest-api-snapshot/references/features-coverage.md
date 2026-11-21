@@ -5,11 +5,14 @@ description: Code coverage with V8 or Istanbul providers
 
 # Code Coverage
 
-**Load when:** Configure Vitest coverage providers, globs, reports or thresholds. **Boundary:** Do not reduce existing coverage or silently enable auto-update.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Configure Vitest coverage providers, globs, reports or
+thresholds. **Boundary:** Do not reduce existing coverage or silently enable
+auto-update. These are generic Vitest examples; inspect the installed version
+and applicable project config before applying them.
 
-**Expected outcome:** Reports contain intended source files and thresholds remain enforced. **Acceptance check:** Check included and excluded files, relevant reporter outputs, and four metrics where locally required.
+**Expected outcome:** Reports contain intended source files and thresholds
+remain enforced. **Acceptance check:** Check included and excluded files,
+relevant reporter outputs, and four metrics where locally required.
 
 ## Setup
 
@@ -198,9 +201,10 @@ vitest --merge-reports --coverage --reporter=json
 
 - V8 is faster, Istanbul is more compatible
 - Use `--coverage` flag or `coverage.enabled: true`
-- Set `coverage.include` to include eligible uncovered source files; never use removed `coverage.all`
-- Set thresholds to enforce minimum coverage; never lower thresholds,
-  change exclusions, or enable threshold auto-update merely to produce green CI
+- Set `coverage.include` to include eligible uncovered source files; never use
+  removed `coverage.all`
+- Set thresholds to enforce minimum coverage; never lower thresholds, change
+  exclusions, or enable threshold auto-update merely to produce green CI
 - In Vitest 5 inspect actual included-file sets after coverage glob changes
 - Use `@preserve` comment to keep ignore hints
 

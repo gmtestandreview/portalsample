@@ -516,7 +516,8 @@
                   <td>ErrorBoundary class component</td>
                   <td>
                     <span class="badge status-resolved">Resolved</span> &mdash;
-                    functional via <code>react-error-boundary</code>
+                    functional via
+                    <code>react-error-boundary</code>
                   </td>
                 </tr>
                 <tr>
@@ -541,7 +542,8 @@
                   <td>
                     <span class="badge status-resolved">Resolved</span> &mdash;
                     <code>ErrorBoundary</code> now wraps
-                    <code>MsalProvider</code> in <code>index.tsx</code>
+                    <code>MsalProvider</code> in
+                    <code>index.tsx</code>
                   </td>
                 </tr>
                 <tr>
@@ -668,8 +670,9 @@
                 ></strong
               >
               &mdash; 5 tests covering forward nav (save-and-next), back nav,
-              linear guard redirect, <code>locationOnCompletion</code> after
-              final step, and step save count assertion.
+              linear guard redirect,
+              <code>locationOnCompletion</code> after final step, and step save
+              count assertion.
             </li>
             <li>
               <strong
@@ -798,7 +801,8 @@
                   <td><span class="badge status-resolved">Confirmed</span></td>
                   <td>
                     Code and docs now agree: 11 vars. Domain allowlist
-                    validation added for <code>EXTERNAL_REDIRECT_URL</code>.
+                    validation added for
+                    <code>EXTERNAL_REDIRECT_URL</code>.
                   </td>
                 </tr>
                 <tr>
@@ -868,8 +872,8 @@
                   </td>
                   <td>
                     MSAL flag only governs MSAL's own internal logging. All
-                    custom <code>AppLogger</code> call sites scrubbed
-                    2026-05-29.
+                    custom
+                    <code>AppLogger</code> call sites scrubbed 2026-05-29.
                   </td>
                   <td><span class="badge status-resolved">Resolved</span></td>
                   <td>
@@ -1656,7 +1660,8 @@
                   <td>Typography</td>
                   <td>
                     "Public Sans" font; 8 heading sizes; Bootstrap font-size
-                    vars; 14 <code>rfs-value()</code> call sites
+                    vars; 14
+                    <code>rfs-value()</code> call sites
                   </td>
                   <td>Design platform typography tokens</td>
                   <td>Medium</td>
@@ -1879,8 +1884,8 @@
                   <td><span class="badge sev-critical">Critical</span></td>
                   <td>
                     Auth bypass (<code>REACT_APP_AUTH_BYPASS</code>) &mdash;
-                    runtime-injectable, no <code>NODE_ENV</code> guard, bypassed
-                    MSAL entirely
+                    runtime-injectable, no
+                    <code>NODE_ENV</code> guard, bypassed MSAL entirely
                   </td>
                   <td>
                     <code>devAuth.ts:4</code>,
@@ -2148,10 +2153,11 @@
                   <td>1</td>
                   <td>
                     WizardForm navigation flow (step advance, back, guard
-                    enforcement) &mdash; <strong>resolved 2026-05-30</strong>: 5
-                    integration tests added covering forward nav (save-and-next
-                    + step save count), back nav, linear guard redirect (step 2
-                    with step 1 NotStarted &rarr; redirects to step 1), and
+                    enforcement) &mdash;
+                    <strong>resolved 2026-05-30</strong>: 5 integration tests
+                    added covering forward nav (save-and-next + step save
+                    count), back nav, linear guard redirect (step 2 with step 1
+                    NotStarted &rarr; redirects to step 1), and
                     <code>locationOnCompletion</code> after final submit.
                   </td>
                   <td><span class="badge status-resolved">Resolved</span></td>
@@ -2283,9 +2289,10 @@
                   <td>11a</td>
                   <td>
                     Storybook 56 static asset failures (font import paths)
-                    &mdash; <strong>resolved 2026-05-31</strong>: font import
-                    paths fixed in <code>.storybook/preview.tsx</code>; all 56
-                    asset 404 failures eliminated.
+                    &mdash;
+                    <strong>resolved 2026-05-31</strong>: font import paths
+                    fixed in <code>.storybook/preview.tsx</code>; all 56 asset
+                    404 failures eliminated.
                   </td>
                   <td><span class="badge status-resolved">Resolved</span></td>
                   <td>N/A</td>
@@ -2299,7 +2306,8 @@
                     Medium &mdash; required for migration; must run
                     <code>npx msw init public/</code> in target &mdash;
                     <strong>documented 2026-05-31</strong>: migration checklist
-                    at <code>docs/migration/msw-init-checklist.md</code>
+                    at
+                    <code>docs/migration/msw-init-checklist.md</code>
                   </td>
                   <td><span class="badge status-resolved">Resolved</span></td>
                 </tr>
@@ -2311,7 +2319,8 @@
                     implementations unconfirmed &mdash;
                     <strong>confirmed 2026-05-31</strong>: all 16 scenarios
                     implemented in <code>tests/e2e/steps/common.steps.ts</code>;
-                    see <code>docs/architecture/bdd-e2e-step-coverage.md</code>
+                    see
+                    <code>docs/architecture/bdd-e2e-step-coverage.md</code>
                   </td>
                   <td><span class="badge status-resolved">Resolved</span></td>
                 </tr>
@@ -2502,8 +2511,8 @@
                   <td><span class="badge dec-migrate">Migrate</span></td>
                   <td>
                     Route tree &mdash; all 41 registered paths (6 public/direct,
-                    3 <code>PreConditions</code>-only, 32 authenticated;
-                    CRD-041)
+                    3
+                    <code>PreConditions</code>-only, 32 authenticated; CRD-041)
                   </td>
                   <td>Route path strings must not drift</td>
                   <td><span class="badge conf-high">High</span></td>
@@ -2689,9 +2698,9 @@
                   <td>BDD feature specs</td>
                   <td>
                     29 feature files are present; regenerate both application
-                    and Storybook <code>.features-gen/</code> projects in
-                    target. Preserve reviewed Type Approval exclusions until
-                    fixtures exist.
+                    and Storybook
+                    <code>.features-gen/</code> projects in target. Preserve
+                    reviewed Type Approval exclusions until fixtures exist.
                   </td>
                   <td><span class="badge conf-medium">Medium</span></td>
                 </tr>
@@ -2770,7 +2779,8 @@
                   <td>23</td>
                   <td>
                     <code>dist/**</code>, <code>storybook-static/**</code>,
-                    <code>reports/**</code>, <code>.features-gen/</code>
+                    <code>reports/**</code>,
+                    <code>.features-gen/</code>
                   </td>
                   <td>
                     <span class="badge dec-exclude">Exclude</span> /
@@ -2932,8 +2942,9 @@
                   </td>
                   <td>
                     Global router decorator (<code>createMemoryRouter</code>)
-                    must be preserved; <code>withPortalProviders</code> must not
-                    wrap with <code>MemoryRouter</code>
+                    must be preserved;
+                    <code>withPortalProviders</code> must not wrap with
+                    <code>MemoryRouter</code>
                   </td>
                   <td>Storybook stories crash with nested-router error</td>
                 </tr>

@@ -5,11 +5,14 @@ description: test/it function for defining tests with modifiers
 
 # Test API
 
-**Load when:** Choose Vitest test/it options, modifiers, context, retry or tags. **Boundary:** Do not assume generic test syntax alone establishes a Vitest runner.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Choose Vitest test/it options, modifiers, context, retry or tags.
+**Boundary:** Do not assume generic test syntax alone establishes a Vitest
+runner. These are generic Vitest examples; inspect the installed version and
+applicable project config before applying them.
 
-**Expected outcome:** Tests run with meaningful assertions, correct modifiers, and supported options. **Acceptance check:** Check timeouts, tags registry, async behavior, and absence of accidental skips.
+**Expected outcome:** Tests run with meaningful assertions, correct modifiers,
+and supported options. **Acceptance check:** Check timeouts, tags registry,
+async behavior, and absence of accidental skips.
 
 ## Basic Test
 
@@ -98,8 +101,8 @@ test.todo('with body', () => {
 
 ### Failing Tests
 
-`test.fails` is for an intentionally documented negative/failing behavior,
-not a workaround for an unexpected regression or failing CI.
+`test.fails` is for an intentionally documented negative/failing behavior, not a
+workaround for an unexpected regression or failing CI.
 
 ```ts
 test.fails('known failure under investigation', () => {

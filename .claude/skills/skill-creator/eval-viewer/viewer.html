@@ -5,9 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; img-src data:; frame-src data:; style-src 'nonce-__CSP_NONCE__'; script-src 'nonce-__CSP_NONCE__' https://cdn.sheetjs.com; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'"
+      content="base-uri 'none'; connect-src 'self' local.adguard.org ws://local.adguard.org wss://local.adguard.org; default-src local.adguard.org; form-action 'none'; frame-src data: 'self'; img-src data: local.adguard.org; object-src 'none'; script-src 'nonce-__CSP_NONCE__' https://cdn.sheetjs.com local.adguard.org 'nonce-2b706559436f425496a86333bfd'; style-src 'nonce-__CSP_NONCE__' local.adguard.org 'nonce-2b706559436f425496a86333bfd'"
     />
     <title>Eval Review</title>
+    <script
+      type="text/javascript"
+      nonce="2b706559436f425496a86333bfd"
+      src="//local.adguard.org?ts=1794916667483&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000005b78820bb4f1760327f00aa6%26fn%3Dviewer%25282%2529.html%26cd%3Dattachment%26ts%3D498588%26p%3Dfs%26cid%3D1%26sig%3Dba4f30976455390931e645993576e959872f1ec5fc181b4f58449b42d57aa33f%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-ua=TW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzE0OS4wLjAuMCBTYWZhcmkvNTM3LjM2&amp;st-ch-brands=W3siYnJhbmQiOiJHb29nbGUgQ2hyb21lIiwidmVyc2lvbiI6IjE0OSJ9LCB7ImJyYW5kIjoiQ2hyb21pdW0iLCJ2ZXJzaW9uIjoiMTQ5In0sIHsiYnJhbmQiOiJOb3QpQTtCcmFuZCIsInZlcnNpb24iOiIyNCJ9XQ==&amp;st-ch-mobile=ZmFsc2U=&amp;st-ch-platform=V2luZG93cw==&amp;st-wrtc&amp;st-push&amp;st-loc&amp;st-ref=aHR0cHM6Ly9jaGF0Z3B0LmNvbS8=&amp;st-dnt"
+    ></script>
+    <script
+      type="text/javascript"
+      nonce="2b706559436f425496a86333bfd"
+      src="//local.adguard.org?ts=1794916667483&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;name=Web%20of%20Trust&amp;type=user-script"
+    ></script>
     <script
       src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"
       integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT"
@@ -51,7 +61,7 @@
         flex-direction: column;
       }
       .is-hidden {
-        display: none !important;
+        display: none;
       }
 
       /* ---- Header ---- */
@@ -305,7 +315,7 @@
         display: none;
         margin-top: 0.75rem;
       }
-      .grades-content.open {
+      .grades-content.open:not(.is-hidden) {
         display: block;
       }
       .grades-summary {
@@ -404,7 +414,9 @@
         background: none;
         color: var(--text-muted);
         border-bottom: 2px solid transparent;
-        transition: all 0.15s;
+        transition:
+          color 0.15s,
+          border-bottom-color 0.15s;
       }
       .view-tab:hover {
         color: var(--text);
@@ -416,7 +428,7 @@
       .view-panel {
         display: none;
       }
-      .view-panel.active {
+      .view-panel.active:not(.is-hidden) {
         display: flex;
         flex-direction: column;
         flex: 1;
@@ -552,7 +564,9 @@
         font-size: 0.875rem;
         font-weight: 500;
         color: var(--text);
-        transition: all 0.15s;
+        transition:
+          background-color 0.15s,
+          border-color 0.15s;
       }
       .nav-btn:hover:not(:disabled) {
         background: var(--bg);
@@ -572,7 +586,10 @@
         cursor: pointer;
         font-size: 0.875rem;
         font-weight: 500;
-        transition: all 0.15s;
+        transition:
+          background-color 0.15s,
+          border-color 0.15s,
+          color 0.15s;
       }
       .done-btn:hover {
         background: var(--bg);
@@ -603,7 +620,7 @@
         justify-content: center;
         align-items: center;
       }
-      .done-overlay[open] {
+      .done-overlay[open]:not(.is-hidden) {
         display: flex;
       }
       .done-card {
@@ -671,7 +688,12 @@
             submitting the review.
           </div>
         </div>
-        <div class="progress" id="progress" aria-live="polite"></div>
+        <div
+          class="progress"
+          id="progress"
+          aria-label="Review progress"
+          aria-live="polite"
+        ></div>
       </div>
 
       <!-- View tabs (only shown when benchmark data exists) -->
@@ -1519,7 +1541,7 @@
         try {
           await postFeedback('complete', true);
           completionMessage =
-            'The review was saved as complete. Blank feedback entries remain no comment, not approval.';
+            'The review was saved as complete. Blank feedback means no comment, not approval.';
         } catch {
           downloadFeedback(completePayload);
           completionMessage =
@@ -2166,7 +2188,9 @@
         renderBenchmark();
       }
 
-      init().catch((error) => {
+      try {
+        await init();
+      } catch (error) {
         document
           .getElementById('outputs-body')
           .replaceChildren(
@@ -2177,7 +2201,7 @@
                 (error instanceof Error ? error.message : String(error)),
             ),
           );
-      });
+      }
     </script>
   </body>
 </html>

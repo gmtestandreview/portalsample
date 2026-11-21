@@ -9,7 +9,7 @@ more, nothing less) and is well-built (clean, tested, maintainable)
 ```text
 Subagent (general-purpose):
   description: "Review Task N (spec + quality)"
-  model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
+  model: [MODEL — REQUIRED: choose per SKILL.md "Model selection"; an omitted
          model silently inherits the session's most expensive one]
   prompt: |
     You are reviewing one task's implementation: first whether it matches its
@@ -19,7 +19,9 @@ Subagent (general-purpose):
 
     ## What Was Requested
 
-    Read the task brief: [BRIEF_FILE]
+    Read the task brief: [BRIEF_FILE] (for the final whole-branch review this is
+    the plan file: judge the whole diff against every task and the global
+    constraints, not one task)
 
     Global constraints from the spec/design that bind this task:
     [GLOBAL_CONSTRAINTS]
@@ -131,9 +133,7 @@ Subagent (general-purpose):
       significantly grow existing files? (Don't flag pre-existing file
       sizes — focus on what this change contributed.)
 
-    Your report should point at evidence: file:line references for every
-    finding and for any check you would otherwise answer with a bare
-    "yes." A tight report that cites lines gives the controller everything
+    Your report should point at evidence: file:line references for every finding and for any check you would otherwise answer with a bare "yes." A file:line is a line number in the file as it exists at HEAD, never a line number inside the diff file, and you quote the cited line's text in backticks beside it so the controller can spot-check it in seconds. A tight report that cites lines gives the controller everything
     it needs.
 
     Your final message is the report itself: begin directly with the
@@ -152,8 +152,7 @@ Subagent (general-purpose):
     If the plan or brief explicitly mandates something this rubric calls a
     defect (a test that asserts nothing, verbatim duplication of a logic
     block), that IS a finding — report it as Important, labeled
-    plan-mandated. The plan's authorship does not grade its own work; the
-    human decides.
+    plan-mandated. The plan's authorship does not grade its own work; the controller rules against the spec, or the human decides when the spec does not settle it.
     Acknowledge what was done well before listing issues — accurate praise
     helps the implementer trust the rest of the feedback.
 
@@ -188,9 +187,11 @@ Subagent (general-purpose):
 
 **Placeholders:**
 
-- `[MODEL]` — REQUIRED: reviewer model per SKILL.md Model Selection
-- `[BRIEF_FILE]` — REQUIRED: the task brief file (`scripts/task-brief PLAN N`
-  prints the path; same file the implementer worked from)
+- `[MODEL]` — REQUIRED: reviewer model per SKILL.md "Model selection"
+- `[BRIEF_FILE]` — REQUIRED: the task brief file
+  (`scripts/task-brief.sh PLAN N`, run by its absolute path from the working
+  tree you are executing in, prints the path; same file the implementer worked
+  from)
 - `[GLOBAL_CONSTRAINTS]` — the binding requirements copied verbatim from the
   plan's Global Constraints section or the spec: exact values, formats, and
   stated relationships between components (not process rules — those are already
@@ -200,7 +201,8 @@ Subagent (general-purpose):
 - `[BASE_SHA]` — commit before this task
 - `[HEAD_SHA]` — current commit
 - `[DIFF_FILE]` — REQUIRED: the path the controller wrote the review package to
-  (`scripts/review-package PLAN_FILE BASE HEAD` prints the unique path it wrote;
+  (`scripts/review-package.sh PLAN_FILE BASE HEAD`, run by its absolute path
+  from the working tree you are executing in, prints the unique path it wrote;
   the package never enters the controller's context)
 
 **Reviewer returns:** Spec Compliance verdict (✅/❌/⚠️), Strengths, Issues

@@ -29,13 +29,13 @@ class InitSkillModule(Protocol):
 #   scripts/Regression tests/test_init_skill.py
 # The implementation lives in:
 #   scripts/init_skill.py
-DEFAULT_TARGET = Path(__file__).resolve().parents[1] / "init_skill.py"
-TARGET = Path(os.environ.get("INIT_SKILL_TARGET", DEFAULT_TARGET)).resolve()
+DEFAULT_TARGET = Path(__file__).resolve().parents[1] / 'init_skill.py'
+TARGET = Path(os.environ.get('INIT_SKILL_TARGET', DEFAULT_TARGET)).resolve()
 
 
 RESERVED_DEVICE_NAMES = frozenset(
-    {"con", "prn", "aux", "nul"}
-    | {f"{device}{digit}" for device in ("com", "lpt") for digit in "123456789"}
+    {'con', 'prn', 'aux', 'nul'}
+    | {f'{device}{digit}' for device in ('com', 'lpt') for digit in '123456789'}
 )
 
 
@@ -43,13 +43,13 @@ def is_valid_skill_name(name: str) -> bool:
     """Test double matching the production validator's documented contract."""
     if not 1 <= len(name) <= 64:
         return False
-    if name.startswith("-") or name.endswith("-") or "--" in name:
+    if name.startswith('-') or name.endswith('-') or '--' in name:
         return False
     if name in RESERVED_DEVICE_NAMES:
         return False
 
     for char in name:
-        if char == "-":
+        if char == '-':
             continue
         if not char.isalnum():
             return False
@@ -60,22 +60,22 @@ def is_valid_skill_name(name: str) -> bool:
 
 def load_candidate() -> InitSkillModule:
     """Load init_skill.py with an isolated validator dependency."""
-    quick_validate = types.ModuleType("scripts.quick_validate")
-    setattr(quick_validate, "is_valid_skill_name", is_valid_skill_name)
+    quick_validate = types.ModuleType('scripts.quick_validate')
+    quick_validate.is_valid_skill_name = is_valid_skill_name
 
-    scripts_package = types.ModuleType("scripts")
-    setattr(scripts_package, "__path__", [])
+    scripts_package = types.ModuleType('scripts')
+    scripts_package.__path__ = []
 
-    module_name = "_candidate_regression_test"
+    module_name = '_candidate_regression_test'
     spec = importlib.util.spec_from_file_location(module_name, TARGET)
     if spec is None or spec.loader is None:
-        raise RuntimeError(f"Unable to load candidate module from {TARGET}")
+        raise RuntimeError(f'Unable to load candidate module from {TARGET}')
 
     module = importlib.util.module_from_spec(spec)
     injected_modules = {
-        "scripts": scripts_package,
-        "scripts.quick_validate": quick_validate,
-        "quick_validate": quick_validate,
+        'scripts': scripts_package,
+        'scripts.quick_validate': quick_validate,
+        'quick_validate': quick_validate,
     }
     with patch.dict(sys.modules, injected_modules):
         spec.loader.exec_module(module)
@@ -85,17 +85,17 @@ def load_candidate() -> InitSkillModule:
 
 def generated_yaml_name(skill_dir: Path) -> str:
     """Read the quoted name scalar emitted by the fixed template."""
-    skill_file = skill_dir / "SKILL.md"
-    for line in skill_file.read_text(encoding="utf-8").splitlines():
-        if not line.startswith("name: "):
+    skill_file = skill_dir / 'SKILL.md'
+    for line in skill_file.read_text(encoding='utf-8').splitlines():
+        if not line.startswith('name: '):
             continue
 
-        scalar = line.removeprefix("name: ")
+        scalar = line.removeprefix('name: ')
         if len(scalar) < 2 or scalar[0] != '"' or scalar[-1] != '"':
-            raise AssertionError(f"name must be emitted as a quoted YAML string: {line!r}")
+            raise AssertionError(f'name must be emitted as a quoted YAML string: {line!r}')
         return scalar[1:-1]
 
-    raise AssertionError("SKILL.md front matter has no name field")
+    raise AssertionError('SKILL.md front matter has no name field')
 
 
 class InitSkillRegressionTests(unittest.TestCase):
@@ -110,82 +110,79 @@ class InitSkillRegressionTests(unittest.TestCase):
         self.root = Path(self.temp_dir.name)
 
     def test_basic_create(self) -> None:
-        result = self.mod.init_skill("demo-skill", self.root)
+        result = self.mod.init_skill('demo-skill', self.root)
 
         self.assertIsNotNone(result)
         assert result is not None
-        self.assertEqual(result, self.root.resolve() / "demo-skill")
-        self.assertTrue((result / "SKILL.md").is_file())
+        self.assertEqual(result, self.root.resolve() / 'demo-skill')
+        self.assertTrue((result / 'SKILL.md').is_file())
 
     def test_examples_create_expected_tree(self) -> None:
-        result = self.mod.init_skill("demo-skill", self.root, True)
+        result = self.mod.init_skill('demo-skill', self.root, True)
 
         self.assertIsNotNone(result)
         assert result is not None
 
         expected = {
-            "SKILL.md",
-            "scripts",
-            "scripts/example.py",
-            "references",
-            "references/reference.md",
-            "assets",
-            "assets/example_asset.txt",
+            'SKILL.md',
+            'scripts',
+            'scripts/example.py',
+            'references',
+            'references/reference.md',
+            'assets',
+            'assets/example_asset.txt',
         }
-        actual = {
-            path.relative_to(result).as_posix()
-            for path in result.rglob("*")
-        }
+        actual = {path.relative_to(result).as_posix() for path in result.rglob('*')}
         self.assertEqual(actual, expected)
 
-        example_script = result / "scripts" / "example.py"
+        example_script = result / 'scripts' / 'example.py'
         self.assertTrue(example_script.is_file())
-        if os.name != "nt":
+        if os.name != 'nt':
             mode = stat.S_IMODE(example_script.stat().st_mode)
             self.assertNotEqual(mode & stat.S_IXUSR, 0)
 
     def test_invalid_names_do_not_create(self) -> None:
         invalid_names = (
-            "",
-            "-a",
-            "a-",
-            "a--b",
-            "A",
-            "a/b",
-            r"a\b",
-            "..",
-            ".",
-            "a b",
-            "a\nb",
-            "a:b",
-            "a_b",
-            "x" * 65,
+            '',
+            '-a',
+            'a-',
+            'a--b',
+            'A',
+            'a/b',
+            r'a\b',
+            '..',
+            '.',
+            'a b',
+            'a\nb',
+            'a:b',
+            'a_b',
+            'x' * 65,
         )
 
         for name in invalid_names:
             with self.subTest(name=name):
-                case_root = self.root / f"case-{len(list(self.root.iterdir()))}"
+                case_root = self.root / f'case-{len(list(self.root.iterdir()))}'
                 case_root.mkdir()
                 self.assertIsNone(self.mod.init_skill(name, case_root))
                 self.assertEqual(list(case_root.iterdir()), [])
 
     def test_windows_reserved_device_names_are_rejected(self) -> None:
-        reserved = ("con", "prn", "aux", "nul", "com1", "com9", "lpt1", "lpt9")
+        reserved = ('con', 'prn', 'aux', 'nul', 'com1', 'com9', 'lpt1', 'lpt9')
 
         for index, name in enumerate(reserved):
             with self.subTest(name=name):
                 self.assertFalse(is_valid_skill_name(name))
-                case_root = self.root / f"reserved-{index}"
+                case_root = self.root / f'reserved-{index}'
                 case_root.mkdir()
                 self.assertIsNone(self.mod.init_skill(name, case_root))
                 self.assertEqual(list(case_root.iterdir()), [])
 
     def test_reserved_name_near_misses_are_accepted(self) -> None:
-        near_misses = ("console", "con-sole", "com0", "com10", "lpt0", "my-con", "nul-1")
+        near_misses = ('console', 'con-sole', 'com0', 'com10', 'lpt0', 'my-con', 'nul-1')
 
         for index, name in enumerate(near_misses):
             with self.subTest(name=name):
-                case_root = self.root / f"near-{index}"
+                case_root = self.root / f'near-{index}'
                 case_root.mkdir()
                 self.assertIsNotNone(self.mod.init_skill(name, case_root))
 
@@ -199,16 +196,16 @@ class InitSkillRegressionTests(unittest.TestCase):
             errors: str | None = None,
             newline: str | None = None,
         ) -> int:
-            if path.name == "SKILL.md":
-                raise OSError("injected")
+            if path.name == 'SKILL.md':
+                raise OSError('injected')
             return original(path, data, encoding=encoding, errors=errors, newline=newline)
 
-        existing = self.root / "existing"
+        existing = self.root / 'existing'
         existing.mkdir()
-        target_parent = existing / "new-a" / "new-b"
+        target_parent = existing / 'new-a' / 'new-b'
 
-        with patch.object(Path, "write_text", new=fail_skill_md):
-            result = self.mod.init_skill("demo-skill", target_parent)
+        with patch.object(Path, 'write_text', new=fail_skill_md):
+            result = self.mod.init_skill('demo-skill', target_parent)
 
         self.assertIsNone(result)
         self.assertTrue(existing.is_dir())
@@ -216,23 +213,23 @@ class InitSkillRegressionTests(unittest.TestCase):
 
     def test_valid_yaml_ambiguous_names_remain_strings(self) -> None:
         ambiguous_names = (
-            "123",
-            "true",
-            "false",
-            "null",
-            "yes",
-            "no",
-            "on",
-            "off",
-            "2026-09-17",
-            "0123",
-            "0x10",
+            '123',
+            'true',
+            'false',
+            'null',
+            'yes',
+            'no',
+            'on',
+            'off',
+            '2026-09-17',
+            '0123',
+            '0x10',
         )
 
         for index, name in enumerate(ambiguous_names):
             with self.subTest(name=name):
                 self.assertTrue(is_valid_skill_name(name))
-                case_root = self.root / f"yaml-{index}"
+                case_root = self.root / f'yaml-{index}'
                 case_root.mkdir()
 
                 result = self.mod.init_skill(name, case_root)
@@ -251,8 +248,8 @@ class InitSkillRegressionTests(unittest.TestCase):
             errors: str | None = None,
             newline: str | None = None,
         ) -> int:
-            if path.name == "SKILL.md":
-                raise OSError("injected")
+            if path.name == 'SKILL.md':
+                raise OSError('injected')
             return original(
                 path,
                 data,
@@ -261,74 +258,73 @@ class InitSkillRegressionTests(unittest.TestCase):
                 newline=newline,
             )
 
-        with patch.object(Path, "write_text", new=fail_skill_md):
-            result = self.mod.init_skill("demo-skill", self.root)
+        with patch.object(Path, 'write_text', new=fail_skill_md):
+            result = self.mod.init_skill('demo-skill', self.root)
 
         self.assertIsNone(result)
-        self.assertFalse((self.root / "demo-skill").exists())
+        self.assertFalse((self.root / 'demo-skill').exists())
 
     def test_existing_directory_is_untouched(self) -> None:
-        destination = self.root / "demo-skill"
+        destination = self.root / 'demo-skill'
         destination.mkdir()
-        marker = destination / "marker"
-        marker.write_text("keep", encoding="utf-8")
+        marker = destination / 'marker'
+        marker.write_text('keep', encoding='utf-8')
 
-        result = self.mod.init_skill("demo-skill", self.root)
+        result = self.mod.init_skill('demo-skill', self.root)
 
         self.assertIsNone(result)
-        self.assertEqual(marker.read_text(encoding="utf-8"), "keep")
+        self.assertEqual(marker.read_text(encoding='utf-8'), 'keep')
 
     def test_path_attacks_are_rejected(self) -> None:
         attacks = (
-            "../escape",
-            "../../escape",
-            "/tmp/escape",
-            r"..\escape",
-            r"C:\tmp\escape",
-            r"\\server\share",
+            '../escape',
+            '../../escape',
+            '/tmp/escape',
+            r'..\escape',
+            r'C:\tmp\escape',
+            r'\\server\share',
         )
 
         for index, name in enumerate(attacks):
             with self.subTest(name=name):
-                case_root = self.root / f"attack-{index}"
+                case_root = self.root / f'attack-{index}'
                 case_root.mkdir()
                 self.assertIsNone(self.mod.init_skill(name, case_root))
                 self.assertEqual(list(case_root.iterdir()), [])
 
     def test_dangling_destination_symlink_is_not_removed(self) -> None:
-        destination = self.root / "demo-skill"
+        destination = self.root / 'demo-skill'
         try:
             destination.symlink_to(
-                self.root / "missing",
+                self.root / 'missing',
                 target_is_directory=True,
             )
         except OSError as exc:
-            self.skipTest(f"Symlink creation is unavailable: {exc}")
+            self.skipTest(f'Symlink creation is unavailable: {exc}')
 
-        result = self.mod.init_skill("demo-skill", self.root)
+        result = self.mod.init_skill('demo-skill', self.root)
 
         self.assertIsNone(result)
         self.assertTrue(destination.is_symlink())
 
     def test_nested_import_error_is_not_masked(self) -> None:
-        candidate = self.root / "candidate.py"
+        candidate = self.root / 'candidate.py'
         shutil.copy2(TARGET, candidate)
 
-        scripts = self.root / "scripts"
+        scripts = self.root / 'scripts'
         scripts.mkdir()
-        (scripts / "__init__.py").write_text("", encoding="utf-8")
-        (scripts / "quick_validate.py").write_text(
-            "import missing_internal_dependency\n",
-            encoding="utf-8",
+        (scripts / '__init__.py').write_text('', encoding='utf-8')
+        (scripts / 'quick_validate.py').write_text(
+            'import missing_internal_dependency\n',
+            encoding='utf-8',
         )
-        (self.root / "quick_validate.py").write_text(
-            "def is_valid_skill_name(name: str) -> bool:\n"
-            "    return True\n",
-            encoding="utf-8",
+        (self.root / 'quick_validate.py').write_text(
+            'def is_valid_skill_name(name: str) -> bool:\n    return True\n',
+            encoding='utf-8',
         )
 
         process = subprocess.run(
-            [sys.executable, "-c", "import candidate"],
+            [sys.executable, '-c', 'import candidate'],
             cwd=self.root,
             capture_output=True,
             text=True,
@@ -336,8 +332,8 @@ class InitSkillRegressionTests(unittest.TestCase):
         )
 
         self.assertNotEqual(process.returncode, 0)
-        self.assertIn("missing_internal_dependency", process.stderr)
+        self.assertIn('missing_internal_dependency', process.stderr)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

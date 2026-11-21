@@ -31,5 +31,6 @@
       "enum": ["in_progress", "complete"]
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$comment": "Schema checks response shape only; persistence, browser accessibility and human approval require runtime tests."
 }

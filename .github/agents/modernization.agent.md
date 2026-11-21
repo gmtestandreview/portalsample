@@ -463,8 +463,8 @@ Feature Breakdown:
 - Language: [C#/.NET | Java/Spring | Python/Django | Node.js/Express | Go |
   PHP/Laravel | Ruby/Rails]
 - Framework Version: [Detected from project files]
-- ORM/Data Access: [Entity Framework | Hibernate | SQLAlchemy | Sequelize | GORM
-  | Eloquent | ActiveRecord]
+- ORM/Data Access: [Entity Framework | Hibernate | SQLAlchemy | Sequelize |
+  GORM | Eloquent | ActiveRecord]
 
 **Frontend:**
 

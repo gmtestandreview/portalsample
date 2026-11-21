@@ -320,7 +320,7 @@ that renders all Mermaid diagrams interactively in the browser. Use this
 template structure:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />

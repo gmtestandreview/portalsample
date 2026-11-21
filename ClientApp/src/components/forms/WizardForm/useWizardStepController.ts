@@ -57,7 +57,9 @@ type StepProps = Pick<
 
 /** What the step component should do with the current controller state. */
 export type WizardStepView =
-  { kind: 'form' } | { kind: 'navigate'; to: string } | { kind: 'blank' };
+  | { kind: 'form' }
+  | { kind: 'navigate'; to: string }
+  | { kind: 'blank' };
 
 export interface WizardStepController {
   isLoading: boolean;
@@ -92,6 +94,19 @@ export const useWizardStepController = (
   const accountState = useAccountState();
   const accountDispatch = useAccountDispatch();
   const controllerRef = useRef<AbortController | null>();
+  const loadStepValuesRef = useRef(loadStepValues);
+  const getRedirectionLocationOnErrorRef = useRef(
+    getRedirectionLocationOnError,
+  );
+
+  useEffect(() => {
+    loadStepValuesRef.current = loadStepValues;
+  }, [loadStepValues]);
+
+  useEffect(() => {
+    getRedirectionLocationOnErrorRef.current = getRedirectionLocationOnError;
+  }, [getRedirectionLocationOnError]);
+
   const abortSignal = () => {
     const controller = new AbortController();
     controllerRef.current = controller;
@@ -112,7 +127,9 @@ export const useWizardStepController = (
       }
       try {
         abortSignal();
-        const currentStep = await loadStepValues(controllerRef.current?.signal);
+        const currentStep = await loadStepValuesRef.current(
+          controllerRef.current?.signal,
+        );
         setStepValues(nullOrUndefinedToEmpty(currentStep.stepValues));
       } catch (error) {
         const err = error as Error;
@@ -121,12 +138,15 @@ export const useWizardStepController = (
         AppLogger.trace(
           'Could not load data for form step.',
           SeverityLevel.Error,
-          { problemDetails: loadServerError, err },
+          {
+            problemDetails: loadServerError,
+            err,
+          },
         );
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Load,
           ),
         );
@@ -135,12 +155,12 @@ export const useWizardStepController = (
         setIsLoading(false);
       }
     },
-    [loadStepValues],
+    [],
   );
 
   useEffect(() => {
     void loadData();
-  }, [loadData]);
+  }, [currentStepIndex, loadData]);
 
   useEffect(() => {
     if (errorState.kind === 'concurrency') {
@@ -165,7 +185,13 @@ export const useWizardStepController = (
         );
       }
     }
-  }, [errorState.kind]);
+  }, [
+    accountDispatch,
+    accountState?.details?.abn,
+    accountState?.details?.organisation,
+    accountState?.details?.targetOrganisation?.targetOrganisationName,
+    errorState.kind,
+  ]);
 
   useEffect(() => {
     if (errorState.kind === 'gone') {
@@ -227,7 +253,7 @@ export const useWizardStepController = (
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Update,
           ),
         );
@@ -259,7 +285,7 @@ export const useWizardStepController = (
         setErrorState(
           resolveErrorState(
             error,
-            getRedirectionLocationOnError,
+            getRedirectionLocationOnErrorRef.current,
             ErrorType.Update,
           ),
         );
@@ -349,7 +375,9 @@ const resolveView = ({
     ) {
       return {
         kind: 'navigate',
-        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location ?? ''}`,
+        to: [url, allSteps.at(firstIncompleteStepIndex)?.props.location].join(
+          '',
+        ),
       };
     }
   }

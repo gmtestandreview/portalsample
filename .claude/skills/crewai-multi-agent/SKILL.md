@@ -89,31 +89,31 @@ from crewai import Agent, Task, Crew, Process
 
 # 1. Define agents
 researcher = Agent(
-    role="Senior Research Analyst",
-    goal="Discover cutting-edge developments in AI",
-    backstory="You are an expert analyst with a keen eye for emerging trends.",
-    verbose=True
+    role='Senior Research Analyst',
+    goal='Discover cutting-edge developments in AI',
+    backstory='You are an expert analyst with a keen eye for emerging trends.',
+    verbose=True,
 )
 
 writer = Agent(
-    role="Technical Writer",
-    goal="Create clear, engaging content about technical topics",
-    backstory="You excel at explaining complex concepts to general audiences.",
-    verbose=True
+    role='Technical Writer',
+    goal='Create clear, engaging content about technical topics',
+    backstory='You excel at explaining complex concepts to general audiences.',
+    verbose=True,
 )
 
 # 2. Define tasks
 research_task = Task(
-    description="Research the latest developments in {topic}. Find 5 key trends.",
-    expected_output="A detailed report with 5 bullet points on key trends.",
-    agent=researcher
+    description='Research the latest developments in {topic}. Find 5 key trends.',
+    expected_output='A detailed report with 5 bullet points on key trends.',
+    agent=researcher,
 )
 
 write_task = Task(
-    description="Write a blog post based on the research findings.",
-    expected_output="A 500-word blog post in markdown format.",
+    description='Write a blog post based on the research findings.',
+    expected_output='A 500-word blog post in markdown format.',
     agent=writer,
-    context=[research_task]  # Uses research output
+    context=[research_task],  # Uses research output
 )
 
 # 3. Create and run crew
@@ -121,11 +121,11 @@ crew = Crew(
     agents=[researcher, writer],
     tasks=[research_task, write_task],
     process=Process.sequential,  # Tasks run in order
-    verbose=True
+    verbose=True,
 )
 
 # 4. Execute
-result = crew.kickoff(inputs={"topic": "AI Agents"})
+result = crew.kickoff(inputs={'topic': 'AI Agents'})
 print(result.raw)
 ```
 
@@ -137,16 +137,16 @@ print(result.raw)
 from crewai import Agent
 
 agent = Agent(
-    role="Data Scientist",                    # Job title/role
-    goal="Analyze data to find insights",     # What they aim to achieve
-    backstory="PhD in statistics...",         # Background context
-    llm="gpt-4o",                             # LLM to use
-    tools=[],                                 # Tools available
-    memory=True,                              # Enable memory
-    verbose=True,                             # Show reasoning
-    allow_delegation=True,                    # Can delegate to others
-    max_iter=15,                              # Max reasoning iterations
-    max_rpm=10                                # Rate limit
+    role='Data Scientist',  # Job title/role
+    goal='Analyze data to find insights',  # What they aim to achieve
+    backstory='PhD in statistics...',  # Background context
+    llm='gpt-4o',  # LLM to use
+    tools=[],  # Tools available
+    memory=True,  # Enable memory
+    verbose=True,  # Show reasoning
+    allow_delegation=True,  # Can delegate to others
+    max_iter=15,  # Max reasoning iterations
+    max_rpm=10,  # Rate limit
 )
 ```
 
@@ -156,13 +156,13 @@ agent = Agent(
 from crewai import Task
 
 task = Task(
-    description="Analyze the sales data for Q4 2024. {context}",
-    expected_output="A summary report with key metrics and trends.",
-    agent=analyst,                            # Assigned agent
-    context=[previous_task],                  # Input from other tasks
-    output_file="report.md",                  # Save to file
-    async_execution=False,                    # Run synchronously
-    human_input=False                         # No human approval needed
+    description='Analyze the sales data for Q4 2024. {context}',
+    expected_output='A summary report with key metrics and trends.',
+    agent=analyst,  # Assigned agent
+    context=[previous_task],  # Input from other tasks
+    output_file='report.md',  # Save to file
+    async_execution=False,  # Run synchronously
+    human_input=False,  # No human approval needed
 )
 ```
 
@@ -172,23 +172,23 @@ task = Task(
 from crewai import Crew, Process
 
 crew = Crew(
-    agents=[researcher, writer, editor],      # Team members
-    tasks=[research, write, edit],            # Tasks to complete
-    process=Process.sequential,               # Or Process.hierarchical
+    agents=[researcher, writer, editor],  # Team members
+    tasks=[research, write, edit],  # Tasks to complete
+    process=Process.sequential,  # Or Process.hierarchical
     verbose=True,
-    memory=True,                              # Enable crew memory
-    cache=True,                               # Cache tool results
-    max_rpm=10,                               # Rate limit
-    share_crew=False                          # Opt-in telemetry
+    memory=True,  # Enable crew memory
+    cache=True,  # Cache tool results
+    max_rpm=10,  # Rate limit
+    share_crew=False,  # Opt-in telemetry
 )
 
 # Execute with inputs
-result = crew.kickoff(inputs={"topic": "AI trends"})
+result = crew.kickoff(inputs={'topic': 'AI trends'})
 
 # Access results
-print(result.raw)                             # Final output
-print(result.tasks_output)                    # All task outputs
-print(result.token_usage)                     # Token consumption
+print(result.raw)  # Final output
+print(result.tasks_output)  # All task outputs
+print(result.token_usage)  # Token consumption
 ```
 
 ## Process types
@@ -201,7 +201,7 @@ Tasks execute in order, each agent completing their task before the next:
 crew = Crew(
     agents=[researcher, writer],
     tasks=[research_task, write_task],
-    process=Process.sequential  # Task 1 → Task 2 → Task 3
+    process=Process.sequential,  # Task 1 → Task 2 → Task 3
 )
 ```
 
@@ -214,7 +214,7 @@ crew = Crew(
     agents=[researcher, writer, analyst],
     tasks=[research_task, write_task, analyze_task],
     process=Process.hierarchical,  # Manager delegates tasks
-    manager_llm="gpt-4o"           # LLM for manager
+    manager_llm='gpt-4o',  # LLM for manager
 )
 ```
 
@@ -228,21 +228,21 @@ pip install 'crewai[tools]'
 
 ```python
 from crewai_tools import (
-    SerperDevTool,           # Web search
-    ScrapeWebsiteTool,       # Web scraping
-    FileReadTool,            # Read files
-    PDFSearchTool,           # Search PDFs
-    WebsiteSearchTool,       # Search websites
-    CodeDocsSearchTool,      # Search code docs
+    SerperDevTool,  # Web search
+    ScrapeWebsiteTool,  # Web scraping
+    FileReadTool,  # Read files
+    PDFSearchTool,  # Search PDFs
+    WebsiteSearchTool,  # Search websites
+    CodeDocsSearchTool,  # Search code docs
     YoutubeVideoSearchTool,  # Search YouTube
 )
 
 # Assign tools to agent
 researcher = Agent(
-    role="Researcher",
-    goal="Find accurate information",
-    backstory="Expert at finding data online.",
-    tools=[SerperDevTool(), ScrapeWebsiteTool()]
+    role='Researcher',
+    goal='Find accurate information',
+    backstory='Expert at finding data online.',
+    tools=[SerperDevTool(), ScrapeWebsiteTool()],
 )
 ```
 
@@ -252,23 +252,21 @@ researcher = Agent(
 from crewai.tools import BaseTool
 from pydantic import Field
 
+
 class CalculatorTool(BaseTool):
-    name: str = "Calculator"
-    description: str = "Performs mathematical calculations. Input: expression"
+    name: str = 'Calculator'
+    description: str = 'Performs mathematical calculations. Input: expression'
 
     def _run(self, expression: str) -> str:
         try:
             result = eval(expression)
-            return f"Result: {result}"
+            return f'Result: {result}'
         except Exception as e:
-            return f"Error: {str(e)}"
+            return f'Error: {str(e)}'
+
 
 # Use custom tool
-agent = Agent(
-    role="Analyst",
-    goal="Perform calculations",
-    tools=[CalculatorTool()]
-)
+agent = Agent(role='Analyst', goal='Perform calculations', tools=[CalculatorTool()])
 ```
 
 ## YAML configuration (recommended)
@@ -334,24 +332,18 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import SerperDevTool
 
+
 @CrewBase
 class MyProjectCrew:
     """My Project crew"""
 
     @agent
     def researcher(self) -> Agent:
-        return Agent(
-            config=self.agents_config['researcher'],
-            tools=[SerperDevTool()],
-            verbose=True
-        )
+        return Agent(config=self.agents_config['researcher'], tools=[SerperDevTool()], verbose=True)
 
     @agent
     def reporting_analyst(self) -> Agent:
-        return Agent(
-            config=self.agents_config['reporting_analyst'],
-            verbose=True
-        )
+        return Agent(config=self.agents_config['reporting_analyst'], verbose=True)
 
     @task
     def research_task(self) -> Task:
@@ -359,19 +351,11 @@ class MyProjectCrew:
 
     @task
     def reporting_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['reporting_task'],
-            output_file='report.md'
-        )
+        return Task(config=self.tasks_config['reporting_task'], output_file='report.md')
 
     @crew
     def crew(self) -> Crew:
-        return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
-            process=Process.sequential,
-            verbose=True
-        )
+        return Crew(agents=self.agents, tasks=self.tasks, process=Process.sequential, verbose=True)
 ```
 
 ### main.py
@@ -379,14 +363,13 @@ class MyProjectCrew:
 ```python
 from my_project.crew import MyProjectCrew
 
+
 def run():
-    inputs = {
-        'topic': 'AI Agents',
-        'year': 2025
-    }
+    inputs = {'topic': 'AI Agents', 'year': 2025}
     MyProjectCrew().crew().kickoff(inputs=inputs)
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     run()
 ```
 
@@ -398,13 +381,15 @@ For complex workflows with conditional logic, use Flows:
 from crewai.flow.flow import Flow, listen, start, router
 from pydantic import BaseModel
 
+
 class MyState(BaseModel):
     confidence: float = 0.0
+
 
 class MyFlow(Flow[MyState]):
     @start()
     def gather_data(self):
-        return {"data": "collected"}
+        return {'data': 'collected'}
 
     @listen(gather_data)
     def analyze(self, data):
@@ -413,11 +398,12 @@ class MyFlow(Flow[MyState]):
 
     @router(analyze)
     def decide(self):
-        return "high" if self.state.confidence > 0.8 else "low"
+        return 'high' if self.state.confidence > 0.8 else 'low'
 
-    @listen("high")
+    @listen('high')
     def generate_report(self):
         return report_crew.kickoff()
+
 
 # Run flow
 flow = MyFlow()
@@ -433,11 +419,11 @@ See [Flows Guide](references/flows.md) for complete documentation.
 crew = Crew(
     agents=[researcher],
     tasks=[research_task],
-    memory=True,           # Enable memory
-    embedder={             # Custom embeddings
-        "provider": "openai",
-        "config": {"model": "text-embedding-3-small"}
-    }
+    memory=True,  # Enable memory
+    embedder={  # Custom embeddings
+        'provider': 'openai',
+        'config': {'model': 'text-embedding-3-small'},
+    },
 )
 ```
 
@@ -448,12 +434,12 @@ crew = Crew(
 ```python
 from crewai import LLM
 
-llm = LLM(model="gpt-4o")                              # OpenAI (default)
-llm = LLM(model="claude-sonnet-4-5-20250929")                       # Anthropic
-llm = LLM(model="ollama/llama3.1", base_url="http://localhost:11434")  # Local
-llm = LLM(model="azure/gpt-4o", base_url="https://...")              # Azure
+llm = LLM(model='gpt-4o')  # OpenAI (default)
+llm = LLM(model='claude-sonnet-4-5-20250929')  # Anthropic
+llm = LLM(model='ollama/llama3.1', base_url='http://localhost:11434')  # Local
+llm = LLM(model='azure/gpt-4o', base_url='https://...')  # Azure
 
-agent = Agent(role="Analyst", goal="Analyze data", llm=llm)
+agent = Agent(role='Analyst', goal='Analyze data', llm=llm)
 ```
 
 ## CrewAI vs alternatives
@@ -480,9 +466,9 @@ agent = Agent(role="Analyst", goal="Analyze data", llm=llm)
 
 ```python
 agent = Agent(
-    role="...",
-    max_iter=10,           # Limit iterations
-    max_rpm=5              # Rate limit
+    role='...',
+    max_iter=10,  # Limit iterations
+    max_rpm=5,  # Rate limit
 )
 ```
 
@@ -490,9 +476,9 @@ agent = Agent(
 
 ```python
 task2 = Task(
-    description="...",
-    context=[task1],       # Explicitly pass context
-    agent=writer
+    description='...',
+    context=[task1],  # Explicitly pass context
+    agent=writer,
 )
 ```
 
@@ -501,7 +487,8 @@ task2 = Task(
 ```python
 # Use environment variable for storage
 import os
-os.environ["CREWAI_STORAGE_DIR"] = "./my_storage"
+
+os.environ['CREWAI_STORAGE_DIR'] = './my_storage'
 ```
 
 ## References

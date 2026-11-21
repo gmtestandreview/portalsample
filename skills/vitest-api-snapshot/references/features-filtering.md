@@ -5,11 +5,14 @@ description: Filter tests by name, file patterns, and tags
 
 # Test Filtering
 
-**Load when:** Filter Vitest tests by file, test name, tags, projects or changes. **Boundary:** Do not disable CI-only-test protections or use deprecated tag CLI flags.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Filter Vitest tests by file, test name, tags, projects or
+changes. **Boundary:** Do not disable CI-only-test protections or use deprecated
+tag CLI flags. These are generic Vitest examples; inspect the installed version
+and applicable project config before applying them.
 
-**Expected outcome:** Only the intended tests are selected without suppressing CI safeguards. **Acceptance check:** Check test inventory, tag declarations, file patterns, and `.only` handling.
+**Expected outcome:** Only the intended tests are selected without suppressing
+CI safeguards. **Acceptance check:** Check test inventory, tag declarations,
+file patterns, and `.only` handling.
 
 ## CLI Filtering
 
@@ -81,9 +84,8 @@ describe.only('only this suite', () => {
 });
 ```
 
-In CI, `.only` should fail by default; keep that safeguard. Remove
-temporary `.only` before committing. Do not set `allowOnly: true` merely to
-make CI green.
+In CI, `.only` should fail by default; keep that safeguard. Remove temporary
+`.only` before committing. Do not set `allowOnly: true` merely to make CI green.
 
 ## Skip Tests
 
@@ -102,8 +104,8 @@ test('dynamic', ({ skip }) => {
 
 ## Tags
 
-Tags require Vitest 4.1+ and definitions in `test.tags`; unregistered tags
-fail by default. Use `--tags-filter`, not `--tags`. Do not change an existing
+Tags require Vitest 4.1+ and definitions in `test.tags`; unregistered tags fail
+by default. Use `--tags-filter`, not `--tags`. Do not change an existing
 project's `strictTags` policy to bypass a typo.
 
 Filter by custom tags:

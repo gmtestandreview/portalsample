@@ -305,7 +305,7 @@ describe('rhfAddressLookup results', () => {
       );
     });
     logError.mock.calls.forEach(([message]) => {
-      expect(String(message)).not.toContain('Secret');
+      expect(message).not.toContain('Secret');
     });
     logError.mockRestore();
   });

@@ -246,6 +246,12 @@ describe('unit leaf owns jsdom, unit discovery and unit coverage', () => {
     expect(unit.maxWorkers).toBe(2);
   });
 
+  it('keeps test files isolated to prevent cross-file state leakage', () => {
+    expect.hasAssertions();
+
+    expect(unit.isolate).toBe(true);
+  });
+
   it('owns unit coverage reporting', () => {
     expect.hasAssertions();
 

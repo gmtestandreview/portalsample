@@ -25,9 +25,11 @@ const yesNoOptions = [
   { id: 'yesno-no', value: 'No', label: 'No' },
 ];
 
+const emptyInitialValues: Record<string, unknown> = {};
+
 const FormikWrapper = ({
   children,
-  initialValues = {},
+  initialValues = emptyInitialValues,
 }: {
   children: ReactNode;
   initialValues?: Record<string, unknown>;

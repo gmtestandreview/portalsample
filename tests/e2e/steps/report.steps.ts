@@ -68,7 +68,10 @@ Given(
   ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey('GET', '/api/dashboard/get-quote-report-pdf'),
-      { status, once: false },
+      {
+        status,
+        once: false,
+      },
     );
   },
 );

@@ -92,7 +92,10 @@ describe('reviewed Storybook source and story evidence', () => {
 
     expect(
       moduleUnderTest.validateStoryEvidence({ manifest, files, index }),
-    ).toStrictEqual({ ok: true, errors: [] });
+    ).toStrictEqual({
+      ok: true,
+      errors: [],
+    });
   });
 
   describe('markers nested in assertion arguments', () => {
@@ -113,7 +116,10 @@ describe('reviewed Storybook source and story evidence', () => {
 
       expect(
         moduleUnderTest.validateStoryEvidence({ manifest, files, index }),
-      ).toStrictEqual({ ok: true, errors: [] });
+      ).toStrictEqual({
+        ok: true,
+        errors: [],
+      });
     });
 
     it.each([

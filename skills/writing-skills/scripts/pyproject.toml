@@ -4,21 +4,12 @@ version = "0.1.0"
 description = "Reference library for Agent Skills"
 license = "Apache-2.0"
 readme = "README.md"
-authors = [
-    { name = "Keith Lazuka", email = "klazuka@anthropic.com" }
-]
+authors = [{ name = "Keith Lazuka", email = "klazuka@anthropic.com" }]
 requires-python = ">=3.11"
-dependencies = [
-    "click>=8.0",
-    "strictyaml>=1.7.3",
-]
+dependencies = ["click>=8.0", "strictyaml>=1.7.3"]
 
 [project.optional-dependencies]
-dev = [
-    "defusedxml>=0.7.1",
-    "pytest>=7.0",
-    "ruff>=0.8.0",
-]
+dev = ["defusedxml>=0.7.1", "pytest>=7.0", "ruff>=0.8.0"]
 
 [project.scripts]
 skills-ref = "skills_ref.cli:main"
@@ -31,11 +22,7 @@ build-backend = "hatchling.build"
 packages = ["skills_ref"]
 
 [dependency-groups]
-dev = [
-    "defusedxml>=0.7.1",
-    "pytest>=7.0",
-    "ruff>=0.8.0",
-]
+dev = ["defusedxml>=0.7.1", "pytest>=7.0", "ruff>=0.8.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

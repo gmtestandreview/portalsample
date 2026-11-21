@@ -147,9 +147,9 @@ accepting that **we must manage Kong infrastructure ourselves**.
 ## 4. Superseding
 
 Use when a new ADR retires an earlier one. Set the earlier ADR to
-`Superseded by <ref>` (or `Deprecated` when nothing replaces it) per
-`SKILL.md` → Status Lifecycle, and link both ways. **Add** Alternatives
-Considered, Validation, and a Review Trigger.
+`Superseded by <ref>` (or `Deprecated` when nothing replaces it) per `SKILL.md`
+→ Status Lifecycle, and link both ways. **Add** Alternatives Considered,
+Validation, and a Review Trigger.
 
 ```markdown
 # ADR-0020: Replace MongoDB with PostgreSQL for User Profiles
@@ -203,8 +203,8 @@ Carry forward from the superseded ADR:
 Use for a proposal that needs open discussion before the team commits, such as a
 large design change with unresolved questions. It is a pre-decision document:
 once the team decides, record the outcome as an ADR (or convert this one) so the
-finished record carries a `Decision`. **Not sufficient alone:** add a status
-per `SKILL.md` → Status Lifecycle (`Proposed` while open), Positive and Negative
+finished record carries a `Decision`. **Not sufficient alone:** add a status per
+`SKILL.md` → Status Lifecycle (`Proposed` while open), Positive and Negative
 Consequences, Validation, Rollback / Reversal, and a Review Trigger. The
 `Alternatives` section must give a rejection reason for each option.
 

@@ -28,9 +28,9 @@ test: {
 
 Isolation-off runs share module state and the environment within a worker.
 Validate order independence, mocks, fake timers, globals, browser APIs, and
-cleanup. Prefer `vitest doctor` to measure the alternative and check whether
-the suite still passes. A project can scope `isolate: false` to a controlled
-subset with separate `projects` entries.
+cleanup. Prefer `vitest doctor` to measure the alternative and check whether the
+suite still passes. A project can scope `isolate: false` to a controlled subset
+with separate `projects` entries.
 
 `vmThreads` cannot disable isolation. If shared state is safe and isolation is
 the dominant cost, compare `threads` with `isolate: false` instead. In Vitest
@@ -62,14 +62,14 @@ inside one file.
 ## Test environments
 
 DOM environments can dominate a run because a fresh environment is created per
-file under the default isolated pools. Compare only when the `environment`
-phase is large:
+file under the default isolated pools. Compare only when the `environment` phase
+is large:
 
-| Configuration | Environment lifetime | Main trade-off |
-| --- | --- | --- |
-| `forks`/`threads` + `isolate: true` | Once per file | Safest; usually most setup work |
-| `vmThreads` | Once per worker, fresh VM context per file | Cross-realm `instanceof` edge cases and less reliable memory reclamation |
-| `threads` + `isolate: false` | Once per worker | Shared `window` and module state; requires strong cleanup |
+| Configuration                       | Environment lifetime                       | Main trade-off                                                           |
+| ----------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------ |
+| `forks`/`threads` + `isolate: true` | Once per file                              | Safest; usually most setup work                                          |
+| `vmThreads`                         | Once per worker, fresh VM context per file | Cross-realm `instanceof` edge cases and less reliable memory reclamation |
+| `threads` + `isolate: false`        | Once per worker                            | Shared `window` and module state; requires strong cleanup                |
 
 `happy-dom` is generally cheaper to create than `jsdom`, but changing the
 environment can change browser behavior. Use real DOM/browser assertions where
@@ -127,8 +127,8 @@ with:
 pnpm exec vitest --clearCache
 ```
 
-It currently does not affect Browser Mode. Cache keys include file content,
-the module id, Vite environment configuration, and coverage status, but plugin
+It currently does not affect Browser Mode. Cache keys include file content, the
+module id, Vite environment configuration, and coverage status, but plugin
 options and other external inputs can still make a cache stale. Do not carry
 forward the Vitest 4 form `experimental.fsModuleCache`; verify the installed
 types if explicitly configuring the option. Plugin authors should use
@@ -145,8 +145,8 @@ externalized dependencies:
 NODE_COMPILE_CACHE=node_modules/.cache/node-compile-cache pnpm exec vitest run
 ```
 
-The first run pays the serialization cost, so retain the directory between
-runs or in a CI cache before judging the result. `NODE_DISABLE_COMPILE_CACHE=1`
+The first run pays the serialization cost, so retain the directory between runs
+or in a CI cache before judging the result. `NODE_DISABLE_COMPILE_CACHE=1`
 overrides it. Vitest disables the worker compile cache when the `v8` coverage
 provider is enabled because cached scripts lack the source positions needed for
 precise coverage.
@@ -161,11 +161,11 @@ pnpm exec vitest run --pool=forks
 pnpm exec vitest run --pool=threads
 ```
 
-Measure duration, peak memory, failures, hangs, native-module compatibility,
-and repeatability. `vmThreads` and `vmForks` are specialized choices for VM
-contexts and memory-sensitive suites; do not select them as a first tuning
-step. They may improve environment or module reuse while introducing
-cross-realm and memory trade-offs.
+Measure duration, peak memory, failures, hangs, native-module compatibility, and
+repeatability. `vmThreads` and `vmForks` are specialized choices for VM contexts
+and memory-sensitive suites; do not select them as a first tuning step. They may
+improve environment or module reuse while introducing cross-realm and memory
+trade-offs.
 
 ## Test sharding
 
@@ -224,19 +224,19 @@ runner baseline.
 Benchmark files are selected by `benchmark.include` (default
 `**/*.{bench,benchmark}.?(c|m)[jt]s?(x)`) and run in their own project, separate
 from regular test files. The `vitest` command ignores them unless
-`benchmark.enabled: true` is set; `vitest bench` runs only benchmarks and enables
-that option implicitly. The `bench` fixture comes from the test context and is
-available only inside those files, so using it in a regular test file throws.
-Use `bench.compare()` for alternatives, `writeResult`/`bench.from()` for stored
-baselines, and `toBeFasterThan`/`toBeSlowerThan` with a `delta` when assertions
-need tolerance.
+`benchmark.enabled: true` is set; `vitest bench` runs only benchmarks and
+enables that option implicitly. The `bench` fixture comes from the test context
+and is available only inside those files, so using it in a regular test file
+throws. Use `bench.compare()` for alternatives, `writeResult`/`bench.from()` for
+stored baselines, and `toBeFasterThan`/`toBeSlowerThan` with a `delta` when
+assertions need tolerance.
 
 Keep benchmark results stable by running them away from competing CPU load,
-using their sequential execution, retrying noisy assertions when justified,
-and consuming computed results so the JavaScript engine cannot eliminate the
-work. Be aware that Vite's module-runner export getters can dominate a
-microbenchmark of a very hot imported function; treat the warning as a
-measurement concern, not automatically as a production regression.
+using their sequential execution, retrying noisy assertions when justified, and
+consuming computed results so the JavaScript engine cannot eliminate the work.
+Be aware that Vite's module-runner export getters can dominate a microbenchmark
+of a very hot imported function; treat the warning as a measurement concern, not
+automatically as a production regression.
 
 ## Optimization decision rules
 
@@ -267,5 +267,5 @@ These rules are grounded in the Vitest 5 documentation and release notes:
 - [The `fsModuleCache` configuration](https://vitest.dev/config/fsmodulecache)
 
 If the installed Vitest release disagrees with a version-sensitive example,
-prefer the installed package's types and documentation, record the mismatch,
-and mark the optimization `Needs Human Review` rather than guessing.
+prefer the installed package's types and documentation, record the mismatch, and
+mark the optimization `Needs Human Review` rather than guessing.

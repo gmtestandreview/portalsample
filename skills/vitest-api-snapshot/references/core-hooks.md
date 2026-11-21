@@ -5,11 +5,14 @@ description: beforeEach, afterEach, beforeAll, afterAll, and around hooks
 
 # Lifecycle Hooks
 
-**Load when:** Use test lifecycle, around hooks, cleanup, or hook ordering. **Boundary:** Do not skip teardown on failure or assume global hooks access fixture-scoped values.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Use test lifecycle, around hooks, cleanup, or hook ordering.
+**Boundary:** Do not skip teardown on failure or assume global hooks access
+fixture-scoped values. These are generic Vitest examples; inspect the installed
+version and applicable project config before applying them.
 
-**Expected outcome:** Setup and teardown execute at the correct scope even when tests fail. **Acceptance check:** Check order, failure cleanup, and fixture hook boundaries.
+**Expected outcome:** Setup and teardown execute at the correct scope even when
+tests fail. **Acceptance check:** Check order, failure cleanup, and fixture hook
+boundaries.
 
 ## Basic Hooks
 
@@ -247,8 +250,8 @@ defineConfig({
 
 - Hooks are not called during type checking
 - Return cleanup function from `before*` to avoid `after*` duplication
-- `aroundEach`/`aroundAll` must call `runTest()`/`runSuite()`;
-  put mandatory cleanup in `finally` so failure cannot skip it
+- `aroundEach`/`aroundAll` must call `runTest()`/`runSuite()`; put mandatory
+  cleanup in `finally` so failure cannot skip it
 - `onTestFinished` always runs, even if test fails
 - Use context hooks for concurrent tests
 

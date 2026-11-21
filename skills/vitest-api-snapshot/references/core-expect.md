@@ -5,11 +5,14 @@ description: Assertions with matchers, asymmetric matchers, and custom matchers
 
 # Expect API
 
-**Load when:** Use Vitest assertions, promise matching, soft or custom matchers. **Boundary:** Do not assume Jest-only or Browser Mode locator assertions share identical behavior.
- These are generic Vitest examples; inspect the installed version and
- applicable project config before applying them.
+**Load when:** Use Vitest assertions, promise matching, soft or custom matchers.
+**Boundary:** Do not assume Jest-only or Browser Mode locator assertions share
+identical behavior. These are generic Vitest examples; inspect the installed
+version and applicable project config before applying them.
 
-**Expected outcome:** Assertions detect the intended behavior, with async matchers awaited. **Acceptance check:** Check positive and failing counterexamples; distinguish browser locator assertions.
+**Expected outcome:** Assertions detect the intended behavior, with async
+matchers awaited. **Acceptance check:** Check positive and failing
+counterexamples; distinguish browser locator assertions.
 
 Vitest uses Chai assertions with Jest-compatible API.
 
@@ -201,7 +204,9 @@ expect(data).toMatchSnapshot();
 expect(data).toMatchInlineSnapshot(`{ "id": 1 }`);
 await expect(result).toMatchFileSnapshot('./expected.json');
 
-expect(() => { throw new Error('fail'); }).toThrowErrorMatchingSnapshot();
+expect(() => {
+  throw new Error('fail');
+}).toThrowErrorMatchingSnapshot();
 ```
 
 ## Key Points

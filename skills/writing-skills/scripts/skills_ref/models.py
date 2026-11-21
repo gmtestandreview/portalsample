@@ -33,15 +33,15 @@ class SkillProperties:
     def to_dict(self) -> dict[str, SkillPropertyValue]:
         """Convert to dictionary, excluding None values."""
         result: dict[str, SkillPropertyValue] = {
-            "name": self.name,
-            "description": self.description,
+            'name': self.name,
+            'description': self.description,
         }
         if self.license is not None:
-            result["license"] = self.license
+            result['license'] = self.license
         if self.compatibility is not None:
-            result["compatibility"] = self.compatibility
+            result['compatibility'] = self.compatibility
         if self.allowed_tools is not None:
-            result["allowed-tools"] = self.allowed_tools
+            result['allowed-tools'] = self.allowed_tools
         if self.metadata:
-            result["metadata"] = dict(self.metadata)
+            result['metadata'] = dict(self.metadata)
         return result

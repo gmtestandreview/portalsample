@@ -383,6 +383,12 @@ describe('yup string extension branch coverage', () => {
     expect(valid(Yup.string().email(), 12)).toBe(false);
   });
 
+  it('fails closed for a non-string value in strict mode', () => {
+    expect.hasAssertions();
+
+    expect(Yup.string().numbersOnly().strict().isValidSync(123)).toBe(false);
+  });
+
   it.each(fallbackMessageCases)(
     'uses fallback path messages for %s',
     async (_name, schema, value, message) => {
@@ -432,5 +438,16 @@ describe('yup string extension branch coverage', () => {
 
     expect(valid(schema, 'ab1a')).toBe(true);
     expect(valid(schema, 'ab1aa')).toBe(false);
+  });
+
+  it('fails closed when a non-string value reaches a registered test', () => {
+    expect.hasAssertions();
+
+    const config = Yup.string()
+      .numbersOnly()
+      .tests.find((t) => t.OPTIONS?.name === 'numbersOnly')?.OPTIONS;
+    const context = { schema: Yup.string() } as unknown as Yup.TestContext;
+
+    expect(config?.test.call(context, 123, context)).toBe(false);
   });
 });

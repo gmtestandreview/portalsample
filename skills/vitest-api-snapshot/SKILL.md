@@ -1,13 +1,13 @@
 ---
 name: vitest-api-snapshot
 description: >-
-  Raw Vitest API syntax reference (upstream snapshot, Git SHA
-  4a7321e, generated 2026-01-28), remediated for Vitest 5.0.5. Use only as a
-  supplemental syntax lookup for Vitest tests, mocks, matchers, snapshots,
-  hooks, fixtures, coverage, CLI, config, environments, or type testing when the
-  installed types or official docs are not reachable. Project testing policy,
-  lane ownership, and coverage rules are NOT here — the separate `vitest` skill
-  owns those. Do not use for Playwright, Jest, or framework-agnostic testing.
+  Raw Vitest API syntax reference (upstream snapshot, Git SHA 4a7321e, generated
+  2026-01-28), remediated for Vitest 5.0.5. Use only as a supplemental syntax
+  lookup for Vitest tests, mocks, matchers, snapshots, hooks, fixtures,
+  coverage, CLI, config, environments, or type testing when the installed types
+  or official docs are not reachable. Project testing policy, lane ownership,
+  and coverage rules are NOT here — the separate `vitest` skill owns those. Do
+  not use for Playwright, Jest, or framework-agnostic testing.
 license: MIT
 metadata:
   role: supplemental API reference (quarantined snapshot)
@@ -15,8 +15,9 @@ metadata:
   upstream-source: https://github.com/vitest-dev/vitest
   upstream-revision: 4a7321e10672f00f0bb698823a381c2cc245b8f7
   generated: '2026-01-28'
-  sunset: delete this skill when the project reaches online mode and installed
-    types + official docs are reliably reachable
+  sunset:
+    delete this skill when the project reaches online mode and installed types +
+    official docs are reliably reachable
 ---
 
 # Vitest API snapshot (supplemental reference only)
@@ -51,29 +52,30 @@ not runtime proof.
 
 ## Reference routing
 
-| Topic | Reference |
-| --- | --- |
-| Config and command line | [core-config](references/core-config.md), [core-cli](references/core-cli.md) |
-| Tests, suites, assertions, lifecycle | [core-test-api](references/core-test-api.md), [core-describe](references/core-describe.md), [core-expect](references/core-expect.md), [core-hooks](references/core-hooks.md) |
-| Mocking / broad vi helpers | [features-mocking](references/features-mocking.md); [advanced-vi](references/advanced-vi.md) only if needed |
-| Snapshot / coverage | [features-snapshots](references/features-snapshots.md), [features-coverage](references/features-coverage.md) |
-| Context / concurrency / filtering | [features-context](references/features-context.md), [features-concurrency](references/features-concurrency.md), [features-filtering](references/features-filtering.md) |
+| Topic                                | Reference                                                                                                                                                                        |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Config and command line              | [core-config](references/core-config.md), [core-cli](references/core-cli.md)                                                                                                     |
+| Tests, suites, assertions, lifecycle | [core-test-api](references/core-test-api.md), [core-describe](references/core-describe.md), [core-expect](references/core-expect.md), [core-hooks](references/core-hooks.md)     |
+| Mocking / broad vi helpers           | [features-mocking](references/features-mocking.md); [advanced-vi](references/advanced-vi.md) only if needed                                                                      |
+| Snapshot / coverage                  | [features-snapshots](references/features-snapshots.md), [features-coverage](references/features-coverage.md)                                                                     |
+| Context / concurrency / filtering    | [features-context](references/features-context.md), [features-concurrency](references/features-concurrency.md), [features-filtering](references/features-filtering.md)           |
 | Environments / type tests / projects | [advanced-environments](references/advanced-environments.md), [advanced-type-testing](references/advanced-type-testing.md), [advanced-projects](references/advanced-projects.md) |
 
 ### Routing notes
 
 - **Sharding** (`--shard`, CI split across jobs/machines) resolves to
   [features-concurrency](references/features-concurrency.md) — it holds the
-  concept, the CI matrix, and `--merge-reports`. [core-cli](references/core-cli.md)
-  is an acceptable co-reference for the `--shard` flag's syntax alone.
+  concept, the CI matrix, and `--merge-reports`.
+  [core-cli](references/core-cli.md) is an acceptable co-reference for the
+  `--shard` flag's syntax alone.
 - **Undocumented / unsupported flag or option:** consult
-  [core-cli](references/core-cli.md) then [core-config](references/core-config.md)
-  before answering. If neither documents it, report the evidence gap — do not
-  invent syntax.
+  [core-cli](references/core-cli.md) then
+  [core-config](references/core-config.md) before answering. If neither
+  documents it, report the evidence gap — do not invent syntax.
 - **"Does X exist / is X valid in 5.0.5" (version-validity):** not answerable
-  from this snapshot. Defer to the **`vitest`** skill's `vitest-5-compatibility.md`
-  and the installed types; a page existing here is not proof the feature exists
-  in the installed version.
+  from this snapshot. Defer to the **`vitest`** skill's
+  `vitest-5-compatibility.md` and the installed types; a page existing here is
+  not proof the feature exists in the installed version.
 
 For version-sensitive migration guidance (removed APIs and supported
 replacements), the **`vitest`** skill's `vitest-5-compatibility.md` is

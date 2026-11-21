@@ -56,11 +56,11 @@ const Checkbox = <T,>(
               : helpId
           }
         />
-        {inlineHelp && (
+        {inlineHelp ? (
           <Form.Text id={helpId} className='contextual-help'>
             {inlineHelp}
           </Form.Text>
-        )}
+        ) : null}
         <label htmlFor={controlId}>
           <i className='icon-tick' aria-hidden='true' />
           <span className='d-flex flex-column'>
@@ -86,12 +86,12 @@ const Checkbox = <T,>(
           </Form.Control.Feedback>
         ) : null}
 
-        {subFormField && (
+        {subFormField ? (
           <div className='subform-field-container'>
             <div className='checklist-line' />
             {subFormField}
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
