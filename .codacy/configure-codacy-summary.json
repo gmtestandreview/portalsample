@@ -1,0 +1,127 @@
+{
+  "summary": {
+    "enabledPatterns": { "before": 5777, "after": 3204 },
+    "enabledTools": { "before": 20, "after": 16 },
+    "issues": { "before": 4702, "after": 1312 },
+    "analysisRuntime": { "before": 1241368, "after": 762499 }
+  },
+  "toolChanges": [
+    {
+      "toolId": "Biome",
+      "action": "disabled",
+      "reason": "No Biome config; ESLint9 covers a11y and hooks",
+      "patternsAffected": 215
+    },
+    {
+      "toolId": "Oxlint",
+      "action": "disabled",
+      "reason": "No Oxlint config in repo",
+      "patternsAffected": 241
+    },
+    {
+      "toolId": "PMD",
+      "action": "disabled",
+      "reason": "No Java/Apex in repo",
+      "patternsAffected": 157
+    },
+    {
+      "toolId": "spectral",
+      "action": "disabled",
+      "reason": "No OpenAPI spec in repo",
+      "patternsAffected": 68
+    }
+  ],
+  "patternChanges": [
+    {
+      "patternId": "ESLint9_* (framework plugins)",
+      "toolId": "ESLint9",
+      "action": "disabled",
+      "reason": "Plugins for frameworks not in stack",
+      "delta": 0,
+      "parameters": []
+    },
+    {
+      "patternId": "ESLint9_no-undef",
+      "toolId": "ESLint9",
+      "action": "disabled",
+      "reason": "TypeScript resolves undefined names",
+      "delta": 0,
+      "parameters": []
+    },
+    {
+      "patternId": "Prospector_pyflakes",
+      "toolId": "Prospector",
+      "action": "disabled",
+      "reason": "Duplicate of Ruff F rules",
+      "delta": 0,
+      "parameters": []
+    },
+    {
+      "patternId": "Lizard_nloc-medium",
+      "toolId": "Lizard",
+      "action": "updated",
+      "reason": "Threshold raised to 120",
+      "delta": 0,
+      "parameters": [{ "id": "threshold", "after": "120" }]
+    },
+    {
+      "patternId": "Lizard_parameter-count-medium",
+      "toolId": "Lizard",
+      "action": "updated",
+      "reason": "Threshold raised to 12",
+      "delta": 0,
+      "parameters": [{ "id": "threshold", "after": "12" }]
+    }
+  ],
+  "fileExclusions": {
+    "global": [
+      "vendor/**",
+      "tests/fixtures/**",
+      ".github/migration-verifier/fixtures/**"
+    ],
+    "perTool": {
+      "markdownlint": [
+        ".claude/skills/**",
+        ".github/skills/**",
+        "skills/**",
+        ".claude/agents/**",
+        ".github/agents/**"
+      ],
+      "Prospector": ["skills trees", "**/tests/**", "**/test_*.py"],
+      "ESLint9": ["skills trees"],
+      "Lizard": ["skills trees"],
+      "Bandit": ["**/tests/**", "**/test_*.py"],
+      "Semgrep": ["**/tests/**", "**/test_*.py"]
+    }
+  },
+  "securityCoverage": {
+    "deduplication": [
+      "Prospector_bandit disabled; Bandit tool covers the same concern"
+    ],
+    "newCoverage": [],
+    "noisyButKept": ["Bandit_B603 / B404 kept; test files excluded instead"]
+  },
+  "keyImprovements": [
+    "Issues down 72% (4702 to 1312); runtime down 39%",
+    "Four tools not matching the stack removed",
+    "About 1,100 ESLint patterns for absent frameworks removed",
+    "11 shellcheck and 5 PyLint bug-class patterns restored"
+  ],
+  "localConfigTools": [
+    {
+      "toolId": "Ruff",
+      "configFile": "ruff.toml",
+      "issueCount": 547,
+      "note": "Governed by ruff.toml, not Codacy patterns"
+    },
+    {
+      "toolId": "markdownlint",
+      "configFile": ".markdownlint.json",
+      "issueCount": 78,
+      "note": "Governed by .markdownlint.json"
+    }
+  ],
+  "codacyYaml": "see .codacy.yaml",
+  "importResults": null,
+  "cloudVerification": null
+}

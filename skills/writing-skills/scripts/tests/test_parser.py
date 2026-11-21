@@ -22,14 +22,14 @@ description: A test skill
 Instructions here.
 """
     metadata, body = parse_frontmatter(content)
-    assert metadata["name"] == "my-skill"
-    assert metadata["description"] == "A test skill"
-    assert "# My Skill" in body
+    assert metadata['name'] == 'my-skill'
+    assert metadata['description'] == 'A test skill'
+    assert '# My Skill' in body
 
 
 def test_missing_frontmatter():
-    content = "# No frontmatter here"
-    with pytest.raises(ParseError, match="must start with YAML frontmatter"):
+    content = '# No frontmatter here'
+    with pytest.raises(ParseError, match='must start with YAML frontmatter'):
         parse_frontmatter(content)
 
 
@@ -38,7 +38,7 @@ def test_unclosed_frontmatter():
 name: my-skill
 description: A test skill
 """
-    with pytest.raises(ParseError, match="not properly closed"):
+    with pytest.raises(ParseError, match='not properly closed'):
         parse_frontmatter(content)
 
 
@@ -49,7 +49,7 @@ description: broken
 ---
 Body here
 """
-    with pytest.raises(ParseError, match="Invalid YAML"):
+    with pytest.raises(ParseError, match='Invalid YAML'):
         parse_frontmatter(content)
 
 
@@ -61,14 +61,14 @@ def test_non_dict_frontmatter():
 ---
 Body
 """
-    with pytest.raises(ParseError, match="must be a YAML mapping"):
+    with pytest.raises(ParseError, match='must be a YAML mapping'):
         parse_frontmatter(content)
 
 
 def test_read_valid_skill(tmp_path: Path):
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text("""---
+    (skill_dir / 'SKILL.md').write_text("""---
 name: my-skill
 description: A test skill
 license: MIT
@@ -76,15 +76,15 @@ license: MIT
 # My Skill
 """)
     props = read_properties(skill_dir)
-    assert props.name == "my-skill"
-    assert props.description == "A test skill"
-    assert props.license == "MIT"
+    assert props.name == 'my-skill'
+    assert props.description == 'A test skill'
+    assert props.license == 'MIT'
 
 
 def test_read_with_metadata(tmp_path: Path):
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text("""---
+    (skill_dir / 'SKILL.md').write_text("""---
 name: my-skill
 description: A test skill
 metadata:
@@ -94,58 +94,58 @@ metadata:
 Body
 """)
     props = read_properties(skill_dir)
-    assert props.metadata == {"author": "Test Author", "version": "1.0"}
+    assert props.metadata == {'author': 'Test Author', 'version': '1.0'}
 
 
 def test_missing_skill_md(tmp_path: Path):
-    with pytest.raises(ParseError, match="SKILL.md not found"):
+    with pytest.raises(ParseError, match='SKILL.md not found'):
         read_properties(tmp_path)
 
 
 def test_missing_name(tmp_path: Path):
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text("""---
+    (skill_dir / 'SKILL.md').write_text("""---
 description: A test skill
 ---
 Body
 """)
-    with pytest.raises(ValidationError, match="Missing required field.*name"):
+    with pytest.raises(ValidationError, match='Missing required field.*name'):
         read_properties(skill_dir)
 
 
 def test_missing_description(tmp_path: Path):
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text("""---
+    (skill_dir / 'SKILL.md').write_text("""---
 name: my-skill
 ---
 Body
 """)
-    with pytest.raises(ValidationError, match="Missing required field.*description"):
+    with pytest.raises(ValidationError, match='Missing required field.*description'):
         read_properties(skill_dir)
 
 
 def test_validation_error_copies_error_list():
-    errors = ["first problem"]
-    error = ValidationError("validation failed", errors)
+    errors = ['first problem']
+    error = ValidationError('validation failed', errors)
 
-    errors.append("second problem")
+    errors.append('second problem')
 
-    assert error.errors == ["first problem"]
+    assert error.errors == ['first problem']
 
 
 def test_find_skill_md_requires_exact_uppercase(tmp_path: Path):
     """Only exact-cased SKILL.md satisfies specification discovery."""
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "skill.md").write_text("lowercase")
+    (skill_dir / 'skill.md').write_text('lowercase')
     assert find_skill_md(skill_dir) is None
 
 
 def test_find_skill_md_returns_none_when_missing(tmp_path: Path):
     """find_skill_md should return None when exact SKILL.md does not exist."""
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
     result = find_skill_md(skill_dir)
     assert result is None
@@ -153,23 +153,23 @@ def test_find_skill_md_returns_none_when_missing(tmp_path: Path):
 
 def test_read_properties_rejects_lowercase_skill_md(tmp_path: Path):
     """Lowercase skill.md must not satisfy the exact-casing requirement."""
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "skill.md").write_text("""---
+    (skill_dir / 'skill.md').write_text("""---
 name: my-skill
 description: A test skill
 ---
 # My Skill
 """)
 
-    with pytest.raises(ParseError, match="SKILL.md not found"):
+    with pytest.raises(ParseError, match='SKILL.md not found'):
         read_properties(skill_dir)
 
 
 def test_read_properties_metadata_defaults_to_empty_dict(tmp_path: Path):
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text("""---
+    (skill_dir / 'SKILL.md').write_text("""---
 name: my-skill
 description: A test skill
 ---
@@ -182,9 +182,9 @@ Body
 
 def test_read_with_allowed_tools(tmp_path: Path):
     """allowed-tools should be parsed into SkillProperties."""
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text("""---
+    (skill_dir / 'SKILL.md').write_text("""---
 name: my-skill
 description: A test skill
 allowed-tools: Bash(jq:*) Bash(git:*)
@@ -192,29 +192,29 @@ allowed-tools: Bash(jq:*) Bash(git:*)
 Body
 """)
     props = read_properties(skill_dir)
-    assert props.allowed_tools == "Bash(jq:*) Bash(git:*)"
+    assert props.allowed_tools == 'Bash(jq:*) Bash(git:*)'
     # Verify to_dict outputs as "allowed-tools" (hyphenated)
     d = props.to_dict()
-    assert d["allowed-tools"] == "Bash(jq:*) Bash(git:*)"
+    assert d['allowed-tools'] == 'Bash(jq:*) Bash(git:*)'
 
 
 def test_delimiter_inside_value_does_not_truncate_frontmatter():
-    content = "---\nname: my-skill\ndescription: uses a --- rule inside\n---\nBody\n"
+    content = '---\nname: my-skill\ndescription: uses a --- rule inside\n---\nBody\n'
     metadata, body = parse_frontmatter(content)
-    assert metadata["description"] == "uses a --- rule inside"
-    assert body == "Body"
+    assert metadata['description'] == 'uses a --- rule inside'
+    assert body == 'Body'
 
 
 def test_opener_must_be_exactly_three_dashes():
     with pytest.raises(ParseError):
-        parse_frontmatter("----\nname: x\n---\nBody\n")
+        parse_frontmatter('----\nname: x\n---\nBody\n')
 
 
 @pytest.mark.parametrize(
-    "content",
+    'content',
     [
-        "--- \nname: x\n---\nBody\n",
-        "---\nname: x\n--- \nBody\n",
+        '--- \nname: x\n---\nBody\n',
+        '---\nname: x\n--- \nBody\n',
     ],
 )
 def test_delimiters_must_not_have_trailing_whitespace(content: str):
@@ -223,64 +223,64 @@ def test_delimiters_must_not_have_trailing_whitespace(content: str):
 
 
 def test_read_properties_reports_undecodable_file_as_parse_error(tmp_path: Path):
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_bytes(b"---\nname: my-skill\n\xff\xfe\n---\nBody\n")
+    (skill_dir / 'SKILL.md').write_bytes(b'---\nname: my-skill\n\xff\xfe\n---\nBody\n')
     with pytest.raises(ParseError):
         read_properties(skill_dir)
 
 
 @pytest.mark.parametrize(
-    "field",
+    'field',
     [
-        "metadata: invalid",
-        "metadata:\n  - invalid",
-        "metadata:\n  tags:\n    - invalid",
-        "license:\n  - MIT",
-        "compatibility:\n  - Python",
-        "allowed-tools:\n  - Read",
+        'metadata: invalid',
+        'metadata:\n  - invalid',
+        'metadata:\n  tags:\n    - invalid',
+        'license:\n  - MIT',
+        'compatibility:\n  - Python',
+        'allowed-tools:\n  - Read',
     ],
 )
 def test_read_properties_rejects_malformed_optional_fields(tmp_path: Path, field: str):
-    skill_dir = tmp_path / "my-skill"
+    skill_dir = tmp_path / 'my-skill'
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text(
-        f"---\nname: my-skill\ndescription: Test\n{field}\n---\nBody",
-        encoding="utf-8",
+    (skill_dir / 'SKILL.md').write_text(
+        f'---\nname: my-skill\ndescription: Test\n{field}\n---\nBody',
+        encoding='utf-8',
     )
-    with pytest.raises(ValidationError, match="metadata|license|compatibility|allowed-tools"):
+    with pytest.raises(ValidationError, match='metadata|license|compatibility|allowed-tools'):
         read_properties(skill_dir)
 
 
-@pytest.mark.parametrize("control", ["\x01", "\x7f", "\x80", "\x9f"])
+@pytest.mark.parametrize('control', ['\x01', '\x7f', '\x80', '\x9f'])
 def test_raw_control_yaml_is_a_controlled_parse_error(control: str):
-    with pytest.raises(ParseError, match="Invalid YAML"):
-        parse_frontmatter(f"---\nname: my-skill\ndescription: bad{control}text\n---\nBody")
+    with pytest.raises(ParseError, match='Invalid YAML'):
+        parse_frontmatter(f'---\nname: my-skill\ndescription: bad{control}text\n---\nBody')
 
 
-@pytest.mark.parametrize("escape", [r"\x01", r"\uD800", r"\uFFFE"])
+@pytest.mark.parametrize('escape', [r'\x01', r'\uD800', r'\uFFFE'])
 def test_escaped_forbidden_unicode_is_a_controlled_parse_error(escape: str):
-    with pytest.raises(ParseError, match="Unicode|character"):
+    with pytest.raises(ParseError, match='Unicode|character'):
         parse_frontmatter(f'---\nname: my-skill\ndescription: "{escape}"\n---\nBody')
 
 
 def test_duplicate_yaml_keys_are_rejected():
-    with pytest.raises(ParseError, match="Invalid YAML"):
-        parse_frontmatter("---\nname: first\nname: second\ndescription: Test\n---\nBody")
+    with pytest.raises(ParseError, match='Invalid YAML'):
+        parse_frontmatter('---\nname: first\nname: second\ndescription: Test\n---\nBody')
 
 
 def test_directory_read_failure_is_a_controlled_parse_error(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
     def denied(_path: Path):
-        raise PermissionError("directory access denied")
+        raise PermissionError('directory access denied')
 
-    monkeypatch.setattr(Path, "iterdir", denied)
-    with pytest.raises(ParseError, match="directory access denied"):
+    monkeypatch.setattr(Path, 'iterdir', denied)
+    with pytest.raises(ParseError, match='directory access denied'):
         read_properties(tmp_path)
 
 
-@pytest.mark.parametrize("escape", [r"\U00110000", r"\UFFFFFFFF"])
+@pytest.mark.parametrize('escape', [r'\U00110000', r'\UFFFFFFFF'])
 def test_out_of_range_yaml_unicode_is_a_controlled_parse_error(escape: str):
-    with pytest.raises(ParseError, match="Invalid YAML"):
+    with pytest.raises(ParseError, match='Invalid YAML'):
         parse_frontmatter(f'---\nname: my-skill\ndescription: "{escape}"\n---\nBody')

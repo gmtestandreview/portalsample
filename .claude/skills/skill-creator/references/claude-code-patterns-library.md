@@ -170,3 +170,23 @@ useState|useEffect              # React hooks
 - [trigger types](claude-code-trigger-types.md) - Detailed trigger documentation
 - [skill rules reference](claude-code-skill-rules-reference.md) - Complete
   schema
+
+## Adversarial verification contract
+
+**Local regex falsification set (regex syntax is illustrative, not a replica of
+the external matcher):**
+
+| Pattern family   | Positive                   | Negative (must not independently trigger) |
+| ---------------- | -------------------------- | ----------------------------------------- |
+| Feature/endpoint | "Create an API endpoint"   | "Review an API endpoint design"           |
+| Component        | "Create a React component" | "Explain component architecture"          |
+| Database         | "Modify a database table"  | "What is a database schema?"              |
+| Error handling   | "Fix a runtime error"      | "Describe error classifications"          |
+| Testing          | "Write a unit test"        | "Read the test summary"                   |
+
+**Acceptance:** Evaluate each regex against its pair, count false
+positives/negatives, and refine domain-specific boundaries; never infer a real
+Claude trigger rate from Python/JavaScript regex matches. A failing or absent
+external matcher is NHR. For paths, test inclusion and exclusions together,
+including `.test.tsx` and generated files. Avoid catastrophic regex or broad
+content scans; require a bounded input length in any new matcher implementation.

@@ -94,9 +94,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
+
 @dataclass
 class User:
     """Core user entity - no framework dependencies."""
+
     id: str
     email: str
     name: str
@@ -111,10 +113,12 @@ class User:
         """Business rule: active users can order."""
         return self.is_active
 
+
 # domain/interfaces/user_repository.py
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from domain.entities.user import User
+
 
 class IUserRepository(ABC):
     """Port: defines contract, no implementation."""
@@ -135,6 +139,7 @@ class IUserRepository(ABC):
     async def delete(self, user_id: str) -> bool:
         pass
 
+
 # use_cases/create_user.py
 from domain.entities.user import User
 from domain.interfaces.user_repository import IUserRepository
@@ -142,16 +147,19 @@ from dataclasses import dataclass
 from datetime import datetime
 import uuid
 
+
 @dataclass
 class CreateUserRequest:
     email: str
     name: str
+
 
 @dataclass
 class CreateUserResponse:
     user: User
     success: bool
     error: Optional[str] = None
+
 
 class CreateUserUseCase:
     """Use case: orchestrates business logic."""
@@ -163,11 +171,7 @@ class CreateUserUseCase:
         # Business validation
         existing = await self.user_repository.find_by_email(request.email)
         if existing:
-            return CreateUserResponse(
-                user=None,
-                success=False,
-                error="Email already exists"
-            )
+            return CreateUserResponse(user=None, success=False, error='Email already exists')
 
         # Create entity
         user = User(
@@ -175,22 +179,21 @@ class CreateUserUseCase:
             email=request.email,
             name=request.name,
             created_at=datetime.now(),
-            is_active=True
+            is_active=True,
         )
 
         # Persist
         saved_user = await self.user_repository.save(user)
 
-        return CreateUserResponse(
-            user=saved_user,
-            success=True
-        )
+        return CreateUserResponse(user=saved_user, success=True)
+
 
 # adapters/repositories/postgres_user_repository.py
 from domain.interfaces.user_repository import IUserRepository
 from domain.entities.user import User
 from typing import Optional
 import asyncpg
+
 
 class PostgresUserRepository(IUserRepository):
     """Adapter: PostgreSQL implementation."""
@@ -200,16 +203,12 @@ class PostgresUserRepository(IUserRepository):
 
     async def find_by_id(self, user_id: str) -> Optional[User]:
         async with self.pool.acquire() as conn:
-            row = await conn.fetchrow(
-                "SELECT * FROM users WHERE id = $1", user_id
-            )
+            row = await conn.fetchrow('SELECT * FROM users WHERE id = $1', user_id)
             return self._to_entity(row) if row else None
 
     async def find_by_email(self, email: str) -> Optional[User]:
         async with self.pool.acquire() as conn:
-            row = await conn.fetchrow(
-                "SELECT * FROM users WHERE email = $1", email
-            )
+            row = await conn.fetchrow('SELECT * FROM users WHERE email = $1', email)
             return self._to_entity(row) if row else None
 
     async def save(self, user: User) -> User:
@@ -221,26 +220,29 @@ class PostgresUserRepository(IUserRepository):
                 ON CONFLICT (id) DO UPDATE
                 SET email = $2, name = $3, is_active = $5
                 """,
-                user.id, user.email, user.name, user.created_at, user.is_active
+                user.id,
+                user.email,
+                user.name,
+                user.created_at,
+                user.is_active,
             )
             return user
 
     async def delete(self, user_id: str) -> bool:
         async with self.pool.acquire() as conn:
-            result = await conn.execute(
-                "DELETE FROM users WHERE id = $1", user_id
-            )
-            return result == "DELETE 1"
+            result = await conn.execute('DELETE FROM users WHERE id = $1', user_id)
+            return result == 'DELETE 1'
 
     def _to_entity(self, row) -> User:
         """Map database row to entity."""
         return User(
-            id=row["id"],
-            email=row["email"],
-            name=row["name"],
-            created_at=row["created_at"],
-            is_active=row["is_active"]
+            id=row['id'],
+            email=row['email'],
+            name=row['name'],
+            created_at=row['created_at'],
+            is_active=row['is_active'],
         )
+
 
 # adapters/controllers/user_controller.py
 from fastapi import APIRouter, Depends, HTTPException
@@ -249,14 +251,15 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
+
 class CreateUserDTO(BaseModel):
     email: str
     name: str
 
-@router.post("/users")
+
+@router.post('/users')
 async def create_user(
-    dto: CreateUserDTO,
-    use_case: CreateUserUseCase = Depends(get_create_user_use_case)
+    dto: CreateUserDTO, use_case: CreateUserUseCase = Depends(get_create_user_use_case)
 ):
     """Controller: handles HTTP concerns only."""
     request = CreateUserRequest(email=dto.email, name=dto.name)
@@ -265,7 +268,7 @@ async def create_user(
     if not response.success:
         raise HTTPException(status_code=400, detail=response.error)
 
-    return {"user": response.user}
+    return {'user': response.user}
 ```
 
 ## Hexagonal Architecture Pattern
@@ -279,7 +282,7 @@ class OrderService:
         self,
         order_repository: OrderRepositoryPort,
         payment_gateway: PaymentGatewayPort,
-        notification_service: NotificationPort
+        notification_service: NotificationPort,
     ):
         self.orders = order_repository
         self.payments = payment_gateway
@@ -288,27 +291,23 @@ class OrderService:
     async def place_order(self, order: Order) -> OrderResult:
         # Business logic
         if not order.is_valid():
-            return OrderResult(success=False, error="Invalid order")
+            return OrderResult(success=False, error='Invalid order')
 
         # Use ports (interfaces)
-        payment = await self.payments.charge(
-            amount=order.total,
-            customer=order.customer_id
-        )
+        payment = await self.payments.charge(amount=order.total, customer=order.customer_id)
 
         if not payment.success:
-            return OrderResult(success=False, error="Payment failed")
+            return OrderResult(success=False, error='Payment failed')
 
         order.mark_as_paid()
         saved_order = await self.orders.save(order)
 
         await self.notifications.send(
-            to=order.customer_email,
-            subject="Order confirmed",
-            body=f"Order {order.id} confirmed"
+            to=order.customer_email, subject='Order confirmed', body=f'Order {order.id} confirmed'
         )
 
         return OrderResult(success=True, order=saved_order)
+
 
 # Ports (interfaces)
 class OrderRepositoryPort(ABC):
@@ -316,15 +315,18 @@ class OrderRepositoryPort(ABC):
     async def save(self, order: Order) -> Order:
         pass
 
+
 class PaymentGatewayPort(ABC):
     @abstractmethod
     async def charge(self, amount: Money, customer: str) -> PaymentResult:
         pass
 
+
 class NotificationPort(ABC):
     @abstractmethod
     async def send(self, to: str, subject: str, body: str):
         pass
+
 
 # Adapters (implementations)
 class StripePaymentAdapter(PaymentGatewayPort):
@@ -337,19 +339,18 @@ class StripePaymentAdapter(PaymentGatewayPort):
     async def charge(self, amount: Money, customer: str) -> PaymentResult:
         try:
             charge = self.stripe.Charge.create(
-                amount=amount.cents,
-                currency=amount.currency,
-                customer=customer
+                amount=amount.cents, currency=amount.currency, customer=customer
             )
             return PaymentResult(success=True, transaction_id=charge.id)
         except stripe.error.CardError as e:
             return PaymentResult(success=False, error=str(e))
 
+
 class MockPaymentAdapter(PaymentGatewayPort):
     """Test adapter: no external dependencies."""
 
     async def charge(self, amount: Money, customer: str) -> PaymentResult:
-        return PaymentResult(success=True, transaction_id="mock-123")
+        return PaymentResult(success=True, transaction_id='mock-123')
 ```
 
 ## Domain-Driven Design Pattern
@@ -359,25 +360,30 @@ class MockPaymentAdapter(PaymentGatewayPort):
 from dataclasses import dataclass
 from typing import Optional
 
+
 @dataclass(frozen=True)
 class Email:
     """Value object: validated email."""
+
     value: str
 
     def __post_init__(self):
-        if "@" not in self.value:
-            raise ValueError("Invalid email")
+        if '@' not in self.value:
+            raise ValueError('Invalid email')
+
 
 @dataclass(frozen=True)
 class Money:
     """Value object: amount with currency."""
+
     amount: int  # cents
     currency: str
 
-    def add(self, other: "Money") -> "Money":
+    def add(self, other: 'Money') -> 'Money':
         if self.currency != other.currency:
-            raise ValueError("Currency mismatch")
+            raise ValueError('Currency mismatch')
         return Money(self.amount + other.amount, self.currency)
+
 
 # Entities (with identity)
 class Order:
@@ -403,12 +409,13 @@ class Order:
     def submit(self):
         """State transition with business rules."""
         if not self.items:
-            raise ValueError("Cannot submit empty order")
+            raise ValueError('Cannot submit empty order')
         if self.status != OrderStatus.PENDING:
-            raise ValueError("Order already submitted")
+            raise ValueError('Order already submitted')
 
         self.status = OrderStatus.SUBMITTED
         self._events.append(OrderSubmittedEvent(self.id))
+
 
 # Aggregates (consistency boundary)
 class Customer:
@@ -423,18 +430,20 @@ class Customer:
     def add_address(self, address: Address):
         """Aggregate enforces invariants."""
         if len(self._addresses) >= 5:
-            raise ValueError("Maximum 5 addresses allowed")
+            raise ValueError('Maximum 5 addresses allowed')
         self._addresses.append(address)
 
     @property
     def primary_address(self) -> Optional[Address]:
         return next((a for a in self._addresses if a.is_primary), None)
 
+
 # Domain Events
 @dataclass
 class OrderSubmittedEvent:
     order_id: str
     occurred_at: datetime = field(default_factory=datetime.now)
+
 
 # Repository (aggregate persistence)
 class OrderRepository:

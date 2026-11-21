@@ -9,8 +9,8 @@ description:
   writing skills".
 compatibility: Codex, Claude, A Team, Claude Code, GitHub Copilot
 metadata:
-  version: '2026-10-17-bounded-evidence'
-  last-updated: '2026-10-17'
+  version: '2026-11-14-adversarial-review'
+  last-updated: '2026-11-14'
 ---
 
 # Writing Skills
@@ -19,6 +19,27 @@ Treat skill work as evidence-driven lifecycle management. Observe representative
 behavior where possible, add the smallest justified guidance, and revalidate
 after consequential changes. Never invent requirements, paths, tools, tests,
 results, permissions, or supporting resources.
+
+## Purpose, objective, and success state
+
+**Purpose:** Agent Skill changes can look compliant while hiding activation
+collisions, broken resource paths, destructive side effects, or unverifiable
+behavior. This skill supplies a reusable, evidence-gated workflow that an
+ordinary editing prompt does not reliably enforce.
+
+**Objective:** For the supplied Agent Skill and its authorized resources,
+inspect and either decide or make the smallest justified improvement; preserve
+unique domain knowledge, scope boundaries, safety and existing behavior. Do not
+install, publish, overwrite an external target, or claim readiness without the
+required authority and evidence.
+
+**Success state:** A reviewed before-state, explicit changes or a supported
+no-change decision, protected invariants, a complete deliverable inventory, and
+current check results exist. The requested artifact must be accessible; all
+applicable mandatory gates must pass before `deploy`. A static score, completed
+checklist, or successful test command alone is **not** proof that a skill
+activates or improves real behavior. Stop and report `NHR` or a blocker when a
+required claim cannot be demonstrated.
 
 ## Scope
 
@@ -48,6 +69,19 @@ about packaging them as an Agent Skill.
 - A checklist defines required evidence; it is not execution evidence.
 - Tested behavior is evidence, not authority to waive mandatory requirements.
 - Do not claim safety, readiness, or compliance beyond the evidence available.
+
+## Pre-execution adversarial self-review
+
+Before consequential evaluation or modification, make a compact operational
+check: **intent** (what did the user request, and what is excluded?), **scope**
+(is this the right skill?), **evidence** (which files/tools/results exist?),
+**constraints** (what must remain unchanged?), **risk** (what side effects or
+permissions require a checkpoint/authorization?), **validation** (what would
+falsify success?), and **deliverable** (what exact files/report are required?).
+Challenge the most likely wrong assumption and highest-cost failure. If a
+material ambiguity cannot be resolved from supplied evidence, do not invent an
+answer or proceed with high-impact changes; record `AMBER`/`NHR` and continue
+only with reversible, supported work. Keep this check proportionate to risk.
 
 ## Workflow
 
@@ -81,12 +115,30 @@ criteria. Planning is read-only unless implementation is authorized.
 
 ### 5. Score
 
-For scored audits, load `references/best-practices-evaluations.md` and
-`references/audit-scoring.md`. Classify artifact completeness before scoring.
-Use the current 100-point rubric and normalize only genuine `N/A` criteria. A
-numeric score never overrides a blocker.
+Classify artifact completeness, then **freeze numeric authority and scope**
+before assigning any points. A user-supplied rubric governs every artifact/file
+within its stated scope; preserve its weights, anchors and threshold without
+blending a local fallback. For a requested Devil's Advocate six-area review
+without an attached rubric, use `references/devils-advocate-rubric.md`.
+Otherwise use `references/audit-scoring.md` for the default whole-skill score
+and `references/file-review-rubric.md` for first-party file scores. Load
+`references/best-practices-evaluations.md` for unscored quality diagnostics.
+Label any distinct rubrics separately; prior scores under different schemes are
+not like-for-like baselines. Normalize only genuinely inapplicable criteria
+under the chosen rubric. A numeric score never overrides a blocker.
 
 ### 6. Test or assess evidence
+
+Before testing, freeze the revision, governing instruction, expected result,
+negative oracle, comparison baseline (where meaningful), and evidence location.
+Use `evals/README.md` and `evals/evaluation-schema.md` for cases and recording.
+At minimum cover direct **positive**, **indirect positive**, **near-miss**,
+**edge**, **missing/invalid input**, **pressure**, **known regression**, and
+**output** cases as applicable. For every critical trigger or branch, map a
+positive and near-miss bidirectionally (QAQ/RMI); test what must **not** occur
+as well as what must occur. Distinguish static checks and designed scenarios
+from observed runtime activation and with/without-skill comparisons. Never mark
+an unexecuted behavioral test `PASS`.
 
 Select tests by classification and risk. Use
 `references/evaluating-skill-output.md` for output-quality eval design and
@@ -136,6 +188,18 @@ failures. `deploy` is prohibited while any required blocker remains unresolved.
 
 ### 11. Auto-optimize
 
+Use the selected numeric rubric and scope from step 5; do not substitute a
+different rubric during an optimization wave. For an explicitly requested
+**Devil's Advocate** six-area review, apply
+`references/devils-advocate-rubric.md` unless an in-scope user-supplied version
+takes precedence. For an exhaustive package review, also use
+`references/file-review-rubric.md` to inspect every first-party file by its
+role, including code, tests, evals, templates, metadata, and configuration.
+Report exclusions such as vendored environments, compiled outputs, caches, and
+session logs separately; do not treat them as deployable support files. Score
+individual files independently, not by copying the package total. A file's
+quality score does not establish fresh behavior or deployment readiness.
+
 Run only when optimization/remediation/revision/implementation is requested.
 Audit-only requests report fixes without silent revision.
 
@@ -173,10 +237,19 @@ Always start with `references/index.md`. Important conditional routes:
 Do not rely on a path that has not been supplied or verified. Keep reference
 chains shallow and load optional material only when its condition applies.
 
-## Completion contract
+## Expected output and completion contract
 
-Deliver the requested artifact plus changed paths, exact revision identifier,
-fresh checks actually run, applicable score(s), blockers, `NHR` items, and
-exactly one recommendation:
+Deliver the exact requested candidate or supported no-change decision and an
+independently inspectable report containing: baseline identity/hash and file
+inventory; findings versus fixes; before/after rubric scores with criterion
+scores and evidence; every first-party file's role and score when an atomic
+review is requested; available positive, negative, edge, safety and regression
+test results with commands and exit statuses; unrun tests and `NHR`; protected
+invariants; remaining blockers; final artifact location; and final decision.
+Preserve the supplied original. Never report a proposed action as an edit, a
+planned test as executed, a successful static inspection as a behavioral pass,
+or a high score as release authorization. The final artifact must be verified at
+its actual location before claiming delivery. End with exactly one
+recommendation:
 
 `deploy | revise | split | merge | deprecate | hold`

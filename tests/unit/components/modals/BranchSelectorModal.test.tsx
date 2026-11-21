@@ -307,6 +307,16 @@ const renderModal = (opts: RenderOptions = {}) => {
   );
 };
 
+const renderLoadedModal = async (opts: RenderOptions = {}) => {
+  const view = renderModal(opts);
+  await screen.findByRole('radio', { name: 'ACME Sydney Office' });
+  return view;
+};
+
+const clickSave = () => {
+  fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+};
+
 // ─── tests ────────────────────────────────────────────────────────────────────
 
 describe('branch selector modal', () => {
@@ -352,13 +362,31 @@ describe('branch selector modal', () => {
   });
 
   it('shows no-branches message when the API returns an empty array', async () => {
-    // An empty result causes a TypeError accessing result[0] which the catch handles,
+    // An empty result throws 'No branches returned' which the catch handles,
     // but branches is set to [] before the throw so the empty-branches tbody renders.
     expect.hasAssertions();
 
     resetBranchSelectorMocks();
 
     getOrganisationsByABN.mockResolvedValue([]);
+
+    renderModal();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/No branch\/locations available/i),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('shows no-branches message when the API resolves null for an empty body', async () => {
+    expect.hasAssertions();
+
+    resetBranchSelectorMocks();
+
+    getOrganisationsByABN.mockResolvedValue(
+      null as unknown as OrganisationDto[],
+    );
 
     renderModal();
 
@@ -599,11 +627,9 @@ describe('branch selector modal', () => {
 
     resetBranchSelectorMocks();
 
-    renderModal();
+    await renderLoadedModal();
 
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
@@ -640,14 +666,12 @@ describe('branch selector modal', () => {
       value: locationMock,
     });
 
-    renderModal({
+    await renderLoadedModal({
       mode: BranchSelectionModalMode.RFQSelectOrg,
       rfqId: 'RFQ-123',
     });
 
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
@@ -673,11 +697,9 @@ describe('branch selector modal', () => {
 
     mocks.setDefaultOrganisation.mockRejectedValueOnce(new Error('save error'));
 
-    renderModal();
+    await renderLoadedModal();
 
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(
@@ -698,11 +720,9 @@ describe('branch selector modal', () => {
 
     resetBranchSelectorMocks();
 
-    renderModal({ accountDispatch: null });
+    await renderLoadedModal({ accountDispatch: null });
 
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({
@@ -723,7 +743,7 @@ describe('branch selector modal', () => {
 
     renderModal({ abn: undefined });
 
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({});
@@ -743,7 +763,7 @@ describe('branch selector modal', () => {
 
     renderModal({ abn: undefined, accountCreationCompleted: false });
 
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.setCompleted).toHaveBeenCalledWith();
@@ -757,11 +777,9 @@ describe('branch selector modal', () => {
 
     resetBranchSelectorMocks();
 
-    renderModal({ accountCreationCompleted: false });
+    await renderLoadedModal({ accountCreationCompleted: false });
 
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.setCompleted).toHaveBeenCalledWith();
@@ -773,16 +791,14 @@ describe('branch selector modal', () => {
     );
   });
 
-  it('does nothing when MSAL interaction is in progress (line 187 false branch)', async () => {
+  it('does nothing when MSAL interaction is in progress', async () => {
     expect.hasAssertions();
 
     resetBranchSelectorMocks();
 
-    renderModal({ msalInProgress: InteractionStatus.AcquireToken });
+    await renderLoadedModal({ msalInProgress: InteractionStatus.AcquireToken });
 
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await Promise.resolve();
 
@@ -812,7 +828,7 @@ describe('branch selector modal', () => {
 
     await screen.findByRole('radio', { name: 'No-Name WA Office' });
 
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
@@ -823,16 +839,14 @@ describe('branch selector modal', () => {
     });
   });
 
-  it('skips setDefaultOrganisation and navigates when modal mode is unrecognised (line 199 false branch)', async () => {
+  it('skips setDefaultOrganisation and navigates when modal mode is unrecognised', async () => {
     expect.hasAssertions();
 
     resetBranchSelectorMocks();
 
-    renderModal({ mode: 'UnknownMode' });
+    await renderLoadedModal({ mode: 'UnknownMode' });
 
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
+    clickSave();
 
     await waitFor(() => {
       expect(mocks.navigate).toHaveBeenCalledWith('/');

@@ -465,13 +465,13 @@ describe('coverage remapping cohort', () => {
   it('resolves the V8-to-Istanbul remapper at exactly one reviewed version', () => {
     expect.hasAssertions();
 
-    expect(installedVersions('ast-v8-to-istanbul')).toStrictEqual(['1.0.7']);
+    expect(installedVersions('ast-v8-to-istanbul')).toStrictEqual(['1.0.8']);
   });
 
   it('keeps the coverage provider aligned with the Vitest cohort', () => {
     expect.hasAssertions();
 
-    expect(installedVersions('@vitest/coverage-v8')).toStrictEqual(['5.0.5']);
+    expect(installedVersions('@vitest/coverage-v8')).toStrictEqual(['5.1.1']);
   });
 
   it('holds the Storybook test cohort on the same Vitest 5 release', () => {

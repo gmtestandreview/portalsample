@@ -42,12 +42,12 @@ M (medium).
 
 ## 1. Purpose: why should this skill exist?
 
-| #   | Sev | Attack                                                                                       | Defeated when                                                                                                                                                                     |
-| --- | --- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| P1  | H   | "It is a fork of `superpowers:subagent-driven-development`. Delete it and nothing is lost."  | The skill lists behaviors the upstream lacks and a repo rule that requires each (human gates, 3-round cap, `.agent-sync/` workspace, Veto Buffer), and each is cited in the text. |
-| P2  | M   | "The governance purpose is not in the description, so the skill can never be chosen for it." | The description or `When to use` lets an agent pick this skill over the upstream variant for a stated reason.                                                                     |
-| P3  | M   | "Context isolation is asserted, not enforced."                                               | A rule or script forces it (briefs as files, report files, no pasted history) and an example shows it.                                                                            |
-| P4  | H   | "When the upstream plugin changes, the two drift silently."                                  | The skill names an owner or a re-merge trigger, or states that divergence is intentional and where it is recorded.                                                                |
+| #   | Sev | Attack                                                                                       | Defeated when                                                                                                                                                        |
+| --- | --- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P1  | H   | "It is a fork of `superpowers:subagent-driven-development`. Delete it and nothing is lost."  | The skill lists behaviors the upstream lacks and a repo rule that requires each (human gates, `.agent-sync/` workspace, Veto Buffer), and each is cited in the text. |
+| P2  | M   | "The governance purpose is not in the description, so the skill can never be chosen for it." | The description or `When to use` lets an agent pick this skill over the upstream variant for a stated reason.                                                        |
+| P3  | M   | "Context isolation is asserted, not enforced."                                               | A rule or script forces it (briefs as files, report files, no pasted history) and an example shows it.                                                               |
+| P4  | H   | "When the upstream plugin changes, the two drift silently."                                  | The skill names an owner or a re-merge trigger, or states that divergence is intentional and where it is recorded.                                                   |
 
 ## 2. Objective: what must the activated agent accomplish?
 
@@ -69,12 +69,12 @@ M (medium).
 
 ## 4. Test: how is the skill itself proven?
 
-| #   | Sev | Attack                                                                                              | Defeated when                                                                                                                             |
-| --- | --- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| T1  | H   | "There is no behavioral evidence. The skill has only been read, never followed under pressure."     | A recorded run or eval shows a controller following it: baseline (without) vs with, raw output retained.                                  |
-| T2  | H   | "Nobody has tested the stop conditions. The first time an agent should stop, it will rule instead." | Cases exist where the agent must stop (destructive op, merge, round-3 cap) and must not stop (routine progress), with expected outcomes.  |
-| T3  | M   | "The scripts were checked ad hoc in a scratch repo; nothing re-runs them."                          | A runnable script test covers: `5` vs `5.1`, slug collision, empty range, wrong-direction range, non-repo plan.                           |
-| T4  | M   | "Activation was never tested: no positive and near-miss prompts."                                   | Listed prompts (for example "execute this plan in this session" vs "execute this plan in parallel worktrees") with expected skill choice. |
+| #   | Sev | Attack                                                                                              | Defeated when                                                                                                                              |
+| --- | --- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| T1  | H   | "There is no behavioral evidence. The skill has only been read, never followed under pressure."     | A recorded run or eval shows a controller following it: baseline (without) vs with, raw output retained.                                   |
+| T2  | H   | "Nobody has tested the stop conditions. The first time an agent should stop, it will rule instead." | Cases exist where the agent must stop (destructive op, merge, fix-round cap) and must not stop (routine progress), with expected outcomes. |
+| T3  | M   | "The scripts were checked ad hoc in a scratch repo; nothing re-runs them."                          | A runnable script test covers: `5` vs `5.1`, slug collision, empty range, wrong-direction range, non-repo plan.                            |
+| T4  | M   | "Activation was never tested: no positive and near-miss prompts."                                   | Listed prompts (for example "execute this plan in this session" vs "execute this plan in parallel worktrees") with expected skill choice.  |
 
 ## 5. Validation: how is each run proven?
 

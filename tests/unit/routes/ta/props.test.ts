@@ -199,8 +199,52 @@ const resetTaPropsMocks = () => {
   });
 };
 
-describe('pattern approval wizard prop factories', () => {
-  it('loads and saves application/instrument details while stripping lookup-only values', async () => {
+const createOrganisationProps = () =>
+  organisationAndContactProps(
+    'PA-2',
+    accounts,
+    instance,
+    accountDetails,
+    stepStatuses,
+    'Type approval',
+  );
+
+const createSummaryProps = () =>
+  summaryAndSubmitProps(
+    'PA-4',
+    accounts,
+    instance,
+    accountDetails,
+    stepStatuses,
+    'Type approval',
+  );
+
+interface LoggedFailureCase {
+  operation: () => unknown;
+  message: string;
+  logger: string;
+  id: string;
+}
+
+const expectLoggedFailures = async (
+  failureCases: readonly LoggedFailureCase[],
+) => {
+  for (const failureCase of failureCases) {
+    await expect(Promise.resolve(failureCase.operation())).rejects.toThrow(
+      failureCase.message,
+    );
+    expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
+      failureCase.logger,
+      expect.any(Error),
+      {
+        Id: failureCase.id,
+      },
+    );
+  }
+};
+
+describe('application and instrument loading and visibility', () => {
+  it('loads application/instrument details and exposes hide branches', async () => {
     expect.hasAssertions();
 
     resetTaPropsMocks();
@@ -273,6 +317,24 @@ describe('pattern approval wizard prop factories', () => {
       bannerSubTitle: 'Trading - Branch - National Measurement Institute',
       hidingFields: [false, true, false, false, false],
     });
+  });
+});
+
+describe('application and instrument saving', () => {
+  it('saves application/instrument details while stripping lookup-only values', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const props = applicationAndInstrumentProps(
+      'PA-1',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const abortSignal = new AbortController().signal;
 
     await props.onSaveAndNext?.(
       {
@@ -324,20 +386,15 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     );
   });
+});
 
-  it('loads and saves organisation/contact details with all hide branches', async () => {
+describe('organisation and contact visibility', () => {
+  it('loads organisation/contact step values and exposes all hide branches', async () => {
     expect.hasAssertions();
 
     resetTaPropsMocks();
 
-    const props = organisationAndContactProps(
-      'PA-2',
-      accounts,
-      instance,
-      accountDetails,
-      stepStatuses,
-      'Type approval',
-    );
+    const props = createOrganisationProps();
     const abortSignal = new AbortController().signal;
     const hidingFields =
       props.hidingFields as unknown as OrganisationHidingFields;
@@ -409,6 +466,17 @@ describe('pattern approval wizard prop factories', () => {
       ],
       redirect: '/not-found',
     });
+  });
+});
+
+describe('organisation and contact saving', () => {
+  it('saves organisation/contact details on exit and on next', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const props = createOrganisationProps();
+    const abortSignal = new AbortController().signal;
 
     await props.onSaveAndExit?.(
       { isManufacturer: YesNo.No },
@@ -442,7 +510,9 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     ]);
   });
+});
 
+describe('supporting document props', () => {
   it('loads and saves supporting documents with document-list branches', async () => {
     expect.hasAssertions();
 
@@ -513,26 +583,16 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     ]);
   });
+});
 
-  it('loads and submits summary values with lookup-enriched application details', async () => {
+describe('summary loading', () => {
+  it('loads summary values enriched with application lookups', async () => {
     expect.hasAssertions();
 
     resetTaPropsMocks();
 
-    const props = summaryAndSubmitProps(
-      'PA-4',
-      accounts,
-      instance,
-      accountDetails,
-      stepStatuses,
-      'Type approval',
-    );
+    const props = createSummaryProps();
     const abortSignal = new AbortController().signal;
-    const hidingFields = props.hidingFields as unknown as SummaryHidingFields;
-    const summaryExtras = props as unknown as {
-      disableLinkedError: boolean;
-      suppressErrorSummaryPath: boolean;
-    };
 
     await expect(props.loadStepValues(abortSignal)).resolves.toStrictEqual({
       stepValues: {
@@ -554,52 +614,98 @@ describe('pattern approval wizard prop factories', () => {
         },
       },
     });
+    expect(mocks.getSummary.mock.calls.at(-1)).toStrictEqual([
+      'PA-4',
+      abortSignal,
+    ]);
+  });
+});
+
+describe('summary organisation and contact visibility', () => {
+  it('exposes summary organisation/contact hide branches', () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const props = createSummaryProps();
+    const hidingFields = props.hidingFields as unknown as SummaryHidingFields;
+
+    expect([
+      hidingFields.organisationAndContact.branchOrLocationName({
+        organisationAndContact: {},
+      }),
+      hidingFields.organisationAndContact.branchOrLocationName({
+        organisationAndContact: { branchOrLocationName: 'Branch' },
+      }),
+      hidingFields.organisationAndContact.isManufacturerHide({
+        organisationAndContact: { isManufacturer: YesNo.Yes },
+      }),
+      hidingFields.organisationAndContact.isManufacturerHide({
+        organisationAndContact: { isManufacturer: YesNo.No },
+      }),
+      hidingFields.organisationAndContact.isManufacturerHide({
+        organisationAndContact: { isManufacturer: undefined },
+      }),
+      hidingFields.organisationAndContact.principalInvoiceContactHide({
+        organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes },
+      }),
+      hidingFields.organisationAndContact.principalInvoiceContactHide({
+        organisationAndContact: { isPrincipalInvoiceContact: YesNo.No },
+      }),
+      hidingFields.organisationAndContact.principalInvoiceContactHide({
+        organisationAndContact: { isPrincipalInvoiceContact: undefined },
+      }),
+      hidingFields.organisationAndContact.isCurrentOrganisationHide({
+        organisationAndContact: { isManufacturer: YesNo.No },
+      }),
+      hidingFields.organisationAndContact.isCurrentOrganisationHide({
+        organisationAndContact: { isManufacturer: YesNo.Yes },
+      }),
+      hidingFields.organisationAndContact.contact.titleOther({
+        organisationAndContact: { contact: { title: Title.Other } },
+      }),
+      hidingFields.organisationAndContact.contact.titleOther({
+        organisationAndContact: { contact: { title: Title.Dr } },
+      }),
+      hidingFields.organisationAndContact.invoiceContact.titleOther({
+        organisationAndContact: { invoiceContact: { title: Title.Other } },
+      }),
+      hidingFields.organisationAndContact.invoiceContact.titleOther({
+        organisationAndContact: { invoiceContact: { title: Title.Dr } },
+      }),
+    ]).toStrictEqual([
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+    ]);
+  });
+});
+
+describe('summary application and instrument visibility and submission', () => {
+  it('exposes summary application/instrument hide branches and error handling flags', () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const props = createSummaryProps();
+    const hidingFields = props.hidingFields as unknown as SummaryHidingFields;
+    const summaryExtras = props as unknown as {
+      disableLinkedError: boolean;
+      suppressErrorSummaryPath: boolean;
+    };
+
     expect({
-      summaryCall: mocks.getSummary.mock.calls.at(-1),
-      organisationAndContact: [
-        hidingFields.organisationAndContact.branchOrLocationName({
-          organisationAndContact: {},
-        }),
-        hidingFields.organisationAndContact.branchOrLocationName({
-          organisationAndContact: { branchOrLocationName: 'Branch' },
-        }),
-        hidingFields.organisationAndContact.isManufacturerHide({
-          organisationAndContact: { isManufacturer: YesNo.Yes },
-        }),
-        hidingFields.organisationAndContact.isManufacturerHide({
-          organisationAndContact: { isManufacturer: YesNo.No },
-        }),
-        hidingFields.organisationAndContact.isManufacturerHide({
-          organisationAndContact: { isManufacturer: undefined },
-        }),
-        hidingFields.organisationAndContact.principalInvoiceContactHide({
-          organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes },
-        }),
-        hidingFields.organisationAndContact.principalInvoiceContactHide({
-          organisationAndContact: { isPrincipalInvoiceContact: YesNo.No },
-        }),
-        hidingFields.organisationAndContact.principalInvoiceContactHide({
-          organisationAndContact: { isPrincipalInvoiceContact: undefined },
-        }),
-        hidingFields.organisationAndContact.isCurrentOrganisationHide({
-          organisationAndContact: { isManufacturer: YesNo.No },
-        }),
-        hidingFields.organisationAndContact.isCurrentOrganisationHide({
-          organisationAndContact: { isManufacturer: YesNo.Yes },
-        }),
-        hidingFields.organisationAndContact.contact.titleOther({
-          organisationAndContact: { contact: { title: Title.Other } },
-        }),
-        hidingFields.organisationAndContact.contact.titleOther({
-          organisationAndContact: { contact: { title: Title.Dr } },
-        }),
-        hidingFields.organisationAndContact.invoiceContact.titleOther({
-          organisationAndContact: { invoiceContact: { title: Title.Other } },
-        }),
-        hidingFields.organisationAndContact.invoiceContact.titleOther({
-          organisationAndContact: { invoiceContact: { title: Title.Dr } },
-        }),
-      ],
       applicationAndInstrument: [
         hidingFields.applicationAndInstrument.isApplNewHide({
           applicationAndInstrument: {
@@ -637,29 +743,20 @@ describe('pattern approval wizard prop factories', () => {
       disableLinkedError: summaryExtras.disableLinkedError,
       suppressErrorSummaryPath: summaryExtras.suppressErrorSummaryPath,
     }).toStrictEqual({
-      summaryCall: ['PA-4', abortSignal],
-      organisationAndContact: [
-        true,
-        false,
-        true,
-        false,
-        true,
-        true,
-        false,
-        true,
-        true,
-        false,
-        false,
-        true,
-        false,
-        true,
-      ],
       applicationAndInstrument: [false, true, false, true, false, true, false],
       redirect: '/not-found',
       disableLinkedError: false,
       suppressErrorSummaryPath: true,
     });
+  });
 
+  it('submits the summary on save and next', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const props = createSummaryProps();
+    const abortSignal = new AbortController().signal;
     const summary: RequestForPatternApprovalSummaryDto = {
       referenceId: 'PA-4',
       acceptNMIP106: true,
@@ -678,7 +775,9 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     );
   });
+});
 
+describe('client authentication', () => {
   it('authenticates every client with the acquired access token on each load and save path', async () => {
     expect.hasAssertions();
 
@@ -761,8 +860,10 @@ describe('pattern approval wizard prop factories', () => {
       });
     }
   });
+});
 
-  it('logs and rethrows client failures from each async prop helper', async () => {
+describe('application and organisation client failures', () => {
+  it('logs and rethrows application and organisation client failures', async () => {
     expect.hasAssertions();
 
     resetTaPropsMocks();
@@ -843,6 +944,20 @@ describe('pattern approval wizard prop factories', () => {
         logger: 'Failed to save PA org and contact details',
         id: 'PA-8',
       },
+    ];
+
+    await expectLoggedFailures(failureCases);
+  });
+});
+
+describe('document and summary client failures', () => {
+  it('logs and rethrows document and summary client failures', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+
+    const abortSignal = new AbortController().signal;
+    const failureCases = [
       {
         operation: () => {
           mocks.getSupportingDocuments.mockRejectedValueOnce(
@@ -915,20 +1030,11 @@ describe('pattern approval wizard prop factories', () => {
       },
     ];
 
-    for (const failureCase of failureCases) {
-      await expect(Promise.resolve(failureCase.operation())).rejects.toThrow(
-        failureCase.message,
-      );
-      expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
-        failureCase.logger,
-        expect.any(Error),
-        {
-          Id: failureCase.id,
-        },
-      );
-    }
+    await expectLoggedFailures(failureCases);
   });
+});
 
+describe('account availability', () => {
   it('throws account-availability errors before making client calls', async () => {
     expect.hasAssertions();
 

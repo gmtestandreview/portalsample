@@ -98,10 +98,10 @@ leadership.
 # Impact vs. Effort scoring framework
 def prioritize_features(features):
     scoring_matrix = {
-        'customer_impact': {'weight': 0.3, 'scale': 1-10},
-        'business_impact': {'weight': 0.3, 'scale': 1-10},
-        'effort_required': {'weight': 0.2, 'scale': 1-10},  # Inverse scoring
-        'strategic_alignment': {'weight': 0.2, 'scale': 1-10}
+        'customer_impact': {'weight': 0.3, 'scale': 1 - 10},
+        'business_impact': {'weight': 0.3, 'scale': 1 - 10},
+        'effort_required': {'weight': 0.2, 'scale': 1 - 10},  # Inverse scoring
+        'strategic_alignment': {'weight': 0.2, 'scale': 1 - 10},
     }
 
     for feature in features:

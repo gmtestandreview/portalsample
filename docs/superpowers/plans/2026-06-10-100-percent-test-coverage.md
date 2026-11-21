@@ -670,7 +670,7 @@ describe('AppLogger', () => {
     const logger = new AppLogger({ trackException } as never);
     const error = new Error('Failed');
 
-    logger.error(error, { requestId: '123' });
+    logging.exception(error, { requestId: '123' });
 
     expect(trackException).toHaveBeenCalledWith({
       exception: error,

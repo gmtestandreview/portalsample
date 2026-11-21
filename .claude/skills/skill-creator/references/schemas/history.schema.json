@@ -50,5 +50,6 @@
       }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$comment": "Schema checks structural iterations only; versions, parent references, uniqueness and current_best require semantic tests."
 }

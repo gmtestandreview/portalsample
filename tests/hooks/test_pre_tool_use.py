@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Behaviour matrix for the A Team PreToolUse guard (scripts/pre_tool_use.py).
+"""Behaviour matrix for the A Team PreToolUse guard (scripts/pre_tool_use.py).
 
 The guard is a security control, so it is tested from the outside exactly as
 Claude Code invokes it: a JSON tool call on stdin, and an exit code out.
@@ -30,7 +29,7 @@ from typing import cast
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-GUARD = ROOT / "scripts" / "pre_tool_use.py"
+GUARD = ROOT / 'scripts' / 'pre_tool_use.py'
 
 BLOCK = 2
 ALLOW = 0
@@ -38,167 +37,167 @@ ALLOW = 0
 # Assembled so this file's own text carries no contiguous destructive literal —
 # the guard inspects command strings, and a literal here would trip it when a
 # tool call happens to quote this file.
-_RECURSE_FORCE = "-Recurse " + "-Force"
-_RM_RF = "rm -r" + "f"
+_RECURSE_FORCE = '-Recurse ' + '-Force'
+_RM_RF = 'rm -r' + 'f'
 
 # A path segment like "...-formik-..." spells out r-then-f letters
 # (-f[o]r[mik]) purely by coincidence of English word order, with no real
 # flag delimiter involved. Split so this file's own text stays clean too.
-_HYPHENATED_FILENAME_LOOKALIKE = "docs/plans/2026-09-27-fo" + "rmik-migration-status.md"
+_HYPHENATED_FILENAME_LOOKALIKE = 'docs/plans/2026-09-27-fo' + 'rmik-migration-status.md'
 
 # (label, expected exit, tool_name, tool_input)
 BEHAVIOURS: list[tuple[str, int, str, dict[str, str]]] = [
     # --- Bash destructive --------------------------------------------------
-    ("bash: recursive force delete of root", BLOCK, "Bash", {"command": f"{_RM_RF} /"}),
-    ("bash: recursive force delete of home", BLOCK, "Bash", {"command": "rm -fr ~"}),
+    ('bash: recursive force delete of root', BLOCK, 'Bash', {'command': f'{_RM_RF} /'}),
+    ('bash: recursive force delete of home', BLOCK, 'Bash', {'command': 'rm -fr ~'}),
     # --- PowerShell destructive: the primary shell on Windows hosts --------
     (
-        "pwsh: Remove-Item recursive force",
+        'pwsh: Remove-Item recursive force',
         BLOCK,
-        "PowerShell",
-        {"command": f"Remove-Item {_RECURSE_FORCE} ."},
+        'PowerShell',
+        {'command': f'Remove-Item {_RECURSE_FORCE} .'},
     ),
     (
-        "pwsh: switches in reverse order",
+        'pwsh: switches in reverse order',
         BLOCK,
-        "PowerShell",
-        {"command": "Remove-Item -Force -Recurse C:\\"},
+        'PowerShell',
+        {'command': 'Remove-Item -Force -Recurse C:\\'},
     ),
-    ("pwsh: abbreviated switches -r -fo", BLOCK, "PowerShell", {"command": "ri -r -fo ./build"}),
+    ('pwsh: abbreviated switches -r -fo', BLOCK, 'PowerShell', {'command': 'ri -r -fo ./build'}),
     (
-        "pwsh: rm alias with PowerShell switches",
+        'pwsh: rm alias with PowerShell switches',
         BLOCK,
-        "PowerShell",
-        {"command": "rm -Recurse -Force ~"},
+        'PowerShell',
+        {'command': 'rm -Recurse -Force ~'},
     ),
     (
-        "pwsh: -Confirm:$false does not evade",
+        'pwsh: -Confirm:$false does not evade',
         BLOCK,
-        "PowerShell",
-        {"command": f"Remove-Item {_RECURSE_FORCE} -Confirm:$false ."},
+        'PowerShell',
+        {'command': f'Remove-Item {_RECURSE_FORCE} -Confirm:$false .'},
     ),
-    ("pwsh: Format-Volume", BLOCK, "PowerShell", {"command": "Format-Volume -DriveLetter C"}),
+    ('pwsh: Format-Volume', BLOCK, 'PowerShell', {'command': 'Format-Volume -DriveLetter C'}),
     # --- .env via path-bearing tools ---------------------------------------
-    ("read: .env", BLOCK, "Read", {"file_path": "/proj/.env"}),
-    ("read: .env.sample is a template", ALLOW, "Read", {"file_path": "/proj/.env.sample"}),
+    ('read: .env', BLOCK, 'Read', {'file_path': '/proj/.env'}),
+    ('read: .env.sample is a template', ALLOW, 'Read', {'file_path': '/proj/.env.sample'}),
     # --- .env via search tools ---------------------------------------------
-    ("grep: path targets .env", BLOCK, "Grep", {"pattern": ".", "path": ".env"}),
-    ("grep: glob targets .env", BLOCK, "Grep", {"pattern": ".", "path": ".", "glob": ".env*"}),
-    ("glob: pattern targets .env", BLOCK, "Glob", {"pattern": "**/.env"}),
+    ('grep: path targets .env', BLOCK, 'Grep', {'pattern': '.', 'path': '.env'}),
+    ('grep: glob targets .env', BLOCK, 'Grep', {'pattern': '.', 'path': '.', 'glob': '.env*'}),
+    ('glob: pattern targets .env', BLOCK, 'Glob', {'pattern': '**/.env'}),
     (
         "grep: searching FOR the text '.env' is legitimate",
         ALLOW,
-        "Grep",
-        {"pattern": "\\.env", "path": "src"},
+        'Grep',
+        {'pattern': '\\.env', 'path': 'src'},
     ),
     # --- .env via shell commands -------------------------------------------
-    ("bash: cat .env", BLOCK, "Bash", {"command": "cat .env"}),
-    ("pwsh: Get-Content .env", BLOCK, "PowerShell", {"command": "Get-Content .env"}),
-    ("pwsh: gc alias on .env", BLOCK, "PowerShell", {"command": "gc .env"}),
+    ('bash: cat .env', BLOCK, 'Bash', {'command': 'cat .env'}),
+    ('pwsh: Get-Content .env', BLOCK, 'PowerShell', {'command': 'Get-Content .env'}),
+    ('pwsh: gc alias on .env', BLOCK, 'PowerShell', {'command': 'gc .env'}),
     (
-        "pwsh: Copy-Item .env exfiltration",
+        'pwsh: Copy-Item .env exfiltration',
         BLOCK,
-        "PowerShell",
-        {"command": "Copy-Item .env $env:TEMP\\leak.txt"},
+        'PowerShell',
+        {'command': 'Copy-Item .env $env:TEMP\\leak.txt'},
     ),
     (
-        "pwsh: Get-Content .env.example is a template",
+        'pwsh: Get-Content .env.example is a template',
         ALLOW,
-        "PowerShell",
-        {"command": "Get-Content .env.example"},
+        'PowerShell',
+        {'command': 'Get-Content .env.example'},
     ),
-    ("bash: redirect into .env", BLOCK, "Bash", {"command": "echo X=1 >.env"}),
-    ("bash: grep reads .env", BLOCK, "Bash", {"command": "grep KEY .env.local"}),
-    ("bash: nested bash -c still inspected", BLOCK, "Bash", {"command": f"bash -c '{_RM_RF} /'"}),
+    ('bash: redirect into .env', BLOCK, 'Bash', {'command': 'echo X=1 >.env'}),
+    ('bash: grep reads .env', BLOCK, 'Bash', {'command': 'grep KEY .env.local'}),
+    ('bash: nested bash -c still inspected', BLOCK, 'Bash', {'command': f"bash -c '{_RM_RF} /'"}),
     (
-        "pwsh: nested -Command still inspected",
+        'pwsh: nested -Command still inspected',
         BLOCK,
-        "PowerShell",
-        {"command": f'pwsh -Command "Remove-Item {_RECURSE_FORCE} C:\\"'},
+        'PowerShell',
+        {'command': f'pwsh -Command "Remove-Item {_RECURSE_FORCE} C:\\"'},
     ),
     (
-        "bash: command substitution still inspected",
+        'bash: command substitution still inspected',
         BLOCK,
-        "Bash",
-        {"command": f"echo $({_RM_RF} ~)"},
+        'Bash',
+        {'command': f'echo $({_RM_RF} ~)'},
     ),
-    ("glob: *.env* selector", BLOCK, "Glob", {"pattern": "**/*.env*"}),
+    ('glob: *.env* selector', BLOCK, 'Glob', {'pattern': '**/*.env*'}),
     # --- sonar / scanner cleanup of build artefacts is legitimate ----------
     (
-        "pwsh: scanner workdir cleanup",
+        'pwsh: scanner workdir cleanup',
         ALLOW,
-        "PowerShell",
-        {"command": f"Remove-Item {_RECURSE_FORCE} .scannerwork"},
+        'PowerShell',
+        {'command': f'Remove-Item {_RECURSE_FORCE} .scannerwork'},
     ),
-    ("bash: scanner workdir cleanup", ALLOW, "Bash", {"command": f"{_RM_RF} .scannerwork .sonar"}),
+    ('bash: scanner workdir cleanup', ALLOW, 'Bash', {'command': f'{_RM_RF} .scannerwork .sonar'}),
     (
-        "bash: node_modules cache cleanup",
+        'bash: node_modules cache cleanup',
         ALLOW,
-        "Bash",
-        {"command": f"{_RM_RF} node_modules/.cache/sonar"},
+        'Bash',
+        {'command': f'{_RM_RF} node_modules/.cache/sonar'},
     ),
     (
-        "bash: allowlist cannot be escaped with ..",
+        'bash: allowlist cannot be escaped with ..',
         BLOCK,
-        "Bash",
-        {"command": f"{_RM_RF} dist/../src"},
+        'Bash',
+        {'command': f'{_RM_RF} dist/../src'},
     ),
-    ("bash: glob of root is not allowlisted", BLOCK, "Bash", {"command": f"{_RM_RF} *"}),
+    ('bash: glob of root is not allowlisted', BLOCK, 'Bash', {'command': f'{_RM_RF} *'}),
 ]
 
 # Every one of these must be ALLOWED.
 FALSE_POSITIVES: list[tuple[str, dict[str, str]]] = [
-    ("Bash", {"command": "npm run test:ci:unit"}),
-    ("Bash", {"command": "npm run type-check"}),
-    ("Bash", {"command": "git diff origin/main...HEAD --name-only"}),
-    ("Bash", {"command": "git rm -r --cached ."}),
-    ("Bash", {"command": "rm -f temp.txt"}),
-    ("Bash", {"command": "grep -rn 'pattern' ClientApp/src"}),
-    ("Bash", {"command": "sed -i 's/foo/bar/' file.txt"}),
-    ("Bash", {"command": "npx tsc --noEmit"}),
-    ("PowerShell", {"command": "Get-Process node | Select-Object Id, CPU"}),
-    ("PowerShell", {"command": "Get-ChildItem -Recurse -Filter *.ts"}),
-    ("PowerShell", {"command": "Copy-Item report.html backup.html"}),
-    ("PowerShell", {"command": "Remove-Item build.txt"}),
-    ("PowerShell", {"command": "New-Item -ItemType Directory -Force reports"}),
-    ("Bash", {"command": f"git rm {_HYPHENATED_FILENAME_LOOKALIKE}"}),
-    ("PowerShell", {"command": f"git rm {_HYPHENATED_FILENAME_LOOKALIKE}"}),
-    ("Grep", {"pattern": "acquireTokenSilent", "path": "ClientApp/src"}),
-    ("Grep", {"pattern": "\\.env", "path": "ClientApp/src", "glob": "*.ts"}),
-    ("Glob", {"pattern": "**/*.stories.tsx"}),
-    ("Read", {"file_path": "ClientApp/src/env.ts"}),
-    ("Write", {"file_path": "reports/out.json"}),
+    ('Bash', {'command': 'npm run test:ci:unit'}),
+    ('Bash', {'command': 'npm run type-check'}),
+    ('Bash', {'command': 'git diff origin/main...HEAD --name-only'}),
+    ('Bash', {'command': 'git rm -r --cached .'}),
+    ('Bash', {'command': 'rm -f temp.txt'}),
+    ('Bash', {'command': "grep -rn 'pattern' ClientApp/src"}),
+    ('Bash', {'command': "sed -i 's/foo/bar/' file.txt"}),
+    ('Bash', {'command': 'npx tsc --noEmit'}),
+    ('PowerShell', {'command': 'Get-Process node | Select-Object Id, CPU'}),
+    ('PowerShell', {'command': 'Get-ChildItem -Recurse -Filter *.ts'}),
+    ('PowerShell', {'command': 'Copy-Item report.html backup.html'}),
+    ('PowerShell', {'command': 'Remove-Item build.txt'}),
+    ('PowerShell', {'command': 'New-Item -ItemType Directory -Force reports'}),
+    ('Bash', {'command': f'git rm {_HYPHENATED_FILENAME_LOOKALIKE}'}),
+    ('PowerShell', {'command': f'git rm {_HYPHENATED_FILENAME_LOOKALIKE}'}),
+    ('Grep', {'pattern': 'acquireTokenSilent', 'path': 'ClientApp/src'}),
+    ('Grep', {'pattern': '\\.env', 'path': 'ClientApp/src', 'glob': '*.ts'}),
+    ('Glob', {'pattern': '**/*.stories.tsx'}),
+    ('Read', {'file_path': 'ClientApp/src/env.ts'}),
+    ('Write', {'file_path': 'reports/out.json'}),
     # Text that merely MENTIONS a verb or filename is data, not an action.
-    ("PowerShell", {"command": "Get-Content r.json | Select-String 'import.meta.env'"}),
-    ("PowerShell", {"command": "Select-String -Path a.ts -Pattern 'rm -r" + "f|Remove-Item'"}),
-    ("Bash", {"command": "cat sonar-report.txt | grep process.env"}),
-    ("Bash", {"command": "git commit -m 'fix rm -r" + "f guard and .env handling'"}),
-    ("Bash", {"command": "python - <<'EOF'\nprint('cat .env')\nEOF"}),
-    ("PowerShell", {"command": "$s = @'\nGet-Content .env\n'@\n$s | python -"}),
-    ("Bash", {"command": "npx sonar-scanner -Dsonar.projectKey=x"}),
-    ("Bash", {"command": "ls -la .env.local"}),
-    ("Read", {"file_path": "ClientApp/src/process.env.d.ts"}),
-    ("Grep", {"pattern": "x", "path": "docs/.environment-notes.md"}),
+    ('PowerShell', {'command': "Get-Content r.json | Select-String 'import.meta.env'"}),
+    ('PowerShell', {'command': "Select-String -Path a.ts -Pattern 'rm -r" + "f|Remove-Item'"}),
+    ('Bash', {'command': 'cat sonar-report.txt | grep process.env'}),
+    ('Bash', {'command': "git commit -m 'fix rm -r" + "f guard and .env handling'"}),
+    ('Bash', {'command': "python - <<'EOF'\nprint('cat .env')\nEOF"}),
+    ('PowerShell', {'command': "$s = @'\nGet-Content .env\n'@\n$s | python -"}),
+    ('Bash', {'command': 'npx sonar-scanner -Dsonar.projectKey=x'}),
+    ('Bash', {'command': 'ls -la .env.local'}),
+    ('Read', {'file_path': 'ClientApp/src/process.env.d.ts'}),
+    ('Grep', {'pattern': 'x', 'path': 'docs/.environment-notes.md'}),
 ]
 
 
-TEST_CREDENTIAL = "fixture-redaction-value"
+TEST_CREDENTIAL = 'fixture-redaction-value'
 
 
 def invoke(tool_name: str, tool_input: Mapping[str, str], project_dir: Path | None = None) -> int:
     if project_dir is None:
-        with tempfile.TemporaryDirectory(prefix="pretooluse-") as folder:
+        with tempfile.TemporaryDirectory(prefix='pretooluse-') as folder:
             return invoke(tool_name, tool_input, Path(folder))
-    payload = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
+    payload = json.dumps({'tool_name': tool_name, 'tool_input': tool_input})
     proc = subprocess.run(  # nosec B603
-        [sys.executable, "-I", "-S", str(GUARD)],
+        [sys.executable, '-I', '-S', str(GUARD)],
         input=payload,
         capture_output=True,
         text=True,
         timeout=30,
         check=False,
         cwd=project_dir,
-        env={**os.environ, "CLAUDE_PROJECT_DIR": str(project_dir)},
+        env={**os.environ, 'CLAUDE_PROJECT_DIR': str(project_dir)},
     )
     return proc.returncode
 
@@ -206,45 +205,45 @@ def invoke(tool_name: str, tool_input: Mapping[str, str], project_dir: Path | No
 def check_log(project_dir: Path) -> list[str]:
     """Log is append-only JSONL, records blocks, redacts secrets, stores no file bodies."""
     problems: list[str] = []
-    invoke("Write", {"file_path": "a.txt", "content": "BODY-" + TEST_CREDENTIAL}, project_dir)
-    invoke("Bash", {"command": f"export API_TOKEN={TEST_CREDENTIAL}; {_RM_RF} /"}, project_dir)
-    log_file = project_dir / ".agent-sync" / "logs" / "pre_tool_use.jsonl"
+    invoke('Write', {'file_path': 'a.txt', 'content': 'BODY-' + TEST_CREDENTIAL}, project_dir)
+    invoke('Bash', {'command': f'export API_TOKEN={TEST_CREDENTIAL}; {_RM_RF} /'}, project_dir)
+    log_file = project_dir / '.agent-sync' / 'logs' / 'pre_tool_use.jsonl'
     if not log_file.is_file():
-        return ["append-only JSONL log is missing"]
-    lines = log_file.read_text(encoding="utf-8").splitlines()
+        return ['append-only JSONL log is missing']
+    lines = log_file.read_text(encoding='utf-8').splitlines()
     try:
         records: list[object] = [json.loads(line) for line in lines]
     except json.JSONDecodeError:
-        return ["log is not valid JSONL"]
+        return ['log is not valid JSONL']
     if not all(isinstance(record, dict) for record in records):
-        problems.append("log records are not JSON objects")
+        problems.append('log records are not JSON objects')
     if not any(
-        isinstance(r, dict) and cast(dict[str, object], r).get("decision") == "block"
+        isinstance(r, dict) and cast(dict[str, object], r).get('decision') == 'block'
         for r in records
     ):
-        problems.append("blocked calls are not logged")
-    if TEST_CREDENTIAL in "\n".join(lines):
-        problems.append("secret/body leaked into log")
+        problems.append('blocked calls are not logged')
+    if TEST_CREDENTIAL in '\n'.join(lines):
+        problems.append('secret/body leaked into log')
     return problems
 
 
 def check_fail_open_wrapper(project_dir: Path) -> list[str]:
     """Garbage on stdin must not crash the guard (the wrapper treats crashes as errors)."""
     proc = subprocess.run(  # nosec B603
-        [sys.executable, "-I", "-S", str(GUARD)],
-        input="not json",
+        [sys.executable, '-I', '-S', str(GUARD)],
+        input='not json',
         capture_output=True,
         text=True,
         timeout=30,
         check=False,
         cwd=project_dir,
-        env={**os.environ, "CLAUDE_PROJECT_DIR": str(project_dir)},
+        env={**os.environ, 'CLAUDE_PROJECT_DIR': str(project_dir)},
     )
-    return [] if proc.returncode == ALLOW else [f"malformed stdin exit {proc.returncode}"]
+    return [] if proc.returncode == ALLOW else [f'malformed stdin exit {proc.returncode}']
 
 
 @pytest.mark.parametrize(
-    ("label", "expected", "tool", "payload"),
+    ('label', 'expected', 'tool', 'payload'),
     BEHAVIOURS,
     ids=[case[0] for case in BEHAVIOURS],
 )
@@ -253,256 +252,254 @@ def test_guard_behaviour(label: str, expected: int, tool: str, payload: dict[str
 
 
 DELETE_BOUNDARIES: list[tuple[str, str, int]] = [
-    ("Bash", f"env -C other {_RM_RF} dist", BLOCK),
-    ("Bash", f"env --chdir=other {_RM_RF} dist", BLOCK),
-    ("Bash", f"env -Cother {_RM_RF} dist", BLOCK),
-    ("Bash", f"sudo -D other {_RM_RF} dist", BLOCK),
-    ("Bash", f"sudo --chdir=other {_RM_RF} dist", BLOCK),
-    ("Bash", f"bash -ce '{_RM_RF} /'", BLOCK),
-    ("Bash", f'eval "{_RM_RF} /"', BLOCK),
-    ("PowerShell", f'iex "Remove-Item {_RECURSE_FORCE} ."', BLOCK),
-    ("PowerShell", "Invoke-Expression 'rd /s C:\\'", BLOCK),
-    ("Bash", f"echo \\<<EOF\n{_RM_RF} /\nEOF", BLOCK),
-    ("Bash", f"cat <<EOF\n'$({_RM_RF} /)'\nEOF", BLOCK),
-    ("Bash", "cmd /c \"echo 'data & rd /s C:\\ '\"", BLOCK),
-    ("Bash", f"command -p {_RM_RF} /", BLOCK),
-    ("Bash", f"time -p {_RM_RF} /", BLOCK),
-    ("Bash", f"xargs -p {_RM_RF} /", BLOCK),
-    ("Bash", f"exec -a alias {_RM_RF} /", BLOCK),
-    ("Bash", f"cd other; {_RM_RF} .scannerwork", BLOCK),
-    ("Bash", f"sudo -n -u root {_RM_RF} /", BLOCK),
-    ("Bash", f"echo '<<EOF'\n{_RM_RF} /", BLOCK),
-    ("Bash", f"({_RM_RF} /)", BLOCK),
-    ("Bash", f"if true; then {_RM_RF} /; fi", BLOCK),
-    ("PowerShell", f"& {{ Remove-Item {_RECURSE_FORCE} . }}", BLOCK),
-    ("PowerShell", f"Remove-Item {_RECURSE_FORCE} .scannerwork/cache,./src", BLOCK),
-    ("Bash", "cmd /c rd /s/q C:\\", BLOCK),
-    ("Bash", "cmd /c del /f important.txt", BLOCK),
-    ("Bash", "cmd /c " * 10 + "rd /s C:\\", BLOCK),
-    ("Bash", f"echo '$({_RM_RF} /)'", ALLOW),
-    ("Bash", f"python - <<EOF\n$({_RM_RF} /)\nEOF", BLOCK),
-    ("Bash", f"{_RM_RF} -- .scannerwork/cache", ALLOW),
-    ("PowerShell", f"Remove-Item {_RECURSE_FORCE} -LiteralPath .scannerwork/cache", ALLOW),
-    ("Bash", f"{_RM_RF} .scannerwork/../../src", BLOCK),
-    ("Bash", "rm -r ../outside", BLOCK),
-    ("Bash", "rm -r /tmp/anything", BLOCK),
-    ("PowerShell", "Remove-Item -Recurse ../outside", BLOCK),
-    ("Bash", "rm -r .scannerwork/cache", ALLOW),
-    ("PowerShell", "Remove-Item -Recurse .scannerwork/cache", ALLOW),
-    ("Bash", "rm -f marker; rm -r .scannerwork/cache", BLOCK),
+    ('Bash', f'env -C other {_RM_RF} dist', BLOCK),
+    ('Bash', f'env --chdir=other {_RM_RF} dist', BLOCK),
+    ('Bash', f'env -Cother {_RM_RF} dist', BLOCK),
+    ('Bash', f'sudo -D other {_RM_RF} dist', BLOCK),
+    ('Bash', f'sudo --chdir=other {_RM_RF} dist', BLOCK),
+    ('Bash', f"bash -ce '{_RM_RF} /'", BLOCK),
+    ('Bash', f'eval "{_RM_RF} /"', BLOCK),
+    ('PowerShell', f'iex "Remove-Item {_RECURSE_FORCE} ."', BLOCK),
+    ('PowerShell', "Invoke-Expression 'rd /s C:\\'", BLOCK),
+    ('Bash', f'echo \\<<EOF\n{_RM_RF} /\nEOF', BLOCK),
+    ('Bash', f"cat <<EOF\n'$({_RM_RF} /)'\nEOF", BLOCK),
+    ('Bash', 'cmd /c "echo \'data & rd /s C:\\ \'"', BLOCK),
+    ('Bash', f'command -p {_RM_RF} /', BLOCK),
+    ('Bash', f'time -p {_RM_RF} /', BLOCK),
+    ('Bash', f'xargs -p {_RM_RF} /', BLOCK),
+    ('Bash', f'exec -a alias {_RM_RF} /', BLOCK),
+    ('Bash', f'cd other; {_RM_RF} .scannerwork', BLOCK),
+    ('Bash', f'sudo -n -u root {_RM_RF} /', BLOCK),
+    ('Bash', f"echo '<<EOF'\n{_RM_RF} /", BLOCK),
+    ('Bash', f'({_RM_RF} /)', BLOCK),
+    ('Bash', f'if true; then {_RM_RF} /; fi', BLOCK),
+    ('PowerShell', f'& {{ Remove-Item {_RECURSE_FORCE} . }}', BLOCK),
+    ('PowerShell', f'Remove-Item {_RECURSE_FORCE} .scannerwork/cache,./src', BLOCK),
+    ('Bash', 'cmd /c rd /s/q C:\\', BLOCK),
+    ('Bash', 'cmd /c del /f important.txt', BLOCK),
+    ('Bash', 'cmd /c ' * 10 + 'rd /s C:\\', BLOCK),
+    ('Bash', f"echo '$({_RM_RF} /)'", ALLOW),
+    ('Bash', f'python - <<EOF\n$({_RM_RF} /)\nEOF', BLOCK),
+    ('Bash', f'{_RM_RF} -- .scannerwork/cache', ALLOW),
+    ('PowerShell', f'Remove-Item {_RECURSE_FORCE} -LiteralPath .scannerwork/cache', ALLOW),
+    ('Bash', f'{_RM_RF} .scannerwork/../../src', BLOCK),
+    ('Bash', 'rm -r ../outside', BLOCK),
+    ('Bash', 'rm -r /tmp/anything', BLOCK),
+    ('PowerShell', 'Remove-Item -Recurse ../outside', BLOCK),
+    ('Bash', 'rm -r .scannerwork/cache', ALLOW),
+    ('PowerShell', 'Remove-Item -Recurse .scannerwork/cache', ALLOW),
+    ('Bash', 'rm -f marker; rm -r .scannerwork/cache', BLOCK),
 ]
 
 
-@pytest.mark.parametrize(("tool", "command", "expected"), DELETE_BOUNDARIES)
+@pytest.mark.parametrize(('tool', 'command', 'expected'), DELETE_BOUNDARIES)
 def test_delete_parser_preserves_security_boundaries(
     tool: str, command: str, expected: int
 ) -> None:
-    assert invoke(tool, {"command": command}) == expected  # nosec B101
+    assert invoke(tool, {'command': command}) == expected  # nosec B101
 
 
 WRAPPER_OPTIONS: list[tuple[str, int]] = [
-    (f"env - --chdir=other {_RM_RF} /", BLOCK),
-    (f"env -- --chdir=other {_RM_RF} /", BLOCK),
-    (f"env -- invalid-name=value {_RM_RF} /", BLOCK),
-    (f"env - invalid-name=value {_RM_RF} /", BLOCK),
-    (f"env invalid-name=value {_RM_RF} /", BLOCK),
-    (f"sudo invalid-name=value {_RM_RF} /", BLOCK),
-    (f"env -- a=b=c {_RM_RF} /", BLOCK),
-    (f"env - --chdir=other {_RM_RF} dist", ALLOW),
-    (f"env -- --chdir=other {_RM_RF} dist", ALLOW),
-    ("echo rm | xargs -I CMD CMD -rf /", BLOCK),
-    (f"env -iu ignored {_RM_RF} /", BLOCK),
-    (f"env -uignored {_RM_RF} /", BLOCK),
-    (f"sudo -nu root {_RM_RF} /", BLOCK),
-    (f"sudo -nuroot {_RM_RF} /", BLOCK),
-    (f"sudo -R other {_RM_RF} dist", BLOCK),
-    (f"sudo -nRother {_RM_RF} dist", BLOCK),
-    (f"sudo --chroot=other {_RM_RF} dist", BLOCK),
-    (f"sudo --chr other {_RM_RF} dist", BLOCK),
-    (f"env --chd=other {_RM_RF} dist", BLOCK),
-    (f"env --chd other {_RM_RF} dist", BLOCK),
-    (f"env -iCother {_RM_RF} dist", BLOCK),
-    (f"env -iC other {_RM_RF} dist", BLOCK),
-    (f"sudo --chd=other {_RM_RF} dist", BLOCK),
-    (f"env -i sudo -nRother {_RM_RF} dist", BLOCK),
-    (f"command -p env --chd=other {_RM_RF} dist", BLOCK),
-    (f"env - {_RM_RF} /", BLOCK),
-    (f"env -i - {_RM_RF} /", BLOCK),
-    ("env --unknown harmless", BLOCK),
-    ("sudo -Z harmless", BLOCK),
-    ("command -Z harmless", BLOCK),
-    ("time --unknown harmless", BLOCK),
-    ("nohup --unknown harmless", BLOCK),
-    ("exec -Z harmless", BLOCK),
-    ("xargs -Z harmless", BLOCK),
-    ("call -Z harmless", BLOCK),
-    (f"env --ch other {_RM_RF} dist", BLOCK),
-    ("sudo --ch harmless", BLOCK),
-    ("env --chdir", BLOCK),
-    ("sudo -nu", BLOCK),
-    ("exec -a", BLOCK),
-    ("xargs -n", BLOCK),
-    ("env --debug=unexpected harmless", BLOCK),
+    (f'env - --chdir=other {_RM_RF} /', BLOCK),
+    (f'env -- --chdir=other {_RM_RF} /', BLOCK),
+    (f'env -- invalid-name=value {_RM_RF} /', BLOCK),
+    (f'env - invalid-name=value {_RM_RF} /', BLOCK),
+    (f'env invalid-name=value {_RM_RF} /', BLOCK),
+    (f'sudo invalid-name=value {_RM_RF} /', BLOCK),
+    (f'env -- a=b=c {_RM_RF} /', BLOCK),
+    (f'env - --chdir=other {_RM_RF} dist', ALLOW),
+    (f'env -- --chdir=other {_RM_RF} dist', ALLOW),
+    ('echo rm | xargs -I CMD CMD -rf /', BLOCK),
+    (f'env -iu ignored {_RM_RF} /', BLOCK),
+    (f'env -uignored {_RM_RF} /', BLOCK),
+    (f'sudo -nu root {_RM_RF} /', BLOCK),
+    (f'sudo -nuroot {_RM_RF} /', BLOCK),
+    (f'sudo -R other {_RM_RF} dist', BLOCK),
+    (f'sudo -nRother {_RM_RF} dist', BLOCK),
+    (f'sudo --chroot=other {_RM_RF} dist', BLOCK),
+    (f'sudo --chr other {_RM_RF} dist', BLOCK),
+    (f'env --chd=other {_RM_RF} dist', BLOCK),
+    (f'env --chd other {_RM_RF} dist', BLOCK),
+    (f'env -iCother {_RM_RF} dist', BLOCK),
+    (f'env -iC other {_RM_RF} dist', BLOCK),
+    (f'sudo --chd=other {_RM_RF} dist', BLOCK),
+    (f'env -i sudo -nRother {_RM_RF} dist', BLOCK),
+    (f'command -p env --chd=other {_RM_RF} dist', BLOCK),
+    (f'env - {_RM_RF} /', BLOCK),
+    (f'env -i - {_RM_RF} /', BLOCK),
+    ('env --unknown harmless', BLOCK),
+    ('sudo -Z harmless', BLOCK),
+    ('command -Z harmless', BLOCK),
+    ('time --unknown harmless', BLOCK),
+    ('nohup --unknown harmless', BLOCK),
+    ('exec -Z harmless', BLOCK),
+    ('xargs -Z harmless', BLOCK),
+    ('call -Z harmless', BLOCK),
+    (f'env --ch other {_RM_RF} dist', BLOCK),
+    ('sudo --ch harmless', BLOCK),
+    ('env --chdir', BLOCK),
+    ('sudo -nu', BLOCK),
+    ('exec -a', BLOCK),
+    ('xargs -n', BLOCK),
+    ('env --debug=unexpected harmless', BLOCK),
     ("env -S 'harmless'", BLOCK),
     ("sudo -s 'harmless'", BLOCK),
-    (f"env -iu ignored {_RM_RF} dist", ALLOW),
-    (f"sudo -nuroot {_RM_RF} dist", ALLOW),
-    (f"env -uCother {_RM_RF} dist", ALLOW),
-    (f"env --unset=--chdir=other {_RM_RF} dist", ALLOW),
-    (f"sudo -np--chroot=other {_RM_RF} dist", ALLOW),
-    (f"env -- {_RM_RF} dist", ALLOW),
-    (f"sudo -- {_RM_RF} dist", ALLOW),
-    (f"env - {_RM_RF} dist", ALLOW),
-    (f"time -po output {_RM_RF} dist", ALLOW),
-    (f"exec -cla alias {_RM_RF} dist", ALLOW),
-    (f"xargs -pr -n1 {_RM_RF} dist", ALLOW),
-    (f"exec -cla alias {_RM_RF} /", BLOCK),
-    (f"time -po output {_RM_RF} /", BLOCK),
-    (f"xargs -pn 1 {_RM_RF} /", BLOCK),
-    (f"env SETTING=value {_RM_RF} dist", ALLOW),
-    (f"sudo SETTING=value -nu root {_RM_RF} /", BLOCK),
+    (f'env -iu ignored {_RM_RF} dist', ALLOW),
+    (f'sudo -nuroot {_RM_RF} dist', ALLOW),
+    (f'env -uCother {_RM_RF} dist', ALLOW),
+    (f'env --unset=--chdir=other {_RM_RF} dist', ALLOW),
+    (f'sudo -np--chroot=other {_RM_RF} dist', ALLOW),
+    (f'env -- {_RM_RF} dist', ALLOW),
+    (f'sudo -- {_RM_RF} dist', ALLOW),
+    (f'env - {_RM_RF} dist', ALLOW),
+    (f'time -po output {_RM_RF} dist', ALLOW),
+    (f'exec -cla alias {_RM_RF} dist', ALLOW),
+    (f'xargs -pr -n1 {_RM_RF} dist', ALLOW),
+    (f'exec -cla alias {_RM_RF} /', BLOCK),
+    (f'time -po output {_RM_RF} /', BLOCK),
+    (f'xargs -pn 1 {_RM_RF} /', BLOCK),
+    (f'env SETTING=value {_RM_RF} dist', ALLOW),
+    (f'sudo SETTING=value -nu root {_RM_RF} /', BLOCK),
 ]
 
 
-@pytest.mark.parametrize(("command", "expected"), WRAPPER_OPTIONS)
+@pytest.mark.parametrize(('command', 'expected'), WRAPPER_OPTIONS)
 def test_wrapper_options_preserve_security_and_value_boundaries(
     command: str, expected: int
 ) -> None:
-    assert invoke("Bash", {"command": command}) == expected  # nosec B101
+    assert invoke('Bash', {'command': command}) == expected  # nosec B101
 
 
 ENV_BOUNDARIES: list[tuple[str, str, int]] = [
-    ("Bash", "grep -f .env src/a.ts", BLOCK),
-    ("Bash", "grep --regexp='.env' src/a.ts", ALLOW),
-    ("Bash", "git commit --message='.env'", ALLOW),
-    ("Bash", "# cat .env", ALLOW),
-    ("Bash", "cat .env.sample .env", BLOCK),
-    ("PowerShell", "Get-Content .env,.env.sample", BLOCK),
-    ("PowerShell", "Select-String -Path .env password", BLOCK),
-    ("PowerShell", "Select-String -Pattern '.env' -Path src/a.ts", ALLOW),
-    ("Bash", "git show HEAD:.env", BLOCK),
-    ("Bash", "git commit -m '.env'", ALLOW),
-    ("Bash", "echo ignore < .env", BLOCK),
-    ("Bash", "echo 'cat .env'", ALLOW),
-    ("Bash", 'echo "$(cat .env)"', BLOCK),
-    ("Bash", "c\\at .env", BLOCK),
-    ("Bash", "grep '.env' src/a.ts", ALLOW),
-    ("Bash", "cat .env.private.env.sample", BLOCK),
-    ("Bash", "cat config/prod.env", BLOCK),
-    ("Bash", "cat .envrc", BLOCK),
-    ("Bash", "cat secrets/.env/key", BLOCK),
-    ("Bash", "cat docs/environment.md", ALLOW),
-    ("Bash", 'eval "cat .env"', BLOCK),
-    ("PowerShell", 'iex "Get-Content .env"', BLOCK),
-    ("Bash", "python -c \"print(open('.env').read())\"", BLOCK),
-    ("Bash", "python3 -c \"print(open('.env').read())\"", BLOCK),
-    ("Bash", "node -e \"fs.readFileSync('.env')\"", BLOCK),
-    ("Bash", "node --eval \"fs.readFileSync('.env')\"", BLOCK),
-    ("Bash", "python -c \"print(open('.env.example').read())\"", BLOCK),
-    ("Bash", "python -cprint(open('.env').read())", BLOCK),
-    ("Bash", "python -c \"print(open('.' + 'env').read())\"", BLOCK),
-    ("Bash", "node -r dotenv/config app.js", BLOCK),
+    ('Bash', 'grep -f .env src/a.ts', BLOCK),
+    ('Bash', "grep --regexp='.env' src/a.ts", ALLOW),
+    ('Bash', "git commit --message='.env'", ALLOW),
+    ('Bash', '# cat .env', ALLOW),
+    ('Bash', 'cat .env.sample .env', BLOCK),
+    ('PowerShell', 'Get-Content .env,.env.sample', BLOCK),
+    ('PowerShell', 'Select-String -Path .env password', BLOCK),
+    ('PowerShell', "Select-String -Pattern '.env' -Path src/a.ts", ALLOW),
+    ('Bash', 'git show HEAD:.env', BLOCK),
+    ('Bash', "git commit -m '.env'", ALLOW),
+    ('Bash', 'echo ignore < .env', BLOCK),
+    ('Bash', "echo 'cat .env'", ALLOW),
+    ('Bash', 'echo "$(cat .env)"', BLOCK),
+    ('Bash', 'c\\at .env', BLOCK),
+    ('Bash', "grep '.env' src/a.ts", ALLOW),
+    ('Bash', 'cat .env.private.env.sample', BLOCK),
+    ('Bash', 'cat config/prod.env', BLOCK),
+    ('Bash', 'cat .envrc', BLOCK),
+    ('Bash', 'cat secrets/.env/key', BLOCK),
+    ('Bash', 'cat docs/environment.md', ALLOW),
+    ('Bash', 'eval "cat .env"', BLOCK),
+    ('PowerShell', 'iex "Get-Content .env"', BLOCK),
+    ('Bash', 'python -c "print(open(\'.env\').read())"', BLOCK),
+    ('Bash', 'python3 -c "print(open(\'.env\').read())"', BLOCK),
+    ('Bash', 'node -e "fs.readFileSync(\'.env\')"', BLOCK),
+    ('Bash', 'node --eval "fs.readFileSync(\'.env\')"', BLOCK),
+    ('Bash', 'python -c "print(open(\'.env.example\').read())"', BLOCK),
+    ('Bash', "python -cprint(open('.env').read())", BLOCK),
+    ('Bash', "python -c \"print(open('.' + 'env').read())\"", BLOCK),
+    ('Bash', 'node -r dotenv/config app.js', BLOCK),
 ]
 
 
-@pytest.mark.parametrize(("tool", "command", "expected"), ENV_BOUNDARIES)
+@pytest.mark.parametrize(('tool', 'command', 'expected'), ENV_BOUNDARIES)
 def test_secret_paths_and_search_data_are_distinguished(
     tool: str, command: str, expected: int
 ) -> None:
-    assert invoke(tool, {"command": command}) == expected  # nosec B101
+    assert invoke(tool, {'command': command}) == expected  # nosec B101
 
 
-@pytest.mark.parametrize(("tool", "payload"), FALSE_POSITIVES)
+@pytest.mark.parametrize(('tool', 'payload'), FALSE_POSITIVES)
 def test_legitimate_tool_calls_are_allowed(tool: str, payload: dict[str, str]) -> None:
     assert invoke(tool, payload) == ALLOW  # nosec B101
 
 
 def test_log_records_blocks_without_exposing_content() -> None:
-    with tempfile.TemporaryDirectory(prefix="pretooluse-log-") as directory:
+    with tempfile.TemporaryDirectory(prefix='pretooluse-log-') as directory:
         assert check_log(Path(directory)) == []  # nosec B101
 
 
 def test_malformed_stdin_fails_open() -> None:
-    with tempfile.TemporaryDirectory(prefix="pretooluse-malformed-") as directory:
+    with tempfile.TemporaryDirectory(prefix='pretooluse-malformed-') as directory:
         assert check_fail_open_wrapper(Path(directory)) == []  # nosec B101
 
 
-@pytest.mark.parametrize("payload", [None, [], "Bash", {}, {"tool_name": []}])
+@pytest.mark.parametrize('payload', [None, [], 'Bash', {}, {'tool_name': []}])
 def test_wrong_hook_payload_shapes_fail_open(payload: object) -> None:
-    with tempfile.TemporaryDirectory(prefix="pretooluse-shape-") as directory:
+    with tempfile.TemporaryDirectory(prefix='pretooluse-shape-') as directory:
         result = subprocess.run(  # nosec B603
-            [sys.executable, "-I", "-S", str(GUARD)],
+            [sys.executable, '-I', '-S', str(GUARD)],
             input=json.dumps(payload),
             cwd=directory,
             capture_output=True,
             text=True,
             timeout=20,
             check=False,
-            env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
+            env={**os.environ, 'CLAUDE_PROJECT_DIR': directory},
         )
         assert result.returncode == 0  # nosec B101
-        assert result.stdout == ""  # nosec B101
+        assert result.stdout == ''  # nosec B101
 
 
 @pytest.mark.parametrize(
-    "command",
+    'command',
     [
         f'curl -H "Authorization: Bearer {TEST_CREDENTIAL}" https://example.invalid',
         f"echo password='{TEST_CREDENTIAL} two words'",
-        f"echo --token {TEST_CREDENTIAL}",
+        f'echo --token {TEST_CREDENTIAL}',
         f"$env:TOKEN = '{TEST_CREDENTIAL}'",
     ],
 )
-@pytest.mark.parametrize("blocked", [False, True])
+@pytest.mark.parametrize('blocked', [False, True])
 def test_audit_and_stderr_do_not_persist_credential_values(command: str, blocked: bool) -> None:
-    with tempfile.TemporaryDirectory(prefix="pretooluse-private-") as directory:
+    with tempfile.TemporaryDirectory(prefix='pretooluse-private-') as directory:
         result = subprocess.run(  # nosec B603
-            [sys.executable, "-I", "-S", str(GUARD)],
-            input=json.dumps(
-                {
-                    "tool_name": "Bash",
-                    "tool_input": {"command": command + (f"; {_RM_RF} /" if blocked else "")},
-                }
-            ),
+            [sys.executable, '-I', '-S', str(GUARD)],
+            input=json.dumps({
+                'tool_name': 'Bash',
+                'tool_input': {'command': command + (f'; {_RM_RF} /' if blocked else '')},
+            }),
             cwd=directory,
             capture_output=True,
             text=True,
             timeout=20,
             check=False,
-            env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
+            env={**os.environ, 'CLAUDE_PROJECT_DIR': directory},
         )
         assert result.returncode == (BLOCK if blocked else ALLOW)  # nosec B101
         assert TEST_CREDENTIAL not in result.stdout + result.stderr  # nosec B101
-        log = Path(directory) / ".agent-sync/logs/pre_tool_use.jsonl"
-        assert log.is_file(), "append-only audit log missing"  # nosec B101
-        assert TEST_CREDENTIAL not in log.read_text(encoding="utf-8")  # nosec B101
+        log = Path(directory) / '.agent-sync/logs/pre_tool_use.jsonl'
+        assert log.is_file(), 'append-only audit log missing'  # nosec B101
+        assert TEST_CREDENTIAL not in log.read_text(encoding='utf-8')  # nosec B101
 
 
 def test_log_uses_project_root_preserves_records_and_rotates() -> None:
-    with tempfile.TemporaryDirectory(prefix="pretooluse-append-") as directory:
+    with tempfile.TemporaryDirectory(prefix='pretooluse-append-') as directory:
         root = Path(directory)
-        other_cwd = root / "other-cwd"
+        other_cwd = root / 'other-cwd'
         other_cwd.mkdir()
-        log = root / ".agent-sync/logs/pre_tool_use.jsonl"
+        log = root / '.agent-sync/logs/pre_tool_use.jsonl'
         for _ in range(2):
             result = subprocess.run(  # nosec B603
-                [sys.executable, "-I", "-S", str(GUARD)],
-                input=json.dumps({"tool_name": "Read", "tool_input": {"file_path": "a.ts"}}),
+                [sys.executable, '-I', '-S', str(GUARD)],
+                input=json.dumps({'tool_name': 'Read', 'tool_input': {'file_path': 'a.ts'}}),
                 cwd=other_cwd,
                 capture_output=True,
                 text=True,
                 timeout=20,
                 check=False,
-                env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
+                env={**os.environ, 'CLAUDE_PROJECT_DIR': directory},
             )
             assert result.returncode == ALLOW  # nosec B101
-            assert log.is_file(), "log ignored CLAUDE_PROJECT_DIR"  # nosec B101
-        assert len(log.read_text(encoding="utf-8").splitlines()) == 2  # nosec B101
-        assert not (other_cwd / ".agent-sync").exists()  # nosec B101
-        prior = "{}\n" * (512 * 1024 // 3 + 1)
-        log.write_text(prior, encoding="utf-8")
-        assert invoke("Read", {"file_path": "a.ts"}, root) == ALLOW  # nosec B101
-        assert log.with_suffix(".jsonl.1").read_text(encoding="utf-8") == prior  # nosec B101
+            assert log.is_file(), 'log ignored CLAUDE_PROJECT_DIR'  # nosec B101
+        assert len(log.read_text(encoding='utf-8').splitlines()) == 2  # nosec B101
+        assert not (other_cwd / '.agent-sync').exists()  # nosec B101
+        prior = '{}\n' * (512 * 1024 // 3 + 1)
+        log.write_text(prior, encoding='utf-8')
+        assert invoke('Read', {'file_path': 'a.ts'}, root) == ALLOW  # nosec B101
+        assert log.with_suffix('.jsonl.1').read_text(encoding='utf-8') == prior  # nosec B101
         assert log.stat().st_size <= 512 * 1024  # nosec B101
 
 
@@ -536,19 +533,19 @@ def coordinated_replace(source, destination):
 guard.os.replace = coordinated_replace
 guard._log("Read", {"file_path": "a.ts"}, "allow")
 """
-    with tempfile.TemporaryDirectory(prefix="pretooluse-concurrent-") as directory:
+    with tempfile.TemporaryDirectory(prefix='pretooluse-concurrent-') as directory:
         root = Path(directory)
-        log = root / ".agent-sync/logs/pre_tool_use.jsonl"
+        log = root / '.agent-sync/logs/pre_tool_use.jsonl'
         log.parent.mkdir(parents=True)
-        prior = '{"prior_record": true}\n' + "{}\n" * (512 * 1024 // 3)
-        log.write_text(prior, encoding="utf-8")
+        prior = '{"prior_record": true}\n' + '{}\n' * (512 * 1024 // 3)
+        log.write_text(prior, encoding='utf-8')
         processes: list[subprocess.Popen[str]] = []
         try:
             for _ in range(2):
                 process = subprocess.Popen(  # nosec B603
-                    [sys.executable, "-I", "-S", "-c", child, str(GUARD)],
+                    [sys.executable, '-I', '-S', '-c', child, str(GUARD)],
                     cwd=root,
-                    env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
+                    env={**os.environ, 'CLAUDE_PROJECT_DIR': directory},
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
@@ -557,12 +554,12 @@ guard._log("Read", {"file_path": "a.ts"}, "allow")
             for process in processes:
                 stdout, stderr = process.communicate(timeout=10)
                 assert process.returncode == 0, stderr  # nosec B101
-                assert stdout == ""  # nosec B101
-                assert stderr == ""  # nosec B101
-            assert log.with_suffix(".jsonl.1").read_text(encoding="utf-8") == prior  # nosec B101
-            records = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
+                assert stdout == ''  # nosec B101
+                assert stderr == ''  # nosec B101
+            assert log.with_suffix('.jsonl.1').read_text(encoding='utf-8') == prior  # nosec B101
+            records = [json.loads(line) for line in log.read_text(encoding='utf-8').splitlines()]
             assert len(records) == 2  # nosec B101
-            assert all(record["decision"] == "allow" for record in records)  # nosec B101
+            assert all(record['decision'] == 'allow' for record in records)  # nosec B101
         finally:
             for process in processes:
                 if process.poll() is None:
@@ -572,23 +569,23 @@ guard._log("Read", {"file_path": "a.ts"}, "allow")
 
 def test_guard_does_not_persist_file_bodies_or_credentials() -> None:
     """Check actual log artifacts even when the expected JSONL log is absent."""
-    body = "TEST_FILE_BODY_DO_NOT_LOG"
-    with tempfile.TemporaryDirectory(prefix="pretooluse-redaction-") as directory:
+    body = 'TEST_FILE_BODY_DO_NOT_LOG'
+    with tempfile.TemporaryDirectory(prefix='pretooluse-redaction-') as directory:
         project_dir = Path(directory)
-        assert invoke("Write", {"file_path": "a.txt", "content": body}, project_dir) == ALLOW  # nosec B101
-        result = invoke("Bash", {"command": f"echo API_TOKEN={TEST_CREDENTIAL}"}, project_dir)
+        assert invoke('Write', {'file_path': 'a.txt', 'content': body}, project_dir) == ALLOW  # nosec B101
+        result = invoke('Bash', {'command': f'echo API_TOKEN={TEST_CREDENTIAL}'}, project_dir)
         assert result == ALLOW  # nosec B101
-        logs = project_dir / ".agent-sync" / "logs"
-        for path in logs.glob("*"):
+        logs = project_dir / '.agent-sync' / 'logs'
+        for path in logs.glob('*'):
             if path.is_file():
-                text = path.read_text(encoding="utf-8")
-                assert body not in text, "file body persisted in audit log"  # nosec B101
-                assert TEST_CREDENTIAL not in text, "credential persisted in audit log"  # nosec B101
+                text = path.read_text(encoding='utf-8')
+                assert body not in text, 'file body persisted in audit log'  # nosec B101
+                assert TEST_CREDENTIAL not in text, 'credential persisted in audit log'  # nosec B101
 
 
 def main() -> int:
-    return pytest.main([str(Path(__file__).resolve()), "-q"])
+    return pytest.main([str(Path(__file__).resolve()), '-q'])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

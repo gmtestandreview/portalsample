@@ -1,5 +1,6 @@
-from playwright.sync_api import sync_playwright
 import os
+
+from playwright.sync_api import sync_playwright
 
 # Example: Automating interaction with static HTML files using file:// URLs
 
@@ -30,4 +31,4 @@ with sync_playwright() as p:
 
     browser.close()
 
-print("Static HTML automation completed!")
+print('Static HTML automation completed!')

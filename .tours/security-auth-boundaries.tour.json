@@ -1,5 +1,5 @@
 {
-  "$schema": "https://aka.ms/codetour-schema",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Security and Auth Boundaries",
   "description": "For security reviewers auditing the NMI Portal before the React 19 / Design System migration. Covers MSAL config, PII logging, auth error handling, TrustedTypes CSP, DOMPurify, env injection, App Insights error tracking, and input validation.",
   "nextTour": "WizardForm Deep Dive",

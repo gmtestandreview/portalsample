@@ -24,5 +24,6 @@
       }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$comment": "Schema checks metadata shape only; eval-id/run linkage and stale source digests require consumer verification."
 }

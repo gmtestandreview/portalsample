@@ -217,9 +217,13 @@ function resolveDotExecutable() {
   ];
   for (const candidate of candidates) {
     try {
-      const executable = fs.realpathSync(candidate);
-      if (runDot(executable, 'digraph probe {}').includes('<svg'))
-        return executable;
+      // Verify that the candidate resolves, but invoke the original launcher
+      // path: some Graphviz installations dispatch by argv[0] (e.g. dot is a
+      // symlink to libgvc6-config-update). Executing its realpath loses that
+      // selector and falsely reports Graphviz as unavailable.
+      fs.realpathSync(candidate);
+      if (runDot(candidate, 'digraph probe {}').includes('<svg'))
+        return candidate;
     } catch {
       // Try the next configured/standard Graphviz location.
     }

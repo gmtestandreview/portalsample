@@ -14,12 +14,12 @@ MAX_COMPATIBILITY_LENGTH = 500
 
 # Allowed frontmatter fields per Agent Skills Spec
 ALLOWED_FIELDS = {
-    "name",
-    "description",
-    "license",
-    "allowed-tools",
-    "metadata",
-    "compatibility",
+    'name',
+    'description',
+    'license',
+    'allowed-tools',
+    'metadata',
+    'compatibility',
 }
 
 
@@ -38,31 +38,31 @@ def _validate_name(name: object, skill_dir: Path | None) -> list[str]:
     if len(name) > MAX_SKILL_NAME_LENGTH:
         errors.append(
             f"Skill name '{name}' exceeds {MAX_SKILL_NAME_LENGTH} character limit "
-            f"({len(name)} chars)"
+            f'({len(name)} chars)'
         )
 
     if name != name.strip():
-        errors.append("Skill name cannot have leading or trailing whitespace")
+        errors.append('Skill name cannot have leading or trailing whitespace')
 
-    name = unicodedata.normalize("NFKC", name)
+    name = unicodedata.normalize('NFKC', name)
 
     if name != name.lower():
         errors.append(f"Skill name '{name}' must be lowercase")
 
-    if name.startswith("-") or name.endswith("-"):
-        errors.append("Skill name cannot start or end with a hyphen")
+    if name.startswith('-') or name.endswith('-'):
+        errors.append('Skill name cannot start or end with a hyphen')
 
-    if "--" in name:
-        errors.append("Skill name cannot contain consecutive hyphens")
+    if '--' in name:
+        errors.append('Skill name cannot contain consecutive hyphens')
 
-    if not all(c.isalnum() or c == "-" for c in name):
+    if not all(c.isalnum() or c == '-' for c in name):
         errors.append(
             f"Skill name '{name}' contains invalid characters. "
-            "Only letters, digits, and hyphens are allowed."
+            'Only letters, digits, and hyphens are allowed.'
         )
 
     if skill_dir:
-        dir_name = unicodedata.normalize("NFKC", skill_dir.name)
+        dir_name = unicodedata.normalize('NFKC', skill_dir.name)
         if dir_name != name:
             errors.append(f"Directory name '{skill_dir.name}' must match skill name '{name}'")
 
@@ -79,8 +79,8 @@ def _validate_description(description: object) -> list[str]:
 
     if len(description) > MAX_DESCRIPTION_LENGTH:
         errors.append(
-            f"Description exceeds {MAX_DESCRIPTION_LENGTH} character limit "
-            f"({len(description)} chars)"
+            f'Description exceeds {MAX_DESCRIPTION_LENGTH} character limit '
+            f'({len(description)} chars)'
         )
 
     return errors
@@ -99,8 +99,8 @@ def _validate_compatibility(compatibility: object) -> list[str]:
 
     if len(compatibility) > MAX_COMPATIBILITY_LENGTH:
         errors.append(
-            f"Compatibility exceeds {MAX_COMPATIBILITY_LENGTH} character limit "
-            f"({len(compatibility)} chars)"
+            f'Compatibility exceeds {MAX_COMPATIBILITY_LENGTH} character limit '
+            f'({len(compatibility)} chars)'
         )
 
     return errors
@@ -145,8 +145,8 @@ def _validate_metadata_fields(metadata: Mapping[str, object]) -> list[str]:
     extra_fields = set(metadata.keys()) - ALLOWED_FIELDS
     if extra_fields:
         errors.append(
-            f"Unexpected fields in frontmatter: {', '.join(sorted(extra_fields))}. "
-            f"Only {sorted(ALLOWED_FIELDS)} are allowed."
+            f'Unexpected fields in frontmatter: {', '.join(sorted(extra_fields))}. '
+            f'Only {sorted(ALLOWED_FIELDS)} are allowed.'
         )
 
     return errors
@@ -168,27 +168,27 @@ def validate_metadata(metadata: Mapping[str, object], skill_dir: Path | None = N
     errors: list[str] = []
     errors.extend(_validate_metadata_fields(metadata))
 
-    if "name" not in metadata:
-        errors.append("Missing required field in frontmatter: name")
+    if 'name' not in metadata:
+        errors.append('Missing required field in frontmatter: name')
     else:
-        errors.extend(_validate_name(metadata["name"], skill_dir))
+        errors.extend(_validate_name(metadata['name'], skill_dir))
 
-    if "description" not in metadata:
-        errors.append("Missing required field in frontmatter: description")
+    if 'description' not in metadata:
+        errors.append('Missing required field in frontmatter: description')
     else:
-        errors.extend(_validate_description(metadata["description"]))
+        errors.extend(_validate_description(metadata['description']))
 
-    if "license" in metadata:
-        errors.extend(_validate_license(metadata["license"]))
+    if 'license' in metadata:
+        errors.extend(_validate_license(metadata['license']))
 
-    if "compatibility" in metadata:
-        errors.extend(_validate_compatibility(metadata["compatibility"]))
+    if 'compatibility' in metadata:
+        errors.extend(_validate_compatibility(metadata['compatibility']))
 
-    if "metadata" in metadata:
-        errors.extend(_validate_metadata_value(metadata["metadata"]))
+    if 'metadata' in metadata:
+        errors.extend(_validate_metadata_value(metadata['metadata']))
 
-    if "allowed-tools" in metadata:
-        errors.extend(_validate_allowed_tools(metadata["allowed-tools"]))
+    if 'allowed-tools' in metadata:
+        errors.extend(_validate_allowed_tools(metadata['allowed-tools']))
 
     return errors
 
@@ -205,22 +205,22 @@ def validate(skill_dir: Path) -> list[str]:
     skill_dir = Path(skill_dir)
 
     if not skill_dir.exists():
-        return [f"Path does not exist: {skill_dir}"]
+        return [f'Path does not exist: {skill_dir}']
 
     if not skill_dir.is_dir():
-        return [f"Not a directory: {skill_dir}"]
+        return [f'Not a directory: {skill_dir}']
 
     skill_dir = skill_dir.resolve()
 
     try:
         skill_md = find_skill_md(skill_dir)
         if skill_md is None:
-            return ["Missing required file: SKILL.md"]
+            return ['Missing required file: SKILL.md']
         metadata, body = parse_frontmatter(read_skill_text(skill_md))
     except ParseError as e:
         return [str(e)]
 
     errors = validate_metadata(metadata, skill_dir)
     if not body.strip():
-        errors.append("SKILL.md must contain Markdown content after frontmatter")
+        errors.append('SKILL.md must contain Markdown content after frontmatter')
     return errors

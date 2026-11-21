@@ -21,10 +21,11 @@ implementation and validation.
 
 ## Dynamic Rule Updates
 
-**Documented current behavior:** `HOOK_MECHANISMS.md` says each
-UserPromptSubmit/PreToolUse execution loads `skill-rules.json`. This reference
-therefore does not assert that a Claude Code restart is required. If another
-layer caches rules, verify that behavior in the target project.
+**Documented example behavior:**
+[`claude-code-hook-mechanisms.md`](claude-code-hook-mechanisms.md) describes
+each UserPromptSubmit/PreToolUse execution loads `skill-rules.json`. This
+reference therefore does not assert that a Claude Code restart is required. If
+another layer caches rules, verify that behavior in the target project.
 
 **Future Enhancement:** If rule loading is later cached, add explicit
 invalidation/reload behavior
@@ -232,3 +233,15 @@ describe('database-verification', () => {
 - [Main skill guide](../SKILL.md) - Main skill guide
 - [troubleshooting](claude-code-troubleshooting.md) - Current debugging guide
 - [hook mechanisms](claude-code-hook-mechanisms.md) - How hooks work today
+
+## Adversarial verification contract
+
+**Proposal gate:** For each optional feature above, first capture the
+implementing repository commit and actual loader/config schema; freeze a
+valid-config example and a forbidden-field example. Test that a missing
+dependency, stale rule cache, permission denial, or invalid proposed field
+produces an explicit error or unsupported status—not silent fallback. Only after
+the actual target host consumes the new field may documentation call it
+"supported". If the hook/loader source is absent, retain proposal-only/NHR.
+**Rollback:** Delete only the candidate configuration change, restoring the
+versioned original; do not auto-edit production rules.

@@ -13,58 +13,57 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-RECORD = ROOT / "evals/current-revision-pressure/run-record.json"
-CASES = ROOT / "evals/cases.json"
-SKILL = ROOT / "SKILL.md"
-VALID = {"PASS", "AMBER", "FAIL", "NHR", "N/A"}
+RECORD = ROOT / 'evals/current-revision-pressure/run-record.json'
+CASES = ROOT / 'evals/cases.json'
+SKILL = ROOT / 'SKILL.md'
+VALID = {'PASS', 'AMBER', 'FAIL', 'NHR', 'N/A'}
 
 # All active, nonhistorical sources that can affect instructions/eval expectations.
 # Historical snapshots and the current run-record are excluded to avoid circular hashes.
 RESOURCE_FILES = (
-    [ROOT / "SOURCE-ATTRIBUTION.md"]
-    + sorted((ROOT / "references").glob("*.md"))
+    [ROOT / 'SOURCE-ATTRIBUTION.md']
+    + sorted((ROOT / 'references').glob('*.md'))
     + [
-        ROOT / "evals/cases.json",
-        ROOT / "evals/qaq-rmi.md",
-        ROOT / "evals/evidence-applicability.md",
-        ROOT / "evals/current-revision-pressure/README.md",
-        ROOT / "scripts/validate_evidence.py",
+        ROOT / 'evals/cases.json',
+        ROOT / 'evals/qaq-rmi.md',
+        ROOT / 'evals/evidence-applicability.md',
+        ROOT / 'evals/current-revision-pressure/README.md',
+        ROOT / 'scripts/validate_evidence.py',
     ]
 )
-
 
 
 def _validate_trace_paths(cid: str, arm: str, paths: list[str], problems: list[str]) -> None:
     for name in paths:
         target = (RECORD.parent / name).resolve()
         if not target.is_relative_to(RECORD.parent.resolve()) or not target.is_file():
-            problems.append(f"{cid}/{arm}: missing or escaping trace {name!r}")
+            problems.append(f'{cid}/{arm}: missing or escaping trace {name!r}')
 
 
 def _validate_arm(cid: str, arm: str, value: dict[str, Any], problems: list[str]) -> None:
-    state = value.get("status")
+    state = value.get('status')
     if state not in VALID:
-        problems.append(f"{cid}/{arm}: invalid status")
+        problems.append(f'{cid}/{arm}: invalid status')
     paths: list[str] | dict[str, Any] | str | int | float | bool | None = value.get(
-        "evidence_paths", []
+        'evidence_paths', []
     )
     if not isinstance(paths, list):
-        problems.append(f"{cid}/{arm}: evidence_paths must be list")
+        problems.append(f'{cid}/{arm}: evidence_paths must be list')
         return
-    if state in {"PASS", "AMBER", "FAIL"} and (not value.get("observation") or not paths):
-        problems.append(f"{cid}/{arm}: graded status without observation and trace")
-    if state == "N/A" and not value.get("observation"):
-        problems.append(f"{cid}/{arm}: N/A needs rationale")
+    if state in {'PASS', 'AMBER', 'FAIL'} and (not value.get('observation') or not paths):
+        problems.append(f'{cid}/{arm}: graded status without observation and trace')
+    if state == 'N/A' and not value.get('observation'):
+        problems.append(f'{cid}/{arm}: N/A needs rationale')
     _validate_trace_paths(cid, arm, paths, problems)
 
 
 def _validate_case(
     cid: str, row: dict[str, Any], source: dict[str, Any], problems: list[str]
 ) -> None:
-    for key in ("prompt", "expected", "kind", "required"):
+    for key in ('prompt', 'expected', 'kind', 'required'):
         if row.get(key) != source.get(key):
-            problems.append(f"{cid}: mismatched frozen {key}")
-    for arm in ("without_skill", "with_skill"):
+            problems.append(f'{cid}: mismatched frozen {key}')
+    for arm in ('without_skill', 'with_skill'):
         _validate_arm(cid, arm, row.get(arm, {}), problems)
 
 
@@ -73,52 +72,57 @@ def _validate_cases(
 ) -> None:
     seen: set[str] = set()
     for row in rows:
-        cid = row.get("id")
+        cid = row.get('id')
         if cid not in expected or cid in seen:
-            problems.append(f"Unknown or duplicated case: {cid!r}")
+            problems.append(f'Unknown or duplicated case: {cid!r}')
             continue
         seen.add(cid)
         _validate_case(cid, row, expected[cid], problems)
     for missing in sorted(set(expected) - seen):
-        problems.append(f"Missing case: {missing}")
+        problems.append(f'Missing case: {missing}')
 
 
 def main() -> int:
     problems: list[str] = []
-    record = json.loads(RECORD.read_text(encoding="utf-8"))
-    cases = json.loads(CASES.read_text(encoding="utf-8"))["cases"]
+    record = json.loads(RECORD.read_text(encoding='utf-8'))
+    cases = json.loads(CASES.read_text(encoding='utf-8'))['cases']
     digest = hashlib.sha256(SKILL.read_bytes()).hexdigest()
-    if record.get("candidate_sha256") != digest:
-        problems.append("SKILL.md hash differs from run record; new evaluation required")
+    if record.get('candidate_sha256') != digest:
+        problems.append('SKILL.md hash differs from run record; new evaluation required')
     expected_paths = {str(p.relative_to(ROOT)) for p in RESOURCE_FILES}
-    observed_hashes = record.get("resource_sha256", {})
+    observed_hashes = record.get('resource_sha256', {})
     if not isinstance(observed_hashes, dict) or set(observed_hashes) != expected_paths:
-        problems.append("Resource inventory incomplete or unexpected; re-freeze candidate")
+        problems.append('Resource inventory incomplete or unexpected; re-freeze candidate')
     else:
         for path in RESOURCE_FILES:
             name = str(path.relative_to(ROOT))
-            if not path.is_file() or observed_hashes[name] != hashlib.sha256(path.read_bytes()).hexdigest():
-                problems.append(f"Changed/missing supporting resource: {name}")
-    expected = {c["id"]: c for c in cases}
+            if (
+                not path.is_file()
+                or observed_hashes[name] != hashlib.sha256(path.read_bytes()).hexdigest()
+            ):
+                problems.append(f'Changed/missing supporting resource: {name}')
+    expected = {c['id']: c for c in cases}
     if len(expected) != len(cases):
-        problems.append("Duplicate source case ID")
-    rows = record.get("cases", [])
+        problems.append('Duplicate source case ID')
+    rows = record.get('cases', [])
     _validate_cases(rows, expected, problems)
     required_unresolved = [
-        row["id"]
+        row['id']
         for row in rows
-        if row.get("required") and row.get("with_skill", {}).get("status") != "PASS"
+        if row.get('required') and row.get('with_skill', {}).get('status') != 'PASS'
     ]
     if problems:
-        print("INVALID evidence record:")
+        print('INVALID evidence record:')
         for problem in problems:
-            print(" -", problem)
+            print(' -', problem)
         return 1
-    print(f"VALID schema, resource hashes, and trace pointers: {len(rows)} cases; SKILL hash {digest}")
-    print(f"Required cases without behavioral PASS: {len(required_unresolved)}")
-    print("Behavioral assessment and deployment approval: NOT established by this validator")
+    print(
+        f'VALID schema, resource hashes, and trace pointers: {len(rows)} cases; SKILL hash {digest}'
+    )
+    print(f'Required cases without behavioral PASS: {len(required_unresolved)}')
+    print('Behavioral assessment and deployment approval: NOT established by this validator')
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

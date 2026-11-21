@@ -1,0 +1,22 @@
+[
+  {
+    "id": "activation-smoke-01",
+    "query": "Create a reusable Agent Skill from this incident response runbook.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-smoke-02",
+    "query": "Review this SKILL.md and fix its unclear activation boundaries.",
+    "should_trigger": true
+  },
+  {
+    "id": "activation-smoke-03",
+    "query": "Fix the GitHub Actions workflow trigger for our deployment pipeline.",
+    "should_trigger": false
+  },
+  {
+    "id": "activation-smoke-04",
+    "query": "Package this Python library as a wheel for PyPI.",
+    "should_trigger": false
+  }
+]

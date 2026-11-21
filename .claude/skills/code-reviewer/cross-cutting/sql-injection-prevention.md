@@ -19,7 +19,7 @@ safe ORM APIs, or query builders that bind values separately from SQL text.
 
 ```python
 # Safe: value is bound separately.
-cursor.execute("select * from users where email = %s", [email])
+cursor.execute('select * from users where email = %s', [email])
 ```
 
 ```ts

@@ -581,3 +581,24 @@ EOF
 - [hook mechanisms](claude-code-hook-mechanisms.md) - How hooks work
 - [skill rules reference](claude-code-skill-rules-reference.md) - Configuration
   reference
+
+## Adversarial verification contract
+
+**Preconditions:** The diagnostic `.claude/hooks/...` paths and Node/tsx
+commands in this guide refer to a target project; verify their existence and
+registration before running them. Never reconstruct missing hook source from
+prose. Preserve the original rules before editing and avoid printing
+tokens/session secrets from diagnostics.
+
+**Repeatable error fixtures:** (1) Absent hook path → explicit `not installed`,
+no success claim; (2) Invalid `skill-rules.json` → parser error with path and no
+fallback rule applied; (3) keyword causes unrelated positive → narrow keyword
+and rerun both the intended positive and unrelated near miss; (4) guarded edit
+with unavailable hook → mark the security enforcement gate blocked, not pass;
+(5) missing `node`/`tsx` → record executable availability and NHR for hook
+behavior.
+
+**Proof format:** command, target repo revision, stdout/stderr (redacted),
+return code, case expectation, observed match/allow/block, follow-up retest and
+rollback point. If the host has no programmatic probe, run a human-reviewed
+equivalent and label it accordingly.

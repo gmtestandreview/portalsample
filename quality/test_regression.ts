@@ -159,7 +159,7 @@ test('BUG-007: shared validation modules import yupExtensions locally', () => {
 
 test('BUG-008: dashboard alert selector matches the rendered notif-* IDs', () => {
   const dashboardSource = readFileSync(
-    'ClientApp/src/routes/dashboard/index.tsx',
+    'ClientApp/src/routes/dashboard/dashboard.helpers.ts',
     'utf8',
   );
 

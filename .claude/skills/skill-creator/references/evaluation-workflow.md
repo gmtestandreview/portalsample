@@ -2,6 +2,17 @@
 
 ## Pipeline modes
 
+The pipeline loads its fixed, _definition-only_ selection cases from
+`references/activation-cases/activation-smoke.json` (4),
+`references/activation-cases/activation-eval.json` (20), and
+`references/activation-cases/activation-holdout.json` (8). Unlike generated root
+`evals/`, these files are included in the distributed skill and needed for
+`smoke`/`release` dry runs. Keep the holdout unchanged and out of iterative
+candidate tuning. A bundled fixture proves planned coverage, **not** observed
+activation, host loading, or generalization to unseen requests. Missing or
+malformed fixtures must produce a nonzero exit and a clear blocker; never
+silently lower planned calls or treat an incomplete corpus as PASS.
+
 | Mode      | Purpose                                                       |                              Claude calls | Readiness meaning                                   |
 | --------- | ------------------------------------------------------------- | ----------------------------------------: | --------------------------------------------------- |
 | `check`   | deterministic validation, regression tests, and pytest        |                                         0 | mode-ready only when local gates pass               |
@@ -10,15 +21,29 @@
 
 Select `smoke` or `release` explicitly. The release base is 20 activation, 8
 holdout, 4 early-exit, and 2 readiness-pressure calls. After a complete base, up
-to three failed non-readiness cases may receive two targeted confirmations in
-priority order: holdout positives, activation positives, early-exit cases, then
-remaining fixture failures. Confirmation uses the majority of all attempts;
-readiness pairs are never retried automatically.
+to three failed non-readiness cases could use the six reserved call slots, but
+**the current pipeline does not schedule confirmation retries**. All cases are
+evaluated once, and a failed case blocks readiness. The reserve is a bound, not
+observed work or a promise of automatic retries. Readiness pairs are never
+retried automatically.
 
 All modes expose independent execution, evidence, verdict, mode-readiness, and
-release-readiness gates. Checkpoint completion is not evidence completeness.
-Missing, skipped, rate-limited, deadline-exceeded, or budget-exhausted work is
-reported as unavailable/partial rather than pass.
+release-readiness gates. The pipeline derives its verdict from the
+stage-specific case oracles, required case counts, check results, recorded call
+totals, verified checkpoint identity, and frozen SHA-256 manifests of
+first-party files. It **never accepts a caller-supplied `pass` as authority**. A
+completed command with failed cases is `fail`, not `pass`; an incomplete
+execution is `unavailable`. A negative activation case passes only when the
+observation correctly avoids triggering, and RED/GREEN readiness must explicitly
+evaluate to `PASS`.
+
+Checkpoint completion is not evidence completeness. Missing, skipped,
+rate-limited, deadline-exceeded, or budget-exhausted work is reported as
+unavailable/partial rather than pass. The `check`/`smoke`/`release` pipeline
+summary represents **the bundled automated test contract**, not independent
+certification of out-of-sample generalisation or production suitability. See
+[the independent holdout protocol](independent-holdout-protocol.md) before
+making a broader release or effectiveness claim.
 
 Use this reference when testing whether a skill materially improves output
 quality or execution reliability.
@@ -547,7 +572,7 @@ not repair missing evidence by inventing values.
 From the skill root, run:
 
 ```bash
-python -m scripts.aggregate_benchmark <workspace>/iteration-N --skill-name <name>
+python3.14 -m scripts.aggregate_benchmark <workspace>/iteration-N --skill-name <name>
 ```
 
 This writes `benchmark.json` and `benchmark.md`.
@@ -831,3 +856,23 @@ re-enter execution, grading, benchmarking, and review. The final retained
 version defines the evidence basis for any readiness or quality claim.
 Overfitted revisions, unpreserved predecessors, stale verification, or changes
 retained without regression evidence weaken or invalidate that claim.
+
+## Adversarial verification contract
+
+**Minimal route for callers:** Trigger-only work uses
+`references/description-optimization.md` and `scripts/run_eval.py`;
+output-quality comparison uses this reference and the grader/comparator schemas;
+readiness certification additionally requires `scripts/run_pipeline.py` release
+evidence and, for generalization claims,
+`references/independent-holdout-protocol.md`. A request for a simple `SKILL.md`
+wording change does not require all three.
+
+**End-to-end falsification:** Create an isolated skill candidate and a frozen
+positive/near-miss corpus. First check baseline evidence identity, then execute
+available runs, grade only observable expectations, validate schema _and_
+semantic arithmetic, generate review, and finally cross-check aggregate counts
+and raw artifacts. **Negative:** missing grading or tampered `stage.json` must
+never produce `release_ready=true`; failed or incomplete host runs stay NHR.
+**Output contract:** candidate hash, resource hashes, case IDs, expectation
+oracle, executor/runtime, result, human feedback, release decision. The full
+live sequence is unrun unless an identified host transcript proves it.

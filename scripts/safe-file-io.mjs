@@ -18,6 +18,17 @@ const outsideRoot = (relative) =>
 const missingPathError = (error) =>
   error?.code === 'ENOENT' || error?.code === 'ENOTDIR';
 
+const lstatIfPresent = (candidate) => {
+  try {
+    return fsLstatSync(candidate);
+  } catch (error) {
+    if (!missingPathError(error)) {
+      throw error;
+    }
+    return undefined;
+  }
+};
+
 const realPathForContainment = (candidate) => {
   let current = candidate;
   const suffix = [];
@@ -31,15 +42,7 @@ const realPathForContainment = (candidate) => {
         throw error;
       }
 
-      let currentStat;
-      try {
-        currentStat = fsLstatSync(current);
-      } catch (lstatError) {
-        if (!missingPathError(lstatError)) {
-          throw lstatError;
-        }
-      }
-      if (currentStat?.isSymbolicLink()) {
+      if (lstatIfPresent(current)?.isSymbolicLink()) {
         throw new Error(`Refusing path outside workspace root: ${candidate}`, {
           cause: error,
         });

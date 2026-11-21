@@ -50,88 +50,116 @@ export interface McpEnvelope {
   };
 }
 
+export interface McpClientInfo {
+  name: string;
+  version: string;
+}
+
+export interface McpSession {
+  initializeEnvelope: McpEnvelope;
+  sessionHeaders: Record<string, string>;
+  sessionId: string;
+}
+
+export interface InitializeMcpSessionOptions {
+  clientInfo: McpClientInfo;
+  initializeId: number | string;
+  request: APIRequestContext;
+}
+
+export async function initializeMcpSession({
+  clientInfo,
+  initializeId,
+  request,
+}: InitializeMcpSessionOptions): Promise<McpSession> {
+  const initialize = await request.post(STORYBOOK_MCP, {
+    headers: MCP_HEADERS,
+    data: {
+      jsonrpc: '2.0',
+      id: initializeId,
+      method: 'initialize',
+      params: {
+        protocolVersion: '2025-03-26',
+        capabilities: {},
+        clientInfo,
+      },
+    },
+  });
+
+  expect(initialize.status()).toBe(200);
+
+  const sessionId = initialize.headers()['mcp-session-id'];
+  if (sessionId === undefined) {
+    throw new Error('MCP initialize response did not provide a session ID');
+  }
+
+  const initializeEnvelope = await readMcpEvent(initialize, initializeId);
+  const sessionHeaders = {
+    ...MCP_HEADERS,
+    'mcp-session-id': sessionId,
+  };
+  const initialized = await request.post(STORYBOOK_MCP, {
+    headers: sessionHeaders,
+    data: { jsonrpc: '2.0', method: 'notifications/initialized' },
+  });
+
+  expect(initialized.status()).toBe(202);
+
+  return { initializeEnvelope, sessionHeaders, sessionId };
+}
+
 const isTransientMcpTransportError = (error: unknown): boolean =>
   /ECONNRESET|ECONNREFUSED|socket hang up/i.test(
     error instanceof Error ? error.message : String(error),
   );
 
-export async function executeMcpTestRun(
+const executeMcpTestRunAttempt = async (
+  request: APIRequestContext,
+  storyIds: string[],
+  attempt: number,
+): Promise<APIResponse> => {
+  try {
+    const { sessionHeaders } = await initializeMcpSession({
+      clientInfo: {
+        name: 'storybook-coverage-remediation',
+        version: '1.0.0',
+      },
+      initializeId: 10,
+      request,
+    });
+
+    return await request.post(STORYBOOK_MCP, {
+      headers: sessionHeaders,
+      timeout: 150_000,
+      data: {
+        jsonrpc: '2.0',
+        id: 11,
+        method: 'tools/call',
+        params: {
+          name: 'test-run',
+          arguments: {
+            a11y: true,
+            stories: storyIds.map((storyId) => ({ storyId })),
+          },
+        },
+      },
+    });
+  } catch (error) {
+    const delay = MCP_TRANSPORT_RETRY_DELAYS_MS.at(attempt);
+    if (!isTransientMcpTransportError(error) || delay === undefined) {
+      throw error;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    return executeMcpTestRunAttempt(request, storyIds, attempt + 1);
+  }
+};
+
+export function executeMcpTestRun(
   request: APIRequestContext,
   storyIds: string[],
 ): Promise<APIResponse> {
-  let lastError: unknown;
-
-  for (
-    let attempt = 0;
-    attempt <= MCP_TRANSPORT_RETRY_DELAYS_MS.length;
-    attempt += 1
-  ) {
-    try {
-      const initialize = await request.post(STORYBOOK_MCP, {
-        headers: MCP_HEADERS,
-        data: {
-          jsonrpc: '2.0',
-          id: 10,
-          method: 'initialize',
-          params: {
-            protocolVersion: '2025-03-26',
-            capabilities: {},
-            clientInfo: {
-              name: 'storybook-coverage-remediation',
-              version: '1.0.0',
-            },
-          },
-        },
-      });
-
-      expect(initialize.status()).toBe(200);
-
-      const sessionId = initialize.headers()['mcp-session-id'];
-      if (sessionId === undefined) {
-        throw new Error('MCP initialize response did not provide a session ID');
-      }
-      await readMcpEvent(initialize, 10);
-
-      const sessionHeaders = {
-        ...MCP_HEADERS,
-        'mcp-session-id': sessionId,
-      };
-      const initialized = await request.post(STORYBOOK_MCP, {
-        headers: sessionHeaders,
-        data: { jsonrpc: '2.0', method: 'notifications/initialized' },
-      });
-
-      expect(initialized.status()).toBe(202);
-
-      return await request.post(STORYBOOK_MCP, {
-        headers: sessionHeaders,
-        timeout: 150_000,
-        data: {
-          jsonrpc: '2.0',
-          id: 11,
-          method: 'tools/call',
-          params: {
-            name: 'test-run',
-            arguments: {
-              a11y: true,
-              stories: storyIds.map((storyId) => ({ storyId })),
-            },
-          },
-        },
-      });
-    } catch (error) {
-      lastError = error;
-      const delay = MCP_TRANSPORT_RETRY_DELAYS_MS.at(attempt);
-      if (!isTransientMcpTransportError(error) || delay === undefined) {
-        throw error;
-      }
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
-
-  throw lastError instanceof Error
-    ? lastError
-    : new Error('MCP test-run failed without a transport error');
+  return executeMcpTestRunAttempt(request, storyIds, 0);
 }
 
 export async function readMcpEvent(

@@ -34,8 +34,7 @@ DOMPurify / react-error-boundary
 
 ## Task 1 — SEC-003/004/005/008: Scrub PII from AppLogger and console.log calls
 
-**Severity:** High (CWE-319, CWE-359) — compliance-critical  
-**Files:**
+**Severity:** High (CWE-319, CWE-359) — compliance-critical **Files:**
 
 - Modify: `ClientApp/src/authentication/AccountProvider.tsx` (lines 171,
   175, 182)
@@ -47,7 +46,7 @@ DOMPurify / react-error-boundary
 - Modify: `ClientApp/src/analytics/GoogleAnalytics.tsx` (lines 52–55)
 - Modify: `ClientApp/src/routes/common/helperFunctions.ts` (lines 328–332)
 
-**Root cause:** `AppLogger.verbose` / `AppLogger.error` / `AppLogger.trace`
+**Root cause:** `AppLogger.verbose` / `Applogging.exception` / `AppLogger.trace`
 route their second/third argument directly to `insights.trackTrace` /
 `insights.trackException` as the `properties` object, which App Insights
 serialises and sends to Azure. Passing `account` (AccountInfo),
@@ -182,7 +181,7 @@ that uniquely identifies the session in logs without disclosing personal data.
 
   ```ts
   // line 198 — BEFORE:
-  AppLogger.error('Could not submit form step.', error as Error, values);
+  Applogging.exception('Could not submit form step.', error as Error, values);
   // line 200 — BEFORE:
   AppLogger.trace('Could not submit form step.', SeverityLevel.Error, {
     values,
@@ -195,7 +194,7 @@ that uniquely identifies the session in logs without disclosing personal data.
 
   ```ts
   // line 198 — AFTER:
-  AppLogger.error('Could not submit form step.', error as Error, {
+  Applogging.exception('Could not submit form step.', error as Error, {
     stepIndex: currentStepIndex,
   });
   // line 200 — AFTER:
@@ -212,7 +211,7 @@ that uniquely identifies the session in logs without disclosing personal data.
 
   ```ts
   // line 255 — BEFORE:
-  AppLogger.error('Could not save form step.', err, values);
+  Applogging.exception('Could not save form step.', err, values);
   // line 257 — BEFORE:
   AppLogger.trace('Could not save form step.', SeverityLevel.Error, {
     values,
@@ -225,7 +224,7 @@ that uniquely identifies the session in logs without disclosing personal data.
 
   ```ts
   // line 255 — AFTER:
-  AppLogger.error('Could not save form step.', err, {
+  Applogging.exception('Could not save form step.', err, {
     stepIndex: currentStepIndex,
   });
   // line 257 — AFTER:
@@ -303,8 +302,7 @@ that uniquely identifies the session in logs without disclosing personal data.
 
 ## Task 2 — SEC-006: Validate EXTERNAL_REDIRECT_URL against domain allowlist at startup
 
-**Severity:** High (CWE-601 — open redirect)  
-**Files:**
+**Severity:** High (CWE-601 — open redirect) **Files:**
 
 - Modify: `ClientApp/src/env.ts`
 
@@ -405,8 +403,7 @@ The dev default in `webpack.config.js` is `http://localhost:3000` — hostname
 
 ## Task 3 — SEC-007: Encode server data in mailto hrefs
 
-**Severity:** Medium (CWE-116 — improper encoding)  
-**Files:**
+**Severity:** Medium (CWE-116 — improper encoding) **Files:**
 
 - Modify: `ClientApp/src/routes/quotation/nMIContactDetails.tsx` (line 40)
 - Modify: `ClientApp/src/routes/measurementReport/nMIContactDetails.tsx`
@@ -469,7 +466,7 @@ must be percent-encoded.
 
 ## Task 4 — SEC-009: Implement TrustedTypes createHTML and createScript handlers
 
-**Severity:** Medium (CWE-79 — XSS via incomplete TrustedTypes policy)  
+**Severity:** Medium (CWE-79 — XSS via incomplete TrustedTypes policy)
 **Files:**
 
 - Modify: `ClientApp/src/trustedtypes.ts`
@@ -580,8 +577,7 @@ inline script creation should be permitted.
 ## Task 5 — Architecture: Add ErrorBoundary at provider level
 
 **Severity:** Architecture risk — uncaught exception in MsalProvider or
-AccountProvider crashes entire app with no fallback UI  
-**Files:**
+AccountProvider crashes entire app with no fallback UI **Files:**
 
 - Modify: `ClientApp/src/index.tsx`
 
@@ -673,7 +669,7 @@ exact same pattern already used in `AuthenticatedElement.tsx`.
 
 ## Task 6 — SEC-011: Validate callingPath before passing to navigate()
 
-**Severity:** Low (CWE-346 — unvalidated client-supplied navigation target)  
+**Severity:** Low (CWE-346 — unvalidated client-supplied navigation target)
 **Files:**
 
 - Modify: `ClientApp/src/components/modals/BranchSelectorModal/index.tsx`
@@ -823,7 +819,7 @@ This is correct as a rule but misleading — it implies the app is compliant, wh
   Replace with:
 
   ```text
-  - **PII**: MSAL logging has `piiLoggingEnabled: false`. Never log user-identifiable data. **Important:** this flag only governs MSAL's own internal logging — `AppLogger.verbose` / `AppLogger.error` route their `properties` argument directly to `insights.trackTrace` / `insights.trackException`. Always pass a scrubbed projection (e.g., `{ homeAccountId: account.homeAccountId }`) rather than a raw `AccountInfo` or `AccountDetails` object.
+  - **PII**: MSAL logging has `piiLoggingEnabled: false`. Never log user-identifiable data. **Important:** this flag only governs MSAL's own internal logging — `AppLogger.verbose` / `Applogging.exception` route their `properties` argument directly to `insights.trackTrace` / `insights.trackException`. Always pass a scrubbed projection (e.g., `{ homeAccountId: account.homeAccountId }`) rather than a raw `AccountInfo` or `AccountDetails` object.
   ```
 
 ### 7e — CLAUDE.md: update Yup custom-method list to include all 19 methods
@@ -918,8 +914,9 @@ All tasks complete when:
 
 - `npm run type-check` passes with zero errors after each task's commit
 - `git log --oneline -7` shows 7 commits matching the commit messages above
-- No `AppLogger.verbose` or `AppLogger.error` call passes a raw `AccountInfo`,
-  `AccountDetails`, or `FormikValues` object as the properties argument
+- No `AppLogger.verbose` or `Applogging.exception` call passes a raw
+  `AccountInfo`, `AccountDetails`, or `FormikValues` object as the properties
+  argument
 - `env.ts` throws on an invalid `EXTERNAL_REDIRECT_URL` at module load time
 - `trustedtypes.ts` has no commented-out handlers
 - `index.tsx` has `ErrorBoundary` as the outermost element in `root.render`

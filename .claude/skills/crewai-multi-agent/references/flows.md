@@ -25,26 +25,28 @@ control than Crews provide.
 from crewai.flow.flow import Flow, listen, start, router, or_, and_
 from pydantic import BaseModel
 
+
 # Define state model
 class MyState(BaseModel):
     counter: int = 0
-    data: str = ""
+    data: str = ''
     results: list = []
+
 
 # Create flow with typed state
 class MyFlow(Flow[MyState]):
-
     @start()
     def initialize(self):
         """Entry point - runs first"""
         self.state.counter = 1
-        return {"initialized": True}
+        return {'initialized': True}
 
     @listen(initialize)
     def process(self, data):
         """Runs after initialize completes"""
         self.state.counter += 1
-        return f"Processed: {data}"
+        return f'Processed: {data}'
+
 
 # Run flow
 flow = MyFlow()
@@ -60,16 +62,18 @@ print(flow.state.counter)  # Access final state
 @start()
 def begin(self):
     """First method(s) to execute"""
-    return {"status": "started"}
+    return {'status': 'started'}
+
 
 # Multiple start points (run in parallel)
 @start()
 def start_a(self):
-    return "A"
+    return 'A'
+
 
 @start()
 def start_b(self):
-    return "B"
+    return 'B'
 ```
 
 #### @listen() - Event Trigger
@@ -81,8 +85,9 @@ def after_init(self, result):
     """Runs when initialize completes"""
     return process(result)
 
+
 # Listen to string name
-@listen("high_confidence")
+@listen('high_confidence')
 def handle_high(self):
     """Runs when router returns 'high_confidence'"""
     pass
@@ -95,20 +100,23 @@ def handle_high(self):
 def decide_path(self):
     """Returns string to route to specific listener"""
     if self.state.confidence > 0.8:
-        return "high_confidence"
+        return 'high_confidence'
     elif self.state.confidence > 0.5:
-        return "medium_confidence"
-    return "low_confidence"
+        return 'medium_confidence'
+    return 'low_confidence'
 
-@listen("high_confidence")
+
+@listen('high_confidence')
 def handle_high(self):
     pass
 
-@listen("medium_confidence")
+
+@listen('medium_confidence')
 def handle_medium(self):
     pass
 
-@listen("low_confidence")
+
+@listen('low_confidence')
 def handle_low(self):
     pass
 ```
@@ -118,10 +126,12 @@ def handle_low(self):
 ```python
 from crewai.flow.flow import or_, and_
 
+
 # Triggers when EITHER condition is met
-@listen(or_("success", "partial_success"))
+@listen(or_('success', 'partial_success'))
 def handle_any_success(self):
     pass
+
 
 # Triggers when BOTH conditions are met
 @listen(and_(task_a, task_b))
@@ -137,6 +147,7 @@ def after_both_complete(self):
 from pydantic import BaseModel, Field
 from typing import Optional
 
+
 class WorkflowState(BaseModel):
     # Required fields
     input_data: str
@@ -150,6 +161,7 @@ class WorkflowState(BaseModel):
     # Nested models
     metadata: dict = Field(default_factory=dict)
 
+
 class MyFlow(Flow[WorkflowState]):
     @start()
     def init(self):
@@ -158,8 +170,8 @@ class MyFlow(Flow[WorkflowState]):
 
         # Modify state
         self.state.processed = True
-        self.state.results.append("item")
-        self.state.metadata["timestamp"] = "2025-01-01"
+        self.state.results.append('item')
+        self.state.metadata['timestamp'] = '2025-01-01'
 ```
 
 ### State Initialization
@@ -167,10 +179,10 @@ class MyFlow(Flow[WorkflowState]):
 ```python
 # Initialize with inputs
 flow = MyFlow()
-result = flow.kickoff(inputs={"input_data": "my data"})
+result = flow.kickoff(inputs={'input_data': 'my data'})
 
 # Or set state before kickoff
-flow.state.input_data = "my data"
+flow.state.input_data = 'my data'
 result = flow.kickoff()
 ```
 
@@ -182,32 +194,26 @@ result = flow.kickoff()
 from crewai import Crew, Agent, Task, Process
 from crewai.flow.flow import Flow, listen, start
 
-class ResearchFlow(Flow[ResearchState]):
 
+class ResearchFlow(Flow[ResearchState]):
     @start()
     def gather_requirements(self):
-        return {"topic": self.state.topic}
+        return {'topic': self.state.topic}
 
     @listen(gather_requirements)
     def run_research_crew(self, requirements):
         # Define crew
         researcher = Agent(
-            role="Researcher",
-            goal="Research {topic}",
-            backstory="Expert researcher"
+            role='Researcher', goal='Research {topic}', backstory='Expert researcher'
         )
 
         research_task = Task(
-            description="Research {topic} thoroughly",
-            expected_output="Detailed findings",
-            agent=researcher
+            description='Research {topic} thoroughly',
+            expected_output='Detailed findings',
+            agent=researcher,
         )
 
-        crew = Crew(
-            agents=[researcher],
-            tasks=[research_task],
-            process=Process.sequential
-        )
+        crew = Crew(agents=[researcher], tasks=[research_task], process=Process.sequential)
 
         # Execute crew within flow
         result = crew.kickoff(inputs=requirements)
@@ -217,29 +223,28 @@ class ResearchFlow(Flow[ResearchState]):
     @listen(run_research_crew)
     def process_results(self, crew_result):
         # Process crew output
-        return {"summary": self.state.research_output[:500]}
+        return {'summary': self.state.research_output[:500]}
 ```
 
 ### Multiple Crews in Flow
 
 ```python
 class MultiCrewFlow(Flow[MultiState]):
-
     @start()
     def init(self):
-        return {"ready": True}
+        return {'ready': True}
 
     @listen(init)
     def research_phase(self, data):
-        return research_crew.kickoff(inputs={"topic": self.state.topic})
+        return research_crew.kickoff(inputs={'topic': self.state.topic})
 
     @listen(research_phase)
     def writing_phase(self, research):
-        return writing_crew.kickoff(inputs={"research": research.raw})
+        return writing_crew.kickoff(inputs={'research': research.raw})
 
     @listen(writing_phase)
     def review_phase(self, draft):
-        return review_crew.kickoff(inputs={"draft": draft.raw})
+        return review_crew.kickoff(inputs={'draft': draft.raw})
 ```
 
 ## Complex Flow Patterns
@@ -248,10 +253,9 @@ class MultiCrewFlow(Flow[MultiState]):
 
 ```python
 class ParallelFlow(Flow[ParallelState]):
-
     @start()
     def init(self):
-        return {"ready": True}
+        return {'ready': True}
 
     # These run in parallel after init
     @listen(init)
@@ -269,18 +273,13 @@ class ParallelFlow(Flow[ParallelState]):
     # Waits for all branches
     @listen(and_(branch_a, branch_b, branch_c))
     def merge_results(self):
-        return {
-            "a": self.state.result_a,
-            "b": self.state.result_b,
-            "c": self.state.result_c
-        }
+        return {'a': self.state.result_a, 'b': self.state.result_b, 'c': self.state.result_c}
 ```
 
 ### Error Handling
 
 ```python
 class RobustFlow(Flow[RobustState]):
-
     @start()
     def risky_operation(self):
         try:
@@ -290,19 +289,19 @@ class RobustFlow(Flow[RobustState]):
         except Exception as e:
             self.state.error = str(e)
             self.state.success = False
-            return {"error": str(e)}
+            return {'error': str(e)}
 
     @router(risky_operation)
     def handle_result(self):
         if self.state.success:
-            return "success"
-        return "failure"
+            return 'success'
+        return 'failure'
 
-    @listen("success")
+    @listen('success')
     def continue_flow(self):
         pass
 
-    @listen("failure")
+    @listen('failure')
     def handle_error(self):
         # Retry, alert, or graceful degradation
         pass
@@ -312,7 +311,6 @@ class RobustFlow(Flow[RobustState]):
 
 ```python
 class RetryFlow(Flow[RetryState]):
-
     @start()
     def attempt_task(self):
         result = try_operation()
@@ -322,24 +320,24 @@ class RetryFlow(Flow[RetryState]):
 
     @router(attempt_task)
     def check_result(self):
-        if self.state.last_result.get("success"):
-            return "success"
+        if self.state.last_result.get('success'):
+            return 'success'
         if self.state.attempts >= 3:
-            return "max_retries"
-        return "retry"
+            return 'max_retries'
+        return 'retry'
 
-    @listen("retry")
+    @listen('retry')
     def retry_task(self):
         # Recursively call start
         return self.attempt_task()
 
-    @listen("success")
+    @listen('success')
     def finish(self):
-        return {"completed": True}
+        return {'completed': True}
 
-    @listen("max_retries")
+    @listen('max_retries')
     def fail(self):
-        return {"error": "Max retries exceeded"}
+        return {'error': 'Max retries exceeded'}
 ```
 
 ## Flow Visualization
@@ -399,14 +397,14 @@ class ApprovalFlow(Flow[ApprovalState]):
     @router(review)
     def approval_decision(self):
         if self.state.approved:
-            return "approved"
-        return "rejected"
+            return 'approved'
+        return 'rejected'
 
-    @listen("approved")
+    @listen('approved')
     def execute(self):
         return execute_request()
 
-    @listen("rejected")
+    @listen('rejected')
     def notify_rejection(self):
         return send_notification()
 ```
@@ -421,20 +419,20 @@ class AnalysisFlow(Flow[AnalysisState]):
 
     @listen(collect_data)
     def analyze(self, data):
-        return analysis_crew.kickoff(inputs={"data": data})
+        return analysis_crew.kickoff(inputs={'data': data})
 
     @router(analyze)
     def quality_check(self):
         if self.state.confidence > 0.8:
-            return "high_quality"
-        return "needs_review"
+            return 'high_quality'
+        return 'needs_review'
 
-    @listen("high_quality")
+    @listen('high_quality')
     def generate_report(self):
         return report_crew.kickoff()
 
-    @listen("needs_review")
+    @listen('needs_review')
     def request_human_review(self):
         self.state.needs_human = True
-        return "Awaiting human review"
+        return 'Awaiting human review'
 ```

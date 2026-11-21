@@ -130,25 +130,26 @@ imports the guard by path):
 ```python
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / 'scripts'))
 import pre_tool_use as g
 
 CASES = [
     # (command, expected list of (verb, args))
-    ("cat a | grep b", [("cat", ["a"]), ("grep", ["b"])]),
-    ("echo 'rm -r" + "f /'", [("echo", ["rm -r" + "f /"])]),          # quoted text is one arg
-    ("sudo rm -r a; ls", [("rm", ["-r", "a"]), ("ls", [])]),           # wrapper skipped
-    ("bash -c 'rm x'", [("bash", ["-c", "rm x"]), ("rm", ["x"])]),    # nested shell recursed
-    ("echo $(rm y)", [("rm", ["y"]), ("echo", ["$(rm", "y)"])]),      # substitution first
-    ("python - <<'EOF'\ncat x\nEOF", [("python", ["-"])]),             # heredoc body + operator dropped
-    ("$s = @'\ncat x\n'@\n$s | python -", [("$s", ["="]), ("$s", []), ("python", ["-"])]),
-    ("echo hi >.out", [("echo", ["hi", ">", ".out"])]),               # redirect tokens kept
-    ("Remove-Item C:\\temp\\x", [("remove-item", ["C:\\temp\\x"])]),  # backslash literal
+    ('cat a | grep b', [('cat', ['a']), ('grep', ['b'])]),
+    ("echo 'rm -r" + "f /'", [('echo', ['rm -r' + 'f /'])]),  # quoted text is one arg
+    ('sudo rm -r a; ls', [('rm', ['-r', 'a']), ('ls', [])]),  # wrapper skipped
+    ("bash -c 'rm x'", [('bash', ['-c', 'rm x']), ('rm', ['x'])]),  # nested shell recursed
+    ('echo $(rm y)', [('rm', ['y']), ('echo', ['$(rm', 'y)'])]),  # substitution first
+    ("python - <<'EOF'\ncat x\nEOF", [('python', ['-'])]),  # heredoc body + operator dropped
+    ("$s = @'\ncat x\n'@\n$s | python -", [('$s', ['=']), ('$s', []), ('python', ['-'])]),
+    ('echo hi >.out', [('echo', ['hi', '>', '.out'])]),  # redirect tokens kept
+    ('Remove-Item C:\\temp\\x', [('remove-item', ['C:\\temp\\x'])]),  # backslash literal
 ]
 bad = [c for c, want in CASES if g.commands(c) != want]
 for c in bad:
-    print("FAIL", repr(c), "->", g.commands(c))
-print(f"{len(CASES) - len(bad)}/{len(CASES)} passed")
+    print('FAIL', repr(c), '->', g.commands(c))
+print(f'{len(CASES) - len(bad)}/{len(CASES)} passed')
 sys.exit(1 if bad else 0)
 ```
 
@@ -168,93 +169,120 @@ Run: `python tests\hooks\test_guard_parser.py` Expected:
 In `scripts/pre_tool_use.py` add, replacing the regex tables over time:
 
 ```python
-_WRAPPERS = {"sudo", "command", "env", "time", "nohup", "exec", "xargs", "call", "&"}
-_SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
-_PS_SHELLS = {"pwsh", "powershell"}
+_WRAPPERS = {'sudo', 'command', 'env', 'time', 'nohup', 'exec', 'xargs', 'call', '&'}
+_SHELLS = {'bash', 'sh', 'zsh', 'dash', 'ksh'}
+_PS_SHELLS = {'pwsh', 'powershell'}
 _HEREDOC = re.compile(r"<<-?\s*['\"]?(\w+)['\"]?")
-_SUBST = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
+_SUBST = re.compile(r'\$\(([^()]*)\)|`([^`]*)`')
 _MAX_DEPTH = 3
+
 
 def _strip_blocks(text):
     out, closer = [], None
-    for line in text.split("\n"):
+    for line in text.split('\n'):
         if closer is not None:
-            if (closer[0] == "h" and line.strip() == closer[1]) or \
-               (closer[0] == "p" and line.startswith(closer[1])):
+            if (closer[0] == 'h' and line.strip() == closer[1]) or (
+                closer[0] == 'p' and line.startswith(closer[1])
+            ):
                 closer = None
             continue
         m = _HEREDOC.search(line)
         if m:
-            closer = ("h", m.group(1))
-            line = line[: m.start()] + line[m.end():]
+            closer = ('h', m.group(1))
+            line = line[: m.start()] + line[m.end() :]
         elif line.rstrip().endswith(("@'", '@"')):
-            closer = ("p", "'@" if line.rstrip().endswith("@'") else '"@')
+            closer = ('p', "'@" if line.rstrip().endswith("@'") else '"@')
             line = line.rstrip()[:-2]
         out.append(line)
-    return "\n".join(out)
+    return '\n'.join(out)
+
 
 def _split(text):
     segs, toks, cur, quote = [], [], [], None
+
     def flush():
-        if cur: toks.append("".join(cur)); cur.clear()
+        if cur:
+            toks.append(''.join(cur))
+            cur.clear()
+
     def end():
         flush()
-        if toks: segs.append(list(toks)); toks.clear()
+        if toks:
+            segs.append(list(toks))
+            toks.clear()
+
     for ch in text:
         if quote:
-            if ch == quote: quote = None
-            else: cur.append(ch)
-        elif ch in "'\"": quote = ch
-        elif ch in ";|&\n": end()
-        elif ch in "<>":
-            flush(); toks.append(ch)
-        elif ch in " \t": flush()
-        else: cur.append(ch)
+            if ch == quote:
+                quote = None
+            else:
+                cur.append(ch)
+        elif ch in '\'"':
+            quote = ch
+        elif ch in ';|&\n':
+            end()
+        elif ch in '<>':
+            flush()
+            toks.append(ch)
+        elif ch in ' \t':
+            flush()
+        else:
+            cur.append(ch)
     end()
     return segs
 
+
 def _verb_index(toks):
     for i, t in enumerate(toks):
-        if "=" in t and t.split("=")[0].replace("_", "").isalnum() and not t.startswith("-"):
+        if '=' in t and t.split('=')[0].replace('_', '').isalnum() and not t.startswith('-'):
             continue
         if t.lower() in _WRAPPERS:
             continue
         return i
     return None
 
+
 def _verb_name(tok):
-    name = tok.replace("\\", "/").rsplit("/", 1)[-1].lower()
-    for ext in (".exe", ".cmd", ".bat"):
-        if name.endswith(ext): name = name[: -len(ext)]
+    name = tok.replace('\\', '/').rsplit('/', 1)[-1].lower()
+    for ext in ('.exe', '.cmd', '.bat'):
+        if name.endswith(ext):
+            name = name[: -len(ext)]
     return name
+
 
 def commands(text, depth=0):
     """Return [(verb, args)] for every command in `text`, recursing into nested shells."""
     found = []
     body = _strip_blocks(text)
     for m in _SUBST.finditer(body):
-        if depth < _MAX_DEPTH: found += commands(m.group(1) or m.group(2), depth + 1)
+        if depth < _MAX_DEPTH:
+            found += commands(m.group(1) or m.group(2), depth + 1)
     for toks in _split(body):
         i = _verb_index(toks)
-        if i is None: continue
-        verb, args = _verb_name(toks[i]), toks[i + 1:]
+        if i is None:
+            continue
+        verb, args = _verb_name(toks[i]), toks[i + 1 :]
         found.append((verb, args))
         payload = _nested_payload(verb, args)
-        if payload and depth < _MAX_DEPTH: found += commands(payload, depth + 1)
+        if payload and depth < _MAX_DEPTH:
+            found += commands(payload, depth + 1)
     return found
+
 
 def _nested_payload(verb, args):
     low = [a.lower() for a in args]
     if verb in _SHELLS:
         for k, a in enumerate(args[:-1]):
-            if a.startswith("-") and not a.startswith("--") and a.endswith("c"): return args[k + 1]
+            if a.startswith('-') and not a.startswith('--') and a.endswith('c'):
+                return args[k + 1]
     if verb in _PS_SHELLS:
         for k, a in enumerate(low[:-1]):
-            if a in ("-c", "-command") or (a.startswith("-co") and "command".startswith(a[1:])):
-                return " ".join(args[k + 1:])
-    if verb == "cmd":
+            if a in ('-c', '-command') or (a.startswith('-co') and 'command'.startswith(a[1:])):
+                return ' '.join(args[k + 1 :])
+    if verb == 'cmd':
         for k, a in enumerate(low[:-1]):
-            if a in ("/c", "/k"): return " ".join(args[k + 1:])
+            if a in ('/c', '/k'):
+                return ' '.join(args[k + 1 :])
     return None
 ```
 
@@ -296,63 +324,83 @@ failing, as in Baseline).
 - [ ] **Step 3: Implement**
 
 ```python
-_REMOVERS = {"rm", "remove-item", "ri", "rmdir", "rd", "del", "erase"}
-_ALWAYS_BAD = {"format-volume", "clear-disk"}
-_SAFE_ROOTS = {".scannerwork", ".sonar", "node_modules", "dist", "coverage", "storybook-static"}
-_ROOTISH = {"/", "~", "*", ".", "..", "/*", "~/*", "./*"}
+_REMOVERS = {'rm', 'remove-item', 'ri', 'rmdir', 'rd', 'del', 'erase'}
+_ALWAYS_BAD = {'format-volume', 'clear-disk'}
+_SAFE_ROOTS = {'.scannerwork', '.sonar', 'node_modules', 'dist', 'coverage', 'storybook-static'}
+_ROOTISH = {'/', '~', '*', '.', '..', '/*', '~/*', './*'}
+
 
 def _norm(t):
-    t = t.replace("\\", "/")
-    while t.startswith("./"):
+    t = t.replace('\\', '/')
+    while t.startswith('./'):
         t = t[2:]
-    return t.rstrip("/") or "/"
+    return t.rstrip('/') or '/'
+
 
 def _is_safe_target(t):
     n = _norm(t)
-    if n.startswith(("/", "~", "$")) or re.match(r"[A-Za-z]:", n) or ".." in n.split("/"):
+    if n.startswith(('/', '~', '$')) or re.match(r'[A-Za-z]:', n) or '..' in n.split('/'):
         return False
-    return n.split("/")[0] in _SAFE_ROOTS
+    return n.split('/')[0] in _SAFE_ROOTS
+
 
 def _is_dangerous_target(t):
     n = _norm(t).lower()
-    return (n in _ROOTISH or re.fullmatch(r"[a-z]:/?\*?", n) is not None
-            or n.startswith(("$home", "$env:userprofile")) or re.fullmatch(r"/[^/]+", n) is not None)
+    return (
+        n in _ROOTISH
+        or re.fullmatch(r'[a-z]:/?\*?', n) is not None
+        or n.startswith(('$home', '$env:userprofile'))
+        or re.fullmatch(r'/[^/]+', n) is not None
+    )
+
 
 def _remove_flags(args):
     rec = force = False
     targets, i = [], 0
     while i < len(args):
         a, low = args[i], args[i].lower()
-        if a in ("<", ">"):
-            i += 2; continue
-        if low in ("-path", "-literalpath", "-lp") and i + 1 < len(args):
-            targets.append(args[i + 1]); i += 2; continue
-        if low == "/s": rec = True
-        elif low in ("/f", "/q"): force = True
-        elif low.startswith("--"):
-            rec = rec or low == "--recursive"; force = force or low == "--force"
-        elif a.startswith("-") and len(a) > 1:
-            name = low[1:].split(":")[0]
-            if name and "recurse".startswith(name): rec = True
-            elif name and "force".startswith(name): force = True
-            elif len(name) <= 4 and set(name) <= set("rfvid"):
-                rec = rec or "r" in name; force = force or "f" in name
+        if a in ('<', '>'):
+            i += 2
+            continue
+        if low in ('-path', '-literalpath', '-lp') and i + 1 < len(args):
+            targets.append(args[i + 1])
+            i += 2
+            continue
+        if low == '/s':
+            rec = True
+        elif low in ('/f', '/q'):
+            force = True
+        elif low.startswith('--'):
+            rec = rec or low == '--recursive'
+            force = force or low == '--force'
+        elif a.startswith('-') and len(a) > 1:
+            name = low[1:].split(':')[0]
+            if name and 'recurse'.startswith(name):
+                rec = True
+            elif name and 'force'.startswith(name):
+                force = True
+            elif len(name) <= 4 and set(name) <= set('rfvid'):
+                rec = rec or 'r' in name
+                force = force or 'f' in name
         else:
             targets.append(a)
         i += 1
     return rec, force, targets
 
+
 def _is_destructive(command):
     for verb, args in commands(command):
         if verb in _ALWAYS_BAD:
-            return "destructive-verb"
-        if verb == "format" and any(re.fullmatch(r"[A-Za-z]:", a) for a in args):
-            return "format-drive"
+            return 'destructive-verb'
+        if verb == 'format' and any(re.fullmatch(r'[A-Za-z]:', a) for a in args):
+            return 'format-drive'
         if verb in _REMOVERS:
             rec, force, targets = _remove_flags(args)
-            if rec and (any(_is_dangerous_target(t) for t in targets)
-                        or (force and not (targets and all(_is_safe_target(t) for t in targets)))):
-                return "recursive-delete"
+            if rec and (
+                any(_is_dangerous_target(t) for t in targets)
+                or (force and not (targets and all(_is_safe_target(t) for t in targets)))
+            ):
+                return 'recursive-delete'
     return None
 ```
 
@@ -398,33 +446,49 @@ git commit -m "fix: scope pre-tool-use delete guard to targets and allow scanner
 - [ ] **Step 3: Implement**
 
 ```python
-_ENV_NAME = re.compile(r"^\*{0,2}\.env([.*?].*)?$", re.IGNORECASE)
-_ENV_EXEMPT_VERBS = {"echo", "printf", "write-output", "write-host", "ls", "dir", "gci",
-                     "get-childitem", "test-path", "test", "stat", "git"}
+_ENV_NAME = re.compile(r'^\*{0,2}\.env([.*?].*)?$', re.IGNORECASE)
+_ENV_EXEMPT_VERBS = {
+    'echo',
+    'printf',
+    'write-output',
+    'write-host',
+    'ls',
+    'dir',
+    'gci',
+    'get-childitem',
+    'test-path',
+    'test',
+    'stat',
+    'git',
+}
+
 
 def _is_env_file(path):
-    base = path.replace("\\", "/").rsplit("/", 1)[-1]
+    base = path.replace('\\', '/').rsplit('/', 1)[-1]
     return bool(_ENV_NAME.match(base)) and not base.endswith(_ENV_SAFE_SUFFIXES)
+
 
 def _env_args(verb, args):
     """Arguments that can name a file: drop Select-String's search pattern."""
-    if verb in ("select-string", "sls"):
+    if verb in ('select-string', 'sls'):
         low = [a.lower() for a in args]
-        if "-pattern" in low:
-            k = low.index("-pattern"); return args[:k] + args[k + 2:]
-        positional = [i for i, a in enumerate(args) if not a.startswith("-")]
+        if '-pattern' in low:
+            k = low.index('-pattern')
+            return args[:k] + args[k + 2 :]
+        positional = [i for i, a in enumerate(args) if not a.startswith('-')]
         return [a for i, a in enumerate(args) if not positional or i != positional[0]]
     return args
+
 
 def _has_env_command_access(tool_name, tool_input):
     if tool_name not in _COMMAND_TOOLS:
         return False
-    command = tool_input.get("command")
+    command = tool_input.get('command')
     if not isinstance(command, str):
         return False
     for verb, args in commands(command):
         for k, a in enumerate(args):
-            if a in (">", "<") and k + 1 < len(args) and _is_env_file(args[k + 1]) and a == ">":
+            if a in ('>', '<') and k + 1 < len(args) and _is_env_file(args[k + 1]) and a == '>':
                 return True
         if verb in _ENV_EXEMPT_VERBS:
             continue
@@ -438,11 +502,16 @@ Replace the path and combined checks, keeping `_COMMAND_TOOLS`,
 
 ```python
 def _has_env_path_access(tool_name, tool_input):
-    return any(isinstance(tool_input.get(f), str) and _is_env_file(tool_input[f])
-               for f in _ENV_PATH_FIELDS.get(tool_name, ()))
+    return any(
+        isinstance(tool_input.get(f), str) and _is_env_file(tool_input[f])
+        for f in _ENV_PATH_FIELDS.get(tool_name, ())
+    )
+
 
 def _is_env_access(tool_name, tool_input):
-    return _has_env_path_access(tool_name, tool_input) or _has_env_command_access(tool_name, tool_input)
+    return _has_env_path_access(tool_name, tool_input) or _has_env_command_access(
+        tool_name, tool_input
+    )
 ```
 
 Remove the now-unused `_ENV_BASH_PATTERNS`, `_ENV_PS_PATTERNS`,
@@ -488,56 +557,74 @@ logging section and `main`:
 ```python
 _LOG_MAX_BYTES = 512 * 1024
 _SUMMARY_MAX = 200
-_SUMMARY_FIELDS = ("command", "file_path", "notebook_path", "path", "pattern", "glob")
-_REDACT = re.compile(r"(?i)((?:token|password|passwd|secret|api[_-]?key|authorization)\S*?[=:]\s*)\S+")
+_SUMMARY_FIELDS = ('command', 'file_path', 'notebook_path', 'path', 'pattern', 'glob')
+_REDACT = re.compile(
+    r'(?i)((?:token|password|passwd|secret|api[_-]?key|authorization)\S*?[=:]\s*)\S+'
+)
+
 
 def _project_root():
-    return os.environ.get("CLAUDE_PROJECT_DIR") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.environ.get('CLAUDE_PROJECT_DIR') or os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))
+    )
+
 
 def _summary(tool_input):
     for field in _SUMMARY_FIELDS:
         value = tool_input.get(field)
         if isinstance(value, str):
-            return _REDACT.sub(r"\1[REDACTED]", value)[:_SUMMARY_MAX]
-    return ""
+            return _REDACT.sub(r'\1[REDACTED]', value)[:_SUMMARY_MAX]
+    return ''
+
 
 def _log(tool_name, tool_input, decision, rule=None):
     try:
-        folder = os.path.join(_project_root(), ".agent-sync", "logs")
+        folder = os.path.join(_project_root(), '.agent-sync', 'logs')
         os.makedirs(folder, exist_ok=True)
-        path = os.path.join(folder, "pre_tool_use.jsonl")
+        path = os.path.join(folder, 'pre_tool_use.jsonl')
         if os.path.exists(path) and os.path.getsize(path) > _LOG_MAX_BYTES:
-            os.replace(path, path + ".1")
-        record = {"ts": time.strftime("%Y-%m-%dT%H:%M:%S"), "tool": tool_name,
-                  "decision": decision, "rule": rule, "summary": _summary(tool_input)}
-        with open(path, "a", encoding="utf-8") as handle:
-            handle.write(json.dumps(record) + "\n")
+            os.replace(path, path + '.1')
+        record = {
+            'ts': time.strftime('%Y-%m-%dT%H:%M:%S'),
+            'tool': tool_name,
+            'decision': decision,
+            'rule': rule,
+            'summary': _summary(tool_input),
+        }
+        with open(path, 'a', encoding='utf-8') as handle:
+            handle.write(json.dumps(record) + '\n')
     except OSError as err:
-        print(f"[pre_tool_use] log write failed: {err}", file=sys.stderr)
+        print(f'[pre_tool_use] log write failed: {err}', file=sys.stderr)
+
 
 def _block(tool_name, tool_input, rule, message):
-    _log(tool_name, tool_input, "block", rule)
-    print(f"BLOCKED: {message} (rule: {rule})", file=sys.stderr)
-    print(f"Input: {_summary(tool_input)}", file=sys.stderr)
+    _log(tool_name, tool_input, 'block', rule)
+    print(f'BLOCKED: {message} (rule: {rule})', file=sys.stderr)
+    print(f'Input: {_summary(tool_input)}', file=sys.stderr)
     sys.exit(2)
+
 
 def main():
     try:
         data = json.load(sys.stdin)
     except json.JSONDecodeError:
         return
-    if not isinstance(data, dict) or not isinstance(data.get("tool_name"), str):
+    if not isinstance(data, dict) or not isinstance(data.get('tool_name'), str):
         return
-    tool_name = data["tool_name"]
-    tool_input = data.get("tool_input") if isinstance(data.get("tool_input"), dict) else {}
+    tool_name = data['tool_name']
+    tool_input = data.get('tool_input') if isinstance(data.get('tool_input'), dict) else {}
     if _is_env_access(tool_name, tool_input):
-        _block(tool_name, tool_input, "secret-file-access",
-               "access to .env secret files is not allowed; use .env.sample for templates")
-    if tool_name in _COMMAND_TOOLS and isinstance(tool_input.get("command"), str):
-        rule = _is_destructive(tool_input["command"])
+        _block(
+            tool_name,
+            tool_input,
+            'secret-file-access',
+            'access to .env secret files is not allowed; use .env.sample for templates',
+        )
+    if tool_name in _COMMAND_TOOLS and isinstance(tool_input.get('command'), str):
+        rule = _is_destructive(tool_input['command'])
         if rule:
-            _block(tool_name, tool_input, rule, "destructive command detected")
-    _log(tool_name, tool_input, "allow")
+            _block(tool_name, tool_input, rule, 'destructive command detected')
+    _log(tool_name, tool_input, 'allow')
     sys.exit(0)
 ```
 
