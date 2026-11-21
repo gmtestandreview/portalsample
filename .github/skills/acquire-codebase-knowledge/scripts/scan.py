@@ -644,7 +644,11 @@ def _detect_container_file(rel_path: str, config: str, uses_glob: bool) -> list[
     rel_name = Path(rel_path).name
 
     if 'Dockerfile' in rel_name:
-        message = f'Container: Docker found ({rel_path})' if uses_glob else 'Container: Docker found'
+        message = (
+            f'Container: Docker found ({rel_path})'
+            if uses_glob
+            else 'Container: Docker found'
+        )
         return [message]
     if 'docker-compose' in rel_name:
         message = (
@@ -981,7 +985,10 @@ def run_scan(output_file: TextIO | None) -> int:
         print_optional_section(
             'ENTRY POINTS',
             [f'Found: {entry}' for entry in find_entry_points()],
-            "No common entry points found. Check 'main' or 'scripts.start' in manifest files above.",
+            (
+                "No common entry points found. Check 'main' or "
+                "'scripts.start' in manifest files above."
+            ),
             output_file,
         )
 
