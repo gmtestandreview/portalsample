@@ -7,7 +7,7 @@ export type IntentButtonChildren =
   | ((onClick: MouseEventHandler<HTMLButtonElement>) => ReactNode);
 
 interface IntentButtonProps {
-  children?: IntentButtonChildren | undefined;
+  children?: IntentButtonChildren;
   onClick: MouseEventHandler<HTMLButtonElement>;
   testId: string;
   label: string;

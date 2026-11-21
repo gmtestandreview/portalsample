@@ -31,19 +31,31 @@ if _git is None:
     sys.exit('git not found on PATH')
 GIT: str = _git
 
-ENV: dict[str, str] = dict(
-    os.environ,
-    GIT_AUTHOR_NAME='fixture',
-    GIT_AUTHOR_EMAIL='fixture@example.invalid',
-    GIT_COMMITTER_NAME='fixture',
-    GIT_COMMITTER_EMAIL='fixture@example.invalid',
-)
-
 PACKAGE_JSON = (
     '{ "name": "e2e-fixture", "version": "0.0.0", "private": true, '
     '"scripts": { "test": "node --test" } }\n'
 )
 FEATURE_BRANCH = 'feat/p'
+
+
+def build_git_env() -> dict[str, str]:
+    """Keep inherited Git settings from changing fixture subprocess behavior."""
+    env = {name: value for name, value in os.environ.items() if not name.startswith('GIT_')}
+    env.update(
+        {
+            'GIT_AUTHOR_NAME': 'fixture',
+            'GIT_AUTHOR_EMAIL': 'fixture@example.invalid',
+            'GIT_COMMITTER_NAME': 'fixture',
+            'GIT_COMMITTER_EMAIL': 'fixture@example.invalid',
+            'GIT_CONFIG_GLOBAL': os.devnull,
+            'GIT_CONFIG_NOSYSTEM': '1',
+            'GIT_CONFIG_SYSTEM': os.devnull,
+        }
+    )
+    return env
+
+
+ENV: dict[str, str] = build_git_env()
 
 TASKS: dict[int, tuple[str, str, str, str | None]] = {
     1: ('add', 'add(a, b)', 'returning `a + b`', None),

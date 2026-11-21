@@ -166,6 +166,7 @@ export const getFileDetails = (
   switch (result.quoteRequestStatus) {
     case QuoteStatus.QuoteAccepted:
     case QuoteStatus.ArtifactReceived:
+    case QuoteStatus.ReportInProgress:
       return dashboardClient.getQuoteRequestAcceptedPDFByID(
         result.crmQuoteRequestId,
         getFile,
@@ -191,11 +192,6 @@ export const getFileDetails = (
             result.crmQuoteRequestId,
             getFile,
           );
-    case QuoteStatus.ReportInProgress:
-      return dashboardClient.getQuoteRequestAcceptedPDFByID(
-        result.crmQuoteRequestId,
-        getFile,
-      );
     default:
       return Promise.resolve(undefined);
   }
@@ -579,7 +575,8 @@ export function sortList<T>(
       .startsWith(lastItem.toLocaleLowerCase()),
   );
 
-  if (displayFieldName === 'displayText') {
+  const displayField: PropertyKey = displayFieldName;
+  if (displayField === 'displayText') {
     const item =
       indexOfItemToRemove >= 0 ? list.at(indexOfItemToRemove) : undefined;
     removeId = (item as SelectInputOption<string> | undefined)?.value ?? '';

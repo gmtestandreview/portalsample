@@ -82,7 +82,9 @@ const stepBlocks = (contents: string): string[] => {
 };
 
 const hasAlwaysGuard = (step: string): boolean =>
-  /^\s*if:\s*always\(\)(?:\s*&&|\s*$)/m.test(step);
+  step
+    .split('\n')
+    .some((line) => /^\s*if:\s*always\(\)(?:\s*&&|\s*$)/.test(line));
 
 const withoutComments = (contents: string): string =>
   contents
@@ -91,7 +93,7 @@ const withoutComments = (contents: string): string =>
     .join('\n');
 
 const isWordCharacter = (character: string | undefined): boolean =>
-  character !== undefined && /[A-Za-z0-9_]/.test(character);
+  character !== undefined && /\w/.test(character);
 
 const hasNpxScannerInvocation = (line: string): boolean => {
   const npx = 'npx';
@@ -622,11 +624,13 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   it('uses the official scanner action at the intended immutable commit', () => {
     expect.hasAssertions();
 
-    const scannerReferences = [
-      ...block.matchAll(
-        /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm,
-      ),
-    ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
+    const scannerReferences = block.split('\n').flatMap((line) => {
+      const reference =
+        /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/.exec(
+          line,
+        )?.[1];
+      return reference === undefined ? [] : [reference];
+    });
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toStrictEqual([

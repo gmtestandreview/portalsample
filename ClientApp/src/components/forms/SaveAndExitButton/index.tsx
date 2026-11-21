@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import IntentButton from '../IntentButton';
 import type { IntentButtonChildren } from '../IntentButton';
 import { useIsRhfShell, useRhfFormApi } from '../RhfForm';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 interface SaveAndExitButtonProps {
   children?: IntentButtonChildren;
@@ -13,10 +14,8 @@ const FormikSaveAndExitButton = ({
   children,
 }: Readonly<SaveAndExitButtonProps>) => {
   const { submitForm } = useFormikContext();
-  const [_field, _meta, saveAndExitHelper] = useField<boolean | undefined>(
-    'saveAndExit',
-  );
-  const [saveAndExitClickField, _m, saveAndExitClickHelper] = useField<
+  const [, , saveAndExitHelper] = useField<boolean | undefined>('saveAndExit');
+  const [saveAndExitClickField, , saveAndExitClickHelper] = useField<
     boolean | undefined
   >('saveAndExitClick');
 
@@ -40,9 +39,8 @@ const FormikSaveAndExitButton = ({
       className='me-md-3'
       mode='dark'
       onClick={onClick}
-    >
-      {children}
-    </IntentButton>
+      {...omitUndefined({ children })}
+    />
   );
 };
 
@@ -65,9 +63,8 @@ const RhfSaveAndExitButton = ({
       className='me-md-3'
       mode='dark'
       onClick={onClick}
-    >
-      {children}
-    </IntentButton>
+      {...omitUndefined({ children })}
+    />
   );
 };
 

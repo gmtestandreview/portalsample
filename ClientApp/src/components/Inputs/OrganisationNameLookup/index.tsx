@@ -39,7 +39,7 @@ const OrganisationNameLookup = (
     maxResults = 30,
   } = props;
 
-  const [_field, _meta, _fieldHelper] = useField<string>(name);
+  const [, _meta, _fieldHelper] = useField<string>(name);
   const [_orgNameOptions] = useField<OrgNameOption[] | undefined>(
     'orgNameOptions',
   );

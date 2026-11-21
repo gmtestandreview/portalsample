@@ -29,6 +29,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import pluginSecurity from 'eslint-plugin-security';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
+import sonarjs from 'eslint-plugin-sonarjs';
 import tseslint from 'typescript-eslint';
 import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
 import vitest from '@vitest/eslint-plugin';
@@ -227,6 +228,11 @@ export default defineConfig(
     name: 'nmi/javascript-recommended',
     files: javascriptAndTypeScriptFiles,
     extends: [js.configs.recommended],
+  },
+  {
+    name: 'nmi/sonarjs-recommended',
+    files: javascriptAndTypeScriptFiles,
+    extends: [sonarjs.configs.recommended],
   },
 
   {

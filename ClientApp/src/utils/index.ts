@@ -148,9 +148,9 @@ export const parseDateUTC = (value: Date | string): Date | undefined => {
     : undefined;
 };
 
-export const isDateValid = (
-  value: Date | string | null | undefined,
-): boolean => {
+type DateInput = Date | string | null | undefined;
+
+export const isDateValid = (value: DateInput): boolean => {
   if (value === null || value === undefined || value.toString().trim() === '') {
     return false;
   }

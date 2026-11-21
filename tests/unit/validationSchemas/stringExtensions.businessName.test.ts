@@ -25,7 +25,9 @@ describe('yup stringExtensions — businessName', () => {
   it('rejects a name containing < or > (disallowed ASIC chars)', async () => {
     expect.hasAssertions();
 
-    await expect(schema.validate('<script>bad</script>')).rejects.toThrow(
+    const invalidBusinessName = 'Acme < Trading > Co';
+
+    await expect(schema.validate(invalidBusinessName)).rejects.toThrow(
       'Business name contains invalid characters',
     );
   });

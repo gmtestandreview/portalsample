@@ -44,10 +44,10 @@ const readSourceFiles = async (directory: string): Promise<string[]> => {
 };
 
 const mappingRows = (design: string) =>
-  [...design.matchAll(/^\|\s*`([^`]+)`\s*\|\s*(.*?)\s*\|$/gmu)].map(
+  [...design.matchAll(/^\|[^\S\n]*`([^`]+)`[^\S\n]*\|(.*)\|$/gmu)].map(
     ([, legacyName, viteName]) => ({
       legacyName,
-      viteName: viteName?.replaceAll('`', ''),
+      viteName: viteName?.trim().replaceAll('`', ''),
     }),
   );
 
@@ -111,7 +111,9 @@ describe('browser environment contract', () => {
     expect(runtimeEnvironment).toContain('VITE_B2C_CLIENTID');
     expect(runtimeEnvironment).not.toMatch(/\bREACT_APP_[A-Z0-9_]+\b/u);
     expect(runtimeEnvironment).toContain('Object.assign(globalThis');
-    expect(runtimeEnvironment).not.toMatch(/^\s*var\s+/mu);
+    expect(
+      runtimeEnvironment.split('\n').some((line) => /^\s*var\s+/u.test(line)),
+    ).toBe(false);
   });
 });
 

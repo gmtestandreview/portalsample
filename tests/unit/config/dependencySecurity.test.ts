@@ -430,8 +430,10 @@ describe('install-script approvals', () => {
   it('reviews every dependency that runs an install script', () => {
     expect.hasAssertions();
 
-    expect(Object.keys(allowScripts ?? {}).sort()).toStrictEqual(
-      [...APPROVED_INSTALL_SCRIPTS].sort(),
+    expect(
+      Object.keys(allowScripts ?? {}).sort((a, b) => a.localeCompare(b)),
+    ).toStrictEqual(
+      [...APPROVED_INSTALL_SCRIPTS].sort((a, b) => a.localeCompare(b)),
     );
   });
 

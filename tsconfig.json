@@ -65,6 +65,9 @@
     "scripts/**/*.ts",
     "quality/**/*",
     ".storybook/**/*",
+    ".github/migration-verifier/tests/**/*.ts",
+    ".github/migration-verifier/tests/**/*.tsx",
+    ".github/migration-verifier/*.config.ts",
     "tests/**/*"
   ],
   "exclude": [

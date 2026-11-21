@@ -19,6 +19,7 @@ import AppLogger from '../../instrumentation/AppLogger';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import { toPaDashboardItemStatus } from '../../routes/common/helperFunctions';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
   dateToFormat
@@ -160,7 +161,7 @@ const PaRequestItem = ({
           {
             action: PaRequestAction.Edit,
             text: 'Resume application',
-            route: editRoute,
+            ...omitUndefined({ route: editRoute }),
             onClick: () => {
               trackGAEvent('Editapplication');
             },
@@ -183,7 +184,7 @@ const PaRequestItem = ({
           {
             action: PaRequestAction.Edit,
             text: 'View application details',
-            route: editRoute,
+            ...omitUndefined({ route: editRoute }),
             onClick: () => {
               trackGAEvent('Viewapplicationdetails');
             },
@@ -236,7 +237,7 @@ const PaRequestItem = ({
             </Col>
             <Col lg={1} className='text-end'>
               <Actions
-                id={portalElementId('actions-')}
+                {...omitUndefined({ id: portalElementId('actions-') })}
                 as='icon'
                 variant='Blue'
                 dropDownActions={getActions()}

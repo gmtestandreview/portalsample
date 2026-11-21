@@ -44,10 +44,10 @@ const TRUNCATION_MARKERS: readonly string[] = [
   'FATAL ERROR',
 ];
 
-const COMPLETION_MARKER = /^\s*Test Files\s+\d/mu;
+const COMPLETION_LINE = /^\s*Test Files\s+\d/u;
 
 export const auditLog = (log: string): LogAudit => {
-  const completed = COMPLETION_MARKER.test(log);
+  const completed = log.split('\n').some((line) => COMPLETION_LINE.test(line));
   const truncatedBy = TRUNCATION_MARKERS.filter((marker) =>
     log.includes(marker),
   );
