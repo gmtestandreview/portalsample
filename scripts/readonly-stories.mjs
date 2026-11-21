@@ -94,7 +94,7 @@ function functionStoryChanges(name, initializer) {
     changes: parameterChanges(
       initializer.parameters,
       name,
-      (index) => `Parameters<Story>[${index}]`,
+      (index) => 'Parameters<Story>[' + index + ']',
     ),
     skipped: [],
   };
@@ -126,7 +126,8 @@ function objectStoryChanges(name, initializer) {
       ...parameterChanges(
         property.initializer.parameters,
         `${name}.${propName}`,
-        (index) => `Parameters<NonNullable<Story['${propName}']>>[${index}]`,
+        (index) =>
+          "Parameters<NonNullable<Story['" + propName + "']>>[" + index + ']',
       ),
     );
   }
