@@ -10,6 +10,7 @@ import type { DashboardClient } from '../../../ClientApp/src/api/web-api-client'
 import { DashboardTab } from '../../../ClientApp/src/components/SearchFilter/types';
 import type { CustomPaginationProps } from '../../../ClientApp/src/components/Pagination/types';
 import { defined } from '../helpers/defined';
+import { omitKeys } from '../../../ClientApp/src/utils/omitKeys';
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────
 
@@ -473,18 +474,6 @@ const BASE_USER_PROFILE = {
   filterSearchText: '',
   filterSortOrder: 'descending',
   filtersChanged: false,
-};
-
-// Builds a copy without the named key, so fixtures can model an absent field
-// (exactOptionalPropertyTypes forbids an explicit `undefined`) without
-// declaring an unused rest-sibling binding.
-const omitKey = <T extends object, K extends keyof T>(
-  source: T,
-  key: K,
-): Omit<T, K> => {
-  const copy: Omit<T, K> = { ...source };
-  Reflect.deleteProperty(copy, key);
-  return copy;
 };
 
 const BASE: AccountDetails = {
@@ -1158,7 +1147,7 @@ describe('dashboard', () => {
 
     resetDashboardMocks();
 
-    const profileWithoutPaging = omitKey(
+    const profileWithoutPaging = omitKeys(
       BASE_USER_PROFILE,
       'filterCurrentPage',
     );

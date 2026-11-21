@@ -13,19 +13,10 @@ import SummaryDisplay from '../../SummaryDisplay';
 import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { omitKeys } from '../../../utils/omitKeys';
 import { getControlId } from '../getControlId';
 
 type DateFieldValue = string | Date | null | undefined;
-
-/** Returns a copy of `source` without `key`, so the key is not forwarded by a rest spread. */
-const omitKey = <T extends object, K extends keyof T>(
-  source: T,
-  key: K,
-): Omit<T, K> => {
-  const copy: Omit<T, K> = { ...source };
-  Reflect.deleteProperty(copy, key);
-  return copy;
-};
 
 const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   const {
@@ -42,7 +33,7 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
 
   // `startDate` is accepted for API compatibility but is not forwarded to `CustomDatePicker`;
   // the current value comes from the Formik field instead.
-  const theRest = omitKey(remainingProps, 'startDate');
+  const theRest = omitKeys(remainingProps, 'startDate');
 
   const [_field, _meta] = useField<DateFieldValue>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext();

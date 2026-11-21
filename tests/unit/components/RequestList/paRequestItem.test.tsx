@@ -29,6 +29,7 @@ import PaRequestItem from '@/components/RequestList/paRequestItem';
 import { DashboardTab } from '@/components/SearchFilter/types';
 import { PaDashboardItemStatus } from '@/routes/common/enums';
 import { NotificationSeverity } from '@/storage/types';
+import { omitKeys } from '@/utils/omitKeys';
 
 const mocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn<IPublicClientApplication['acquireTokenSilent']>(),
@@ -128,20 +129,6 @@ const baseRequest: PatternApprovalDashboardDetailsDto = {
   appliedFor: 'Pattern approval certificate',
   assessedAs: 'Instrument pattern',
   unreadMessageCount: 2,
-};
-
-// Builds a copy without the named keys, so fixtures can model an absent field
-// (exactOptionalPropertyTypes forbids an explicit `undefined`) without
-// declaring unused rest-sibling bindings.
-const omitKeys = <T extends object, K extends keyof T>(
-  source: T,
-  ...keys: readonly K[]
-): Omit<T, K> => {
-  const copy: Omit<T, K> = { ...source };
-  for (const key of keys) {
-    Reflect.deleteProperty(copy, key);
-  }
-  return copy;
 };
 
 const renderPaRequestItem = (

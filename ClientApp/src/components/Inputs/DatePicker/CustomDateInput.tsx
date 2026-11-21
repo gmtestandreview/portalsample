@@ -4,20 +4,11 @@ import { Form, InputGroup } from 'react-bootstrap';
 
 import findElementInTreeById from '../../Utilities/findElementInTreeById';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { omitKeys } from '../../../utils/omitKeys';
 import type {
   CustomInputControlRef,
   CustomInputForwardRefProps,
 } from './types';
-
-/** Returns a copy of `source` without `key`, so the key is not forwarded by a rest spread. */
-const omitKey = <T extends object, K extends keyof T>(
-  source: T,
-  key: K,
-): Omit<T, K> => {
-  const copy: Omit<T, K> = { ...source };
-  Reflect.deleteProperty(copy, key);
-  return copy;
-};
 
 /**
  * Formik-connected text input and calendar trigger used by `CustomDatePicker`.
@@ -55,7 +46,7 @@ const CustomDateInput = React.forwardRef<
 
   // `handleCloseCalendar` is part of the props contract but this control does not use it.
   // Omit it so it is not forwarded to the DOM input.
-  const theRest = omitKey(remainingProps, 'handleCloseCalendar');
+  const theRest = omitKeys(remainingProps, 'handleCloseCalendar');
 
   const [, _meta] = useField(name);
   const helpId = inlineHelp ? `help-${name}` : undefined;
