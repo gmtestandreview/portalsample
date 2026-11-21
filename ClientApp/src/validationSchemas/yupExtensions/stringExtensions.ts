@@ -467,14 +467,11 @@ export const registerYupStringExtensions = () => {
         stringTest((value) => {
           if (NotEmpty(value)) {
             const num = Number.parseInt(value, 10);
-            if (
+            return (
               !Number.isNaN(num) &&
               value.length === 4 &&
               ((num >= 200 && num <= 299) || (num >= 800 && num <= 9999))
-            ) {
-              return true;
-            }
-            return false;
+            );
           }
           return true;
         }),

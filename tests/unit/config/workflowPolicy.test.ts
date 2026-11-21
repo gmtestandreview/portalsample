@@ -91,7 +91,7 @@ const withoutComments = (contents: string): string =>
     .join('\n');
 
 const isWordCharacter = (character: string | undefined): boolean =>
-  character !== undefined && /[A-Za-z0-9_]/.test(character);
+  character !== undefined && /\w/.test(character);
 
 const hasNpxScannerInvocation = (line: string): boolean => {
   const npx = 'npx';

@@ -166,6 +166,7 @@ export const getFileDetails = (
   switch (result.quoteRequestStatus) {
     case QuoteStatus.QuoteAccepted:
     case QuoteStatus.ArtifactReceived:
+    case QuoteStatus.ReportInProgress:
       return dashboardClient.getQuoteRequestAcceptedPDFByID(
         result.crmQuoteRequestId,
         getFile,
@@ -191,11 +192,6 @@ export const getFileDetails = (
             result.crmQuoteRequestId,
             getFile,
           );
-    case QuoteStatus.ReportInProgress:
-      return dashboardClient.getQuoteRequestAcceptedPDFByID(
-        result.crmQuoteRequestId,
-        getFile,
-      );
     default:
       return Promise.resolve(undefined);
   }
