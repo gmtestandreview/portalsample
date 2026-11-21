@@ -91,13 +91,12 @@ export const supportingDocsSubmitValidation = yup.object().shape({
         }),
       )
       .min(1, ValidationMessages.RequiredDoc)
-      .test('all-have-category', function (docs) {
-        if (!Array.isArray(docs)) return true;
-        const hasMissing = docs.some((doc) => !doc.attachmentCategory);
-        return hasMissing
-          ? this.createError({ message: ValidationMessages.RequiredTag })
-          : true;
-      }),
+      .test(
+        'all-have-category',
+        ValidationMessages.RequiredTag,
+        (docs) =>
+          !Array.isArray(docs) || docs.every((doc) => !!doc.attachmentCategory),
+      ),
   }),
 });
 

@@ -13,23 +13,16 @@ import { getControlId } from '../getControlId';
 
 type NumberInputFieldValue = string | number | Date | null | undefined;
 
-const formatInputValue = (
+const isDateInputValue = (
   type: string | undefined,
   value: NumberInputFieldValue,
-): NumberInputFieldValue => {
-  if (
-    type !== 'date' ||
-    !value ||
-    !(typeof value === 'string' || value instanceof Date)
-  ) {
-    return value;
-  }
+): value is string | Date =>
+  type === 'date' &&
+  !!value &&
+  (typeof value === 'string' || value instanceof Date);
 
-  return formatDate(
-    typeof value === 'string' ? parseISO(value) : value,
-    'yyyy-MM-dd',
-  );
-};
+const formatDateInputValue = (value: string | Date): string =>
+  formatDate(typeof value === 'string' ? parseISO(value) : value, 'yyyy-MM-dd');
 
 const getDisplayFormat = (
   format: NumberInputProps['format'],
@@ -93,7 +86,12 @@ const NumberInput = ({
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
   const inputPrependId = prepend ? `input-prepend-${controlId}` : undefined;
   const inputAppendId = append ? `input-append-${controlId}` : undefined;
-  const formattedValue = formatInputValue(type, meta.value);
+  const formattedValue: NumberInputFieldValue = isDateInputValue(
+    type,
+    meta.value,
+  )
+    ? formatDateInputValue(meta.value)
+    : meta.value;
   const displayValue = formattedValue ?? '';
   const phoneFormatValue =
     typeof formattedValue === 'string' ? formattedValue : undefined;
