@@ -134,7 +134,9 @@ describe('safe test filesystem helpers', () => {
 
       expect({
         blockedOperations,
-        outsideEntryNames: outsideEntries.map((entry) => entry.name).sort(),
+        outsideEntryNames: outsideEntries
+          .map((entry) => entry.name)
+          .sort((a, b) => a.localeCompare(b)),
       }).toStrictEqual({
         blockedOperations: new Array(operations.length).fill(true),
         outsideEntryNames: ['fixture.txt'],
