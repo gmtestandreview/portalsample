@@ -41,6 +41,9 @@ const isRuleOptions = (
   value: unknown,
 ): value is readonly [unknown, ...unknown[]] => Array.isArray(value);
 
+const toNumericSeverity = (entry: unknown): 0 | 1 | 2 =>
+  Number(isRuleOptions(entry) ? entry[0] : entry) as 0 | 1 | 2;
+
 const severityOf = (
   rules: Record<string, unknown>,
   ruleId: string,
@@ -49,11 +52,7 @@ const severityOf = (
     .find(([name]) => name === ruleId)
     ?.at(1);
 
-  if (entry === undefined) return 'absent';
-
-  const raw = isRuleOptions(entry) ? entry[0] : entry;
-
-  return Number(raw) as 0 | 1 | 2;
+  return entry === undefined ? 'absent' : toNumericSeverity(entry);
 };
 
 const severityIn = (
@@ -63,11 +62,7 @@ const severityIn = (
   const configured =
     rules === undefined ? undefined : Reflect.get(rules, ruleId);
 
-  if (configured === undefined) return 'absent';
-
-  const raw = isRuleOptions(configured) ? configured[0] : configured;
-
-  return Number(raw) as 0 | 1 | 2;
+  return configured === undefined ? 'absent' : toNumericSeverity(configured);
 };
 
 const lintTextMessages = async (filePath: string, code: string) => {

@@ -84,7 +84,7 @@ describe('generated API client harness', () => {
 
     const client = createClientMockFor('getStepStatuses');
 
-    new (client.constructor as unknown as new () => unknown)();
+    Reflect.construct(client.constructor, []);
     client.instance.setAuthToken('access-token');
     client.instance.getStepStatuses();
 

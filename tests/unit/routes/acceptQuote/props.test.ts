@@ -149,6 +149,15 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule72>,
 );
 
+const captureError = async (invoke: () => unknown) => {
+  try {
+    await invoke();
+    return undefined;
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+};
+
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
 const emptyAccounts = [] as AccountInfo[];
 const instance = {
@@ -339,14 +348,6 @@ describe('accept quote wizard prop factories', () => {
 
     mocks.savePaymentDetails.mockRejectedValueOnce(new Error('save failed'));
 
-    const captureError = async (invoke: () => unknown) => {
-      try {
-        await invoke();
-        return undefined;
-      } catch (error) {
-        return error instanceof Error ? error.message : String(error);
-      }
-    };
     const saveError = await captureError(() =>
       props.onSaveAndNext?.(paymentValues, true, abortSignal),
     );
@@ -452,14 +453,6 @@ describe('accept quote wizard prop factories', () => {
 
     mocks.saveReportRecipient.mockRejectedValueOnce(new Error('save failed'));
 
-    const captureError = async (invoke: () => unknown) => {
-      try {
-        await invoke();
-        return undefined;
-      } catch (error) {
-        return error instanceof Error ? error.message : String(error);
-      }
-    };
     const saveError = await captureError(() =>
       props.onSaveAndExit?.(recipientValues, false, abortSignal),
     );
@@ -635,25 +628,16 @@ describe('accept quote wizard prop factories', () => {
       'Accept quote',
     );
 
-    const rejectionMessage = async (invoke: () => unknown) => {
-      try {
-        await invoke();
-        return undefined;
-      } catch (error) {
-        return error instanceof Error ? error.message : String(error);
-      }
-    };
-
     await expect(
       Promise.all([
-        rejectionMessage(() => deliveryProps.loadStepValues()),
-        rejectionMessage(() => deliveryProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => paymentProps.loadStepValues()),
-        rejectionMessage(() => paymentProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => recipientProps.loadStepValues()),
-        rejectionMessage(() => recipientProps.onSaveAndExit?.({}, false)),
-        rejectionMessage(() => summaryProps.loadStepValues()),
-        rejectionMessage(() => summaryProps.onSaveAndExit?.({}, false)),
+        captureError(() => deliveryProps.loadStepValues()),
+        captureError(() => deliveryProps.onSaveAndExit?.({}, false)),
+        captureError(() => paymentProps.loadStepValues()),
+        captureError(() => paymentProps.onSaveAndExit?.({}, false)),
+        captureError(() => recipientProps.loadStepValues()),
+        captureError(() => recipientProps.onSaveAndExit?.({}, false)),
+        captureError(() => summaryProps.loadStepValues()),
+        captureError(() => summaryProps.onSaveAndExit?.({}, false)),
       ]),
     ).resolves.toStrictEqual([
       'There was an error retrieving your details.',

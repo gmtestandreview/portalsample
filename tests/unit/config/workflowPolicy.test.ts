@@ -77,7 +77,7 @@ const stepBlocks = (contents: string): string[] => {
   });
 
   return starts.map((start, index) =>
-    lines.slice(start, starts[index + 1]).join('\n'),
+    lines.slice(start, starts[index + 1] ?? lines.length).join('\n'),
   );
 };
 
@@ -95,9 +95,27 @@ const withoutComments = (contents: string): string =>
 const isWordCharacter = (character: string | undefined): boolean =>
   character !== undefined && /\w/.test(character);
 
+const hasScannerReferenceAfter = (line: string, start: number): boolean => {
+  const scannerReference = '@sonar/scan';
+  let searchStart = start;
+
+  while (searchStart < line.length) {
+    const scannerIndex = line.indexOf(scannerReference, searchStart);
+
+    if (scannerIndex === -1) return false;
+
+    if (!isWordCharacter(line[scannerIndex + scannerReference.length])) {
+      return true;
+    }
+
+    searchStart = scannerIndex + scannerReference.length;
+  }
+
+  return false;
+};
+
 const hasNpxScannerInvocation = (line: string): boolean => {
   const npx = 'npx';
-  const scannerReference = '@sonar/scan';
   let searchStart = 0;
 
   while (searchStart < line.length) {
@@ -107,21 +125,10 @@ const hasNpxScannerInvocation = (line: string): boolean => {
 
     if (
       !isWordCharacter(line[npxIndex - 1]) &&
-      !isWordCharacter(line[npxIndex + npx.length])
+      !isWordCharacter(line[npxIndex + npx.length]) &&
+      hasScannerReferenceAfter(line, npxIndex + npx.length)
     ) {
-      let scannerSearchStart = npxIndex + npx.length;
-
-      while (scannerSearchStart < line.length) {
-        const scannerIndex = line.indexOf(scannerReference, scannerSearchStart);
-
-        if (scannerIndex === -1) break;
-
-        if (!isWordCharacter(line[scannerIndex + scannerReference.length])) {
-          return true;
-        }
-
-        scannerSearchStart = scannerIndex + scannerReference.length;
-      }
+      return true;
     }
 
     searchStart = npxIndex + npx.length;

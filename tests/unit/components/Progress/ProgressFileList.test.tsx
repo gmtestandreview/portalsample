@@ -353,13 +353,13 @@ describe('progress file list', () => {
 
     expect({
       callbackCalls: onCancelFile.mock.calls,
-      rowOrder: updatedRows.map((row) =>
-        row === clickedRow
-          ? 'cancelled'
-          : row === otherRow
-            ? 'other'
-            : 'unknown',
-      ),
+      rowOrder: updatedRows.map((row) => {
+        if (row === clickedRow) {
+          return 'cancelled';
+        }
+
+        return row === otherRow ? 'other' : 'unknown';
+      }),
       cancellationFollowsClickedRow: cancellationRow === clickedRow,
       remainingButtonId: remainingButton.id,
     }).toStrictEqual({

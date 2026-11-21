@@ -8,6 +8,23 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
+const linkRenderProps = vi.hoisted(
+  () =>
+    (
+      includeHref: boolean,
+      children: React.ReactNode,
+      className: string | undefined,
+      href: string | undefined,
+    ): { children: React.ReactNode; className?: string; href?: string } => {
+      const classNameProps = className === undefined ? {} : { className };
+      const hrefProps = href === undefined ? {} : { href };
+
+      return includeHref
+        ? { children, ...classNameProps, ...hrefProps }
+        : { children, ...classNameProps };
+    },
+);
+
 vi.mock(
   import('react-aria-components/Link'),
   (() =>
@@ -29,16 +46,12 @@ vi.mock(
       }) =>
         renderLink ? (
           renderLink(
-            ariaLinkMockState.includeHref
-              ? {
-                  children,
-                  ...(className === undefined ? {} : { className }),
-                  ...(href === undefined ? {} : { href }),
-                }
-              : {
-                  children,
-                  ...(className === undefined ? {} : { className }),
-                },
+            linkRenderProps(
+              ariaLinkMockState.includeHref,
+              children,
+              className,
+              href,
+            ),
           )
         ) : (
           <a className={className} href={href}>
