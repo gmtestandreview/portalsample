@@ -8,6 +8,11 @@ const NMIContactDetails = (
   props: Readonly<{
     quotationData: RequestForQuoteDetails | undefined;
   }>,
-) => <SharedNMIContactDetails heading={quotationHeading} {...props} />;
+) => (
+  <SharedNMIContactDetails
+    heading={quotationHeading}
+    quotationData={props.quotationData}
+  />
+);
 
 export default NMIContactDetails;

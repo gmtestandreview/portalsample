@@ -51,10 +51,13 @@ export const DisplayRules = {
   isApplNewInstrumentHiddenP(
     x: Partial<ApplicationAndInstrumentStep>,
   ): boolean {
-    return (
-      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
-      (!x.instrumentCategory && !x.instrumentType)
-    );
+    if (
+      x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate
+    ) {
+      return true;
+    }
+
+    return !x.instrumentCategory && !x.instrumentType;
   },
 
   isOIMLHidden(x: Partial<ApplicationAndInstrumentStep>): boolean {

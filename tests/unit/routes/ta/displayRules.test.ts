@@ -237,14 +237,14 @@ describe('displayRules.isApplNewInstrumentHiddenP', () => {
     expect(DisplayRules.isApplNewInstrumentHiddenP(step(undefined))).toBe(true);
   });
 
-  it('shows the instrument section before a category or type is selected', () => {
+  it('hides the instrument section before a category or type is selected', () => {
     expect.hasAssertions();
 
     const result = DisplayRules.isApplNewInstrumentHiddenP({
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
     });
 
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 });
 

@@ -7,6 +7,8 @@ interface SharedContactDetailsProps {
   readonly quotationData: RequestForQuoteDetails | undefined;
 }
 
+const quotationId = 'Q-2024-000456';
+
 vi.mock('../../../../ClientApp/src/routes/common/NMIContactDetails', () => ({
   default: ({ heading, quotationData }: SharedContactDetailsProps) => (
     <div data-testid='shared-contact-details' data-heading={heading}>
@@ -22,7 +24,7 @@ describe(NMIContactDetails, () => {
     expect.assertions(2);
 
     render(
-      <NMIContactDetails quotationData={{ quotationIdNum: 'Q-2024-000456' }} />,
+      <NMIContactDetails quotationData={{ quotationIdNum: quotationId }} />,
     );
 
     const sharedContactDetails = screen.getByTestId('shared-contact-details');
@@ -32,6 +34,6 @@ describe(NMIContactDetails, () => {
       'Contact your NMI test officer if any of the details are not correct before proceeding.',
     );
 
-    expect(sharedContactDetails).toHaveTextContent('Q-2024-000456');
+    expect(sharedContactDetails).toHaveTextContent(quotationId);
   });
 });
