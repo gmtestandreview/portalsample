@@ -28,11 +28,16 @@ import subprocess
 import sys
 import threading
 import time
-from typing import IO, cast
+from typing import IO, TypedDict, cast
 
 # Shell punctuation that must never reach an executed command. `&&` is the only
 # operator supported, and only to chain `cd DIR && ...` prefixes.
 _SHELL_PUNCTUATION = set('();<>|&')
+
+
+class ServerConfig(TypedDict):
+    cmd: str
+    port: int
 
 
 def _split_segments(command: str) -> list[list[str]]:
@@ -87,22 +92,33 @@ _BATCH_SUFFIXES = ('.cmd', '.bat')
 _SAFE_BATCH_ARGUMENT = re.compile(r'[A-Za-z0-9_@+=:,./\\ -]*')
 
 
-def resolve_executable(name: str) -> str:
-    """Resolve `name` through PATH, refusing a bare name found only in the current directory.
+def resolve_executable(name: str, *, cwd: str | None = None) -> str:
+    """Find an executable by explicit path or through PATH for a bare name.
 
-    Windows searches the current directory before PATH; a planted `npm.cmd` there must
-    not win. A name containing a path separator is an explicit operator choice.
+    Explicit relative paths are based on the command's working directory. Bare names
+    use the caller's PATH and reject implicit Windows current-directory matches.
     """
+    caller_cwd = os.getcwd()
     if os.path.dirname(name):
-        return name
+        path = os.path.join(caller_cwd, cwd or '', name)
+        if not os.path.isabs(path):
+            path = os.path.abspath(path)  # Windows drive-relative path
+        # Check the exact path without applying Windows PATHEXT search rules.
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f'Executable not found at path: {path!r}')
+        if os.name != 'nt' and not os.access(path, os.X_OK):
+            raise PermissionError(f'File is not executable: {path!r}')
+        return path
+
     found = shutil.which(name)
     if found is None:
         # Never hand a bare name to CreateProcess, which may search the current directory.
         raise FileNotFoundError(f'Executable not found on PATH: {name!r}')
-    here = os.path.normcase(os.path.realpath(os.getcwd()))
+    found = os.path.join(caller_cwd, found)
+    here = os.path.normcase(os.path.realpath(caller_cwd))
     parent = os.path.normcase(os.path.realpath(os.path.dirname(found)))
     on_path = {
-        os.path.normcase(os.path.realpath(entry or os.getcwd()))
+        os.path.normcase(os.path.realpath(entry or caller_cwd))
         for entry in os.environ.get('PATH', '').split(os.pathsep)
     }
     if parent == here and here not in on_path:
@@ -110,9 +126,9 @@ def resolve_executable(name: str) -> str:
     return found
 
 
-def prepare_argv(argv: list[str]) -> list[str]:
+def prepare_argv(argv: list[str], *, cwd: str | None = None) -> list[str]:
     """Resolve argv[0] and validate arguments passed to batch-file targets."""
-    argv = [resolve_executable(argv[0]), *argv[1:]]
+    argv = [resolve_executable(argv[0], cwd=cwd), *argv[1:]]
     if argv[0].lower().endswith(_BATCH_SUFFIXES):
         for argument in argv[1:]:
             if not _SAFE_BATCH_ARGUMENT.fullmatch(argument):
@@ -177,27 +193,20 @@ def start_server(
     discarded. It is never left in an unread pipe, which would block a chatty server.
     """
     cwd, argv = parse_server_command(command, base=base)
-    argv = prepare_argv(argv)
+    validated_argv = prepare_argv(argv, cwd=cwd)
     output = subprocess.PIPE if tail is not None else subprocess.DEVNULL
-    # Own process group/session so stop_server can end the whole tree.
-    if os.name == 'nt':
-        process = subprocess.Popen(
-            argv,
-            cwd=cwd,
-            shell=False,
-            stdout=output,
-            stderr=subprocess.STDOUT,
-            creationflags=getattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 0),
-        )
-    else:
-        process = subprocess.Popen(
-            argv,
-            cwd=cwd,
-            shell=False,
-            stdout=output,
-            stderr=subprocess.STDOUT,
-            start_new_session=True,
-        )
+    on_windows = os.name == 'nt'
+    # The caller selects the executable. The parser and resolver validate it before
+    # launch in a separate group or session so stop_server can end the whole tree.
+    process = subprocess.Popen(  # nosec B603
+        validated_argv,
+        cwd=cwd,
+        shell=False,
+        stdout=output,
+        stderr=subprocess.STDOUT,
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if on_windows else 0,
+        start_new_session=not on_windows,
+    )
     if tail is not None and process.stdout is not None:
         tail.attach(process.stdout)
     return process
@@ -215,8 +224,10 @@ def _taskkill_path() -> str:
 
 def _kill_tree(process: subprocess.Popen[bytes]) -> None:
     if os.name == 'nt':
-        subprocess.run(
+        # The executable comes from the OS and the PID comes from the process we started.
+        subprocess.run(  # nosec B603
             [_taskkill_path(), '/PID', str(process.pid), '/T', '/F'],
+            shell=False,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             check=False,
@@ -251,19 +262,19 @@ def stop_server(process: subprocess.Popen[bytes]) -> None:
         process.wait()
 
 
-def is_server_ready(port, timeout=30):
+def is_server_ready(port: int, timeout: int = 30) -> bool:
     """Wait for server to be ready by polling the port."""
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
             with socket.create_connection(('localhost', port), timeout=1):
                 return True
-        except OSError, ConnectionRefusedError:
+        except OSError:
             time.sleep(0.5)
     return False
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description='Run command with one or more servers')
     parser.add_argument(
         '--server',
@@ -288,26 +299,30 @@ def main():
     )
 
     args = parser.parse_args()
+    server_commands = cast(list[str], args.servers)
+    server_ports = cast(list[int], args.ports)
+    command = cast(list[str], args.command)
+    timeout = cast(int, args.timeout)
 
     # Remove the '--' separator if present
-    if args.command and args.command[0] == '--':
-        args.command = args.command[1:]
+    if command and command[0] == '--':
+        command = command[1:]
 
-    if not args.command:
+    if not command:
         print('Error: No command specified to run')
         sys.exit(1)
 
     # Parse server configurations
-    if len(args.servers) != len(args.ports):
+    if len(server_commands) != len(server_ports):
         print('Error: Number of --server and --port arguments must match')
         sys.exit(1)
 
-    servers = []
-    for cmd, port in zip(args.servers, args.ports):
+    servers: list[ServerConfig] = []
+    for cmd, port in zip(server_commands, server_ports, strict=False):
         servers.append({'cmd': cmd, 'port': port})
 
-    server_processes = []
-    tails = []
+    server_processes: list[subprocess.Popen[bytes]] = []
+    tails: list[OutputTail] = []
 
     try:
         # Start all servers
@@ -323,7 +338,7 @@ def main():
 
             # Wait for this server to be ready
             print(f'Waiting for server on port {server['port']}...')
-            if not is_server_ready(server['port'], timeout=args.timeout):
+            if not is_server_ready(server['port'], timeout=timeout):
                 print(tail.read()[-2000:].decode('utf-8', errors='replace'))
                 raise RuntimeError(
                     f'Server failed to start on port {server['port']} within {args.timeout}s'
@@ -333,9 +348,14 @@ def main():
 
         print(f'\nAll {len(servers)} server(s) ready')
 
-        # Run the command
-        print(f'Running: {' '.join(args.command)}\n')
-        result = subprocess.run(prepare_argv(args.command), shell=False)
+        # The caller supplies a separate argument vector after the server options.
+        print(f'Running: {' '.join(command)}\n')
+        validated_argv = prepare_argv(command)
+        result = subprocess.run(  # nosec B603
+            validated_argv,
+            shell=False,
+            check=False,
+        )
         sys.exit(result.returncode)
 
     finally:

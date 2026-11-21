@@ -15,6 +15,9 @@ class ViewerOptimizedTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.text = VIEWER.read_text(encoding='utf-8')
 
+    def test_review_progress_is_named_for_accessibility(self) -> None:
+        self.assertIn('aria-label="Review progress"', self.text)
+
     def test_embedded_data_marker_is_unique(self) -> None:
         self.assertEqual(self.text.count('/*__EMBEDDED_DATA__*/'), 1)
 

@@ -196,3 +196,22 @@ Claude reads `REDLINING.md` / `OOXML.md` only when those features are needed.
   references.
 - **Add a table of contents** to any reference file longer than ~100 lines, so
   Claude sees the full scope when previewing it.
+
+## Adversarial verification contract
+
+**Skill-specific positive:** A skill that audits `SKILL.md` frontmatter must
+retain its required `name`/`description` checks in the entrypoint and move only
+long validation examples to `references/`. After revision, verify the target
+directory name still matches the YAML `name`, every first-level link exists, and
+an indirect request to _revise an Agent Skill_ still selects this workflow.
+
+**Near miss:** A task to explain Python packaging should **not** trigger this
+skill because it mentions "packaging"; likewise an employee "skill matrix" is
+not an Agent Skill. **Counterexample:** Moving _all_ safety and missing-evidence
+rules out of the entrypoint makes the skill shorter but worse; a short safety
+stop belongs in the always-loaded instructions.
+
+**Failure oracle:** If no representative host is available, record structural
+results only and set activation/behavior to NHR. **Deliverable:** diff,
+preserved-invariant checklist, positive/negative trigger matrix, and links to
+runnable evidence or explicit missing-tool blockers.

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import multiprocessing
 import os
 import subprocess
 import sys
@@ -95,6 +96,39 @@ class StartServerTests(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             ws.start_server('definitely-not-a-real-binary-xyz --flag')
 
+    def test_missing_explicit_executable_is_rejected_before_launch(self) -> None:
+        with (
+            tempfile.TemporaryDirectory() as root,
+            mock.patch.object(ws.subprocess, 'Popen') as popen,
+            self.assertRaises(FileNotFoundError),
+        ):
+            ws.start_server(f'"{Path(root) / 'missing-executable'}" --flag')
+        popen.assert_not_called()
+
+    def test_explicit_relative_executable_is_resolved_from_server_cwd(self) -> None:
+        executable = Path(sys.executable)
+        with mock.patch.object(ws.subprocess, 'Popen') as popen:
+            ws.start_server(f'cd . && "./{executable.name}" app.js', base=str(executable.parent))
+        launched, *arguments = popen.call_args.args[0]
+        self.assertEqual(Path(launched), executable)
+        self.assertEqual(arguments, ['app.js'])
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows PATHEXT behavior')
+    def test_explicit_executable_launch_ignores_pathext(self) -> None:
+        with mock.patch.dict(os.environ, {'PATHEXT': '.CMD;.BAT'}):
+            out = run_for_output(f'"{sys.executable}" -V')
+        self.assertTrue(out.startswith(b'Python '), out)
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows PATHEXT behavior')
+    def test_missing_explicit_path_does_not_select_batch_sibling(self) -> None:
+        with (
+            tempfile.TemporaryDirectory() as root,
+            mock.patch.dict(os.environ, {'PATHEXT': '.CMD;.BAT'}),
+        ):
+            (Path(root) / 'tool.cmd').touch()
+            with self.assertRaises(FileNotFoundError):
+                ws.prepare_argv(['./tool'], cwd=root)
+
     def test_real_process_receives_metacharacters_as_data(self) -> None:
         with tempfile.TemporaryDirectory() as root:
             marker = Path(root) / 'pwned'
@@ -154,19 +188,21 @@ class CleanupTests(unittest.TestCase):
             self.assertEqual(before, beat.stat().st_size, 'descendant kept running')
 
     def test_stop_server_does_not_touch_unrelated_processes(self) -> None:
-        sleeper = [sys.executable, '-c', 'import time; time.sleep(60)']
-        bystander = subprocess.Popen(sleeper)
+        bystander = multiprocessing.get_context('spawn').Process(target=time.sleep, args=(60,))
+        bystander.start()
         try:
             server = ws.start_server(f'"{sys.executable}" -c "import time; time.sleep(60)"')
             ws.stop_server(server)
             self.assertIsNotNone(server.poll())
-            self.assertIsNone(bystander.poll(), 'an unrelated process was stopped')
+            self.assertTrue(bystander.is_alive(), 'an unrelated process was stopped')
             # Also safe to call again once the server is gone (PID may be reused).
             ws.stop_server(server)
-            self.assertIsNone(bystander.poll())
+            self.assertTrue(bystander.is_alive())
         finally:
-            bystander.kill()
-            bystander.wait()
+            if bystander.is_alive():
+                bystander.kill()
+            bystander.join()
+            bystander.close()
 
     def test_stop_server_is_safe_on_already_exited_process(self) -> None:
         process = ws.start_server(f'"{sys.executable}" -c "pass"')
@@ -198,6 +234,26 @@ class CleanupTests(unittest.TestCase):
         ):
             ws.main()
         stop.assert_called_once_with(started)
+
+
+class FinalCommandTests(unittest.TestCase):
+    def test_final_command_ignores_pathext_for_explicit_path_and_propagates_exit_code(self) -> None:
+        argv = ['with_server.py', '--server', 'a', '--port', '1', '--', sys.executable, '-V']
+        with (
+            mock.patch.dict(os.environ, {'PATHEXT': '.CMD;.BAT'}),
+            mock.patch.object(sys, 'argv', argv),
+            mock.patch.object(ws, 'start_server', return_value=mock.Mock()),
+            mock.patch.object(ws, 'is_server_ready', return_value=True),
+            mock.patch.object(ws, 'stop_server'),
+            mock.patch.object(ws.subprocess, 'run') as run,
+        ):
+            run.return_value = mock.Mock(returncode=7)
+            with self.assertRaises(SystemExit) as cm:
+                ws.main()
+        self.assertEqual(cm.exception.code, 7)
+        run.assert_called_once()
+        self.assertIs(run.call_args.kwargs.get('check'), False)
+        self.assertIs(run.call_args.kwargs.get('shell'), False)
 
 
 class PipeDrainTests(unittest.TestCase):
@@ -357,6 +413,12 @@ class ParserEdgeCaseTests(unittest.TestCase):
 
 
 class ExecutableProvenanceTests(unittest.TestCase):
+    def _batch_target(self, name: str) -> str:
+        root = self.enterContext(tempfile.TemporaryDirectory())
+        target = Path(root) / name
+        target.touch(mode=0o700)
+        return str(target)
+
     @unittest.skipUnless(os.name == 'nt', 'Windows system directory lookup')
     def test_taskkill_location_ignores_environment_variables(self) -> None:
         with mock.patch.dict(os.environ, {'SYSTEMROOT': r'C:\evil', 'WINDIR': r'C:\evil'}):
@@ -366,18 +428,22 @@ class ExecutableProvenanceTests(unittest.TestCase):
         self.assertTrue(os.path.isfile(taskkill))
 
     def test_batch_target_rejects_cmd_metacharacters(self) -> None:
+        target = self._batch_target('tool.cmd')
         for argument in ('a&calc', 'a|b', 'a>b', '%PATH%', '"q"', 'a^b', '(x)', '!x!'):
             with self.subTest(argument=argument), self.assertRaises(ValueError):
-                ws.prepare_argv(['bin/tool.cmd', argument])
+                ws.prepare_argv([target, argument])
+        upper_target = self._batch_target('TOOL.BAT')
         with self.assertRaises(ValueError):
-            ws.prepare_argv(['bin/TOOL.BAT', 'a&b'])
+            ws.prepare_argv([upper_target, 'a&b'])
 
     def test_batch_target_allows_ordinary_arguments(self) -> None:
-        argv = ws.prepare_argv(['bin/tool.cmd', 'run', 'dev', '--port=5173', 'dir with space'])
+        target = self._batch_target('tool.cmd')
+        argv = ws.prepare_argv([target, 'run', 'dev', '--port=5173', 'dir with space'])
         self.assertEqual(argv[1:], ['run', 'dev', '--port=5173', 'dir with space'])
 
     def test_batch_target_allows_backslash_paths(self) -> None:
-        argv = ws.prepare_argv(['bin/tool.cmd', 'C:\\work\\app'])
+        target = self._batch_target('tool.cmd')
+        argv = ws.prepare_argv([target, 'C:\\work\\app'])
         self.assertEqual(argv[1:], ['C:\\work\\app'])
 
     def test_non_batch_target_keeps_metacharacters_as_data(self) -> None:
@@ -396,20 +462,21 @@ class ExecutableProvenanceTests(unittest.TestCase):
             out = run_for_output(f'"{shim}" safe-arg', root)
             self.assertIn(b'got:safe-arg', out)
 
-    @unittest.skipUnless(os.name == 'nt', 'Windows searches the current directory first')
     def test_bare_name_from_current_directory_is_refused(self) -> None:
         with tempfile.TemporaryDirectory() as root:
-            (Path(root) / 'plantedtool.cmd').write_text('@echo off\n', encoding='utf-8')
+            planted = Path(root) / 'plantedtool.cmd'
+            planted.touch()
             previous = os.getcwd()
             os.chdir(root)
-            # Default Windows behaviour: the current directory is searched first.
-            with mock.patch.dict(os.environ):
-                os.environ.pop('NoDefaultCurrentDirectoryInExePath', None)
-                try:
-                    with self.assertRaises(ValueError):
-                        ws.resolve_executable('plantedtool')
-                finally:
-                    os.chdir(previous)
+            try:
+                with (
+                    mock.patch.dict(os.environ, {'PATH': str(Path(root) / 'bin')}),
+                    mock.patch.object(ws.shutil, 'which', return_value=str(planted)),
+                    self.assertRaisesRegex(ValueError, 'from the current directory'),
+                ):
+                    ws.resolve_executable('plantedtool')
+            finally:
+                os.chdir(previous)
 
     def test_explicit_path_is_an_operator_choice(self) -> None:
         self.assertEqual(ws.resolve_executable(sys.executable), sys.executable)

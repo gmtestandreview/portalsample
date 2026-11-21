@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Aggregate graded benchmark runs into JSON and Markdown summaries.
 
 The aggregator preserves observed evidence only:
@@ -19,16 +19,16 @@ import math
 import sys
 from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import fmean, stdev
 from typing import TypeAlias, TypedDict, TypeGuard, cast
 
-JsonScalar: TypeAlias = str | int | float | bool | None
-JsonValue: TypeAlias = JsonScalar | list['JsonValue'] | dict[str, 'JsonValue']
-JsonObject: TypeAlias = dict[str, JsonValue]
-EvalId: TypeAlias = int | str
-ComparisonPair: TypeAlias = tuple[str, str]
+type JsonScalar = str | int | float | bool | None
+type JsonValue = JsonScalar | list['JsonValue'] | dict[str, 'JsonValue']
+type JsonObject = dict[str, JsonValue]
+type EvalId = int | str
+type ComparisonPair = tuple[str, str]
 
 SUPPORTED_COMPARISON_PAIRS: tuple[ComparisonPair, ...] = (
     ('with_skill', 'without_skill'),
@@ -71,8 +71,8 @@ class DeltaSummary(DeltaSummaryRequired, total=False):
     tokens: str
 
 
-RunSummaryValue: TypeAlias = ConfigSummary | DeltaSummary
-RunSummary: TypeAlias = dict[str, RunSummaryValue]
+type RunSummaryValue = ConfigSummary | DeltaSummary
+type RunSummary = dict[str, RunSummaryValue]
 
 
 class RunResultRequired(TypedDict):

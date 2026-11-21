@@ -181,13 +181,14 @@ def test_deep_yaml_is_reported_as_a_controlled_cli_error(tmp_path: Path, command
     # Click 8.1 combines stdout/stderr; Click 8.2+ exposes stderr_bytes.
     # Assert the emitted error without requiring a newer Click than the
     # package's declared click>=8.0 baseline.
+    captured_stderr = getattr(result, 'stderr_bytes', None)
     captured_error = (
-        result.stderr_bytes.decode(errors='replace')
-        if result.stderr_bytes is not None
+        captured_stderr.decode(errors='replace')
+        if isinstance(captured_stderr, bytes)
         else result.output
     )
     if 'Invalid YAML' not in captured_error:
         pytest.fail(f"Expected 'Invalid YAML' in CLI output, got: {captured_error!r}")
     # Only a runner that captures streams separately can prove stdout empty.
-    if result.stderr_bytes is not None and result.stdout != '':
+    if isinstance(captured_stderr, bytes) and result.stdout != '':
         pytest.fail(f'Expected no stdout, got: {result.stdout!r}')

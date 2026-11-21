@@ -521,3 +521,16 @@ A valid benchmark analysis is:
 - **descriptive** — no unsupported causes or remediation proposals;
 - **sample-bounded** — conclusions are limited to observed evals/runs;
 - **machine-readable** — output is a valid JSON array of strings.
+
+## Adversarial verification contract
+
+**Calibration case:** Given a comparator decision and conflicting run
+transcripts, produce a schema-valid analysis that cites each observed difference
+without asserting the skill text _caused_ it. **Adversarial case:** If A/B
+identity or raw transcript is missing, mark the analysis incomplete and do not
+invent the losing skill's behavior. **Regression:** both post-hoc and benchmark
+modes preserve their distinct input contracts; reuse neither a post-hoc
+conclusion as a measured aggregate rate nor a benchmark percentage as causal
+proof. **Output evidence:** comparison/run IDs, observed facts, qualified
+hypotheses, actionable smallest-change suggestion and schema-validator result. A
+written oracle does not replace an executed, independently judged agent trial.

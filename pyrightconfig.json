@@ -1,9 +1,25 @@
 {
-  "include": ["scripts", "tests"],
+  "include": ["scripts", "tests", ".claude/skills/**/*.py", "."],
   "exclude": ["**/node_modules", "**/__pycache__", "**/.venv"],
   "extraPaths": ["scripts"],
+  "defineConstant": {
+    "DEBUG": true
+  },
   "venvPath": ".",
   "venv": ".venv",
   "pythonVersion": "3.14",
-  "typeCheckingMode": "strict"
+  "pythonPlatform": "Windows",
+  "executionEnvironments": [
+    { "root": ".claude/skills/skill-creator" },
+    { "root": "." }
+  ],
+  "typeCheckingMode": "strict",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": true,
+  "reportUnknownParameterType": true,
+  "enableReachabilityAnalysis": true,
+  "strictDictionaryInference": true,
+  "strictParameterNoneValue": true,
+  "strictListInference": true,
+  "strictSetInference": true
 }

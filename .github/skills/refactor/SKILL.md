@@ -6,7 +6,6 @@ description:
   Applies to cleanup, extracting or renaming code, reducing duplication or
   complexity, and incremental design improvements; not feature work, bug-fix
   behavior changes, rewrites, or migrations.
-license: MIT
 ---
 
 # Refactor

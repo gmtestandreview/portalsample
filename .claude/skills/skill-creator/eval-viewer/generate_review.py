@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Generate and serve a review page for eval results.
 
 The viewer is an evidence-presentation layer. It discovers current run evidence,
 embeds task-relevant outputs into a self-contained HTML page, optionally adds a
 benchmark and previous-iteration context, and persists explicit human feedback.
 
-The module is stdlib-only and supports Python 3.10+.
+The module is stdlib-only and targets Python 3.14.x.
 """
 
 from __future__ import annotations
@@ -35,6 +35,12 @@ from socketserver import BaseServer
 from typing import TypeAlias, TypedDict, cast
 from urllib.parse import urlsplit
 
+if sys.version_info[:2] != (3, 14):
+    raise SystemExit(
+        'generate_review requires Python 3.14.x '
+        f'(found {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro})'
+    )
+
 TEXT_ENCODING = 'utf-8'
 JSON_CONTENT_TYPE = 'application/json'
 TRANSCRIPT_FILE = 'transcript.md'
@@ -60,7 +66,7 @@ SUPPORTED_FEEDBACK_STATUSES = frozenset({'in_progress', 'complete'})
 SKIP_DIRECTORIES = frozenset({'node_modules', '.git', '__pycache__', 'skill', 'inputs'})
 METADATA_FILES = frozenset({TRANSCRIPT_FILE, 'user_notes.md', 'metrics.json'})
 
-EvalId: TypeAlias = int | str
+type EvalId = int | str
 
 _feedback_write_lock = threading.Lock()
 
@@ -662,6 +668,13 @@ def _json_for_script(data: object) -> str:
     )
 
 
+def _validated_run_id(value: object) -> str:
+    """Validate runtime-supplied run IDs independently of TypedDict hints."""
+    if not isinstance(value, str) or not value:
+        raise ValueError('viewer runs require non-empty string IDs')
+    return value
+
+
 def generate_html(
     runs: list[Run],
     skill_name: str,
@@ -669,6 +682,11 @@ def generate_html(
     benchmark: dict[str, object] | None = None,
 ) -> str:
     """Generate a self-contained review page from the viewer template."""
+    # Direct API callers must not bypass find_runs()'s collision handling:
+    # feedback is keyed by run ID, so duplicate IDs could misattribute reviews.
+    identifiers = [_validated_run_id(run.get('id')) for run in runs]
+    if len(identifiers) != len(set(identifiers)):
+        raise ValueError('viewer runs must have unique IDs for feedback attribution')
     template_path = Path(__file__).parent / 'viewer.html'
     template = template_path.read_text(encoding=TEXT_ENCODING)
 
@@ -717,7 +735,7 @@ def _parse_iso_datetime(value: str) -> bool:
 
 
 def _utc_now_iso() -> str:
-    from datetime import datetime, timezone
+    from datetime import datetime
 
     return datetime.now(UTC).isoformat(timespec='seconds').replace('+00:00', 'Z')
 

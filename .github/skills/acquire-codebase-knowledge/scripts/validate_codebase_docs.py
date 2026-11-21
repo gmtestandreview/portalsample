@@ -111,7 +111,8 @@ PLACEHOLDER_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Credential-like values. These are intentionally conservative and should not match plain env var names.
+# Credential-like values. These are intentionally conservative and should not
+# match plain env var names.
 SECRET_PATTERNS: Sequence[tuple[str, re.Pattern]] = (
     (
         'private key material',
@@ -163,7 +164,9 @@ class Finding:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description='Validate docs/codebase outputs produced by the acquire-codebase-knowledge skill.'
+        description=(
+            'Validate docs/codebase outputs produced by the acquire-codebase-knowledge skill.'
+        )
     )
     parser.add_argument(
         '--project-root',
@@ -284,7 +287,8 @@ def validate_file(project_root: Path, docs_dir: Path, path: Path, findings: list
             findings,
             'error',
             doc_name,
-            f'unresolved template placeholder near line {line_no(text, match.start())}: {match.group(0)}',
+            f'unresolved template placeholder near line '
+            f'{line_no(text, match.start())}: {match.group(0)}',
         )
 
     # [ASK USER] must include a question or actionable prompt on the same line.
@@ -345,4 +349,4 @@ if __name__ == '__main__':
     try:
         raise SystemExit(main())
     except BrokenPipeError:
-        raise SystemExit(1)
+        raise SystemExit(1) from None

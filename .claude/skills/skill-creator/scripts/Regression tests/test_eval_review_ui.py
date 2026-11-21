@@ -48,7 +48,6 @@ const { chromium } = require('playwright');
 """
 
 
-@unittest.skipUnless(shutil.which('node'), 'Node is required for the real-browser UI regression')
 class EvalReviewBrowserTests(unittest.TestCase):
     def run_browser_case(self, case: str) -> None:
         creator = Path(__file__).resolve().parents[2]
@@ -84,6 +83,21 @@ class EvalReviewBrowserTests(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(generated.returncode, 0, generated.stderr)
+            # Prefer the original Node Playwright contract when installed; otherwise
+            # execute equivalent browser oracles with the Python Playwright binding.
+            node_available = (
+                shutil.which('node')
+                and subprocess.run(
+                    ['node', '-e', 'require.resolve("playwright")'],
+                    capture_output=True,
+                    check=False,
+                    timeout=5,
+                ).returncode
+                == 0
+            )
+            if not node_available:
+                self._python_browser_case(output, case)
+                return
             browser = subprocess.run(
                 ['node', '--eval', NODE_TEST, str(output), case],
                 cwd=creator,
@@ -93,6 +107,55 @@ class EvalReviewBrowserTests(unittest.TestCase):
                 timeout=30,
             )
             self.assertEqual(browser.returncode, 0, browser.stderr)
+
+    def _python_browser_case(self, output: Path, case: str) -> None:
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            self.skipTest('Neither Node nor Python Playwright is installed')
+        browser_path = shutil.which('chromium') or shutil.which('google-chrome')
+        if browser_path is None:
+            self.skipTest('No system Chromium available for Python Playwright')
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(
+                executable_path=browser_path,
+                headless=True,
+                args=['--no-sandbox'],
+            )
+            try:
+                page = browser.new_page()
+                page.route('**/*', lambda request: request.abort())
+                page.set_content(output.read_text(encoding='utf-8'))
+                if case == 'labels':
+                    for number in (1, 2):
+                        self.assertEqual(
+                            page.get_by_role('textbox', name=f'Query {number}', exact=True).count(),
+                            1,
+                        )
+                        self.assertEqual(
+                            page.get_by_role(
+                                'checkbox', name=f'Should trigger for query {number}', exact=True
+                            ).count(),
+                            1,
+                        )
+                else:
+                    page.get_by_role('button', name='+ Add Query', exact=True).click()
+                    self.assertEqual(page.evaluate('document.activeElement.value'), '')
+                    page.keyboard.type('new positive query')
+                    self.assertEqual(
+                        page.get_by_role('textbox', name='Query 3', exact=True).input_value(),
+                        'new positive query',
+                    )
+                    self.assertTrue(
+                        page.get_by_role(
+                            'checkbox', name='Should trigger for query 3', exact=True
+                        ).is_checked()
+                    )
+                    self.assertEqual(
+                        page.locator('textarea').nth(2).input_value(), 'existing negative query'
+                    )
+            finally:
+                browser.close()
 
     def test_query_and_trigger_controls_have_accessible_row_labels(self) -> None:
         self.run_browser_case('labels')

@@ -36,7 +36,7 @@ class DesignTokenGenerator:
         """Generate comprehensive color palette from brand color"""
         # Convert hex to RGB
         brand_rgb = self._hex_to_rgb(brand_color)
-        brand_hsv = colorsys.rgb_to_hsv(*[c / 255 for c in brand_rgb])
+        colorsys.rgb_to_hsv(*[c / 255 for c in brand_rgb])
 
         palette = {
             'primary': self._generate_color_scale(brand_color, 'primary'),
@@ -92,7 +92,6 @@ class DesignTokenGenerator:
 
         for step in steps:
             # Adjust lightness based on step
-            factor = (1000 - step) / 1000
             new_v = 0.95 if step < 500 else v * (1 - (step - 500) / 500)
             new_s = s * (0.3 + 0.7 * (step / 900))
 

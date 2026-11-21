@@ -50,9 +50,11 @@ const module = new vm.SourceTextModule(fs.readFileSync(process.argv[1], 'utf8'),
   identifier: process.argv[1],
 });
 await module.link(async specifier => {
-  if (specifier === 'node:child_process') return syntheticModule(specifier, {spawnSync: child.spawnSync});
+  if (specifier === 'node:child_process') return syntheticModule(
+    specifier, {spawnSync: child.spawnSync});
   if (specifier === 'node:path') return syntheticModule(specifier, {resolve: path.resolve});
-  if (specifier === 'node:url') return syntheticModule(specifier, {fileURLToPath: () => process.argv[1]});
+  if (specifier === 'node:url') return syntheticModule(
+    specifier, {fileURLToPath: () => process.argv[1]});
   throw new Error(`Unexpected import: ${specifier}`);
 });
 try {

@@ -229,7 +229,6 @@ test('preserves fatal parser diagnostics as errors', () => {
     severity: 'error',
     ruleId: null,
     message: 'Parsing error: Unexpected token',
-    nodeType: undefined,
     fatal: true,
     fixable: false,
   });

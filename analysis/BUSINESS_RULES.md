@@ -62,7 +62,7 @@ SEC-011 closed 2026-06-01 (CRD-029, CRD-031).
 | RULE-008 | PDF page number by status            | Lifecycle   | P1       | `helperFunctions.ts`                                              | Medium                                  |
 | RULE-009 | Proceed/decline button eligibility   | Lifecycle   | P1       | `quoteStatus.ts`, `quotation/index.tsx`                           | High                                    |
 | RULE-010 | Dashboard action menu by status      | Lifecycle   | P0       | `requestItem.tsx`, `instrumentItem.tsx` _(corrected CRD-045)_     | High                                    |
-| RULE-011 | Optimistic UI status override        | Lifecycle   | P1       | `dashboard/index.tsx`                                             | High                                    |
+| RULE-011 | Optimistic UI status override        | Lifecycle   | P1       | `dashboard.helpers.ts`                                            | High                                    |
 | RULE-012 | Decline is irreversible              | Policy      | P0       | `quotation/index.tsx` _(corrected CRD-045)_                       | High                                    |
 | RULE-013 | RFQ submission is irreversible       | Policy      | P0       | `requestForQuote/index.tsx`                                       | High                                    |
 | RULE-014 | Quote acceptance is irreversible     | Policy      | P0       | `acceptQuote/index.tsx`                                           | High                                    |
@@ -104,7 +104,7 @@ SEC-011 closed 2026-06-01 (CRD-029, CRD-031).
 | RULE-050 | NMI ABN hardcoded                    | Policy      | P0       | `summaryAndAccept.tsx` _(corrected CRD-044)_                      | High                                    |
 | RULE-051 | NMI address hardcoded                | Policy      | P1       | `summaryAndAccept.tsx` _(corrected CRD-044)_                      | High _(detail section written CRD-045)_ |
 | RULE-052 | Terms version config                 | Policy      | P0       | `terms-config.json`                                               | High                                    |
-| RULE-053 | Dashboard/report page size           | Policy      | P2       | `dashboard/index.tsx`                                             | High                                    |
+| RULE-053 | Dashboard/report page size           | Policy      | P2       | `dashboardShared.tsx`                                             | High                                    |
 
 ---
 
@@ -203,8 +203,8 @@ And    on acceptance, call AccountLoginClient.acceptTerms; setAgree() in Account
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
 `ClientApp/src/routes/preConditions/PreConditions.tsx:84-88`,
-`ClientApp/src/components/modals/BranchSelectorModal/index.tsx:154-162` **Plain
-English:** After accepting T&C, if the user has no default organisation
+`ClientApp/src/components/modals/BranchSelectorModal/branchSelectorHelpers.tsx:51-84`
+**Plain English:** After accepting T&C, if the user has no default organisation
 selected, a blocking branch-selector modal is shown. The user cannot dismiss it
 without selecting an organisation. **Specification:**
 
@@ -265,7 +265,7 @@ never been submitted to CRM and have no `QuoteStatus` value **Confidence:** High
 ### RULE-007: Status → Downloadable Document Mapping
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:172-207` **Plain English:** The
+`ClientApp/src/routes/common/helperFunctions.ts:173-218` **Plain English:** The
 PDF document served to a customer for a given record depends entirely on its
 current status. Different statuses serve fundamentally different documents
 (offer vs acceptance vs report). **Specification:**
@@ -292,23 +292,22 @@ When   status is ReportInProgress
 Then   fetch getQuoteRequestAcceptedPDFByID
 
 When   status is any other value (including QuoteSubmitted, QuoteInProgress, ReportWithdrawn)
-Then   return a permanently-pending Promise (no document)
+Then   resolve without a downloadable document
 ```
 
 **Parameters:** All API method names are compile-time string literals in
-`web-api-client.ts` **Suspected defect:** The `default` branch returns a Promise
-that can never resolve or reject — any caller that `await`s it will hang
-indefinitely. See Debt #8 in ASSESSMENT.md. **Confidence:** High
+`web-api-client.ts`. The `default` branch resolves `undefined`, so callers can
+continue without a downloadable document. **Confidence:** High
 
 ---
 
 ### RULE-008: PDF Initial Page Number by Status
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:156-168` **Plain English:** The
-PDF viewer opens to a specific page depending on the quote's status, reflecting
-which section of the document is most relevant to the customer's current
-situation. **Specification:**
+`ClientApp/src/routes/common/helperFunctions.ts:299-311` **Plain English:** The
+`getQuoteOfferPageNumber` helper opens the PDF viewer to a specific page
+depending on the quote's status, reflecting which section of the document is
+most relevant to the customer's current situation. **Specification:**
 
 ```text
 Given  a QuoteStatus value
@@ -402,7 +401,7 @@ Implementation status identifiers include `QuoteDrafted`, `QuoteAvailable`,
 ### RULE-011: Optimistic UI Status Override Post-Acceptance
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/dashboard/index.tsx:176-203`,
+`ClientApp/src/routes/dashboard/dashboard.helpers.ts:114-148`,
 `ClientApp/src/routes/quotation/index.tsx:192-199` **Plain English:**
 Immediately after a customer accepts a quote and returns to the dashboard, the
 portal optimistically shows the record as accepted before CRM has propagated the
@@ -1363,12 +1362,12 @@ To trigger re-acceptance for all users:
 ### RULE-053: Dashboard and Report Page Size
 
 **Category:** Policy **Priority:** P2 **Source:**
-`ClientApp/src/routes/dashboard/index.tsx:51`,
+`ClientApp/src/routes/dashboard/dashboardShared.tsx:11`,
 `ClientApp/src/routes/measurementReport/indexList.tsx:36` **Plain English:** All
 paginated lists in the portal show 10 items per page. **Specification:**
 
 ```text
-Dashboard (all 3 tabs): DEFAULT_DASHBOARD_PAGESIZE = 10 (dashboard/index.tsx:51)
+Dashboard (all 3 tabs): DEFAULT_DASHBOARD_PAGESIZE = 10 (dashboard/dashboardShared.tsx:11)
 Measurement report list: pageSize = 10 (measurementReport/indexList.tsx:36)
 These are separate constants — changing one does NOT change the other.
 ```

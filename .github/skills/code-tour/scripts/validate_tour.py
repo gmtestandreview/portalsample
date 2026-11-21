@@ -195,7 +195,8 @@ def validate_tour(tour_path: str, repo_root: str = '.') -> dict:
                         content = _file_content(file_path)
                         if not compiled.search(content):
                             errors.append(
-                                f'{label}: Pattern {step['pattern']!r} matches nothing in {raw_path!r}'
+                                f'{label}: Pattern {step['pattern']!r} matches '
+                                f'nothing in {raw_path!r}'
                             )
                     except re.error as e:
                         errors.append(f'{label}: Invalid regex pattern: {e}')
@@ -328,7 +329,8 @@ def main():
             tour_files = [str(p) for p in sorted(tours_dir.glob('*.tour'))]
         if not tour_files:
             print(
-                'No .tour files found. Pass a file path or run from a repo with a .tours/ directory.'
+                'No .tour files found. Pass a file path or run from a repo '
+                'with a .tours/ directory.'
             )
             sys.exit(1)
 

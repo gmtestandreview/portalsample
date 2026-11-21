@@ -85,14 +85,16 @@ class RealProjectRegressionTests(unittest.TestCase):
         payload = json.dumps({'compilerOptions': {'strict': True}, 'files': files})
         self.assertGreater(len(payload), 8000)
         completed = subprocess.CompletedProcess([], 0, stdout=payload, stderr='')
-        with tempfile.TemporaryDirectory() as td:
-            with mock.patch.object(tsd.subprocess, 'run', return_value=completed):
-                result, config = tsd.show_config(
-                    'tsc',
-                    root=Path(td),
-                    tsconfig=Path(td) / 'tsconfig.json',
-                    timeout=1,
-                )
+        with (
+            tempfile.TemporaryDirectory() as td,
+            mock.patch.object(tsd.subprocess, 'run', return_value=completed),
+        ):
+            result, config = tsd.show_config(
+                'tsc',
+                root=Path(td),
+                tsconfig=Path(td) / 'tsconfig.json',
+                timeout=1,
+            )
         self.assertEqual(result.status, tsd.PASS)
         self.assertIsNotNone(config)
 
@@ -144,7 +146,7 @@ class TimeoutOutputTests(unittest.TestCase):
 
     def test_bytes_partial_output_is_decoded(self) -> None:
         exc = subprocess.TimeoutExpired(
-            cmd=['tool'], timeout=1, output=b'partial out', stderr=b'partial err'
+            'tool', timeout=1, output=b'partial out', stderr=b'partial err'
         )
         code, output, _ = self.run_with_timeout(exc)
         self.assertEqual(code, 124)
@@ -152,13 +154,13 @@ class TimeoutOutputTests(unittest.TestCase):
         self.assertIn('partial err', output)
 
     def test_text_partial_output_is_kept(self) -> None:
-        exc = subprocess.TimeoutExpired(cmd=['tool'], timeout=1, output='text out', stderr=None)
+        exc = subprocess.TimeoutExpired('tool', timeout=1, output='text out', stderr=None)
         code, output, _ = self.run_with_timeout(exc)
         self.assertEqual(code, 124)
         self.assertEqual(output, 'text out')
 
     def test_no_output_reports_the_timeout(self) -> None:
-        code, output, _ = self.run_with_timeout(subprocess.TimeoutExpired(cmd=['tool'], timeout=1))
+        code, output, _ = self.run_with_timeout(subprocess.TimeoutExpired('tool', timeout=1))
         self.assertEqual(code, 124)
         self.assertEqual(output, 'Timed out after 1s')
 

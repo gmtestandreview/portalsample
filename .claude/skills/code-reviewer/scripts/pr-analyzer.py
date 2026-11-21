@@ -334,10 +334,7 @@ def is_config_file(filename: str) -> bool:
     if any(re.search(pattern, normalized, flags=re.IGNORECASE) for pattern in config_path_patterns):
         return True
 
-    if re.search(r'(?:^|[._-])config\.', lower_basename):
-        return True
-
-    return False
+    return bool(re.search(r'(?:^|[._-])config\.', lower_basename))
 
 
 def _append_octal_escape(encoded: str, index: int, output: bytearray) -> int:
@@ -635,7 +632,8 @@ def identify_risk_factors(files: list[FileStats]) -> list[str]:
 
     if test_deletions > 0:
         risks.append(
-            f'{RISK_TEST_DELETIONS}: {test_deletions} test line(s) removed - verify coverage was not reduced'
+            f'{RISK_TEST_DELETIONS}: {test_deletions} test line(s) removed - '
+            'verify coverage was not reduced'
         )
 
     if production_additions > 100 and test_additions / production_additions < 0.2:

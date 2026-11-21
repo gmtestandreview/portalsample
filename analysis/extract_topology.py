@@ -1,4 +1,5 @@
-"""extract_topology.py — Dependency and topology map for ClientApp/src (TypeScript/React/NMI portal).
+"""extract_topology.py — Dependency and topology map for ClientApp/src
+(TypeScript/React/NMI portal).
 
 Produces:
   analysis/topology.json   — machine-readable graph datasets
@@ -15,6 +16,8 @@ from collections import defaultdict
 from pathlib import Path
 
 SRC = Path('ClientApp/src')
+APP_FILE = 'App.tsx'
+INDEX_FILE = 'index.tsx'
 
 # ──────────────────────────────────────────────────
 # 1. Collect files
@@ -61,51 +64,39 @@ file_keys = {key(f) for f in all_files}
 # ──────────────────────────────────────────────────
 # 2. Domain classifier
 # ──────────────────────────────────────────────────
+DOMAIN_RULES: tuple[tuple[tuple[str, ...], str], ...] = (
+    (('routes/dashboard',), 'Dashboard'),
+    (('routes/account', 'routes/contact'), 'Account Management'),
+    (('routes/requestForQuote',), 'Request for Quote'),
+    (('routes/acceptQuote',), 'Accept Quote'),
+    (('routes/quotation',), 'Quotation'),
+    (('routes/measurementReport',), 'Measurement Reports'),
+    (('routes/preConditions',), 'PreConditions'),
+    (('routes/sign-in', 'routes/sign-out'), 'Auth Routes'),
+    (('routes/help-guide', 'routes/services-we-offer'), 'Help & Services'),
+    (('routes/common',), 'Shared Route Helpers'),
+    (('components/forms',), 'Wizard Framework'),
+    (('components/modals',), 'Modals'),
+    (('components/Layout', 'components/Header', 'components/Footer'), 'UI Shell'),
+    (('components/',), 'UI Components'),
+    (('authentication/',), 'Auth'),
+    (('api/',), 'API Client'),
+    (('validationSchemas/',), 'Validation'),
+    (('storage/',), 'Storage'),
+    (('instrumentation/',), 'Instrumentation'),
+    (('analytics/',), 'Analytics'),
+    ((APP_FILE, INDEX_FILE), 'Bootstrap'),
+)
+
+
+def matches_domain_rule(path: str, markers: tuple[str, ...]) -> bool:
+    return any(marker in path for marker in markers)
+
+
 def classify_domain(k: str) -> str:
-    if 'routes/dashboard' in k:
-        return 'Dashboard'
-    if 'routes/account' in k:
-        return 'Account Management'
-    if 'routes/contact' in k:
-        return 'Account Management'
-    if 'routes/requestForQuote' in k:
-        return 'Request for Quote'
-    if 'routes/acceptQuote' in k:
-        return 'Accept Quote'
-    if 'routes/quotation' in k:
-        return 'Quotation'
-    if 'routes/measurementReport' in k:
-        return 'Measurement Reports'
-    if 'routes/preConditions' in k:
-        return 'PreConditions'
-    if 'routes/sign-in' in k or 'routes/sign-out' in k:
-        return 'Auth Routes'
-    if 'routes/help-guide' in k or 'routes/services-we-offer' in k:
-        return 'Help & Services'
-    if 'routes/common' in k:
-        return 'Shared Route Helpers'
-    if 'components/forms' in k:
-        return 'Wizard Framework'
-    if 'components/modals' in k:
-        return 'Modals'
-    if 'components/Layout' in k or 'components/Header' in k or 'components/Footer' in k:
-        return 'UI Shell'
-    if 'components/' in k:
-        return 'UI Components'
-    if 'authentication/' in k:
-        return 'Auth'
-    if 'api/' in k:
-        return 'API Client'
-    if 'validationSchemas/' in k:
-        return 'Validation'
-    if 'storage/' in k:
-        return 'Storage'
-    if 'instrumentation/' in k:
-        return 'Instrumentation'
-    if 'analytics/' in k:
-        return 'Analytics'
-    if 'App.tsx' in k or 'index.tsx' in k:
-        return 'Bootstrap'
+    for markers, domain in DOMAIN_RULES:
+        if matches_domain_rule(k, markers):
+            return domain
     return 'Other'
 
 
@@ -130,7 +121,7 @@ def resolve_import(importer: Path, spec: str) -> str | None:
         base.with_suffix('.ts'),
         base.with_suffix('.tsx'),
         base / 'index.ts',
-        base / 'index.tsx',
+        base / INDEX_FILE,
         base,
     ]
     for c in candidates:
@@ -140,9 +131,9 @@ def resolve_import(importer: Path, spec: str) -> str | None:
     return None
 
 
-import_edges = []  # (from_key, to_key)
-missing_imports = []  # (from_key, spec)
-non_code_relative_imports = []  # (from_key, spec)
+import_edges: list[tuple[str, str]] = []  # (from_key, to_key)
+missing_imports: list[tuple[str, str]] = []  # (from_key, spec)
+non_code_relative_imports: list[tuple[str, str]] = []  # (from_key, spec)
 
 for f in all_files:
     text = f.read_text(encoding='utf-8', errors='ignore')
@@ -184,7 +175,7 @@ READ_METHODS = re.compile(
     r'\.(get|list|fetch|search|load|query|download|retrieve)\w*\s*\(', re.IGNORECASE
 )
 
-api_usages = []  # (file_key, client_name, api_label, rw)
+api_usages: list[tuple[str, str, str, str]] = []  # (file_key, client_name, api_label, rw)
 
 for f in all_files:
     text = f.read_text(encoding='utf-8', errors='ignore')
@@ -207,7 +198,7 @@ for f in all_files:
 # 5. sessionStorage usages
 # ──────────────────────────────────────────────────
 SESSION_RE = re.compile(r"sessionStorage\.(getItem|setItem|removeItem)\(['\"](\w+)['\"]")
-session_usages = []  # (file_key, op, key_name)
+session_usages: list[tuple[str, str, str]] = []  # (file_key, op, key_name)
 
 for f in all_files:
     text = f.read_text(encoding='utf-8', errors='ignore')
@@ -218,8 +209,8 @@ for f in all_files:
 # ──────────────────────────────────────────────────
 # 6. Entry points — routes from App.tsx
 # ──────────────────────────────────────────────────
-APP_TSX = SRC / 'App.tsx'
-entry_points = []
+APP_TSX = SRC / APP_FILE
+entry_points: list[str] = []
 
 if APP_TSX.exists():
     app_text = APP_TSX.read_text(encoding='utf-8', errors='ignore')
@@ -229,13 +220,13 @@ if APP_TSX.exists():
     entry_points = [(m.group(1)) for m in PATH_RE.finditer(app_text)]
 
 # index.tsx is the bootstrap entry
-entry_files = {key(SRC / 'index.tsx'), key(SRC / 'App.tsx')}
+entry_files = {key(SRC / INDEX_FILE), key(APP_TSX)}
 
 # ──────────────────────────────────────────────────
 # 7. Dead-end candidates
 # ──────────────────────────────────────────────────
-all_targets = {to for _, to in import_edges}
-dead_candidates = []
+all_targets: set[str] = {to for _, to in import_edges}
+dead_candidates: list[str] = []
 
 for f in all_files:
     k = key(f)
@@ -251,7 +242,7 @@ for f in all_files:
 # 8. Build topology.json
 # ──────────────────────────────────────────────────
 # Aggregate: for the call graph, work at domain level to keep it tractable
-domain_call_edges = defaultdict(set)  # (from_domain, to_domain)
+domain_call_edges: defaultdict[str, set[str]] = defaultdict(set)  # (from_domain, to_domain)
 for frm, to in import_edges:
     fd = classify_domain(frm)
     td = classify_domain(to)
@@ -259,13 +250,17 @@ for frm, to in import_edges:
         domain_call_edges[fd].add(td)
 
 # API data lineage at domain level
-domain_api_edges = defaultdict(lambda: defaultdict(set))  # domain -> client -> {read, write}
-for fk, client, label, rw in api_usages:
+domain_api_edges: defaultdict[str, defaultdict[str, set[str]]] = defaultdict(
+    lambda: defaultdict[str, set[str]](set)
+)  # domain -> client -> {read, write}
+for fk, client, _, rw in api_usages:
     d = classify_domain(fk)
     domain_api_edges[d][client].add(rw)
 
 # sessionStorage lineage
-domain_session_edges = defaultdict(lambda: defaultdict(set))  # domain -> ss_key -> {read, write}
+domain_session_edges: defaultdict[str, defaultdict[str, set[str]]] = defaultdict(
+    lambda: defaultdict[str, set[str]](set)
+)  # domain -> ss_key -> {read, write}
 for fk, op, ss_key in session_usages:
     d = classify_domain(fk)
     domain_session_edges[d][ss_key].add(op)

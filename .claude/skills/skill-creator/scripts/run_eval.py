@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Run trigger evaluation for a skill description.
 
 Tests whether a skill description causes Claude to trigger (read the skill) for
@@ -29,28 +29,43 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Literal, TypedDict, cast
 
-try:
-    from scripts.eval_control import (
-        AttemptSpec,
-        CachedResult,
-        CheckpointStore,
-        ClaudeCliError,
-        EvaluationControl,
-        validate_model_id,
-    )
-except ModuleNotFoundError:
+if TYPE_CHECKING:
+    # The analyzer runs against this file in the scripts directory, where sibling
+    # imports preserve the concrete exported types instead of degrading to Unknown.
     from eval_control import (
         AttemptSpec,
         CachedResult,
         CheckpointStore,
         ClaudeCliError,
         EvaluationControl,
+        effective_skill_digest,
         validate_model_id,
     )
-
-if TYPE_CHECKING:
-    from scripts.utils import parse_skill_md
+    from utils import parse_skill_md
 else:
+    try:
+        from scripts.eval_control import (
+            AttemptSpec,
+            CachedResult,
+            CheckpointStore,
+            ClaudeCliError,
+            EvaluationControl,
+            effective_skill_digest,
+            validate_model_id,
+        )
+    except ModuleNotFoundError as exc:
+        if exc.name not in {'scripts', 'scripts.eval_control'}:
+            raise
+        from eval_control import (
+            AttemptSpec,
+            CachedResult,
+            CheckpointStore,
+            ClaudeCliError,
+            EvaluationControl,
+            effective_skill_digest,
+            validate_model_id,
+        )
+
     try:
         from scripts.utils import parse_skill_md
     except ModuleNotFoundError as exc:
@@ -73,6 +88,10 @@ _SAFE_MODEL_RE = re.compile(r'[A-Za-z0-9][A-Za-z0-9._:/\[\]-]*')
 _YAML_ESCAPE_RE = re.compile('[\x7f-\x9f﻿￾￿]')
 
 
+class EvalExecutionError(RuntimeError):
+    """An expected failure to obtain a valid Claude CLI result."""
+
+
 class EvalItem(TypedDict):
     """Validated evaluation input."""
 
@@ -80,18 +99,21 @@ class EvalItem(TypedDict):
     should_trigger: bool
 
 
-class QueryResult(TypedDict):
-    """Result for one eval query across repeated probes."""
-
-    query: str
-    should_trigger: bool
-    trigger_rate: float | None
-    triggers: int
-    runs: int
-    completed_runs: int
-    execution_errors: int
-    error_messages: list[str]
-    pass_: bool
+QueryResult = TypedDict(
+    'QueryResult',
+    {
+        'query': str,
+        'should_trigger': bool,
+        'trigger_rate': float | None,
+        'triggers': int,
+        'runs': int,
+        'completed_runs': int,
+        'execution_errors': int,
+        'error_messages': list[str],
+        'pass': bool,
+        'skipped_runs': int,
+    },
+)
 
 
 class EvalSummary(TypedDict):
@@ -102,12 +124,29 @@ class EvalSummary(TypedDict):
     failed: int
 
 
+class ExecutionSummary(TypedDict):
+    """Execution-control accounting for one evaluation."""
+
+    status: Literal['complete', 'partial']
+    stop_reason: str | None
+    planned_calls: int
+    attempted_calls: int
+    successful_calls: int
+    error_calls: int
+    resumed_calls: int
+    skipped_calls: int
+
+
 class EvalOutput(TypedDict):
     """Top-level evaluation output."""
 
     skill_name: str
     description: str
-    results: list[dict[str, object]]
+    results: list[QueryResult]
+    execution: ExecutionSummary
+    attempted_runs: int
+    skipped_runs: int
+    implicit_safe_default: bool
     summary: EvalSummary
 
 
@@ -240,11 +279,11 @@ def _parse_stream_tool_input(
     except json.JSONDecodeError:
         return None
     except ValueError as exc:
-        raise RuntimeError(f'invalid streamed tool input: {exc}') from exc
+        raise EvalExecutionError(f'invalid streamed tool input: {exc}') from exc
 
     tool_input = _string_key_mapping(raw)
     if tool_input is None:
-        raise RuntimeError('streamed tool input must be a JSON object')
+        raise EvalExecutionError('streamed tool input must be a JSON object')
     return _tool_input_triggers(tool_name, tool_input, clean_name)
 
 
@@ -296,7 +335,7 @@ def _stream_block_stop(state: _StreamState, clean_name: str) -> bool:
 
     parsed = _parse_stream_tool_input(tool_name, accumulated, clean_name)
     if parsed is None:
-        raise RuntimeError('claude CLI ended a tool-use block with malformed JSON input')
+        raise EvalExecutionError('claude CLI ended a tool-use block with malformed JSON input')
     return parsed
 
 
@@ -339,7 +378,7 @@ def _normalize_stream_event(
 def _result_event_decision(event: Mapping[str, object]) -> _EventDecision:
     is_error = event.get('is_error')
     if is_error is not None and not isinstance(is_error, bool):
-        raise RuntimeError('claude CLI result event has non-boolean is_error')
+        raise EvalExecutionError('claude CLI result event has non-boolean is_error')
     if is_error is not True:
         return 'no_trigger'
 
@@ -583,7 +622,7 @@ def _raw_line_decision(
     event = _event_mapping(line)
     if event is None:
         preview = line[:200]
-        raise RuntimeError(f'claude CLI emitted malformed stream-json output: {preview!r}')
+        raise EvalExecutionError(f'claude CLI emitted malformed stream-json output: {preview!r}')
     return _process_event(event, stream_state, clean_name)
 
 
@@ -651,11 +690,15 @@ def _wait_for_trigger(
 def _format_process_error(
     message: str,
     stderr_buffer: bytearray,
-) -> RuntimeError:
+    *,
+    cause: ClaudeCliError | EvalExecutionError | None = None,
+) -> ClaudeCliError | EvalExecutionError:
     stderr = _stderr_text(stderr_buffer)
     if stderr:
-        return RuntimeError(f'{message}; stderr: {stderr}')
-    return RuntimeError(message)
+        message = f'{message}; stderr: {stderr}'
+    if isinstance(cause, ClaudeCliError):
+        return ClaudeCliError(cause.status, message)
+    return EvalExecutionError(message)
 
 
 def _close_process_streams(
@@ -711,7 +754,7 @@ def _evaluate_process(
     stdout = process.stdout
     if stdout is None:
         _terminate_process_tree(process)
-        raise RuntimeError('claude CLI stdout pipe was not created')
+        raise EvalExecutionError('claude CLI stdout pipe was not created')
 
     line_queue: queue.Queue[bytes | None] = queue.Queue()
     stdout_reader = threading.Thread(
@@ -732,7 +775,7 @@ def _evaluate_process(
         )
         stderr_reader.start()
 
-    wait_error: RuntimeError | None = None
+    wait_error: ClaudeCliError | EvalExecutionError | None = None
     try:
         result = _wait_for_trigger(
             process,
@@ -740,7 +783,7 @@ def _evaluate_process(
             clean_name,
             time.monotonic() + timeout,
         )
-    except RuntimeError as exc:
+    except (ClaudeCliError, EvalExecutionError) as exc:
         result = 'eof'
         wait_error = exc
     finally:
@@ -748,7 +791,9 @@ def _evaluate_process(
         _close_process_streams(stdout, stderr, stdout_reader, stderr_reader)
 
     if wait_error is not None:
-        raise _format_process_error(str(wait_error), stderr_buffer)
+        raise _format_process_error(
+            str(wait_error), stderr_buffer, cause=wait_error
+        ) from wait_error
     if stdout_reader.is_alive() or (stderr_reader is not None and stderr_reader.is_alive()):
         raise _format_process_error(
             'claude CLI stream reader did not shut down cleanly',
@@ -951,7 +996,7 @@ def _signal_process_group(pgid: int, sig: int) -> bool:
 def _terminate_process_directly(process: subprocess.Popen[bytes]) -> None:
     try:
         process.terminate()
-    except AttributeError, OSError:
+    except OSError:
         with contextlib.suppress(OSError):
             process.kill()
 
@@ -1015,6 +1060,18 @@ def _result_error_message(exc: BaseException) -> str:
     return message or exc.__class__.__name__
 
 
+def _activation_attempt_digest(description: str, source_digest: str | None) -> str:
+    """Freeze both effective source inputs and the evaluated description.
+
+    A fixed source digest must not replay a previous candidate's trigger result
+    after its description is rewritten in the optimization loop.
+    """
+    import hashlib
+
+    source = source_digest or ''
+    return hashlib.sha256((source + '\0' + description).encode('utf-8')).hexdigest()
+
+
 def run_eval(
     eval_set: object,
     skill_name: str,
@@ -1026,6 +1083,7 @@ def run_eval(
     trigger_threshold: float = 0.5,
     model: str | None = None,
     control: EvaluationControl | None = None,
+    skill_content_sha256: str | None = None,
 ) -> EvalOutput:
     """Run the full eval set and return deterministic, evidence-safe results."""
     _validate_run_eval_inputs(
@@ -1038,10 +1096,13 @@ def run_eval(
         model,
     )
     items = _validate_eval_set(eval_set, runs_per_query, trigger_threshold)
+    if skill_content_sha256 is not None and not re.fullmatch(r'[a-f0-9]{64}', skill_content_sha256):
+        raise ValueError('skill_content_sha256 must be a 64-character lowercase hex digest')
     claude_executable = _require_claude_cli()
 
     outcomes: list[list[bool | None]] = [[None] * runs_per_query for _ in items]
     errors: list[list[str | None]] = [[None] * runs_per_query for _ in items]
+    skipped: list[list[bool]] = [[False] * runs_per_query for _ in items]
 
     attempt_count = len(items) * runs_per_query
     implicit_safe_default = control is None
@@ -1053,7 +1114,7 @@ def run_eval(
             deadline_seconds=None,
         )
     entry = control.snapshot()
-    digest = __import__('hashlib').sha256(description.encode('utf-8')).hexdigest()
+    digest = _activation_attempt_digest(description, skill_content_sha256)
     distractor_digest = __import__('hashlib').sha256(b'').hexdigest()
     pending: list[tuple[_Attempt, AttemptSpec]] = []
     for item_index, item in enumerate(items):
@@ -1095,7 +1156,10 @@ def run_eval(
                     outcomes[attempt.item_index][attempt.run_index] = cached.outcome == 'trigger'
                     continue
                 if not control.reserve_call(spec):
-                    control.mark_skipped(len(pending) - next_index)
+                    skipped[attempt.item_index][attempt.run_index] = True
+                    for skipped_attempt, _ in pending[next_index:]:
+                        skipped[skipped_attempt.item_index][skipped_attempt.run_index] = True
+                    control.mark_skipped(len(pending) - next_index + 1)
                     next_index = len(pending)
                     return
                 future = executor.submit(
@@ -1117,34 +1181,39 @@ def run_eval(
                 attempt, spec = future_to_attempt.pop(future)
                 try:
                     value = future.result()
-                    outcomes[attempt.item_index][attempt.run_index] = value
-                    control.record_success(spec, CachedResult('trigger' if value else 'no_trigger'))
-                except BaseException as exc:
+                except (ClaudeCliError, EvalExecutionError, OSError) as exc:
                     message = _result_error_message(exc)
                     errors[attempt.item_index][attempt.run_index] = message
                     control.record_error(spec, exc)
                     if isinstance(exc, ClaudeCliError) and exc.status == 429:
                         circuit_seen = True
+                else:
+                    outcomes[attempt.item_index][attempt.run_index] = value
+                    control.record_success(spec, CachedResult('trigger' if value else 'no_trigger'))
                 if circuit_seen or control.circuit_open:
-                    for pending_future, (pending_attempt, pending_spec) in list(
+                    for pending_future, (queued_attempt, pending_spec) in list(
                         future_to_attempt.items()
                     ):
                         if pending_future.cancel():
                             future_to_attempt.pop(pending_future)
+                            skipped[queued_attempt.item_index][queued_attempt.run_index] = True
                             control.cancel_reserved(pending_spec)
                     if next_index < len(pending):
+                        for skipped_attempt, _ in pending[next_index:]:
+                            skipped[skipped_attempt.item_index][skipped_attempt.run_index] = True
                         control.mark_skipped(len(pending) - next_index)
                         next_index = len(pending)
                 else:
                     submit_more()
 
-    results: list[dict[str, object]] = []
+    results: list[QueryResult] = []
     threshold = float(trigger_threshold)
 
     for item_index, item in enumerate(items):
         query_outcomes = outcomes[item_index]
         valid = [value for value in query_outcomes if value is not None]
-        execution_errors = len(query_outcomes) - len(valid)
+        execution_errors = sum(message is not None for message in errors[item_index])
+        skipped_runs = sum(skipped[item_index])
         trigger_count = sum(1 for value in valid if value is True)
         trigger_rate: float | None = trigger_count / len(valid) if valid else None
         should_trigger = item['should_trigger']
@@ -1166,13 +1235,13 @@ def run_eval(
             'execution_errors': execution_errors,
             'error_messages': error_messages,
             'pass': did_pass,
-            'skipped_runs': 0,
+            'skipped_runs': skipped_runs,
         })
 
     passed = sum(1 for result in results if result['pass'] is True)
     total = len(results)
     final = control.snapshot()
-    execution = {
+    execution: ExecutionSummary = {
         'status': 'complete'
         if final.error_calls == entry.error_calls and final.skipped_calls == entry.skipped_calls
         else 'partial',
@@ -1216,6 +1285,11 @@ def _load_eval_json(path: Path) -> object:
         )
     except ValueError as exc:
         raise ValueError(f'invalid eval JSON in {path}: {exc}') from exc
+
+
+def _json_array_length(value: object) -> int:
+    """Return a JSON array length without leaking an unknown list element type."""
+    return len(cast(list[object], value)) if isinstance(value, list) else 0
 
 
 def _positive_int(value: str) -> int:
@@ -1287,18 +1361,12 @@ def _emit_verbose_results(output: EvalOutput, description: str) -> None:
         file=sys.stderr,
     )
     for result in output['results']:
-        status = 'PASS' if result.get('pass') is True else 'FAIL'
-        completed = result.get('completed_runs')
-        rate_text = (
-            f'{result.get('triggers')}/{completed}'
-            if isinstance(completed, int) and completed > 0
-            else 'unavailable'
-        )
-        query = result.get('query')
-        query_text = query if isinstance(query, str) else ''
+        status = 'PASS' if result['pass'] else 'FAIL'
+        completed = result['completed_runs']
+        rate_text = f'{result['triggers']}/{completed}' if completed > 0 else 'unavailable'
         print(
-            f'  [{status}] rate={rate_text} attempts={result.get('runs')} '
-            f'expected={result.get('should_trigger')}: {query_text[:70]}',
+            f'  [{status}] rate={rate_text} attempts={result['runs']} '
+            f'expected={result['should_trigger']}: {result['query'][:70]}',
             file=sys.stderr,
         )
 
@@ -1324,9 +1392,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         checkpoint_path = Path(cast(str, args.checkpoint)) if args.checkpoint else None
         control = EvaluationControl(
             max_calls=cast(int, args.max_model_calls),
-            planned_calls=len(cast(list[object], raw_eval_set)) * cast(int, args.runs_per_query)
-            if isinstance(raw_eval_set, list)
-            else 0,
+            planned_calls=_json_array_length(raw_eval_set) * cast(int, args.runs_per_query),
             checkpoint=CheckpointStore(checkpoint_path) if checkpoint_path else None,
             deadline_seconds=cast(float | None, args.deadline_seconds),
         )
@@ -1341,6 +1407,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             trigger_threshold=cast(float, args.trigger_threshold),
             model=model,
             control=control,
+            skill_content_sha256=effective_skill_digest(skill_path),
         )
     except (OSError, RuntimeError, ValueError) as exc:
         print(f'Error: {exc}', file=sys.stderr)
@@ -1350,7 +1417,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         _emit_verbose_results(output, description)
 
     print(json.dumps(output, indent=2, allow_nan=False))
-    return 0
+    if output['execution']['status'] != 'complete':
+        return 2
+    results = output['results']
+    return 0 if results and all(result['pass'] for result in results) else 1
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Shared call-budget, checkpoint, and circuit-breaker primitives."""
 
 from __future__ import annotations
@@ -10,11 +10,45 @@ import re
 import time
 from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import cast
+
+
+def effective_skill_manifest(skill_root: Path) -> dict[str, str]:
+    """Hash first-party effective files so a changed supporting file invalidates replays."""
+    excluded = {
+        '__pycache__',
+        '.pytest_cache',
+        '.git',
+        '.venv',
+        'evals',
+        '.ruff_cache',
+        'dist',
+        'node_modules',
+    }
+    return {
+        path.relative_to(skill_root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(skill_root.rglob('*'))
+        if path.is_file()
+        and not any(part in excluded for part in path.relative_to(skill_root).parts)
+        and not path.name.endswith(('.pyc', '.pyo'))
+    }
+
+
+def effective_skill_digest(skill_root: Path) -> str:
+    """Canonical SHA-256 of all first-party inputs, not only the description text."""
+    manifest = effective_skill_manifest(skill_root)
+    if 'SKILL.md' not in manifest:
+        raise ValueError(f'candidate missing SKILL.md: {skill_root}')
+    return hashlib.sha256(
+        json.dumps(manifest, sort_keys=True, separators=(',', ':')).encode()
+    ).hexdigest()
+
 
 CHECKPOINT_SCHEMA_VERSION = 1
-_MODEL_RE = re.compile(r'^claude-[a-z0-9-]*\d[a-z0-9-]*$')
+_UNSETTLED_RESERVATION_ERROR = 'attempt is not an unsettled reservation'
+_MODEL_RE = re.compile(r'^claude-(?=[a-z0-9-]*\d)[a-z0-9-]+$')
 _OUTCOMES = {
     'trigger',
     'no_trigger',
@@ -74,7 +108,7 @@ class CheckpointFormatError(ValueError):
 
 def validate_model_id(value: str) -> str:
     """Accept only an explicit, lowercase, versioned Claude model identifier."""
-    if not isinstance(value, str) or not _MODEL_RE.fullmatch(value):
+    if not _MODEL_RE.fullmatch(value):
         raise ValueError('model must be a lowercase versioned claude-* identifier')
     return value
 
@@ -110,6 +144,24 @@ class ArtifactEvidence:
         return {'relative_path': self.relative_path, 'sha256': self.sha256}
 
 
+def _artifacts_from_record(raw_artifacts: object) -> tuple[ArtifactEvidence, ...]:
+    if not isinstance(raw_artifacts, list):
+        raise CheckpointFormatError('artifacts must be a list')
+    artifacts: list[ArtifactEvidence] = []
+    for raw_item in cast(list[object], raw_artifacts):
+        if not isinstance(raw_item, Mapping):
+            raise CheckpointFormatError('invalid artifact evidence')
+        raw = dict(cast(Mapping[str, object], raw_item))
+        if set(raw) != {'relative_path', 'sha256'}:
+            raise CheckpointFormatError('invalid artifact evidence')
+        path = raw.get('relative_path')
+        digest = raw.get('sha256')
+        if not isinstance(path, str) or not isinstance(digest, str):
+            raise CheckpointFormatError('artifact fields must be strings')
+        artifacts.append(ArtifactEvidence(path, digest))
+    return tuple(artifacts)
+
+
 @dataclass(frozen=True, slots=True)
 class CachedResult:
     outcome: str
@@ -138,18 +190,8 @@ class CachedResult:
         payload = record.get('payload')
         if payload is not None and not isinstance(payload, dict):
             raise CheckpointFormatError('payload must be an object or null')
-        raw_artifacts = record.get('artifacts')
-        if not isinstance(raw_artifacts, list):
-            raise CheckpointFormatError('artifacts must be a list')
-        artifacts: list[ArtifactEvidence] = []
-        for raw in raw_artifacts:
-            if not isinstance(raw, dict) or set(raw) != {'relative_path', 'sha256'}:
-                raise CheckpointFormatError('invalid artifact evidence')
-            path, digest = raw['relative_path'], raw['sha256']
-            if not isinstance(path, str) or not isinstance(digest, str):
-                raise CheckpointFormatError('artifact fields must be strings')
-            artifacts.append(ArtifactEvidence(path, digest))
-        return cls(outcome, value, payload, tuple(artifacts))
+        artifacts = _artifacts_from_record(record.get('artifacts'))
+        return cls(outcome, value, cast(dict[str, object] | None, payload), artifacts)
 
 
 @dataclass(frozen=True, slots=True)
@@ -181,14 +223,23 @@ def _record_base(spec: AttemptSpec, status: str) -> dict[str, object]:
 
 
 def _spec_from_mapping(value: object) -> AttemptSpec:
-    if not isinstance(value, dict) or set(value) != _SPEC_FIELDS:
+    if not isinstance(value, dict):
+        raise CheckpointFormatError('spec must be an object')
+    mapping = cast(dict[str, object], value)
+    if set(mapping) != _SPEC_FIELDS:
         raise CheckpointFormatError('spec has missing or unknown fields')
-    if not isinstance(value['kind'], str) or not isinstance(value['query'], str):
+
+    kind = mapping.get('kind')
+    query = mapping.get('query')
+    if not isinstance(kind, str) or not isinstance(query, str):
         raise CheckpointFormatError('spec text fields are invalid')
-    if not isinstance(value['run_index'], int) or isinstance(value['run_index'], bool):
+
+    run_index = mapping.get('run_index')
+    if not isinstance(run_index, int) or isinstance(run_index, bool):
         raise CheckpointFormatError('run_index must be an integer')
+
     if not all(
-        isinstance(value[field], str)
+        isinstance(mapping.get(field), str)
         for field in (
             'skill_name',
             'skill_content_sha256',
@@ -198,57 +249,95 @@ def _spec_from_mapping(value: object) -> AttemptSpec:
         )
     ):
         raise CheckpointFormatError('spec identity fields are invalid')
-    if not isinstance(value['harness_version'], int) or isinstance(value['harness_version'], bool):
+
+    harness_version = mapping.get('harness_version')
+    if not isinstance(harness_version, int) or isinstance(harness_version, bool):
         raise CheckpointFormatError('harness_version must be an integer')
-    return AttemptSpec(**value)  # type: ignore[arg-type]
+
+    return AttemptSpec(
+        kind=kind,
+        query=query,
+        run_index=run_index,
+        skill_name=cast(str, mapping['skill_name']),
+        skill_content_sha256=cast(str, mapping['skill_content_sha256']),
+        model=cast(str, mapping['model']),
+        claude_version=cast(str, mapping['claude_version']),
+        distractor_sha256=cast(str, mapping['distractor_sha256']),
+        harness_version=harness_version,
+    )
+
+
+def _record_has_result(record: Mapping[str, object]) -> bool:
+    return (
+        record.get('outcome') is not None
+        or record.get('value') is not None
+        or record.get('payload') is not None
+        or record.get('artifacts') != []
+    )
+
+
+def _validate_status_fields(record: Mapping[str, object], status: object) -> None:
+    if status == 'success':
+        if (
+            record.get('error_status') is not None
+            or record.get('error_message') is not None
+            or record.get('invalidation_reason') is not None
+        ):
+            raise CheckpointFormatError('success has error or invalidation fields')
+        CachedResult.from_record(record)
+        return
+
+    if status == 'error':
+        if _record_has_result(record):
+            raise CheckpointFormatError('error cannot contain a result')
+        if not isinstance(record.get('error_message'), str) or not record.get('error_message'):
+            raise CheckpointFormatError('error requires an error message')
+        return
+
+    if _record_has_result(record):
+        raise CheckpointFormatError('invalidation cannot contain a result')
+    if not isinstance(record.get('invalidation_reason'), str) or not record.get(
+        'invalidation_reason'
+    ):
+        raise CheckpointFormatError('invalidation requires a reason')
 
 
 def parse_checkpoint_record(raw: object) -> dict[str, object]:
     """Validate one decoded checkpoint object and return a normalized copy."""
-    if not isinstance(raw, dict) or set(raw) != _RECORD_FIELDS:
+    if not isinstance(raw, dict):
         raise CheckpointFormatError('checkpoint record has missing or unknown fields')
-    if raw['schema_version'] != CHECKPOINT_SCHEMA_VERSION:
+    record = cast(dict[str, object], raw)
+    if set(record) != _RECORD_FIELDS:
+        raise CheckpointFormatError('checkpoint record has missing or unknown fields')
+
+    schema_version = record.get('schema_version')
+    if schema_version != CHECKPOINT_SCHEMA_VERSION:
         raise CheckpointFormatError('unknown checkpoint schema version')
-    attempt_key = raw['attempt_key']
+
+    attempt_key = record.get('attempt_key')
     if not isinstance(attempt_key, str):
         raise CheckpointFormatError('attempt_key must be a string')
-    spec = _spec_from_mapping(raw['spec'])
-    if spec.key() != attempt_key or raw['kind'] != spec.kind:
-        raise CheckpointFormatError('attempt key or kind does not match spec')
-    status = raw['status']
+
+    spec = _spec_from_mapping(record.get('spec'))
+    if spec.key() != attempt_key:
+        raise CheckpointFormatError('attempt key does not match spec')
+
+    kind = record.get('kind')
+    if not isinstance(kind, str):
+        raise CheckpointFormatError('kind must be a string')
+    if kind != spec.kind:
+        raise CheckpointFormatError('kind does not match spec')
+
+    status = record.get('status')
     if status not in {'success', 'error', 'invalidated'}:
         raise CheckpointFormatError('unknown checkpoint status')
-    if not isinstance(raw['recorded_at'], str) or not raw['recorded_at']:
+
+    recorded_at = record.get('recorded_at')
+    if not isinstance(recorded_at, str) or not recorded_at:
         raise CheckpointFormatError('recorded_at must be a string')
-    if status == 'success':
-        if (
-            raw['error_status'] is not None
-            or raw['error_message'] is not None
-            or raw['invalidation_reason'] is not None
-        ):
-            raise CheckpointFormatError('success has error or invalidation fields')
-        CachedResult.from_record(raw)
-    elif status == 'error':
-        if (
-            raw['outcome'] is not None
-            or raw['value'] is not None
-            or raw['payload'] is not None
-            or raw['artifacts'] != []
-        ):
-            raise CheckpointFormatError('error cannot contain a result')
-        if not isinstance(raw['error_message'], str) or not raw['error_message']:
-            raise CheckpointFormatError('error requires an error message')
-    else:
-        if (
-            raw['outcome'] is not None
-            or raw['value'] is not None
-            or raw['payload'] is not None
-            or raw['artifacts'] != []
-        ):
-            raise CheckpointFormatError('invalidation cannot contain a result')
-        if not isinstance(raw['invalidation_reason'], str) or not raw['invalidation_reason']:
-            raise CheckpointFormatError('invalidation requires a reason')
-    return dict(raw)
+
+    _validate_status_fields(record, status)
+    return dict(record)
 
 
 class CheckpointStore:
@@ -454,7 +543,7 @@ class EvaluationControl:
     def cancel_reserved(self, spec: AttemptSpec) -> None:
         key = spec.key()
         if key not in self._outstanding:
-            raise RuntimeError('attempt is not an unsettled reservation')
+            raise RuntimeError(_UNSETTLED_RESERVATION_ERROR)
         del self._outstanding[key]
         self._attempted -= 1
         self._skipped += 1
@@ -463,7 +552,7 @@ class EvaluationControl:
     def record_success(self, spec: AttemptSpec, result: CachedResult) -> None:
         key = spec.key()
         if key not in self._outstanding:
-            raise RuntimeError('attempt is not an unsettled reservation')
+            raise RuntimeError(_UNSETTLED_RESERVATION_ERROR)
         if self.checkpoint is not None:
             self.checkpoint.append_success(spec, result)
         del self._outstanding[key]
@@ -473,7 +562,7 @@ class EvaluationControl:
     def record_error(self, spec: AttemptSpec, error: BaseException) -> None:
         key = spec.key()
         if key not in self._outstanding:
-            raise RuntimeError('attempt is not an unsettled reservation')
+            raise RuntimeError(_UNSETTLED_RESERVATION_ERROR)
         if self.checkpoint is not None:
             self.checkpoint.append_error(spec, error)
         del self._outstanding[key]

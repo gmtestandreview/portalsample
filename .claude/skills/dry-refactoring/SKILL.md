@@ -46,10 +46,13 @@ Work in this order:
 1. **Exact clones** — default scan. Treat these as the strongest refactoring
    candidates.
 2. **Renamed clones** — only after exact clones are reviewed:
+
    ```bash
    npx -y jscpd@5 --reporters ai --ignore-identifiers --min-tokens 70 <path>
    ```
+
 3. **Near-miss clones** — only after exact/renamed review:
+
    ```bash
    npx -y jscpd@5 --reporters ai --max-gap-lines 1 --similarity <path>
    ```

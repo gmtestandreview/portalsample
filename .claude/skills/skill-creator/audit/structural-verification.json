@@ -1,0 +1,12 @@
+{
+  "source_files": 79,
+  "py": 39,
+  "json": 17,
+  "md": 19,
+  "html": 2,
+  "bad_links": [],
+  "schema_count": 11,
+  "schema_hash_mismatches": [],
+  "frontmatter_name": "skill-creator",
+  "compatibility": "Portable Agent Skills are the default. Bundled tooling is oriented to Claude Code/Cowork; validation and packaging require Python 3.14.x and PyYAML, the full regression gate also requires pytest and Chromium with Node or Python Playwright for browser UI tests, and model-backed trigger tests require a working Claude CLI and explicitly selected model."
+}

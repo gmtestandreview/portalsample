@@ -326,3 +326,21 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 - [trigger types](claude-code-trigger-types.md) - Complete trigger documentation
 - [troubleshooting](claude-code-troubleshooting.md) - Debugging configuration
   issues
+
+## Adversarial verification contract
+
+**Schema and override boundary:** This TypeScript interface is an example of a
+project-local extension, **not an executable schema included in this ZIP**.
+Before installation, inspect the actual JSON loader and valid keys, record a
+snapshot of `.claude/settings.json` and `skill-rules.json`, and validate a
+known-good rule and an unknown-key rejection in that implementation. An
+`envOverride`, `fileMarkers` skip string, or cached `sessionSkillUsed` may only
+bypass a risk-bearing guardrail with recorded policy-owner approval; do not use
+a text marker as authentication or as proof that a skill really executed.
+
+**Cases:** Positive — a verified guardrail blocks a relevant edit; negative — an
+unrelated edit is unaffected; adversarial — a user-supplied file marker, stale
+session state, malformed JSON, or absent hook binary cannot remove a security
+requirement. Record target host version, process exit and actual block/allow
+result. Until confirmed, mark runtime semantics NHR; do not describe the
+hypothetical interface as installed.

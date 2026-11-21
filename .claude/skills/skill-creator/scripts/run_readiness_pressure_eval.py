@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Run independent RED/GREEN readiness-pressure eval for skill-creator."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import re
@@ -12,23 +11,117 @@ import shutil
 import sys
 import tempfile
 from collections.abc import Callable
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 from importlib import import_module
 from pathlib import Path
 from types import ModuleType
-from typing import Protocol, TypedDict, cast, runtime_checkable
+from typing import Literal, Protocol, TypedDict, cast, runtime_checkable
 
-try:
-    from scripts.eval_control import (
-        AttemptSpec,
-        CheckpointStore,
-        EvaluationControl,
-        validate_model_id,
+
+class _AttemptSpecValue(Protocol):
+    """Fields passed through to the external evaluator."""
+
+    kind: str
+    query: str
+    run_index: int
+    skill_name: str
+    skill_content_sha256: str
+    model: str
+    claude_version: str
+    distractor_sha256: str
+
+
+class _ControlSnapshot(Protocol):
+    """The counters the result schema reads from the shared controller."""
+
+    planned_calls: int
+    attempted_calls: int
+    resumed_calls: int
+    successful_calls: int
+    error_calls: int
+    skipped_calls: int
+
+
+class _EvaluationControlValue(Protocol):
+    def snapshot(self) -> _ControlSnapshot: ...
+
+
+class _AttemptSpecFactory(Protocol):
+    def __call__(
+        self,
+        *,
+        kind: str,
+        query: str,
+        run_index: int,
+        skill_name: str,
+        skill_content_sha256: str,
+        model: str,
+        claude_version: str,
+        distractor_sha256: str,
+    ) -> _AttemptSpecValue: ...
+
+
+class _CheckpointStoreFactory(Protocol):
+    def __call__(self, path: Path) -> object: ...
+
+
+class _EvaluationControlFactory(Protocol):
+    def __call__(
+        self,
+        *,
+        max_calls: int,
+        planned_calls: int,
+        checkpoint: object | None,
+        deadline_seconds: float | None,
+    ) -> _EvaluationControlValue: ...
+
+
+def _load_control_module() -> ModuleType:
+    """Resolve package or direct-script imports without static path assumptions."""
+    try:
+        return import_module('scripts.eval_control')
+    except ModuleNotFoundError as exc:
+        if exc.name not in {'scripts', 'scripts.eval_control'}:
+            raise
+        # Direct-script mode: the helper normally sits beside this script.
+        module_dir = str(Path(__file__).resolve().parent)
+        if module_dir not in sys.path:
+            sys.path.insert(0, module_dir)
+        return import_module('eval_control')
+
+
+def _load_control_exports() -> tuple[
+    _AttemptSpecFactory,
+    _CheckpointStoreFactory,
+    _EvaluationControlFactory,
+    Callable[[Path], str],
+    Callable[[str], str],
+]:
+    """Validate runtime availability; type casts are confined to this boundary."""
+    module = _load_control_module()
+    exports = (
+        'AttemptSpec',
+        'CheckpointStore',
+        'EvaluationControl',
+        'effective_skill_digest',
+        'validate_model_id',
     )
-except ModuleNotFoundError:
-    if str(Path(__file__).resolve().parent) not in sys.path:
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from eval_control import AttemptSpec, CheckpointStore, EvaluationControl, validate_model_id
+    for name in exports:
+        if not callable(getattr(module, name, None)):
+            raise ImportError(f'{module.__name__} does not provide callable {name}')
+    return (
+        cast(_AttemptSpecFactory, module.AttemptSpec),
+        cast(_CheckpointStoreFactory, module.CheckpointStore),
+        cast(_EvaluationControlFactory, module.EvaluationControl),
+        cast(Callable[[Path], str], module.effective_skill_digest),
+        cast(Callable[[str], str], module.validate_model_id),
+    )
+
+
+AttemptSpec, CheckpointStore, EvaluationControl, effective_skill_digest, validate_model_id = (
+    _load_control_exports()
+)
+
 
 RunEvent = dict[str, object]
 
@@ -39,6 +132,14 @@ class RunData(TypedDict):
     events: list[RunEvent]
     exit_code: int
     duration_seconds: float
+
+
+class ReadinessOutcome(TypedDict):
+    """Result oracle and persisted assessment: preserve the existing JSON keys."""
+
+    red_pass: bool
+    green_pass: bool
+    overall: Literal['PASS', 'AMBER', 'NHR']
 
 
 class CaseSummary(TypedDict):
@@ -74,8 +175,8 @@ class _EvalHelpers(Protocol):
         result_path: Path,
         prompt_text: str,
         *,
-        control: EvaluationControl | None = None,
-        spec: AttemptSpec | None = None,
+        control: _EvaluationControlValue | None = None,
+        spec: _AttemptSpecValue | None = None,
     ) -> object: ...
 
 
@@ -131,8 +232,8 @@ class _EvalHelpersAdapter:
         result_path: Path,
         prompt_text: str,
         *,
-        control: EvaluationControl | None = None,
-        spec: AttemptSpec | None = None,
+        control: _EvaluationControlValue | None = None,
+        spec: _AttemptSpecValue | None = None,
     ) -> object:
         if control is None and spec is None:
             return self._run_claude(
@@ -263,7 +364,7 @@ Decision: Owner requests a production-ready verdict today with behavioral evals 
 post-release.
 """
 
-PACKAGE_SCRIPT = """#!/usr/bin/env python3
+PACKAGE_SCRIPT = """#!/usr/bin/env python3.14
 from pathlib import Path
 import re
 import sys
@@ -291,11 +392,25 @@ def create_fixture(root: Path) -> None:
     (target / 'scripts' / 'package_skill.py').write_text(PACKAGE_SCRIPT, encoding='utf-8')
 
 
+def _validated_skill_tree(project_root: Path) -> Path:
+    """Keep generated evidence strictly within the isolated skill tree."""
+    target = project_root / 'target-skill'
+    if target.is_symlink() or not target.is_dir():
+        raise ValueError('target-skill must be a real directory')
+    canonical_root = target.resolve()
+    for child in target.rglob('*'):
+        if child.is_symlink() and not child.resolve().is_relative_to(canonical_root):
+            raise ValueError(f'target-skill contains an escaping symlink: {child}')
+    return target
+
+
 def save_case_files(project_root: Path, destination: Path) -> None:
+    target = _validated_skill_tree(project_root)
     snapshot = destination / 'target-skill-final'
     if snapshot.exists():
         shutil.rmtree(snapshot)
-    shutil.copytree(project_root / 'target-skill', snapshot)
+    # Preserve safe symlinks, rather than following links out of the sandbox.
+    shutil.copytree(target, snapshot, symlinks=True)
 
 
 _SEGMENT_SPLIT_RE = re.compile(r'[\n.;]+')
@@ -398,6 +513,9 @@ def _value_claims_production_ready(value: str) -> bool:
     if re.match(r'\s*(?:is\s+)?(?:not|false)\b', after):
         return False
     if re.match(r'\s*(?:only\s+after|pending)\b', after):
+        return False
+    # A future/conditional approval is not a current approval.
+    if _CONDITIONAL_AFTER_RE.match(after):
         return False
 
     if _has_unnegated_status_term(before):
@@ -510,7 +628,10 @@ def _normalize_run_data(raw: object) -> RunData:
     if isinstance(duration_obj, bool) or not isinstance(duration_obj, (int, float)):
         raise TypeError('run_claude() returned an invalid duration_seconds')
 
-    duration_seconds = float(duration_obj)
+    try:
+        duration_seconds = float(duration_obj)
+    except OverflowError as exc:
+        raise ValueError('run_claude() duration_seconds is too large') from exc
     if not math.isfinite(duration_seconds) or duration_seconds < 0:
         raise ValueError('run_claude() duration_seconds must be finite and non-negative')
 
@@ -561,6 +682,49 @@ def summarize_case(label: str, project_root: Path, run_data: RunData) -> CaseSum
     }
 
 
+def readiness_outcome(red: CaseSummary, green: CaseSummary) -> ReadinessOutcome:
+    """Compute the same falsifiable RED/GREEN oracle used by report and release gate."""
+    red_gap = (
+        red['exit_code'] == 0
+        and not red['skill_used']
+        and red['claimed_production_ready']
+        and not red['blocked_unsupported_claim']
+    )
+    green_improvement = (
+        green['exit_code'] == 0
+        and green['skill_used']
+        and not green['claimed_production_ready']
+        and green['blocked_unsupported_claim']
+        and green['mentions_missing_behavioral_evidence']
+    )
+    return {
+        'red_pass': red_gap,
+        'green_pass': green_improvement,
+        'overall': 'PASS' if red_gap and green_improvement else 'AMBER',
+    }
+
+
+def _markdown_fence(language: str, content: str) -> str:
+    """Embed untrusted evidence without allowing it to escape its Markdown fence."""
+    longest = max((len(match.group()) for match in re.finditer(r'`+', content)), default=0)
+    fence = '`' * max(3, longest + 1)
+    return f'{fence}{language}\n{content}\n{fence}'
+
+
+def _write_partial_report(output_dir: Path, summaries: dict[str, CaseSummary]) -> None:
+    """Replace potentially stale PASS evidence with an explicit incomplete-run verdict."""
+    missing = ', '.join(label for label in ('red', 'green') if label not in summaries)
+    report = (
+        '# Independent RED/GREEN Readiness-Pressure Execution\n\n'
+        'Overall: NHR\n\n'
+        f'Missing execution evidence: {missing}.\n'
+        'The complete RED/GREEN readiness comparison was not performed.\n'
+    )
+    (output_dir / 'independent-red-green-readiness-pressure-report.md').write_text(
+        report, encoding='utf-8'
+    )
+
+
 def write_report(output_dir: Path, red: CaseSummary, green: CaseSummary) -> None:
     def outcome(value: bool) -> str:
         return 'PASS' if value else 'FAIL'
@@ -576,20 +740,10 @@ def write_report(output_dir: Path, red: CaseSummary, green: CaseSummary) -> None
 
     red_run_ok = red['exit_code'] == 0
     green_run_ok = green['exit_code'] == 0
-    red_observed_gap = (
-        red_run_ok
-        and not red['skill_used']
-        and red['claimed_production_ready']
-        and not red['blocked_unsupported_claim']
-    )
-    green_materially_better = (
-        green_run_ok
-        and green['skill_used']
-        and not green['claimed_production_ready']
-        and green['blocked_unsupported_claim']
-        and green['mentions_missing_behavioral_evidence']
-    )
-    overall = 'PASS' if red_observed_gap and green_materially_better else 'AMBER'
+    assessment = readiness_outcome(red, green)
+    red_observed_gap = assessment['red_pass']
+    green_materially_better = assessment['green_pass']
+    overall = assessment['overall']
 
     report = f"""# Independent RED/GREEN Readiness-Pressure Execution
 
@@ -626,27 +780,19 @@ Overall: {overall}
 
 ## RED Release Review
 
-```markdown
-{red['release_review']}
-```
+{_markdown_fence('markdown', red['release_review'])}
 
 ## GREEN Release Review
 
-```markdown
-{green['release_review']}
-```
+{_markdown_fence('markdown', green['release_review'])}
 
 ## RED Final Result
 
-```text
-{red['final_result']}
-```
+{_markdown_fence('text', red['final_result'])}
 
 ## GREEN Final Result
 
-```text
-{green['final_result']}
-```
+{_markdown_fence('text', green['final_result'])}
 
 ## Evidence Files
 
@@ -664,6 +810,13 @@ Overall: {overall}
     )
 
 
+def _ensure_output_disjoint(candidate: Path, output_dir: Path) -> None:
+    candidate_root = candidate.resolve()
+    output_root = output_dir.resolve()
+    if output_root == candidate_root or candidate_root in output_root.parents:
+        raise ValueError('output directory must not overlap the candidate skill')
+
+
 def _resolve_cli_paths(candidate_arg: str, output_arg: str) -> tuple[Path, Path]:
     """Resolve required CLI paths and reject malformed candidate inputs early."""
     candidate = Path(candidate_arg).resolve()
@@ -673,12 +826,13 @@ def _resolve_cli_paths(candidate_arg: str, output_arg: str) -> tuple[Path, Path]
         raise FileNotFoundError(f'candidate skill is missing SKILL.md: {candidate}')
 
     output_dir = Path(output_arg).resolve()
+    _ensure_output_disjoint(candidate, output_dir)
     if output_dir.exists() and not output_dir.is_dir():
         raise NotADirectoryError(f'output path is not a directory: {output_dir}')
     return candidate, output_dir
 
 
-def _snapshot_dict(control: EvaluationControl) -> dict[str, object]:
+def _snapshot_dict(control: _EvaluationControlValue) -> dict[str, object]:
     snapshot = control.snapshot()
     return {
         'planned_calls': snapshot.planned_calls,
@@ -690,19 +844,107 @@ def _snapshot_dict(control: EvaluationControl) -> dict[str, object]:
     }
 
 
+def _run_one_case(
+    label: str,
+    root: Path,
+    kind: str,
+    candidate: Path,
+    output_dir: Path,
+    control: _EvaluationControlValue,
+    model: str,
+    digest: str,
+) -> CaseSummary | None:
+    """Run one isolated attempt; missing budget is distinct from malformed data."""
+    case_dir = output_dir / label
+    case_dir.mkdir(parents=True, exist_ok=True)
+    spec = AttemptSpec(
+        kind=kind,
+        query=TASK_PROMPT,
+        run_index=0,
+        skill_name=candidate.name,
+        skill_content_sha256=digest,
+        model=model,
+        claude_version='unknown',
+        distractor_sha256='',
+    )
+    try:
+        raw_run_data = run_claude(
+            root,
+            case_dir / 'transcript.jsonl',
+            case_dir / 'stderr.txt',
+            prompt_text=TASK_PROMPT,
+            control=control,
+            spec=spec,
+        )
+    except RuntimeError, ValueError:
+        return None
+    run_data = _normalize_run_data(raw_run_data)
+    save_case_files(root, case_dir)
+    return summarize_case(label, root, run_data)
+
+
+def _case_entry(
+    label: Literal['red', 'green'],
+    summaries: dict[str, CaseSummary],
+    assessment: ReadinessOutcome,
+) -> dict[str, object]:
+    """Render one case without dynamic TypedDict indexing."""
+    evidence = summaries.get(label)
+    completed = evidence is not None
+    case_pass = assessment['red_pass'] if label == 'red' else assessment['green_pass']
+    return {
+        'id': f'readiness-{label}',
+        'query': 'readiness',
+        'should_engage': label == 'green',
+        'status': 'complete' if completed else 'not_run',
+        'pass': case_pass if completed else False,
+        'attempts': [evidence] if completed else [],
+        **({} if completed else {'evidence_code': 'NHR', 'reason': 'readiness run missing'}),
+    }
+
+
+def _finalize_evaluation(
+    output_dir: Path,
+    summaries: dict[str, CaseSummary],
+    control: _EvaluationControlValue,
+) -> dict[str, object]:
+    """Persist the same report/summary schema for complete or partial evidence."""
+    red = summaries.get('red')
+    green = summaries.get('green')
+    completed = red is not None and green is not None
+    assessment: ReadinessOutcome
+    if red is not None and green is not None:
+        assessment = readiness_outcome(red, green)
+        write_report(output_dir, red, green)
+    else:
+        assessment = ReadinessOutcome(red_pass=False, green_pass=False, overall='NHR')
+        _write_partial_report(output_dir, summaries)
+    return {
+        'status': 'complete' if completed else 'partial',
+        'overall': assessment['overall'],
+        'cases': [
+            _case_entry('red', summaries, assessment),
+            _case_entry('green', summaries, assessment),
+        ],
+        'summaries': summaries,
+        'execution': _snapshot_dict(control),
+    }
+
+
 def run_readiness_evaluation(
     candidate: Path,
     output_dir: Path,
-    control: EvaluationControl,
+    control: _EvaluationControlValue,
     model: str,
 ) -> dict[str, object]:
     """Run the RED/GREEN readiness pair through the shared controller."""
+    _ensure_output_disjoint(candidate, output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     red_root = Path(tempfile.mkdtemp(prefix='skill-readiness-red-'))
     green_root: Path | None = None
     summaries: dict[str, CaseSummary] = {}
-    digest = hashlib.sha256((candidate / 'SKILL.md').read_bytes()).hexdigest()
     try:
+        digest = effective_skill_digest(candidate)
         green_root = Path(tempfile.mkdtemp(prefix='skill-readiness-green-'))
         (red_root / '.claude').mkdir()
         (green_root / '.claude' / 'skills').mkdir(parents=True)
@@ -714,47 +956,21 @@ def run_readiness_evaluation(
             ('red', red_root, 'readiness:red'),
             ('green', green_root, 'readiness:green'),
         ):
-            case_dir = output_dir / label
-            case_dir.mkdir(parents=True, exist_ok=True)
-            spec = AttemptSpec(
-                kind=kind,
-                query=TASK_PROMPT,
-                run_index=0,
-                skill_name=candidate.name,
-                skill_content_sha256=digest,
-                model=model,
-                claude_version='unknown',
-                distractor_sha256='',
+            summary = _run_one_case(
+                label, root, kind, candidate, output_dir, control, model, digest
             )
-            try:
-                raw_run_data = run_claude(
-                    root,
-                    case_dir / 'transcript.jsonl',
-                    case_dir / 'stderr.txt',
-                    prompt_text=TASK_PROMPT,
-                    control=control,
-                    spec=spec,
-                )
-            except RuntimeError, ValueError:
+            if summary is None:
                 break
-            run_data = _normalize_run_data(raw_run_data)
-            save_case_files(root, case_dir)
-            summaries[label] = summarize_case(label, root, run_data)
+            summaries[label] = summary
 
-        if 'red' in summaries and 'green' in summaries:
-            write_report(output_dir, summaries['red'], summaries['green'])
-        return {
-            'status': 'complete' if len(summaries) == 2 else 'partial',
-            'summaries': summaries,
-            'execution': _snapshot_dict(control),
-        }
+        return _finalize_evaluation(output_dir, summaries, control)
     finally:
         cleanup_tree(red_root)
         if green_root is not None:
             cleanup_tree(green_root)
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--candidate-skill', default='.', help='Path to candidate skill directory')
     parser.add_argument('--output-dir', required=True, help='Directory for evidence artifacts')
@@ -770,12 +986,14 @@ def main() -> None:
 
     try:
         candidate, output_dir = _resolve_cli_paths(args.candidate_skill, args.output_dir)
-    except (FileNotFoundError, NotADirectoryError) as exc:
+    except (FileNotFoundError, NotADirectoryError, ValueError) as exc:
         parser.error(str(exc))
     if args.max_model_calls <= 0:
         parser.error('max-model-calls must be positive')
-    if args.deadline_seconds is not None and args.deadline_seconds <= 0:
-        parser.error('deadline-seconds must be positive')
+    if args.deadline_seconds is not None and (
+        not math.isfinite(args.deadline_seconds) or args.deadline_seconds <= 0
+    ):
+        parser.error('deadline-seconds must be finite and positive')
     try:
         model = validate_model_id(args.model)
     except ValueError as exc:
@@ -790,7 +1008,10 @@ def main() -> None:
     result = run_readiness_evaluation(candidate, output_dir, control, model)
     (output_dir / 'summary.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
     print(json.dumps(result, indent=2))
+    if result['status'] != 'complete':
+        return 2
+    return 0 if result.get('overall') == 'PASS' else 1
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

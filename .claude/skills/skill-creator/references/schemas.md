@@ -102,10 +102,25 @@ distinct. The accounting invariant is:
 
 Pipeline summaries expose `execution_status` (`complete`, `short_circuited`,
 `partial`, or `not_run`), `evidence_status` (`complete` or `incomplete`),
-`verdict` (`pass`, `fail`, `unavailable`, or `not_applicable`), `mode_ready`,
-and `release_ready`. Every applicable case appears once. A `not_run` case
-carries `evidence_code: "NHR"` and a reason; it must not disappear from the
-summary.
+`verdict` (`pass`, `fail`, or `unavailable`), `mode_ready`, and `release_ready`.
+Pipeline schema version 2 derives all four decision fields independently of the
+caller's suggested verdict. An `execution_status=complete` does not imply a
+`pass` verdict. `release_ready` is true only for `release` when all bundled case
+and stage oracles pass and the deterministic preflight, call counters, source
+manifest, and checkpoint validate. It is **not** evidence of broad production
+readiness without independent private holdout evidence.
+
+`inputs.source_manifest` records SHA-256 hashes of each first-party source file
+before the live run, excluding generated caches, and the validator compares
+those values with the source still present at summary creation. `preflight`
+records the actual three-command deterministic check. Live checkpoint paths must
+remain under the evidence workspace, and their hashes must match on
+verification. `plan` and `stages` must match the frozen source fixture set, with
+exactly one completed and observed PASS result per case.
+`readiness-pressure.overall` must be `PASS`; neither missing nor AMBER outcomes
+can be promoted to success. A `not_run` case carries `evidence_code: "NHR"` and
+a reason; it must not disappear from the summary. Synthetic all-green controls
+inside tests prove only validator logic, not host execution or model behaviour.
 
 ## Schema catalog
 
@@ -453,3 +468,19 @@ for:
 - duplicate/colliding `run_id` values;
 - current versus previous-iteration feedback;
 - schema-valid payloads that are semantically inconsistent across files.
+
+## Adversarial verification contract
+
+**Schema evidence freshness:** See `schema-validation-2026-11-17-py313.json` for
+the new diagnostic definition/fixture snapshot, which is **not** the required
+Python 3.14 release gate. `references/validation-results.json` records a
+historical 2026-10-05 check; never change its old SHA values to manufacture a
+current PASS. For the present release, generate a **separate** revision-stamped
+report with current hashes, runtime version, installed `jsonschema` version and
+actual exit status. If a checksum differs, mark the historical observation stale
+for that file. Tests must distinguish meta-schema validity, valid/invalid
+instance fixtures, and cross-field semantic invariants such as
+`summary.passed + summary.failed == summary.total` and the implied `pass_rate`.
+JSON Schema syntax validity alone does not satisfy those semantic checks. Record
+resource mapping from `schema-manifest.json` and test all its consumers or
+report NHR.

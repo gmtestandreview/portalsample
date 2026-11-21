@@ -39,7 +39,10 @@ ENV: dict[str, str] = dict(
     GIT_COMMITTER_EMAIL='fixture@example.invalid',
 )
 
-PACKAGE_JSON = '{ "name": "e2e-fixture", "version": "0.0.0", "private": true, "scripts": { "test": "node --test" } }\n'
+PACKAGE_JSON = (
+    '{ "name": "e2e-fixture", "version": "0.0.0", "private": true, '
+    '"scripts": { "test": "node --test" } }\n'
+)
 FEATURE_BRANCH = 'feat/p'
 
 TASKS: dict[int, tuple[str, str, str, str | None]] = {
@@ -123,7 +126,8 @@ def plan_text(count: int, force_push_task: int | None = None) -> str:
             '',
             f'**Files:** `src/t{n}.js`, `tests/t{n}.test.js`',
             '',
-            f'- [ ] Write a failing test, then implement `{signature}` {returns}; export it as `{{ {name} }}`.',
+            f'- [ ] Write a failing test, then implement `{signature}` {returns}; '
+            f'export it as `{{ {name} }}`.',
         ]
         if extra:
             lines.append(f'- [ ] {extra}')
@@ -137,8 +141,16 @@ def source(n: int) -> str:
     name = TASKS[n][0]
     bodies: dict[int, str] = {
         1: 'function add(a, b) {\n  return a + b;\n}\n',
-        2: "function divide(a, b) {\n  if (b === 0) {\n    throw new RangeError('division by zero');\n  }\n  return a / b;\n}\n",
-        3: "function clamp(n, min, max) {\n  if (min > max) {\n    throw new RangeError('min greater than max');\n  }\n  return Math.min(Math.max(n, min), max);\n}\n",
+        2: (
+            'function divide(a, b) {\n  if (b === 0) {\n'
+            "    throw new RangeError('division by zero');\n  }\n"
+            '  return a / b;\n}\n'
+        ),
+        3: (
+            'function clamp(n, min, max) {\n  if (min > max) {\n'
+            "    throw new RangeError('min greater than max');\n  }\n"
+            '  return Math.min(Math.max(n, min), max);\n}\n'
+        ),
         4: 'function negate(n) {\n  return -n;\n}\n',
     }
     return f"'use strict';\n\n{bodies[n]}\nmodule.exports = {{ {name} }};\n"
@@ -238,7 +250,8 @@ def build_c5(out: Path) -> None:
         "const target = path.join(__dirname, '..', 'src', 't2.js');\n\n"
         '// Pre-existing test: it only runs once src/t2.js exists, then expects the\n'
         '// opposite of what Task 2 specifies.\n'
-        "test('legacy: dividing by zero yields Infinity', { skip: !fs.existsSync(target) && 'src/t2.js not present yet' }, () => {\n"
+        "test('legacy: dividing by zero yields Infinity', { skip: "
+        "!fs.existsSync(target) && 'src/t2.js not present yet' }, () => {\n"
         '  const { divide } = require(target);\n'
         '  assert.equal(divide(1, 0), Infinity);\n'
         '});\n'
@@ -263,10 +276,12 @@ def main() -> int:
     for name in ('c1-resume', 'b1-destructive', 'c5-conflict'):
         repo = out / name
         print(
-            f'{name}: {repo}  branch={git(repo, 'branch', '--show-current')}  commits={git(repo, 'rev-list', '--count', 'HEAD')}'
+            f'{name}: {repo}  branch={git(repo, 'branch', '--show-current')}  '
+            f'commits={git(repo, 'rev-list', '--count', 'HEAD')}'
         )
     print(
-        f'b1 remote main before any run: {(out / 'b1-origin.sha').read_text(encoding='utf8').strip()}'
+        f'b1 remote main before any run: '
+        f'{(out / 'b1-origin.sha').read_text(encoding='utf8').strip()}'
     )
     return 0
 

@@ -40,7 +40,8 @@ def semantic(m):
                 f.append(
                     finding(
                         'PARENT',
-                        'move/rename destination parent not created earlier or declared preexisting',
+                        'move/rename destination parent not created earlier or '
+                        'declared preexisting',
                     )
                 )
         if a.get('duplicate_state') == 'HOLD_FOR_REVIEW':
@@ -64,9 +65,11 @@ def main():
             out['findings'] = [finding('JCS_UNAVAILABLE', 'RFC 8785 jcs package unavailable')]
             print(json.dumps(out, separators=(',', ':')))
             return 2
-        raw = open(args.manifest, 'rb').read()
+        with open(args.manifest, 'rb') as manifest_file:
+            raw = manifest_file.read()
         m = json.loads(raw)
-        sch = json.load(open(args.schema, encoding='utf-8'))
+        with open(args.schema, encoding='utf-8') as schema_file:
+            sch = json.load(schema_file)
         jsonschema.validate(m, sch)
         out['findings'] = semantic(m)
         if out['findings']:

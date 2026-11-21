@@ -303,11 +303,11 @@ def validate_cardinality_gate(repo_dir):
     covers_by_req = {}
     for bug_id, block in _split_bug_blocks(bugs_text):
         covers = _parse_covers(block)
-        if len(covers) >= 2:
-            if not _parse_consolidation_rationale(block):
-                failures.append(
-                    f"{bug_id}: Covers has {len(covers)} entries but 'Consolidation rationale:' is missing or empty"
-                )
+        if len(covers) >= 2 and not _parse_consolidation_rationale(block):
+            failures.append(
+                f'{bug_id}: Covers has {len(covers)} entries but '
+                "'Consolidation rationale:' is missing or empty"
+            )
         for cell_id in covers:
             if not _CELL_ID_RE.match(cell_id):
                 failures.append(
@@ -338,7 +338,8 @@ def validate_cardinality_gate(repo_dir):
         reason = rec.get('reason_class', '')
         if reason and reason not in VALID_REASON_CLASSES:
             failures.append(
-                f"downgrade record {rid}: reason_class '{reason}' not in {sorted(VALID_REASON_CLASSES)}"
+                f"downgrade record {rid}: reason_class '{reason}' not in "
+                f'{sorted(VALID_REASON_CLASSES)}'
             )
             rec_ok = False
         if not rec_ok:
@@ -369,7 +370,8 @@ def validate_cardinality_gate(repo_dir):
             if not isinstance(present, bool):
                 cell_id = c.get('cell_id') or '<no cell_id>'
                 failures.append(
-                    f"{req_id}: cell {cell_id} 'present' must be boolean true or false; got {present!r}"
+                    f"{req_id}: cell {cell_id} 'present' must be boolean true "
+                    f'or false; got {present!r}'
                 )
                 continue
             valid_cells.append(c)
@@ -392,12 +394,15 @@ def validate_cardinality_gate(repo_dir):
             evidence = c.get('evidence')
             if not evidence or not isinstance(evidence, str) or not evidence.strip():
                 failures.append(
-                    f"{cell_id}: present:true requires non-empty 'evidence' field with file:line citation"
+                    f"{cell_id}: present:true requires non-empty 'evidence' "
+                    'field with file:line citation'
                 )
                 continue
             if not _EVIDENCE_RE.match(evidence.strip()):
                 failures.append(
-                    f"{cell_id}: 'evidence' must be file:line (e.g. 'path/to.c:123' or 'path/to.c:120-140'); got {evidence!r}"
+                    f"{cell_id}: 'evidence' must be file:line (e.g. "
+                    "'path/to.c:123' or 'path/to.c:120-140'); "
+                    f'got {evidence!r}'
                 )
 
         covered = covers_by_req.get(req_id, set())
@@ -771,7 +776,8 @@ def check_file_existence(repo_dir, q, strictness):
         pass_('functional test file exists')
     else:
         fail(
-            'functional test file missing (test_functional.*, functional_test.*, FunctionalSpec.*, FunctionalTest.*, functional.test.*)'
+            'functional test file missing (test_functional.*, functional_test.*, '
+            'FunctionalSpec.*, FunctionalTest.*, functional.test.*)'
         )
 
     if (repo_dir / 'AGENTS.md').is_file():
@@ -815,7 +821,11 @@ def check_file_existence(repo_dir, q, strictness):
                 has_probes = True
                 pass_('verify.sh contains triage probe assertions')
             if not has_probes:
-                msg = 'No executable triage evidence found (expected spec_audits/triage_probes.sh or probe assertions in mechanical/verify.sh)'
+                msg = (
+                    'No executable triage evidence found (expected '
+                    'spec_audits/triage_probes.sh or probe assertions in '
+                    'mechanical/verify.sh)'
+                )
                 if strictness == 'benchmark':
                     fail(msg)
                 else:
@@ -1044,20 +1054,23 @@ def check_tdd_logs(q, bug_count, bug_ids, tdd_data):
             pass_(f'All {green_found} bug(s) with fix patches have green-phase logs')
         else:
             fail(
-                f'{green_missing} bug(s) with fix patches missing green-phase log (BUG-NNN.green.log)'
+                f'{green_missing} bug(s) with fix patches missing green-phase '
+                'log (BUG-NNN.green.log)'
             )
     else:
         info('No fix patches found — green-phase logs not required')
 
     if red_bad_tag > 0:
         fail(
-            f'{red_bad_tag} red-phase log(s) missing valid first-line status tag (expected RED/GREEN/NOT_RUN/ERROR)'
+            f'{red_bad_tag} red-phase log(s) missing valid first-line status '
+            'tag (expected RED/GREEN/NOT_RUN/ERROR)'
         )
     elif red_found > 0:
         pass_('All red-phase logs have valid status tags')
     if green_bad_tag > 0:
         fail(
-            f'{green_bad_tag} green-phase log(s) missing valid first-line status tag (expected RED/GREEN/NOT_RUN/ERROR)'
+            f'{green_bad_tag} green-phase log(s) missing valid first-line status '
+            'tag (expected RED/GREEN/NOT_RUN/ERROR)'
         )
     elif green_found > 0:
         pass_('All green-phase logs have valid status tags')
@@ -1088,12 +1101,14 @@ def check_tdd_logs(q, bug_count, bug_ids, tdd_data):
                 if sidecar_red == 'fail' and log_tag != 'RED':
                     xv_mismatch += 1
                     fail(
-                        f"{bid}: sidecar red_phase='{sidecar_red}' but log first-line is '{log_tag}' (expected RED)"
+                        f"{bid}: sidecar red_phase='{sidecar_red}' but log "
+                        f"first-line is '{log_tag}' (expected RED)"
                     )
                 elif sidecar_red == 'pass' and log_tag != 'GREEN':
                     xv_mismatch += 1
                     fail(
-                        f"{bid}: sidecar red_phase='{sidecar_red}' but log first-line is '{log_tag}' (expected GREEN)"
+                        f"{bid}: sidecar red_phase='{sidecar_red}' but log "
+                        f"first-line is '{log_tag}' (expected GREEN)"
                     )
 
             green_log = results_dir / f'{bid}.green.log'
@@ -1103,12 +1118,14 @@ def check_tdd_logs(q, bug_count, bug_ids, tdd_data):
                 if sidecar_green == 'pass' and log_tag != 'GREEN':
                     xv_mismatch += 1
                     fail(
-                        f"{bid}: sidecar green_phase='{sidecar_green}' but log first-line is '{log_tag}' (expected GREEN)"
+                        f"{bid}: sidecar green_phase='{sidecar_green}' but log "
+                        f"first-line is '{log_tag}' (expected GREEN)"
                     )
                 elif sidecar_green == 'fail' and log_tag != 'RED':
                     xv_mismatch += 1
                     fail(
-                        f"{bid}: sidecar green_phase='{sidecar_green}' but log first-line is '{log_tag}' (expected RED)"
+                        f"{bid}: sidecar green_phase='{sidecar_green}' but log "
+                        f"first-line is '{log_tag}' (expected RED)"
                     )
 
         if xv_checked > 0 and xv_mismatch == 0:
@@ -1194,14 +1211,14 @@ def check_integration_sidecar(q, strictness):
     groups = data.get('groups') if isinstance(data, dict) else None
     if isinstance(groups, list):
         for g in groups:
-            if isinstance(g, dict) and 'result' in g:
-                if g.get('result') not in allowed_results:
-                    bad_results += 1
+            if isinstance(g, dict) and 'result' in g and g.get('result') not in allowed_results:
+                bad_results += 1
     if bad_results == 0:
         pass_('all groups[].result values are canonical')
     else:
         fail(
-            f'{bad_results} non-canonical groups[].result value(s) (must be pass/fail/skipped/error)'
+            f'{bad_results} non-canonical groups[].result value(s) '
+            '(must be pass/fail/skipped/error)'
         )
 
     # uc_coverage value enum
@@ -1216,7 +1233,8 @@ def check_integration_sidecar(q, strictness):
         pass_('all uc_coverage values are canonical')
     else:
         fail(
-            f'{bad_uc} non-canonical uc_coverage value(s) (must be covered_pass/covered_fail/not_mapped)'
+            f'{bad_uc} non-canonical uc_coverage value(s) '
+            '(must be covered_pass/covered_fail/not_mapped)'
         )
 
 
@@ -1286,11 +1304,15 @@ def check_use_cases(repo_dir, q, strictness):
 
     if uc_unique >= min_uc:
         pass_(
-            f'Found {uc_unique} distinct UC identifiers ({uc_ids} total references, {src_count} source files)'
+            f'Found {uc_unique} distinct UC identifiers ({uc_ids} total '
+            f'references, {src_count} source files)'
         )
     elif uc_unique > 0:
         connector = 'for' if strictness == 'general' else 'required for'
-        msg = f'Only {uc_unique} distinct UC identifiers (minimum {min_uc} {connector} {src_count} source files)'
+        msg = (
+            f'Only {uc_unique} distinct UC identifiers (minimum {min_uc} '
+            f'{connector} {src_count} source files)'
+        )
         if strictness == 'general':
             warn(msg)
         else:
@@ -1345,7 +1367,8 @@ def check_test_file_extension(repo_dir, q):
         pass_(f'{func_test.name} matches project language ({detected_lang})')
     else:
         fail(
-            f'{func_test.name} does not match project language ({detected_lang}) — expected .{primary}'
+            f'{func_test.name} does not match project language '
+            f'({detected_lang}) — expected .{primary}'
         )
 
     if reg_test is not None:
@@ -1354,7 +1377,8 @@ def check_test_file_extension(repo_dir, q):
             pass_(f'test_regression.{reg_ext} matches project language ({detected_lang})')
         else:
             fail(
-                f'test_regression.{reg_ext} does not match project language ({detected_lang}) — expected .{primary}'
+                f'test_regression.{reg_ext} does not match project language '
+                f'({detected_lang}) — expected .{primary}'
             )
 
 
@@ -1441,7 +1465,8 @@ def check_patches(q, bug_count, bug_ids, strictness):
         fail(f'{reg_patch_missing} bug(s) missing regression-test patch')
     else:
         fail(
-            'No regression-test patches found (quality/patches/BUG-NNN-regression-test.patch required)'
+            'No regression-test patches found '
+            '(quality/patches/BUG-NNN-regression-test.patch required)'
         )
 
     if fix_patch_count > 0:
@@ -1520,7 +1545,8 @@ def check_writeups(q, bug_count):
         pass_(f'{writeup_count} writeup(s) for {bug_count} bug(s)')
     elif writeup_count > 0:
         fail(
-            f'{writeup_count} writeup(s) for {bug_count} bug(s) — all confirmed bugs require writeups (SKILL.md line 1454)'
+            f'{writeup_count} writeup(s) for {bug_count} bug(s) — all confirmed '
+            'bugs require writeups (SKILL.md line 1454)'
         )
     else:
         fail(f'No writeups for {bug_count} confirmed bug(s)')
@@ -1530,11 +1556,13 @@ def check_writeups(q, bug_count):
             pass_(f'All {writeup_diff_count} writeup(s) have inline fix diffs')
         elif writeup_diff_count > 0:
             fail(
-                f'Only {writeup_diff_count}/{writeup_count} writeup(s) have inline fix diffs (all require section 6 diff)'
+                f'Only {writeup_diff_count}/{writeup_count} writeup(s) have '
+                'inline fix diffs (all require section 6 diff)'
             )
         else:
             fail(
-                "No writeups have inline fix diffs (section 6 'The fix' must include a ```diff block)"
+                "No writeups have inline fix diffs (section 6 'The fix' must "
+                'include a ```diff block)'
             )
 
         # Non-empty-diff content check. A ```diff fence with no `+`/`-` body
@@ -1613,7 +1641,8 @@ def check_cross_run_contamination(repo_dir, q, version_arg, skill_version):
         dir_version = matches[-1] if matches else ''
         if dir_version and dir_version != skill_version:
             fail(
-                f"Directory version '{dir_version}' != skill version '{skill_version}' — possible cross-run contamination"
+                f"Directory version '{dir_version}' != skill version "
+                f"'{skill_version}' — possible cross-run contamination"
             )
         else:
             pass_('No version mismatch detected')
@@ -1624,7 +1653,8 @@ def check_cross_run_contamination(repo_dir, q, version_arg, skill_version):
         json_sv = get_str(data, 'skill_version')
         if json_sv and json_sv != skill_version:
             fail(
-                f"tdd-results.json skill_version '{json_sv}' != SKILL.md '{skill_version}' — stale artifacts from prior run?"
+                f"tdd-results.json skill_version '{json_sv}' != SKILL.md "
+                f"'{skill_version}' — stale artifacts from prior run?"
             )
 
 
@@ -2534,9 +2564,7 @@ def _bug_req_has_tier_12_citation(req_id, requirements_records):
         if rec.get('tier') not in (1, 2):
             return False
         citation = rec.get('citation')
-        if isinstance(citation, dict) and citation:
-            return True
-        return False
+        return bool(isinstance(citation, dict) and citation)
     return False
 
 
@@ -2617,9 +2645,7 @@ def _challenge_record_has_verdict(path):
         return False
     if _CHALLENGE_VERDICT_RE.search(text):
         return True
-    if _CHALLENGE_VERDICT_LEGACY_RE.search(text):
-        return True
-    return False
+    return bool(_CHALLENGE_VERDICT_LEGACY_RE.search(text))
 
 
 def check_challenge_gate_coverage(q):
@@ -2677,7 +2703,8 @@ def check_challenge_gate_coverage(q):
             fail(
                 f'quality/challenge/{bug_id}-challenge.md',
                 f'missing or malformed verdict line (triggered by: {', '.join(fired)}) '
-                '— expected a line matching `^\\*\\*Verdict:\\*\\*\\s+(CONFIRMED|DOWNGRADED|REJECTED)` '
+                '— expected a line matching '
+                '`^\\*\\*Verdict:\\*\\*\\s+(CONFIRMED|DOWNGRADED|REJECTED)` '
                 'or the legacy final-verdict form',
             )
 
@@ -3015,10 +3042,7 @@ def _role_map_has_role(role_map, role_set):
     files = role_map.get('files') or []
     if not isinstance(files, list):
         return False
-    for entry in files:
-        if isinstance(entry, dict) and entry.get('role') in role_set:
-            return True
-    return False
+    return any(isinstance(entry, dict) and entry.get('role') in role_set for entry in files)
 
 
 def _phase4_project_type(q):
@@ -3139,7 +3163,8 @@ def check_reference_file_req_coverage(repo_dir, q):
         failures += 1
     if failures == 0:
         pass_(
-            'check_reference_file_req_coverage: every reference file has ≥1 citing REQ or non-normative marker'
+            'check_reference_file_req_coverage: every reference file has ≥1 '
+            'citing REQ or non-normative marker'
         )
 
 

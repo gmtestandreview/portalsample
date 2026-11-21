@@ -1,12 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Skill Packager - Creates a distributable .skill file of a skill folder.
 
 Usage:
-    python -m scripts.package_skill <path/to/skill-folder> [output-directory]
+    python3.14 -m scripts.package_skill <path/to/skill-folder> [output-directory]
 
 Example:
-    python -m scripts.package_skill skills/public/my-skill
-    python -m scripts.package_skill skills/public/my-skill ./dist
+    python3.14 -m scripts.package_skill skills/public/my-skill
+    python3.14 -m scripts.package_skill skills/public/my-skill ./dist
 """
 
 import argparse
@@ -17,13 +17,10 @@ import uuid
 import zipfile
 from pathlib import Path
 
-try:
-    from scripts.quick_validate import validate_skill
-except ModuleNotFoundError as exc:
-    # Support direct execution without masking a missing dependency imported
-    # from inside scripts.quick_validate.
-    if exc.name not in {'scripts', 'scripts.quick_validate'}:
-        raise
+if __package__:
+    from .quick_validate import validate_skill
+else:
+    # Support direct execution when this file is run as a script.
     from quick_validate import validate_skill
 
 PathInput = str | Path
