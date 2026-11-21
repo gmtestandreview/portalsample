@@ -63,12 +63,15 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule90>) as unknown as __DynamicPartialMockFactory<__TestMockModule90>,
 );
 
-const renderCreatedRoute = () =>
+const renderCreatedRoute = (
+  initialPath = '/ta/PA-200/created',
+  routePath = '/ta/:id/created',
+) =>
   render(
-    <MemoryRouter initialEntries={['/ta/PA-200/created']}>
+    <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
         <Route
-          path='/ta/:id/created'
+          path={routePath}
           element={<RequestForPatternApprovalCreated />}
         />
         <Route
@@ -122,6 +125,16 @@ describe(RequestForPatternApprovalCreated, () => {
     expect(screen.getByTestId('application-submit-success')).toHaveTextContent(
       'PA-200',
     );
+  });
+
+  it('renders an empty reference when the created route has no id', () => {
+    expect.hasAssertions();
+
+    resetCreatedRequestMocks();
+
+    renderCreatedRoute('/ta/created', '/ta/created');
+
+    expect(screen.getByTestId('form-banner')).toHaveTextContent('Ref ID:');
   });
 
   it('sets the dashboard tab marker and navigates when the dashboard button is clicked', () => {

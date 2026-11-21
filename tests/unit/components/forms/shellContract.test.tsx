@@ -68,7 +68,7 @@ interface Setup {
 
 const FormikField = ({ name }: { name: string }) => {
   const [field] = useField<string>(name);
-  return <input aria-label={name} {...field} value={field.value ?? ''} />;
+  return <input aria-label={name} {...field} value={field.value} />;
 };
 
 const RhfField = ({ name }: { name: string }) => {

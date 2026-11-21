@@ -38,7 +38,7 @@ const AppLogger = {
     const obj = {
       message,
       severityLevel: SeverityLevel.Error,
-      error,
+      exception: error,
     };
     Object.assign(obj, { properties });
 

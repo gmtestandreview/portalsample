@@ -142,6 +142,7 @@ sensitive data.
 # Vulnerable: Weak hash, no salt
 import hashlib
 
+
 def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
 ```
@@ -152,9 +153,11 @@ def hash_password(password):
 # Secure: Strong hash with salt
 import bcrypt
 
+
 def hash_password(password):
     salt = bcrypt.gensalt(rounds=12)
     return bcrypt.hashpw(password.encode(), salt)
+
 
 def verify_password(password, hashed):
     return bcrypt.checkpw(password.encode(), hashed)
@@ -200,7 +203,7 @@ def search():
 @app.route('/search')
 def search():
     query = request.args.get('q')
-    sql = "SELECT * FROM products WHERE name LIKE ?"
+    sql = 'SELECT * FROM products WHERE name LIKE ?'
     results = db.execute(sql, (f'%{query}%',))
     return jsonify(results)
 ```
@@ -210,6 +213,7 @@ def search():
 ```python
 # Vulnerable: Passing user input to shell
 import os
+
 
 @app.route('/ping')
 def ping():
@@ -224,24 +228,25 @@ def ping():
 # Secure: Use library instead of shell command
 import subprocess
 
+
 @app.route('/ping')
 def ping():
     host = request.args.get('host')
 
     # Validate input
     import re
+
     if not re.match(r'^[a-zA-Z0-9.-]+$', host):
-        return "Invalid host", 400
+        return 'Invalid host', 400
 
     # Use array format (no shell interpretation)
     try:
-        result = subprocess.run(['ping', '-c', '1', host],
-                              capture_output=True,
-                              timeout=5,
-                              check=False)
+        result = subprocess.run(
+            ['ping', '-c', '1', host], capture_output=True, timeout=5, check=False
+        )
         return result.stdout.decode()
     except subprocess.TimeoutExpired:
-        return "Timeout", 408
+        return 'Timeout', 408
 ```
 
 **Mitigation**:
@@ -294,33 +299,31 @@ from flask_talisman import Talisman
 app = Flask(__name__)
 
 # Enforce HTTPS and security headers
-Talisman(app,
+Talisman(
+    app,
     force_https=True,
     strict_transport_security=True,
     content_security_policy={
         'default-src': "'self'",
         'script-src': "'self' 'unsafe-inline'",
-        'style-src': "'self' 'unsafe-inline'"
+        'style-src': "'self' 'unsafe-inline'",
     },
     content_security_policy_nonce_in=['script-src'],
     referrer_policy='strict-origin-when-cross-origin',
-    feature_policy={
-        'geolocation': "'none'",
-        'camera': "'none'",
-        'microphone': "'none'"
-    }
+    feature_policy={'geolocation': "'none'", 'camera': "'none'", 'microphone': "'none'"},
 )
 
 # Disable debug mode in production
 app.config['DEBUG'] = False
 
+
 # Custom error handlers (don't reveal stack traces)
 @app.errorhandler(500)
 def internal_error(error):
     # Log error details server-side
-    app.logger.error(f'Server Error: {error}')
+    app.logging.exception(f'Server Error: {error}')
     # Return generic message to user
-    return "Internal server error", 500
+    return 'Internal server error', 500
 ```
 
 **Nginx Security Headers**:
@@ -416,22 +419,19 @@ app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)  # Strong random secret
 
 # Rate limiting (brute force protection)
-limiter = Limiter(
-    app=app,
-    key_func=get_remote_address,
-    default_limits=["100 per hour"]
-)
+limiter = Limiter(app=app, key_func=get_remote_address, default_limits=['100 per hour'])
 
 # Session configuration
 app.config.update(
     SESSION_COOKIE_SECURE=True,  # HTTPS only
     SESSION_COOKIE_HTTPONLY=True,  # No JavaScript access
     SESSION_COOKIE_SAMESITE='Lax',  # CSRF protection
-    PERMANENT_SESSION_LIFETIME=timedelta(hours=1)  # Session timeout
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=1),  # Session timeout
 )
 
+
 @app.route('/login', methods=['POST'])
-@limiter.limit("5 per minute")  # Max 5 login attempts per minute
+@limiter.limit('5 per minute')  # Max 5 login attempts per minute
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
@@ -443,16 +443,17 @@ def login():
         session.clear()
         session['user_id'] = user.id
         session['login_time'] = datetime.utcnow()
-        return {"status": "success"}
+        return {'status': 'success'}
     else:
         # Generic error message (don't reveal if username exists)
-        return {"error": "Invalid credentials"}, 401
+        return {'error': 'Invalid credentials'}, 401
 ```
 
 **Password Policy**:
 
 ```python
 import re
+
 
 def validate_password(password):
     """
@@ -464,24 +465,24 @@ def validate_password(password):
     - At least one special character
     """
     if len(password) < 12:
-        return False, "Password must be at least 12 characters"
+        return False, 'Password must be at least 12 characters'
 
     if not re.search(r'[A-Z]', password):
-        return False, "Password must contain uppercase letter"
+        return False, 'Password must contain uppercase letter'
 
     if not re.search(r'[a-z]', password):
-        return False, "Password must contain lowercase letter"
+        return False, 'Password must contain lowercase letter'
 
     if not re.search(r'\d', password):
-        return False, "Password must contain digit"
+        return False, 'Password must contain digit'
 
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        return False, "Password must contain special character"
+        return False, 'Password must contain special character'
 
     # Check against common passwords (implement breach password check)
     # Example: Use haveibeenpwned API
 
-    return True, "Password is strong"
+    return True, 'Password is strong'
 ```
 
 ---
@@ -537,19 +538,19 @@ from flask import request, g
 # Configure secure logging
 handler = RotatingFileHandler('security.log', maxBytes=10000000, backupCount=10)
 handler.setLevel(logging.INFO)
-formatter = logging.Formatter(
-    '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
-)
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s')
 handler.setFormatter(formatter)
 
 security_logger = logging.getLogger('security')
 security_logger.addHandler(handler)
 security_logger.setLevel(logging.INFO)
 
+
 @app.before_request
 def log_request():
     # Log all requests with security context
     security_logger.info(f'Request: {request.method} {request.path} from {request.remote_addr}')
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -561,11 +562,11 @@ def login():
     if user and verify_password(password, user.password_hash):
         security_logger.info(f'Successful login: {username} from {request.remote_addr}')
         session['user_id'] = user.id
-        return {"status": "success"}
+        return {'status': 'success'}
     else:
         # Log failed login attempt
         security_logger.warning(f'Failed login attempt: {username} from {request.remote_addr}')
-        return {"error": "Invalid credentials"}, 401
+        return {'error': 'Invalid credentials'}, 401
 ```
 
 **What to Log**:
@@ -627,6 +628,7 @@ import ipaddress
 # Secure: Validate and restrict URLs
 ALLOWED_DOMAINS = ['api.trusted-partner.com', 'cdn.example.com']
 
+
 def is_safe_url(url):
     parsed = urlparse(url)
 
@@ -649,18 +651,19 @@ def is_safe_url(url):
 
     return True
 
+
 @app.route('/fetch')
 def fetch_url():
     url = request.args.get('url')
 
     if not is_safe_url(url):
-        return "Invalid URL", 400
+        return 'Invalid URL', 400
 
     try:
         response = requests.get(url, timeout=5)
         return response.text
     except requests.exceptions.RequestException:
-        return "Error fetching URL", 500
+        return 'Error fetching URL', 500
 ```
 
 ---
@@ -770,6 +773,7 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
 
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -783,7 +787,7 @@ def token_required(f):
             if token.startswith('Bearer '):
                 token = token[7:]
 
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
             current_user = User.query.get(data['user_id'])
         except jwt.ExpiredSignatureError:
             return jsonify({'error': 'Token has expired'}), 401
@@ -793,6 +797,7 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
 
     return decorated
+
 
 @app.route('/api/protected', methods=['GET'])
 @token_required
@@ -809,12 +814,13 @@ from flask_limiter.util import get_remote_address
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["1000 per day", "100 per hour"],
-    storage_uri="redis://localhost:6379"
+    default_limits=['1000 per day', '100 per hour'],
+    storage_uri='redis://localhost:6379',
 )
 
+
 @app.route('/api/login', methods=['POST'])
-@limiter.limit("5 per minute")
+@limiter.limit('5 per minute')
 def api_login():
     # Login logic
     pass
@@ -825,11 +831,13 @@ def api_login():
 ```python
 from marshmallow import Schema, fields, validate, ValidationError
 
+
 class UserRegistrationSchema(Schema):
     username = fields.Str(required=True, validate=validate.Length(min=3, max=50))
     email = fields.Email(required=True)
     password = fields.Str(required=True, validate=validate.Length(min=12))
     age = fields.Int(validate=validate.Range(min=18, max=120))
+
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -850,13 +858,16 @@ def register():
 from flask_cors import CORS
 
 # Restrict CORS to specific origins
-CORS(app, resources={
-    r"/api/*": {
-        "origins": ["https://trusted-frontend.com"],
-        "methods": ["GET", "POST"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }
-})
+CORS(
+    app,
+    resources={
+        r'/api/*': {
+            'origins': ['https://trusted-frontend.com'],
+            'methods': ['GET', 'POST'],
+            'allow_headers': ['Content-Type', 'Authorization'],
+        }
+    },
+)
 ```
 
 ---

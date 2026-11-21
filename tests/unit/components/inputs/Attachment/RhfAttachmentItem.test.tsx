@@ -28,6 +28,12 @@ const methodsRef: {
   current: UseFormReturn<Record<string, unknown>> | undefined;
 } = { current: undefined };
 
+const getMethods = (): UseFormReturn<Record<string, unknown>> => {
+  const methods = methodsRef.current;
+  if (!methods) throw new Error('Form methods were not captured');
+  return methods;
+};
+
 interface Deferred {
   readonly promise: Promise<void>;
   readonly resolve: () => void;
@@ -193,6 +199,35 @@ describe('rhf attachment item behavior', () => {
 
     expect(screen.getByTestId('values')).toHaveTextContent(
       '"attachmentCategory":"Manuals"',
+    );
+  });
+
+  it('normalises missing attachment names in the save error and remove label', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('save failed'));
+    const onCategoryError = vi.fn<CategoryError>();
+    renderItem(
+      { onCategoryUpdate, onCategoryError },
+      { ...attachment, attachmentName: undefined },
+    );
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate',
+    );
+
+    await waitFor(() => {
+      expect(onCategoryError).toHaveBeenCalledWith(
+        'Could not save the category for .',
+      );
+    });
+
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveTextContent(
+      'Delete',
     );
   });
 
@@ -387,9 +422,16 @@ describe('rhf attachment item behavior', () => {
       unmount();
       await settle(pending, 'reject');
 
-      expect(
-        methodsRef.current?.getValues('attachments.0.attachmentCategory'),
-      ).toBe('Certificate');
+      const methods = getMethods();
+      const getAttachmentCategory = methods.getValues.bind(methods) as (
+        name: 'attachments.0.attachmentCategory',
+      ) => string | undefined;
+
+      const attachmentCategory = getAttachmentCategory(
+        'attachments.0.attachmentCategory',
+      );
+
+      expect(attachmentCategory).toBe('Certificate');
     });
   });
 

@@ -50,9 +50,20 @@ An unresolved required gate prevents a merge/readiness claim; recommend `hold`
 or a supported separate/split disposition. A hypothesis or high numeric score
 cannot clear it. Deployment requires the testing checklist beyond this template.
 
-## Specific actions
+## Specific actions and falsification
 
 1. [Evidence/finding → authorized action or missing decision → verifier]
+2. [The most plausible wrong assumption → how a counterexample would reveal it]
+3. [Next required evidence → owner/test/actual environment → stop rule]
+
+Before recommending merge, test the **negative oracle**: removing a source must
+not remove unique safety rules, activation constraints or usable references. An
+observed violation makes the proposed merge `FAIL`; a missing consumer or
+execution environment is `NHR`, never proof that the hypothesis is sound. This
+template does not perform the test. Record the actual source revisions, relevant
+inputs, expected and forbidden outputs, raw result reference and freshness in
+the full audit before claiming a behavioral PASS. A decision to keep skills
+separate may be supported without constructing a merged artifact.
 
 ## Illustrative filled check
 

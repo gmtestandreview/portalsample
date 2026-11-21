@@ -2,7 +2,10 @@ import { createServer, type Server, type ServerResponse } from 'node:http';
 
 import { expect, test } from '@playwright/test';
 
-import { expectJsonResponseToMatchSchema } from '../e2e/support/api-contract';
+import {
+  expectJsonResponseToMatchSchema,
+  expectValueToMatchSchema,
+} from '../e2e/support/api-contract';
 
 const dashboardResponseSchema = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',
@@ -51,8 +54,12 @@ const invalidDashboardResponse = {
   totalCount: 1,
 };
 
-const writeJson = (serverResponse: ServerResponse, body: unknown) => {
-  serverResponse.writeHead(200, { 'content-type': 'application/json' });
+const writeJson = (
+  serverResponse: ServerResponse,
+  body: unknown,
+  contentType = 'application/json',
+) => {
+  serverResponse.writeHead(200, { 'content-type': contentType });
   serverResponse.end(JSON.stringify(body));
 };
 
@@ -69,6 +76,16 @@ test.describe('API contract helper', () => {
 
       if (request.url === '/dashboard-invalid') {
         writeJson(response, invalidDashboardResponse);
+        return;
+      }
+
+      if (request.url === '/dashboard-problem') {
+        writeJson(response, validDashboardResponse, 'application/problem+json');
+        return;
+      }
+
+      if (request.url === '/dashboard-text-json') {
+        writeJson(response, validDashboardResponse, 'text/example+json');
         return;
       }
 
@@ -119,5 +136,42 @@ test.describe('API contract helper', () => {
     await expect(
       expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
     ).rejects.toThrow('/items/0');
+  });
+
+  test('accepts JSON structured-suffix response media types', async ({
+    request,
+  }) => {
+    const response = await request.get(`${baseUrl}/dashboard-problem`);
+
+    await expect(
+      expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
+    ).resolves.toEqual(validDashboardResponse);
+  });
+
+  test('rejects non-application structured-suffix media types', async ({
+    request,
+  }) => {
+    const response = await request.get(`${baseUrl}/dashboard-text-json`);
+
+    await expect(
+      expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
+    ).rejects.toThrow('not JSON');
+  });
+
+  test('rejects invalid runtime schema values before compiling them', () => {
+    for (const schema of [null, undefined, 'schema', []]) {
+      expect(() => {
+        expectValueToMatchSchema(validDashboardResponse, schema);
+      }).toThrow('JSON Schema object or boolean');
+    }
+  });
+
+  test('accepts boolean JSON Schemas', () => {
+    expect(() => {
+      expectValueToMatchSchema(validDashboardResponse, true);
+    }).not.toThrow();
+    expect(() => {
+      expectValueToMatchSchema(validDashboardResponse, false);
+    }).toThrow('did not match its JSON Schema contract');
   });
 });

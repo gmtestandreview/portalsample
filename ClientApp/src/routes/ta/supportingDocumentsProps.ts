@@ -7,7 +7,7 @@ import {
   RequestForPatternApprovalClient,
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
-import { silentRequestFor } from '../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -27,11 +27,11 @@ const loadSummary =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       try {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          RequestForPatternApprovalClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
         const summaryStep = await client.getSupportingDocuments(
           id,
           abortSignal,
@@ -80,11 +80,11 @@ const saveStep =
   ) => {
     if (accounts.length > 0) {
       try {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          RequestForPatternApprovalClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
 
         // Save for later
         let formStepValues: SupportingDocumentsStep | undefined;

@@ -115,7 +115,10 @@ class TestIntersectionObserver implements IntersectionObserver {
   }
 }
 
-globalThis.IntersectionObserver ??= TestIntersectionObserver;
+const intersectionObserver: unknown = globalThis.IntersectionObserver;
+if (intersectionObserver === null || intersectionObserver === undefined) {
+  globalThis.IntersectionObserver = TestIntersectionObserver;
+}
 const originalUserAgent = navigator.userAgent;
 
 function DragAndDropCollections() {
@@ -268,7 +271,7 @@ describe('react aria coverage wrappers', () => {
           selectedKeys={['selected']}
         >
           <DropdownItem id='selected'>Selected</DropdownItem>
-          <DropdownItem id='custom-dropdown'>
+          <DropdownItem id='custom-dropdown' textValue='Custom dropdown'>
             <span>Custom dropdown</span>
           </DropdownItem>
         </DropdownListBox>

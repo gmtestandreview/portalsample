@@ -30,7 +30,7 @@ import {
   RequestForPatternApprovalClient,
 } from '../../../api/web-api-client';
 import StatusPill from '../../../components/Pill/StatusPill';
-import type { PaDashboardItemStatus } from '../../common/enums';
+import { toPaDashboardItemStatus } from '../../common/helperFunctions';
 import ApplicationSummary from '../summary/ApplicationSummary';
 import appDetailsProps from './appDetailsProps';
 import OrganisationSummary from '../summary/OrganisationSummary';
@@ -70,17 +70,12 @@ const ApplicationDetails = () => {
   const [applicationType, setApplicationType] = useState<string | null>(null);
   const [messageCount, setMessageCount] = useState<number>(0);
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const disposedRef = useRef(false);
+  const pollGenerationRef = useRef(0);
 
-  const clearPollTimeout = () => {
-    if (pollTimeoutRef.current) {
-      clearTimeout(pollTimeoutRef.current);
-      pollTimeoutRef.current = null;
-    }
-  };
-
-  const fetchMessageCountData = useCallback(async () => {
-    if (!id || accounts.length === 0) return;
+  const fetchMessageCountData = useCallback(async (): Promise<
+    number | undefined
+  > => {
+    if (!id || accounts.length === 0) return undefined;
 
     try {
       const client = new RequestForPatternApprovalClient();
@@ -90,10 +85,9 @@ const ApplicationDetails = () => {
       client.setAuthToken(tokenResult.accessToken);
       const count = await client.getAppMessageCount(id, id);
 
-      if (disposedRef.current) return;
-      setMessageCount(count || 0);
+      return count || 0;
     } catch {
-      // optional: log
+      return undefined;
     }
   }, [accounts, id, instance]);
 
@@ -138,11 +132,14 @@ const ApplicationDetails = () => {
   }, []);
 
   useEffect(() => {
-    disposedRef.current = false;
+    const pollGeneration = ++pollGenerationRef.current;
 
     const poll = async () => {
-      await fetchMessageCountData();
-      if (!disposedRef.current) {
+      const nextMessageCount = await fetchMessageCountData();
+      if (pollGenerationRef.current === pollGeneration) {
+        if (nextMessageCount !== undefined) {
+          setMessageCount(nextMessageCount);
+        }
         // The rule cannot trace the clear through clearPollTimeout(),
         // which this effect's cleanup calls and which does invoke
         // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
@@ -155,17 +152,13 @@ const ApplicationDetails = () => {
     void poll();
 
     return () => {
-      clearPollTimeout();
+      pollGenerationRef.current += 1;
+      if (pollTimeoutRef.current !== null) {
+        clearTimeout(pollTimeoutRef.current);
+        pollTimeoutRef.current = null;
+      }
     };
   }, [fetchMessageCountData]);
-
-  useEffect(
-    () => () => {
-      disposedRef.current = true;
-      clearPollTimeout();
-    },
-    [],
-  );
 
   const refreshMessagesTab = () => {
     setLoadMessagesTab(true);
@@ -228,6 +221,7 @@ const ApplicationDetails = () => {
       title,
       submittedDate,
     } = details.applicationDetails ?? {};
+    const mappedStatus = toPaDashboardItemStatus(status);
     return (
       <Row className='mb-4'>
         <Col aria-busy={isDataLoading} aria-live='polite'>
@@ -252,7 +246,9 @@ const ApplicationDetails = () => {
                       eventKey='0'
                       className='mb-4 py-2'
                       nameRHS={
-                        <StatusPill status={status as PaDashboardItemStatus} />
+                        <StatusPill
+                          status={mappedStatus ?? status ?? 'Unknown status'}
+                        />
                       }
                     >
                       {/* Application Status content body */}
@@ -289,7 +285,9 @@ const ApplicationDetails = () => {
                           </p>
                           <p className='small'>
                             <StatusPill
-                              status={status as PaDashboardItemStatus}
+                              status={
+                                mappedStatus ?? status ?? 'Unknown status'
+                              }
                               className='visually-hidden -me-2'
                             />
                             {statusDetail}

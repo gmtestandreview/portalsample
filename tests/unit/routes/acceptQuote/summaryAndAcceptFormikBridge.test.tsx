@@ -87,7 +87,7 @@ const submitted = (
 ): SummaryAndAcceptStep => defined(onSubmit.mock.calls[0], 'submit call')[0];
 
 const probe = () =>
-  JSON.parse(screen.getByTestId('probe').textContent ?? '') as {
+  JSON.parse(screen.getByTestId('probe').textContent) as {
     acceptance: boolean | undefined;
     dirty: boolean;
   };

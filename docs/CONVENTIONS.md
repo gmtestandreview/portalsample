@@ -155,12 +155,12 @@
 
   ```ts
   AppLogger.verbose('Dashboard.loadDataForDisplay', contextObject);
-  AppLogger.error('Failed to load dashboard.', error as Error);
+  Applogging.exception('Failed to load dashboard.', error as Error);
   ```
 
 - **PII**: MSAL logging has `piiLoggingEnabled: false`. Never log
   user-identifiable data. **Important:** this flag only governs MSAL's own
-  internal logging — `AppLogger.verbose` / `AppLogger.error` route their
+  internal logging — `AppLogger.verbose` / `Applogging.exception` route their
   `properties` argument directly to `insights.trackTrace` /
   `insights.trackException`. Always pass a scrubbed projection (e.g.,
   `{ homeAccountId: account.homeAccountId }`) rather than a raw `AccountInfo` or

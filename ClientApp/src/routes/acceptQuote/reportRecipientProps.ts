@@ -11,21 +11,18 @@ import type {
   FormStepStatusDto,
   ReportRecipientStep,
 } from '../../api/web-api-client';
-import { silentRequestFor } from '../../authentication/silentRequest';
-import { ErrorType } from '../../components/forms/WizardForm/types';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import type {
   WizardFormStepValues,
   WizardStepProps,
 } from '../../components/forms/WizardForm/types';
-import { setDashboardNotification } from '../../storage/notification';
-import { NotificationSeverity } from '../../storage/types';
-import { HttpStatusCode } from '../../types';
 import {
   reportRecipientSaveValidation,
   reportRecipientSubmitValidation,
 } from './validation';
 import type { AccountDetails } from '../../authentication/accountContext';
 import type { DiscardProps } from '../../components/forms/types';
+import { acceptQuoteRedirectionOnError } from './redirection';
 import { formatBannerTitle } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
@@ -33,11 +30,11 @@ const loadReportRecipient =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
-      const client = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
+      const client = await createAuthenticatedClient(
+        AcceptQuoteClient,
+        accounts,
+        instance,
       );
-      client.setAuthToken(tokenResult.accessToken);
       const reportRecipient = await client.getReportRecipient(id, abortSignal);
       const wizardStepValues: WizardFormStepValues<ReportRecipientStep> = {
         stepValues: { ...reportRecipient },
@@ -63,11 +60,11 @@ const saveStep =
   ) => {
     if (accounts.length > 0) {
       try {
-        const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          AcceptQuoteClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
         await client.saveReportRecipient(
           id,
           {
@@ -97,30 +94,6 @@ const discardChanges = (id: string): DiscardProps => ({
   // New option for Wizard footer Cancel button
   locationOnCancel: `/quotation/${id}`,
 });
-
-const getRedirectionLocationOnError =
-  (id: string) => (errorCode: number, errorType: ErrorType) => {
-    if (
-      errorCode === Number(HttpStatusCode.PreconditionFailed) &&
-      errorType === ErrorType.Load
-    ) {
-      return `/accept-quote/${id}/view-summary`;
-    }
-
-    if (
-      errorCode === Number(HttpStatusCode.NotFound) &&
-      errorType === ErrorType.Update
-    ) {
-      setDashboardNotification({
-        message:
-          'Another person has deleted this request. Your changes have not been saved.',
-        severity: NotificationSeverity.Error,
-      });
-      return '/';
-    }
-
-    return undefined;
-  };
 
 const reportRecipientProps = (
   id: string,
@@ -153,7 +126,7 @@ const reportRecipientProps = (
   bannerTitle,
   bannerRefTitle: `Quotation ID: ${id}`,
   bannerSubTitle: formatBannerTitle(accountDetails),
-  getRedirectionLocationOnError: getRedirectionLocationOnError(id),
+  getRedirectionLocationOnError: acceptQuoteRedirectionOnError(id),
   discard: discardChanges(referenceId),
 });
 

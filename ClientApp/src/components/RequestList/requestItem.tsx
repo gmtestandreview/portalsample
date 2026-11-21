@@ -23,6 +23,7 @@ import StatusPill from '../Pill/StatusPill';
 import ContactDetails from '../Utilities/contactDetails';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 import { formatFullName } from '../../utils';
+import { toDashboardItemStatus } from '../../routes/common/helperFunctions';
 
 enum RequestAction {
   Delete = 'Delete',
@@ -188,9 +189,10 @@ const renderQuotationContent = (
 ) => {
   // Quotation tab content placeholder (3 col pairs)
   const nmiOfficer = dashboardQuoteDto.nmiContactDetails;
-  const useQuoteId = validQuoteIdStatus.includes(
-    quoteStatus as DashboardItemStatus,
-  );
+  const mappedQuoteStatus = toDashboardItemStatus(quoteStatus);
+  const useQuoteId =
+    mappedQuoteStatus !== undefined &&
+    validQuoteIdStatus.includes(mappedQuoteStatus);
   const quotationRouteId = useQuoteId
     ? dashboardQuoteDto.quotationId
     : referenceId;
@@ -417,10 +419,13 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     requestForQuote,
     sourceReferenceId,
   } = request;
+  const mappedStatus = toDashboardItemStatus(status);
 
   const showArtefactHeading = useMemo(
-    () => viewArtefactHeadingStatus.includes(status as DashboardItemStatus),
-    [status],
+    () =>
+      mappedStatus !== undefined &&
+      viewArtefactHeadingStatus.includes(mappedStatus),
+    [mappedStatus],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
     ? `${requestForQuote.manufacturer} ${requestForQuote.model ?? ''}` // If Model null display empty string
@@ -446,7 +451,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
   const getActions = (): DropdownActionItem[] => {
     const actions: DropdownActionItem[] = [];
 
-    switch (status) {
+    switch (mappedStatus) {
       case DashboardItemStatus.QuoteDrafted:
         actions.push(
           {
@@ -495,7 +500,8 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
 
     if (
       requestForQuoteId !== undefined &&
-      viewQuotationAcceptMenu.includes(status as DashboardItemStatus)
+      mappedStatus !== undefined &&
+      viewQuotationAcceptMenu.includes(mappedStatus)
     ) {
       actions.push({
         action: RequestAction.View,
@@ -508,7 +514,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     }
 
     // We want 'view request' in every case other than draft.
-    if (status !== DashboardItemStatus.QuoteDrafted) {
+    if (mappedStatus !== DashboardItemStatus.QuoteDrafted) {
       actions.push({
         action: RequestAction.View,
         text: 'View request',
@@ -519,7 +525,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
       });
     }
 
-    if (status === DashboardItemStatus.ReportIssued) {
+    if (mappedStatus === DashboardItemStatus.ReportIssued) {
       actions.push({
         action: RequestAction.View,
         text: 'Request recalibration',
@@ -530,7 +536,7 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
       });
     }
 
-    if (status === DashboardItemStatus.ReportWithdrawn) {
+    if (mappedStatus === DashboardItemStatus.ReportWithdrawn) {
       actions.push({
         action: RequestAction.View,
         text: 'Request recalibration',
@@ -615,7 +621,9 @@ const RequestItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                 <Row>
                   <Col className='fw-bold small'>Status:</Col>
                   <Col className='small'>
-                    <StatusPill status={status as DashboardItemStatus} />
+                    <StatusPill
+                      status={mappedStatus ?? status ?? 'Unknown status'}
+                    />
                   </Col>
                 </Row>
                 <Row>

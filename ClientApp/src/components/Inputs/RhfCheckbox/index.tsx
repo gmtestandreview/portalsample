@@ -25,7 +25,11 @@ const RhfCheckbox = (props: Readonly<RhfCheckboxProps>) => {
   } = props;
 
   const {
-    field,
+    fieldValue,
+    fieldRef,
+    fieldName,
+    onFieldChange,
+    onFieldBlur,
     controlId,
     helpId,
     validationMessageId,
@@ -39,7 +43,7 @@ const RhfCheckbox = (props: Readonly<RhfCheckboxProps>) => {
         label={label}
         id={controlId}
         as='span'
-        value={field.value ? 'Yes' : 'No'}
+        value={fieldValue ? 'Yes' : 'No'}
       />
     );
   }
@@ -48,38 +52,38 @@ const RhfCheckbox = (props: Readonly<RhfCheckboxProps>) => {
     <div className={`form-field-container ${containerClassName}`}>
       <div className={`checkbox ${className}`}>
         <input
-          ref={field.ref}
+          ref={fieldRef}
           id={controlId}
-          name={field.name}
+          name={fieldName}
           type='checkbox'
-          checked={!!field.value}
+          checked={!!fieldValue}
           disabled={disabled}
           onChange={(event) => {
-            field.onChange(event.target.checked);
+            onFieldChange(event.target.checked);
             onChange?.(event.target.checked);
           }}
-          onBlur={field.onBlur}
+          onBlur={onFieldBlur}
           className={errorMessage ? 'is-invalid' : undefined}
           aria-invalid={errorMessage ? true : undefined}
           aria-describedby={describedBy}
         />
-        {inlineHelp && (
+        {inlineHelp ? (
           <Form.Text id={helpId} className='contextual-help'>
             {inlineHelp}
           </Form.Text>
-        )}
+        ) : null}
         <label htmlFor={controlId}>
           <i className='icon-tick' aria-hidden='true' />
           <span className='d-flex flex-column'>
             {label}
-            {!!descriptor && (
+            {descriptor ? (
               <>
                 <br />{' '}
                 <span className='d-block mt-2 fw-normal text-body'>
                   {descriptor}
                 </span>
               </>
-            )}
+            ) : null}
           </span>
         </label>
 
@@ -93,12 +97,12 @@ const RhfCheckbox = (props: Readonly<RhfCheckboxProps>) => {
           </Form.Control.Feedback>
         ) : null}
 
-        {subFormField && (
+        {subFormField ? (
           <div className='subform-field-container'>
             <div className='checklist-line' />
             {subFormField}
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

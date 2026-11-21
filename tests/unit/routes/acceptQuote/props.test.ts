@@ -666,4 +666,81 @@ describe('accept quote wizard prop factories', () => {
       'No authenticated account available to save form.',
     ]);
   });
+
+  it('authenticates every client with the acquired access token on each load and save path', async () => {
+    expect.hasAssertions();
+
+    resetAcceptQuotePropsMocks();
+
+    const abortSignal = new AbortController().signal;
+    const delivery = deliveryAndReturnProps(
+      'Q-1',
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      'Accept quote',
+    );
+    const payment = paymentDetailsProps(
+      'Q-1',
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      'Accept quote',
+    );
+    const recipient = reportRecipientProps(
+      'Q-1',
+      'Q-REF',
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      'Accept quote',
+    );
+    const summary = summaryAndAcceptProps(
+      'Q-1',
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      'Accept quote',
+    );
+    const token = ['access-token'];
+    const operations: [string, () => unknown][] = [
+      ['delivery and return load', () => delivery.loadStepValues(abortSignal)],
+      [
+        'delivery and return save',
+        () => Promise.resolve(delivery.onSaveAndNext?.({}, true, abortSignal)),
+      ],
+      ['payment details load', () => payment.loadStepValues(abortSignal)],
+      [
+        'payment details save',
+        () => Promise.resolve(payment.onSaveAndNext?.({}, true, abortSignal)),
+      ],
+      ['report recipient load', () => recipient.loadStepValues(abortSignal)],
+      [
+        'report recipient save',
+        () => Promise.resolve(recipient.onSaveAndNext?.({}, true, abortSignal)),
+      ],
+      ['summary and accept load', () => summary.loadStepValues(abortSignal)],
+      [
+        'summary and accept save',
+        () => Promise.resolve(summary.onSaveAndNext?.({}, true, abortSignal)),
+      ],
+    ];
+
+    for (const [name, operation] of operations) {
+      mocks.setAuthToken.mockClear();
+      await operation();
+
+      expect({
+        name,
+        calls: mocks.setAuthToken.mock.calls,
+      }).toStrictEqual({
+        name,
+        calls: [token],
+      });
+    }
+  });
 });

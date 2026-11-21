@@ -219,7 +219,6 @@ describe('error boundary', () => {
     ).toBeInTheDocument();
     expect(trackException).toHaveBeenCalledWith(
       expect.objectContaining({
-        error: expectedError,
         exception: expectedError,
         severityLevel: SeverityLevel.Error,
       }),
@@ -227,6 +226,7 @@ describe('error boundary', () => {
     expect(
       trackException.mock.calls[0]?.[0]?.properties?.['componentStack'],
     ).toStrictEqual(expect.any(String));
+    expect(trackException.mock.calls[0]?.[0]).not.toHaveProperty('error');
   });
 
   it('uses the server-error fallback when a thrown error has no status', () => {
@@ -311,12 +311,11 @@ describe('error boundary', () => {
     }
 
     const [trackedException] = trackException.mock.calls[0] as [
-      { error: Error; exception: Error; severityLevel: SeverityLevel },
+      { exception: Error; severityLevel: SeverityLevel },
     ];
 
-    expect(trackedException.error).toBeInstanceOf(Error);
-    expect(trackedException.exception).toBe(trackedException.error);
-    expect(trackedException.error.message).toBe('plain string failure');
+    expect(trackedException.exception).toBeInstanceOf(Error);
+    expect(trackedException.exception.message).toBe('plain string failure');
     expect(trackedException.severityLevel).toBe(SeverityLevel.Error);
   });
 });

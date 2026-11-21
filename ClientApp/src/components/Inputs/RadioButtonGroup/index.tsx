@@ -66,18 +66,18 @@ const RadioButtonGroup = <T,>(
         className={`form-field-container ${containerClassName}`}
         tabIndex={-1}
       >
-        {inlineHelp && !inlineHelpTitle && (
+        {inlineHelp && !inlineHelpTitle ? (
           <Form.Text as='p' id={helpId} className='contextual-help'>
             {inlineHelp}
           </Form.Text>
-        )}
-        {inlineHelp && inlineHelpTitle && (
+        ) : null}
+        {inlineHelp && inlineHelpTitle ? (
           <Details
             {...omitUndefined({ id: helpId })}
             title={inlineHelpTitle}
             inlineHelp={inlineHelp}
           />
-        )}
+        ) : null}
         {displayHorizontally ? (
           <Row>
             {options.map((option) => (

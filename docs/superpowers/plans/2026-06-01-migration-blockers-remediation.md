@@ -842,7 +842,7 @@ const result = await client.getStepStatuses(applicationId);
 Also update the logger context:
 
 ```ts
-AppLogger.error('Failed to load application steps', error as Error, {
+Applogging.exception('Failed to load application steps', error as Error, {
   Id: applicationId,
 });
 ```

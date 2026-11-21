@@ -124,5 +124,6 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$comment": "Schema checks structural analysis data only; transcript/provenance and causal claims need independent assessment."
 }

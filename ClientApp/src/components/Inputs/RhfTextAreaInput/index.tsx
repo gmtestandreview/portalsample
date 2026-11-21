@@ -31,15 +31,17 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
   } = props;
 
   const {
-    field,
+    fieldValue,
+    fieldRef,
+    fieldName,
+    onFieldChange,
+    onFieldBlur,
     controlId,
     helpId,
     validationMessageId,
     errorMessage,
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
-  const fieldValue: unknown = field.value as unknown;
-  const onChange = field.onChange as (value: unknown) => void;
   const textValue = typeof fieldValue === 'string' ? fieldValue : '';
 
   if (isSummary) {
@@ -57,9 +59,9 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
   const handleBlur = () => {
     const trimmed = typeof fieldValue === 'string' ? fieldValue.trim() : '';
     if (trimmed !== fieldValue) {
-      onChange(trimmed);
+      onFieldChange(trimmed);
     }
-    field.onBlur();
+    onFieldBlur();
   };
 
   const showCounter = !!maxCharacters && maxCharacters > 0;
@@ -75,18 +77,18 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
       className={`form-field-container ${containerClassName}`}
       controlId={controlId}
     >
-      {label && <Form.Label>{label}</Form.Label>}
-      {inlineHelp && (
+      {label ? <Form.Label>{label}</Form.Label> : null}
+      {inlineHelp ? (
         <Form.Text as='p' id={helpId} className='contextual-help'>
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
       <Form.Control
         className={`form-field form-text-area ${className}`}
         as='textarea'
         rows={rows ?? DEFAULT_ROWS}
-        name={field.name}
-        ref={field.ref}
+        name={fieldName}
+        ref={fieldRef}
         isInvalid={!!errorMessage}
         {...omitUndefined({
           disabled,
@@ -97,7 +99,7 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
         value={textValue}
         onBlur={handleBlur}
         onChange={(event) => {
-          onChange(removeSupplementaryPlaneCharacters(event.target.value));
+          onFieldChange(removeSupplementaryPlaneCharacters(event.target.value));
         }}
       />
       {showCounter && (

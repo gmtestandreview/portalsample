@@ -13,6 +13,10 @@ import {
   requestForQuoteDetailsFixture,
   serviceResponses,
 } from '../ClientApp/src/storybook/storybookFixtures';
+import {
+  toApplicationType,
+  toCRMLookupTypes,
+} from '../ClientApp/src/utils/apiEnumMappings';
 
 export const dashboardPageResponse = {
   currentPage: 1,
@@ -91,12 +95,23 @@ const applicationReferenceIds: Partial<Record<ApplicationType, string>> = {
   [ApplicationType.QuoteRequest]: 'RFQ-NEW-0001',
 };
 
+const getOwnMappedValue = <T>(
+  values: Partial<Record<string, T>>,
+  key: string | undefined,
+): T | undefined => {
+  if (key === undefined || !Object.hasOwn(values, key)) {
+    return undefined;
+  }
+
+  return Object.entries(values).find(([valueKey]) => valueKey === key)?.[1];
+};
+
 const applicationResponse = (applicationType: string | undefined) => {
-  const referenceId =
-    applicationType !== undefined &&
-    Object.hasOwn(applicationReferenceIds, applicationType)
-      ? applicationReferenceIds[applicationType as ApplicationType]
-      : undefined;
+  const mappedApplicationType = toApplicationType(applicationType);
+  const referenceId = getOwnMappedValue(
+    applicationReferenceIds,
+    mappedApplicationType,
+  );
 
   if (referenceId === undefined) {
     return HttpResponse.json(
@@ -114,10 +129,11 @@ const quoteDetailsResponse = (request: Request) => {
   const applicationType = new URL(request.url).searchParams.get(
     'ApplicationType',
   );
+  const mappedApplicationType = toApplicationType(applicationType);
 
   if (
-    applicationType !== ApplicationType.QuoteRequest &&
-    applicationType !== ApplicationType.QuoteAccept
+    mappedApplicationType !== ApplicationType.QuoteRequest &&
+    mappedApplicationType !== ApplicationType.QuoteAccept
   ) {
     return HttpResponse.json(
       {
@@ -219,16 +235,10 @@ export const mswHandlers = [
   // very warning this file exists to remove - so an unmapped type fails closed
   // and surfaces inside the story that needs the fixture.
   http.get('/api/lookup', ({ request }) => {
-    const lookupType = new URL(request.url).searchParams.get(
-      'LookupType',
-    ) as CRMLookupTypes | null;
-    const fixture =
-      lookupType === null || !Object.hasOwn(lookupResponsesByType, lookupType)
-        ? undefined
-        : Reflect.get<typeof lookupResponsesByType, CRMLookupTypes>(
-            lookupResponsesByType,
-            lookupType,
-          );
+    const lookupType = toCRMLookupTypes(
+      new URL(request.url).searchParams.get('LookupType'),
+    );
+    const fixture = getOwnMappedValue(lookupResponsesByType, lookupType);
 
     if (fixture === undefined) {
       return HttpResponse.json(

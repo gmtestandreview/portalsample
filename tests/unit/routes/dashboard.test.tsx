@@ -1,10 +1,11 @@
 import type React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { afterEach, vi, describe, it, expect } from 'vitest';
+import { onTestFinished, vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
+import { toDashboardTab } from '../../../ClientApp/src/routes/common/helperFunctions';
 import type { DashboardClient } from '../../../ClientApp/src/api/web-api-client';
 import { DashboardTab } from '../../../ClientApp/src/components/SearchFilter/types';
 import type { CustomPaginationProps } from '../../../ClientApp/src/components/Pagination/types';
@@ -188,10 +189,13 @@ vi.mock(
 
 vi.mock(
   import('../../../ClientApp/src/routes/common/helperFunctions'),
-  () =>
-    ({
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof HelperFunctionsModule>();
+    return {
+      ...actual,
       mapToUserProfile: mockMapToUserProfile,
-    }) satisfies __ExactMockModule<__TestMockModule9>,
+    } satisfies __ExactMockModule<__TestMockModule9>;
+  },
 );
 
 vi.mock(
@@ -299,7 +303,7 @@ vi.mock(
           data-current={currentPage}
           data-total={totalPages}
           onClick={() => {
-            onPageChange((currentPage ?? 1) + 1);
+            onPageChange(currentPage + 1);
           }}
         >
           Next
@@ -515,6 +519,10 @@ function renderDashboard(Dashboard: React.ComponentType) {
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
 const resetDashboardMocks = () => {
+  onTestFinished(() => {
+    vi.restoreAllMocks();
+  });
+
   vi.clearAllMocks();
   // Restore per-test defaults after clearing mock call history.
   mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
@@ -544,7 +552,7 @@ const resetDashboardMocks = () => {
       p.testingCalibrationDashboard?.filterStatusType ?? 'allStatuses',
     filterCurrentPage: p.testingCalibrationDashboard?.filterCurrentPage ?? 1,
     filterActiveTab:
-      (p.testingCalibrationDashboard?.filterActiveTab as DashboardTab) ??
+      toDashboardTab(p.testingCalibrationDashboard?.filterActiveTab) ??
       DashboardTab.Drafts,
     filterSearchText: p.testingCalibrationDashboard?.filterSearchText ?? '',
     filterSortOrder:
@@ -553,10 +561,6 @@ const resetDashboardMocks = () => {
   }));
   mockAccountDetails = { ...BASE };
 };
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
 
 describe('dashboard', () => {
   // ── Test 1: Renders without crashing ──────────────────────────────────────
@@ -739,6 +743,7 @@ describe('dashboard', () => {
       const paginationEls = screen.getAllByTestId('pagination');
 
       expect(paginationEls).toHaveLength(3);
+
       for (const pagination of paginationEls) {
         expect(pagination).toHaveAttribute('data-total', '3');
       }
@@ -857,6 +862,40 @@ describe('dashboard', () => {
 
     expect(acceptedItem.status).toBe('Quote offer is accepted');
     expect(acceptedItem.quote).toStrictEqual({ artefactName: 'Mass standard' });
+    expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
+  });
+
+  it('leaves an accepted quote without quote details unchanged', async () => {
+    expect.hasAssertions();
+
+    resetDashboardMocks();
+
+    mockSessionGetItem.mockReturnValue('RFQ-accepted-without-details');
+    const acceptedItem = {
+      referenceId: 'RFQ-accepted-without-details',
+      status: 'Quote offer is available',
+      quote: undefined,
+      requestForQuote: { artefactName: 'Mass standard' },
+    };
+    mockGetDrafts.mockResolvedValue({
+      items: [acceptedItem],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 1,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      expect(mockSessionSetItem).toHaveBeenCalledWith(
+        'RFQ-accepted-without-details',
+        'view-quote-id',
+      );
+    });
+
+    expect(acceptedItem.status).toBe('Quote offer is accepted');
+    expect(acceptedItem.quote).toBeUndefined();
     expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
   });
 
@@ -1142,7 +1181,7 @@ describe('dashboard', () => {
     });
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBe('2025');
-    expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBe('Open');
+    expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBeUndefined();
     expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
       'data-current',
       '1',
@@ -1297,7 +1336,9 @@ describe('dashboard', () => {
       expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
     });
     const initialDraftCallCount = mockGetDrafts.mock.calls.length;
+
     expect(defined(mockGetDrafts.mock.calls.at(-1))[4]).toBe('initial');
+
     mockMapToUserProfile.mockClear();
 
     mockAccountDetails = {
@@ -1322,6 +1363,7 @@ describe('dashboard', () => {
     });
 
     expect(mockGetDrafts).toHaveBeenCalledTimes(initialDraftCallCount);
+
     for (const call of mockGetDrafts.mock.calls) {
       expect(call[4]).toBe('initial');
     }

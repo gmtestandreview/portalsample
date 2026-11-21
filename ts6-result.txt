@@ -1,0 +1,26 @@
+npm notice run nmi-portal@0.1.0 npx
+npm notice run ^"tsc^" --noEmit --extendedDiagnostics
+Files:                        3426
+Lines of Library:            51352
+Lines of Definitions:       424007
+Lines of TypeScript:        161798
+Lines of JavaScript:             0
+Lines of JSON:                   2
+Lines of Other:                  0
+Identifiers:                648315
+Symbols:                    379215
+Types:                          85
+Instantiations:                  0
+Memory used:               618559K
+Assignability cache size:        0
+Identity cache size:             0
+Subtype cache size:              0
+Strict subtype cache size:       0
+I/O Read time:               0.39s
+Parse time:                  0.89s
+ResolveModule time:          0.77s
+ResolveTypeReference time:   0.01s
+ResolveLibrary time:         0.02s
+Program time:                2.43s
+Bind time:                   0.37s
+Total time:                  2.79s

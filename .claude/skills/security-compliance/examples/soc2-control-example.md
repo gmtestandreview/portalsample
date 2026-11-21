@@ -235,33 +235,31 @@ import requests
 import json
 from datetime import datetime
 
-OKTA_API_KEY = "xxx"  # Retrieved from secrets manager
-OKTA_DOMAIN = "company.okta.com"
+OKTA_API_KEY = 'xxx'  # Retrieved from secrets manager
+OKTA_DOMAIN = 'company.okta.com'
+
 
 def collect_mfa_enrollment():
     """Collect MFA enrollment status for all users"""
-    headers = {
-        "Authorization": f"SSWS {OKTA_API_KEY}",
-        "Content-Type": "application/json"
-    }
+    headers = {'Authorization': f'SSWS {OKTA_API_KEY}', 'Content-Type': 'application/json'}
 
     # Get all active users
-    users_url = f"https://{OKTA_DOMAIN}/api/v1/users?filter=status eq \"ACTIVE\""
+    users_url = f'https://{OKTA_DOMAIN}/api/v1/users?filter=status eq "ACTIVE"'
     users = requests.get(users_url, headers=headers).json()
 
     enrollment_data = []
 
     for user in users:
         # Get MFA factors for each user
-        factors_url = f"https://{OKTA_DOMAIN}/api/v1/users/{user['id']}/factors"
+        factors_url = f'https://{OKTA_DOMAIN}/api/v1/users/{user['id']}/factors'
         factors = requests.get(factors_url, headers=headers).json()
 
         enrollment_data.append({
-            "user_id": user['id'],
-            "email": user['profile']['email'],
-            "mfa_enrolled": len(factors) > 0,
-            "factor_count": len(factors),
-            "factors": [f['factorType'] for f in factors]
+            'user_id': user['id'],
+            'email': user['profile']['email'],
+            'mfa_enrolled': len(factors) > 0,
+            'factor_count': len(factors),
+            'factors': [f['factorType'] for f in factors],
         })
 
     # Calculate enrollment rate
@@ -271,24 +269,25 @@ def collect_mfa_enrollment():
 
     # Save evidence
     evidence = {
-        "collection_date": datetime.now().isoformat(),
-        "control_id": "CC6.1-MFA-01",
-        "total_users": total_users,
-        "enrolled_users": enrolled_users,
-        "enrollment_rate": round(enrollment_rate, 2),
-        "users": enrollment_data
+        'collection_date': datetime.now().isoformat(),
+        'control_id': 'CC6.1-MFA-01',
+        'total_users': total_users,
+        'enrolled_users': enrolled_users,
+        'enrollment_rate': round(enrollment_rate, 2),
+        'users': enrollment_data,
     }
 
-    filename = f"mfa_enrollment_{datetime.now().strftime('%Y%m%d')}.json"
-    with open(f"/evidence/mfa/{filename}", "w") as f:
+    filename = f'mfa_enrollment_{datetime.now().strftime('%Y%m%d')}.json'
+    with open(f'/evidence/mfa/{filename}', 'w') as f:
         json.dump(evidence, f, indent=2)
 
-    print(f"Evidence collected: {filename}")
-    print(f"Enrollment rate: {enrollment_rate:.2f}%")
+    print(f'Evidence collected: {filename}')
+    print(f'Enrollment rate: {enrollment_rate:.2f}%')
 
     return evidence
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     collect_mfa_enrollment()
 ```
 

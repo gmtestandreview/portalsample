@@ -1,37 +1,41 @@
-import { access, readdir, readFile } from 'node:fs/promises';
-import { isAbsolute, relative, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import process from 'node:process';
+import {
+  listDirectory,
+  pathExists,
+  readTextFile,
+  safePath,
+} from './safe-file-io.mjs';
 
 const root = process.cwd();
 const staticDir = resolve(root, 'storybook-static');
 
 const ownedPath = (parent, candidate) => {
-  const relativePath = relative(resolve(parent), resolve(candidate));
-  if (
-    relativePath !== '' &&
-    (relativePath.startsWith('..') || isAbsolute(relativePath))
-  ) {
+  try {
+    return safePath(candidate, parent);
+  } catch {
     throw new Error(`path escapes owned Storybook directory: ${candidate}`);
   }
-  return resolve(candidate);
 };
 
 const readOwnedFile = async (parent, filePath) => {
   const safePath = ownedPath(parent, filePath);
   // safePath is confined to the generated/source tree selected by this verifier.
-  return readFile(safePath, 'utf8');
+  return readTextFile(safePath, parent);
 };
 
 const readOwnedDirectory = async (parent, directoryPath) => {
   const safePath = ownedPath(parent, directoryPath);
   // safePath is confined to the generated/source tree selected by this verifier.
-  return readdir(safePath, { withFileTypes: true });
+  return listDirectory(safePath, { withFileTypes: true }, parent);
 };
 
 const requiredFiles = ['index.html', 'iframe.html', 'index.json'];
 
 for (const file of requiredFiles) {
-  await access(resolve(staticDir, file));
+  if (!pathExists(resolve(staticDir, file), staticDir)) {
+    throw new Error(`Required Storybook file is missing: ${file}`);
+  }
 }
 
 const index = JSON.parse(

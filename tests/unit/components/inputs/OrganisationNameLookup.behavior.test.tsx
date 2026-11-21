@@ -125,7 +125,7 @@ describe('organisation name lookup behavior', () => {
     }
   });
 
-  it('falls back to typed input if the active suggestion is unexpectedly absent', () => {
+  it('falls back to typed input if the active suggestion is unexpectedly absent', async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers();
@@ -158,18 +158,23 @@ describe('organisation name lookup behavior', () => {
       );
 
       const input = screen.getByRole('combobox');
-      fireEvent.change(input, { target: { value: 'Labs' } });
+      await act(async () => {
+        fireEvent.change(input, { target: { value: 'Labs' } });
+        await Promise.resolve();
+      });
       act(() => {
         vi.advanceTimersByTime(350);
       });
 
       expect(screen.getByText('Alpha Labs')).toBeInTheDocument();
 
-      act(() => {
+      await act(async () => {
         fireEvent.keyDown(input, { key: 'ArrowDown' });
+        await Promise.resolve();
       });
-      act(() => {
+      await act(async () => {
         fireEvent.keyDown(input, { key: 'Enter' });
+        await Promise.resolve();
       });
 
       expect(input).toHaveValue('Labs');

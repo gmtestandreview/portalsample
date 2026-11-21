@@ -447,6 +447,7 @@ describe('utility component coverage slice', () => {
       expect(
         screen.queryByRole('button', { name: /copied/i }),
       ).not.toBeInTheDocument();
+      expect(log).not.toHaveBeenCalled();
     } finally {
       log.mockRestore();
     }

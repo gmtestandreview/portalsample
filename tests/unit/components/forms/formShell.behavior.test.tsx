@@ -7,12 +7,13 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, useFormikContext } from 'formik';
+import { Form, Formik, useFormikContext } from 'formik';
 import { MemoryRouter } from 'react-router';
 import FormikForm from '@/components/forms/FormikForm';
 import type { FormikFormProps } from '@/components/forms/FormikForm/types';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import ContactDetailsInput from '@/components/forms/CommonForms/ContactDetails';
+import HidableField from '@/components/forms/HidableField';
 import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
 
@@ -25,6 +26,10 @@ type FormikSubmitCall = [
   TestValues,
   { setSubmitting: (...args: never[]) => unknown },
 ];
+
+interface HidableFieldValues {
+  displayName: string;
+}
 
 vi.mock(
   import('@/components/forms/UnsavedFormPrompt'),
@@ -63,6 +68,23 @@ function ValuesProbe() {
 }
 
 describe('form shell behavior slice', () => {
+  it('supports explicit HidableField value types and typed child renderers', () => {
+    expect.hasAssertions();
+
+    render(
+      <Formik<HidableFieldValues>
+        initialValues={{ displayName: 'Acme' }}
+        onSubmit={vi.fn<(values: HidableFieldValues) => void>()}
+      >
+        <HidableField<HidableFieldValues> name='displayName'>
+          {(values) => values.displayName}
+        </HidableField>
+      </Formik>,
+    );
+
+    expect(screen.getByText('Acme')).toBeInTheDocument();
+  });
+
   it('formikForm validates hard, renders function children, and submits normalized values', async () => {
     expect.hasAssertions();
 
@@ -231,7 +253,7 @@ describe('form shell behavior slice', () => {
         >
           {({ errors, validateForm }) => (
             <button type='button' onClick={() => void validateForm()}>
-              {String(errors.draftName ?? 'Validate soft')}
+              {errors.draftName ?? 'Validate soft'}
             </button>
           )}
         </FormikForm>
@@ -256,7 +278,7 @@ describe('form shell behavior slice', () => {
         >
           {({ errors, validateForm }) => (
             <button type='button' onClick={() => void validateForm()}>
-              {String(errors.finalName ?? 'Validate hard')}
+              {errors.finalName ?? 'Validate hard'}
             </button>
           )}
         </FormikForm>

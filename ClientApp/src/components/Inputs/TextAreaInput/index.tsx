@@ -56,7 +56,7 @@ const TextAreaInput = ({
   if (maxCharacters && maxCharacters > 0) {
     const currCharacters = _field.value ? _field.value.trim().length : 0;
     counterText = `${currCharacters} of ${maxCharacters} characters used`;
-    hasExceededMaximum = currCharacters > Number(maxCharacters);
+    hasExceededMaximum = currCharacters > maxCharacters;
   }
 
   return (
@@ -65,11 +65,11 @@ const TextAreaInput = ({
       controlId={controlId}
     >
       <Form.Label>{label}</Form.Label>
-      {inlineHelp && (
+      {inlineHelp ? (
         <Form.Text as='p' id={helpId} className='contextual-help'>
           {inlineHelp}
         </Form.Text>
-      )}
+      ) : null}
       <Form.Control
         className={`form-field form-text-area ${className}`}
         as='textarea'
@@ -88,13 +88,13 @@ const TextAreaInput = ({
         onChange={handleChange}
         onBlur={handleOnBlur}
       />
-      {maxCharacters && (
+      {maxCharacters !== undefined && maxCharacters > 0 ? (
         <div
           className={`text-end ${hasExceededMaximum ? 'counterLabelExceedsMax' : 'counterLabelWithinMax'}`}
         >
           <span className='small'>{counterText}</span>
         </div>
-      )}
+      ) : null}
       {_meta.touched && _meta.error ? (
         <Form.Control.Feedback
           type='invalid'

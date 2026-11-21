@@ -1,5 +1,10 @@
 import ReactGA from 'react-ga4';
-import { DashboardClient } from '../../api/web-api-client';
+import {
+  DashboardClient,
+  FilterMessages,
+  PatternApprovalStatusEnumDto,
+  StatusEnumDto,
+} from '../../api/web-api-client';
 import type {
   AddressDetailsDto,
   DownloadedFileResponse,
@@ -9,18 +14,140 @@ import type {
   UserProfileDto,
 } from '../../api/web-api-client';
 import type { AccountDetails } from '../../authentication/accountContext';
-import type {
-  DashboardTab,
-  UserProfile,
-} from '../../components/SearchFilter/types';
+import { HttpStatusCode } from '../../types';
+import { DashboardTab } from '../../components/SearchFilter/types';
+import type { UserProfile } from '../../components/SearchFilter/types';
+import { DashboardItemStatus, PaDashboardItemStatus } from './enums';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import { base64toBlob } from '../../utils';
+import { toHttpStatusCode } from '../../utils/apiEnumMappings';
 import { DashBoardNotifications } from './dashboardNotifications';
-import { Environment, QuoteStatus } from './enums';
+import { Environment, QuoteStatus, ReportStatus } from './enums';
 import type { SelectInputOption } from '../../components/Inputs/SelectInput/types';
 import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from './openWindow';
 import DOMPurify from 'dompurify';
+
+const enumValue = <T extends Record<string, string>>(
+  enumObject: T,
+  value: unknown,
+): T[keyof T] | undefined => {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  return Object.values(enumObject).find((enumItem) => enumItem === value) as
+    | T[keyof T]
+    | undefined;
+};
+
+export const toDashboardTab = (value: unknown): DashboardTab | undefined =>
+  enumValue(DashboardTab, value);
+
+/**
+ * Applies a selection from the dashboard tab control. The control reports its
+ * key as `string | null`, so a key that is not a dashboard tab is ignored.
+ */
+export const selectDashboardTab = (
+  key: unknown,
+  onSelectTab: (tab: DashboardTab) => void,
+) => {
+  const tab = toDashboardTab(key);
+  if (tab !== undefined) {
+    onSelectTab(tab);
+  }
+};
+
+export const toStatusEnumDto = (value: unknown): StatusEnumDto | undefined =>
+  enumValue(StatusEnumDto, value);
+
+export const toPatternApprovalStatusEnumDto = (
+  value: unknown,
+): PatternApprovalStatusEnumDto | undefined =>
+  enumValue(PatternApprovalStatusEnumDto, value);
+
+export const toFilterMessages = (value: unknown): FilterMessages | undefined =>
+  enumValue(FilterMessages, value);
+
+export const toDashboardItemStatus = (
+  value: unknown,
+): DashboardItemStatus | undefined => {
+  const localStatus = enumValue(DashboardItemStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  const apiStatus = toStatusEnumDto(value);
+  switch (apiStatus) {
+    case StatusEnumDto.Submitted:
+      return DashboardItemStatus.QuoteSubmitted;
+    case StatusEnumDto.QuoteInProgress:
+      return DashboardItemStatus.QuoteInProgress;
+    case StatusEnumDto.QuoteAvailable:
+      return DashboardItemStatus.QuoteAvailable;
+    case StatusEnumDto.QuoteAccepted:
+      return DashboardItemStatus.QuoteAccepted;
+    case StatusEnumDto.ReportInProgress:
+      return DashboardItemStatus.ReportInProgress;
+    case StatusEnumDto.ReportIssued:
+      return DashboardItemStatus.ReportIssued;
+    case StatusEnumDto.QuoteExpired:
+      return DashboardItemStatus.QuoteExpired;
+    case StatusEnumDto.QuoteDeclined:
+      return DashboardItemStatus.QuoteDeclined;
+    case StatusEnumDto.QuoteClosed:
+      return DashboardItemStatus.QuoteClosed;
+    case StatusEnumDto.ArtefactReceived:
+      return DashboardItemStatus.ArtifactReceived;
+    default:
+      return undefined;
+  }
+};
+
+export const toQuoteStatus = (value: unknown): QuoteStatus | undefined => {
+  const localStatus = enumValue(QuoteStatus, value);
+  if (localStatus !== undefined) {
+    return localStatus;
+  }
+
+  // Note: StatusEnumDto.Submitted ("Submitted") shares its string value with
+  // QuoteStatus.QuoteSubmitted, so the local enumValue() lookup above always
+  // resolves "Submitted" first; a StatusEnumDto.Submitted arm here is
+  // unreachable and is intentionally omitted.
+  const apiStatus = toStatusEnumDto(value);
+  switch (apiStatus) {
+    case StatusEnumDto.QuoteInProgress:
+      return QuoteStatus.QuoteInProgress;
+    case StatusEnumDto.QuoteAvailable:
+      return QuoteStatus.QuoteAvailable;
+    case StatusEnumDto.QuoteAccepted:
+      return QuoteStatus.QuoteAccepted;
+    case StatusEnumDto.ReportInProgress:
+      return QuoteStatus.ReportInProgress;
+    case StatusEnumDto.ReportIssued:
+      return QuoteStatus.ReportIssued;
+    case StatusEnumDto.QuoteExpired:
+      return QuoteStatus.QuoteExpired;
+    case StatusEnumDto.QuoteDeclined:
+      return QuoteStatus.QuoteDeclined;
+    case StatusEnumDto.QuoteClosed:
+      return QuoteStatus.QuoteClosed;
+    case StatusEnumDto.ArtefactReceived:
+      return QuoteStatus.ArtifactReceived;
+    default:
+      return undefined;
+  }
+};
+
+export const toReportStatus = (value: unknown): ReportStatus | undefined =>
+  enumValue(ReportStatus, value);
+
+// PatternApprovalStatusEnumDto's members (Submitted, InProgress, OnHold,
+// Completed) carry the same string values as the matching PaDashboardItemStatus
+// members, so a single lookup resolves both the local and the API vocabulary.
+export const toPaDashboardItemStatus = (
+  value: unknown,
+): PaDashboardItemStatus | undefined => enumValue(PaDashboardItemStatus, value);
 
 /**
  * Gets downloadable files from CRM depending on status
@@ -220,7 +347,7 @@ export const handleUnexpectedError = (details: ProblemDetails) => {
   handleAlertScroll();
   setDashboardNotification(
     DashBoardNotifications.getDashboardErrorNotification(
-      details.status ?? 0,
+      toHttpStatusCode(details.status) ?? HttpStatusCode.InternalServerError,
       '',
     ),
   );
@@ -232,8 +359,9 @@ export const mapToUserProfile = (profile: UserProfileDto): UserProfile => ({
   filterSortOrder: profile.testingCalibrationDashboard?.filterSortOrder,
   filtersChanged: profile.testingCalibrationDashboard?.filtersChanged,
   filterCurrentPage: profile.testingCalibrationDashboard?.filterCurrentPage,
-  filterActiveTab: profile.testingCalibrationDashboard
-    ?.filterActiveTab as DashboardTab,
+  filterActiveTab: toDashboardTab(
+    profile.testingCalibrationDashboard?.filterActiveTab,
+  ),
   filterSearchText: profile.testingCalibrationDashboard?.filterSearchText,
 });
 

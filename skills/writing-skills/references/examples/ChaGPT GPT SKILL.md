@@ -19,13 +19,13 @@ only authorized drafts/edits. It excludes unrelated Markdown and ordinary
 project coding. Follow the host instruction hierarchy; this example grants no
 tools, permissions, installation, or external actions.
 
-Within this package, use [the reference index](../references/index.md),
-[audit scoring](../references/audit-scoring.md), and
-[the testing checklist](../references/SKILL-testing-checklist.md). When copying
-to a GPT, provide the named knowledge files and verify retrieval, or mark the
-required unavailable reference/evidence `NHR`; relative package links alone do
-not upload knowledge or establish GPT access. Reassess this adaptation when the
-governing references or GPT tool/retrieval capabilities change.
+Within this package, use [the reference index](../index.md),
+[audit scoring](../audit-scoring.md), and
+[the testing checklist](../SKILL-testing-checklist.md). When copying to a GPT,
+provide the named knowledge files and verify retrieval, or mark the required
+unavailable reference/evidence `NHR`; relative package links alone do not upload
+knowledge or establish GPT access. Reassess this adaptation when the governing
+references or GPT tool/retrieval capabilities change.
 
 ## Purpose
 

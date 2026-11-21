@@ -861,8 +861,7 @@ Create `docs/adr/2026-05-30-acquire-token-silent-interceptor.md`:
 ````markdown
 # ADR: Centralise acquireTokenSilent via an MSAL auth interceptor
 
-**Date:** 2026-05-30  
-**Status:** Proposed — deferred to migration sprint  
+**Date:** 2026-05-30 **Status:** Proposed — deferred to migration sprint
 **Deciders:** Portal rebuild team
 
 ## Context
@@ -1502,7 +1501,7 @@ const handleDashboardLoadError = (
 // Before:
 } catch (error) {
     if ((error as { name?: string }).name === 'AbortError') return;
-    AppLogger.error('Failed to load dashboard.', error as Error);
+    Applogging.exception('Failed to load dashboard.', error as Error);
     const problemDetails = error as ProblemDetails;
     if (problemDetails.status! > 0) setErrorStatus((prevState) => ({ ...prevState, status: problemDetails.status! }));
     if (problemDetails.status === HttpStatusCode.Forbidden
@@ -1520,7 +1519,7 @@ const handleDashboardLoadError = (
 // After:
 } catch (error) {
     if ((error as { name?: string }).name === 'AbortError') return;
-    AppLogger.error('Failed to load dashboard.', error as Error);
+    Applogging.exception('Failed to load dashboard.', error as Error);
     handleDashboardLoadError(error, setErrorStatus);
 }
 ```

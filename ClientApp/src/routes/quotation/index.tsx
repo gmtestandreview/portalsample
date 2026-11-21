@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import type React from 'react';
 import { Col, Row, Container, Button } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
@@ -24,17 +25,18 @@ import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import QuoteDetails from './quoteDetails';
-import NMIContactDetails from './nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import ConfirmationModal from '../../components/modals/ConfirmationModal';
 
 import { QuoteStatus } from '../common/enums';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { proceedDeclineValidStatuses } from '../common/quoteStatus';
+import { toQuoteStatus } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 
-const showDashboardMessage = (message: JSX.Element | null) => (
+const showDashboardMessage = (message: React.JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -108,14 +110,13 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
     { to: '', text: 'Testing and calibration service - Quotation' },
   ];
 
-  const backButtonVisible = useMemo(
-    () =>
-      quotationData?.quoteRequestStatus !== undefined &&
-      proceedDeclineValidStatuses.includes(
-        quotationData.quoteRequestStatus as QuoteStatus,
-      ),
-    [quotationData?.quoteRequestStatus],
-  );
+  const backButtonVisible = useMemo(() => {
+    const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
+    return (
+      quoteStatus !== undefined &&
+      proceedDeclineValidStatuses.includes(quoteStatus)
+    );
+  }, [quotationData?.quoteRequestStatus]);
 
   const declineQuote = async () => {
     setIsLoading(true);
@@ -243,18 +244,16 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   useEffect(() => {
     clearDashboardInfoNotification();
   }, []);
+  const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
   const renderQuotationSummary = () => (
     <>
       <QuoteDetails
         quotationData={quotationData}
         isSummary={isSummary}
-        firstName={accountState?.details?.givenName}
-        lastName={accountState?.details?.familyName}
         fileError={fileError}
       />
-      {!!quotationData?.quoteRequestStatus &&
-        quotationData.quoteRequestStatus !==
-          String(QuoteStatus.QuoteExpired) && (
+      {quotationData?.quoteRequestStatus !== undefined &&
+        quoteStatus !== QuoteStatus.QuoteExpired && (
           <Row className='mb-3'>
             <Col md={12}>
               <div>
@@ -279,7 +278,10 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
             </Col>
           </Row>
         )}
-      <NMIContactDetails quotationData={quotationData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if any of the details are not correct before proceeding.'
+        quotationData={quotationData}
+      />
     </>
   );
 

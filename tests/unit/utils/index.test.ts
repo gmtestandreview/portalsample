@@ -108,7 +108,7 @@ describe('object and array helpers', () => {
     expect(utils.tail([1, 2, 3])).toStrictEqual([2, 3]);
     expect(utils.head([1, 2, 3])).toBe(1);
     expect(utils.tail([])).toStrictEqual([]);
-    expect(utils.head([])).toBeUndefined();
+    expect(utils.head([] as unknown[])).toBeUndefined();
   });
 
   it('returns typed property names and prefixed property names', () => {
@@ -119,9 +119,11 @@ describe('object and array helpers', () => {
     }
 
     expect(utils.propertyOf<Example>('child')).toBe('child');
-    expect(utils.prefixedPropertyOf<Example>('parent')('child')).toBe(
-      'parent.child',
-    );
+
+    const prefixedChild: `${string}.child` =
+      utils.prefixedPropertyOf<Example>('parent')('child');
+
+    expect(prefixedChild).toBe('parent.child');
   });
 
   it('converts null and undefined properties to empty strings recursively', () => {
@@ -383,6 +385,18 @@ describe('formatting helpers', () => {
       utils.formatBytes(1536),
       utils.formatBytes(1536, -1),
     ]).toStrictEqual(['0 Bytes', '1 kb', '1.5 kb', '2 kb']);
+  });
+
+  it('falls back to bytes when the computed unit cannot be read', () => {
+    expect.hasAssertions();
+
+    const at = vi.spyOn(Array.prototype, 'at').mockReturnValueOnce(undefined);
+
+    try {
+      expect(utils.formatBytes(1024)).toBe('1 bytes');
+    } finally {
+      at.mockRestore();
+    }
   });
 
   it('formats calendar and financial reporting periods', () => {

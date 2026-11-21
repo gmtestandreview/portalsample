@@ -133,5 +133,6 @@
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$comment": "Schema cannot enforce passed + failed == total, pass_rate arithmetic, or grounding in actual transcript evidence."
 }

@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { Buffer } from 'node:buffer';
-import { mkdirSync, writeFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import * as ts from 'typescript';
@@ -11,6 +10,10 @@ import {
   readSourceFiles,
   validateSourceClaims,
 } from './storybook-coverage.mjs';
+import {
+  makeExternalDirectory,
+  writeExternalTextFile,
+} from './safe-file-io.mjs';
 
 const SOURCE_EXTENSIONS = ['.ts', '.tsx', '.mts', '.cts'];
 
@@ -143,12 +146,22 @@ export function buildWorklist({ files, candidateFiles = [] }) {
   };
 }
 
+/**
+ * --out and --summary intentionally allow caller-selected, including external,
+ * destinations. Check every existing path component through the filesystem root
+ * before creating directories or overwriting a report so a symlink cannot
+ * redirect an ordinary invocation.
+ * Path-based Node APIs cannot make this check race-free; a concurrent path
+ * replacement remains a residual TOCTOU limitation of this CLI boundary.
+ */
 const writeJson = (filePath, value) => {
   const resolvedPath = path.resolve(filePath);
-  // --out and --summary are caller-selected CLI destinations. Keep their
-  // existing path contract while making the dynamic filesystem boundary clear.
-  mkdirSync(path.dirname(resolvedPath), { recursive: true });
-  writeFileSync(resolvedPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  makeExternalDirectory(path.dirname(resolvedPath));
+  writeExternalTextFile(
+    resolvedPath,
+    `${JSON.stringify(value, null, 2)}\n`,
+    'utf8',
+  );
 };
 
 const readCandidateFiles = (root) => {

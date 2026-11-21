@@ -115,7 +115,7 @@ Mirror `static/js/routes/requestForQuote/organisationAndContact.tsx`:
   `lastStepNextButtonTitle`, `canSaveDraft`
 - One `<WizardStep>` per step, passing the props file as `stepComponentProps`
 - Loading guard: render `<BlockUISpinner>` until step statuses are loaded
-- API error → `navigate('/not-found')` with `AppLogger.error`
+- API error → `navigate('/not-found')` with `Applogging.exception`
 
 **Single page style** — use `<FormikForm>` instead of `<WizardForm>`:
 

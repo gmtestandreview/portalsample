@@ -1,9 +1,8 @@
 import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useField, useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { useMsal } from '@azure/msal-react';
 import { Alert, Card, Col, Container } from 'react-bootstrap';
 import HidableField from '../../components/forms/HidableField';
 import SelectInput from '../../components/Inputs/SelectInput';
@@ -30,7 +29,6 @@ import InstrumentInfoPanel from './instrumentInfoPanel';
 import TextInput from '../../components/Inputs/TextInput';
 import { sortList } from '../common/helperFunctions';
 import SummaryDisplay from '../../components/SummaryDisplay';
-import BlockUISpinner from '../../components/BlockUISpinner';
 
 export {
   applicationTypes,
@@ -39,6 +37,217 @@ export {
   otherApprovalSubOptions,
 } from './applicationOptions';
 
+const getSubOptionLabels = (
+  value: string[] | string | undefined,
+  options: { label: string; value: string }[],
+) => {
+  if (!value || (Array.isArray(value) && value.length === 0)) {
+    return 'Not selected';
+  }
+  if (Array.isArray(value)) {
+    return (
+      value
+        .map(
+          (optionValue) =>
+            options.find((option) => option.value === optionValue)?.label,
+        )
+        .filter(Boolean)
+        .join(', ') || 'Not selected'
+    );
+  }
+  return orIfEmpty(
+    options.find((option) => option.value === value)?.label,
+    'Not selected',
+  );
+};
+
+interface ApplicationTypeSelectorProps {
+  isSummary: boolean | undefined;
+  getName: (localName: string) => string;
+  selectedApplication: string | null;
+  applicationType: PatternApprovalRequiredValues | undefined;
+  selectedNewSubOptions: PatternApprovalRequiredValueOptions[] | undefined;
+  selectedVariationSubOptions:
+    | PatternApprovalRequiredValueOptions[]
+    | undefined;
+  selectedOtherSubOptions: PatternApprovalRequiredValueOptions[] | undefined;
+  onApplicationTypeChange: (
+    applicationType: PatternApprovalRequiredValues,
+  ) => void;
+}
+
+const ApplicationTypeSelector = ({
+  isSummary,
+  getName,
+  selectedApplication,
+  applicationType,
+  selectedNewSubOptions,
+  selectedVariationSubOptions,
+  selectedOtherSubOptions,
+  onApplicationTypeChange,
+}: ApplicationTypeSelectorProps) => {
+  if (isSummary) {
+    return (
+      <Container>
+        <Row className='mb-0'>
+          <SummaryDisplay
+            label='Application type'
+            id='applicationType'
+            as='p'
+            value={
+              applicationType
+                ? orIfEmpty(
+                    applicationTypes.find(
+                      (application) => application.value === applicationType,
+                    )?.label,
+                    'Not selected',
+                  )
+                : 'Not selected'
+            }
+          />
+          {applicationType === PatternApprovalRequiredValues.NewCertificate && (
+            <SummaryDisplay
+              label='Applying for'
+              id='newCertificateSubOptions'
+              as='ul'
+              className='mb-0'
+              value={getSubOptionLabels(
+                selectedNewSubOptions,
+                newCertificateSubOptions,
+              )}
+            />
+          )}
+          {applicationType === PatternApprovalRequiredValues.Variation && (
+            <SummaryDisplay
+              label='Applying for'
+              id='variationSubOptions'
+              as='ul'
+              className='mb-0'
+              value={getSubOptionLabels(
+                selectedVariationSubOptions,
+                variationSubOptions,
+              )}
+            />
+          )}
+          {applicationType === PatternApprovalRequiredValues.OtherApproval && (
+            <SummaryDisplay
+              label='Applying for'
+              id='otherApprovalSubOptions'
+              as='ul'
+              className='mb-0'
+              value={getSubOptionLabels(
+                selectedOtherSubOptions,
+                otherApprovalSubOptions,
+              )}
+            />
+          )}
+        </Row>
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <Row className='mb-5'>
+        <fieldset id='appl-selector' role='group' tabIndex={-1}>
+          <legend className='h4'>What type of application do you need?</legend>
+          {applicationTypes.map((application) => (
+            <Card
+              key={application.key}
+              className={`mb-1 border border-3 border-white ${selectedApplication === application.value ? 'selected-application' : ''}`}
+            >
+              <Card.Body className='d-flex flex-column align-items-start p-0'>
+                <div className='form-field-container mb-0 w-100' tabIndex={-1}>
+                  <RadioButton
+                    id={`radio-${application.id}`}
+                    name={getName('patternApprovalType')}
+                    label={application.label}
+                    checked={selectedApplication === application.value}
+                    onChange={(_event: ChangeEvent<HTMLInputElement>) => {
+                      onApplicationTypeChange(application.value);
+                    }}
+                    className='form-field me-2 p-0'
+                    value={application.value}
+                  />
+                </div>
+                {application.value ===
+                  PatternApprovalRequiredValues.NewCertificate && (
+                  <HidableField name={getName('isApplNewHide')}>
+                    <div
+                      id={`${application.key}-sub-options-group`}
+                      className='mb-0 ms-3 px-4 collapse fade show'
+                    >
+                      <div>
+                        <CheckboxGroup
+                          legend='Select all that apply'
+                          name={getName(`${application.key}SubOptions`)}
+                          id={`q-${application.key}-sub-options`}
+                          containerClassName='mb-2'
+                          legendClassName='visually-hidden'
+                          className='checkbox-sm'
+                          isSummary={isSummary}
+                          supressFieldLevelMessages
+                          options={newCertificateSubOptions}
+                        />
+                      </div>
+                    </div>
+                  </HidableField>
+                )}
+                {application.value ===
+                  PatternApprovalRequiredValues.Variation && (
+                  <HidableField name={getName('isApplVariationHide')}>
+                    <div
+                      id={`${application.key}-sub-options-group`}
+                      className='mb-0 ms-3 px-4 collapse fade show'
+                    >
+                      <div>
+                        <CheckboxGroup
+                          legend='Select all that apply'
+                          name={getName(`${application.key}SubOptions`)}
+                          id={`q-${application.key}-sub-options`}
+                          containerClassName='mb-2'
+                          legendClassName='visually-hidden'
+                          className='checkbox-sm'
+                          isSummary={isSummary}
+                          supressFieldLevelMessages
+                          options={variationSubOptions}
+                        />
+                      </div>
+                    </div>
+                  </HidableField>
+                )}
+                {application.value ===
+                  PatternApprovalRequiredValues.OtherApproval && (
+                  <HidableField name={getName('isApplOtherHide')}>
+                    <div
+                      id={`${application.key}-sub-options-group`}
+                      className='mb-0 ms-3 px-4 collapse fade show'
+                    >
+                      <div>
+                        <CheckboxGroup
+                          legend='Select all that apply'
+                          name={getName(`${application.key}SubOptions`)}
+                          id={`q-${application.key}-sub-options`}
+                          containerClassName='mb-2'
+                          legendClassName='visually-hidden'
+                          className='checkbox-sm'
+                          isSummary={isSummary}
+                          supressFieldLevelMessages
+                          options={otherApprovalSubOptions}
+                        />
+                      </div>
+                    </div>
+                  </HidableField>
+                )}
+              </Card.Body>
+            </Card>
+          ))}
+        </fieldset>
+      </Row>
+    </Container>
+  );
+};
+
 const ApplicationAndInstrument = (
   props: Readonly<TAApplicationAndInstrumentProps>,
 ) => {
@@ -46,12 +255,16 @@ const ApplicationAndInstrument = (
   const getName = (localName: string) =>
     name ? `${name}.${localName}` : localName;
   const context = useFormikContext<ApplicationAndInstrumentStepDto>();
-  const { accounts, instance } = useMsal();
-  const [isDataLoading, setIsDataLoading] = useState(false);
-  const initialKey = context.getFieldMeta('patternApprovalType')
-    .initialValue as string | null;
+  const { setFieldValue } = context;
+  const patternApprovalFieldName = getName('patternApprovalType');
+  const patternApprovalType = context.getFieldMeta(patternApprovalFieldName)
+    .value as string | undefined;
   const [selectedApplication, setSelectedApplication] = useState<string | null>(
-    () => orIfEmpty(initialKey, 'new'),
+    () =>
+      orIfEmpty(
+        patternApprovalType,
+        PatternApprovalRequiredValues.NewCertificate,
+      ),
   );
   const [instrumentCategories, setInstrumentCategories] =
     useState<LookupResponse[]>();
@@ -79,96 +292,107 @@ const ApplicationAndInstrument = (
   const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
     useState(false);
 
-  const getInstrumentTypes = (
-    values: LookupResponse[],
-    parentId: string | undefined,
-  ): SelectInputOption<string>[] => {
-    const options: SelectInputOption<string>[] = [];
-    if (parentId !== undefined && parentId !== '') {
-      for (const l of values) {
-        if (l.parentId === parentId) {
+  const getInstrumentTypes = useCallback(
+    (
+      values: LookupResponse[],
+      parentId: string | undefined,
+    ): SelectInputOption<string>[] => {
+      const options: SelectInputOption<string>[] = [];
+      if (parentId !== undefined && parentId !== '') {
+        for (const l of values) {
+          if (l.parentId === parentId) {
+            options.push({ displayText: l.label ?? '', value: l.id ?? '' });
+          }
+        }
+      } else if (isSummary) {
+        for (const l of values) {
           options.push({ displayText: l.label ?? '', value: l.id ?? '' });
         }
       }
-    } else if (isSummary) {
-      for (const l of values) {
-        options.push({ displayText: l.label ?? '', value: l.id ?? '' });
-      }
-    }
-    const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
-    noInstrumentTypeId.current = lastId;
+      const [sorted, lastId] = sortList(
+        options,
+        'No instrument',
+        'displayText',
+      );
+      noInstrumentTypeId.current = lastId;
 
-    return sorted;
-  };
+      return sorted;
+    },
+    [isSummary],
+  );
 
-  // Sync selectedApplication with Formik's patternApprovalType value
+  // Sync the local selection with Formik after asynchronous step values load.
   useEffect(() => {
-    // Sync selectedApplication with initialKey, but only if initialKey is defined and different
-    if (!initialKey) {
-      setIsDataLoading(true);
-    } else if (initialKey !== selectedApplication) {
-      setIsDataLoading(true);
-      setSelectedApplication(initialKey);
-      setIsDataLoading(false);
-    } else {
-      setIsDataLoading(false);
+    if (patternApprovalType === undefined) {
+      if (!isSummary) {
+        void setFieldValue(
+          patternApprovalFieldName,
+          PatternApprovalRequiredValues.NewCertificate,
+          false,
+        );
+      }
+      return;
     }
-  }, [initialKey, selectedApplication]);
+    if (patternApprovalType !== selectedApplication) {
+      setSelectedApplication(patternApprovalType);
+    }
+  }, [
+    isSummary,
+    patternApprovalFieldName,
+    patternApprovalType,
+    selectedApplication,
+    setFieldValue,
+  ]);
 
   useEffect(() => {
-    const loadInstrumentCategories = () => {
-      try {
-        if (!instrumentCategories) {
-          const result = _categoryLookupField.value;
-          const artefactTypeResult = _typeLookupField.value;
-          if (result && artefactTypeResult) {
-            const [sorted, lastId] = sortList(
-              result,
-              'No measurement',
-              'label',
-            );
-            noInstrumentCategoriestId.current = lastId;
-            setInstrumentCategories(sorted);
-            setInstrumentTypes(artefactTypeResult);
-            if (_instrumentTypeField.value !== undefined || isSummary) {
-              setInstrumentTypesSelected(
-                getInstrumentTypes(
-                  artefactTypeResult,
-                  _instrumentCatField.value,
-                ),
-              );
-              if (
-                !isSummary &&
-                _instrumentCatField.value === noInstrumentCategoriestId.current
-              )
-                setIsInstrumentTypeDisabled(true);
-            } else {
-              setInstrumentTypesSelected([]);
-            }
-          } else {
-            setInstrumentTypesSelected([]);
-          }
-        }
-      } catch (e) {
-        AppLogger.error('Failed to retrieve look ups', e as Error);
+    const result = _categoryLookupField.value;
+    const artefactTypeResult = _typeLookupField.value;
+
+    // Formik starts with an empty step while the controller loads the saved
+    // values. Keep the controls empty until both lookup responses arrive, then
+    // derive them again when Formik rehydrates the step.
+    if (result === undefined || artefactTypeResult === undefined) {
+      setInstrumentCategories(undefined);
+      setInstrumentTypes(undefined);
+      setInstrumentTypesSelected([]);
+      setIsInstrumentTypeDisabled(false);
+      return;
+    }
+
+    try {
+      const [sorted, lastId] = sortList(result, 'No measurement', 'label');
+      noInstrumentCategoriestId.current = lastId;
+      setInstrumentCategories(sorted);
+      setInstrumentTypes(artefactTypeResult);
+      if (_instrumentTypeField.value !== undefined || isSummary) {
+        setInstrumentTypesSelected(
+          getInstrumentTypes(artefactTypeResult, _instrumentCatField.value),
+        );
+        setIsInstrumentTypeDisabled(
+          !isSummary &&
+            _instrumentCatField.value === noInstrumentCategoriestId.current,
+        );
+      } else {
+        setInstrumentTypesSelected([]);
       }
-    };
-    // if (!isLoadingInstrumentCategories.current) {
-    loadInstrumentCategories();
-    // }
-    // return () => { isLoadingInstrumentCategories.current = true; };
+    } catch (e) {
+      AppLogger.error('Failed to retrieve look ups', e as Error);
+    }
   }, [
     _categoryLookupField.value,
     _typeLookupField.value,
-    accounts,
-    instance,
-    instrumentCategories,
+    _instrumentCatField.value,
+    _instrumentTypeField.value,
+    getInstrumentTypes,
+    isSummary,
   ]);
 
   const getInstrumentCategories = () => {
     const options: SelectInputOption<string>[] = [];
     for (const l of instrumentCategories ?? []) {
-      options.push({ displayText: l.label ?? '', value: l.id ?? '' });
+      // `sortList` read every `label` to order these categories, so a missing
+      // label cannot reach this point.
+      options.push({ displayText: String(l.label), value: l.id ?? '' });
     }
     return options;
   };
@@ -222,214 +446,21 @@ const ApplicationAndInstrument = (
   //     </BlockUISpinner>
   // ) :
 
-  const renderApplTypeSelector = () => {
-    const renderApplTypeSummary = () => {
-      // Helper to get labels for suboption arrays
-      const getSubOptionLabels = (
-        value: string[] | string | undefined,
-        options: { label: string; value: string }[],
-      ) => {
-        if (!value || (Array.isArray(value) && value.length === 0))
-          return 'Not selected';
-        if (Array.isArray(value)) {
-          return (
-            value
-              .map((v) => options.find((o) => o.value === v)?.label)
-              .filter(Boolean)
-              .join(', ') || 'Not selected'
-          );
-        }
-        return orIfEmpty(
-          options.find((o) => o.value === value)?.label,
-          'Not selected',
-        );
-      };
-      return (
-        <Container>
-          <Row className='mb-0'>
-            <SummaryDisplay
-              label='Application type'
-              id='applicationType'
-              as='p'
-              value={
-                _field.value
-                  ? orIfEmpty(
-                      applicationTypes.find((a) => a.value === _field.value)
-                        ?.label,
-                      'Not selected',
-                    )
-                  : 'Not selected'
-              }
-            />
-            {/* Only show sub options for the selected application type */}
-            {_field.value === PatternApprovalRequiredValues.NewCertificate && (
-              <SummaryDisplay
-                label='Applying for'
-                id='newCertificateSubOptions'
-                as='ul'
-                className='mb-0'
-                value={getSubOptionLabels(
-                  _newField.value,
-                  newCertificateSubOptions,
-                )}
-              />
-            )}
-            {_field.value === PatternApprovalRequiredValues.Variation && (
-              <SummaryDisplay
-                label='Applying for'
-                id='variationSubOptions'
-                as='ul'
-                className='mb-0'
-                value={getSubOptionLabels(_varField.value, variationSubOptions)}
-              />
-            )}
-            {_field.value === PatternApprovalRequiredValues.OtherApproval && (
-              <SummaryDisplay
-                label='Applying for'
-                id='otherApprovalSubOptions'
-                as='ul'
-                className='mb-0'
-                value={getSubOptionLabels(
-                  _othField.value,
-                  otherApprovalSubOptions,
-                )}
-              />
-            )}
-          </Row>
-        </Container>
-      );
-    };
-
-    if (isSummary) {
-      return renderApplTypeSummary();
-    }
-    if (isDataLoading) {
-      return (
-        <Container>
-          <Row>
-            <BlockUISpinner partial>
-              <p>Loading data...</p>
-            </BlockUISpinner>
-          </Row>
-        </Container>
-      );
-    }
-    return (
-      <Container>
-        <Row className='mb-5'>
-          <fieldset id='appl-selector' role='group' tabIndex={-1}>
-            <legend className='h4'>
-              What type of application do you need?
-            </legend>
-            {applicationTypes.map((applicationType) => (
-              <Card
-                key={applicationType.key}
-                className={`mb-1 border border-3 border-white ${selectedApplication === applicationType.value ? 'selected-application' : ''}`}
-              >
-                <Card.Body className='d-flex flex-column align-items-start p-0'>
-                  <div
-                    className='form-field-container mb-0 w-100'
-                    tabIndex={-1}
-                  >
-                    <RadioButton
-                      id={`radio-${applicationType.id}`}
-                      name={getName('patternApprovalType')}
-                      label={applicationType.label}
-                      checked={selectedApplication === applicationType.value}
-                      onChange={(_e: React.ChangeEvent<HTMLInputElement>) => {
-                        setSelectedApplication(applicationType.value);
-                        if (context.submitCount > 0) {
-                          context.resetForm({
-                            // values: {}, // Optionally reset values to initial or empty
-                            errors: {},
-                            touched: {},
-                          });
-                        }
-                      }}
-                      className='form-field me-2 p-0'
-                      value={applicationType.value}
-                    />
-                  </div>
-
-                  {/* Child checkbox UI */}
-                  {applicationType.value ===
-                    PatternApprovalRequiredValues.NewCertificate && (
-                    <HidableField name={getName('isApplNewHide')}>
-                      <div
-                        id={`${applicationType.key}-sub-options-group`}
-                        className='mb-0 ms-3 px-4 collapse fade show'
-                      >
-                        <div>
-                          <CheckboxGroup
-                            legend='Select all that apply'
-                            name={getName(`${applicationType.key}SubOptions`)}
-                            id={`q-${applicationType.key}-sub-options`}
-                            containerClassName='mb-2'
-                            legendClassName='visually-hidden'
-                            className='checkbox-sm'
-                            isSummary={isSummary}
-                            supressFieldLevelMessages
-                            options={newCertificateSubOptions}
-                          />
-                        </div>
-                      </div>
-                    </HidableField>
-                  )}
-
-                  {applicationType.value ===
-                    PatternApprovalRequiredValues.Variation && (
-                    <HidableField name={getName('isApplVariationHide')}>
-                      <div
-                        id={`${applicationType.key}-sub-options-group`}
-                        className='mb-0 ms-3 px-4 collapse fade show'
-                      >
-                        <div>
-                          <CheckboxGroup
-                            legend='Select all that apply'
-                            name={getName(`${applicationType.key}SubOptions`)}
-                            id={`q-${applicationType.key}-sub-options`}
-                            containerClassName='mb-2'
-                            legendClassName='visually-hidden'
-                            className='checkbox-sm'
-                            isSummary={isSummary}
-                            supressFieldLevelMessages
-                            options={variationSubOptions}
-                          />
-                        </div>
-                      </div>
-                    </HidableField>
-                  )}
-
-                  {applicationType.value ===
-                    PatternApprovalRequiredValues.OtherApproval && (
-                    <HidableField name={getName('isApplOtherHide')}>
-                      <div
-                        id={`${applicationType.key}-sub-options-group`}
-                        className='mb-0 ms-3 px-4 collapse fade show'
-                      >
-                        <div>
-                          <CheckboxGroup
-                            legend='Select all that apply'
-                            name={getName(`${applicationType.key}SubOptions`)}
-                            id={`q-${applicationType.key}-sub-options`}
-                            containerClassName='mb-2'
-                            legendClassName='visually-hidden'
-                            className='checkbox-sm'
-                            isSummary={isSummary}
-                            supressFieldLevelMessages
-                            options={otherApprovalSubOptions}
-                          />
-                        </div>
-                      </div>
-                    </HidableField>
-                  )}
-                </Card.Body>
-              </Card>
-            ))}
-          </fieldset>
-        </Row>
-      </Container>
+  const onApplicationTypeChange = (
+    applicationType: PatternApprovalRequiredValues,
+  ) => {
+    setSelectedApplication(applicationType);
+    void context.setFieldValue(
+      getName('patternApprovalType'),
+      applicationType,
+      false,
     );
+    if (context.submitCount > 0) {
+      context.resetForm({
+        errors: {},
+        touched: {},
+      });
+    }
   };
 
   const renderInstrumentInfoPanel = () => (
@@ -472,7 +503,18 @@ const ApplicationAndInstrument = (
 
   return (
     <>
-      <Row>{renderApplTypeSelector()}</Row>
+      <Row>
+        <ApplicationTypeSelector
+          isSummary={isSummary}
+          getName={getName}
+          selectedApplication={selectedApplication}
+          applicationType={_field.value}
+          selectedNewSubOptions={_newField.value}
+          selectedVariationSubOptions={_varField.value}
+          selectedOtherSubOptions={_othField.value}
+          onApplicationTypeChange={onApplicationTypeChange}
+        />
+      </Row>
       {/* NEW application content panel based on above Radio/Checkbox selections  */}
       <HidableField name={getName('isApplNewHide')}>
         <Row className={isSummary ? '' : 'mb-2'}>

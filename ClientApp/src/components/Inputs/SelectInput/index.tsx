@@ -48,7 +48,7 @@ const SelectInput = <T extends string | number>(
   const {
     displayHorizontally,
     label,
-    inlineHelp = undefined, // default props
+    inlineHelp,
     inlineHelpTitle,
     options,
     defaultValue = '', // default props

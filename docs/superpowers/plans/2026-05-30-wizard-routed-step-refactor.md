@@ -640,7 +640,7 @@ const loadData = useCallback(async () => {
     setStepState({ values });
   } catch (error) {
     const err = error as Error;
-    AppLogger.error('Could not load data for form step.', err);
+    Applogging.exception('Could not load data for form step.', err);
     const loadServerError = error as ProblemDetails;
     AppLogger.trace('Could not load data for form step.', SeverityLevel.Error, {
       problemDetails: loadServerError,
@@ -649,7 +649,7 @@ const loadData = useCallback(async () => {
     setErrorState(
       resolveErrorState(error, getRedirectionLocationOnError, ErrorType.Load),
     );
-    AppLogger.error('Failed to Load step values', err);
+    Applogging.exception('Failed to Load step values', err);
   } finally {
     setIsLoading(false);
   }
@@ -717,7 +717,7 @@ const onSubmitStep = async (
       }
     } catch (error) {
       const err = error as Error;
-      AppLogger.error('Could not submit form step.', error as Error, {
+      Applogging.exception('Could not submit form step.', error as Error, {
         stepIndex: currentStepIndex,
       });
       const saveServerError = error as ProblemDetails;
@@ -763,7 +763,7 @@ const onSaveAndExitStep = async (
       navigate(locationAfterExit || '/');
     } catch (error) {
       const err = error as Error;
-      AppLogger.error('Could not save form step.', err, {
+      Applogging.exception('Could not save form step.', err, {
         stepIndex: currentStepIndex,
       });
       const saveServerError = error as ProblemDetails;

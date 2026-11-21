@@ -1,9 +1,9 @@
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
 import unitConfig from '../../../vitest.unit.config';
+import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 /**
  * Keeps SonarCloud and lcov measuring the same coverage denominator.
@@ -50,9 +50,9 @@ function expandBraces(pattern: string): string[] {
 }
 
 function readSonarProperty(name: string): string[] {
-  const source = readFileSync(
+  const source = readTextFileSync(
     path.join(repositoryRoot, 'sonar-project.properties'),
-    'utf8',
+    repositoryRoot,
   );
   // Property values continue across lines with a trailing backslash.
   const unwrapped = source.replace(/\\r?\n\s*/g, '');

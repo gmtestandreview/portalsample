@@ -47,6 +47,7 @@ import {
   Heading as SheetHeading,
 } from '@/components/AriaComponents/Sheet/Sheet';
 import { Slider } from '@/components/AriaComponents/Slider/Slider';
+import { ColorSlider } from '@/components/AriaComponents/ColorSlider/ColorSlider';
 import { Switch } from '@/components/AriaComponents/Switch/Switch';
 import {
   Tab,
@@ -87,7 +88,8 @@ import {
   TreeSection,
 } from '@/components/AriaComponents/Tree/Tree';
 
-if (!Element.prototype.getAnimations) {
+const getAnimations: unknown = Reflect.get(Element.prototype, 'getAnimations');
+if (!getAnimations) {
   Object.defineProperty(Element.prototype, 'getAnimations', {
     configurable: true,
     value: vi.fn<() => Animation[]>(() => []),
@@ -118,7 +120,10 @@ class TestIntersectionObserver implements IntersectionObserver {
   }
 }
 
-globalThis.IntersectionObserver ??= TestIntersectionObserver;
+const intersectionObserver: unknown = globalThis.IntersectionObserver;
+if (intersectionObserver === null || intersectionObserver === undefined) {
+  globalThis.IntersectionObserver = TestIntersectionObserver;
+}
 
 const expectAnything = (): unknown => expect.anything();
 const expectStringContaining = (value: string): unknown =>
@@ -473,6 +478,20 @@ describe('react Aria evaluation wrappers', () => {
     );
   });
 
+  it('renders the color slider checkerboard when the track has no default background', () => {
+    expect.hasAssertions();
+
+    render(
+      <ColorSlider
+        aria-label='Red opacity'
+        defaultValue='#f00'
+        channel='alpha'
+      />,
+    );
+
+    expect(screen.getByRole('slider', { name: 'Alpha' })).toBeInTheDocument();
+  });
+
   it('renders text, textarea, number, search, time, and switch field content', () => {
     expect.hasAssertions();
 
@@ -561,10 +580,10 @@ describe('react Aria evaluation wrappers', () => {
     });
   });
 
-  it('renders toggle and segmented controls with their configured variants', () => {
+  it('renders toggle and segmented controls with their configured variants', async () => {
     expect.hasAssertions();
 
-    act(() => {
+    await act(async () => {
       render(
         <>
           <ToggleButton variant='secondary'>Pin</ToggleButton>
@@ -584,6 +603,7 @@ describe('react Aria evaluation wrappers', () => {
           </SegmentedControl>
         </>,
       );
+      await Promise.resolve();
     });
 
     expect({

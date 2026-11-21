@@ -61,8 +61,10 @@ After all tasks complete and verified:
 
 - Announce: "I'm using the finishing-a-development-branch skill to complete this
   work."
-- **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
-- Follow that skill to verify tests, present options, execute choice
+- **REQUIRED SUB-SKILL:** Use finishing-a-development-branch (this repository's
+  local skill, not the `superpowers:` plugin variant)
+- Follow that skill to verify tests, ask which action the user wants, then
+  perform only that action
 
 ## When to Stop and Ask for Help
 

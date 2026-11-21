@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Run the eval + improve loop until all pass or max iterations reached.
 
 Combines run_eval.py and improve_description.py in a loop, tracking history
@@ -8,28 +8,82 @@ holdout data is evaluated only after the best training candidate is frozen.
 
 import argparse
 import hashlib
+import importlib
 import json
 import sys
 import tempfile
 import time
 import webbrowser
+from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TYPE_CHECKING, Protocol, TypedDict, cast
 
-try:
-    from scripts.eval_control import (
-        CacheValidationError,
-        CheckpointStore,
-        EvaluationControl,
-        validate_model_id,
+
+class EvaluationSnapshot(Protocol):
+    planned_calls: int
+    attempted_calls: int
+    resumed_calls: int
+    successful_calls: int
+    error_calls: int
+    skipped_calls: int
+
+
+class EvaluationControlLike(Protocol):
+    planned_calls: int
+    attempted_calls: int
+    resumed_calls: int
+    skipped_calls: int
+    stop_reason: str | None
+
+    def snapshot(self) -> EvaluationSnapshot: ...
+
+    def mark_skipped(self, count: int) -> None: ...
+
+
+class EvaluationControlFactory(Protocol):
+    def __call__(
+        self,
+        *,
+        max_calls: int,
+        planned_calls: int,
+        checkpoint: object | None,
+        deadline_seconds: float | None,
+    ) -> EvaluationControlLike: ...
+
+
+class CheckpointStoreFactory(Protocol):
+    def __call__(self, path: Path) -> object: ...
+
+
+def _load_eval_control() -> tuple[
+    type[Exception],
+    CheckpointStoreFactory,
+    EvaluationControlFactory,
+    Callable[[Path], str],
+    Callable[[str | None], str | None],
+]:
+    try:
+        module = importlib.import_module('scripts.eval_control')
+    except ModuleNotFoundError:
+        module = importlib.import_module('eval_control')
+
+    return (
+        cast(type[Exception], module.CacheValidationError),
+        cast(CheckpointStoreFactory, module.CheckpointStore),
+        cast(EvaluationControlFactory, module.EvaluationControl),
+        cast(Callable[[Path], str], module.effective_skill_digest),
+        cast(Callable[[str | None], str | None], module.validate_model_id),
     )
-except ModuleNotFoundError:
-    from eval_control import (
-        CacheValidationError,
-        CheckpointStore,
-        EvaluationControl,
-        validate_model_id,
-    )
+
+
+(
+    CacheValidationError,
+    CheckpointStore,
+    EvaluationControl,
+    effective_skill_digest,
+    validate_model_id,
+) = _load_eval_control()
 
 
 class EvalCase(TypedDict):
@@ -39,11 +93,34 @@ class EvalCase(TypedDict):
     should_trigger: bool
 
 
+@dataclass(frozen=True, slots=True)
+class RunLoopOptions:
+    """Configuration for :func:`run_loop`.
+
+    Keeping orchestration policy in one immutable value object avoids a long
+    parameter list while preserving explicit static types for every option.
+    """
+
+    description_override: str | None
+    num_workers: int
+    timeout: int
+    max_iterations: int
+    runs_per_query: int
+    trigger_threshold: float
+    holdout: float
+    model: str | None
+    verbose: bool
+    live_report_path: Path | None = None
+    log_dir: Path | None = None
+    control: EvaluationControlLike | None = None
+    patience: int = 1
+
+
 if TYPE_CHECKING:
     # Local interface shims contain partially typed neighboring modules so strict
     # checking of this file does not inherit their Unknown-heavy signatures.
     def generate_html(
-        data: dict[str, object], auto_refresh: bool = False, skill_name: str = ""
+        data: dict[str, object], auto_refresh: bool = False, skill_name: str = ''
     ) -> str: ...
 
     def improve_description(
@@ -57,7 +134,7 @@ if TYPE_CHECKING:
         test_results: dict[str, object] | None = None,
         log_dir: Path | None = None,
         iteration: int | None = None,
-        control: EvaluationControl | None = None,
+        control: EvaluationControlLike | None = None,
     ) -> str: ...
 
     def find_project_root() -> Path: ...
@@ -73,10 +150,12 @@ if TYPE_CHECKING:
         runs_per_query: int,
         trigger_threshold: float,
         model: str | None,
-        control: EvaluationControl | None = None,
+        control: EvaluationControlLike | None = None,
+        skill_content_sha256: str | None = None,
     ) -> object: ...
 
     def parse_skill_md(skill_path: Path) -> tuple[str, str, str]: ...
+
 else:
     try:
         from scripts.generate_report import generate_html
@@ -96,17 +175,42 @@ class EvalSummary(TypedDict):
     total: int
 
 
-def _validate_eval_case(value: object, index: int) -> EvalCase:
+class ExecutionInfo(TypedDict, total=False):
+    status: str
+    stop_reason: str | None
+
+
+def _execution_info(value: object) -> ExecutionInfo | None:
     if not isinstance(value, dict):
-        raise ValueError(f"eval_set[{index}] must be an object")
+        return None
 
     mapping = cast(dict[object, object], value)
-    query = mapping.get("query")
-    should_trigger = mapping.get("should_trigger")
+    status = mapping.get('status')
+    stop_reason = mapping.get('stop_reason')
+    if status is not None and not isinstance(status, str):
+        raise ValueError('execution.status must be a string when present')
+    if stop_reason is not None and not isinstance(stop_reason, str):
+        raise ValueError('execution.stop_reason must be a string or null when present')
+
+    info: ExecutionInfo = {}
+    if status is not None:
+        info['status'] = status
+    if 'stop_reason' in mapping:
+        info['stop_reason'] = stop_reason
+    return info
+
+
+def _validate_eval_case(value: object, index: int) -> EvalCase:
+    if not isinstance(value, dict):
+        raise ValueError(f'eval_set[{index}] must be an object')
+
+    mapping = cast(dict[object, object], value)
+    query = mapping.get('query')
+    should_trigger = mapping.get('should_trigger')
     if not isinstance(query, str) or not query:
-        raise ValueError(f"eval_set[{index}].query must be a non-empty string")
+        raise ValueError(f'eval_set[{index}].query must be a non-empty string')
     if not isinstance(should_trigger, bool):
-        raise ValueError(f"eval_set[{index}].should_trigger must be a boolean")
+        raise ValueError(f'eval_set[{index}].should_trigger must be a boolean')
 
     # Preserve any extra keys expected by run_eval while validating the fields
     # this module relies on.
@@ -116,24 +220,24 @@ def _validate_eval_case(value: object, index: int) -> EvalCase:
 def _validate_eval_set_identity(eval_set: list[EvalCase]) -> None:
     """Reject empty or ambiguous eval sets before any evaluation is attempted."""
     if not eval_set:
-        raise ValueError("eval set must contain at least one evaluation case")
+        raise ValueError('eval set must contain at least one evaluation case')
 
-    queries = [item["query"] for item in eval_set]
+    queries = [item['query'] for item in eval_set]
     if len(set(queries)) != len(queries):
         raise ValueError(
-            "eval-set query strings must be unique because run_eval results are keyed by query"
+            'eval-set query strings must be unique because run_eval results are keyed by query'
         )
 
 
 def load_eval_set(path: Path) -> list[EvalCase]:
     """Load and validate the eval-set boundary used by this module."""
     try:
-        raw: object = json.loads(path.read_text(encoding="utf-8"))
+        raw: object = json.loads(path.read_text(encoding='utf-8'))
     except (OSError, json.JSONDecodeError) as exc:
-        raise ValueError(f"Unable to read eval set {path}: {exc}") from exc
+        raise ValueError(f'Unable to read eval set {path}: {exc}') from exc
 
     if not isinstance(raw, list):
-        raise ValueError("eval set root must be a JSON array")
+        raise ValueError('eval set root must be a JSON array')
 
     raw_items = cast(list[object], raw)
     eval_set = [_validate_eval_case(item, index) for index, item in enumerate(raw_items)]
@@ -146,19 +250,18 @@ def split_eval_set(
 ) -> tuple[list[EvalCase], list[EvalCase]]:
     """Split evals into fixed, stratified train/holdout sets without emptying a class."""
     if holdout <= 0.0 or holdout >= 1.0:
-        raise ValueError("holdout must be between 0 and 1 when enabled")
+        raise ValueError('holdout must be between 0 and 1 when enabled')
 
-    trigger = [item for item in eval_set if item["should_trigger"]]
-    no_trigger = [item for item in eval_set if not item["should_trigger"]]
+    trigger = [item for item in eval_set if item['should_trigger']]
+    no_trigger = [item for item in eval_set if not item['should_trigger']]
 
     if len(trigger) < 2 or len(no_trigger) < 2:
         raise ValueError(
-            "holdout evaluation requires at least 2 should-trigger and "
-            "2 should-not-trigger queries"
+            'holdout evaluation requires at least 2 should-trigger and 2 should-not-trigger queries'
         )
 
     def stable_order(item: EvalCase) -> bytes:
-        payload = f"{seed}\0{item['query']}".encode()
+        payload = f'{seed}\0{item['query']}'.encode()
         return hashlib.sha256(payload).digest()
 
     trigger.sort(key=stable_order)
@@ -177,45 +280,43 @@ def split_eval_set(
 
 def _validate_result(value: object, index: int) -> dict[str, object]:
     if not isinstance(value, dict):
-        raise ValueError(f"run_eval results[{index}] must be an object")
+        raise ValueError(f'run_eval results[{index}] must be an object')
 
     mapping = cast(dict[object, object], value)
     required_types: tuple[tuple[str, type[object]], ...] = (
-        ("query", str),
-        ("should_trigger", bool),
-        ("triggers", int),
-        ("runs", int),
-        ("pass", bool),
+        ('query', str),
+        ('should_trigger', bool),
+        ('triggers', int),
+        ('runs', int),
+        ('pass', bool),
     )
     for key, expected_type in required_types:
         field = mapping.get(key)
         if not isinstance(field, expected_type):
-            raise ValueError(
-                f"run_eval results[{index}].{key} must be {expected_type.__name__}"
-            )
+            raise ValueError(f'run_eval results[{index}].{key} must be {expected_type.__name__}')
 
-    triggers = mapping["triggers"]
-    runs = mapping["runs"]
+    triggers = mapping['triggers']
+    runs = mapping['runs']
     if isinstance(triggers, bool) or isinstance(runs, bool):
-        raise ValueError(f"run_eval results[{index}] counts must be integers, not booleans")
+        raise ValueError(f'run_eval results[{index}] counts must be integers, not booleans')
     if cast(int, triggers) < 0 or cast(int, runs) <= 0:
         raise ValueError(
-            f"run_eval results[{index}] counts must satisfy 0 <= triggers and runs > 0"
+            f'run_eval results[{index}] counts must satisfy 0 <= triggers and runs > 0'
         )
     if cast(int, triggers) > cast(int, runs):
-        raise ValueError(f"run_eval results[{index}].triggers cannot exceed runs")
+        raise ValueError(f'run_eval results[{index}].triggers cannot exceed runs')
 
     return cast(dict[str, object], value)
 
 
 def _extract_results(raw_output: object) -> list[dict[str, object]]:
     if not isinstance(raw_output, dict):
-        raise ValueError("run_eval must return an object")
+        raise ValueError('run_eval must return an object')
 
     output_mapping = cast(dict[object, object], raw_output)
-    raw_results = output_mapping.get("results")
+    raw_results = output_mapping.get('results')
     if not isinstance(raw_results, list):
-        raise ValueError("run_eval output must contain a results array")
+        raise ValueError('run_eval output must contain a results array')
 
     result_items = cast(list[object], raw_results)
     return [_validate_result(item, index) for index, item in enumerate(result_items)]
@@ -226,49 +327,49 @@ def _validate_result_identity(
     expected_cases: list[EvalCase],
 ) -> None:
     """Validate one-to-one result coverage and immutable eval identity fields."""
-    expected = {case["query"]: case["should_trigger"] for case in expected_cases}
+    expected = {case['query']: case['should_trigger'] for case in expected_cases}
     seen: set[str] = set()
 
     for result in all_results:
-        query = cast(str, result["query"])
+        query = cast(str, result['query'])
         if query in seen:
-            raise ValueError(f"run_eval returned duplicate result for query {query!r}")
+            raise ValueError(f'run_eval returned duplicate result for query {query!r}')
         seen.add(query)
 
         if query not in expected:
-            raise ValueError(f"run_eval returned result for unknown query {query!r}")
+            raise ValueError(f'run_eval returned result for unknown query {query!r}')
         expected_should_trigger = expected[query]
 
-        actual_should_trigger = cast(bool, result["should_trigger"])
+        actual_should_trigger = cast(bool, result['should_trigger'])
         if actual_should_trigger != expected_should_trigger:
             raise ValueError(
-                "run_eval result changed should_trigger for "
-                f"query {query!r}: expected {expected_should_trigger}, "
-                f"got {actual_should_trigger}"
+                'run_eval result changed should_trigger for '
+                f'query {query!r}: expected {expected_should_trigger}, '
+                f'got {actual_should_trigger}'
             )
 
     missing = set(expected) - seen
     if missing:
-        missing_list = ", ".join(repr(query) for query in sorted(missing))
-        raise ValueError(f"run_eval omitted results for query/queries: {missing_list}")
+        missing_list = ', '.join(repr(query) for query in sorted(missing))
+        raise ValueError(f'run_eval omitted results for query/queries: {missing_list}')
 
 
 def _summarize(results: list[dict[str, object]]) -> EvalSummary:
-    passed = sum(1 for result in results if cast(bool, result["pass"]))
+    passed = sum(1 for result in results if cast(bool, result['pass']))
     total = len(results)
-    return {"passed": passed, "failed": total - passed, "total": total}
+    return {'passed': passed, 'failed': total - passed, 'total': total}
 
 
 def _print_eval_stats(label: str, results: list[dict[str, object]], elapsed: float) -> None:
-    positives = [result for result in results if cast(bool, result["should_trigger"])]
-    negatives = [result for result in results if not cast(bool, result["should_trigger"])]
+    positives = [result for result in results if cast(bool, result['should_trigger'])]
+    negatives = [result for result in results if not cast(bool, result['should_trigger'])]
 
-    true_positives = sum(cast(int, result["triggers"]) for result in positives)
-    positive_runs = sum(cast(int, result["runs"]) for result in positives)
+    true_positives = sum(cast(int, result['triggers']) for result in positives)
+    positive_runs = sum(cast(int, result['runs']) for result in positives)
     false_negatives = positive_runs - true_positives
 
-    false_positives = sum(cast(int, result["triggers"]) for result in negatives)
-    negative_runs = sum(cast(int, result["runs"]) for result in negatives)
+    false_positives = sum(cast(int, result['triggers']) for result in negatives)
+    negative_runs = sum(cast(int, result['runs']) for result in negatives)
     true_negatives = negative_runs - false_positives
 
     total = true_positives + true_negatives + false_positives + false_negatives
@@ -279,19 +380,19 @@ def _print_eval_stats(label: str, results: list[dict[str, object]], elapsed: flo
     accuracy = (true_positives + true_negatives) / total if total else 0.0
 
     print(
-        f"{label}: {true_positives + true_negatives}/{total} correct, "
-        f"precision={precision:.0%} recall={recall:.0%} "
-        f"accuracy={accuracy:.0%} ({elapsed:.1f}s)",
+        f'{label}: {true_positives + true_negatives}/{total} correct, '
+        f'precision={precision:.0%} recall={recall:.0%} '
+        f'accuracy={accuracy:.0%} ({elapsed:.1f}s)',
         file=sys.stderr,
     )
     for result in results:
-        status = "PASS" if cast(bool, result["pass"]) else "FAIL"
-        triggers = cast(int, result["triggers"])
-        runs = cast(int, result["runs"])
-        expected = cast(bool, result["should_trigger"])
-        query = cast(str, result["query"])
+        status = 'PASS' if cast(bool, result['pass']) else 'FAIL'
+        triggers = cast(int, result['triggers'])
+        runs = cast(int, result['runs'])
+        expected = cast(bool, result['should_trigger'])
+        query = cast(str, result['query'])
         print(
-            f"  [{status}] rate={triggers}/{runs} expected={expected}: {query[:60]}",
+            f'  [{status}] rate={triggers}/{runs} expected={expected}: {query[:60]}',
             file=sys.stderr,
         )
 
@@ -306,17 +407,17 @@ def _validate_options(
     holdout: float,
 ) -> None:
     if num_workers < 1:
-        raise ValueError("num_workers must be at least 1")
+        raise ValueError('num_workers must be at least 1')
     if timeout < 1:
-        raise ValueError("timeout must be at least 1 second")
+        raise ValueError('timeout must be at least 1 second')
     if max_iterations < 1:
-        raise ValueError("max_iterations must be at least 1")
+        raise ValueError('max_iterations must be at least 1')
     if runs_per_query < 1:
-        raise ValueError("runs_per_query must be at least 1")
+        raise ValueError('runs_per_query must be at least 1')
     if not 0.0 <= trigger_threshold <= 1.0:
-        raise ValueError("trigger_threshold must be between 0 and 1")
+        raise ValueError('trigger_threshold must be between 0 and 1')
     if not 0.0 <= holdout < 1.0:
-        raise ValueError("holdout must be in [0, 1)")
+        raise ValueError('holdout must be in [0, 1)')
 
 
 def _prepare_eval_sets(
@@ -328,19 +429,17 @@ def _prepare_eval_sets(
     train_set, test_set = split_eval_set(eval_set, holdout)
     if verbose:
         print(
-            f"Split: {len(train_set)} train, {len(test_set)} holdout (holdout={holdout})",
+            f'Split: {len(train_set)} train, {len(test_set)} holdout (holdout={holdout})',
             file=sys.stderr,
         )
     return train_set, test_set
 
 
-def _print_iteration_header(
-    iteration: int, max_iterations: int, current_description: str
-) -> None:
-    print(f"\n{'=' * 60}", file=sys.stderr)
-    print(f"Iteration {iteration}/{max_iterations}", file=sys.stderr)
-    print(f"Description: {current_description}", file=sys.stderr)
-    print(f"{'=' * 60}", file=sys.stderr)
+def _print_iteration_header(iteration: int, max_iterations: int, current_description: str) -> None:
+    print(f'\n{'=' * 60}', file=sys.stderr)
+    print(f'Iteration {iteration}/{max_iterations}', file=sys.stderr)
+    print(f'Description: {current_description}', file=sys.stderr)
+    print(f'{'=' * 60}', file=sys.stderr)
 
 
 def _evaluate_cases(
@@ -354,7 +453,8 @@ def _evaluate_cases(
     runs_per_query: int,
     trigger_threshold: float,
     model: str | None,
-    control: EvaluationControl | None = None,
+    control: EvaluationControlLike | None = None,
+    skill_content_sha256: str | None = None,
 ) -> tuple[list[dict[str, object]], EvalSummary, dict[str, object], float]:
     """Evaluate one fixed set and validate one-to-one result coverage."""
     start = time.perf_counter()
@@ -369,18 +469,23 @@ def _evaluate_cases(
         trigger_threshold=trigger_threshold,
         model=model,
         control=control,
+        skill_content_sha256=skill_content_sha256,
     )
     elapsed = time.perf_counter() - start
 
-    result_list = _extract_results(raw_output)
+    if not isinstance(raw_output, dict):
+        raise ValueError('run_eval must return an object')
+    output_mapping = cast(dict[object, object], raw_output)
+
+    result_list = _extract_results(output_mapping)
     _validate_result_identity(result_list, eval_set)
     summary = _summarize(result_list)
     results: dict[str, object] = {
-        "results": result_list,
-        "summary": summary,
+        'results': result_list,
+        'summary': summary,
     }
-    if isinstance(raw_output, dict) and "execution" in raw_output:
-        results["execution"] = raw_output["execution"]
+    if 'execution' in output_mapping:
+        results['execution'] = output_mapping['execution']
     return result_list, summary, results, elapsed
 
 
@@ -393,21 +498,22 @@ def _make_history_entry(
 ) -> dict[str, object]:
     """Record training evidence; holdout fields stay blinded until selection freezes."""
     return {
-        "iteration": iteration,
-        "description": description,
-        "train_passed": train_summary["passed"],
-        "train_failed": train_summary["failed"],
-        "train_total": train_summary["total"],
-        "train_results": train_result_list,
-        "test_passed": None,
-        "test_failed": None,
-        "test_total": None,
-        "test_results": None,
+        'iteration': iteration,
+        'description': description,
+        'train_passed': train_summary['passed'],
+        'train_failed': train_summary['failed'],
+        'train_total': train_summary['total'],
+        'train_results': train_result_list,
+        'test_passed': None,
+        'test_failed': None,
+        'test_total': None,
+        'test_results': None,
+        'test_evidence_status': 'not_run',
         # Backward compatibility with report generator.
-        "passed": train_summary["passed"],
-        "failed": train_summary["failed"],
-        "total": train_summary["total"],
-        "results": train_result_list,
+        'passed': train_summary['passed'],
+        'failed': train_summary['failed'],
+        'total': train_summary['total'],
+        'results': train_result_list,
     }
 
 
@@ -417,10 +523,11 @@ def _attach_holdout_result(
     summary: EvalSummary,
 ) -> None:
     """Attach one post-selection holdout evaluation to the frozen best entry."""
-    entry["test_passed"] = summary["passed"]
-    entry["test_failed"] = summary["failed"]
-    entry["test_total"] = summary["total"]
-    entry["test_results"] = result_list
+    entry['test_passed'] = summary['passed']
+    entry['test_failed'] = summary['failed']
+    entry['test_total'] = summary['total']
+    entry['test_results'] = result_list
+    entry['test_evidence_status'] = 'observed'
 
 
 def _write_live_report(
@@ -438,18 +545,18 @@ def _write_live_report(
         return
 
     partial_output: dict[str, object] = {
-        "original_description": original_description,
-        "best_description": current_description,
-        "best_score": "in progress",
-        "iterations_run": len(history),
-        "holdout": holdout,
-        "train_size": len(train_set),
-        "test_size": len(test_set),
-        "history": history,
+        'original_description': original_description,
+        'best_description': current_description,
+        'best_score': 'in progress',
+        'iterations_run': len(history),
+        'holdout': holdout,
+        'train_size': len(train_set),
+        'test_size': len(test_set),
+        'history': history,
     }
     live_report_path.write_text(
         generate_html(partial_output, auto_refresh=True, skill_name=skill_name),
-        encoding="utf-8",
+        encoding='utf-8',
     )
 
 
@@ -460,7 +567,7 @@ def _report_iteration_stats(
     eval_elapsed: float,
 ) -> None:
     if verbose:
-        _print_eval_stats("Train", train_result_list, eval_elapsed)
+        _print_eval_stats('Train', train_result_list, eval_elapsed)
 
 
 def _report_holdout_stats(
@@ -470,7 +577,7 @@ def _report_holdout_stats(
     elapsed: float,
 ) -> None:
     if verbose:
-        _print_eval_stats("Holdout", result_list, elapsed)
+        _print_eval_stats('Holdout', result_list, elapsed)
 
 
 def _termination_reason(
@@ -482,22 +589,22 @@ def _termination_reason(
     no_improvement_count: int = 0,
     patience: int = 1,
 ) -> str | None:
-    if train_summary["failed"] == 0:
-        return f"all_passed (iteration {iteration})"
+    if train_summary['failed'] == 0:
+        return f'all_passed (iteration {iteration})'
     if iteration == max_iterations:
-        return f"max_iterations ({max_iterations})"
+        return f'max_iterations ({max_iterations})'
     if best_passed is not None and no_improvement_count >= patience:
-        return f"no_improvement (patience {patience})"
+        return f'no_improvement (patience {patience})'
     return None
 
 
 def _report_termination(reason: str, iteration: int, verbose: bool) -> None:
     if not verbose:
         return
-    if reason.startswith("all_passed"):
-        print(f"\nAll train queries passed on iteration {iteration}!", file=sys.stderr)
+    if reason.startswith('all_passed'):
+        print(f'\nAll train queries passed on iteration {iteration}!', file=sys.stderr)
     else:
-        print(f"\nMax iterations reached ({iteration}).", file=sys.stderr)
+        print(f'\nMax iterations reached ({iteration}).', file=sys.stderr)
 
 
 def _improve_current_description(
@@ -511,13 +618,13 @@ def _improve_current_description(
     log_dir: Path | None,
     iteration: int,
     verbose: bool,
-    control: EvaluationControl,
+    control: EvaluationControlLike,
 ) -> str:
     if verbose:
-        print("\nImproving description...", file=sys.stderr)
+        print('\nImproving description...', file=sys.stderr)
 
     blinded_history: list[dict[str, object]] = [
-        {key: value for key, value in entry.items() if not key.startswith("test_")}
+        {key: value for key, value in entry.items() if not key.startswith('test_')}
         for entry in history
     ]
     start = time.perf_counter()
@@ -535,7 +642,7 @@ def _improve_current_description(
     improve_elapsed = time.perf_counter() - start
 
     if verbose:
-        print(f"Proposed ({improve_elapsed:.1f}s): {new_description}", file=sys.stderr)
+        print(f'Proposed ({improve_elapsed:.1f}s): {new_description}', file=sys.stderr)
     return new_description
 
 
@@ -543,7 +650,7 @@ def _best_history_entry(history: list[dict[str, object]]) -> dict[str, object]:
     """Select only from training evidence; holdout must not influence selection."""
 
     def score(entry: dict[str, object]) -> int:
-        return cast(int, entry["train_passed"])
+        return cast(int, entry['train_passed'])
 
     return max(history, key=score)
 
@@ -560,14 +667,15 @@ def _evaluate_frozen_holdout(
     trigger_threshold: float,
     model: str | None,
     verbose: bool,
-    control: EvaluationControl,
+    control: EvaluationControlLike,
+    skill_content_sha256: str | None = None,
 ) -> None:
     """Evaluate the selected description on holdout exactly once."""
     if not test_set:
         return
 
-    description = cast(str, best["description"])
-    result_list, summary, _, elapsed = _evaluate_cases(
+    description = cast(str, best['description'])
+    result_list, summary, evidence, elapsed = _evaluate_cases(
         eval_set=test_set,
         skill_name=skill_name,
         description=description,
@@ -578,7 +686,13 @@ def _evaluate_frozen_holdout(
         trigger_threshold=trigger_threshold,
         model=model,
         control=control,
+        skill_content_sha256=skill_content_sha256,
     )
+    execution = _execution_info(evidence.get('execution'))
+    if execution is not None and execution.get('status') != 'complete':
+        best['test_results'] = result_list
+        best['test_evidence_status'] = 'NHR'
+        return
     _attach_holdout_result(best, result_list, summary)
     _report_holdout_stats(
         verbose=verbose,
@@ -597,55 +711,63 @@ def _build_loop_output(
     train_set: list[EvalCase],
     test_set: list[EvalCase],
     verbose: bool,
-    control: EvaluationControl,
+    control: EvaluationControlLike,
     call_plan: dict[str, int],
 ) -> dict[str, object]:
     best = _best_history_entry(history)
-    best_score = (
-        f"{best['test_passed']}/{best['test_total']}"
-        if test_set
-        else f"{best['train_passed']}/{best['train_total']}"
-    )
+    holdout_unavailable = bool(test_set) and best.get('test_evidence_status') != 'observed'
+    if holdout_unavailable:
+        best_score = 'NHR'
+    elif test_set:
+        best_score = f'{best['test_passed']}/{best['test_total']}'
+    else:
+        best_score = f'{best['train_passed']}/{best['train_total']}'
 
     if verbose:
-        print(f"\nExit reason: {exit_reason}", file=sys.stderr)
-        print(f"Best score: {best_score} (iteration {best['iteration']})", file=sys.stderr)
+        print(f'\nExit reason: {exit_reason}', file=sys.stderr)
+        print(f'Best score: {best_score} (iteration {best['iteration']})', file=sys.stderr)
 
     snapshot = control.snapshot()
     execution_counts = {
-        "planned_calls": snapshot.planned_calls,
-        "attempted_calls": snapshot.attempted_calls,
-        "resumed_calls": snapshot.resumed_calls,
-        "successful_calls": snapshot.successful_calls,
-        "error_calls": snapshot.error_calls,
-        "skipped_calls": snapshot.skipped_calls,
+        'planned_calls': snapshot.planned_calls,
+        'attempted_calls': snapshot.attempted_calls,
+        'resumed_calls': snapshot.resumed_calls,
+        'successful_calls': snapshot.successful_calls,
+        'error_calls': snapshot.error_calls,
+        'skipped_calls': snapshot.skipped_calls,
     }
     return {
-        "exit_reason": exit_reason,
-        "original_description": original_description,
-        "best_description": best["description"],
-        "best_score": best_score,
-        "best_train_score": f"{best['train_passed']}/{best['train_total']}",
-        "best_test_score": (
-            f"{best['test_passed']}/{best['test_total']}" if test_set else None
+        'exit_reason': exit_reason,
+        'original_description': original_description,
+        'best_description': best['description'],
+        'best_score': best_score,
+        'best_train_score': f'{best['train_passed']}/{best['train_total']}',
+        'best_test_score': (
+            f'{best['test_passed']}/{best['test_total']}'
+            if test_set and not holdout_unavailable
+            else None
         ),
-        "final_description": current_description,
-        "iterations_run": len(history),
-        "holdout": holdout,
-        "train_size": len(train_set),
-        "test_size": len(test_set),
-        "history": history,
-        "execution": {
-            "status": "complete" if control.stop_reason is None else "partial",
-            "stop_reason": control.stop_reason,
+        'holdout_evidence_status': best.get('test_evidence_status') if test_set else 'N/A',
+        'final_description': current_description,
+        'iterations_run': len(history),
+        'holdout': holdout,
+        'train_size': len(train_set),
+        'test_size': len(test_set),
+        'history': history,
+        'execution': {
+            'status': 'complete'
+            if control.stop_reason is None and not holdout_unavailable
+            else 'partial',
+            'stop_reason': control.stop_reason
+            or ('holdout_unavailable' if holdout_unavailable else None),
             **execution_counts,
         },
-        "call_plan": call_plan,
+        'call_plan': call_plan,
     }
 
 
 def _normalise_description(value: str) -> str:
-    return " ".join(value.split()).casefold()
+    return ' '.join(value.split()).casefold()
 
 
 def _call_plan(
@@ -658,36 +780,139 @@ def _call_plan(
     trigger_probes = (len(train_set) * max_iterations + len(test_set)) * runs_per_query
     rewrite_calls = max(0, max_iterations - 1) * 2
     return {
-        "max_trigger_probes": trigger_probes,
-        "max_rewrite_calls": rewrite_calls,
-        "worst_case_calls": trigger_probes + rewrite_calls,
+        'max_trigger_probes': trigger_probes,
+        'max_rewrite_calls': rewrite_calls,
+        'worst_case_calls': trigger_probes + rewrite_calls,
     }
 
 
-def _mark_unstarted(control: EvaluationControl) -> None:
-    remaining = control.planned_calls - control.resumed_calls - control.attempted_calls - control.skipped_calls
+def _mark_unstarted(control: EvaluationControlLike) -> None:
+    remaining = (
+        control.planned_calls
+        - control.resumed_calls
+        - control.attempted_calls
+        - control.skipped_calls
+    )
     if remaining > 0:
         control.mark_skipped(remaining)
+
+
+def _ensure_control(
+    control: EvaluationControlLike | None,
+    call_plan: dict[str, int],
+) -> EvaluationControlLike:
+    if control is not None:
+        return control
+    return EvaluationControl(
+        max_calls=call_plan['worst_case_calls'],
+        planned_calls=call_plan['worst_case_calls'],
+        checkpoint=None,
+        deadline_seconds=None,
+    )
+
+
+def _report_call_plan(call_plan: dict[str, int], verbose: bool) -> None:
+    if not verbose:
+        return
+    print(
+        'Worst-case call plan: '
+        f'{call_plan['max_trigger_probes']} trigger probes + '
+        f'{call_plan['max_rewrite_calls']} rewrite/shorten calls = '
+        f'{call_plan['worst_case_calls']} calls; a lower cap may stop partial.',
+        file=sys.stderr,
+    )
+
+
+def _report_iteration_header(
+    *,
+    verbose: bool,
+    iteration: int,
+    max_iterations: int,
+    current_description: str,
+) -> None:
+    if verbose:
+        _print_iteration_header(iteration, max_iterations, current_description)
+
+
+def _updated_progress(
+    train_summary: EvalSummary,
+    best_passed: int | None,
+    no_improvement_count: int,
+) -> tuple[int, int]:
+    passed = train_summary['passed']
+    if best_passed is None or passed > best_passed:
+        return passed, 0
+    return best_passed, no_improvement_count + 1
+
+
+def _partial_execution_reason(train_results: dict[str, object]) -> str | None:
+    execution = _execution_info(train_results.get('execution'))
+    if execution is None or execution.get('status') != 'partial':
+        return None
+    return f'partial ({execution.get('stop_reason') or 'activation unavailable'})'
+
+
+def _should_evaluate_holdout(
+    partial: bool,
+    control: EvaluationControlLike,
+) -> bool:
+    return not partial and control.stop_reason not in {
+        'rate_limited',
+        'budget_exhausted',
+        'deadline_exceeded',
+    }
+
+
+def _try_improve_description(
+    *,
+    skill_name: str,
+    skill_content: str,
+    current_description: str,
+    train_results: dict[str, object],
+    history: list[dict[str, object]],
+    model: str | None,
+    log_dir: Path | None,
+    iteration: int,
+    verbose: bool,
+    control: EvaluationControlLike,
+) -> tuple[str | None, str | None]:
+    try:
+        proposed_description = _improve_current_description(
+            skill_name=skill_name,
+            skill_content=skill_content,
+            current_description=current_description,
+            train_results=train_results,
+            history=history,
+            model=model,
+            log_dir=log_dir,
+            iteration=iteration,
+            verbose=verbose,
+            control=control,
+        )
+    except (CacheValidationError, RuntimeError, ValueError) as exc:
+        return None, f'partial ({control.stop_reason or str(exc)})'
+    return proposed_description, None
 
 
 def run_loop(
     eval_set: list[EvalCase],
     skill_path: Path,
-    description_override: str | None,
-    num_workers: int,
-    timeout: int,
-    max_iterations: int,
-    runs_per_query: int,
-    trigger_threshold: float,
-    holdout: float,
-    model: str | None,
-    verbose: bool,
-    live_report_path: Path | None = None,
-    log_dir: Path | None = None,
-    control: EvaluationControl | None = None,
-    patience: int = 1,
+    options: RunLoopOptions,
 ) -> dict[str, object]:
     """Run the eval + improvement loop."""
+    description_override = options.description_override
+    num_workers = options.num_workers
+    timeout = options.timeout
+    max_iterations = options.max_iterations
+    runs_per_query = options.runs_per_query
+    trigger_threshold = options.trigger_threshold
+    holdout = options.holdout
+    model = options.model
+    verbose = options.verbose
+    live_report_path = options.live_report_path
+    log_dir = options.log_dir
+    control = options.control
+    patience = options.patience
     _validate_options(
         num_workers=num_workers,
         timeout=timeout,
@@ -697,11 +922,15 @@ def run_loop(
         holdout=holdout,
     )
     if patience < 1:
-        raise ValueError("patience must be at least 1")
+        raise ValueError('patience must be at least 1')
     _validate_eval_set_identity(eval_set)
 
     project_root = find_project_root()
     name, original_description, content = parse_skill_md(skill_path)
+    # Real skill directories include references and scripts in the checkpoint identity.
+    source_digest = (
+        effective_skill_digest(skill_path) if (skill_path / 'SKILL.md').is_file() else None
+    )
     current_description = description_override or original_description
     train_set, test_set = _prepare_eval_sets(eval_set, holdout, verbose)
     call_plan = _call_plan(
@@ -710,31 +939,22 @@ def run_loop(
         max_iterations=max_iterations,
         runs_per_query=runs_per_query,
     )
-    if control is None:
-        control = EvaluationControl(
-            max_calls=call_plan["worst_case_calls"],
-            planned_calls=call_plan["worst_case_calls"],
-            checkpoint=None,
-            deadline_seconds=None,
-        )
-    if verbose:
-        print(
-            "Worst-case call plan: "
-            f"{call_plan['max_trigger_probes']} trigger probes + "
-            f"{call_plan['max_rewrite_calls']} rewrite/shorten calls = "
-            f"{call_plan['worst_case_calls']} calls; a lower cap may stop partial.",
-            file=sys.stderr,
-        )
+    active_control = _ensure_control(control, call_plan)
+    _report_call_plan(call_plan, verbose)
     history: list[dict[str, object]] = []
-    exit_reason = "unknown"
+    exit_reason = 'unknown'
     seen_descriptions: set[str] = set()
     best_passed: int | None = None
     no_improvement_count = 0
     partial = False
 
     for iteration in range(1, max_iterations + 1):
-        if verbose:
-            _print_iteration_header(iteration, max_iterations, current_description)
+        _report_iteration_header(
+            verbose=verbose,
+            iteration=iteration,
+            max_iterations=max_iterations,
+            current_description=current_description,
+        )
 
         train_result_list, train_summary, train_results, eval_elapsed = _evaluate_cases(
             eval_set=train_set,
@@ -746,7 +966,8 @@ def run_loop(
             runs_per_query=runs_per_query,
             trigger_threshold=trigger_threshold,
             model=model,
-            control=control,
+            control=active_control,
+            skill_content_sha256=source_digest,
         )
 
         history.append(
@@ -775,16 +996,16 @@ def run_loop(
 
         current_key = _normalise_description(current_description)
         seen_descriptions.add(current_key)
-        if best_passed is None or train_summary["passed"] > best_passed:
-            best_passed = train_summary["passed"]
-            no_improvement_count = 0
-        else:
-            no_improvement_count += 1
+        best_passed, no_improvement_count = _updated_progress(
+            train_summary,
+            best_passed,
+            no_improvement_count,
+        )
 
-        execution = train_results.get("execution")
-        if isinstance(execution, dict) and execution.get("status") == "partial":
+        partial_reason = _partial_execution_reason(train_results)
+        if partial_reason is not None:
             partial = True
-            exit_reason = f"partial ({execution.get('stop_reason') or 'activation unavailable'})"
+            exit_reason = partial_reason
             break
 
         reason = _termination_reason(
@@ -800,31 +1021,32 @@ def run_loop(
             _report_termination(reason, iteration, verbose)
             break
 
-        try:
-            proposed_description = _improve_current_description(
-                skill_name=name,
-                skill_content=content,
-                current_description=current_description,
-                train_results=train_results,
-                history=history,
-                model=model,
-                log_dir=log_dir,
-                iteration=iteration,
-                verbose=verbose,
-                control=control,
-            )
-        except (CacheValidationError, RuntimeError, ValueError) as exc:
+        proposed_description, improvement_error = _try_improve_description(
+            skill_name=name,
+            skill_content=content,
+            current_description=current_description,
+            train_results=train_results,
+            history=history,
+            model=model,
+            log_dir=log_dir,
+            iteration=iteration,
+            verbose=verbose,
+            control=active_control,
+        )
+        if improvement_error is not None:
             partial = True
-            exit_reason = f"partial ({control.stop_reason or str(exc)})"
+            exit_reason = improvement_error
             break
+        if proposed_description is None:
+            raise AssertionError('description improvement returned neither a value nor an error')
         current_description = proposed_description
         proposed_key = _normalise_description(current_description)
         if proposed_key in seen_descriptions:
-            exit_reason = "duplicate_description"
+            exit_reason = 'duplicate_description'
             break
 
     best = _best_history_entry(history)
-    if not partial and control.stop_reason not in {"rate_limited", "budget_exhausted", "deadline_exceeded"}:
+    if _should_evaluate_holdout(partial, active_control):
         _evaluate_frozen_holdout(
             best=best,
             test_set=test_set,
@@ -836,9 +1058,10 @@ def run_loop(
             trigger_threshold=trigger_threshold,
             model=model,
             verbose=verbose,
-            control=control,
+            control=active_control,
+            skill_content_sha256=source_digest,
         )
-    _mark_unstarted(control)
+    _mark_unstarted(active_control)
 
     return _build_loop_output(
         exit_reason=exit_reason,
@@ -849,46 +1072,132 @@ def run_loop(
         train_set=train_set,
         test_set=test_set,
         verbose=verbose,
-        control=control,
+        control=active_control,
         call_plan=call_plan,
     )
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run eval + improve loop")
-    parser.add_argument("--eval-set", required=True, help="Path to eval set JSON file")
-    parser.add_argument("--skill-path", required=True, help="Path to skill directory")
-    parser.add_argument("--description", default=None, help="Override starting description")
-    parser.add_argument("--num-workers", type=int, default=2, help="Number of parallel workers")
-    parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
-    parser.add_argument("--max-iterations", type=int, default=5, help="Max improvement iterations")
-    parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
+    parser = argparse.ArgumentParser(description='Run eval + improve loop')
+    parser.add_argument('--eval-set', required=True, help='Path to eval set JSON file')
+    parser.add_argument('--skill-path', required=True, help='Path to skill directory')
+    parser.add_argument('--description', default=None, help='Override starting description')
+    parser.add_argument('--num-workers', type=int, default=2, help='Number of parallel workers')
+    parser.add_argument('--timeout', type=int, default=30, help='Timeout per query in seconds')
+    parser.add_argument('--max-iterations', type=int, default=5, help='Max improvement iterations')
+    parser.add_argument('--runs-per-query', type=int, default=3, help='Number of runs per query')
     parser.add_argument(
-        "--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold"
+        '--trigger-threshold', type=float, default=0.5, help='Trigger rate threshold'
     )
     parser.add_argument(
-        "--holdout",
+        '--holdout',
         type=float,
         default=0.4,
-        help="Fraction of eval set to hold out for testing (0 to disable)",
+        help='Fraction of eval set to hold out for testing (0 to disable)',
     )
-    parser.add_argument("--model", required=True, help="Explicit versioned Claude model ID")
-    parser.add_argument("--max-model-calls", type=int, required=True, help="Maximum live model calls")
-    parser.add_argument("--checkpoint", default=None, help="Append-only JSONL checkpoint path")
-    parser.add_argument("--deadline-seconds", type=float, default=None, help="Stop after this many seconds")
-    parser.add_argument("--patience", type=int, default=1, help="Consecutive non-improving evaluations before stopping")
-    parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
+    parser.add_argument('--model', required=True, help='Explicit versioned Claude model ID')
     parser.add_argument(
-        "--report",
-        default="auto",
+        '--max-model-calls', type=int, required=True, help='Maximum live model calls'
+    )
+    parser.add_argument('--checkpoint', default=None, help='Append-only JSONL checkpoint path')
+    parser.add_argument(
+        '--deadline-seconds', type=float, default=None, help='Stop after this many seconds'
+    )
+    parser.add_argument(
+        '--patience',
+        type=int,
+        default=1,
+        help='Consecutive non-improving evaluations before stopping',
+    )
+    parser.add_argument('--verbose', action='store_true', help='Print progress to stderr')
+    parser.add_argument(
+        '--report',
+        default='auto',
         help="Generate HTML report at this path ('auto' or 'none' supported)",
     )
     parser.add_argument(
-        "--results-dir",
+        '--results-dir',
         default=None,
-        help="Save outputs to a timestamped subdirectory here",
+        help='Save outputs to a timestamped subdirectory here',
     )
     return parser
+
+
+def _prepare_live_report(skill_path: Path, report: str) -> Path | None:
+    if report == 'none':
+        return None
+
+    if report == 'auto':
+        timestamp = time.strftime('%Y%m%d_%H%M%S')
+        live_report_path = (
+            Path(tempfile.gettempdir())
+            / f'skill_description_report_{skill_path.name}_{timestamp}.html'
+        )
+    else:
+        live_report_path = Path(report)
+        live_report_path.parent.mkdir(parents=True, exist_ok=True)
+
+    live_report_path.write_text(
+        '<html><body><h1>Starting optimization loop...</h1>'
+        "<meta http-equiv='refresh' content='5'></body></html>",
+        encoding='utf-8',
+    )
+    webbrowser.open(live_report_path.resolve().as_uri())
+    return live_report_path
+
+
+def _prepare_results_dir(results_dir_arg: str | None) -> Path | None:
+    if not results_dir_arg:
+        return None
+    timestamp = time.strftime('%Y-%m-%d_%H%M%S')
+    results_dir = Path(results_dir_arg) / timestamp
+    results_dir.mkdir(parents=True, exist_ok=True)
+    return results_dir
+
+
+def _validate_cli_limits(args: argparse.Namespace) -> None:
+    _validate_options(
+        num_workers=args.num_workers,
+        timeout=args.timeout,
+        max_iterations=args.max_iterations,
+        runs_per_query=args.runs_per_query,
+        trigger_threshold=args.trigger_threshold,
+        holdout=args.holdout,
+    )
+    if args.max_model_calls <= 0:
+        raise ValueError('max_model_calls must be positive')
+    if args.deadline_seconds is not None and args.deadline_seconds <= 0:
+        raise ValueError('deadline_seconds must be positive')
+    if args.patience < 1:
+        raise ValueError('patience must be at least 1')
+
+
+def _write_outputs(
+    *,
+    output: dict[str, object],
+    json_output: str,
+    results_dir: Path | None,
+    live_report_path: Path | None,
+    skill_name: str,
+) -> None:
+    if results_dir is not None:
+        (results_dir / 'results.json').write_text(json_output, encoding='utf-8')
+
+    if live_report_path is not None:
+        live_report_path.write_text(
+            generate_html(output, auto_refresh=False, skill_name=skill_name),
+            encoding='utf-8',
+        )
+        print(f'\nReport: {live_report_path}', file=sys.stderr)
+
+    if results_dir is not None and live_report_path is not None:
+        (results_dir / 'report.html').write_text(
+            generate_html(output, auto_refresh=False, skill_name=skill_name),
+            encoding='utf-8',
+        )
+
+    if results_dir is not None:
+        print(f'Results saved to: {results_dir}', file=sys.stderr)
 
 
 def main() -> int:
@@ -897,58 +1206,17 @@ def main() -> int:
     try:
         eval_set = load_eval_set(Path(args.eval_set))
         skill_path = Path(args.skill_path)
-        skill_file = skill_path / "SKILL.md"
+        skill_file = skill_path / 'SKILL.md'
         if not skill_file.is_file():
-            raise ValueError(f"No SKILL.md found at {skill_path}")
+            raise ValueError(f'No SKILL.md found at {skill_path}')
 
-        _validate_options(
-            num_workers=args.num_workers,
-            timeout=args.timeout,
-            max_iterations=args.max_iterations,
-            runs_per_query=args.runs_per_query,
-            trigger_threshold=args.trigger_threshold,
-            holdout=args.holdout,
-        )
+        _validate_cli_limits(args)
         model = validate_model_id(args.model)
-        if args.max_model_calls <= 0:
-            raise ValueError("max_model_calls must be positive")
-        if args.deadline_seconds is not None and args.deadline_seconds <= 0:
-            raise ValueError("deadline_seconds must be positive")
-        if args.patience < 1:
-            raise ValueError("patience must be at least 1")
-
         name, _, _ = parse_skill_md(skill_path)
+        live_report_path = _prepare_live_report(skill_path, args.report)
+        results_dir = _prepare_results_dir(args.results_dir)
 
-        live_report_path: Path | None
-        if args.report != "none":
-            if args.report == "auto":
-                timestamp = time.strftime("%Y%m%d_%H%M%S")
-                live_report_path = (
-                    Path(tempfile.gettempdir())
-                    / f"skill_description_report_{skill_path.name}_{timestamp}.html"
-                )
-            else:
-                live_report_path = Path(args.report)
-                live_report_path.parent.mkdir(parents=True, exist_ok=True)
-
-            live_report_path.write_text(
-                "<html><body><h1>Starting optimization loop...</h1>"
-                "<meta http-equiv='refresh' content='5'></body></html>",
-                encoding="utf-8",
-            )
-            webbrowser.open(live_report_path.resolve().as_uri())
-        else:
-            live_report_path = None
-
-        results_dir: Path | None
-        if args.results_dir:
-            timestamp = time.strftime("%Y-%m-%d_%H%M%S")
-            results_dir = Path(args.results_dir) / timestamp
-            results_dir.mkdir(parents=True, exist_ok=True)
-        else:
-            results_dir = None
-
-        log_dir = results_dir / "logs" if results_dir else None
+        log_dir = results_dir / 'logs' if results_dir else None
         train_set, test_set = _prepare_eval_sets(eval_set, args.holdout, False)
         call_plan = _call_plan(
             train_set=train_set,
@@ -959,13 +1227,11 @@ def main() -> int:
         checkpoint = CheckpointStore(Path(args.checkpoint)) if args.checkpoint else None
         control = EvaluationControl(
             max_calls=args.max_model_calls,
-            planned_calls=call_plan["worst_case_calls"],
+            planned_calls=call_plan['worst_case_calls'],
             checkpoint=checkpoint,
             deadline_seconds=args.deadline_seconds,
         )
-        output = run_loop(
-            eval_set=eval_set,
-            skill_path=skill_path,
+        options = RunLoopOptions(
             description_override=args.description,
             num_workers=args.num_workers,
             timeout=args.timeout,
@@ -980,33 +1246,27 @@ def main() -> int:
             control=control,
             patience=args.patience,
         )
+        output = run_loop(
+            eval_set=eval_set,
+            skill_path=skill_path,
+            options=options,
+        )
 
         json_output = json.dumps(output, indent=2, allow_nan=False)
         print(json_output)
 
-        if results_dir:
-            (results_dir / "results.json").write_text(json_output, encoding="utf-8")
-
-        if live_report_path:
-            live_report_path.write_text(
-                generate_html(output, auto_refresh=False, skill_name=name),
-                encoding="utf-8",
-            )
-            print(f"\nReport: {live_report_path}", file=sys.stderr)
-
-        if results_dir and live_report_path:
-            (results_dir / "report.html").write_text(
-                generate_html(output, auto_refresh=False, skill_name=name),
-                encoding="utf-8",
-            )
-
-        if results_dir:
-            print(f"Results saved to: {results_dir}", file=sys.stderr)
+        _write_outputs(
+            output=output,
+            json_output=json_output,
+            results_dir=results_dir,
+            live_report_path=live_report_path,
+            skill_name=name,
+        )
         return 0
     except (OSError, ValueError) as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        print(f'Error: {exc}', file=sys.stderr)
         return 2
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

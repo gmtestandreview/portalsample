@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import SessionStorageCache from '../../../ClientApp/src/storage/sessionStorageCache';
 
+interface StoredPayload {
+  id: number;
+}
+
 // function suite titles are required by vitest/prefer-describe-function-title.
 describe(SessionStorageCache, () => {
   const clearSessionStorage = () => {
@@ -28,6 +32,19 @@ describe(SessionStorageCache, () => {
       ).toStrictEqual({ id: 42 });
     });
 
+    it('passes parsed values through a caller-provided deserializer', () => {
+      expect.hasAssertions();
+
+      clearSessionStorage();
+      globalThis.sessionStorage.setItem('test-key', JSON.stringify({ id: 42 }));
+
+      expect(
+        SessionStorageCache().getItem('test-key', (value) =>
+          String((value as StoredPayload).id),
+        ),
+      ).toBe('42');
+    });
+
     it('returns undefined and removes the key for malformed JSON (fail-soft)', () => {
       expect.hasAssertions();
 
@@ -52,6 +69,19 @@ describe(SessionStorageCache, () => {
   });
 
   describe('setItem', () => {
+    it('preserves explicit generic type arguments for callers', () => {
+      expect.hasAssertions();
+
+      clearSessionStorage();
+
+      const payload: StoredPayload = { id: 42 };
+      SessionStorageCache().setItem<StoredPayload>(payload, 'typed-key');
+
+      expect(
+        SessionStorageCache().getItem<StoredPayload>('typed-key'),
+      ).toStrictEqual(payload);
+    });
+
     it('stores a value as JSON-serialised string', () => {
       expect.hasAssertions();
 

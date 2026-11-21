@@ -299,7 +299,7 @@ try {
   const data = await fetchUser(userId);
   return data;
 } catch (error) {
-  logger.error('Failed to fetch user', { userId, error });
+  logging.exception('Failed to fetch user', { userId, error });
   throw new UserNotFoundError(userId);
 }
 ```
@@ -358,23 +358,21 @@ Copilot to follow automatically.
 ## Common Pitfalls to Avoid
 
 - ❌ **Too generic**: "Write clean code" doesn't give Copilot actionable
-  guidance  
-  ✅ **Instead**: Provide specific patterns: "Extract functions longer than 20
-  lines into smaller, named functions"
+  guidance ✅ **Instead**: Provide specific patterns: "Extract functions longer
+  than 20 lines into smaller, named functions"
 
 - ❌ **Too verbose**: Including entire documentation pages overwhelms the
-  context window  
-  ✅ **Instead**: Distill key patterns and link to full documentation
+  context window ✅ **Instead**: Distill key patterns and link to full
+  documentation
 
 - ❌ **Contradictory rules**: Different instructions suggesting opposite
-  approaches  
-  ✅ **Instead**: Design complementary instructions with clear scopes
+  approaches ✅ **Instead**: Design complementary instructions with clear scopes
 
 - ❌ **Outdated patterns**: Instructions referencing deprecated APIs or old
-  versions  
-  ✅ **Instead**: Review and update instructions when dependencies change
+  versions ✅ **Instead**: Review and update instructions when dependencies
+  change
 
-- ❌ **Missing scope**: Using `applyTo: '**'` for language-specific guidelines  
+- ❌ **Missing scope**: Using `applyTo: '**'` for language-specific guidelines
   ✅ **Instead**: Scope to relevant files: `applyTo: '**/*.py'` for
   Python-specific rules
 
