@@ -42,6 +42,15 @@ export interface TextInputProps {
   'aria-haspopup'?: AriaAttributes['aria-haspopup'];
 }
 
+const getDate = (date: Date | string) =>
+  typeof date === 'string' ? parseISO(date) : date;
+
+const formatDateValue = (
+  type: string | undefined,
+  value: string | undefined,
+  pattern: string,
+) => (type === 'date' && value ? format(getDate(value), pattern) : value);
+
 const TextInput = ({
   label,
   inlineHelp,
@@ -67,19 +76,11 @@ const TextInput = ({
   const controlId = getControlId(id, name);
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
-  const getDate = (date: Date | string) =>
-    typeof date === 'string' ? parseISO(date) : date;
-
-  const formattedValue =
-    type === 'date' && _meta.value
-      ? format(getDate(_meta.value), 'yyyy-MM-dd')
-      : _meta.value;
+  const formattedValue = formatDateValue(type, _meta.value, 'yyyy-MM-dd');
+  const hasError = !!(_meta.touched && _meta.error);
 
   if (isSummary) {
-    const displayValue =
-      type === 'date' && _field.value
-        ? format(getDate(_field.value), 'dd/MM/yyyy')
-        : _field.value;
+    const displayValue = formatDateValue(type, _field.value, 'dd/MM/yyyy');
 
     return (
       <SummaryDisplay
@@ -92,41 +93,27 @@ const TextInput = ({
   }
 
   const handleOnBlur = (e: FocusEvent<HTMLInputElement>) => {
-    if (onBlur !== undefined) {
-      onBlur(e);
-    }
-    let newValue =
-      type === 'date' && _meta.value
-        ? format(getDate(_meta.value), 'yyyy-MM-dd')
-        : _meta.value;
-    newValue = (newValue as string | null | undefined)?.trim() ?? '';
+    onBlur?.(e);
+    const newValue = formattedValue?.trim() ?? '';
     void _fieldHelper.setValue(newValue);
     void _fieldHelper.setTouched(true);
   };
 
   const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (onChange !== undefined) {
-      onChange(e);
-    }
+    onChange?.(e);
     _field.onChange(e);
   };
 
   const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (onKeyDown !== undefined) {
-      onKeyDown(e);
-    }
+    onKeyDown?.(e);
   };
 
   const handleOnClick = (e: MouseEvent<HTMLInputElement>) => {
-    if (onClick !== undefined) {
-      onClick(e);
-    }
+    onClick?.(e);
   };
 
   const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
-    if (onFocus !== undefined) {
-      onFocus(e);
-    }
+    onFocus?.(e);
   };
 
   return (
@@ -151,14 +138,11 @@ const TextInput = ({
         className={`form-field form-text-input ${className}`}
         type={type ?? 'text'}
         {..._field}
-        isInvalid={!!(_meta.touched && _meta.error)}
+        isInvalid={hasError}
         {...omitUndefined({
           disabled,
           readOnly: readonly,
-          'aria-describedby':
-            _meta.touched && _meta.error
-              ? `${controlId}-validation-msg`
-              : helpId,
+          'aria-describedby': hasError ? `${controlId}-validation-msg` : helpId,
           autoComplete,
           placeholder: type === 'date' ? 'dd/mm/yyyy' : placeholder,
         })}
@@ -170,7 +154,7 @@ const TextInput = ({
         onFocus={handleFocus}
         {...rest}
       />
-      {_meta.touched && _meta.error ? (
+      {hasError ? (
         <Form.Control.Feedback
           type='invalid'
           id={`${controlId}-validation-msg`}
