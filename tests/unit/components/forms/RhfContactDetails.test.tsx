@@ -7,6 +7,7 @@ import { Title } from '@/api/web-api-client';
 import RhfContactDetails from '@/components/forms/CommonForms/RhfContactDetails';
 import { RhfHiddenRulesProvider } from '@/components/forms/RhfHidableField';
 import type { Hideable } from '@/components/forms/types';
+import { renderTitleOptionTexts } from '../../helpers/titleOptions';
 
 interface ContactValues {
   title: string;
@@ -155,6 +156,17 @@ describe('rhfContactDetails edit mode', () => {
     ]);
     expect(options).toContainEqual(['Other', 'Other']);
     expect(options).toHaveLength(Object.keys(Title).length + 1);
+  });
+
+  it('skips title options that do not map to a display title', () => {
+    expect.hasAssertions();
+
+    const options = renderTitleOptionTexts(Title.Dr, () =>
+      renderDetails(EMPTY_CONTACT),
+    );
+
+    expect(options).not.toContain('Dr');
+    expect(options).toContain('Mr');
   });
 
   it('writes typed and chosen values into the form', async () => {

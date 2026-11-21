@@ -1,9 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
+import type { ReactElement } from 'react';
 import { render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
 import { Title } from '@/api/web-api-client';
 import ContactDetails from '@/components/forms/CommonForms/ContactDetails';
-import * as apiEnumMappings from '@/utils/apiEnumMappings';
+import { renderTitleOptionTexts } from '../../helpers/titleOptions';
 
 const customLabels = {
   titleLabel: 'Salutation',
@@ -31,31 +32,42 @@ interface ContactFormValues {
 
 type ContactSubmit = (values: ContactFormValues) => void | Promise<void>;
 
+const EMPTY_CONTACT: ContactFormValues['contact'] = {
+  title: '',
+  titleOther: '',
+  firstName: '',
+  lastName: '',
+  role: '',
+  phone: '',
+  mobile: '',
+  email: '',
+};
+
+const renderInFormik = (
+  ui: ReactElement,
+  contact: Partial<ContactFormValues['contact']> = {},
+) => {
+  const values = { ...EMPTY_CONTACT, ...contact };
+
+  return render(
+    <Formik
+      initialValues={{
+        contact: values,
+        organisationAndContact: { contact: { title: values.title } },
+      }}
+      initialStatus={{ hidden: {} }}
+      onSubmit={vi.fn<ContactSubmit>()}
+    >
+      {ui}
+    </Formik>,
+  );
+};
+
 describe('contactDetails branch coverage', () => {
   it('renders all supplied labels in edit mode', () => {
     expect.hasAssertions();
 
-    render(
-      <Formik
-        initialValues={{
-          contact: {
-            title: '',
-            titleOther: '',
-            firstName: '',
-            lastName: '',
-            role: '',
-            phone: '',
-            mobile: '',
-            email: '',
-          },
-          organisationAndContact: { contact: { title: '' } },
-        }}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<ContactSubmit>()}
-      >
-        <ContactDetails name='contact' {...customLabels} />
-      </Formik>,
-    );
+    renderInFormik(<ContactDetails name='contact' {...customLabels} />);
 
     for (const label of Object.values(customLabels)) {
       expect(screen.getByText(label)).toBeInTheDocument();
@@ -71,26 +83,17 @@ describe('contactDetails branch coverage', () => {
   it('omits the empty-title fallback when a summary has a title', () => {
     expect.hasAssertions();
 
-    render(
-      <Formik
-        initialValues={{
-          contact: {
-            title: 'Dr',
-            titleOther: '',
-            firstName: 'Alex',
-            lastName: 'Smith',
-            role: 'Scientist',
-            phone: '0299999999',
-            mobile: '0400000000',
-            email: 'alex@example.test',
-          },
-          organisationAndContact: { contact: { title: 'Dr' } },
-        }}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<ContactSubmit>()}
-      >
-        <ContactDetails name='contact' isSummary {...customLabels} />
-      </Formik>,
+    renderInFormik(
+      <ContactDetails name='contact' isSummary {...customLabels} />,
+      {
+        title: 'Dr',
+        firstName: 'Alex',
+        lastName: 'Smith',
+        role: 'Scientist',
+        phone: '0299999999',
+        mobile: '0400000000',
+        email: 'alex@example.test',
+      },
     );
 
     expect(screen.getByText('Dr')).toBeInTheDocument();
@@ -99,40 +102,11 @@ describe('contactDetails branch coverage', () => {
   it('skips title options that do not map to a display title', () => {
     expect.hasAssertions();
 
-    const toTitle = vi
-      .spyOn(apiEnumMappings, 'toTitle')
-      .mockImplementation((value) =>
-        value === Title.Dr ? undefined : (value as Title),
-      );
+    const options = renderTitleOptionTexts(Title.Dr, () =>
+      renderInFormik(<ContactDetails name='contact' />),
+    );
 
-    try {
-      render(
-        <Formik
-          initialValues={{
-            contact: {
-              title: '',
-              titleOther: '',
-              firstName: '',
-              lastName: '',
-              role: '',
-              phone: '',
-              mobile: '',
-              email: '',
-            },
-            organisationAndContact: { contact: { title: '' } },
-          }}
-          initialStatus={{ hidden: {} }}
-          onSubmit={vi.fn<ContactSubmit>()}
-        >
-          <ContactDetails name='contact' />
-        </Formik>,
-      );
-
-      expect(
-        screen.getAllByRole('option').map((option) => option.textContent),
-      ).not.toContain('Dr');
-    } finally {
-      toTitle.mockRestore();
-    }
+    expect(options).not.toContain('Dr');
+    expect(options).toContain('Mr');
   });
 });
