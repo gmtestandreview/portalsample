@@ -6,7 +6,7 @@ description:
   Oxfmt.
 ---
 
-# Migrate-oxfmt
+# migrate-oxfmt
 
 This skill guides you through migrating a project from Prettier or Biome to
 [Oxfmt](https://oxc.rs/docs/guide/usage/formatter).
