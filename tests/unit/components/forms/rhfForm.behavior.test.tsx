@@ -40,11 +40,12 @@ const fields = (
 
 interface SetupOptions {
   initialValues?: Values;
-  validateHard?: typeof hard | undefined;
-  validateSoft?: typeof soft | undefined;
+  validateHard?: typeof hard;
+  validateSoft?: typeof soft;
   hidingFields?: Hideable;
   onSaveAndExit?: (values: Values) => Promise<unknown>;
   noExitHandler?: boolean;
+  noSchemas?: boolean;
 }
 
 const setup = (options: SetupOptions = {}) => {
@@ -56,11 +57,17 @@ const setup = (options: SetupOptions = {}) => {
     vi.fn<(values: Values) => Promise<unknown>>(() =>
       Promise.resolve(undefined),
     );
-  const baseProps = {
+  let validateHard: typeof hard | undefined;
+  let validateSoft: typeof soft | undefined;
+  if (!options.noSchemas) {
+    validateHard = 'validateHard' in options ? options.validateHard : hard;
+    validateSoft = 'validateSoft' in options ? options.validateSoft : soft;
+  }
+  const baseProps: RhfFormProps<Values> = {
     initialValues: options.initialValues ?? { name: '', other: '' },
-    validateHard: 'validateHard' in options ? options.validateHard : hard,
-    validateSoft: 'validateSoft' in options ? options.validateSoft : soft,
     onSubmit,
+    ...(validateHard === undefined ? {} : { validateHard }),
+    ...(validateSoft === undefined ? {} : { validateSoft }),
     ...(options.hidingFields ? { hidingFields: options.hidingFields } : {}),
     ...(options.noExitHandler ? {} : { onSaveAndExit }),
   };
@@ -255,8 +262,7 @@ describe('rhfForm shell behavior', () => {
     expect.hasAssertions();
 
     const { user, onSubmit } = setup({
-      validateHard: undefined,
-      validateSoft: undefined,
+      noSchemas: true,
     });
 
     await user.click(screen.getByTestId('next'));

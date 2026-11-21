@@ -13,12 +13,14 @@ describe('dOMPurify security regressions', () => {
     expect.hasAssertions();
 
     const root = document.createElement('div');
-    root.innerHTML = [
-      '<footer>',
-      '<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" onload="globalThis.exploited = true">',
-      '</footer>',
-      '<div>safe</div>',
-    ].join('');
+    const footer = document.createElement('footer');
+    const image = document.createElement('img');
+    image.setAttribute('src', 'data:image/gif;base64,R0lGODlhAQABAAAAACw=');
+    image.setAttribute('onload', 'globalThis.exploited = true');
+    footer.append(image);
+    const safeContent = document.createElement('div');
+    safeContent.textContent = 'safe';
+    root.append(footer, safeContent);
     const detachedImage = requireImage(root.querySelector('img'));
 
     DOMPurify.addHook('uponSanitizeElement', (node) => {
@@ -32,7 +34,9 @@ describe('dOMPurify security regressions', () => {
       IN_PLACE: true,
     });
 
-    expect(root.innerHTML).toBe('<div>safe</div>');
+    expect(root.children).toHaveLength(1);
+    expect(root.firstElementChild).toBe(safeContent);
+    expect(safeContent.textContent).toBe('safe');
     expect(detachedImage).not.toHaveAttribute('onload');
 
     DOMPurify.removeAllHooks();

@@ -118,7 +118,7 @@ vi.mock(
           />
         );
       },
-      serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
+      serializeToHtml: () => '<p>Serialized mock message</p>',
     }) satisfies __ExactMockModule<__TestMockModule142>) as unknown as __DynamicPartialMockFactory<__TestMockModule142>,
 );
 

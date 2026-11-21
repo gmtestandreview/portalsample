@@ -52,11 +52,11 @@ export const useIsRhfShell = (): boolean =>
 
 export interface RhfFormProps<T extends FormValues> {
   initialValues: T;
-  validateSoft?: ValidationSchema | undefined;
-  validateHard?: ValidationSchema | undefined;
-  hidingFields?: Hideable | undefined;
+  validateSoft?: ValidationSchema;
+  validateHard?: ValidationSchema;
+  hidingFields?: Hideable;
   onSubmit: (values: T) => undefined | Promise<unknown>;
-  onSaveAndExit?: ((values: T) => undefined | Promise<unknown>) | undefined;
+  onSaveAndExit?: (values: T) => undefined | Promise<unknown>;
   children?: ReactNode | ((api: RhfFormApi) => ReactNode);
 }
 

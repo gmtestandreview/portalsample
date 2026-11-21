@@ -107,6 +107,26 @@ describe('slateEditor helpers', () => {
     );
   });
 
+  it('escapes markup-looking text before applying inline mark formatting', () => {
+    expect.hasAssertions();
+
+    const html = serializeToHtml([
+      {
+        type: 'paragraph',
+        children: [
+          {
+            text: '<img src="x" onerror="alert(1)">',
+            bold: true,
+          },
+        ],
+      },
+    ]);
+
+    expect(html).toBe(
+      '<p><strong>&lt;img src=&quot;x&quot; onerror=&quot;alert(1)&quot;&gt;</strong></p>',
+    );
+  });
+
   it.each([
     ['<br>', true],
     ['<br/>', true],
@@ -305,6 +325,25 @@ describe('slateEditor document changes', () => {
     captured.editors.length = 0;
   };
 
+  const typePastCharacterLimit = async () => {
+    resetCapturedEditors();
+    render(
+      <SlateEditor
+        value={paragraph('abcdef')}
+        setValue={vi.fn<SetValue>()}
+        maxCharacters={5}
+      />,
+    );
+
+    const editor = currentEditor();
+    await placeCaret(editor, 6);
+    await applyEdit(() => {
+      Transforms.insertText(editor, 'g');
+    });
+
+    return editor;
+  };
+
   it('pushes edits back to the caller and updates the live character count', async () => {
     expect.hasAssertions();
 
@@ -336,20 +375,7 @@ describe('slateEditor document changes', () => {
   it('reports a message that grows past the limit while it is being typed', async () => {
     expect.hasAssertions();
 
-    resetCapturedEditors();
-    render(
-      <SlateEditor
-        value={paragraph('abcdef')}
-        setValue={vi.fn<SetValue>()}
-        maxCharacters={5}
-      />,
-    );
-
-    const editor = currentEditor();
-    await placeCaret(editor, 6);
-    await applyEdit(() => {
-      Transforms.insertText(editor, 'g');
-    });
+    await typePastCharacterLimit();
 
     expect(
       screen.getByText(
@@ -361,20 +387,7 @@ describe('slateEditor document changes', () => {
   it('does not stack the length error as typing continues past the limit', async () => {
     expect.hasAssertions();
 
-    resetCapturedEditors();
-    render(
-      <SlateEditor
-        value={paragraph('abcdef')}
-        setValue={vi.fn<SetValue>()}
-        maxCharacters={5}
-      />,
-    );
-
-    const editor = currentEditor();
-    await placeCaret(editor, 6);
-    await applyEdit(() => {
-      Transforms.insertText(editor, 'g');
-    });
+    const editor = await typePastCharacterLimit();
     await applyEdit(() => {
       Transforms.insertText(editor, 'h');
     });

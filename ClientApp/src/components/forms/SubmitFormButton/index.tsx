@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import IntentButton from '../IntentButton';
 import type { IntentButtonChildren } from '../IntentButton';
 import { useIsRhfShell, useRhfFormApi } from '../RhfForm';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 interface SubmitFormButtonProps {
   children?: IntentButtonChildren;
@@ -37,9 +38,8 @@ const FormikSubmitFormButton = ({
       label='Submit'
       className='me-3'
       onClick={onClick}
-    >
-      {children}
-    </IntentButton>
+      {...omitUndefined({ children })}
+    />
   );
 };
 
@@ -57,9 +57,8 @@ const RhfSubmitFormButton = ({ children }: Readonly<SubmitFormButtonProps>) => {
       label='Submit'
       className='me-3'
       onClick={onClick}
-    >
-      {children}
-    </IntentButton>
+      {...omitUndefined({ children })}
+    />
   );
 };
 

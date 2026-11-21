@@ -18,10 +18,31 @@ const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFilePath);
 const repoRoot = path.resolve(currentDir, '../../../../');
 
-const readRepoFile = (relativePath: string) =>
-  fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+const readRepoFile = (relativePath: string) => {
+  const normalizedPath = path.normalize(relativePath);
+  const resolvedPath = path.resolve(repoRoot, normalizedPath);
+  const relativeToRepoRoot = path.relative(repoRoot, resolvedPath);
+
+  if (
+    relativeToRepoRoot === '..' ||
+    relativeToRepoRoot.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relativeToRepoRoot)
+  ) {
+    throw new Error(
+      `Refusing to read outside repository root: ${relativePath}`,
+    );
+  }
+
+  return fs.readFileSync(resolvedPath, 'utf8');
+};
 
 describe('migration checklist static verifier', () => {
+  it('rejects paths outside the repository root', () => {
+    expect(() => readRepoFile('../AGENTS.md')).toThrow(
+      'Refusing to read outside repository root',
+    );
+  });
+
   it('pins the current audited route findings in dashboard and quotation', () => {
     const dashboard = readRepoFile('static/js/routes/dashboard/index.tsx');
     const quotation = readRepoFile('static/js/routes/quotation/index.tsx');

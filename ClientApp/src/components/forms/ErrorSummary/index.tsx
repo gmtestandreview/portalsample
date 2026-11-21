@@ -81,7 +81,7 @@ const keyToSentenceCase = (key: string, depth?: number, separator = '.') => {
   return sentenceBuilder;
 };
 
-const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
+const ErrorSummaryAlert = ({ children }: { children: React.ReactNode }) => (
   <Alert
     variant='danger'
     role='alert'
@@ -96,42 +96,31 @@ const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
         <i className='icon-warning' aria-hidden='true' />
       </div>
     </div>
-    <div>
-      <Alert.Heading as='h2' className='h5 fw-normal'>
-        The following issue(s) must be corrected before you can continue:
-      </Alert.Heading>
-      <ul>
-        {Object.entries(errors).map(([key, value]) =>
-          renderErrorListItem(
-            key,
-            `${keyToSentenceCase(key, 1)}${value}`,
-            disableLinkedError,
-          ),
-        )}
-      </ul>
-    </div>
+    <div>{children}</div>
   </Alert>
 );
 
+const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
+  <ErrorSummaryAlert>
+    <Alert.Heading as='h2' className='h5 fw-normal'>
+      The following issue(s) must be corrected before you can continue:
+    </Alert.Heading>
+    <ul>
+      {Object.entries(errors).map(([key, value]) =>
+        renderErrorListItem(
+          key,
+          `${keyToSentenceCase(key, 1)}${value}`,
+          disableLinkedError,
+        ),
+      )}
+    </ul>
+  </ErrorSummaryAlert>
+);
+
 const renderServerError = (error: string | React.JSX.Element) => (
-  <Alert
-    variant='danger'
-    role='alert'
-    aria-live='assertive'
-    id='form-error-summary'
-    data-testid='form-error-summary'
-    className='d-flex'
-    tabIndex={-1}
-  >
-    <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
-      <div className='bgCircle me-3'>
-        <i className='icon-warning' aria-hidden='true' />
-      </div>
-    </div>
-    <div>
-      <span className='text-danger fw-bold'>{error}</span>
-    </div>
-  </Alert>
+  <ErrorSummaryAlert>
+    <span className='text-danger fw-bold'>{error}</span>
+  </ErrorSummaryAlert>
 );
 
 const sanitizeErrorData = (
