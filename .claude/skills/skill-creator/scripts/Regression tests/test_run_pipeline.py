@@ -273,7 +273,7 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(main(['smoke', '--dry-run']), 2)
 
     def test_check_stops_after_first_failed_gate(self) -> None:
-        failed = subprocess.CompletedProcess(['python'], 1, 'out', 'err')
+        failed = Mock(spec=subprocess.CompletedProcess, returncode=1, stdout='out', stderr='err')
         with patch.object(subprocess, 'run', return_value=failed) as run:
             result = run_check(Path('.'))
         self.assertFalse(result['passed'])

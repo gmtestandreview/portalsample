@@ -28,11 +28,16 @@ import subprocess
 import sys
 import threading
 import time
-from typing import IO, cast
+from typing import IO, TypedDict, cast
 
 # Shell punctuation that must never reach an executed command. `&&` is the only
 # operator supported, and only to chain `cd DIR && ...` prefixes.
 _SHELL_PUNCTUATION = set('();<>|&')
+
+
+class ServerConfig(TypedDict):
+    cmd: str
+    port: int
 
 
 def _split_segments(command: str) -> list[list[str]]:
@@ -193,7 +198,7 @@ def start_server(
     on_windows = os.name == 'nt'
     # The caller selects the executable. The parser and resolver validate it before
     # launch in a separate group or session so stop_server can end the whole tree.
-    process = subprocess.Popen(
+    process = subprocess.Popen(  # nosec B603
         validated_argv,
         cwd=cwd,
         shell=False,
@@ -220,7 +225,7 @@ def _taskkill_path() -> str:
 def _kill_tree(process: subprocess.Popen[bytes]) -> None:
     if os.name == 'nt':
         # The executable comes from the OS and the PID comes from the process we started.
-        subprocess.run(
+        subprocess.run(  # nosec B603
             [_taskkill_path(), '/PID', str(process.pid), '/T', '/F'],
             shell=False,
             stdout=subprocess.DEVNULL,
@@ -257,19 +262,19 @@ def stop_server(process: subprocess.Popen[bytes]) -> None:
         process.wait()
 
 
-def is_server_ready(port, timeout=30):
+def is_server_ready(port: int, timeout: int = 30) -> bool:
     """Wait for server to be ready by polling the port."""
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
             with socket.create_connection(('localhost', port), timeout=1):
                 return True
-        except OSError, ConnectionRefusedError:
+        except OSError:
             time.sleep(0.5)
     return False
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description='Run command with one or more servers')
     parser.add_argument(
         '--server',
@@ -294,26 +299,30 @@ def main():
     )
 
     args = parser.parse_args()
+    server_commands = cast(list[str], args.servers)
+    server_ports = cast(list[int], args.ports)
+    command = cast(list[str], args.command)
+    timeout = cast(int, args.timeout)
 
     # Remove the '--' separator if present
-    if args.command and args.command[0] == '--':
-        args.command = args.command[1:]
+    if command and command[0] == '--':
+        command = command[1:]
 
-    if not args.command:
+    if not command:
         print('Error: No command specified to run')
         sys.exit(1)
 
     # Parse server configurations
-    if len(args.servers) != len(args.ports):
+    if len(server_commands) != len(server_ports):
         print('Error: Number of --server and --port arguments must match')
         sys.exit(1)
 
-    servers = []
-    for cmd, port in zip(args.servers, args.ports, strict=False):
+    servers: list[ServerConfig] = []
+    for cmd, port in zip(server_commands, server_ports, strict=False):
         servers.append({'cmd': cmd, 'port': port})
 
-    server_processes = []
-    tails = []
+    server_processes: list[subprocess.Popen[bytes]] = []
+    tails: list[OutputTail] = []
 
     try:
         # Start all servers
@@ -329,7 +338,7 @@ def main():
 
             # Wait for this server to be ready
             print(f'Waiting for server on port {server['port']}...')
-            if not is_server_ready(server['port'], timeout=args.timeout):
+            if not is_server_ready(server['port'], timeout=timeout):
                 print(tail.read()[-2000:].decode('utf-8', errors='replace'))
                 raise RuntimeError(
                     f'Server failed to start on port {server['port']} within {args.timeout}s'
@@ -340,9 +349,13 @@ def main():
         print(f'\nAll {len(servers)} server(s) ready')
 
         # The caller supplies a separate argument vector after the server options.
-        print(f'Running: {' '.join(args.command)}\n')
-        validated_argv = prepare_argv(args.command)
-        result = subprocess.run(validated_argv, shell=False, check=False)
+        print(f'Running: {' '.join(command)}\n')
+        validated_argv = prepare_argv(command)
+        result = subprocess.run(  # nosec B603
+            validated_argv,
+            shell=False,
+            check=False,
+        )
         sys.exit(result.returncode)
 
     finally:
