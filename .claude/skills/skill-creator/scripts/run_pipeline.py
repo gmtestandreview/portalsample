@@ -371,7 +371,8 @@ def run_check(skill_root: Path, workspace: Path | None = None) -> JsonObject:
     records: list[JsonObject] = []
     for command in commands:
         # These command vectors are defined above and execute without a shell.
-        result = subprocess.run(  # nosec B603
+        # nosec silences Bandit only; nosemgrep silences the Semgrep audit rules.
+        result = subprocess.run(  # nosec B603  # nosemgrep: python.lang.security.audit.dangerous-subprocess-use-audit.dangerous-subprocess-use-audit, python.lang.security.dangerous-subprocess-use.dangerous-subprocess-use
             command,
             cwd=skill_root,
             capture_output=True,
