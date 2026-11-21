@@ -315,7 +315,7 @@ describe('application documents', () => {
 
       await resetApplicationDocumentsState();
 
-      let release: (value: unknown) => void = () => undefined;
+      let release: (value: unknown) => void = (_value) => undefined;
       clients.patternApproval.methods.getAppDocuments.mockReturnValue(
         new Promise((resolve) => {
           release = resolve;
@@ -641,7 +641,7 @@ describe('application documents', () => {
 
       const { unmount } = await renderLoaded();
 
-      let failPoll: (reason: Error) => void = () => undefined;
+      let failPoll: (reason: Error) => void = (_reason) => undefined;
       clients.progress.methods.getProgress.mockReturnValue(
         new Promise((_resolve, reject) => {
           failPoll = reject;

@@ -226,7 +226,8 @@ describe('services we offer', () => {
 
       resetServicesWeOfferMocks();
 
-      let releaseServices: (value: ServiceDto[]) => void = () => undefined;
+      let releaseServices: (value: ServiceDto[]) => void = (_value) =>
+        undefined;
       clients.lookup.methods.getServices.mockReturnValue(
         new Promise<ServiceDto[]>((resolve) => {
           releaseServices = resolve;

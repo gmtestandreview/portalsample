@@ -154,8 +154,8 @@ export const rejectToken = (
  * and to unmount mid-flight so an unmount guard can be proven.
  */
 export const pendingToken = () => {
-  let settle: (accessToken?: string) => void = () => undefined;
-  let fail: (error?: Error) => void = () => undefined;
+  let settle: (accessToken?: string) => void = (_accessToken) => undefined;
+  let fail: (error?: Error) => void = (_error) => undefined;
 
   msalMocks.acquireTokenSilent.mockReturnValue(
     new Promise((resolve, reject) => {
