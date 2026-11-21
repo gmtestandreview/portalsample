@@ -28,23 +28,19 @@ const repositoryRoot = path.resolve(__dirname, '../../..');
  * pattern such as `*.test.{ts,tsx}` has to be carried across as two entries.
  */
 function expandBraces(pattern: string): string[] {
-  const match = /\{([^}]*)\}/.exec(pattern);
-  if (!match) {
+  const open = pattern.indexOf('{');
+  const close = open === -1 ? -1 : pattern.indexOf('}', open + 1);
+  if (close === -1) {
     return [pattern];
   }
 
-  const alternatives = match[1];
-  if (alternatives === undefined) {
-    throw new Error(`Expected brace alternatives in ${pattern}`);
-  }
+  const alternatives = pattern.slice(open + 1, close);
 
   return alternatives
     .split(',')
     .flatMap((alternative) =>
       expandBraces(
-        pattern.slice(0, match.index) +
-          alternative +
-          pattern.slice(match.index + match[0].length),
+        pattern.slice(0, open) + alternative + pattern.slice(close + 1),
       ),
     );
 }

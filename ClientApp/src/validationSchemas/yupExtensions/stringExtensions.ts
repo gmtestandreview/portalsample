@@ -441,7 +441,7 @@ export const registerYupStringExtensions = () => {
         YUP_DECIMALNUMBERSONLY_METHOD,
         errMsg,
         stringTest((value) => {
-          const regExStr = /^-?\d+\.?\d*$/;
+          const regExStr = /^-?(?:\d+\.\d*|\d+)$/;
 
           return regExStr.exec(value) !== null;
         }),
@@ -664,7 +664,7 @@ export const registerYupStringExtensions = () => {
         YUP_ATLEASTONECHAR_METHOD,
         errMsg,
         stringTest((value) => {
-          return /(?=.*[a-z])/i.exec(value) !== null;
+          return /[a-z]/i.test(value);
         }),
       );
     },

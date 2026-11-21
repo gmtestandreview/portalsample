@@ -26,8 +26,14 @@ const withoutQuery = (id: string): string => id.split('?', 1)[0] ?? id;
 const normalizedPath = (id: string): string =>
   withoutQuery(id).replaceAll('\\', '/');
 
-const normalizedDirectory = (path: string): string =>
-  normalizedPath(path).replace(/\/+$/u, '');
+const normalizedDirectory = (path: string): string => {
+  const normalized = normalizedPath(path);
+  let end = normalized.length;
+  while (end > 0 && normalized[end - 1] === '/') {
+    end -= 1;
+  }
+  return normalized.slice(0, end);
+};
 
 const isExecutable = (id: string): boolean =>
   EXECUTABLE_EXTENSIONS.some((extension) =>

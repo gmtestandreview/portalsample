@@ -59,7 +59,7 @@ const renderErrorListItem = (
 const keyToSentenceCase = (key: string, depth?: number, separator = '.') => {
   const formatKeyPart = (keyPart: string) => {
     const formatted = keyPart
-      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+      .replace(/[A-Z](?=[A-Z][a-z])/g, '$& ')
       .replace(/([a-z\d])([A-Z])/g, '$1 $2')
       .replace(/[_-]+/g, ' ')
       .trim();

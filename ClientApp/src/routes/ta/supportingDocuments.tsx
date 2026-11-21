@@ -367,7 +367,8 @@ const SupportingDocuments = (
   // e.g. 'supportingDocuments.form.documents' => 'documents'
   const errorName = name.slice(name.lastIndexOf('.') + 1);
   // e.g. 'supportingDocuments.form.documents' => 'supportingDocuments'
-  const rootErrorName = name.replace(/\..*$/s, '');
+  const firstDot = name.indexOf('.');
+  const rootErrorName = firstDot === -1 ? name : name.slice(0, firstDot);
   // Get Formik field errors for this field
   const rootError = Object.hasOwn(formikErrors, rootErrorName)
     ? Reflect.get(formikErrors, rootErrorName)
