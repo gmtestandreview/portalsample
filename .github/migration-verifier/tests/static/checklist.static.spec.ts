@@ -1,7 +1,7 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { readTextFileSync } from '../../../../tests/helpers/safeTestFilesystem';
 import {
   hasBareUseRef,
   hasBrokenNotificationSelector,
@@ -18,28 +18,13 @@ const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFilePath);
 const repoRoot = path.resolve(currentDir, '../../../../');
 
-const readRepoFile = (relativePath: string) => {
-  const normalizedPath = path.normalize(relativePath);
-  const resolvedPath = path.resolve(repoRoot, normalizedPath);
-  const relativeToRepoRoot = path.relative(repoRoot, resolvedPath);
-
-  if (
-    relativeToRepoRoot === '..' ||
-    relativeToRepoRoot.startsWith(`..${path.sep}`) ||
-    path.isAbsolute(relativeToRepoRoot)
-  ) {
-    throw new Error(
-      `Refusing to read outside repository root: ${relativePath}`,
-    );
-  }
-
-  return fs.readFileSync(resolvedPath, 'utf8');
-};
+const readRepoFile = (relativePath: string) =>
+  readTextFileSync(relativePath, repoRoot);
 
 describe('migration checklist static verifier', () => {
   it('rejects paths outside the repository root', () => {
     expect(() => readRepoFile('../AGENTS.md')).toThrow(
-      'Refusing to read outside repository root',
+      'outside the allowed root',
     );
   });
 

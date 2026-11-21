@@ -18,11 +18,16 @@ import type { TaSummarySectionProps } from './types';
 const ROOT = 'applicationAndInstrument';
 const NOT_SELECTED = 'Not selected';
 
+const toArray = (value: string[] | string | undefined): string[] => {
+  if (Array.isArray(value)) return value;
+  return value ? [value] : [];
+};
+
 const subOptionLabels = (
   value: string[] | string | undefined,
   options: { label: string; value: string }[],
 ) => {
-  const selected = Array.isArray(value) ? value : value ? [value] : [];
+  const selected = toArray(value);
   return (
     selected
       .map((v) => options.find((o) => o.value === v)?.label)
