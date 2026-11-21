@@ -130,6 +130,20 @@ const baseRequest: PatternApprovalDashboardDetailsDto = {
   unreadMessageCount: 2,
 };
 
+// Builds a copy without the named keys, so fixtures can model an absent field
+// (exactOptionalPropertyTypes forbids an explicit `undefined`) without
+// declaring unused rest-sibling bindings.
+const omitKeys = <T extends object, K extends keyof T>(
+  source: T,
+  ...keys: readonly K[]
+): Omit<T, K> => {
+  const copy: Omit<T, K> = { ...source };
+  for (const key of keys) {
+    Reflect.deleteProperty(copy, key);
+  }
+  return copy;
+};
+
 const renderPaRequestItem = (
   request: PatternApprovalDashboardDetailsDto,
   tab = DashboardTab.Requests,
@@ -276,12 +290,12 @@ describe('pa request item', () => {
     resetPaRequestItemMocks();
     const user = userEvent.setup();
     const setDeleteSuccess = vi.fn<(success: boolean) => void>();
-    const {
-      title: _title,
-      lastUpdated: _lastUpdated,
-      unreadMessageCount: _unreadMessageCount,
-      ...draftRequest
-    } = baseRequest;
+    const draftRequest = omitKeys(
+      baseRequest,
+      'title',
+      'lastUpdated',
+      'unreadMessageCount',
+    );
 
     renderPaRequestItem(
       {
@@ -422,10 +436,10 @@ describe('pa request item', () => {
 
       resetPaRequestItemMocks();
       const user = userEvent.setup();
-      const {
-        portalReferenceId: _basePortalReferenceId,
-        ...requestWithoutPortalReferenceId
-      } = baseRequest;
+      const requestWithoutPortalReferenceId = omitKeys(
+        baseRequest,
+        'portalReferenceId',
+      );
       const request =
         portalReferenceId === undefined
           ? requestWithoutPortalReferenceId
@@ -454,8 +468,7 @@ describe('pa request item', () => {
 
     resetPaRequestItemMocks();
     const user = userEvent.setup();
-    const { portalReferenceId: _portalReferenceId, ...requestWithoutPortalId } =
-      baseRequest;
+    const requestWithoutPortalId = omitKeys(baseRequest, 'portalReferenceId');
 
     renderPaRequestItem({
       ...requestWithoutPortalId,
@@ -476,7 +489,7 @@ describe('pa request item', () => {
     expect.hasAssertions();
 
     resetPaRequestItemMocks();
-    const { status: _status, ...requestWithoutStatus } = baseRequest;
+    const requestWithoutStatus = omitKeys(baseRequest, 'status');
     renderPaRequestItem({
       ...requestWithoutStatus,
       unreadMessageCount: undefined,

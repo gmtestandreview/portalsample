@@ -475,6 +475,18 @@ const BASE_USER_PROFILE = {
   filtersChanged: false,
 };
 
+// Builds a copy without the named key, so fixtures can model an absent field
+// (exactOptionalPropertyTypes forbids an explicit `undefined`) without
+// declaring an unused rest-sibling binding.
+const omitKey = <T extends object, K extends keyof T>(
+  source: T,
+  key: K,
+): Omit<T, K> => {
+  const copy: Omit<T, K> = { ...source };
+  Reflect.deleteProperty(copy, key);
+  return copy;
+};
+
 const BASE: AccountDetails = {
   organisation: 'Acme',
   trading: 'Acme',
@@ -1146,8 +1158,10 @@ describe('dashboard', () => {
 
     resetDashboardMocks();
 
-    const { filterCurrentPage: _filterCurrentPage, ...profileWithoutPaging } =
-      BASE_USER_PROFILE;
+    const profileWithoutPaging = omitKey(
+      BASE_USER_PROFILE,
+      'filterCurrentPage',
+    );
     mockAccountDetails = {
       ...BASE,
       userProfile: {

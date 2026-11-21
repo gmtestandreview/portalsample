@@ -454,6 +454,18 @@ const BASE_FILTERS = {
   filterActiveTab: 'drafts',
   filterSearchText: '',
 };
+
+// Builds a copy without the named key, so fixtures can model an absent field
+// (exactOptionalPropertyTypes forbids an explicit `undefined`) without
+// declaring an unused rest-sibling binding.
+const omitKey = <T extends object, K extends keyof T>(
+  source: T,
+  key: K,
+): Omit<T, K> => {
+  const copy: Omit<T, K> = { ...source };
+  Reflect.deleteProperty(copy, key);
+  return copy;
+};
 const EMPTY_RESPONSE = {
   currentPage: 1,
   items: [],
@@ -1179,8 +1191,7 @@ describe('pattern/type approval dashboard', () => {
     // the restore (updatedP) and the fetch (initialFilters).
     // Omit `filterCurrentPage` entirely (exactOptionalPropertyTypes forbids an
     // explicit `undefined`); an absent key drives the same `?? 1` fallback.
-    const { filterCurrentPage: _omitPage, ...filtersWithoutPage } =
-      BASE_FILTERS;
+    const filtersWithoutPage = omitKey(BASE_FILTERS, 'filterCurrentPage');
     mockAccountDetails = {
       ...BASE_ACCOUNT,
       userProfile: {
