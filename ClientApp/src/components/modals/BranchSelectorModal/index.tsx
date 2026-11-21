@@ -76,6 +76,101 @@ const BranchSelectorModal = () => {
     );
   };
 
+  const renderTableBody = () => {
+    if (isModalDataLoading) {
+      return (
+        <tbody key='tBodyKey'>
+          <tr>
+            <td colSpan={3}>
+              <BlockUISpinner partial>
+                <p>Loading data...</p>
+              </BlockUISpinner>
+            </td>
+          </tr>
+        </tbody>
+      );
+    }
+    if (branches !== undefined && branches.length > 0) {
+      return (
+        <tbody key='tBodyKey'>
+          {branches.map((branch, index) => (
+            <tr key={branch.organisationId}>
+              <td className='pe-0' data-header='Set as default'>
+                {/* To do - replace this with RadioButton component */}
+                <div className='form-field-container mb-0' tabIndex={-1}>
+                  <div className='radio-button'>
+                    <input
+                      type='radio'
+                      id={`branch${index}`}
+                      name='branchSelector'
+                      value={branch.organisationId}
+                      checked={branch.organisationId === selectedBranch}
+                      onChange={(e) => {
+                        handleChange(
+                          e,
+                          branch.organisationId,
+                          branch.name,
+                          branch.businessOrTradingName,
+                          branch.branchOrLocationName,
+                          branch.abn,
+                          branch.crmGuid,
+                        );
+                      }}
+                    />
+                    <label
+                      htmlFor={`branch${index}`}
+                      className='form-field flex-column'
+                      title='Set as default'
+                    >
+                      {/* <span className='visually-hidden'>
+                                                                                    {'Set as default '}
+                                                                                </span> */}
+                      <span className='text-break'>
+                        {branch.businessListName}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </td>
+              <td data-header='Location' className='text-break'>
+                <span>
+                  {[branch.streetAddress?.suburb, branch.streetAddress?.state]
+                    .filter(Boolean)
+                    .join(', ')}
+                </span>
+              </td>
+              {branchSelectionModalMode ===
+                BranchSelectionModalMode.SelectAndEditOrg && (
+                <td>
+                  <span>
+                    {branch.organisationId !== undefined && (
+                      <Link
+                        to={`/update-organisation/${branch.organisationId}`}
+                        onClick={handleClose}
+                        aria-label='Edit details for this branch/location'
+                      >
+                        Edit
+                      </Link>
+                    )}
+                  </span>
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      );
+    }
+    return (
+      <tbody key='tBodyKey'>
+        <tr>
+          <td colSpan={3}>
+            No branch/locations available. Please create a new one.
+          </td>
+        </tr>
+      </tbody>
+    );
+  };
+
   return (
     <Modal
       size='lg'
@@ -220,101 +315,7 @@ const BranchSelectorModal = () => {
                       )}
                     </tr>
                   </thead>
-                  {isModalDataLoading ? (
-                    <tbody key='tBodyKey'>
-                      <tr>
-                        <td colSpan={3}>
-                          <BlockUISpinner partial>
-                            <p>Loading data...</p>
-                          </BlockUISpinner>
-                        </td>
-                      </tr>
-                    </tbody>
-                  ) : branches !== undefined && branches.length > 0 ? (
-                    <tbody key='tBodyKey'>
-                      {branches.map((branch, index) => (
-                        <tr key={branch.organisationId}>
-                          <td className='pe-0' data-header='Set as default'>
-                            {/* To do - replace this with RadioButton component */}
-                            <div
-                              className='form-field-container mb-0'
-                              tabIndex={-1}
-                            >
-                              <div className='radio-button'>
-                                <input
-                                  type='radio'
-                                  id={`branch${index}`}
-                                  name='branchSelector'
-                                  value={branch.organisationId}
-                                  checked={
-                                    branch.organisationId === selectedBranch
-                                  }
-                                  onChange={(e) => {
-                                    handleChange(
-                                      e,
-                                      branch.organisationId,
-                                      branch.name,
-                                      branch.businessOrTradingName,
-                                      branch.branchOrLocationName,
-                                      branch.abn,
-                                      branch.crmGuid,
-                                    );
-                                  }}
-                                />
-                                <label
-                                  htmlFor={`branch${index}`}
-                                  className='form-field flex-column'
-                                  title='Set as default'
-                                >
-                                  {/* <span className='visually-hidden'>
-                                                                                    {'Set as default '}
-                                                                                </span> */}
-                                  <span className='text-break'>
-                                    {branch.businessListName}
-                                  </span>
-                                </label>
-                              </div>
-                            </div>
-                          </td>
-                          <td data-header='Location' className='text-break'>
-                            <span>
-                              {[
-                                branch.streetAddress?.suburb,
-                                branch.streetAddress?.state,
-                              ]
-                                .filter(Boolean)
-                                .join(', ')}
-                            </span>
-                          </td>
-                          {branchSelectionModalMode ===
-                            BranchSelectionModalMode.SelectAndEditOrg && (
-                            <td>
-                              <span>
-                                {branch.organisationId !== undefined && (
-                                  <Link
-                                    to={`/update-organisation/${branch.organisationId}`}
-                                    onClick={handleClose}
-                                    aria-label='Edit details for this branch/location'
-                                  >
-                                    Edit
-                                  </Link>
-                                )}
-                              </span>
-                            </td>
-                          )}
-                        </tr>
-                      ))}
-                    </tbody>
-                  ) : (
-                    <tbody key='tBodyKey'>
-                      <tr>
-                        <td colSpan={3}>
-                          No branch/locations available. Please create a new
-                          one.
-                        </td>
-                      </tr>
-                    </tbody>
-                  )}
+                  {renderTableBody()}
                 </Table>
               </fieldset>
             </div>

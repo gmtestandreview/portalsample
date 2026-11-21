@@ -42,8 +42,9 @@ const OptionSummary = ({
   value: string | undefined;
   options: Option[];
   containerClassName?: string;
-}>) =>
-  value ? (
+}>) => {
+  if (!value) return null;
+  return (
     <SummaryDisplay
       label={legend}
       id={id}
@@ -54,7 +55,8 @@ const OptionSummary = ({
         'No details added'
       }
     />
-  ) : null;
+  );
+};
 
 const AddressSummary = ({
   label,
