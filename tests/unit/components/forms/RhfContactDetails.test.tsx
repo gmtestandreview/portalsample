@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -7,7 +7,7 @@ import { Title } from '@/api/web-api-client';
 import RhfContactDetails from '@/components/forms/CommonForms/RhfContactDetails';
 import { RhfHiddenRulesProvider } from '@/components/forms/RhfHidableField';
 import type { Hideable } from '@/components/forms/types';
-import * as apiEnumMappings from '@/utils/apiEnumMappings';
+import { renderTitleOptionTexts } from '../../helpers/titleOptions';
 
 interface ContactValues {
   title: string;
@@ -161,21 +161,12 @@ describe('rhfContactDetails edit mode', () => {
   it('skips title options that do not map to a display title', () => {
     expect.hasAssertions();
 
-    const toTitle = vi
-      .spyOn(apiEnumMappings, 'toTitle')
-      .mockImplementation((value) =>
-        value === Title.Dr ? undefined : (value as Title),
-      );
+    const options = renderTitleOptionTexts(Title.Dr, () =>
+      renderDetails(EMPTY_CONTACT),
+    );
 
-    try {
-      renderDetails(EMPTY_CONTACT);
-
-      expect(
-        screen.getAllByRole('option').map((option) => option.textContent),
-      ).not.toContain('Dr');
-    } finally {
-      toTitle.mockRestore();
-    }
+    expect(options).not.toContain('Dr');
+    expect(options).toContain('Mr');
   });
 
   it('writes typed and chosen values into the form', async () => {
