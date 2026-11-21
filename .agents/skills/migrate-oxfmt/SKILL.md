@@ -6,8 +6,6 @@ description:
   Oxfmt.
 ---
 
-# Migrate-oxfmt
-
 This skill guides you through migrating a project from Prettier or Biome to
 [Oxfmt](https://oxc.rs/docs/guide/usage/formatter).
 
@@ -306,7 +304,7 @@ check
   Prettier's output with options or ignore comments.
 - Not listed, and not explained by a config difference (e.g. `printWidth`):
   likely an Oxfmt bug. Tell the user, who can report it at
-  <https://github.com/oxc-project/oxc/issues>.
+  https://github.com/oxc-project/oxc/issues.
 
 ## Tips
 
