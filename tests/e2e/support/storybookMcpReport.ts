@@ -35,7 +35,7 @@ const sectionLines = (markdown: string, heading: string): string[] => {
   );
 
   return lines
-    .slice(headingLine + 1, nextHeading === -1 ? undefined : nextHeading)
+    .slice(headingLine + 1, nextHeading === -1 ? lines.length : nextHeading)
     .map((line) => line.trim())
     .filter((line) => line.startsWith('- '))
     .map((line) => line.slice(2).trim())

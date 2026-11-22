@@ -77,12 +77,14 @@ const stepBlocks = (contents: string): string[] => {
   });
 
   return starts.map((start, index) =>
-    lines.slice(start, starts[index + 1]).join('\n'),
+    lines.slice(start, starts[index + 1] ?? lines.length).join('\n'),
   );
 };
 
 const hasAlwaysGuard = (step: string): boolean =>
-  /^\s*if:\s*always\(\)(?:\s*&&|\s*$)/m.test(step);
+  step
+    .split('\n')
+    .some((line) => /^\s*if:\s*always\(\)(?:\s*&&|\s*$)/.test(line));
 
 const withoutComments = (contents: string): string =>
   contents
@@ -91,11 +93,29 @@ const withoutComments = (contents: string): string =>
     .join('\n');
 
 const isWordCharacter = (character: string | undefined): boolean =>
-  character !== undefined && /[A-Za-z0-9_]/.test(character);
+  character !== undefined && /\w/.test(character);
+
+const hasScannerReferenceAfter = (line: string, start: number): boolean => {
+  const scannerReference = '@sonar/scan';
+  let searchStart = start;
+
+  while (searchStart < line.length) {
+    const scannerIndex = line.indexOf(scannerReference, searchStart);
+
+    if (scannerIndex === -1) return false;
+
+    if (!isWordCharacter(line[scannerIndex + scannerReference.length])) {
+      return true;
+    }
+
+    searchStart = scannerIndex + scannerReference.length;
+  }
+
+  return false;
+};
 
 const hasNpxScannerInvocation = (line: string): boolean => {
   const npx = 'npx';
-  const scannerReference = '@sonar/scan';
   let searchStart = 0;
 
   while (searchStart < line.length) {
@@ -105,21 +125,10 @@ const hasNpxScannerInvocation = (line: string): boolean => {
 
     if (
       !isWordCharacter(line[npxIndex - 1]) &&
-      !isWordCharacter(line[npxIndex + npx.length])
+      !isWordCharacter(line[npxIndex + npx.length]) &&
+      hasScannerReferenceAfter(line, npxIndex + npx.length)
     ) {
-      let scannerSearchStart = npxIndex + npx.length;
-
-      while (scannerSearchStart < line.length) {
-        const scannerIndex = line.indexOf(scannerReference, scannerSearchStart);
-
-        if (scannerIndex === -1) break;
-
-        if (!isWordCharacter(line[scannerIndex + scannerReference.length])) {
-          return true;
-        }
-
-        scannerSearchStart = scannerIndex + scannerReference.length;
-      }
+      return true;
     }
 
     searchStart = npxIndex + npx.length;
@@ -622,11 +631,13 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   it('uses the official scanner action at the intended immutable commit', () => {
     expect.hasAssertions();
 
-    const scannerReferences = [
-      ...block.matchAll(
-        /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm,
-      ),
-    ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
+    const scannerReferences = block.split('\n').flatMap((line) => {
+      const reference =
+        /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/.exec(
+          line,
+        )?.[1];
+      return reference === undefined ? [] : [reference];
+    });
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toStrictEqual([

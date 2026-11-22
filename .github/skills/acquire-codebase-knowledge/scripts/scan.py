@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""scan.py — Collect project discovery information for the acquire-codebase-knowledge skill.
+"""
+scan.py — Collect project discovery information for the acquire-codebase-knowledge skill.
 Run from the project root directory.
 
 Usage: python3 scan.py [OPTIONS]
@@ -14,12 +15,14 @@ Exit codes:
 """
 
 import argparse
-import json
 import os
-import re
 import subprocess
 import sys
+from collections import Counter
+from collections.abc import Generator
+from contextlib import contextmanager
 from pathlib import Path
+from typing import TextIO, TypedDict
 
 TREE_LIMIT = 200
 TREE_MAX_DEPTH = 3
@@ -27,6 +30,9 @@ TODO_LIMIT = 60
 MANIFEST_PREVIEW_LINES = 80
 RECENT_COMMITS_LIMIT = 20
 CHURN_LIMIT = 20
+GIT_RECENT_COMMITS_TITLE = 'GIT RECENT COMMITS (last 20)'
+HIGH_CHURN_FILES_TITLE = 'HIGH-CHURN FILES (last 90 days, top 20)'
+NONE_FOUND = 'None found.'
 
 EXCLUDE_DIRS = {
     'node_modules',
@@ -53,9 +59,11 @@ EXCLUDE_DIRS = {
     'obj',
 }
 
+PACKAGE_JSON = 'package.json'
+
 MANIFESTS = [
     # JavaScript/Node.js
-    'package.json',
+    PACKAGE_JSON,
     'package-lock.json',
     'yarn.lock',
     'pnpm-lock.yaml',
@@ -358,6 +366,16 @@ PERFORMANCE_MARKERS = [
 ]
 
 
+class CodeMetrics(TypedDict):
+    """Typed code metrics returned by the scanner."""
+
+    total_files: int
+    by_extension: dict[str, int]
+    by_language: dict[str, int]
+    total_lines: int
+    largest_files: list[str]
+
+
 def parse_args():
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
@@ -376,9 +394,9 @@ def should_exclude(path: Path) -> bool:
 
 def get_directory_tree(max_depth: int = TREE_MAX_DEPTH) -> list[str]:
     """Get directory tree up to max_depth."""
-    files = []
+    files: list[str] = []
 
-    def walk(path: Path, depth: int):
+    def walk(path: Path, depth: int) -> None:
         if depth > max_depth or should_exclude(path):
             return
         try:
@@ -389,7 +407,7 @@ def get_directory_tree(max_depth: int = TREE_MAX_DEPTH) -> list[str]:
                 files.append(str(rel_path))
                 if item.is_dir():
                     walk(item, depth + 1)
-        except PermissionError, OSError:
+        except OSError:
             pass
 
     walk(Path.cwd(), 0)
@@ -398,7 +416,7 @@ def get_directory_tree(max_depth: int = TREE_MAX_DEPTH) -> list[str]:
 
 def find_manifest_files() -> list[str]:
     """Find manifest files matching patterns."""
-    found = []
+    found: list[str] = []
     for pattern in MANIFESTS:
         if '*' in pattern:
             # Handle glob patterns
@@ -419,7 +437,7 @@ def read_file_preview(filepath: Path, max_lines: int = MANIFEST_PREVIEW_LINES) -
             lines = f.readlines()
 
         if not lines:
-            return 'None found.'
+            return NONE_FOUND
 
         preview = ''.join(lines[:max_lines])
         if len(lines) > max_lines:
@@ -435,8 +453,8 @@ def find_entry_points() -> list[str]:
     ENTRY_CANDIDATES may include glob patterns such as ``cmd/*/main.go``.
     Expand those patterns so common multi-binary layouts are detected.
     """
-    found = []
-    seen = set()
+    found: list[str] = []
+    seen: set[str] = set()
 
     for candidate in ENTRY_CANDIDATES:
         matches = (
@@ -459,16 +477,16 @@ def find_entry_points() -> list[str]:
 
 def find_lint_config() -> list[str]:
     """Find linting and formatting config files."""
-    found = []
+    found: list[str] = []
     for filename in LINT_FILES:
         if Path(filename).exists():
             found.append(filename)
     return found
 
 
-def find_env_templates() -> list[tuple]:
+def find_env_templates() -> list[tuple[str, Path]]:
     """Find environment variable templates."""
-    found = []
+    found: list[tuple[str, Path]] = []
     for filename in ENV_TEMPLATES:
         path = Path(filename)
         if path.exists():
@@ -476,38 +494,35 @@ def find_env_templates() -> list[tuple]:
     return found
 
 
+def find_todos_in_file(filepath: Path, patterns: list[str]) -> list[str]:
+    """Find TODO-style comments in one source file."""
+    todos: list[str] = []
+    try:
+        with open(filepath, encoding='utf-8', errors='replace') as f:
+            for line_num, line in enumerate(f, 1):
+                if any(pattern in line for pattern in patterns):
+                    rel_path = filepath.relative_to(Path.cwd())
+                    todos.append(f'{rel_path}:{line_num}: {line.strip()}')
+    except Exception:
+        pass
+    return todos
+
+
 def search_todos() -> list[str]:
     """Search for TODO/FIXME/HACK comments."""
-    todos = []
+    todos: list[str] = []
     patterns = ['TODO', 'FIXME', 'HACK']
-    '|'.join(EXCLUDE_DIRS | {'test', 'tests', '__tests__', 'spec', '__mocks__', 'fixtures'})
+    todo_exclude_dirs = {'test', 'tests', '__tests__', 'spec', '__mocks__', 'fixtures'}
 
     try:
         for root, dirs, files in os.walk(Path.cwd()):
-            # Remove excluded directories from dirs to prevent os.walk from descending
-            dirs[:] = [
-                d
-                for d in dirs
-                if d not in EXCLUDE_DIRS
-                and d not in {'test', 'tests', '__tests__', 'spec', '__mocks__', 'fixtures'}
-            ]
+            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS and d not in todo_exclude_dirs]
 
             for file in files:
-                # Check file extension
                 ext = Path(file).suffix.lstrip('.')
-                if ext not in SOURCE_EXTS:
-                    continue
-
-                filepath = Path(root) / file
-                try:
-                    with open(filepath, encoding='utf-8', errors='replace') as f:
-                        for line_num, line in enumerate(f, 1):
-                            for pattern in patterns:
-                                if pattern in line:
-                                    rel_path = filepath.relative_to(Path.cwd())
-                                    todos.append(f'{rel_path}:{line_num}: {line.strip()}')
-                except Exception:
-                    pass
+                if ext in SOURCE_EXTS:
+                    filepath = Path(root) / file
+                    todos.extend(find_todos_in_file(filepath, patterns))
     except Exception:
         pass
 
@@ -542,10 +557,10 @@ def get_git_churn() -> list[str]:
         if result.returncode == 0:
             files = [f.strip() for f in result.stdout.split('\n') if f.strip()]
             # Count occurrences
-            from collections import Counter
-
-            counts = Counter(files)
-            churn = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+            counts: Counter[str] = Counter(files)
+            churn: list[tuple[str, int]] = sorted(
+                counts.items(), key=lambda item: item[1], reverse=True
+            )
             return [f'{count:4d} {filename}' for filename, count in churn[:CHURN_LIMIT]]
         return []
     except Exception:
@@ -565,7 +580,7 @@ def is_git_repo() -> bool:
 
 def detect_monorepo() -> list[str]:
     """Detect monorepo signals."""
-    signals = []
+    signals: list[str] = []
 
     for filename in MONOREPO_FILES:
         if Path(filename).exists():
@@ -576,13 +591,13 @@ def detect_monorepo() -> list[str]:
             signals.append(f'Sub-package directory found: {dirname}/')
 
     # Check package.json workspaces
-    if Path('package.json').exists():
+    if Path(PACKAGE_JSON).exists():
         try:
-            with open('package.json') as f:
+            with open(PACKAGE_JSON) as f:
                 content = f.read()
                 if '"workspaces"' in content:
                     signals.append(
-                        "package.json has 'workspaces' field (npm/yarn workspaces monorepo)"
+                        f"{PACKAGE_JSON} has 'workspaces' field (npm/yarn workspaces monorepo)"
                     )
         except Exception:
             pass
@@ -592,7 +607,7 @@ def detect_monorepo() -> list[str]:
 
 def detect_ci_cd_pipelines() -> list[str]:
     """Detect CI/CD pipeline configurations."""
-    pipelines = []
+    pipelines: list[str] = []
 
     for config_path, pipeline_name in CI_CD_CONFIGS.items():
         path = Path(config_path)
@@ -609,6 +624,88 @@ def detect_ci_cd_pipelines() -> list[str]:
     return pipelines
 
 
+def _container_config_paths(config: str) -> tuple[bool, list[Path]]:
+    """Expand a container config glob and return whether globbing was used."""
+    uses_glob = any(char in config for char in '*?[')
+    paths = list(Path.cwd().glob(config)) if uses_glob else [Path(config)]
+    return uses_glob, paths
+
+
+def _container_relative_path(path: Path) -> str:
+    """Get a display path relative to the project root when possible."""
+    if path.is_absolute():
+        return str(path.relative_to(Path.cwd()))
+    return str(path)
+
+
+def _detect_container_file(rel_path: str, config: str, uses_glob: bool) -> list[str]:
+    """Classify a detected container file."""
+    rel_name = Path(rel_path).name
+
+    if 'Dockerfile' in rel_name:
+        message = (
+            f'Container: Docker found ({rel_path})' if uses_glob else 'Container: Docker found'
+        )
+        return [message]
+    if 'docker-compose' in rel_name:
+        message = (
+            f'Orchestration: Docker Compose found ({rel_path})'
+            if uses_glob
+            else 'Orchestration: Docker Compose found'
+        )
+        return [message]
+    if rel_path.endswith(('.yaml', '.yml')):
+        message = (
+            f'Container/Orchestration: {rel_path}'
+            if uses_glob
+            else f'Container/Orchestration: {config}'
+        )
+        return [message]
+    return []
+
+
+def _detect_container_directory(path: Path, rel_path: str) -> list[str]:
+    """Classify a detected container or orchestration directory."""
+    messages: list[str] = []
+
+    if rel_path in ['k8s', 'kubernetes']:
+        messages.append('Orchestration: Kubernetes configs found')
+
+    try:
+        if list(path.glob('*.yml')) or list(path.glob('*.yaml')):
+            messages.append(f'Container/Orchestration: {rel_path}/ directory found')
+    except Exception:
+        pass
+
+    return messages
+
+
+def _detect_container_matches(config: str) -> list[str]:
+    """Detect and deduplicate messages for one container config."""
+    matches: list[str] = []
+    seen: set[str] = set()
+    uses_glob, paths = _container_config_paths(config)
+
+    for path in paths:
+        if not path.exists() or should_exclude(path):
+            continue
+
+        rel_path = _container_relative_path(path)
+        if path.is_file():
+            messages = _detect_container_file(rel_path, config, uses_glob)
+        elif path.is_dir():
+            messages = _detect_container_directory(path, rel_path)
+        else:
+            messages = []
+
+        for message in messages:
+            if message not in seen:
+                matches.append(message)
+                seen.add(message)
+
+    return matches
+
+
 def detect_containers() -> list[str]:
     """Detect containerization and orchestration configs.
 
@@ -616,59 +713,21 @@ def detect_containers() -> list[str]:
     Expand patterns before classifying files so environment-specific Dockerfiles
     are detected.
     """
-    containers = []
-    seen = set()
-
-    def add(message: str) -> None:
-        if message not in seen:
-            containers.append(message)
-            seen.add(message)
+    containers: list[str] = []
+    seen: set[str] = set()
 
     for config in CONTAINER_FILES:
-        uses_glob = any(char in config for char in '*?[')
-        paths = Path.cwd().glob(config) if uses_glob else [Path(config)]
-
-        for path in paths:
-            if not path.exists() or should_exclude(path):
-                continue
-
-            rel_path = str(path.relative_to(Path.cwd())) if path.is_absolute() else str(path)
-            rel_name = Path(rel_path).name
-
-            if path.is_file():
-                if 'Dockerfile' in rel_name:
-                    add(
-                        f'Container: Docker found ({rel_path})'
-                        if uses_glob
-                        else 'Container: Docker found'
-                    )
-                elif 'docker-compose' in rel_name:
-                    add(
-                        f'Orchestration: Docker Compose found ({rel_path})'
-                        if uses_glob
-                        else 'Orchestration: Docker Compose found'
-                    )
-                elif rel_path.endswith(('.yaml', '.yml')):
-                    add(
-                        f'Container/Orchestration: {rel_path}'
-                        if uses_glob
-                        else f'Container/Orchestration: {config}'
-                    )
-            elif path.is_dir():
-                if rel_path in ['k8s', 'kubernetes']:
-                    add('Orchestration: Kubernetes configs found')
-                try:
-                    if list(path.glob('*.yml')) or list(path.glob('*.yaml')):
-                        add(f'Container/Orchestration: {rel_path}/ directory found')
-                except Exception:
-                    pass
+        for message in _detect_container_matches(config):
+            if message not in seen:
+                containers.append(message)
+                seen.add(message)
 
     return containers
 
 
 def detect_security_configs() -> list[str]:
     """Detect security and compliance configurations."""
-    security = []
+    security: list[str] = []
 
     for config in SECURITY_CONFIGS:
         if Path(config).exists():
@@ -680,7 +739,7 @@ def detect_security_configs() -> list[str]:
 
 def detect_performance_markers() -> list[str]:
     """Detect performance testing and profiling markers."""
-    performance = []
+    performance: list[str] = []
 
     for marker in PERFORMANCE_MARKERS:
         if Path(marker).exists():
@@ -696,9 +755,40 @@ def detect_performance_markers() -> list[str]:
     return performance
 
 
-def collect_code_metrics() -> dict:
+def _collect_file_metrics(
+    filepath: Path,
+    ext: str,
+    lang_map: dict[str, str],
+    metrics: CodeMetrics,
+    file_sizes: list[tuple[Path, int]],
+) -> None:
+    """Collect metrics for a single non-binary file."""
+    if not ext or ext in {'pyc', 'o', 'a', 'so'}:
+        return
+
+    try:
+        size = filepath.stat().st_size
+        file_sizes.append((filepath.relative_to(Path.cwd()), size))
+
+        metrics['total_files'] += 1
+        metrics['by_extension'][ext] = metrics['by_extension'].get(ext, 0) + 1
+
+        lang = lang_map.get(ext, 'Other')
+        metrics['by_language'][lang] = metrics['by_language'].get(lang, 0) + 1
+
+        if ext in SOURCE_EXTS and size < 1_000_000:  # Skip huge files
+            try:
+                with open(filepath, encoding='utf-8', errors='ignore') as f:
+                    metrics['total_lines'] += len(f.readlines())
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+
+def collect_code_metrics() -> CodeMetrics:
     """Collect code metrics: file counts by extension, total LOC."""
-    metrics = {
+    metrics: CodeMetrics = {
         'total_files': 0,
         'by_extension': {},
         'by_language': {},
@@ -706,8 +796,7 @@ def collect_code_metrics() -> dict:
         'largest_files': [],
     }
 
-    # Language mapping
-    lang_map = {
+    lang_map: dict[str, str] = {
         'ts': 'TypeScript',
         'tsx': 'TypeScript/React',
         'js': 'JavaScript',
@@ -731,7 +820,7 @@ def collect_code_metrics() -> dict:
         'hs': 'Haskell',
     }
 
-    file_sizes = []
+    file_sizes: list[tuple[Path, int]] = []
 
     try:
         for root, dirs, files in os.walk(Path.cwd()):
@@ -739,33 +828,15 @@ def collect_code_metrics() -> dict:
 
             for file in files:
                 filepath = Path(root) / file
-                ext = filepath.suffix.lstrip('.')
+                _collect_file_metrics(
+                    filepath,
+                    filepath.suffix.lstrip('.'),
+                    lang_map,
+                    metrics,
+                    file_sizes,
+                )
 
-                if not ext or ext in {'pyc', 'o', 'a', 'so'}:
-                    continue
-
-                try:
-                    size = filepath.stat().st_size
-                    file_sizes.append((filepath.relative_to(Path.cwd()), size))
-
-                    metrics['total_files'] += 1
-                    metrics['by_extension'][ext] = metrics['by_extension'].get(ext, 0) + 1
-
-                    lang = lang_map.get(ext, 'Other')
-                    metrics['by_language'][lang] = metrics['by_language'].get(lang, 0) + 1
-
-                    # Count lines for text files
-                    if ext in SOURCE_EXTS and size < 1_000_000:  # Skip huge files
-                        try:
-                            with open(filepath, encoding='utf-8', errors='ignore') as f:
-                                metrics['total_lines'] += len(f.readlines())
-                        except Exception:
-                            pass
-                except Exception:
-                    pass
-
-        # Top 10 largest files
-        file_sizes.sort(key=lambda x: x[1], reverse=True)
+        file_sizes.sort(key=lambda item: item[1], reverse=True)
         metrics['largest_files'] = [f'{str(f)}: {s / 1024:.1f}KB' for f, s in file_sizes[:10]]
 
     except Exception:
@@ -774,14 +845,11 @@ def collect_code_metrics() -> dict:
     return metrics
 
 
-def print_section(title: str, content: list[str], output_file=None) -> None:
+def print_section(title: str, content: list[str], output_file: TextIO | None = None) -> None:
     """Print a section with title and content."""
     lines = [f'\n=== {title} ===']
 
-    if isinstance(content, list):
-        lines.extend(content if content else ['None found.'])
-    elif isinstance(content, str):
-        lines.append(content)
+    lines.extend(content if content else [NONE_FOUND])
 
     text = '\n'.join(lines) + '\n'
 
@@ -791,190 +859,189 @@ def print_section(title: str, content: list[str], output_file=None) -> None:
         print(text, end='')
 
 
-def main():
-    """Main entry point."""
-    args = parse_args()
+@contextmanager
+def output_file_context(path: str | None) -> Generator[TextIO | None]:
+    """Open the optional output file for the duration of a scan."""
+    if path:
+        with open(path, 'w', encoding='utf-8') as output_file:
+            yield output_file
+    else:
+        yield None
 
-    output_file = None
-    if args.output:
-        output_dir = Path(args.output).parent
-        output_dir.mkdir(parents=True, exist_ok=True)
-        # The file is closed in the main() finally block after all sections write.
-        output_file = open(args.output, 'w', encoding='utf-8')  # noqa: SIM115
-        print(f'Writing output to: {args.output}', file=sys.stderr)
 
+def print_optional_section(
+    title: str,
+    items: list[str],
+    empty_message: str,
+    output_file: TextIO | None,
+) -> None:
+    """Print a section with a fallback message when no items are found."""
+    print_section(title, items if items else [empty_message], output_file)
+
+
+def print_manifest_section(output_file: TextIO | None) -> None:
+    """Print detected manifest files and their previews."""
+    manifests = find_manifest_files()
+    if not manifests:
+        print_optional_section(
+            'STACK DETECTION (manifest files)',
+            [],
+            'No recognized manifest files found in project root.',
+            output_file,
+        )
+        return
+
+    manifest_content = ['']
+    for manifest in manifests:
+        manifest_content.append(f'--- {manifest} ---')
+        if manifest == 'bun.lockb':
+            manifest_content.append(
+                f'[Binary lockfile — see {PACKAGE_JSON} for dependency details.]'
+            )
+        else:
+            manifest_content.append(read_file_preview(Path(manifest)))
+    print_section('STACK DETECTION (manifest files)', manifest_content, output_file)
+
+
+def print_environment_section(output_file: TextIO | None) -> None:
+    """Print environment template previews."""
+    envs = find_env_templates()
+    if not envs:
+        print_optional_section(
+            'ENVIRONMENT VARIABLE TEMPLATES',
+            [],
+            'No .env.example or .env.template found. Identify required '
+            'environment variables by searching the code and config for '
+            'environment variable reads.',
+            output_file,
+        )
+        return
+
+    env_content: list[str] = []
+    for filename, filepath in envs:
+        env_content.append(f'--- {filename} ---')
+        env_content.append(read_file_preview(filepath))
+    print_section('ENVIRONMENT VARIABLE TEMPLATES', env_content, output_file)
+
+
+def print_git_section(output_file: TextIO | None) -> None:
+    """Print recent commit and code churn information."""
+    if not is_git_repo():
+        print_section(
+            GIT_RECENT_COMMITS_TITLE,
+            ['Not a git repository or no commits yet.'],
+            output_file,
+        )
+        print_section(HIGH_CHURN_FILES_TITLE, ['Not a git repository.'], output_file)
+        return
+
+    commits = get_git_commits()
+    print_optional_section(
+        GIT_RECENT_COMMITS_TITLE,
+        commits,
+        'No commits found.',
+        output_file,
+    )
+    print_optional_section(HIGH_CHURN_FILES_TITLE, get_git_churn(), NONE_FOUND, output_file)
+
+
+def print_code_metrics(output_file: TextIO | None) -> None:
+    """Print collected source code metrics."""
+    metrics = collect_code_metrics()
+    metrics_output: list[str] = [
+        f'Total files scanned: {metrics['total_files']}',
+        f'Total lines of code: {metrics['total_lines']}',
+        '',
+    ]
+    if metrics['by_language']:
+        metrics_output.append('Files by language:')
+        for lang, count in sorted(
+            metrics['by_language'].items(),
+            key=lambda item: item[1],
+            reverse=True,
+        ):
+            metrics_output.append(f'  {lang}: {count}')
+    if metrics['largest_files']:
+        metrics_output.extend(['', 'Top 10 largest files:', *metrics['largest_files']])
+    print_section('CODE METRICS', metrics_output, output_file)
+
+
+def run_scan(output_file: TextIO | None) -> int:
+    """Run the scan and write results to the requested destination."""
     try:
-        # Directory tree
         print_section(
             f'DIRECTORY TREE (max depth {TREE_MAX_DEPTH}, source files only)',
             get_directory_tree(),
             output_file,
         )
 
-        # Stack detection
-        manifests = find_manifest_files()
-        if manifests:
-            manifest_content = ['']
-            for manifest in manifests:
-                manifest_path = Path(manifest)
-                manifest_content.append(f'--- {manifest} ---')
-                if manifest == 'bun.lockb':
-                    manifest_content.append(
-                        '[Binary lockfile — see package.json for dependency details.]'
-                    )
-                else:
-                    manifest_content.append(read_file_preview(manifest_path))
-            print_section('STACK DETECTION (manifest files)', manifest_content, output_file)
-        else:
-            print_section(
-                'STACK DETECTION (manifest files)',
-                ['No recognized manifest files found in project root.'],
-                output_file,
-            )
+        print_manifest_section(output_file)
 
-        # Entry points
-        entries = find_entry_points()
-        if entries:
-            entry_content = [f'Found: {e}' for e in entries]
-            print_section('ENTRY POINTS', entry_content, output_file)
-        else:
-            print_section(
-                'ENTRY POINTS',
-                [
-                    "No common entry points found. Check 'main' or "
-                    "'scripts.start' in manifest files above."
-                ],
-                output_file,
-            )
+        print_optional_section(
+            'ENTRY POINTS',
+            [f'Found: {entry}' for entry in find_entry_points()],
+            (
+                "No common entry points found. Check 'main' or "
+                "'scripts.start' in manifest files above."
+            ),
+            output_file,
+        )
 
-        # Linting config
-        lint = find_lint_config()
-        if lint:
-            lint_content = [f'Found: {line}' for line in lint]
-            print_section('LINTING AND FORMATTING CONFIG', lint_content, output_file)
-        else:
-            print_section(
-                'LINTING AND FORMATTING CONFIG',
-                ['No linting or formatting config files found in project root.'],
-                output_file,
-            )
+        print_optional_section(
+            'LINTING AND FORMATTING CONFIG',
+            [f'Found: {lint_file}' for lint_file in find_lint_config()],
+            'No linting or formatting config files found in project root.',
+            output_file,
+        )
 
-        # Environment templates
-        envs = find_env_templates()
-        if envs:
-            env_content = []
-            for filename, filepath in envs:
-                env_content.append(f'--- {filename} ---')
-                env_content.append(read_file_preview(filepath))
-            print_section('ENVIRONMENT VARIABLE TEMPLATES', env_content, output_file)
-        else:
-            print_section(
-                'ENVIRONMENT VARIABLE TEMPLATES',
-                [
-                    'No .env.example or .env.template found. Identify required '
-                    'environment variables by searching the code and config for '
-                    'environment variable reads.'
-                ],
-                output_file,
-            )
+        print_environment_section(output_file)
 
-        # TODOs
-        todos = search_todos()
-        if todos:
-            print_section(
-                'TODO / FIXME / HACK (production code only, test dirs excluded)', todos, output_file
-            )
-        else:
-            print_section(
-                'TODO / FIXME / HACK (production code only, test dirs excluded)',
-                ['None found.'],
-                output_file,
-            )
+        print_optional_section(
+            'TODO / FIXME / HACK (production code only, test dirs excluded)',
+            search_todos(),
+            NONE_FOUND,
+            output_file,
+        )
 
-        # Git info
-        if is_git_repo():
-            commits = get_git_commits()
-            if commits:
-                print_section('GIT RECENT COMMITS (last 20)', commits, output_file)
-            else:
-                print_section('GIT RECENT COMMITS (last 20)', ['No commits found.'], output_file)
+        print_git_section(output_file)
 
-            churn = get_git_churn()
-            if churn:
-                print_section('HIGH-CHURN FILES (last 90 days, top 20)', churn, output_file)
-            else:
-                print_section(
-                    'HIGH-CHURN FILES (last 90 days, top 20)', ['None found.'], output_file
-                )
-        else:
-            print_section(
-                'GIT RECENT COMMITS (last 20)',
-                ['Not a git repository or no commits yet.'],
-                output_file,
-            )
-            print_section(
-                'HIGH-CHURN FILES (last 90 days, top 20)', ['Not a git repository.'], output_file
-            )
+        print_optional_section(
+            'MONOREPO SIGNALS',
+            detect_monorepo(),
+            'No monorepo signals detected.',
+            output_file,
+        )
 
-        # Monorepo detection
-        monorepo = detect_monorepo()
-        if monorepo:
-            print_section('MONOREPO SIGNALS', monorepo, output_file)
-        else:
-            print_section('MONOREPO SIGNALS', ['No monorepo signals detected.'], output_file)
+        print_code_metrics(output_file)
 
-        # Code metrics
-        metrics = collect_code_metrics()
-        metrics_output = [
-            f'Total files scanned: {metrics['total_files']}',
-            f'Total lines of code: {metrics['total_lines']}',
-            '',
-        ]
-        if metrics['by_language']:
-            metrics_output.append('Files by language:')
-            for lang, count in sorted(
-                metrics['by_language'].items(), key=lambda x: x[1], reverse=True
-            ):
-                metrics_output.append(f'  {lang}: {count}')
-        if metrics['largest_files']:
-            metrics_output.append('')
-            metrics_output.append('Top 10 largest files:')
-            metrics_output.extend(metrics['largest_files'])
-        print_section('CODE METRICS', metrics_output, output_file)
+        print_optional_section(
+            'CI/CD PIPELINES',
+            detect_ci_cd_pipelines(),
+            'No CI/CD pipelines detected.',
+            output_file,
+        )
 
-        # CI/CD Detection
-        ci_cd = detect_ci_cd_pipelines()
-        if ci_cd:
-            print_section('CI/CD PIPELINES', ci_cd, output_file)
-        else:
-            print_section('CI/CD PIPELINES', ['No CI/CD pipelines detected.'], output_file)
+        print_optional_section(
+            'CONTAINERS & ORCHESTRATION',
+            detect_containers(),
+            'No containerization configs detected.',
+            output_file,
+        )
 
-        # Container Detection
-        containers = detect_containers()
-        if containers:
-            print_section('CONTAINERS & ORCHESTRATION', containers, output_file)
-        else:
-            print_section(
-                'CONTAINERS & ORCHESTRATION', ['No containerization configs detected.'], output_file
-            )
+        print_optional_section(
+            'SECURITY & COMPLIANCE',
+            detect_security_configs(),
+            'No security configs detected.',
+            output_file,
+        )
 
-        # Security Configs
-        security = detect_security_configs()
-        if security:
-            print_section('SECURITY & COMPLIANCE', security, output_file)
-        else:
-            print_section('SECURITY & COMPLIANCE', ['No security configs detected.'], output_file)
+        print_optional_section(
+            'PERFORMANCE & TESTING',
+            detect_performance_markers(),
+            'No performance testing configs detected.',
+            output_file,
+        )
 
-        # Performance Markers
-        performance = detect_performance_markers()
-        if performance:
-            print_section('PERFORMANCE & TESTING', performance, output_file)
-        else:
-            print_section(
-                'PERFORMANCE & TESTING', ['No performance testing configs detected.'], output_file
-            )
-
-        # Final message
         final_msg = '\n=== SCAN COMPLETE ===\n'
         if output_file:
             output_file.write(final_msg)
@@ -987,9 +1054,16 @@ def main():
         print(f'Error: {e}', file=sys.stderr)
         return 1
 
-    finally:
-        if output_file:
-            output_file.close()
+
+def main():
+    """Main entry point."""
+    args = parse_args()
+    if args.output:
+        output_dir = Path(args.output).parent
+        output_dir.mkdir(parents=True, exist_ok=True)
+        print(f'Writing output to: {args.output}', file=sys.stderr)
+    with output_file_context(args.output) as output_file:
+        return run_scan(output_file)
 
 
 if __name__ == '__main__':

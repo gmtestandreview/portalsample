@@ -5,7 +5,7 @@ import Footer from '../Footer';
 import SkipLinks from '../Utilities/skipLinks';
 import BackToTopButton from '../Utilities/backToTopButton';
 import RouteChangeScrollTop from '../Utilities/routeChangeScrollTop';
-import GoogleAnalytics from '../../analytics/GoogleAnalytics';
+import GoogleAnalytics from '../../analytics/GoogleAnalyticsTracker';
 import { useRouteAccessibility } from '../../hooks/useRouteAccessibility';
 
 interface LayoutProps {

@@ -2,7 +2,7 @@ import type { FormikValues } from 'formik';
 import type { WizardStepProps } from './types';
 import ErrorBoundary from '../../ErrorBoundary';
 import { ai } from '../../../instrumentation/AppInsightsService';
-import GoogleAnalytics from '../../../analytics/GoogleAnalytics';
+import GoogleAnalytics from '../../../analytics/GoogleAnalyticsTracker';
 
 const WizardStep = <T extends FormikValues>(
   props: Readonly<WizardStepProps<T>>,

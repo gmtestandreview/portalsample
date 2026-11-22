@@ -56,12 +56,12 @@ export const Uploading = meta.story({
     ).toBeVisible();
 
     // Each row's progressbar has to name the file it belongs to and carry its value.
-    // The byte counts and percentage sit inside the role, so they are not its name.
+    // The native progress element carries its value in the value attribute.
     const bar = canvas.getByRole('progressbar', {
       name: 'Uploading calibration-certificate.pdf',
     });
 
-    await expect(bar).toHaveAttribute('aria-valuenow', '50');
+    await expect(bar).toHaveAttribute('value', '50');
   },
 });
 

@@ -76,7 +76,7 @@ const CertificateNumberLookup = (
   } = props;
 
   const [_field, _meta, _fieldHelper] = useField<string>(name);
-  const [_idField, _idMeta, _idFieldHelper] = useField<string>(idName);
+  const [, , _idFieldHelper] = useField<string>(idName);
   const [_certNumOptions] = useField<LookupResponse[] | undefined>(
     'certNameOptions',
   );

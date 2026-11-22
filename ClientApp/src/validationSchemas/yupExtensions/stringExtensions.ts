@@ -441,7 +441,7 @@ export const registerYupStringExtensions = () => {
         YUP_DECIMALNUMBERSONLY_METHOD,
         errMsg,
         stringTest((value) => {
-          const regExStr = /^-?\d+\.?\d*$/;
+          const regExStr = /^-?(?:\d+\.\d*|\d+)$/;
 
           return regExStr.exec(value) !== null;
         }),
@@ -467,14 +467,11 @@ export const registerYupStringExtensions = () => {
         stringTest((value) => {
           if (NotEmpty(value)) {
             const num = Number.parseInt(value, 10);
-            if (
+            return (
               !Number.isNaN(num) &&
               value.length === 4 &&
               ((num >= 200 && num <= 299) || (num >= 800 && num <= 9999))
-            ) {
-              return true;
-            }
-            return false;
+            );
           }
           return true;
         }),
@@ -667,7 +664,7 @@ export const registerYupStringExtensions = () => {
         YUP_ATLEASTONECHAR_METHOD,
         errMsg,
         stringTest((value) => {
-          return /(?=.*[a-z])/i.exec(value) !== null;
+          return /[a-z]/i.test(value);
         }),
       );
     },

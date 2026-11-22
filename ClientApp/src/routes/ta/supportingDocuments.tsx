@@ -31,6 +31,7 @@ import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import AttachmentNew from '../../components/Inputs/Attachment/index-new';
 import InstrumentInfoPanel from './instrumentInfoPanel';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 const isString = (e: unknown): e is string => typeof e === 'string';
 
@@ -84,6 +85,8 @@ type SupportingDocumentsAttachmentProps = Pick<
 const EMPTY_EXTERNAL_ERRORS: string[] = [];
 const REQUIRED_DOCUMENT_ERROR: string = ValidationMessages.RequiredDoc;
 const REQUIRED_TAG_ERROR: string = ValidationMessages.RequiredTag;
+const ALLOWED_FILE_TYPES =
+  '.pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .rtf, .odt, .gif, .csv';
 
 /** Normalises Formik's string | string[] | nested-object error for one field to string[]. */
 const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
@@ -106,17 +109,21 @@ const renderInstrumentInfoPanel = (formData: SupportingDocumentsStep) => {
   const isVisibilityApplicationType =
     patternApprovalType === PatternApprovalRequiredValues.NewCertificate;
 
+  if (
+    !isVisibilityApplicationType ||
+    !instrumentCategoryId ||
+    !instrumentTypeId
+  ) {
+    return null;
+  }
+
   return (
-    isVisibilityApplicationType &&
-    instrumentCategoryId &&
-    instrumentTypeId && (
-      <InstrumentInfoPanel
-        name='InstrumentInfo'
-        selectedInstrumentCategoryId={instrumentCategoryId}
-        selectedInstrumentTypeId={instrumentTypeId}
-        isNewCustomer
-      />
-    )
+    <InstrumentInfoPanel
+      name='InstrumentInfo'
+      selectedInstrumentCategoryId={instrumentCategoryId}
+      selectedInstrumentTypeId={instrumentTypeId}
+      isNewCustomer
+    />
   );
 };
 
@@ -182,7 +189,7 @@ const deleteSupportingDocument = async (
 
   client.setAuthToken(tokenResult.accessToken);
   await client.deleteDocument(id, docId);
-  if (onDeleteSuccess) onDeleteSuccess(true);
+  onDeleteSuccess?.(true);
 };
 
 const updateSupportingDocumentCategory = async (
@@ -308,16 +315,18 @@ const SupportingDocumentsContent = ({
           inlineHelp=''
           allowMultiple
           className='drag-and-drop-target'
-          isSummary={isSummary}
           maxFiles={50}
           maxSizeInMB={25}
           onUploadFiles={onUploadFiles}
           onDeleteFile={onDeleteFile}
-          progress={progress}
-          handleCancelFile={handleCancelFile}
           setErrors={setErrors}
-          onCategoryUpdate={onCategoryUpdate}
-          disableUpload={disableUpload}
+          {...omitUndefined({
+            isSummary,
+            progress,
+            handleCancelFile,
+            onCategoryUpdate,
+            disableUpload,
+          })}
         />
       </Col>
     </Row>
@@ -336,8 +345,6 @@ const SupportingDocuments = (
   const accountContext = useAccountContext();
   const accountDispatch = useAccountDispatch();
   const { id } = useParams();
-  const allowedFileTypes =
-    '.pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .rtf, .odt, .gif, .csv';
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const { errors: formikErrors, setErrors: setFormikErrors } =
     useFormikContext<any>();
@@ -367,7 +374,8 @@ const SupportingDocuments = (
   // e.g. 'supportingDocuments.form.documents' => 'documents'
   const errorName = name.slice(name.lastIndexOf('.') + 1);
   // e.g. 'supportingDocuments.form.documents' => 'supportingDocuments'
-  const rootErrorName = name.replace(/\..*$/s, '');
+  const firstDot = name.indexOf('.');
+  const rootErrorName = firstDot === -1 ? name : name.slice(0, firstDot);
   // Get Formik field errors for this field
   const rootError = Object.hasOwn(formikErrors, rootErrorName)
     ? Reflect.get(formikErrors, rootErrorName)
@@ -458,15 +466,17 @@ const SupportingDocuments = (
       <SupportingDocumentsContent
         suppressDocChanges={suppressDocChanges}
         name={name}
-        allowedTypes={allowedFileTypes}
-        isSummary={isSummary}
+        allowedTypes={ALLOWED_FILE_TYPES}
         onUploadFiles={onUpload}
         onDeleteFile={onDeleteAttachment}
-        progress={progress}
-        handleCancelFile={handleCancelFile}
         setErrors={setUploadErrors}
-        onCategoryUpdate={onCategoryUpdate}
-        disableUpload={disableUpload}
+        {...omitUndefined({
+          isSummary,
+          progress,
+          handleCancelFile,
+          onCategoryUpdate,
+          disableUpload,
+        })}
       />
     </>
   );

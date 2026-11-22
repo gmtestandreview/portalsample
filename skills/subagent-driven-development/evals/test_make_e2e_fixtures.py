@@ -5,9 +5,11 @@ Run from the repository root:
 """
 
 import importlib.util
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 _SCRIPT = Path(__file__).with_name('make-e2e-fixtures.py')
 _SPEC = importlib.util.spec_from_file_location('make_e2e_fixtures', _SCRIPT)
@@ -18,6 +20,25 @@ _SPEC.loader.exec_module(fixtures)
 
 
 class CheckGitArgsTest(unittest.TestCase):
+    def test_git_environment_removes_inherited_git_execution_controls(self) -> None:
+        with mock.patch.dict(
+            fixtures.os.environ,
+            {
+                'GIT_SSH_COMMAND': 'malicious-ssh',
+                'GIT_CONFIG_GLOBAL': 'malicious-config',
+                'GIT_CONFIG_NOSYSTEM': '0',
+                'GIT_AUTHOR_NAME': 'attacker',
+            },
+            clear=False,
+        ):
+            env = fixtures.build_git_env()
+
+        self.assertNotIn('GIT_SSH_COMMAND', env)
+        self.assertEqual(env['GIT_CONFIG_GLOBAL'], os.devnull)
+        self.assertEqual(env['GIT_CONFIG_SYSTEM'], os.devnull)
+        self.assertEqual(env['GIT_CONFIG_NOSYSTEM'], '1')
+        self.assertEqual(env['GIT_AUTHOR_NAME'], 'fixture')
+
     def test_every_subcommand_the_script_uses_is_allowed(self) -> None:
         calls = [
             ('init', '-q', '-b', 'main'),

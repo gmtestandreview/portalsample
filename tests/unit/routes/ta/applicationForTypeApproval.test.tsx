@@ -264,7 +264,7 @@ describe('application for type approval', () => {
 
       await resetApplicationForTypeApprovalState();
 
-      let releaseStatuses: (value: unknown) => void = () => undefined;
+      let releaseStatuses: (value: unknown) => void = (_value) => undefined;
       clients.patternApproval.methods.getStepStatuses.mockReturnValue(
         new Promise((resolve) => {
           releaseStatuses = resolve;
@@ -700,7 +700,7 @@ describe('application for type approval', () => {
 
       const { unmount } = await renderLoadedWizard();
 
-      let failPoll: (reason: Error) => void = () => undefined;
+      let failPoll: (reason: Error) => void = (_reason) => undefined;
       clients.progress.methods.getProgress.mockReturnValue(
         new Promise((_resolve, reject) => {
           failPoll = reject;

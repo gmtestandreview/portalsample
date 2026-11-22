@@ -1,7 +1,9 @@
 import preview from '../../../../.storybook/preview';
-import { useState, type ComponentProps } from 'react';
+import { useArgs } from 'storybook/preview-api';
+import type { ComponentProps } from 'react';
 import { within, expect, fn, userEvent } from 'storybook/test';
-import SlateEditor, { type CustomElement } from './SlateEditor';
+import SlateEditor from './SlateEditor';
+import type { CustomElement } from './slateHtml';
 
 /**
  * `SlateEditor` is the rich-text message composer used in the type-approval messaging
@@ -18,18 +20,14 @@ const initialValue: CustomElement[] = [
 ];
 
 const SlateEditorStory = (args: ComponentProps<typeof SlateEditor>) => {
-  const [value, setValue] = useState<CustomElement[]>(args.value);
+  const [storyArgs, updateArgs] = useArgs<ComponentProps<typeof SlateEditor>>();
 
-  return (
-    <SlateEditor
-      {...args}
-      value={value}
-      setValue={(next) => {
-        setValue(next);
-        args.setValue(next);
-      }}
-    />
-  );
+  const setValue = (next: CustomElement[]) => {
+    updateArgs({ value: next });
+    args.setValue(next);
+  };
+
+  return <SlateEditor {...storyArgs} setValue={setValue} />;
 };
 
 const meta = preview.meta({

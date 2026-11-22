@@ -315,7 +315,7 @@ describe('application documents', () => {
 
       await resetApplicationDocumentsState();
 
-      let release: (value: unknown) => void = () => undefined;
+      let release: (value: unknown) => void = (_value) => undefined;
       clients.patternApproval.methods.getAppDocuments.mockReturnValue(
         new Promise((resolve) => {
           release = resolve;
@@ -442,6 +442,46 @@ describe('application documents', () => {
         id: 'doc-2',
         documentReference: 'doc-2',
       });
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: 'Commit' }),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('leaves lock state and bytes off a returned document that carries neither, and still offers the commit', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
+      clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
+        appDocuments([document1({ documentLocked: true })]),
+      );
+
+      await renderLoaded();
+
+      clients.patternApproval.methods.addDocuments.mockResolvedValue({
+        uploadId: 'upload-2',
+        form: {
+          documents: [
+            document1({
+              id: 'doc-3',
+              documentLocked: undefined,
+              documentBytes: undefined,
+            }),
+          ],
+        },
+      });
+
+      let attachments: AttachmentDto[] = [];
+      await act(async () => {
+        attachments = await documentsStep.props.onUploadAttachment('token', []);
+      });
+
+      expect(attachments).toHaveLength(1);
+      expect(attachments[0]).not.toHaveProperty('documentLocked');
+      expect(attachments[0]).not.toHaveProperty('documentBytes');
 
       await waitFor(() => {
         expect(
@@ -641,7 +681,7 @@ describe('application documents', () => {
 
       const { unmount } = await renderLoaded();
 
-      let failPoll: (reason: Error) => void = () => undefined;
+      let failPoll: (reason: Error) => void = (_reason) => undefined;
       clients.progress.methods.getProgress.mockReturnValue(
         new Promise((_resolve, reject) => {
           failPoll = reject;

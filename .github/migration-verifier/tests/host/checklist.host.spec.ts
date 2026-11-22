@@ -1,7 +1,7 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { readTextFileSync } from '../../../../tests/helpers/safeTestFilesystem';
 import { classifyDotnetScript } from '../support/verifierDetectors';
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -9,9 +9,15 @@ const currentDir = path.dirname(currentFilePath);
 const repoRoot = path.resolve(currentDir, '../../../../');
 
 const readRepoFile = (relativePath: string) =>
-  fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  readTextFileSync(relativePath, repoRoot);
 
 describe('migration checklist host verifier', () => {
+  it('rejects paths outside the repository root', () => {
+    expect(() => readRepoFile('../AGENTS.md')).toThrow(
+      'outside the allowed root',
+    );
+  });
+
   it('pins the real .NET 10 verification script to the merged checklist gates', () => {
     const script = readRepoFile(
       '.github/migration-verifier/scripts/verify-dotnet10.ps1',

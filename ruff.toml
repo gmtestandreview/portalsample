@@ -6,6 +6,8 @@ line-length = 100
 # findings). Excluding them keeps ruff focused on code this team maintains:
 # scripts/, analysis/, templates/, tests/hooks/, .claude/hooks/, skills/**.
 
+extend-exclude = ['.claude/skills', '.github/skills']
+
 # Treat '.mdx' and '.qmd' files as Markdown
 extension = { mdx = 'markdown', qmd = 'markdown' }
 

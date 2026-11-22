@@ -10,6 +10,7 @@ import type { DashboardClient } from '../../../ClientApp/src/api/web-api-client'
 import { DashboardTab } from '../../../ClientApp/src/components/SearchFilter/types';
 import type { CustomPaginationProps } from '../../../ClientApp/src/components/Pagination/types';
 import { defined } from '../helpers/defined';
+import { omitKeys } from '../../../ClientApp/src/utils/omitKeys';
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────
 
@@ -1146,8 +1147,10 @@ describe('dashboard', () => {
 
     resetDashboardMocks();
 
-    const { filterCurrentPage: _filterCurrentPage, ...profileWithoutPaging } =
-      BASE_USER_PROFILE;
+    const profileWithoutPaging = omitKeys(
+      BASE_USER_PROFILE,
+      'filterCurrentPage',
+    );
     mockAccountDetails = {
       ...BASE,
       userProfile: {

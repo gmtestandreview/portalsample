@@ -58,7 +58,7 @@ describe('googleAnalytics', () => {
     resetAnalyticsState();
 
     const { default: GoogleAnalytics } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+      await import('../../../ClientApp/src/analytics/GoogleAnalyticsTracker');
 
     render(
       <GoogleAnalytics anonymiseIp testMode>
@@ -85,7 +85,7 @@ describe('googleAnalytics', () => {
 
     reactGaMock.isInitialized = true;
     const { default: GoogleAnalytics } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+      await import('../../../ClientApp/src/analytics/GoogleAnalyticsTracker');
 
     render(<GoogleAnalytics />);
 
@@ -100,7 +100,7 @@ describe('googleAnalytics', () => {
     const originalTrackingId = env.VITE_GA_TRACKINGID;
     env.VITE_GA_TRACKINGID = '';
     const { default: GoogleAnalytics } =
-      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+      await import('../../../ClientApp/src/analytics/GoogleAnalyticsTracker');
 
     try {
       render(<GoogleAnalytics />);

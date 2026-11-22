@@ -1,13 +1,11 @@
 import { useField } from 'formik';
 import { Col, Form, Row } from 'react-bootstrap';
-import { Title } from '../../../../api/web-api-client';
 import type { ContactDto } from '../../../../api/web-api-client';
 import { prefixedPropertyOf } from '../../../../utils';
-import { toTitle } from '../../../../utils/apiEnumMappings';
 import SelectInput from '../../../Inputs/SelectInput';
 import TextInput from '../../../Inputs/TextInput';
-import type { SelectInputOption } from '../../../Inputs/SelectInput/types';
 import HidableField from '../../HidableField';
+import { getTitles } from '../titleOptions';
 import NumberInput from '../../../Inputs/NumberInput';
 
 export interface ContactDetailsProps {
@@ -32,22 +30,6 @@ interface ContactDetailsLabels {
   mobilePhone: string;
   email: string;
 }
-
-const getTitles = (): SelectInputOption<string>[] => {
-  const options: SelectInputOption<string>[] = [];
-  for (const value of Object.values(Title)) {
-    const title = toTitle(value);
-    if (title === undefined) {
-      continue;
-    }
-
-    options.push({
-      displayText: title.replace(/([A-Z])/g, ' $1').trim(),
-      value: title,
-    });
-  }
-  return options;
-};
 
 interface ContactDetailsSummaryViewProps {
   getName: (name: keyof ContactDto) => string;

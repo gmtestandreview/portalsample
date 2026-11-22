@@ -9,14 +9,14 @@ interface ContractValidationOptions {
 
 const draft7Validator = addFormats(
   new Ajv({
-    allErrors: true,
+    allErrors: false,
     strict: true,
   }),
 );
 
 const draft2020Validator = addFormats(
   new Ajv2020({
-    allErrors: true,
+    allErrors: false,
     strict: true,
   }),
 );

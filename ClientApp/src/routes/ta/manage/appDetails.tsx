@@ -1,7 +1,15 @@
 import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useMsal } from '@azure/msal-react';
 import { FormProvider, useForm } from 'react-hook-form';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
@@ -61,6 +69,27 @@ const ApplicationDetails = () => {
   });
   const [applicationType, setApplicationType] = useState<string | null>(null);
   const [messageCount, setMessageCount] = useState<number>(0);
+  const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pollGenerationRef = useRef(0);
+
+  const fetchMessageCountData = useCallback(async (): Promise<
+    number | undefined
+  > => {
+    if (!id || accounts.length === 0) return undefined;
+
+    try {
+      const client = new RequestForPatternApprovalClient();
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0]),
+      );
+      client.setAuthToken(tokenResult.accessToken);
+      const count = await client.getAppMessageCount(id, id);
+
+      return count || 0;
+    } catch {
+      return undefined;
+    }
+  }, [accounts, id, instance]);
 
   // The application type loads asynchronously and the id is a route param, so
   // either may be absent; show only what is known.
@@ -103,31 +132,18 @@ const ApplicationDetails = () => {
   }, []);
 
   useEffect(() => {
-    let active = true;
-    let pollTimeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    const fetchMessageCountData = async () => {
-      if (!id || accounts.length === 0) return;
-
-      try {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
-        );
-        client.setAuthToken(tokenResult.accessToken);
-        const count = await client.getAppMessageCount(id, id);
-
-        if (!active) return;
-        setMessageCount(count || 0);
-      } catch {
-        // optional: log
-      }
-    };
+    const pollGeneration = ++pollGenerationRef.current;
 
     const poll = async () => {
-      await fetchMessageCountData();
-      if (active) {
-        pollTimeoutId = setTimeout(() => {
+      const nextMessageCount = await fetchMessageCountData();
+      if (pollGenerationRef.current === pollGeneration) {
+        if (nextMessageCount !== undefined) {
+          setMessageCount(nextMessageCount);
+        }
+        // The rule cannot trace the clear through clearPollTimeout(),
+        // which this effect's cleanup calls and which does invoke
+        // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
+        pollTimeoutRef.current = setTimeout(() => {
           void poll();
         }, POLL_MS);
       }
@@ -136,13 +152,13 @@ const ApplicationDetails = () => {
     void poll();
 
     return () => {
-      active = false;
-      if (pollTimeoutId !== null) {
-        clearTimeout(pollTimeoutId);
-        pollTimeoutId = null;
+      pollGenerationRef.current += 1;
+      if (pollTimeoutRef.current !== null) {
+        clearTimeout(pollTimeoutRef.current);
+        pollTimeoutRef.current = null;
       }
     };
-  }, [accounts, id, instance]);
+  }, [fetchMessageCountData]);
 
   const refreshMessagesTab = () => {
     setLoadMessagesTab(true);

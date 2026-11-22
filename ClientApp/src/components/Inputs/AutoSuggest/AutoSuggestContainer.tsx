@@ -58,7 +58,7 @@ const AutoSuggestContainer = <T,>(
 
   const controlId = getControlId(id, name);
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
-  const [_field, _meta, { setTouched }] = useField<string>(name);
+  const [, _meta, { setTouched }] = useField<string>(name);
   const errorId = `${controlId}-validation-msg`;
 
   const [isOpen, setIsOpen] = useState(false);

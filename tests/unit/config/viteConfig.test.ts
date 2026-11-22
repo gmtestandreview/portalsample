@@ -95,10 +95,10 @@ const migrationDesign = readTextFileSync(
   repositoryRoot,
 );
 const legacyToViteMapping = [
-  ...migrationDesign.matchAll(/^\|\s*`([^`]+)`\s*\|\s*(.*?)\s*\|$/gmu),
+  ...migrationDesign.matchAll(/^\|[^\S\n]*`([^`]+)`[^\S\n]*\|(.*)\|$/gmu),
 ].map(([, legacyName, viteName]) => ({
   legacyName,
-  viteName: viteName?.replaceAll('`', ''),
+  viteName: viteName?.trim().replaceAll('`', ''),
 }));
 const viteEnvironmentNames = legacyToViteMapping
   .map(({ viteName }) => viteName)

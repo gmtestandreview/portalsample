@@ -67,7 +67,7 @@ const AttachmentNew = (
     disableUpload,
   } = props;
 
-  const [_field, meta, { setValue }] = useField<
+  const [, meta, { setValue }] = useField<
     AttachmentDto[] | AttachmentDto | null
   >(name);
 

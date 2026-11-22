@@ -24,7 +24,6 @@ function getNameForUse(arg0: string): string {
 const FilterMenu = (props: Readonly<FilterMenuProps>) => {
   const {
     containerClassName = '', // default props
-    className: _className = '', // default props
     initialFilters,
     setInitialFilters,
     setCurrentPage,

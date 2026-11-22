@@ -9,10 +9,12 @@ describe('shared Vite environment fixtures', () => {
   it('provides every configured Vite variable for each consumer', () => {
     expect.assertions(3);
 
-    const expectedKeys = [...VITE_ENV_KEYS].sort();
+    const expectedKeys = [...VITE_ENV_KEYS].sort((a, b) => a.localeCompare(b));
 
     for (const fixture of Object.values(VITE_ENV_FIXTURES)) {
-      const fixtureKeys = Object.keys(fixture).sort();
+      const fixtureKeys = Object.keys(fixture).sort((a, b) =>
+        a.localeCompare(b),
+      );
 
       expect(fixtureKeys).toStrictEqual(expectedKeys);
     }

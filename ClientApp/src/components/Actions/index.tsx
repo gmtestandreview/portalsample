@@ -38,12 +38,12 @@ import { Link } from 'react-router';
 export interface DropdownActionItem {
   action: string;
   text: string;
-  route?: string | undefined;
+  route?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 interface ActionsProps {
-  id?: string | undefined;
+  id?: string;
   as?: 'icon';
   dropDownActions: DropdownActionItem[];
   onItemClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;

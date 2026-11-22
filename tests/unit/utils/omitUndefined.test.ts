@@ -34,7 +34,7 @@ describe(omitUndefined, () => {
 
     expect({
       result,
-      isNewObject: result !== input,
+      isNewObject: !Object.is(result, input),
       nestedIsShared: result.nested === nested,
       resultHasMissing: Object.hasOwn(result, 'missing'),
       input,

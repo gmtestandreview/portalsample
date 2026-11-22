@@ -9,7 +9,7 @@
 | Azure AD B2C       | `@azure/msal-browser`, `@azure/msal-react`            | Identity provider — login, token |
 | NMI REST API       | `ClientApp/src/api/web-api-client.ts` (NSwag)         | All data operations              |
 | Azure App Insights | `ClientApp/src/instrumentation/AppInsightsService.ts` | Telemetry / error tracking       |
-| Google Analytics   | `ClientApp/src/analytics/GoogleAnalytics.tsx`         | Page-view tracking               |
+| Google Analytics   | `ClientApp/src/analytics/GoogleAnalyticsTracker.tsx`  | Page-view tracking               |
 
 ## Key NPM Dependencies
 
