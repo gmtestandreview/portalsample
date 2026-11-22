@@ -450,6 +450,46 @@ describe('application documents', () => {
       });
     });
 
+    it('leaves lock state and bytes off a returned document that carries neither, and still offers the commit', async () => {
+      expect.hasAssertions();
+
+      await resetApplicationDocumentsState();
+
+      clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
+        appDocuments([document1({ documentLocked: true })]),
+      );
+
+      await renderLoaded();
+
+      clients.patternApproval.methods.addDocuments.mockResolvedValue({
+        uploadId: 'upload-2',
+        form: {
+          documents: [
+            document1({
+              id: 'doc-3',
+              documentLocked: undefined,
+              documentBytes: undefined,
+            }),
+          ],
+        },
+      });
+
+      let attachments: AttachmentDto[] = [];
+      await act(async () => {
+        attachments = await documentsStep.props.onUploadAttachment('token', []);
+      });
+
+      expect(attachments).toHaveLength(1);
+      expect(attachments[0]).not.toHaveProperty('documentLocked');
+      expect(attachments[0]).not.toHaveProperty('documentBytes');
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: 'Commit' }),
+        ).toBeInTheDocument();
+      });
+    });
+
     it('returns an empty list when the response carries no form', async () => {
       expect.hasAssertions();
 

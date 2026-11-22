@@ -45,7 +45,7 @@ describe('progress file list', () => {
     expect({
       percent: screen
         .getByRole('progressbar', { name: 'Uploading bytes.pdf' })
-        .getAttribute('aria-valuenow'),
+        .getAttribute('value'),
       labels: [
         '512 B / 900 B',
         '2.00 KB',
@@ -454,7 +454,7 @@ describe('progress file list', () => {
       sameRows: updatedRows.map((row, index) => row === initialRows.at(index)),
       progressValues: screen
         .getAllByRole('progressbar', { name: 'Uploading file' })
-        .map((progressbar) => progressbar.getAttribute('aria-valuenow')),
+        .map((progressbar) => progressbar.getAttribute('value')),
     }).toStrictEqual({
       rowCount: 3,
       sameRows: [true, true, true],
