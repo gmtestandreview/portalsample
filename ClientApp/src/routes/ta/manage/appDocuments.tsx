@@ -19,7 +19,11 @@ import AppLogger from '../../../instrumentation/AppLogger';
 import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import { createSaveAwareYupResolver } from '../../../components/forms/saveAwareYupResolver';
 import { supportingDocsSubmitValidation } from '../validation';
-import { getUploadErrorDetails, useUploadHandlers } from '../useUploadState';
+import {
+  getUploadErrorDetails,
+  useUploadHandlers,
+  type UploadHandlers,
+} from '../useUploadState';
 
 interface AppDocumentsFormValues {
   form: {
@@ -71,13 +75,7 @@ const ApplicationDocuments = () => {
     [],
   );
 
-  const {
-    uploading,
-    progress,
-    setProgress,
-    handleCancelFile,
-    onUploadAttachments,
-  } = useUploadHandlers({
+  const uploadHandlers: UploadHandlers = useUploadHandlers({
     accounts,
     instance,
     id,
@@ -85,6 +83,13 @@ const ApplicationDocuments = () => {
     mapUploadedDocument: mapManagedAttachment,
     onAttachmentsUploaded: handleAttachmentsUploaded,
   });
+  const {
+    uploading,
+    progress,
+    setProgress,
+    handleCancelFile,
+    onUploadAttachments,
+  } = uploadHandlers;
 
   useEffect(() => {
     const fetchDocs = async () => {

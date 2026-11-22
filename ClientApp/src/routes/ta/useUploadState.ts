@@ -23,7 +23,7 @@ interface UploadState {
   uploadIdRef: MutableRefObject<string | null>;
 }
 
-interface UploadHandlersOptions {
+export interface UploadHandlersOptions {
   accounts: AccountInfo[];
   instance: IPublicClientApplication;
   id: string | undefined;
@@ -36,7 +36,7 @@ interface UploadHandlersOptions {
   onAttachmentsUploaded?: (attachments: AttachmentDto[]) => void;
 }
 
-interface UploadHandlers {
+export interface UploadHandlers {
   uploading: boolean;
   progress: UploadProgress | undefined;
   setProgress: Dispatch<SetStateAction<UploadProgress | undefined>>;
@@ -47,7 +47,7 @@ interface UploadHandlers {
   ) => Promise<AttachmentDto[]>;
 }
 
-interface UploadErrorDetails {
+export interface UploadErrorDetails {
   status: number | undefined;
   message: string;
 }
