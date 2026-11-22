@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { delimiter, dirname, join, resolve } from 'node:path';
+import { existsSync } from 'node:fs';
+import { dirname, join, posix, resolve, win32 } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -9,34 +10,52 @@ export const localPatches = [
   'patches/storybook-addon-mcp+10.6.3.patch',
 ];
 
-const trustedGitPath = (
-  process.platform === 'win32'
-    ? [
-        String.raw`C:\Program Files\Git\cmd`,
-        String.raw`C:\Program Files\Git\bin`,
-      ]
-    : ['/usr/local/bin', '/usr/bin', '/bin']
-).join(delimiter);
-const inheritedGitPath = process.env.PATH ?? process.env.Path ?? '';
-const gitEnvironment = {
-  ...process.env,
-  PATH: [trustedGitPath, inheritedGitPath].filter(Boolean).join(delimiter),
-};
-delete gitEnvironment.Path;
+const windowsGitDirectories = [
+  String.raw`C:\Program Files\Git\cmd`,
+  String.raw`C:\Program Files\Git\bin`,
+];
+const posixGitDirectories = ['/usr/local/bin', '/usr/bin', '/bin'];
+
+/**
+ * Resolve Git from fixed, trusted directories only; PATH is never searched.
+ * Exported so the unit test spawns the same binary as the patch applicator.
+ * The options exist only so tests can inject a platform, directory list and
+ * existence check without touching the real filesystem or environment.
+ */
+export function resolveGit({
+  platform = process.platform,
+  directories = platform === 'win32'
+    ? windowsGitDirectories
+    : posixGitDirectories,
+  exists = existsSync,
+} = {}) {
+  const executable = platform === 'win32' ? 'git.exe' : 'git';
+  const { join: joinPath } = platform === 'win32' ? win32 : posix;
+  const found = directories
+    .map((directory) => joinPath(directory, executable))
+    .find((candidate) => exists(candidate));
+
+  if (!found) {
+    throw new Error(
+      `Unable to find ${executable} in the trusted directories: ${directories.join(', ')}. ` +
+        'Install Git into one of these locations; PATH is deliberately not searched.',
+    );
+  }
+
+  return found;
+}
+
+let cachedGitPath;
 
 function runGit(root, args) {
-  // Trusted Git directories take precedence, while retaining user-configured locations.
-  return spawnSync(
-    'git', // NOSONAR
-    ['--no-pager', ...args],
-    {
-      cwd: root,
-      encoding: 'utf8',
-      env: gitEnvironment,
-      stdio: ['ignore', 'pipe', 'pipe'],
-      windowsHide: true,
-    },
-  );
+  cachedGitPath ??= resolveGit();
+
+  return spawnSync(cachedGitPath, ['--no-pager', ...args], {
+    cwd: root,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    windowsHide: true,
+  });
 }
 
 function wasSkipped(result) {
