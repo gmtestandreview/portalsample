@@ -1,11 +1,5 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from 'react';
-import type { FormEvent, ReactNode } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { DefaultValues, FieldValues } from 'react-hook-form';
 import { RhfHiddenRulesProvider } from '../RhfHidableField/RhfHiddenRulesProvider';
@@ -14,6 +8,8 @@ import type { FormValues, Hideable, ValidationSchema } from '../types';
 import { createWizardYupResolver } from './wizardYupResolver';
 import type { SubmitMode, WizardYupResolverContext } from './wizardYupResolver';
 import AppLogger from '../../../instrumentation/AppLogger';
+import { RhfFormApiContext } from './rhfFormApiContext';
+import type { RhfFormApi } from './rhfFormApiContext';
 
 const NO_HIDDEN_RULES: Hideable = {};
 
@@ -24,31 +20,6 @@ class SubmitModeContext implements WizardYupResolverContext {
     this.submitMode = mode;
   }
 }
-
-export interface RhfFormApi {
-  /**
-   * Validates with the mode's schema, then calls the matching handler. Never
-   * rejects: a handler that throws is logged, as Formik's handleSubmit did.
-   */
-  submit: (mode: SubmitMode) => Promise<void>;
-  /** Native form submit (Enter key, submit button): behaves as `next`. */
-  onFormSubmit: (event?: FormEvent) => void;
-}
-
-const RhfFormApiContext = createContext<RhfFormApi | null>(null);
-
-/** Submit controls call this instead of writing flags into the form values. */
-export const useRhfFormApi = (): RhfFormApi => {
-  const api = useContext(RhfFormApiContext);
-  if (!api) {
-    throw new Error('useRhfFormApi must be used inside RhfForm');
-  }
-  return api;
-};
-
-/** True under `RhfForm`. Shell-neutral controls use it to pick their adapter. */
-export const useIsRhfShell = (): boolean =>
-  useContext(RhfFormApiContext) !== null;
 
 export interface RhfFormProps<T extends FormValues> {
   initialValues: T;

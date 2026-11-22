@@ -13,7 +13,7 @@ import type { ErrorSummaryProps, FormikErrorsSummaryProps } from './types';
 import HashLink from '../../Utilities/hashLink';
 import { HttpStatusCode } from '../../../types';
 import { omitUndefined } from '../../../utils/omitUndefined';
-import { useIsRhfShell } from '../RhfForm';
+import { useIsRhfShell } from '../RhfForm/rhfFormApiContext';
 import { flattenRhfErrors } from './rhfErrors';
 
 type ErrorData = Record<string, unknown> | readonly unknown[];

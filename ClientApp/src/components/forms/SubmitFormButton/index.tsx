@@ -3,7 +3,7 @@ import type React from 'react';
 import { useEffect } from 'react';
 import IntentButton from '../IntentButton';
 import type { IntentButtonChildren } from '../IntentButton';
-import { useIsRhfShell, useRhfFormApi } from '../RhfForm';
+import { useIsRhfShell, useRhfFormApi } from '../RhfForm/rhfFormApiContext';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 interface SubmitFormButtonProps {
