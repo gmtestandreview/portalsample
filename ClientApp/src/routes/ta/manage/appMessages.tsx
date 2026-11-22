@@ -4,7 +4,10 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Card, Row, Col, Form } from 'react-bootstrap';
 import parse from 'html-react-parser';
-import type { CustomElement } from '../../../components/SlateEditor/SlateEditor';
+import {
+  serializeToHtml,
+  type CustomElement,
+} from '../../../components/SlateEditor/slateHtml';
 
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 
@@ -107,8 +110,6 @@ const ApplicationMessages = () => {
   };
 
   const handleEditorSubmit = async (submittedValue: CustomElement[]) => {
-    const { serializeToHtml } =
-      await import('../../../components/SlateEditor/SlateEditor');
     const htmlContent = serializeToHtml(submittedValue);
     const sanitizedHtmlContent = sanitiseHtml(htmlContent);
 

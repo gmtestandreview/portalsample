@@ -7,8 +7,8 @@ import {
   isBreakTag,
   isEmptyParagraphContent,
   serializeToHtml,
-} from '@/components/SlateEditor/SlateEditor';
-import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
+} from '@/components/SlateEditor/slateHtml';
+import type { CustomElement } from '@/components/SlateEditor/slateHtml';
 
 type SetValue = (value: CustomElement[]) => void;
 type Submit = () => void;
