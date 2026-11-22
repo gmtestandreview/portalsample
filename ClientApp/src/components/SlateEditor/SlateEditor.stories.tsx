@@ -2,7 +2,8 @@ import preview from '../../../../.storybook/preview';
 import { useArgs } from 'storybook/preview-api';
 import type { ComponentProps } from 'react';
 import { within, expect, fn, userEvent } from 'storybook/test';
-import SlateEditor, { type CustomElement } from './SlateEditor';
+import SlateEditor from './SlateEditor';
+import type { CustomElement } from './slateHtml';
 
 /**
  * `SlateEditor` is the rich-text message composer used in the type-approval messaging

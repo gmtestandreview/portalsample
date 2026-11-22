@@ -5,10 +5,7 @@ import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
 import { Slate, Editable, withReact } from 'slate-react';
 import PrimaryButton from '../Buttons/PrimaryButton';
-
 import { serializeToHtml, type CustomElement } from './slateHtml';
-
-export type { CustomElement } from './slateHtml';
 
 interface SlateEditorProps {
   value: CustomElement[];
