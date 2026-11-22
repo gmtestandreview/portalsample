@@ -7,23 +7,20 @@ import { Slate, Editable, withReact } from 'slate-react';
 import PrimaryButton from '../Buttons/PrimaryButton';
 
 // slate helpers
-const escapeHtml = (text: string): string =>
-  text.replace(/[&<>"']/g, (character) => {
-    switch (character) {
-      case '&':
-        return '&amp;';
-      case '<':
-        return '&lt;';
-      case '>':
-        return '&gt;';
-      case '"':
-        return '&quot;';
-      case "'":
-        return '&#39;';
-      default:
-        return character;
-    }
-  });
+const escapeHtml = (text: string): string => {
+  const entities = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  } as const;
+
+  return text.replace(
+    /[&<>"']/g,
+    (character) => entities[character as keyof typeof entities],
+  );
+};
 
 export const serializeToHtml = (value: CustomElement[]): string =>
   value
