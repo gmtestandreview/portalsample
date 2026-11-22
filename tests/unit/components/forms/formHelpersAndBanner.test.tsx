@@ -357,6 +357,59 @@ describe('form utility helpers', () => {
     expect(isHidden('applicant.email', hidden as never, values)).toBe(false);
   });
 
+  it.each([
+    ['a.b', true],
+    ['a.b.c', true],
+    ['a[0]', true],
+    ['a[0][1]', true],
+    ['a.b[0]', true],
+    ['a[0.b]', true],
+    ['a[[0]', true],
+    ['a', true],
+    ['x.b', false],
+    ['x[0]', false],
+  ])(
+    'hides %s when its ancestor is flagged hidden: %s',
+    (fieldPath, expected) => {
+      expect.hasAssertions();
+
+      const hidden = { a: true };
+
+      expect(isHidden(fieldPath, hidden as never, {})).toBe(expected);
+    },
+  );
+
+  it.each(['a', 'a.', 'a[]', '[0]'])(
+    'treats %s as having no parent segment to inherit from',
+    (fieldPath) => {
+      expect.hasAssertions();
+
+      const hidden = { b: true };
+
+      expect(isHidden(fieldPath, hidden as never, {})).toBe(false);
+    },
+  );
+
+  it('does not let a hidden sibling index hide its neighbours', () => {
+    expect.hasAssertions();
+
+    const hidden = { a: { b: true } };
+
+    expect(isHidden('a.b[0]', hidden as never, {})).toBe(true);
+    expect(isHidden('a.c[0]', hidden as never, {})).toBe(false);
+    expect(isHidden('a[0]', hidden as never, {})).toBe(false);
+  });
+
+  it('hides a child through a group-level this flag on its parent', () => {
+    expect.hasAssertions();
+
+    const hidden = { parent: { this: true } };
+
+    expect(isHidden('parent.child', hidden as never, {})).toBe(true);
+    expect(isHidden('parent.child[2]', hidden as never, {})).toBe(true);
+    expect(isHidden('other.child', hidden as never, {})).toBe(false);
+  });
+
   it('removes hidden object fields while preserving visible array entries', () => {
     expect.hasAssertions();
 

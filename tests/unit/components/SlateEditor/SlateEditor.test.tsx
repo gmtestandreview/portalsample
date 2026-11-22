@@ -128,6 +128,25 @@ describe('slateEditor helpers', () => {
   });
 
   it.each([
+    ['&', '&amp;'],
+    ['<', '&lt;'],
+    ['>', '&gt;'],
+    ['"', '&quot;'],
+    ["'", '&#39;'],
+    ['plain text 123', 'plain text 123'],
+    [
+      `Tom & "Jerry" <b>'s</b>`,
+      'Tom &amp; &quot;Jerry&quot; &lt;b&gt;&#39;s&lt;/b&gt;',
+    ],
+  ])('escapes %j as %j when serializing', (text, expected) => {
+    expect.hasAssertions();
+
+    const html = serializeToHtml([{ type: 'paragraph', children: [{ text }] }]);
+
+    expect(html).toBe(`<p>${expected}</p>`);
+  });
+
+  it.each([
     ['<br>', true],
     ['<br/>', true],
     ['<br />', true],
