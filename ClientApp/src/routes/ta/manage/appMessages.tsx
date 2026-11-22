@@ -16,7 +16,7 @@ import {
   type RequestForPatternApprovalApplicationMessage,
   RequestForPatternApprovalClient,
 } from '../../../api/web-api-client';
-import { silentRequestFor } from '../../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../../authentication/authenticatedClient';
 import { formatDateTimeToString } from '../../../utils';
 import CustomPagination from '../../../components/Pagination';
 import BlockUISpinner from '../../../components/BlockUISpinner';
@@ -62,11 +62,11 @@ const ApplicationMessages = () => {
       try {
         // Try do something useful here like fetch messages for the application and display them
         if (accounts.length > 0 && id) {
-          const client = new RequestForPatternApprovalClient();
-          const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0]),
+          const client = await createAuthenticatedClient(
+            RequestForPatternApprovalClient,
+            accounts,
+            instance,
           );
-          client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppMessages(
             id,
             DEFAULT_DASHBOARD_PAGESIZE,
@@ -116,11 +116,11 @@ const ApplicationMessages = () => {
     try {
       // Try do something useful here like fetch messages for the application and display them
       if (accounts.length > 0 && id) {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          RequestForPatternApprovalClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
         await client.addAppMessage(id, sanitizedHtmlContent);
         setValue(initialValue);
         setEditorResetKey((prev) => prev + 1);

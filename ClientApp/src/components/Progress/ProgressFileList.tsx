@@ -123,21 +123,9 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
             </div>
             {/* Progress bar below the row */}
             {hasProgress && (
-              // The byte counts and percentage render inside the role, so they
-              // are not this progressbar's name or value. Named per row so a
-              // screen reader can tell several concurrent uploads apart.
-              <div
-                role='progressbar'
-                className='mt-1'
-                aria-label={
-                  fileName === undefined
-                    ? 'Uploading file'
-                    : `Uploading ${fileName}`
-                }
-                aria-valuenow={progressPercent}
-                aria-valuemin={0}
-                aria-valuemax={100}
-              >
+              // Named per row so a screen reader can tell several concurrent
+              // uploads apart.
+              <div className='mt-1'>
                 <div className='d-flex justify-content-between ms-1 mb-1'>
                   <span className='fs-8 text-muted'>
                     {formatBytes(bytesUploaded)}
@@ -146,20 +134,17 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                   </span>
                   <span className='fs-8 text-muted'>{` ${progressPercent}%`}</span>
                 </div>
-                <div
-                  className='progress w-100 bg-light rounded overflow-hidden'
-                  style={{
-                    height: 6,
-                  }}
-                >
-                  <div
-                    className='h-100 bg-primary rounded-pill'
-                    style={{
-                      width: `${progressPercent}%`,
-                      transition: 'width 0.3s ease',
-                    }}
-                  />
-                </div>
+                <progress
+                  className='w-100 rounded-pill'
+                  style={{ height: 6 }}
+                  aria-label={
+                    fileName === undefined
+                      ? 'Uploading file'
+                      : `Uploading ${fileName}`
+                  }
+                  value={progressPercent}
+                  max={100}
+                />
               </div>
             )}
           </li>

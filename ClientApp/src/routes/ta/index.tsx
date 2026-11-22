@@ -7,12 +7,8 @@ import WizardStep from '../../components/forms/WizardForm/WizardStep';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import useAccountContext from '../../authentication/hooks';
 import {
-  type AttachmentDto,
-  type FileParameter,
   type FormStepStatusDto,
-  ProgressClient,
   RequestForPatternApprovalClient,
-  type UploadProgress,
 } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
@@ -25,7 +21,7 @@ import SupportingDocuments from './supportingDocuments';
 import supportingDocumentsProps from './supportingDocumentsProps';
 import organisationAndContactProps from './organisationAndContactProps';
 import OrganisationAndContact from './organisationAndContact';
-import { pollUploadProgress } from './pollUploadProgress';
+import { getUploadErrorDetails, useUploadHandlers } from './useUploadState';
 
 const bannerTitle = 'Pattern/type approval - Application';
 
@@ -34,14 +30,31 @@ const ApplicationForTypeApproval = () => {
   const { id } = useParams();
   const account = useAccountContext();
   const navigate = useNavigate();
-  // Upload
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState<UploadProgress | undefined>(
-    undefined,
-  );
-  const abortRef = useRef<AbortController | null>(null);
-  const uploadIdRef = useRef<string | null>(null);
   const [submitErrors, setSubmitErrors] = useState<string[]>([]);
+  const handleUploadError = useCallback(
+    (error: unknown) => {
+      const { message, status } = getUploadErrorDetails(error);
+      setSubmitErrors([message]);
+      AppLogger.error('Failed to load application documents', error as Error, {
+        Id: id,
+        Status: status,
+      });
+    },
+    [id],
+  );
+  const {
+    uploading,
+    progress,
+    setProgress,
+    handleCancelFile,
+    onUploadAttachments,
+  } = useUploadHandlers({
+    accounts,
+    instance,
+    id,
+    fallbackUploadId: '',
+    onUploadError: handleUploadError,
+  });
 
   useBodyClass('wizard');
 
@@ -89,120 +102,6 @@ const ApplicationForTypeApproval = () => {
       isLoading.current = true;
     };
   }, [accounts, id, instance, isLoading, navigate, statuses]);
-
-  useEffect(
-    () => () => {
-      if (abortRef.current) {
-        abortRef.current.abort();
-      }
-    },
-    [],
-  );
-
-  const startLongPolling = useCallback(
-    async (uploadId: string) => {
-      const controller = new AbortController();
-      abortRef.current = controller;
-      const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      client.setAuthToken(tokenResult.accessToken);
-      await pollUploadProgress({
-        client,
-        uploadId,
-        signal: controller.signal,
-        onProgress: setProgress,
-        onFinished: () => {
-          setUploading(false);
-        },
-      });
-    },
-    [accounts, instance],
-  );
-
-  const handleCancelFile = async (fileName: string) => {
-    if (!uploadIdRef.current) return;
-    try {
-      const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      client.setAuthToken(tokenResult.accessToken);
-      await client.cancelFile(uploadIdRef.current, fileName);
-    } catch {
-      // Cancellation is best-effort; progress polling will reflect the final state
-    }
-  };
-
-  const onUploadAttachments = async (
-    token: string,
-    fileData: FileParameter[],
-  ): Promise<AttachmentDto[]> => {
-    let attachments = [] as AttachmentDto[];
-    try {
-      const clientProgress = new ProgressClient();
-      clientProgress.setAuthToken(token);
-      const uploadId = await clientProgress.getProgressUploadId();
-      uploadIdRef.current = uploadId;
-      if (uploadIdRef.current) {
-        void startLongPolling(uploadIdRef.current);
-      }
-      const clientPA = new RequestForPatternApprovalClient();
-      clientPA.setAuthToken(token);
-      const result = await clientPA.addDocuments(
-        id,
-        null,
-        uploadId,
-        fileData,
-        null,
-        null,
-      );
-      const { documents } = result.form ?? {};
-      uploadIdRef.current = result.uploadId ?? '';
-
-      attachments =
-        documents?.map(
-          (x) =>
-            ({
-              id: x.id,
-              documentReference: x.id,
-              attachmentType: x.attachmentType,
-              attachmentMimeType: x.attachmentMimeType,
-              attachmentSize: x.attachmentSize,
-              attachmentName: x.attachmentName,
-              attachmentUrl: x.attachmentUrl,
-              attachmentCategory: x.attachmentCategory,
-              parentTimeStamp: new Date().toDateString(),
-            }) as AttachmentDto,
-        ) ?? [];
-    } catch (e) {
-      // handle errors as needed
-      const status =
-        typeof e === 'object' &&
-        e !== null &&
-        'status' in e &&
-        typeof e.status === 'number'
-          ? e.status
-          : undefined;
-
-      if (status === 403) {
-        setSubmitErrors([
-          'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
-        ]);
-      } else if (status && status >= 500) {
-        setSubmitErrors(['A server error occurred. Please try again.']);
-      } else {
-        setSubmitErrors(['Failed to commit documents.']);
-      }
-
-      AppLogger.error('Failed to load application documents', e as Error, {
-        Id: id,
-        Status: status,
-      });
-    }
-    return attachments;
-  };
 
   if (!account?.details) return null;
   const accountDetails = account.details;

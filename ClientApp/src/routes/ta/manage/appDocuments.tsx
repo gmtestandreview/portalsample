@@ -1,14 +1,10 @@
-import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useMsal } from '@azure/msal-react';
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Button, Col, Row } from 'react-bootstrap';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
-  type UploadProgress,
   type AttachmentDto,
-  type FileParameter,
-  ProgressClient,
   RequestForPatternApprovalClient,
   type SupportingDocumentsStep,
 } from '../../../api/web-api-client';
@@ -18,18 +14,18 @@ import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 
-import { silentRequestFor } from '../../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../../authentication/authenticatedClient';
 import AppLogger from '../../../instrumentation/AppLogger';
 import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import { createSaveAwareYupResolver } from '../../../components/forms/saveAwareYupResolver';
 import { supportingDocsSubmitValidation } from '../validation';
-import { pollUploadProgress } from '../pollUploadProgress';
+import { getUploadErrorDetails, useUploadHandlers } from '../useUploadState';
 
 interface AppDocumentsFormValues {
   form: {
     documents: AttachmentDto[];
-    instrumentCategory?: string | undefined;
-    instrumentType?: string | undefined;
+    instrumentCategory?: string;
+    instrumentType?: string;
   };
 }
 
@@ -37,35 +33,69 @@ const ApplicationDocuments = () => {
   const { accounts, instance } = useMsal();
   const { id } = useParams();
   const [isDataLoading, setIsDataLoading] = useState(false);
-
-  useHtmlTitle(`[New certificate] (${id ?? ''}) manage | NMI Services portal`);
-  useBodyClass('pa-application-manage');
-
-  // SupportingDocuments upload state and handlers (from ta/index.tsx)
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState<UploadProgress | undefined>(
-    undefined,
-  );
-  const abortRef = useRef<AbortController | null>(null);
-  const uploadIdRef = useRef<string | null>(null);
-
-  // Saved documents, used as the form's values
   const [filesUploaded, setFilesUploaded] =
     useState<SupportingDocumentsStep | null>(null);
   const [filesToCommit, setFilesToCommit] = useState<boolean>(false);
   const [commitSuccess, setCommitSuccess] = useState<boolean>(false);
   const [submitErrors, setSubmitErrors] = useState<string[]>([]);
 
+  useHtmlTitle(`[New certificate] (${id ?? ''}) manage | NMI Services portal`);
+  useBodyClass('pa-application-manage');
+
+  const handleUploadError = useCallback(
+    (error: unknown) => {
+      AppLogger.error('Failed to load application documents', error as Error, {
+        Id: id,
+      });
+    },
+    [id],
+  );
+
+  const handleAttachmentsUploaded = useCallback(
+    (attachments: AttachmentDto[]) => {
+      setFilesToCommit(attachments.some((doc) => !doc.documentLocked));
+    },
+    [],
+  );
+
+  const mapManagedAttachment = useCallback(
+    (attachment: AttachmentDto, document: AttachmentDto): AttachmentDto => ({
+      ...attachment,
+      ...(document.documentLocked === undefined
+        ? {}
+        : { documentLocked: document.documentLocked }),
+      ...(document.documentBytes === undefined
+        ? {}
+        : { documentBytes: document.documentBytes }),
+    }),
+    [],
+  );
+
+  const {
+    uploading,
+    progress,
+    setProgress,
+    handleCancelFile,
+    onUploadAttachments,
+  } = useUploadHandlers({
+    accounts,
+    instance,
+    id,
+    onUploadError: handleUploadError,
+    mapUploadedDocument: mapManagedAttachment,
+    onAttachmentsUploaded: handleAttachmentsUploaded,
+  });
+
   useEffect(() => {
     const fetchDocs = async () => {
       setIsDataLoading(true);
       try {
         if (accounts.length > 0 && id) {
-          const client = new RequestForPatternApprovalClient();
-          const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0]),
+          const client = await createAuthenticatedClient(
+            RequestForPatternApprovalClient,
+            accounts,
+            instance,
           );
-          client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppDocuments(id);
           setFilesUploaded(response);
           setFilesToCommit(
@@ -85,114 +115,15 @@ const ApplicationDocuments = () => {
     void fetchDocs();
   }, [accounts, id, instance, commitSuccess]);
 
-  // Without this the controller stored below is never aborted, so the progress poll never sees
-  // `signal.aborted`, outlives the component, and against a failing endpoint keeps retrying.
-  useEffect(
-    () => () => {
-      if (abortRef.current) {
-        abortRef.current.abort();
-      }
-    },
-    [],
-  );
-
-  const startLongPolling = useCallback(
-    async (uploadId: string) => {
-      const controller = new AbortController();
-      abortRef.current = controller;
-      const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      client.setAuthToken(tokenResult.accessToken);
-      await pollUploadProgress({
-        client,
-        uploadId,
-        signal: controller.signal,
-        onProgress: setProgress,
-        onFinished: () => {
-          setUploading(false);
-        },
-      });
-    },
-    [accounts, instance],
-  );
-
-  const handleCancelFile = async (fileName: string) => {
-    if (!uploadIdRef.current) return;
-    try {
-      const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
-      client.setAuthToken(tokenResult.accessToken);
-      await client.cancelFile(uploadIdRef.current, fileName);
-    } catch {
-      // Cancellation is best-effort; progress polling will reflect the final state
-    }
-  };
-
-  const onUploadAttachments = async (
-    token: string,
-    fileData: FileParameter[],
-  ): Promise<AttachmentDto[]> => {
-    let attachments = [] as AttachmentDto[];
-    try {
-      const clientProgress = new ProgressClient();
-      clientProgress.setAuthToken(token);
-      const uploadId = await clientProgress.getProgressUploadId();
-      uploadIdRef.current = uploadId;
-      if (uploadIdRef.current) {
-        void startLongPolling(uploadIdRef.current);
-      }
-      const clientPA = new RequestForPatternApprovalClient();
-      clientPA.setAuthToken(token);
-      const result = await clientPA.addDocuments(
-        id,
-        null,
-        uploadId,
-        fileData,
-        null,
-        null,
-      );
-      const { documents } = result.form ?? {};
-      uploadIdRef.current = result.uploadId ?? null;
-
-      attachments =
-        documents?.map(
-          (x) =>
-            ({
-              id: x.id,
-              documentReference: x.id,
-              attachmentType: x.attachmentType,
-              attachmentMimeType: x.attachmentMimeType,
-              attachmentSize: x.attachmentSize,
-              attachmentName: x.attachmentName,
-              attachmentUrl: x.attachmentUrl,
-              attachmentCategory: x.attachmentCategory,
-              parentTimeStamp: new Date().toDateString(),
-              documentLocked: x.documentLocked,
-              documentBytes: x.documentBytes,
-            }) as AttachmentDto,
-        ) ?? [];
-      setFilesToCommit(attachments.some((doc) => !doc.documentLocked));
-    } catch (error) {
-      AppLogger.error('Failed to load application documents', error as Error, {
-        Id: id,
-      });
-    }
-    return attachments;
-  };
-
   const onSubmit = async (values: AppDocumentsFormValues) => {
     if (id === undefined) return;
     try {
       setIsDataLoading(true);
-      const client = new RequestForPatternApprovalClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
+      const client = await createAuthenticatedClient(
+        RequestForPatternApprovalClient,
+        accounts,
+        instance,
       );
-      client.setAuthToken(tokenResult.accessToken);
       // Clear out bytes to avoid unnecessarily large payloads
       const payload: SupportingDocumentsStep = {
         ...values,
@@ -207,17 +138,8 @@ const ApplicationDocuments = () => {
       await client.commitAppDocuments(id, payload);
       setCommitSuccess(true);
     } catch (e: unknown) {
-      const status = (e as { status?: number } | undefined)?.status;
-
-      if (status === 403) {
-        setSubmitErrors([
-          'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
-        ]);
-      } else if (status && status >= 500) {
-        setSubmitErrors(['A server error occurred. Please try again.']);
-      } else {
-        setSubmitErrors(['Failed to commit documents.']);
-      }
+      const { message, status } = getUploadErrorDetails(e);
+      setSubmitErrors([message]);
 
       AppLogger.error('Failed to load application documents', e as Error, {
         Id: id,
@@ -234,14 +156,16 @@ const ApplicationDocuments = () => {
     values: {
       form: {
         documents: filesUploaded?.form?.documents ?? [],
-        instrumentCategory: orIfEmpty(
-          filesUploaded?.form?.instrumentCategory,
-          undefined,
-        ),
-        instrumentType: orIfEmpty(
-          filesUploaded?.form?.instrumentType,
-          undefined,
-        ),
+        ...(filesUploaded?.form?.instrumentCategory
+          ? {
+              instrumentCategory: filesUploaded.form.instrumentCategory,
+            }
+          : {}),
+        ...(filesUploaded?.form?.instrumentType
+          ? {
+              instrumentType: filesUploaded.form.instrumentType,
+            }
+          : {}),
       },
     },
     resolver: createSaveAwareYupResolver<AppDocumentsFormValues>(

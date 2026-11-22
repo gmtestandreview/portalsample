@@ -32,6 +32,7 @@ import globals from 'globals';
 import sonarjs from 'eslint-plugin-sonarjs';
 import tseslint from 'typescript-eslint';
 import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
+import { reactRefresh } from 'eslint-plugin-react-refresh';
 import vitest from '@vitest/eslint-plugin';
 import vitestGlobals from 'eslint-plugin-vitest-globals';
 
@@ -223,7 +224,11 @@ export default defineConfig(
       'no-useless-assignment': 'error',
     },
   },
-
+  {
+    name: 'nmi/react-refresh',
+    files: jsxFiles,
+    extends: [reactRefresh.configs.vite()],
+  },
   {
     name: 'nmi/javascript-recommended',
     files: javascriptAndTypeScriptFiles,

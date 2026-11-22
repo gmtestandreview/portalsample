@@ -128,7 +128,7 @@ When(
 When(
   'the user completes the required instrument and request details',
   async ({ page }) => {
-    await page.getByRole('radio', { name: /Yes$/ }).check({ force: true });
+    await page.getByRole('radio', { name: /Yes$/ }).check();
     await page.getByLabel('Serial number', { exact: true }).fill('SN123456');
     await page.getByLabel('Number of items', { exact: true }).fill('1');
     await page

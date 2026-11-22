@@ -23,8 +23,11 @@ Usage (called by the Copilot CLI skill, not typically invoked directly):
         --output screenshot.png
 """
 
+from __future__ import annotations
+
 import argparse
 import contextlib
+import importlib
 import io
 import json
 import os
@@ -33,36 +36,43 @@ import shutil
 import subprocess
 import sys
 import tempfile
-
-try:
-    import fitz  # PyMuPDF
-except ImportError:
-    fitz = None
-
-try:
-    from PIL import Image, ImageDraw
-except ImportError:
-    Image = None
-    ImageDraw = None
-
-try:
-    from docx import Document
-    from docx.shared import Inches, Pt, RGBColor
-except ImportError:
-    Document = None
-    Inches = None
-    Pt = None
-    RGBColor = None
+from typing import Any
 
 
-def _resolve_path(path_str):
+DOCX_EXTENSION = '.docx'
+WORD_EXTENSIONS = (DOCX_EXTENSION, '.doc', '.rtf')
+URL_PREFIXES = ('http://', 'https://')
+
+
+def _optional_module(module_name: str) -> Any:
+    """Load an optional runtime dependency without requiring local type stubs."""
+    try:
+        return importlib.import_module(module_name)
+    except ImportError:
+        return None
+
+
+fitz: Any = _optional_module('fitz')
+pil_image: Any = _optional_module('PIL.Image')
+pil_image_draw: Any = _optional_module('PIL.ImageDraw')
+docx: Any = _optional_module('docx')
+docx_shared: Any = _optional_module('docx.shared')
+Image: Any = pil_image
+ImageDraw: Any = pil_image_draw
+Document: Any = getattr(docx, 'Document', None)
+Inches: Any = getattr(docx_shared, 'Inches', None)
+Pt: Any = getattr(docx_shared, 'Pt', None)
+RGBColor: Any = getattr(docx_shared, 'RGBColor', None)
+
+
+def _resolve_path(path_str: str) -> str:
     """Expand ~ and environment variables in a user-provided path."""
     return os.path.expandvars(os.path.expanduser(path_str))
 
 
-def _check_core_deps():
+def _check_core_deps() -> None:
     """Raise if core dependencies are missing."""
-    missing = []
+    missing: list[str] = []
     if fitz is None:
         missing.append('pymupdf')
     if Image is None:
@@ -84,7 +94,7 @@ def _check_core_deps():
 # ---------------------------------------------------------------------------
 
 
-def convert_to_pdf(source_path, output_pdf_path):
+def convert_to_pdf(source_path: str, output_pdf_path: str) -> bool:
     """Convert a document to PDF. Supports .docx, .doc, .rtf, .html, .htm."""
     if not os.path.isfile(source_path):
         raise FileNotFoundError(f'Source file not found: {source_path}')
@@ -101,7 +111,7 @@ def convert_to_pdf(source_path, output_pdf_path):
     # Try Microsoft Word first on the current platform
     if (
         system == 'Darwin'
-        and ext in ('.docx', '.doc', '.rtf')
+        and ext in (DOCX_EXTENSION, '.doc', '.rtf')
         and os.path.exists('/Applications/Microsoft Word.app')
         and _convert_with_word_mac(source_path, output_pdf_path)
     ):
@@ -109,7 +119,7 @@ def convert_to_pdf(source_path, output_pdf_path):
 
     if (
         system == 'Windows'
-        and ext in ('.docx', '.doc', '.rtf')
+        and ext in (DOCX_EXTENSION, '.doc', '.rtf')
         and _convert_with_word_windows(source_path, output_pdf_path)
     ):
         return True
@@ -120,7 +130,7 @@ def convert_to_pdf(source_path, output_pdf_path):
         libreoffice_executable = _find_libreoffice_windows()
     if (
         libreoffice_executable
-        and ext in ('.docx', '.doc', '.rtf', '.odt', '.html', '.htm')
+        and ext in (DOCX_EXTENSION, '.doc', '.rtf', '.odt', '.html', '.htm')
         and _convert_with_libreoffice(libreoffice_executable, source_path, output_pdf_path)
     ):
         return True
@@ -131,7 +141,7 @@ def convert_to_pdf(source_path, output_pdf_path):
     )
 
 
-def _convert_with_word_mac(source_path, output_pdf_path):
+def _convert_with_word_mac(source_path: str, output_pdf_path: str) -> bool:
     """Convert using Microsoft Word on macOS via AppleScript."""
     source_abs = os.path.abspath(source_path)
     output_abs = os.path.abspath(output_pdf_path)
@@ -156,7 +166,9 @@ def _convert_with_word_mac(source_path, output_pdf_path):
         return False
 
 
-def _convert_with_libreoffice(soffice_path, source_path, output_pdf_path):
+def _convert_with_libreoffice(
+    soffice_path: str, source_path: str, output_pdf_path: str
+) -> bool:
     """Convert a source document using the LibreOffice executable found by the caller."""
     with tempfile.TemporaryDirectory() as tmpdir:
         try:
@@ -189,9 +201,9 @@ def _convert_with_libreoffice(soffice_path, source_path, output_pdf_path):
     return False
 
 
-def _find_libreoffice_windows():
+def _find_libreoffice_windows() -> str | None:
     """Find LibreOffice in common Windows install locations."""
-    candidates = []
+    candidates: list[str] = []
     for env_var in ('ProgramFiles', 'ProgramFiles(x86)'):
         base = os.environ.get(env_var)
         if base:
@@ -202,12 +214,14 @@ def _find_libreoffice_windows():
     return None
 
 
-def _convert_with_word_windows(source_path, output_pdf_path):
+def _convert_with_word_windows(source_path: str, output_pdf_path: str) -> bool:
     """Convert using Microsoft Word on Windows via win32com."""
     word = None
     doc = None
     try:
-        import win32com.client
+        win32com_client: Any = _optional_module('win32com.client')
+        if win32com_client is None:
+            return False
 
         source_abs = os.path.abspath(source_path)
         output_abs = os.path.abspath(output_pdf_path)
@@ -216,9 +230,9 @@ def _convert_with_word_windows(source_path, output_pdf_path):
         # DispatchEx creates an isolated Word process; fall back to Dispatch
         # if the DCOM class isn't registered
         try:
-            word = win32com.client.DispatchEx('Word.Application')
+            word = win32com_client.DispatchEx('Word.Application')
         except Exception:
-            word = win32com.client.Dispatch('Word.Application')
+            word = win32com_client.Dispatch('Word.Application')
 
         word.Visible = False
         word.DisplayAlerts = 0
@@ -249,18 +263,17 @@ def _convert_with_word_windows(source_path, output_pdf_path):
                 word.Quit()
 
 
-def render_url_to_pdf(url, output_pdf_path):
+def render_url_to_pdf(url: str, output_pdf_path: str) -> None:
     """Render a web page to PDF using Playwright."""
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError:
+    playwright_sync_api: Any = _optional_module('playwright.sync_api')
+    if playwright_sync_api is None:
         raise RuntimeError(
             'Playwright is required for web URL support. '
             f'Run: {sys.executable} -m pip install playwright && '
             f'{sys.executable} -m playwright install chromium'
         ) from None
 
-    with sync_playwright() as p:
+    with playwright_sync_api.sync_playwright() as p:
         browser = None
         try:
             browser = p.chromium.launch(headless=True)
@@ -292,8 +305,13 @@ def render_url_to_pdf(url, output_pdf_path):
 
 
 def screenshot_region(
-    pdf_doc, anchors, target_page=None, target_pages=None, context_padding=40, dpi=200
-):
+    pdf_doc: Any,
+    anchors: str | list[str],
+    target_page: int | None = None,
+    target_pages: list[int] | None = None,
+    context_padding: int = 40,
+    dpi: int = 200,
+) -> tuple[io.BytesIO | None, str | None, tuple[int, int] | None]:
     """Find anchor text in a PDF and capture the surrounding region as a highlighted image.
 
     Args:
@@ -307,63 +325,82 @@ def screenshot_region(
     Returns:
         (image_bytes, page_label, (width, height)) or (None, None, None).
     """
-    if isinstance(anchors, str):
-        anchors = [anchors]
-
-    # Determine pages to search
-    if target_pages:
-        pages = [p - 1 for p in target_pages]
-    elif target_page is not None:
-        pages = [target_page - 1]
-    else:
-        pages = list(range(pdf_doc.page_count))
-
-    # Collect hits across pages
-    page_hits = {}
-    for pg_idx in pages:
-        if pg_idx < 0 or pg_idx >= pdf_doc.page_count:
-            continue
-        page = pdf_doc[pg_idx]
-        hits_on_page = []
-        for anchor in anchors:
-            found = page.search_for(anchor)
-            if found:
-                hits_on_page.extend([(anchor, h) for h in found])
-        if hits_on_page:
-            page_hits[pg_idx] = hits_on_page
+    search_anchors = [anchors] if isinstance(anchors, str) else anchors
+    pages = _pages_to_search(pdf_doc, target_page, target_pages)
+    page_hits = _collect_page_hits(pdf_doc, pages, search_anchors)
 
     if not page_hits:
         return None, None, None
 
     zoom = dpi / 72
-
-    # If single page, render one region
     if len(page_hits) == 1:
-        pg_idx = list(page_hits.keys())[0]
+        pg_idx = next(iter(page_hits))
         img = _render_page_region(pdf_doc, pg_idx, page_hits[pg_idx], context_padding, zoom)
-        img_bytes = _img_to_bytes(img)
-        return img_bytes, f'page {pg_idx + 1}', img.size
+        return _img_to_bytes(img), f'page {pg_idx + 1}', img.size
 
-    # Multi-page: stitch vertically
-    images = []
-    pages_used = sorted(page_hits.keys())
-    for pg_idx in pages_used:
-        img = _render_page_region(pdf_doc, pg_idx, page_hits[pg_idx], context_padding, zoom)
-        images.append(img)
-
+    pages_used = sorted(page_hits)
+    images = [
+        _render_page_region(pdf_doc, pg_idx, page_hits[pg_idx], context_padding, zoom)
+        for pg_idx in pages_used
+    ]
     stitched = _stitch_vertical(images)
-    img_bytes = _img_to_bytes(stitched)
 
-    if len(pages_used) > 1:
-        page_nums = ', '.join(str(p + 1) for p in pages_used)
-        page_label = f'pages {page_nums}'
-    else:
-        page_label = f'page {pages_used[0] + 1}'
-
-    return img_bytes, page_label, stitched.size
+    return _img_to_bytes(stitched), _page_label(pages_used), stitched.size
 
 
-def _render_page_region(pdf_doc, pg_idx, hits_with_anchors, context_padding, zoom):
+def _pages_to_search(
+    pdf_doc: Any,
+    target_page: int | None,
+    target_pages: list[int] | None,
+) -> list[int]:
+    """Resolve requested 1-indexed pages to zero-indexed page numbers."""
+    if target_pages:
+        return [page - 1 for page in target_pages]
+    if target_page is not None:
+        return [target_page - 1]
+    return list(range(pdf_doc.page_count))
+
+
+def _collect_page_hits(
+    pdf_doc: Any,
+    pages: list[int],
+    anchors: list[str],
+) -> dict[int, list[tuple[str, Any]]]:
+    """Collect text search hits for each valid requested page."""
+    page_hits: dict[int, list[tuple[str, Any]]] = {}
+    for pg_idx in pages:
+        if pg_idx < 0 or pg_idx >= pdf_doc.page_count:
+            continue
+
+        hits_on_page: list[tuple[str, Any]] = []
+        page = pdf_doc[pg_idx]
+        for anchor in anchors:
+            found = page.search_for(anchor)
+            if found:
+                hits_on_page.extend((anchor, hit) for hit in found)
+
+        if hits_on_page:
+            page_hits[pg_idx] = hits_on_page
+
+    return page_hits
+
+
+def _page_label(pages_used: list[int]) -> str:
+    """Build a display label for the pages used in a stitched screenshot."""
+    if len(pages_used) == 1:
+        return f'page {pages_used[0] + 1}'
+
+    page_nums = ', '.join(str(page + 1) for page in pages_used)
+    return f'pages {page_nums}'
+
+
+def _render_page_region(
+    pdf_doc: Any,
+    pg_idx: int,
+    hits_with_anchors: list[tuple[str, Any]],
+    context_padding: int,
+    zoom: float,
+) -> Any:
     """Render a cropped region of a PDF page with highlighted anchor text."""
     page = pdf_doc[pg_idx]
     page_rect = page.rect
@@ -402,7 +439,7 @@ def _render_page_region(pdf_doc, pg_idx, hits_with_anchors, context_padding, zoo
     return img
 
 
-def _stitch_vertical(images, gap=4):
+def _stitch_vertical(images: list[Any], gap: int = 4) -> Any:
     """Stitch multiple images vertically with a small gap between them."""
     total_height = sum(img.height for img in images) + gap * (len(images) - 1)
     max_width = max(img.width for img in images)
@@ -417,7 +454,7 @@ def _stitch_vertical(images, gap=4):
     return stitched
 
 
-def _img_to_bytes(img):
+def _img_to_bytes(img: Any) -> io.BytesIO:
     """Convert PIL Image to a PNG BytesIO buffer (file-like object)."""
     buf = io.BytesIO()
     img.save(buf, format='PNG')
@@ -431,8 +468,14 @@ def _img_to_bytes(img):
 
 
 def build_analysis_doc(
-    pdf_doc, sections, output_path, title=None, subtitle=None, source_label=None, dpi=200
-):
+    pdf_doc: Any,
+    sections: list[dict[str, Any]],
+    output_path: str,
+    title: str | None = None,
+    subtitle: str | None = None,
+    source_label: str | None = None,
+    dpi: int = 200,
+) -> str:
     """Build a Word document with analysis sections and inline source screenshots.
 
     Args:
@@ -480,7 +523,7 @@ def build_analysis_doc(
         doc.add_paragraph(analysis)
 
         if anchors:
-            img_bytes, page_label, size = screenshot_region(
+            img_bytes, page_label, _ = screenshot_region(
                 pdf_doc,
                 anchors,
                 target_page=target_page,
@@ -540,110 +583,114 @@ def build_analysis_doc(
 # ---------------------------------------------------------------------------
 
 
-def cmd_setup_check():
-    """Check if all dependencies are available."""
-    checks = {
-        'PyMuPDF': False,
-        'Pillow': False,
-        'python-docx': False,
-        'Playwright': False,
-        'Chromium browser': False,
-        'Word (macOS)': False,
-        'Word (Windows)': False,
-        'LibreOffice': False,
-    }
-
-    try:
-        import fitz
-
-        checks['PyMuPDF'] = True
-    except ImportError:
-        pass
-
-    try:
-        from PIL import Image
-
-        checks['Pillow'] = True
-    except ImportError:
-        pass
-
-    try:
-        from docx import Document
-
-        checks['python-docx'] = True
-    except ImportError:
-        pass
-
-    try:
-        from playwright.sync_api import sync_playwright
-
-        checks['Playwright'] = True
-    except ImportError:
-        pass
-
-    # Check Chromium across all platforms
-    pw_cache_candidates = []
-    system = platform.system()
+def _playwright_cache_candidates(system: str) -> list[str]:
+    """Build Playwright browser cache locations for the current platform."""
+    candidates: list[str] = []
     if system == 'Darwin':
-        pw_cache_candidates.append(os.path.expanduser('~/Library/Caches/ms-playwright'))
+        candidates.append(os.path.expanduser('~/Library/Caches/ms-playwright'))
     if system == 'Windows':
         local_app_data = os.environ.get('LOCALAPPDATA', '')
         if local_app_data:
-            pw_cache_candidates.append(os.path.join(local_app_data, 'ms-playwright'))
-    pw_cache_candidates.append(os.path.expanduser('~/.cache/ms-playwright'))
-    # Respect PLAYWRIGHT_BROWSERS_PATH
-    custom_pw = os.environ.get('PLAYWRIGHT_BROWSERS_PATH')
-    if custom_pw and custom_pw != '0':
-        pw_cache_candidates.insert(0, custom_pw)
-    for pw_cache in pw_cache_candidates:
-        if os.path.isdir(pw_cache) and any(d.startswith('chromium') for d in os.listdir(pw_cache)):
-            checks['Chromium browser'] = True
-            break
+            candidates.append(os.path.join(local_app_data, 'ms-playwright'))
 
-    # Check converters -- registry/filesystem only, never launch Word
-    if system == 'Darwin' and os.path.exists('/Applications/Microsoft Word.app'):
-        checks['Word (macOS)'] = True
+    candidates.append(os.path.expanduser('~/.cache/ms-playwright'))
+    custom_path = os.environ.get('PLAYWRIGHT_BROWSERS_PATH')
+    if custom_path and custom_path != '0':
+        candidates.insert(0, custom_path)
+    return candidates
 
-    if system == 'Windows':
+
+def _find_chromium(system: str) -> bool:
+    """Check known Playwright cache locations for a Chromium browser."""
+    for cache_path in _playwright_cache_candidates(system):
+        if not os.path.isdir(cache_path):
+            continue
+        if any(name.startswith('chromium') for name in os.listdir(cache_path)):
+            return True
+    return False
+
+
+def _find_word_windows() -> bool:
+    """Check Windows registry entries for Microsoft Word."""
+    try:
+        import winreg
+    except ImportError:
+        return False
+
+    registry_paths = (
+        (winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE'),
+        (winreg.HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE'),
+        (winreg.HKEY_CLASSES_ROOT, r'Word.Application'),
+    )
+    for hive, subkey in registry_paths:
         try:
-            import winreg
+            winreg.OpenKey(hive, subkey)
+            return True
+        except OSError:
+            continue
+    return False
 
-            word_reg_paths = [
-                (
-                    winreg.HKEY_LOCAL_MACHINE,
-                    r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE',
-                ),
-                (
-                    winreg.HKEY_CURRENT_USER,
-                    r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE',
-                ),
-                (winreg.HKEY_CLASSES_ROOT, r'Word.Application'),
-            ]
-            for hive, subkey in word_reg_paths:
-                try:
-                    winreg.OpenKey(hive, subkey)
-                    checks['Word (Windows)'] = True
-                    break
-                except OSError:
-                    pass
-        except ImportError:
-            pass
-        # Check if pywin32 is available for Word automation
-        if checks['Word (Windows)']:
-            try:
-                import win32com.client  # noqa: F401
-            except ImportError:
-                checks['Word (Windows)'] = False
-                print('  Note: Microsoft Word found but pywin32 is not installed.')
-                print(f'  Run: {sys.executable} -m pip install pywin32')
 
-    if (
-        shutil.which('libreoffice')
-        or shutil.which('soffice')
-        or system == 'Windows'
-        and _find_libreoffice_windows()
-    ):
-        checks['LibreOffice'] = True
+def _check_word_windows() -> bool:
+    """Check Microsoft Word and its Windows automation dependency."""
+    if not _find_word_windows():
+        return False
+    if _optional_module('win32com.client') is not None:
+        return True
+
+    print('  Note: Microsoft Word found but pywin32 is not installed.')
+    print(f'  Run: {sys.executable} -m pip install pywin32')
+    return False
+
+
+def _find_libreoffice(system: str) -> bool:
+    """Check PATH and common Windows locations for LibreOffice."""
+    if shutil.which('libreoffice') or shutil.which('soffice'):
+        return True
+    return system == 'Windows' and _find_libreoffice_windows() is not None
+
+
+WORD_MACOS_CHECK = 'Word (macOS)'
+WORD_WINDOWS_CHECK = 'Word (Windows)'
+CHROMIUM_CHECK = 'Chromium browser'
+
+
+def _print_setup_support(checks: dict[str, bool], all_core: bool) -> None:
+    """Print source-format readiness information."""
+    has_converter = any(checks[name] for name in (WORD_MACOS_CHECK, WORD_WINDOWS_CHECK, 'LibreOffice'))
+    has_web = checks['Playwright'] and checks[CHROMIUM_CHECK]
+    pdf_requirement = 'Needs: pip3 install pymupdf pillow python-docx'
+    web_requirement = 'Needs: pip3 install playwright && python3 -m playwright install chromium'
+
+    print('')
+    print('Source support:')
+    print(f"  PDF files:   {'Ready' if all_core else pdf_requirement}")
+    print(f"  Word docs:   {'Ready' if has_converter else 'Needs: Microsoft Word or LibreOffice'}")
+    print(f"  Web URLs:    {'Ready' if has_web else web_requirement}")
+
+
+def cmd_setup_check() -> int:
+    """Check if all dependencies are available."""
+    checks = {
+        'PyMuPDF': fitz is not None,
+        'Pillow': Image is not None and ImageDraw is not None,
+        'python-docx': all(
+            dependency is not None for dependency in (Document, Inches, Pt, RGBColor)
+        ),
+        'Playwright': _optional_module('playwright.sync_api') is not None,
+        CHROMIUM_CHECK: False,
+        WORD_MACOS_CHECK: False,
+        WORD_WINDOWS_CHECK: False,
+        'LibreOffice': False,
+    }
+
+    system = platform.system()
+    checks[CHROMIUM_CHECK] = _find_chromium(system)
+    if system == 'Darwin' and os.path.exists('/Applications/Microsoft Word.app'):
+        checks[WORD_MACOS_CHECK] = True
+    if system == 'Windows':
+        checks[WORD_WINDOWS_CHECK] = _check_word_windows()
+    checks['LibreOffice'] = _find_libreoffice(system)
 
     print('Eyeball dependency check:')
     all_core = True
@@ -654,26 +701,16 @@ def cmd_setup_check():
         if name in ('PyMuPDF', 'Pillow', 'python-docx') and not ok:
             all_core = False
 
-    has_converter = checks['Word (macOS)'] or checks['Word (Windows)'] or checks['LibreOffice']
-    has_web = checks['Playwright'] and checks['Chromium browser']
-
-    print('')
-    print('Source support:')
-    pdf_requirement = 'Needs: pip3 install pymupdf pillow python-docx'
-    web_requirement = 'Needs: pip3 install playwright && python3 -m playwright install chromium'
-    print(f'  PDF files:   {'Ready' if all_core else pdf_requirement}')
-    print(f'  Word docs:   {'Ready' if has_converter else 'Needs: Microsoft Word or LibreOffice'}')
-    print(f'  Web URLs:    {'Ready' if has_web else web_requirement}')
-
+    _print_setup_support(checks, all_core)
     return 0 if all_core else 1
 
 
-def cmd_convert(args):
+def cmd_convert(args: argparse.Namespace) -> None:
     """Convert a document to PDF."""
     source = _resolve_path(args.source)
     output = _resolve_path(args.output)
 
-    if source.startswith(('http://', 'https://')):
+    if source.startswith(URL_PREFIXES):
         render_url_to_pdf(source, output)
     else:
         convert_to_pdf(source, output)
@@ -681,7 +718,7 @@ def cmd_convert(args):
     print(f'Converted: {output} ({os.path.getsize(output)} bytes)')
 
 
-def cmd_screenshot(args):
+def cmd_screenshot(args: argparse.Namespace) -> None:
     """Generate a single screenshot from a PDF."""
     _check_core_deps()
     source = _resolve_path(args.source)
@@ -711,7 +748,7 @@ def cmd_screenshot(args):
     finally:
         pdf_doc.close()
 
-    if img_bytes:
+    if img_bytes and size is not None:
         output = _resolve_path(args.output)
         with open(output, 'wb') as f:
             f.write(img_bytes.getvalue())
@@ -721,7 +758,7 @@ def cmd_screenshot(args):
         sys.exit(1)
 
 
-def cmd_build(args):
+def cmd_build(args: argparse.Namespace) -> None:
     """Build a complete analysis document."""
     _check_core_deps()
     source = _resolve_path(args.source)
@@ -731,7 +768,7 @@ def cmd_build(args):
     subtitle = args.subtitle
     dpi = args.dpi
 
-    if not source.startswith(('http://', 'https://')) and not os.path.isfile(source):
+    if not source.startswith(URL_PREFIXES) and not os.path.isfile(source):
         print(f'Source file not found: {source}', file=sys.stderr)
         sys.exit(1)
 
@@ -741,7 +778,7 @@ def cmd_build(args):
 
     pdf_doc = None
     try:
-        if source.startswith(('http://', 'https://')):
+        if source.startswith(URL_PREFIXES):
             render_url_to_pdf(source, tmp_pdf)
             source_label = source
         elif source.lower().endswith('.pdf'):
@@ -772,12 +809,12 @@ def cmd_build(args):
             os.unlink(tmp_pdf)
 
 
-def cmd_extract_text(args):
+def cmd_extract_text(args: argparse.Namespace) -> None:
     """Extract text from a source document (for the AI to read before writing analysis)."""
     _check_core_deps()
     source = _resolve_path(args.source)
 
-    if not source.startswith(('http://', 'https://')) and not os.path.isfile(source):
+    if not source.startswith(URL_PREFIXES) and not os.path.isfile(source):
         print(f'Source file not found: {source}', file=sys.stderr)
         sys.exit(1)
 
@@ -786,7 +823,7 @@ def cmd_extract_text(args):
 
     pdf_doc = None
     try:
-        if source.startswith(('http://', 'https://')):
+        if source.startswith(URL_PREFIXES):
             render_url_to_pdf(source, tmp_pdf)
         elif source.lower().endswith('.pdf'):
             shutil.copy2(source, tmp_pdf)
@@ -806,7 +843,7 @@ def cmd_extract_text(args):
             os.unlink(tmp_pdf)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description='Eyeball: Document analysis with inline source screenshots'
     )
