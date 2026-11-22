@@ -226,7 +226,7 @@ export default defineConfig(
   },
   {
     name: 'nmi/react-refresh',
-    files: jsxFiles,
+    files: jsxFiles.filter((glob) => !glob.startsWith('tests/')),
     extends: [reactRefresh.configs.vite()],
   },
   {
