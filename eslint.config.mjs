@@ -227,8 +227,11 @@ export default defineConfig(
   {
     name: 'nmi/react-refresh',
     files: jsxFiles.filter((glob) => !glob.startsWith('tests/')),
+    // Storybook harness modules are dev-only and never ship in the app bundle.
+    ignores: ['ClientApp/src/storybook/**'],
     extends: [reactRefresh.configs.vite()],
   },
+
   {
     name: 'nmi/javascript-recommended',
     files: javascriptAndTypeScriptFiles,
