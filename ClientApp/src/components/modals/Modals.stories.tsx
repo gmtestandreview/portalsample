@@ -5,9 +5,12 @@ import RFQDeleteModal from './RFQDeleteModal';
 import { ApplicationType } from '../../api/web-api-client';
 import { BranchSelectionModalMode } from './BranchSelectorModal/enums';
 import {
+  BranchSelectorHost,
   DeleteConfirmationDemo,
+  RfqDeleteHost,
   SaveAndExitDemo,
-  branchSelectorHost,
+} from '../../storybook/modalsStoryDemos';
+import {
   branchSelectorPortal,
   createBranchSelectorFetch,
   expectEscapeLeavesOpen,
@@ -16,7 +19,6 @@ import {
   mockAccountDetails,
   modalsMetaOptions,
   observed,
-  rfqDeleteHost,
   rfqDeletePortal,
 } from '../../storybook/modalsStoryHelpers';
 
@@ -221,7 +223,7 @@ export const BranchSelectorSaveSelection = meta.story({
     docs: { story: { inline: false } },
     portal: branchSelectorPortal,
   },
-  render: () => branchSelectorHost,
+  render: () => <BranchSelectorHost />,
   play: async ({ canvas }) => {
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Manage branch or location' }),
@@ -267,7 +269,7 @@ export const BranchSelectorCancelDiscardsSelection = meta.story({
     docs: { story: { inline: false } },
     portal: branchSelectorPortal,
   },
-  render: () => branchSelectorHost,
+  render: () => <BranchSelectorHost />,
   play: async ({ canvas }) => {
     const trigger = await canvas.findByRole('button', {
       name: 'Manage branch or location',
@@ -343,7 +345,7 @@ export const RFQDeleteConfirmation = meta.story({
 
 export const RFQDeleteCancelRestoresFocus = meta.story({
   parameters: { portal: rfqDeletePortal },
-  render: () => rfqDeleteHost,
+  render: () => <RfqDeleteHost />,
   play: async ({ canvas }) => {
     const trigger = await canvas.findByRole('button', {
       name: 'Delete draft request',
@@ -382,7 +384,7 @@ export const RFQDeleteCancelRestoresFocus = meta.story({
 
 export const RFQDeleteConfirmed = meta.story({
   parameters: { portal: rfqDeletePortal },
-  render: () => rfqDeleteHost,
+  render: () => <RfqDeleteHost />,
   play: async ({ canvas }) => {
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Delete draft request' }),
