@@ -216,3 +216,4 @@ type __TestMockModule156 = typeof import('@/authentication/AccountProvider');
 type __TestMockModule157 = typeof import('@/App');
 type __TestMockModule158 = typeof import('@/trustedtypes');
 type __TestMockModule159 = typeof import('dompurify');
+type __TestMockModule160 = typeof import('@/analytics/GoogleAnalyticsTracker');
