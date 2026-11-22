@@ -19,6 +19,12 @@ import { describe, expect, it } from 'vitest';
 
 const PROBE_FILE = 'ClientApp/src/App.tsx';
 
+/**
+ * Resolving the flat config loads every plugin and, under the full parallel
+ * suite, routinely exceeds Vitest's 30s default. Every test that resolves or
+ * awaits a resolved config must carry this budget; a timed-out test otherwise
+ * leaks its late `expect` into the next test's assertion count.
+ */
 const LOAD_TIMEOUT_MS = 60_000;
 
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
@@ -100,41 +106,53 @@ const requireLintResult = <T>(value: T | undefined): T => {
 };
 
 describe('resolved application lint policy', () => {
-  it('resolves a non-empty rule set for the probe file', async () => {
-    expect.assertions(1);
+  it(
+    'resolves a non-empty rule set for the probe file',
+    async () => {
+      expect.assertions(1);
 
-    await policyReady;
-    const policy = await policyReady;
+      await policyReady;
+      const policy = await policyReady;
 
-    expect(Object.keys(policy.appRules).length).toBeGreaterThan(100);
-  });
+      expect(Object.keys(policy.appRules).length).toBeGreaterThan(100);
+    },
+    LOAD_TIMEOUT_MS,
+  );
 });
 
 describe('runner-specific lint boundaries', () => {
-  it('keeps Vitest rules out of Playwright E2E files and rejects Vitest imports', async () => {
-    expect.assertions(3);
+  it(
+    'keeps Vitest rules out of Playwright E2E files and rejects Vitest imports',
+    async () => {
+      expect.assertions(3);
 
-    const config = await calculateConfig('tests/e2e/steps/account.steps.ts');
+      const config = await calculateConfig('tests/e2e/steps/account.steps.ts');
 
-    expect(
-      severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
-    ).toBe(0);
-    expect(severityIn(config.rules, 'vitest/require-hook')).toBe(0);
-    expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
-  });
+      expect(
+        severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
+      ).toBe(0);
+      expect(severityIn(config.rules, 'vitest/require-hook')).toBe(0);
+      expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
+    },
+    LOAD_TIMEOUT_MS,
+  );
 
-  it('rejects Vitest assertion imports from Storybook stories', async () => {
-    expect.assertions(2);
+  it(
+    'rejects Vitest assertion imports from Storybook stories',
+    async () => {
+      expect.assertions(2);
 
-    const config = await calculateConfig(
-      'ClientApp/src/components/Accordion/Accordion.stories.tsx',
-    );
+      const config = await calculateConfig(
+        'ClientApp/src/components/Accordion/Accordion.stories.tsx',
+      );
 
-    expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
-    expect(
-      severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
-    ).toBe('absent');
-  });
+      expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
+      expect(
+        severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
+      ).toBe('absent');
+    },
+    LOAD_TIMEOUT_MS,
+  );
 
   it(
     'reports a Vitest import in a Playwright E2E file',
@@ -178,14 +196,18 @@ describe('runner-specific lint boundaries', () => {
 });
 
 describe('resolved plugin rule surface', () => {
-  it('loads the plugin whose rule surface these assertions describe', async () => {
-    expect.assertions(1);
+  it(
+    'loads the plugin whose rule surface these assertions describe',
+    async () => {
+      expect.assertions(1);
 
-    await policyReady;
-    const policy = await policyReady;
+      await policyReady;
+      const policy = await policyReady;
 
-    expect(policy.pluginRuleNames.length).toBeGreaterThan(100);
-  });
+      expect(policy.pluginRuleNames.length).toBeGreaterThan(100);
+    },
+    LOAD_TIMEOUT_MS,
+  );
 });
 
 describe('vitest policy autofix boundary', () => {
@@ -222,23 +244,31 @@ describe('vitest policy autofix boundary', () => {
 });
 
 describe('jsx accessibility policy', () => {
-  it('loads jsx-a11y-x and enables its recommended rules', async () => {
-    expect.assertions(2);
+  it(
+    'loads jsx-a11y-x and enables its recommended rules',
+    async () => {
+      expect.assertions(2);
 
-    await policyReady;
-    const policy = await policyReady;
+      await policyReady;
+      const policy = await policyReady;
 
-    expect(policy.appPluginNames).toContain('jsx-a11y-x');
-    expect(severityOf(policy.appRules, 'jsx-a11y-x/alt-text')).toBe(2);
-  });
+      expect(policy.appPluginNames).toContain('jsx-a11y-x');
+      expect(severityOf(policy.appRules, 'jsx-a11y-x/alt-text')).toBe(2);
+    },
+    LOAD_TIMEOUT_MS,
+  );
 });
 
 describe('vite configuration lint policy', () => {
-  it('resolves a non-empty rule set for the Vite TypeScript config', async () => {
-    expect.assertions(1);
+  it(
+    'resolves a non-empty rule set for the Vite TypeScript config',
+    async () => {
+      expect.assertions(1);
 
-    const config = await calculateConfig('vite.config.mts');
+      const config = await calculateConfig('vite.config.mts');
 
-    expect(Object.keys(config.rules ?? {}).length).toBeGreaterThan(100);
-  });
+      expect(Object.keys(config.rules ?? {}).length).toBeGreaterThan(100);
+    },
+    LOAD_TIMEOUT_MS,
+  );
 });

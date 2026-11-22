@@ -38,7 +38,6 @@ import sys
 import tempfile
 from typing import Any
 
-
 DOCX_EXTENSION = '.docx'
 WORD_EXTENSIONS = (DOCX_EXTENSION, '.doc', '.rtf')
 URL_PREFIXES = ('http://', 'https://')
@@ -166,9 +165,7 @@ def _convert_with_word_mac(source_path: str, output_pdf_path: str) -> bool:
         return False
 
 
-def _convert_with_libreoffice(
-    soffice_path: str, source_path: str, output_pdf_path: str
-) -> bool:
+def _convert_with_libreoffice(soffice_path: str, source_path: str, output_pdf_path: str) -> bool:
     """Convert a source document using the LibreOffice executable found by the caller."""
     with tempfile.TemporaryDirectory() as tmpdir:
         try:
@@ -618,8 +615,14 @@ def _find_word_windows() -> bool:
         return False
 
     registry_paths = (
-        (winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE'),
-        (winreg.HKEY_CURRENT_USER, r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE'),
+        (
+            winreg.HKEY_LOCAL_MACHINE,
+            r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE',
+        ),
+        (
+            winreg.HKEY_CURRENT_USER,
+            r'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WINWORD.EXE',
+        ),
         (winreg.HKEY_CLASSES_ROOT, r'Word.Application'),
     )
     for hive, subkey in registry_paths:
@@ -657,16 +660,18 @@ CHROMIUM_CHECK = 'Chromium browser'
 
 def _print_setup_support(checks: dict[str, bool], all_core: bool) -> None:
     """Print source-format readiness information."""
-    has_converter = any(checks[name] for name in (WORD_MACOS_CHECK, WORD_WINDOWS_CHECK, 'LibreOffice'))
+    has_converter = any(
+        checks[name] for name in (WORD_MACOS_CHECK, WORD_WINDOWS_CHECK, 'LibreOffice')
+    )
     has_web = checks['Playwright'] and checks[CHROMIUM_CHECK]
     pdf_requirement = 'Needs: pip3 install pymupdf pillow python-docx'
     web_requirement = 'Needs: pip3 install playwright && python3 -m playwright install chromium'
 
     print('')
     print('Source support:')
-    print(f"  PDF files:   {'Ready' if all_core else pdf_requirement}")
-    print(f"  Word docs:   {'Ready' if has_converter else 'Needs: Microsoft Word or LibreOffice'}")
-    print(f"  Web URLs:    {'Ready' if has_web else web_requirement}")
+    print(f'  PDF files:   {'Ready' if all_core else pdf_requirement}')
+    print(f'  Word docs:   {'Ready' if has_converter else 'Needs: Microsoft Word or LibreOffice'}')
+    print(f'  Web URLs:    {'Ready' if has_web else web_requirement}')
 
 
 def cmd_setup_check() -> int:
