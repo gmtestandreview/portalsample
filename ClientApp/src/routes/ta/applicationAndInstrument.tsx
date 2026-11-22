@@ -30,13 +30,6 @@ import TextInput from '../../components/Inputs/TextInput';
 import { sortList } from '../common/helperFunctions';
 import SummaryDisplay from '../../components/SummaryDisplay';
 
-export {
-  applicationTypes,
-  newCertificateSubOptions,
-  variationSubOptions,
-  otherApprovalSubOptions,
-} from './applicationOptions';
-
 const getSubOptionLabels = (
   value: string[] | string | undefined,
   options: { label: string; value: string }[],
