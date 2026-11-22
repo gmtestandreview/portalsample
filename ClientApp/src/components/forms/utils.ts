@@ -13,7 +13,7 @@ import type {
  * the guard instead of trusting the stricter Yup type.
  */
 export const getInnerErrors = (error: {
-  inner?: ValidationError[] | undefined;
+  inner?: ValidationError[];
 }): ValidationError[] | undefined => error.inner;
 
 export const isFieldPathHidden = (hidden: unknown, values: unknown): boolean =>
@@ -22,8 +22,31 @@ export const isFieldPathHidden = (hidden: unknown, values: unknown): boolean =>
     (typeof hidden === 'function' &&
       (hidden as (currentValues: unknown) => boolean)(values)));
 
-const parentPath = (path: string): string =>
-  path.replace(/(?:\.[^.[]+|\[[^\]]+\])$/, '');
+// Start index of a trailing `.name` or `[index]` segment, or -1 when the path
+// has none. Scans with indexOf/lastIndexOf so it stays linear on long input.
+const trailingSegmentStart = (path: string): number => {
+  const last = path.length - 1;
+  let start = -1;
+
+  const dot = path.lastIndexOf('.');
+  if (dot >= 0 && dot < last && !path.includes('[', dot + 1)) {
+    start = dot;
+  }
+
+  if (path.endsWith(']')) {
+    const bracket = path.indexOf('[', path.lastIndexOf(']', last - 1) + 1);
+    if (bracket >= 0 && bracket < last - 1 && (start < 0 || bracket < start)) {
+      start = bracket;
+    }
+  }
+
+  return start;
+};
+
+const parentPath = (path: string): string => {
+  const start = trailingSegmentStart(path);
+  return start < 0 ? path : path.slice(0, start);
+};
 
 export const isHidden = <T, TValues>(
   fieldPath: string,

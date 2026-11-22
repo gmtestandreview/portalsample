@@ -1,9 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import * as Yup from 'yup';
-import RhfForm, {
-  useRhfFormApi,
-} from '../../../../ClientApp/src/components/forms/RhfForm';
+import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
+import { useRhfFormApi } from '../../../../ClientApp/src/components/forms/RhfForm/rhfFormApiContext';
 import { createWizardYupResolver } from '../../../../ClientApp/src/components/forms/RhfForm/wizardYupResolver';
 import type {
   SubmitMode,

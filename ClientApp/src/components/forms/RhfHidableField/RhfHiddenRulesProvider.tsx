@@ -1,10 +1,6 @@
-import { createContext, useContext } from 'react';
 import type { ReactNode } from 'react';
 import type { Hideable } from '../types';
-
-const NO_HIDDEN_RULES: Hideable = {};
-
-const HiddenRulesContext = createContext<Hideable>(NO_HIDDEN_RULES);
+import { HiddenRulesContext } from './hiddenRulesContext';
 
 interface RhfHiddenRulesProviderProps {
   rules: Hideable;
@@ -25,6 +21,3 @@ export const RhfHiddenRulesProvider = ({
     {children}
   </HiddenRulesContext.Provider>
 );
-
-/** Current hide rules; an empty set (nothing hidden) outside a provider. */
-export const useHiddenRules = (): Hideable => useContext(HiddenRulesContext);

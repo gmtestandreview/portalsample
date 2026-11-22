@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 import { render } from '@testing-library/react';
-import RhfForm, {
-  useRhfFormApi,
-} from '../../../ClientApp/src/components/forms/RhfForm';
+import RhfForm from '../../../ClientApp/src/components/forms/RhfForm';
+import { useRhfFormApi } from '../../../ClientApp/src/components/forms/RhfForm/rhfFormApiContext';
 import type { RhfFormProps } from '../../../ClientApp/src/components/forms/RhfForm';
 import type { FormValues } from '../../../ClientApp/src/components/forms/types';
 

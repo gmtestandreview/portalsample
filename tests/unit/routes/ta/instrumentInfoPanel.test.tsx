@@ -113,7 +113,7 @@ describe(InstrumentInfoPanel, () => {
 
     let resolveInfoPanelContent: (
       value: { requirements: string; requirementsLink: string }[],
-    ) => void = () => {
+    ) => void = (_value) => {
       throw new Error('The info panel promise executor has not run');
     };
     const infoPanelContent = new Promise<

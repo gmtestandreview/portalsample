@@ -565,7 +565,7 @@ describe('workflow route wrappers', () => {
       await import('../../../ClientApp/src/routes/requestForQuote')
     ).default;
 
-    let rejectToken: (reason: Error) => void = () => undefined;
+    let rejectToken: (reason: Error) => void = (_reason) => undefined;
     mocks.acquireTokenSilent.mockReturnValueOnce(
       new Promise((_resolve, reject) => {
         rejectToken = reject;
@@ -602,7 +602,7 @@ describe('workflow route wrappers', () => {
       await import('../../../ClientApp/src/routes/requestForQuote')
     ).default;
 
-    let resolveStatuses: (value: unknown) => void = () => undefined;
+    let resolveStatuses: (value: unknown) => void = (_value) => undefined;
     mocks.requestForQuoteGetStepStatuses.mockReturnValueOnce(
       new Promise((resolve) => {
         resolveStatuses = resolve;

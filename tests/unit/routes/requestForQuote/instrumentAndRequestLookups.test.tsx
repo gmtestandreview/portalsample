@@ -9,10 +9,8 @@ import type {
 } from '../../../../ClientApp/src/api/web-api-client';
 import { grantToken, resetMsalMock, signOut } from '../../helpers/mockMsal';
 import type { ClientMockOf } from '../../helpers/mockApiClient';
-import {
-  useInstrumentAndRequestLookups,
-  useStableToday,
-} from '@/routes/requestForQuote/instrumentAndRequest';
+import { useInstrumentAndRequestLookups } from '@/routes/requestForQuote/useInstrumentAndRequestLookups';
+import { useStableToday } from '@/routes/requestForQuote/useStableToday';
 
 const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,

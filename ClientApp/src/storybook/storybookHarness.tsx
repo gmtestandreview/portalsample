@@ -310,7 +310,7 @@ const withOptionalFormik = (
   formik?: PortalFormikConfig,
 ) => {
   if (!formik) {
-    return children;
+    return <>{children}</>;
   }
 
   const formikConfig: FormikConfig<Record<string, unknown>> = {
@@ -351,7 +351,7 @@ const RhfStoryForm = ({
 
 const withOptionalRhf = (children: ReactNode, rhf?: PortalRhfConfig) => {
   if (!rhf) {
-    return children;
+    return <>{children}</>;
   }
 
   return (
@@ -441,7 +441,7 @@ const withOptionalFetch = (
   fetchImpl?: typeof globalThis.fetch,
 ) => {
   if (!fetchImpl) {
-    return children;
+    return <>{children}</>;
   }
 
   return <PatchedFetch fetchImpl={fetchImpl}>{children}</PatchedFetch>;

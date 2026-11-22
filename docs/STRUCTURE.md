@@ -190,7 +190,8 @@ portal.measurement.gov.au/           ← workspace root
     │   │   └── AppLogger.ts           ← Structured logging: verbose/info/error
     │   │
     │   ├── analytics/
-    │   │   └── GoogleAnalytics.tsx    ← GA component wrapper + trackGAEvent helper
+    │   │   ├── GoogleAnalytics.ts         ← trackGAEvent / trackGAPii helpers
+    │   │   └── GoogleAnalyticsTracker.tsx ← GA component wrapper
     │   │
     │   ├── utils/
     │   │   └── index.ts               ← Pure utilities: date, string, bytes, currency

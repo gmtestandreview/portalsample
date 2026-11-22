@@ -8,7 +8,7 @@ import NextStepButton from '@/components/forms/WizardForm/NextStepButton';
 import PreviousStepButton from '@/components/forms/WizardForm/PreviousStepButton';
 import WizardForm from '@/components/forms/WizardForm';
 import WizardStep from '@/components/forms/WizardForm/WizardStep';
-import type GoogleAnalytics from '@/analytics/GoogleAnalytics';
+import type GoogleAnalytics from '@/analytics/GoogleAnalyticsTracker';
 import type ErrorBoundary from '@/components/ErrorBoundary';
 import type { ComponentProps } from 'react';
 
@@ -40,11 +40,11 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  import('@/analytics/GoogleAnalyticsTracker'),
   (() =>
     ({
       default: wrapperMocks.analytics,
-    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule160>) as unknown as __DynamicPartialMockFactory<__TestMockModule160>,
 );
 
 vi.mock(

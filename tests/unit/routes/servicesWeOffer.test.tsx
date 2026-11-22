@@ -226,7 +226,8 @@ describe('services we offer', () => {
 
       resetServicesWeOfferMocks();
 
-      let releaseServices: (value: ServiceDto[]) => void = () => undefined;
+      let releaseServices: (value: ServiceDto[]) => void = (_value) =>
+        undefined;
       clients.lookup.methods.getServices.mockReturnValue(
         new Promise<ServiceDto[]>((resolve) => {
           releaseServices = resolve;
@@ -373,7 +374,7 @@ describe('services we offer', () => {
       // A profile that exists but has never been given a services array. Manage mode is what
       // gets past the pre-render gate, so the effect still runs and has to cope with the
       // list being absent rather than merely empty.
-      mocks.accountContext.mockReturnValue(accountWith(undefined));
+      mocks.accountContext.mockReturnValue(accountWith());
 
       await renderRoute('/services-we-offer?mode=manage');
 

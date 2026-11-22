@@ -109,7 +109,7 @@ interface HarnessProps {
 function Harness({
   values = initialValues,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
-}: HarnessProps) {
+}: Readonly<HarnessProps>) {
   return (
     <Formik<PaymentDetailsStep>
       initialValues={values}
@@ -138,7 +138,9 @@ interface DirectFieldsHarnessProps {
   }[];
 }
 
-function DirectFieldsHarness({ errors = [] }: DirectFieldsHarnessProps) {
+function DirectFieldsHarness({
+  errors = [],
+}: Readonly<DirectFieldsHarnessProps>) {
   const methods = useForm<PaymentDetailsFormValues>({
     defaultValues: {
       invoiceSentTo: InvoiceSentToValues.DifferentPerson,

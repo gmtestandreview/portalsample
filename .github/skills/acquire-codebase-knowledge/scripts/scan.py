@@ -597,8 +597,7 @@ def detect_monorepo() -> list[str]:
                 content = f.read()
                 if '"workspaces"' in content:
                     signals.append(
-                        f'{PACKAGE_JSON} has \'workspaces\' field '
-                        '(npm/yarn workspaces monorepo)'
+                        f"{PACKAGE_JSON} has 'workspaces' field (npm/yarn workspaces monorepo)"
                     )
         except Exception:
             pass
@@ -645,9 +644,7 @@ def _detect_container_file(rel_path: str, config: str, uses_glob: bool) -> list[
 
     if 'Dockerfile' in rel_name:
         message = (
-            f'Container: Docker found ({rel_path})'
-            if uses_glob
-            else 'Container: Docker found'
+            f'Container: Docker found ({rel_path})' if uses_glob else 'Container: Docker found'
         )
         return [message]
     if 'docker-compose' in rel_name:
@@ -848,9 +845,7 @@ def collect_code_metrics() -> CodeMetrics:
     return metrics
 
 
-def print_section(
-    title: str, content: list[str], output_file: TextIO | None = None
-) -> None:
+def print_section(title: str, content: list[str], output_file: TextIO | None = None) -> None:
     """Print a section with title and content."""
     lines = [f'\n=== {title} ===']
 
@@ -954,8 +949,8 @@ def print_code_metrics(output_file: TextIO | None) -> None:
     """Print collected source code metrics."""
     metrics = collect_code_metrics()
     metrics_output: list[str] = [
-        f"Total files scanned: {metrics['total_files']}",
-        f"Total lines of code: {metrics['total_lines']}",
+        f'Total files scanned: {metrics['total_files']}',
+        f'Total lines of code: {metrics['total_lines']}',
         '',
     ]
     if metrics['by_language']:

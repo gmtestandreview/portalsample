@@ -4,7 +4,10 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Card, Row, Col, Form } from 'react-bootstrap';
 import parse from 'html-react-parser';
-import type { CustomElement } from '../../../components/SlateEditor/SlateEditor';
+import {
+  serializeToHtml,
+  type CustomElement,
+} from '../../../components/SlateEditor/slateHtml';
 
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 
@@ -16,7 +19,7 @@ import {
   type RequestForPatternApprovalApplicationMessage,
   RequestForPatternApprovalClient,
 } from '../../../api/web-api-client';
-import { silentRequestFor } from '../../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../../authentication/authenticatedClient';
 import { formatDateTimeToString } from '../../../utils';
 import CustomPagination from '../../../components/Pagination';
 import BlockUISpinner from '../../../components/BlockUISpinner';
@@ -62,11 +65,11 @@ const ApplicationMessages = () => {
       try {
         // Try do something useful here like fetch messages for the application and display them
         if (accounts.length > 0 && id) {
-          const client = new RequestForPatternApprovalClient();
-          const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0]),
+          const client = await createAuthenticatedClient(
+            RequestForPatternApprovalClient,
+            accounts,
+            instance,
           );
-          client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppMessages(
             id,
             DEFAULT_DASHBOARD_PAGESIZE,
@@ -107,8 +110,6 @@ const ApplicationMessages = () => {
   };
 
   const handleEditorSubmit = async (submittedValue: CustomElement[]) => {
-    const { serializeToHtml } =
-      await import('../../../components/SlateEditor/SlateEditor');
     const htmlContent = serializeToHtml(submittedValue);
     const sanitizedHtmlContent = sanitiseHtml(htmlContent);
 
@@ -116,11 +117,11 @@ const ApplicationMessages = () => {
     try {
       // Try do something useful here like fetch messages for the application and display them
       if (accounts.length > 0 && id) {
-        const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          RequestForPatternApprovalClient,
+          accounts,
+          instance,
         );
-        client.setAuthToken(tokenResult.accessToken);
         await client.addAppMessage(id, sanitizedHtmlContent);
         setValue(initialValue);
         setEditorResetKey((prev) => prev + 1);

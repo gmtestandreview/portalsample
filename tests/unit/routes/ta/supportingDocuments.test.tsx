@@ -310,6 +310,18 @@ describe('supporting documents', () => {
       expect(alertItems()).toStrictEqual(['Documents are invalid']);
     });
 
+    it('looks up the root error by the whole name when the field name has no dot', async () => {
+      expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
+
+      await renderDocs({ props: { name: 'documents' } });
+
+      await setFormikErrors({ documents: 'Documents are required here' });
+
+      expect(alertItems()).toStrictEqual(['Documents are required here']);
+    });
+
     it('reports each failed and cancelled upload once the transfer finishes', async () => {
       expect.hasAssertions();
 

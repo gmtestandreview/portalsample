@@ -1,16 +1,13 @@
 import fs from 'node:fs';
-import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
-
-const workspaceSettingsPath = path.resolve('.vscode/settings.json');
 
 describe('sonar analysis configuration', () => {
   it('excludes the generated NSwag client from standalone analysis', () => {
     expect.hasAssertions();
 
     const workspaceSettings = JSON.parse(
-      fs.readFileSync(workspaceSettingsPath, 'utf8'),
+      fs.readFileSync('.vscode/settings.json', 'utf8'),
     ) as {
       'sonarlint.analysisExcludesStandalone'?: string;
     };

@@ -217,7 +217,7 @@ describe.each([
 
   it('hides the section when no pattern approval type is chosen', () => {
     expect.hasAssertions();
-    expect(rule(step(undefined))).toBe(true);
+    expect(rule(step())).toBe(true);
   });
 });
 
@@ -234,7 +234,7 @@ describe('displayRules.isApplNewInstrumentHiddenP', () => {
 
   it('hides the instrument section when no pattern approval type is chosen', () => {
     expect.hasAssertions();
-    expect(DisplayRules.isApplNewInstrumentHiddenP(step(undefined))).toBe(true);
+    expect(DisplayRules.isApplNewInstrumentHiddenP(step())).toBe(true);
   });
 
   it('hides the instrument section before a category or type is selected', () => {

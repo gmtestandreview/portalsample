@@ -13,6 +13,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { omitKeys } from '../../../utils/omitKeys';
 import { getControlId } from '../getControlId';
 
 type DateFieldValue = string | Date | null | undefined;
@@ -27,9 +28,12 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
     label,
     name,
     placeholder,
-    startDate: _startDate,
-    ...theRest
+    ...remainingProps
   } = datePickerProps;
+
+  // `startDate` is accepted for API compatibility but is not forwarded to `CustomDatePicker`;
+  // the current value comes from the Formik field instead.
+  const theRest = omitKeys(remainingProps, 'startDate');
 
   const [_field, _meta] = useField<DateFieldValue>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext();

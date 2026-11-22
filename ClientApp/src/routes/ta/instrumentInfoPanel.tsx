@@ -7,20 +7,6 @@ import { silentRequestFor } from '../../authentication/silentRequest';
 import { isEmptyGuid, isValidGUID } from '../common/helperFunctions';
 import BlockUISpinner from '../../components/BlockUISpinner';
 
-// Define enums for instrument categories and types
-export enum InstrumentCategory {
-  Category1 = 'Area Measurement',
-  Category2 = 'Flow Measurement',
-  Category3 = 'category3',
-  Category4 = 'category4',
-}
-
-export enum InstrumentType {
-  Type1 = 'Water calibration',
-  Type2 = 'type2',
-  Type3 = 'type3',
-}
-
 interface InstrumentInfoPanelProps {
   name: string;
   selectedInstrumentCategoryId?: string | undefined;

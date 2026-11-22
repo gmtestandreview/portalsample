@@ -211,7 +211,7 @@ describe(RfqInstrumentSummary, () => {
       vi.restoreAllMocks();
     });
 
-    let release: (value: unknown[]) => void = () => undefined;
+    let release: (value: unknown[]) => void = (_value) => undefined;
     clients.lookup.methods.getLookup.mockReturnValue(
       new Promise((resolve) => {
         release = resolve;

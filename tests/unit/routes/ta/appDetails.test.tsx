@@ -490,7 +490,7 @@ describe('application details', () => {
       try {
         await resetApplicationDetailsState();
 
-        let releaseOldPoll: (value: number) => void = () => undefined;
+        let releaseOldPoll: (value: number) => void = (_value) => undefined;
         clients.patternApproval.methods.getAppMessageCount.mockImplementation(
           (applicationId: unknown) => {
             if (applicationId === 'APP-1') {
@@ -890,7 +890,7 @@ describe('application details', () => {
         expect(screen.getByText('With the assessor')).toBeInTheDocument();
       });
 
-      let release: (value: unknown) => void = () => undefined;
+      let release: (value: unknown) => void = (_value) => undefined;
       mocks.loadStepValues.mockReturnValue(
         new Promise((resolve) => {
           release = resolve;
@@ -993,7 +993,7 @@ describe('application details', () => {
 
       await resetApplicationDetailsState();
 
-      let releaseCount: (value: number) => void = () => undefined;
+      let releaseCount: (value: number) => void = (_value) => undefined;
       clients.patternApproval.methods.getAppMessageCount.mockReturnValue(
         new Promise<number>((resolve) => {
           releaseCount = resolve;

@@ -4,6 +4,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 
 import findElementInTreeById from '../../Utilities/findElementInTreeById';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { omitKeys } from '../../../utils/omitKeys';
 import type {
   CustomInputControlRef,
   CustomInputForwardRefProps,
@@ -35,16 +36,19 @@ const CustomDateInput = React.forwardRef<
     onBlur,
     onChange,
     onKeyDown,
-    handleCloseCalendar: _handleCloseCalendar,
     handleEnsureCalendarClosed,
     handleOpenCalendar,
     placeholder,
     readOnly,
     wrapperUUID,
-    ...theRest
+    ...remainingProps
   } = customInputProps;
 
-  const [_field, _meta] = useField(name);
+  // `handleCloseCalendar` is part of the props contract but this control does not use it.
+  // Omit it so it is not forwarded to the DOM input.
+  const theRest = omitKeys(remainingProps, 'handleCloseCalendar');
+
+  const [, _meta] = useField(name);
   const helpId = inlineHelp ? `help-${name}` : undefined;
   const [focused, setFocused] = useState(false);
 

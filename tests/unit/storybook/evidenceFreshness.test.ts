@@ -85,7 +85,11 @@ describe('computeInputDigest', () => {
       this: string,
       other: string,
     ) {
-      return this < other ? 1 : this > other ? -1 : 0;
+      if (this < other) {
+        return 1;
+      }
+
+      return this > other ? -1 : 0;
     };
 
     try {

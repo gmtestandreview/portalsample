@@ -167,7 +167,8 @@ initialised once at module evaluation\
 ## 4) Google Analytics
 
 **Config**: tracking ID from `env.VITE_GA_TRACKINGID`\
-**Files**: `ClientApp/src/analytics/GoogleAnalytics.tsx`
+**Files**: `ClientApp/src/analytics/GoogleAnalyticsTracker.tsx` (component),
+`ClientApp/src/analytics/GoogleAnalytics.ts` (`trackGA*` helpers)
 
 ### Usage
 

@@ -5,8 +5,8 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import type { ReactNode } from 'react';
 import RhfHidableField, {
   RhfHiddenRulesProvider,
-  useHiddenRules,
 } from '@/components/forms/RhfHidableField';
+import { useHiddenRules } from '@/components/forms/RhfHidableField/hiddenRulesContext';
 import type { Hideable } from '@/components/forms/types';
 
 interface AccountValues {

@@ -44,11 +44,11 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  import('@/analytics/GoogleAnalyticsTracker'),
   (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule160>) as unknown as __DynamicPartialMockFactory<__TestMockModule160>,
 );
 
 vi.mock(

@@ -29,6 +29,7 @@ import PaRequestItem from '@/components/RequestList/paRequestItem';
 import { DashboardTab } from '@/components/SearchFilter/types';
 import { PaDashboardItemStatus } from '@/routes/common/enums';
 import { NotificationSeverity } from '@/storage/types';
+import { omitKeys } from '@/utils/omitKeys';
 
 const mocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn<IPublicClientApplication['acquireTokenSilent']>(),
@@ -276,12 +277,12 @@ describe('pa request item', () => {
     resetPaRequestItemMocks();
     const user = userEvent.setup();
     const setDeleteSuccess = vi.fn<(success: boolean) => void>();
-    const {
-      title: _title,
-      lastUpdated: _lastUpdated,
-      unreadMessageCount: _unreadMessageCount,
-      ...draftRequest
-    } = baseRequest;
+    const draftRequest = omitKeys(
+      baseRequest,
+      'title',
+      'lastUpdated',
+      'unreadMessageCount',
+    );
 
     renderPaRequestItem(
       {
@@ -422,10 +423,10 @@ describe('pa request item', () => {
 
       resetPaRequestItemMocks();
       const user = userEvent.setup();
-      const {
-        portalReferenceId: _basePortalReferenceId,
-        ...requestWithoutPortalReferenceId
-      } = baseRequest;
+      const requestWithoutPortalReferenceId = omitKeys(
+        baseRequest,
+        'portalReferenceId',
+      );
       const request =
         portalReferenceId === undefined
           ? requestWithoutPortalReferenceId
@@ -454,8 +455,7 @@ describe('pa request item', () => {
 
     resetPaRequestItemMocks();
     const user = userEvent.setup();
-    const { portalReferenceId: _portalReferenceId, ...requestWithoutPortalId } =
-      baseRequest;
+    const requestWithoutPortalId = omitKeys(baseRequest, 'portalReferenceId');
 
     renderPaRequestItem({
       ...requestWithoutPortalId,
@@ -476,7 +476,7 @@ describe('pa request item', () => {
     expect.hasAssertions();
 
     resetPaRequestItemMocks();
-    const { status: _status, ...requestWithoutStatus } = baseRequest;
+    const requestWithoutStatus = omitKeys(baseRequest, 'status');
     renderPaRequestItem({
       ...requestWithoutStatus,
       unreadMessageCount: undefined,

@@ -8,6 +8,16 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
+const linkRenderProps = vi.hoisted(
+  () =>
+    (
+      includeHref: boolean,
+      children: React.ReactNode,
+      href: string | undefined,
+    ): { children: React.ReactNode; href?: string } =>
+      includeHref && href !== undefined ? { children, href } : { children },
+);
+
 vi.mock(
   import('react-aria-components/Breadcrumbs'),
   (() =>
@@ -47,9 +57,7 @@ vi.mock(
       }) =>
         renderLink ? (
           renderLink(
-            ariaLinkMockState.includeHref && href !== undefined
-              ? { children, href }
-              : { children },
+            linkRenderProps(ariaLinkMockState.includeHref, children, href),
           )
         ) : (
           <a href={href ?? '#'}>{children}</a>

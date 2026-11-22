@@ -59,7 +59,7 @@ const TextReadOnly = (props: Readonly<TextReadOnlyProps>) => {
     inlineHelp,
     inlineHelpTitle,
   } = props;
-  const [_field, _meta] = useField(name);
+  const [_field] = useField(name);
   const controlId = getControlId(id, name);
   const hasInlineHelp = Boolean(inlineHelp);
   const hasInlineHelpTitle = Boolean(inlineHelpTitle);

@@ -1,7 +1,7 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { readTextFileSync } from '../../../../tests/helpers/safeTestFilesystem';
 import {
   hasBareUseRef,
   hasBrokenNotificationSelector,
@@ -19,9 +19,15 @@ const currentDir = path.dirname(currentFilePath);
 const repoRoot = path.resolve(currentDir, '../../../../');
 
 const readRepoFile = (relativePath: string) =>
-  fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  readTextFileSync(relativePath, repoRoot);
 
 describe('migration checklist static verifier', () => {
+  it('rejects paths outside the repository root', () => {
+    expect(() => readRepoFile('../AGENTS.md')).toThrow(
+      'outside the allowed root',
+    );
+  });
+
   it('pins the current audited route findings in dashboard and quotation', () => {
     const dashboard = readRepoFile('static/js/routes/dashboard/index.tsx');
     const quotation = readRepoFile('static/js/routes/quotation/index.tsx');

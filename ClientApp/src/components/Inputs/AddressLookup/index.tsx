@@ -57,9 +57,7 @@ const AddressLookup = (
   const [_field, _meta, _helpers] = useField<AddressDetailsDto | undefined>(
     name,
   );
-  const [_fieldSearch, _metaSearch, { setTouched }] = useField<string>(
-    `${name}.searchText`,
-  );
+  const [, , { setTouched }] = useField<string>(`${name}.searchText`);
   const controllerRef = useRef<AbortController | null>();
 
   const { setValue } = _helpers;

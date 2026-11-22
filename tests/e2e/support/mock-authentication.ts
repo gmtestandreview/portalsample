@@ -20,7 +20,7 @@ const seedMsalCache = ({
       btoa(JSON.stringify(value))
         .replaceAll('+', '-')
         .replaceAll('/', '_')
-        .replace(/=+$/, '');
+        .replace(/={1,2}$/, '');
     return `${encode({ alg: 'none', typ: 'JWT' })}.${encode(claims)}.mock-signature`;
   };
   const mockAccount = {

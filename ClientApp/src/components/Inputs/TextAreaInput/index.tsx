@@ -9,6 +9,20 @@ import { getControlId } from '../getControlId';
 
 type TextAreaFieldValue = string | null | undefined;
 
+const getCounterState = (
+  value: TextAreaFieldValue,
+  maxCharacters: number | undefined,
+) => {
+  if (!maxCharacters || maxCharacters <= 0) {
+    return { counterText: '', hasExceededMaximum: false };
+  }
+  const currCharacters = value ? value.trim().length : 0;
+  return {
+    counterText: `${currCharacters} of ${maxCharacters} characters used`,
+    hasExceededMaximum: currCharacters > maxCharacters,
+  };
+};
+
 const TextAreaInput = ({
   label,
   inlineHelp,
@@ -50,14 +64,11 @@ const TextAreaInput = ({
     void _fieldHelper.setValue(newValue);
   };
 
-  let hasExceededMaximum = false;
-  let counterText = '';
-
-  if (maxCharacters && maxCharacters > 0) {
-    const currCharacters = _field.value ? _field.value.trim().length : 0;
-    counterText = `${currCharacters} of ${maxCharacters} characters used`;
-    hasExceededMaximum = currCharacters > maxCharacters;
-  }
+  const hasError = !!(_meta.touched && _meta.error);
+  const { counterText, hasExceededMaximum } = getCounterState(
+    _field.value,
+    maxCharacters,
+  );
 
   return (
     <Form.Group
@@ -76,13 +87,10 @@ const TextAreaInput = ({
         rows={rows ?? 3}
         {..._field}
         value={_field.value ?? ''}
-        isInvalid={!!(_meta.touched && _meta.error)}
+        isInvalid={hasError}
         {...omitUndefined({
           disabled,
-          'aria-describedby':
-            _meta.touched && _meta.error
-              ? `${controlId}-validation-msg`
-              : helpId,
+          'aria-describedby': hasError ? `${controlId}-validation-msg` : helpId,
           placeholder,
         })}
         onChange={handleChange}
@@ -95,7 +103,7 @@ const TextAreaInput = ({
           <span className='small'>{counterText}</span>
         </div>
       ) : null}
-      {_meta.touched && _meta.error ? (
+      {hasError ? (
         <Form.Control.Feedback
           type='invalid'
           id={`${controlId}-validation-msg`}

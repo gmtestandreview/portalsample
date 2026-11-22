@@ -25,6 +25,7 @@ import { NotificationSeverity } from '../../storage/types';
 import RhfAttachment from '../../components/Inputs/RhfAttachment';
 import InstrumentInfoPanel from './instrumentInfoPanel';
 import { getIn } from '../../components/forms/formPath';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 const requiredDocMessage: string = ValidationMessages.RequiredDoc;
 const requiredTagMessage: string = ValidationMessages.RequiredTag;
@@ -309,11 +310,13 @@ const RhfSupportingDocuments = (
             maxSizeInMB={25}
             onUploadFiles={onUpload}
             onDeleteFile={onDeleteAttachment}
-            progress={progress}
-            handleCancelFile={handleCancelFile}
             setErrors={setUploadErrors}
-            onCategoryUpdate={onCategoryUpdate}
-            disableUpload={disableUpload}
+            {...omitUndefined({
+              progress,
+              handleCancelFile,
+              onCategoryUpdate,
+              disableUpload,
+            })}
           />
         </Col>
       </Row>

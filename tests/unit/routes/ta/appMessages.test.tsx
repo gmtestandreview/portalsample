@@ -118,7 +118,6 @@ vi.mock(
           />
         );
       },
-      serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
     }) satisfies __ExactMockModule<__TestMockModule142>) as unknown as __DynamicPartialMockFactory<__TestMockModule142>,
 );
 
@@ -381,7 +380,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await resetApplicationMessagesMocks();
 
-      let release: (value: unknown) => void = () => undefined;
+      let release: (value: unknown) => void = (_value) => undefined;
       clients.patternApproval.methods.getAppMessages.mockReturnValue(
         new Promise((resolve) => {
           release = resolve;
