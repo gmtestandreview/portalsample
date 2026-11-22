@@ -33,16 +33,16 @@ export const serializeToHtml = (value: CustomElement[]): string =>
       const children = element.children
         .map((child) => {
           let text = escapeHtml(child.text);
-          if (child.bold) text = `<strong>${text}</strong>`;
-          if (child.italic) text = `<em>${text}</em>`;
-          if (child.underline) text = `<u>${text}</u>`;
+          if (child.bold) text = '<strong>' + text + '</strong>';
+          if (child.italic) text = '<em>' + text + '</em>';
+          if (child.underline) text = '<u>' + text + '</u>';
           return text;
         })
         .join('');
 
       // CustomElement only models paragraphs; widen it to a discriminated union
       // (with exhaustive serialization) before adding other block types.
-      return `<p>${children}</p>`;
+      return '<p>' + children + '</p>';
     })
     .join('');
 

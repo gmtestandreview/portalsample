@@ -143,7 +143,7 @@ describe('slateEditor helpers', () => {
 
     const html = serializeToHtml([{ type: 'paragraph', children: [{ text }] }]);
 
-    expect(html).toBe(`<p>${expected}</p>`);
+    expect(html).toBe('<p>' + expected + '</p>');
   });
 
   it.each([

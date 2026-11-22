@@ -36,26 +36,47 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
 from typing import Any
 
 DOCX_EXTENSION = '.docx'
 WORD_EXTENSIONS = (DOCX_EXTENSION, '.doc', '.rtf')
 URL_PREFIXES = ('http://', 'https://')
+FITZ_MODULE = 'fitz'
+PIL_IMAGE_MODULE = 'PIL.Image'
+PIL_IMAGE_DRAW_MODULE = 'PIL.ImageDraw'
+DOCX_MODULE = 'docx'
+DOCX_SHARED_MODULE = 'docx.shared'
+PLAYWRIGHT_SYNC_API_MODULE = 'playwright.sync_api'
+WIN32COM_CLIENT_MODULE = 'win32com.client'
+
+OPTIONAL_MODULE_LOADERS: dict[str, Callable[[], Any]] = {
+    FITZ_MODULE: lambda: importlib.import_module(FITZ_MODULE),
+    PIL_IMAGE_MODULE: lambda: importlib.import_module(PIL_IMAGE_MODULE),
+    PIL_IMAGE_DRAW_MODULE: lambda: importlib.import_module(PIL_IMAGE_DRAW_MODULE),
+    DOCX_MODULE: lambda: importlib.import_module(DOCX_MODULE),
+    DOCX_SHARED_MODULE: lambda: importlib.import_module(DOCX_SHARED_MODULE),
+    PLAYWRIGHT_SYNC_API_MODULE: lambda: importlib.import_module(PLAYWRIGHT_SYNC_API_MODULE),
+    WIN32COM_CLIENT_MODULE: lambda: importlib.import_module(WIN32COM_CLIENT_MODULE),
+}
 
 
 def _optional_module(module_name: str) -> Any:
     """Load an optional runtime dependency without requiring local type stubs."""
+    loader = OPTIONAL_MODULE_LOADERS.get(module_name)
+    if loader is None:
+        raise ValueError(f'Unsupported optional module: {module_name}')
     try:
-        return importlib.import_module(module_name)
+        return loader()
     except ImportError:
         return None
 
 
-fitz: Any = _optional_module('fitz')
-pil_image: Any = _optional_module('PIL.Image')
-pil_image_draw: Any = _optional_module('PIL.ImageDraw')
-docx: Any = _optional_module('docx')
-docx_shared: Any = _optional_module('docx.shared')
+fitz: Any = _optional_module(FITZ_MODULE)
+pil_image: Any = _optional_module(PIL_IMAGE_MODULE)
+pil_image_draw: Any = _optional_module(PIL_IMAGE_DRAW_MODULE)
+docx: Any = _optional_module(DOCX_MODULE)
+docx_shared: Any = _optional_module(DOCX_SHARED_MODULE)
 Image: Any = pil_image
 ImageDraw: Any = pil_image_draw
 Document: Any = getattr(docx, 'Document', None)
@@ -216,7 +237,7 @@ def _convert_with_word_windows(source_path: str, output_pdf_path: str) -> bool:
     word = None
     doc = None
     try:
-        win32com_client: Any = _optional_module('win32com.client')
+        win32com_client: Any = _optional_module(WIN32COM_CLIENT_MODULE)
         if win32com_client is None:
             return False
 
@@ -262,7 +283,7 @@ def _convert_with_word_windows(source_path: str, output_pdf_path: str) -> bool:
 
 def render_url_to_pdf(url: str, output_pdf_path: str) -> None:
     """Render a web page to PDF using Playwright."""
-    playwright_sync_api: Any = _optional_module('playwright.sync_api')
+    playwright_sync_api: Any = _optional_module(PLAYWRIGHT_SYNC_API_MODULE)
     if playwright_sync_api is None:
         raise RuntimeError(
             'Playwright is required for web URL support. '
@@ -638,7 +659,7 @@ def _check_word_windows() -> bool:
     """Check Microsoft Word and its Windows automation dependency."""
     if not _find_word_windows():
         return False
-    if _optional_module('win32com.client') is not None:
+    if _optional_module(WIN32COM_CLIENT_MODULE) is not None:
         return True
 
     print('  Note: Microsoft Word found but pywin32 is not installed.')
@@ -682,7 +703,7 @@ def cmd_setup_check() -> int:
         'python-docx': all(
             dependency is not None for dependency in (Document, Inches, Pt, RGBColor)
         ),
-        'Playwright': _optional_module('playwright.sync_api') is not None,
+        'Playwright': _optional_module(PLAYWRIGHT_SYNC_API_MODULE) is not None,
         CHROMIUM_CHECK: False,
         WORD_MACOS_CHECK: False,
         WORD_WINDOWS_CHECK: False,
