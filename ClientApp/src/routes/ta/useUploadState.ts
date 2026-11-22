@@ -23,7 +23,7 @@ interface UploadState {
   uploadIdRef: MutableRefObject<string | null>;
 }
 
-export interface UploadHandlersOptions {
+interface UploadHandlersOptions {
   accounts: AccountInfo[];
   instance: IPublicClientApplication;
   id: string | undefined;
