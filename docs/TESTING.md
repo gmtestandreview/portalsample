@@ -486,7 +486,8 @@ Run both quality suites before merging any change that touches:
 - `ClientApp/src/validationSchemas/contactValidation.ts` or `common.ts`
 - `ClientApp/src/components/forms/UnsavedFormPrompt/`
 - `ClientApp/src/routes/dashboard/index.tsx`
-- `ClientApp/src/analytics/GoogleAnalytics.tsx`
+- `ClientApp/src/analytics/GoogleAnalytics.ts`
+- `ClientApp/src/analytics/GoogleAnalyticsTracker.tsx`
 - `AGENTS.md` or `docs/TESTING.md`
 
 ### Writeup/report maintenance trigger
