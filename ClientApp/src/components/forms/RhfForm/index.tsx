@@ -8,7 +8,7 @@ import {
 import type { FormEvent, ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { DefaultValues, FieldValues } from 'react-hook-form';
-import { RhfHiddenRulesProvider } from '../RhfHidableField/hiddenRulesContext';
+import { RhfHiddenRulesProvider } from '../RhfHidableField/RhfHiddenRulesProvider';
 import { normalizeSubmitValues } from '../utils';
 import type { FormValues, Hideable, ValidationSchema } from '../types';
 import { createWizardYupResolver } from './wizardYupResolver';
