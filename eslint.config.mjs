@@ -327,9 +327,7 @@ export default defineConfig(
     name: 'nmi/jsx-accessibility',
   },
   {
-    extends: [
-      storybook.configs['flat/recommended'],
-    ],
+    extends: [storybook.configs['flat/recommended']],
     files: storyFiles,
     name: 'nmi/stories',
     rules: {
