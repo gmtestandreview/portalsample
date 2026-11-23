@@ -2,9 +2,9 @@
 // File scopes, preset order and project-specific exceptions are intentional.
 // Security warnings are reviewed; CI may enforce --max-warnings 0.
 import { defineConfig, globalIgnores } from 'eslint/config';
+import { URL, fileURLToPath } from 'node:url';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import eslintReact from '@eslint-react/eslint-plugin';
-import { fileURLToPath, URL } from 'node:url';
 import globals from 'globals';
 import js from '@eslint/js';
 import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
@@ -16,146 +16,147 @@ import tseslint from 'typescript-eslint';
 import vitest from '@vitest/eslint-plugin';
 import vitestGlobals from 'eslint-plugin-vitest-globals';
 const packageJsonPath = fileURLToPath(
-  new URL('./package.json', import.meta.url),
-);
-const javascriptAndTypeScriptFiles = ['**/*.{js,jsx,mjs,ts,tsx,mts}'];
-const typescriptFiles = ['**/*.{ts,tsx,mts}'];
-const reactTypeScriptFiles = [
-  'ClientApp/src/**/*.{ts,tsx}',
-  '.storybook/**/*.{tsx}',
-  'tests/unit/**/*.{tsx}',
-];
-const reviewedFilesystemBoundaryFiles = [
-  'scripts/safe-file-io.mjs',
-  'tests/helpers/safeTestFilesystem.ts',
-  'scripts/safe-file-io.test.mjs',
-  'tests/unit/helpers/safeTestFilesystem.test.ts',
-  'tests/unit/storybook/worklist.test.ts',
-];
-const appJsxFiles = [
-  'ClientApp/src/**/*.{jsx,tsx}',
-  '.storybook/**/*.{jsx,tsx}',
-];
-const jsxFiles = [...appJsxFiles, 'tests/unit/**/*.{jsx,tsx}'];
-const vitestFiles = [
-  'tests/unit/**/*.{js,jsx,ts,tsx}',
-  'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
-  'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
-  'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-  'vitest.setup.ts',
-  'vitest.storybook.setup.ts',
-];
-const storyFiles = ['ClientApp/src/**/*.stories.{js,jsx,ts,tsx}'];
-const storybookFiles = ['.storybook/**/*.{js,jsx,mjs,ts,tsx,mts}'];
-const devOnlyStorybookFiles = [...storyFiles, 'ClientApp/src/storybook/**'];
-const playwrightFiles = [
-  'playwright.config.ts',
-  'tests/e2e/**/*.{ts,tsx}',
-  'tests/api-contract/**/*.{ts,tsx}',
-];
-const nodeToolFiles = [
-  '.claude/skills/**/*.{js,mjs}',
-  '.github/skills/**/*.{js,mjs}',
-  'skills/**/*.{js,mjs}',
-  'scripts/**/*.{js,mjs,ts,mts}',
-  'quality/**/*.{js,mjs,ts,mts}',
-  '*.config.{js,mjs,ts,mts}',
-  'vitest*.{js,mjs,ts,mts}',
-  'storybook-vite-policies.ts',
-  'test-import.mjs',
-  '.storybook/main.{js,mjs,ts,mts}',
-  '.storybook/*.config.{js,mjs,ts,mts}',
-  '.storybook/storybook-test-target.mjs',
-];
-const nodeFiles = [...nodeToolFiles, 'tests/**/*.{js,jsx,mjs,ts,tsx,mts}'];
-const serviceWorkerFiles = [
-  'ClientApp/src/**/service-worker.{js,mjs,ts}',
-  'ClientApp/src/**/serviceWorker.{js,mjs,ts}',
-  'ClientApp/src/**/*.sw.{js,mjs,ts}',
-];
-const browserFiles = [
-  'ClientApp/env.js',
-  'ClientApp/src/**/*.{js,jsx,ts,tsx}',
-  '.storybook/preview.{js,jsx,mjs,ts,tsx}',
-  '.storybook/manager.{js,jsx,mjs,ts,tsx}',
-];
-const mixedTestFiles = [...vitestFiles, 'quality/_phase5_seed/**/*.{ts,tsx}'];
-const playWrightImportRestriction = [
-  'error',
-  {
-    paths: [
-      {
-        message:
-          'Use the Playwright test API, not Vitest, in Playwright tooling.',
-        name: 'vitest',
-      },
-    ],
-  },
-];
-const storybookTestImportRestriction = [
-  'error',
-  {
-    paths: [
-      {
-        importNames: ['expect', 'test'],
-        message:
-          'Use the Storybook test API for Storybook assertions and interactions.',
-        name: 'vitest',
-      },
-    ],
-  },
-];
-// Strip deprecated core and SonarJS identifiers from inherited presets.
-// Oxfmt owns formatting; no replacement formatting rules are enabled here.
-const deprecatedRuleIds = new Set(
-  [
-    'array-bracket-newline array-bracket-spacing array-element-newline',
-    'arrow-parens arrow-spacing block-spacing brace-style comma-dangle',
-    'comma-spacing comma-style computed-property-spacing dot-location',
-    'eol-last func-call-spacing function-call-argument-newline',
-    'function-paren-newline generator-star-spacing',
-    'implicit-arrow-linebreak indent indent-legacy jsx-quotes',
-    'key-spacing keyword-spacing linebreak-style lines-around-comment',
-    'max-len max-statements-per-line multiline-ternary new-parens',
-    'newline-per-chained-call no-confusing-arrow no-extra-parens',
-    'no-extra-semi no-floating-decimal no-mixed-operators',
-    'no-mixed-spaces-and-tabs no-multi-spaces no-multiple-empty-lines',
-    'no-new-symbol no-return-await no-spaced-func no-tabs',
-    'no-trailing-spaces no-whitespace-before-property',
-    'nonblock-statement-body-position object-curly-newline',
-    'object-curly-spacing object-property-newline',
-    'one-var-declaration-per-line operator-linebreak padded-blocks',
-    'quote-props quotes rest-spread-spacing semi semi-spacing semi-style',
-    'space-before-blocks space-before-function-paren space-in-parens',
-    'space-infix-ops space-unary-ops switch-colon-spacing',
-    'template-curly-spacing template-tag-spacing wrap-iife wrap-regex',
-    'yield-star-spacing',
-    'sonarjs/no-tab sonarjs/no-redundant-parentheses',
-    'sonarjs/useless-string-operation sonarjs/web-sql-database',
-    'sonarjs/conditional-indentation sonarjs/os-command',
-    'sonarjs/no-unsafe-unzip sonarjs/no-intrusive-permissions',
-    'sonarjs/hidden-files sonarjs/no-mixed-content',
-    'sonarjs/frame-ancestors sonarjs/confidential-information-logging',
-    'sonarjs/no-ip-forward',
-  ]
-    .join(' ')
-    .split(' '),
-);
-const stripDeprecatedRules = (config) => {
-  if (Array.isArray(config)) return config.map(stripDeprecatedRules);
-  const result = { ...config };
-  if (config.extends)
-    result.extends = config.extends.map((entry) =>
-      typeof entry === 'string' ? entry : stripDeprecatedRules(entry),
-    );
-  if (config.rules)
-    result.rules = Object.fromEntries(
-      Object.entries(config.rules).filter(
-        ([ruleName]) => !deprecatedRuleIds.has(ruleName),
-      ),
-    );
-  return result;
-};
+    new URL('./package.json', import.meta.url),
+  ),
+  javascriptAndTypeScriptFiles = ['**/*.{js,jsx,mjs,mts,ts,tsx}'],
+  typescriptFiles = ['**/*.{mts,ts,tsx}'],
+  reactTypeScriptFiles = [
+    '.storybook/**/*.{tsx}',
+    'ClientApp/src/**/*.{ts,tsx}',
+    'tests/unit/**/*.{tsx}',
+  ],
+  reviewedFilesystemBoundaryFiles = [
+    'scripts/safe-file-io.mjs',
+    'tests/helpers/safeTestFilesystem.ts',
+    'scripts/safe-file-io.test.mjs',
+    'tests/unit/helpers/safeTestFilesystem.test.ts',
+    'tests/unit/storybook/worklist.test.ts',
+  ],
+  appJsxFiles = ['ClientApp/src/**/*.{jsx,tsx}', '.storybook/**/*.{jsx,tsx}'],
+  jsxFiles = [...appJsxFiles, 'tests/unit/**/*.{jsx,tsx}'],
+  vitestFiles = [
+    'tests/unit/**/*.{js,jsx,ts,tsx}',
+    'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
+    'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
+    'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+    'vitest.setup.ts',
+    'vitest.storybook.setup.ts',
+  ],
+  storyFiles = ['ClientApp/src/**/*.stories.{js,jsx,ts,tsx}'],
+  storybookFiles = ['.storybook/**/*.{js,jsx,mjs,ts,tsx,mts}'],
+  devOnlyStorybookFiles = [...storyFiles, 'ClientApp/src/storybook/**'],
+  playwrightFiles = [
+    'playwright.config.ts',
+    'tests/e2e/**/*.{ts,tsx}',
+    'tests/api-contract/**/*.{ts,tsx}',
+  ],
+  nodeToolFiles = [
+    '.claude/skills/**/*.{js,mjs}',
+    '.github/skills/**/*.{js,mjs}',
+    'skills/**/*.{js,mjs}',
+    'scripts/**/*.{js,mjs,ts,mts}',
+    'quality/**/*.{js,mjs,ts,mts}',
+    '*.config.{js,mjs,ts,mts}',
+    'vitest*.{js,mjs,ts,mts}',
+    'storybook-vite-policies.ts',
+    'test-import.mjs',
+    '.storybook/main.{js,mjs,ts,mts}',
+    '.storybook/*.config.{js,mjs,ts,mts}',
+    '.storybook/storybook-test-target.mjs',
+  ],
+  nodeFiles = [...nodeToolFiles, 'tests/**/*.{js,jsx,mjs,ts,tsx,mts}'],
+  serviceWorkerFiles = [
+    'ClientApp/src/**/service-worker.{js,mjs,ts}',
+    'ClientApp/src/**/serviceWorker.{js,mjs,ts}',
+    'ClientApp/src/**/*.sw.{js,mjs,ts}',
+  ],
+  browserFiles = [
+    'ClientApp/env.js',
+    'ClientApp/src/**/*.{js,jsx,ts,tsx}',
+    '.storybook/preview.{js,jsx,mjs,ts,tsx}',
+    '.storybook/manager.{js,jsx,mjs,ts,tsx}',
+  ],
+  mixedTestFiles = [...vitestFiles, 'quality/_phase5_seed/**/*.{ts,tsx}'],
+  playWrightImportRestriction = [
+    'error',
+    {
+      paths: [
+        {
+          message:
+            'Use the Playwright test API, not Vitest, in Playwright tooling.',
+          name: 'vitest',
+        },
+      ],
+    },
+  ],
+  storybookTestImportRestriction = [
+    'error',
+    {
+      paths: [
+        {
+          importNames: ['expect', 'test'],
+          message:
+            'Use the Storybook test API for Storybook assertions and interactions.',
+          name: 'vitest',
+        },
+      ],
+    },
+  ],
+  // Strip deprecated core and SonarJS identifiers from inherited presets.
+  // Oxfmt owns formatting; no replacement formatting rules are enabled here.
+  deprecatedRuleIds = new Set(
+    [
+      'array-bracket-newline array-bracket-spacing array-element-newline',
+      'arrow-parens arrow-spacing block-spacing brace-style comma-dangle',
+      'comma-spacing comma-style computed-property-spacing dot-location',
+      'eol-last func-call-spacing function-call-argument-newline',
+      'function-paren-newline generator-star-spacing',
+      'implicit-arrow-linebreak indent indent-legacy jsx-quotes',
+      'key-spacing keyword-spacing linebreak-style lines-around-comment',
+      'max-len max-statements-per-line multiline-ternary new-parens',
+      'newline-per-chained-call no-confusing-arrow no-extra-parens',
+      'no-extra-semi no-floating-decimal no-mixed-operators',
+      'no-mixed-spaces-and-tabs no-multi-spaces no-multiple-empty-lines',
+      'no-new-symbol no-return-await no-spaced-func no-tabs',
+      'no-trailing-spaces no-whitespace-before-property',
+      'nonblock-statement-body-position object-curly-newline',
+      'object-curly-spacing object-property-newline',
+      'one-var-declaration-per-line operator-linebreak padded-blocks',
+      'quote-props quotes rest-spread-spacing semi semi-spacing semi-style',
+      'space-before-blocks space-before-function-paren space-in-parens',
+      'space-infix-ops space-unary-ops switch-colon-spacing',
+      'template-curly-spacing template-tag-spacing wrap-iife wrap-regex',
+      'yield-star-spacing',
+      'sonarjs/no-tab sonarjs/no-redundant-parentheses',
+      'sonarjs/useless-string-operation sonarjs/web-sql-database',
+      'sonarjs/conditional-indentation sonarjs/os-command',
+      'sonarjs/no-unsafe-unzip sonarjs/no-intrusive-permissions',
+      'sonarjs/hidden-files sonarjs/no-mixed-content',
+      'sonarjs/frame-ancestors sonarjs/confidential-information-logging',
+      'sonarjs/no-ip-forward',
+    ]
+      .join(' ')
+      .split(' '),
+  ),
+  stripDeprecatedRules = (config) => {
+    if (Array.isArray(config)) {
+      return config.map(stripDeprecatedRules);
+    }
+    const result = { ...config };
+    if (config.extends) {
+      result.extends = config.extends.map((entry) =>
+        typeof entry === 'string' ? entry : stripDeprecatedRules(entry),
+      );
+    }
+    if (config.rules) {
+      result.rules = Object.fromEntries(
+        Object.entries(config.rules).filter(
+          ([ruleName]) => !deprecatedRuleIds.has(ruleName),
+        ),
+      );
+    }
+    return result;
+  };
 export default defineConfig(
   globalIgnores(
     [

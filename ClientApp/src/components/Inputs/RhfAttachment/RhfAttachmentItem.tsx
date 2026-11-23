@@ -54,16 +54,16 @@ const RhfAttachmentItem = ({
   const initialCategory: unknown = field.value;
   // What the server holds, and which save is newest, so a failed save only
   // undoes itself and only while it is still the latest one.
-  const lastSavedCategory = useRef<string | undefined>(
+  const lastSavedCategoryRef = useRef<string | undefined>(
     typeof initialCategory === 'string' ? initialCategory : undefined,
   );
-  const latestSaveToken = useRef(0);
-  const lastSavedToken = useRef(0);
-  const isMounted = useRef(true);
+  const latestSaveTokenRef = useRef(0);
+  const lastSavedTokenRef = useRef(0);
+  const isMountedRef = useRef(true);
   useEffect(() => {
-    isMounted.current = true;
+    isMountedRef.current = true;
     return () => {
-      isMounted.current = false;
+      isMountedRef.current = false;
     };
   }, []);
   const closeModal = () => {
@@ -91,7 +91,7 @@ const RhfAttachmentItem = ({
   // The index can change while a save is in flight (an earlier row deleted),
   // so find this document again instead of trusting the captured path.
   const revertCategory = (token: number) => {
-    if (!isMounted.current || token !== latestSaveToken.current) return;
+    if (!isMountedRef.current || token !== latestSaveTokenRef.current) return;
     const list: unknown = getValues(name);
     if (!Array.isArray(list)) return;
     const currentIndex = (list as AttachmentDto[]).findIndex(
@@ -100,7 +100,7 @@ const RhfAttachmentItem = ({
     if (currentIndex < 0) return;
     setValue(
       `${name}.${currentIndex}.attachmentCategory`,
-      lastSavedCategory.current,
+      lastSavedCategoryRef.current,
       {
         shouldDirty: true,
       },
@@ -112,13 +112,13 @@ const RhfAttachmentItem = ({
     docId: string,
     category: string,
   ) => {
-    latestSaveToken.current += 1;
-    const token = latestSaveToken.current;
+    latestSaveTokenRef.current += 1;
+    const token = latestSaveTokenRef.current;
     try {
       await update(docId, category);
-      if (token > lastSavedToken.current) {
-        lastSavedToken.current = token;
-        lastSavedCategory.current = category;
+      if (token > lastSavedTokenRef.current) {
+        lastSavedTokenRef.current = token;
+        lastSavedCategoryRef.current = category;
       }
     } catch {
       // The error is left out of the message: it can carry tokens or PII.
