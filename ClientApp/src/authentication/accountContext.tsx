@@ -1,4 +1,3 @@
-import { createContext } from 'react';
 import type { UserProfileDto } from '../api/web-api-client';
 
 export interface AccountDetails {
@@ -66,7 +65,9 @@ export interface AccountDispatchContext {
 // Combined type kept for Props helper functions that need both state and dispatch.
 export type AccountContextState = AccountStateContext & AccountDispatchContext;
 
-export const AccountStateCtx = createContext<AccountStateContext | null>(null);
-export const AccountDispatchCtx = createContext<AccountDispatchContext | null>(
-  null,
-);
+export {
+  AccountDispatchContext,
+  AccountDispatchCtx,
+  AccountStateContext,
+  AccountStateCtx,
+} from './accountContexts';

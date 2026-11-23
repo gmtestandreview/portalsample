@@ -35,7 +35,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   const [acceptQuotePreInfo, setAcceptQuotePreInfo] = useState<
     AcceptQuotePreInfoDto | undefined
   >();
-  const requestGeneration = useRef(0);
+  const requestGenerationRef = useRef(0);
 
   const getAcceptQuotePreInfo =
     useCallback(async (): Promise<PaymentDetailsLoadResult> => {
@@ -60,13 +60,13 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
     }, [accounts, id, instance]);
 
   useEffect(() => {
-    const currentGeneration = ++requestGeneration.current;
+    const currentGeneration = ++requestGenerationRef.current;
     let isActive = true;
 
     const loadDataForDisplay = async () => {
       setIsLoading(true);
       const result = await getAcceptQuotePreInfo();
-      if (!isActive || requestGeneration.current !== currentGeneration) {
+      if (!isActive || requestGenerationRef.current !== currentGeneration) {
         return;
       }
       if (result.kind === 'loaded') {

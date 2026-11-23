@@ -42,7 +42,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
   >();
   const account = useAccountState();
   const homeAccountId = account?.details?.homeAccountId;
-  const requestGeneration = useRef(0);
+  const requestGenerationRef = useRef(0);
 
   const getAcceptQuotePreInfo =
     useCallback(async (): Promise<ReportRecipientLoadResult> => {
@@ -69,13 +69,13 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
     }, [accounts, homeAccountId, id, instance]);
 
   useEffect(() => {
-    const currentGeneration = ++requestGeneration.current;
+    const currentGeneration = ++requestGenerationRef.current;
     let isActive = true;
 
     const loadDataForDisplay = async () => {
       setIsLoading(true);
       const result = await getAcceptQuotePreInfo();
-      if (!isActive || requestGeneration.current !== currentGeneration) {
+      if (!isActive || requestGenerationRef.current !== currentGeneration) {
         return;
       }
       if (result.kind === 'loaded') {

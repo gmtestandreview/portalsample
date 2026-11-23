@@ -11,13 +11,13 @@ import AppLogger from '../../../instrumentation/AppLogger';
 
 const CreateRequestForTypeApproval = () => {
   const { accounts, instance } = useMsal();
-  const isSaving = useRef(false);
+  const isSavingRef = useRef(false);
   const [applicationId, setApplicationId] = useState<string>();
 
   useEffect(() => {
     const createApplication = async () => {
       try {
-        // No applicationId check: the isSaving ref below already limits this to one run,
+        // No applicationId check: isSavingRef below already limits this to one run,
         // and on that run the id has not been set yet, so the guard could not fail.
         const client = new ApplicationClient();
         const tokenResult = await instance.acquireTokenSilent(
@@ -32,13 +32,13 @@ const CreateRequestForTypeApproval = () => {
         AppLogger.error('Failed to create application', e as Error);
       }
     };
-    if (!isSaving.current) {
+    if (!isSavingRef.current) {
       void createApplication();
     }
     return () => {
-      isSaving.current = true;
+      isSavingRef.current = true;
     };
-  }, [accounts, applicationId, instance, isSaving]);
+  }, [accounts, applicationId, instance, isSavingRef]);
 
   return applicationId ? (
     <Navigate to={`/ta/${applicationId}/organisation-details`} />

@@ -18,8 +18,13 @@ export interface ModalDispatch {
   ) => void;
 }
 
-export const ModalStateCtx = createContext<ModalState | null>(null);
-export const ModalDispatchCtx = createContext<ModalDispatch | null>(null);
+export const ModalStateContext = createContext<ModalState | null>(null);
+export const ModalDispatchContext = createContext<ModalDispatch | null>(null);
 
-export const useModalState = () => useContext(ModalStateCtx);
-export const useModalDispatch = () => useContext(ModalDispatchCtx);
+export {
+  ModalStateContext as ModalStateCtx,
+  ModalDispatchContext as ModalDispatchCtx,
+};
+
+export const useModalState = () => useContext(ModalStateContext);
+export const useModalDispatch = () => useContext(ModalDispatchContext);

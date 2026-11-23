@@ -62,15 +62,15 @@ const useTouchOnSubmit = <TValues extends BridgedValues>(
   touchPaths: readonly Path<TValues>[],
 ) => {
   const { values: outerValues, submitCount } = useFormikContext<TValues>();
-  const previousSubmitCount = useRef(submitCount);
+  const previousSubmitCountRef = useRef(submitCount);
 
   useEffect(() => {
-    if (submitCount <= previousSubmitCount.current) {
-      previousSubmitCount.current = submitCount;
+    if (submitCount <= previousSubmitCountRef.current) {
+      previousSubmitCountRef.current = submitCount;
       return;
     }
 
-    previousSubmitCount.current = submitCount;
+    previousSubmitCountRef.current = submitCount;
     setValue(
       'saveAndExit' as Path<TValues>,
       outerValues.saveAndExit as PathValue<TValues, Path<TValues>>,

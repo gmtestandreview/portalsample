@@ -183,6 +183,32 @@ describe('custom pagination', () => {
     }).toStrictEqual({ page1: false, page5: true, page6: true, page7: true });
   });
 
+  it('uses the configured range when the viewport width is unavailable', () => {
+    expect.hasAssertions();
+
+    resetPaginationState();
+    Object.defineProperty(globalThis, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: undefined,
+    });
+
+    render(
+      <CustomPagination
+        currentPage={6}
+        totalPages={20}
+        visiblePageRange={4}
+        onPageChange={vi.fn<() => void>()}
+      />,
+    );
+
+    expect(screen.getByLabelText('Page 4')).toBeInTheDocument();
+    expect(screen.getByLabelText('Page 8')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Page 9')).not.toBeInTheDocument();
+
+    resetPaginationState();
+  });
+
   it.each([
     [800, ['Page 3', 'Page 9'], ['Page 2', 'Page 10']],
     [600, ['Page 4', 'Page 8'], ['Page 3', 'Page 9']],

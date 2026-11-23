@@ -297,6 +297,33 @@ describe('wizard control behavior', () => {
     }
   });
 
+  it('rejects null entries in nested WizardForm children', () => {
+    expect.hasAssertions();
+
+    const preventError = (event: ErrorEvent) => {
+      event.preventDefault();
+    };
+    globalThis.addEventListener('error', preventError);
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    try {
+      expect(() =>
+        render(
+          <MemoryRouter>
+            <WizardForm locationOnCompletion='/complete'>
+              {[null, 'invalid child'] as unknown as React.ReactElement[]}
+            </WizardForm>
+          </MemoryRouter>,
+        ),
+      ).toThrow('WizardForm only accepts children of type WizardStep');
+    } finally {
+      consoleError.mockRestore();
+      globalThis.removeEventListener('error', preventError);
+    }
+  });
+
   it('renders the real WizardStep through analytics and error-boundary wrappers', () => {
     expect.hasAssertions();
 

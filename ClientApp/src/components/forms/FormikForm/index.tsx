@@ -80,15 +80,21 @@ const FormikForm = <Values extends FormikValues>(
   };
 
   const renderChildren = (formik: FormikProps<Values>) => {
+    let renderedChildren: React.ReactNode = null;
+
     if (isFunction(children)) {
-      return children(formik);
+      renderedChildren = children(formik);
+    } else if (!isEmptyChildren(children)) {
+      if (!React.isValidElement(children)) {
+        throw new Error(
+          'React.Children.only expected to receive a single React element child.',
+        );
+      }
+
+      renderedChildren = children;
     }
 
-    if (isEmptyChildren(children)) {
-      return null;
-    }
-
-    return React.Children.only(children);
+    return renderedChildren;
   };
 
   return (

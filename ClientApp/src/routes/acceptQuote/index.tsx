@@ -45,7 +45,7 @@ const AcceptQuote = () => {
     },
   };
 
-  const isLoading = useRef(false);
+  const isLoadingRef = useRef(false);
   const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
   const [crmQuoteRequestId, setCrmQuoteRequestId] = useState<string>('');
   const [referenceId, setReferenceId] = useState<string>('');
@@ -82,13 +82,13 @@ const AcceptQuote = () => {
         }
       }
     };
-    if (!isLoading.current) {
+    if (!isLoadingRef.current) {
       void loadApplicationSteps();
     }
     return () => {
-      isLoading.current = true;
+      isLoadingRef.current = true;
     };
-  }, [accounts, id, instance, isLoading, navigate, statuses]);
+  }, [accounts, id, instance, isLoadingRef, navigate, statuses]);
 
   if (!account?.details) return null;
   const accountDetails = account.details;

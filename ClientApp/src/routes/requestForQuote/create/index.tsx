@@ -11,12 +11,12 @@ import AppLogger from '../../../instrumentation/AppLogger';
 
 const CreateRequestForQuote = () => {
   const { accounts, instance } = useMsal();
-  const isSaving = useRef(false);
+  const isSavingRef = useRef(false);
   const [applicationId, setApplicationId] = useState<string>();
 
   useEffect(() => {
     const createApplication = async () => {
-      isSaving.current = true;
+      isSavingRef.current = true;
       try {
         const client = new ApplicationClient();
         const tokenResult = await instance.acquireTokenSilent(
@@ -28,14 +28,14 @@ const CreateRequestForQuote = () => {
         });
         setApplicationId(application.referenceId);
       } catch (e) {
-        isSaving.current = false;
+        isSavingRef.current = false;
         AppLogger.error('Failed to create application', e as Error);
       }
     };
-    if (accounts.length > 0 && !isSaving.current) {
+    if (accounts.length > 0 && !isSavingRef.current) {
       void createApplication();
     }
-  }, [accounts, instance, isSaving]);
+  }, [accounts, instance, isSavingRef]);
 
   return applicationId ? (
     <Navigate

@@ -11,13 +11,13 @@ import AppLogger from '../../../instrumentation/AppLogger';
 
 const CopyRequestForQuote = () => {
   const { accounts, instance } = useMsal();
-  const isSaving = useRef(false);
+  const isSavingRef = useRef(false);
   const [applicationId, setApplicationId] = useState<string>();
   const { id } = useParams();
 
   useEffect(() => {
     const copyApplication = async (sourceId: string) => {
-      isSaving.current = true;
+      isSavingRef.current = true;
       try {
         const client = new ApplicationClient();
         const tokenResult = await instance.acquireTokenSilent(
@@ -29,14 +29,14 @@ const CopyRequestForQuote = () => {
         });
         setApplicationId(application.referenceId);
       } catch (e) {
-        isSaving.current = false;
+        isSavingRef.current = false;
         AppLogger.error('Failed to copy application', e as Error);
       }
     };
-    if (id !== undefined && accounts.length > 0 && !isSaving.current) {
+    if (id !== undefined && accounts.length > 0 && !isSavingRef.current) {
       void copyApplication(id);
     }
-  }, [accounts, id, instance, isSaving]);
+  }, [accounts, id, instance, isSavingRef]);
 
   return applicationId ? (
     <Navigate

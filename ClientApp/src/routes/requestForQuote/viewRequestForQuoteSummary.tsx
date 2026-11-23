@@ -35,7 +35,7 @@ const ViewRequestForQuoteSummary = ({
     locationAfterExit: '/dashboard',
   };
 
-  const isLoading = useRef(false);
+  const isLoadingRef = useRef(false);
   const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
   useEffect(() => {
@@ -56,13 +56,13 @@ const ViewRequestForQuoteSummary = ({
         });
       }
     };
-    if (!isLoading.current) {
+    if (!isLoadingRef.current) {
       void loadApplicationSteps();
     }
     return () => {
-      isLoading.current = true;
+      isLoadingRef.current = true;
     };
-  }, [accounts, id, instance, isLoading]);
+  }, [accounts, id, instance, isLoadingRef]);
 
   const accountDetails = account?.details;
   return statuses !== undefined && id !== undefined && accountDetails ? (

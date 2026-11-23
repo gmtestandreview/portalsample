@@ -32,7 +32,7 @@ const RequestForQuote = () => {
 
   useBodyClass('wizard');
 
-  const isLoading = useRef(false);
+  const isLoadingRef = useRef(false);
   const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
   /**
@@ -45,11 +45,11 @@ const RequestForQuote = () => {
    * because StrictMode remounts in development.
    *
    * Either mistake produces the same failure: an in-flight load is marked abandoned while
-   * `isLoading.current` is still true, which blocks the re-run from starting a replacement. The
+   * `isLoadingRef.current` is still true, which blocks the re-run from starting a replacement. The
    * response then arrives, sees the flag, and drops the result - leaving `statuses` undefined with
    * nothing left to retrigger the effect, and the wizard stuck on its spinner for good.
    */
-  const isUnmounted = useRef(false);
+  const isUnmountedRef = useRef(false);
 
   useEffect(() => {
     // Reset on every mount, not just initialised once. StrictMode mounts, unmounts and remounts
@@ -57,10 +57,10 @@ const RequestForQuote = () => {
     // unmount and nothing ever clears it - the first real response is then discarded and the
     // wizard sits on its spinner forever. Only the development build shows it, which is why the
     // unit suite (no StrictMode wrapper) passed while the browser-driven e2e did not.
-    isUnmounted.current = false;
+    isUnmountedRef.current = false;
 
     return () => {
-      isUnmounted.current = true;
+      isUnmountedRef.current = true;
     };
   }, []);
 
@@ -73,9 +73,9 @@ const RequestForQuote = () => {
         hasAccountDetails &&
         !statuses &&
         accounts.length > 0 &&
-        !isLoading.current
+        !isLoadingRef.current
       ) {
-        isLoading.current = true;
+        isLoadingRef.current = true;
         try {
           const client = new RequestForQuoteClient();
           const tokenResult = await instance.acquireTokenSilent(
@@ -83,12 +83,12 @@ const RequestForQuote = () => {
           );
           client.setAuthToken(tokenResult.accessToken);
           const result = await client.getStepStatuses(applicationId);
-          if (isUnmounted.current) {
+          if (isUnmountedRef.current) {
             return;
           }
           setStatuses(result);
         } catch (error) {
-          if (isUnmounted.current) {
+          if (isUnmountedRef.current) {
             return;
           }
           AppLogger.error('Failed to load application steps', error as Error, {
@@ -96,7 +96,7 @@ const RequestForQuote = () => {
           });
           void navigate('/not-found');
         } finally {
-          isLoading.current = false;
+          isLoadingRef.current = false;
         }
       }
     };
@@ -106,7 +106,7 @@ const RequestForQuote = () => {
     applicationId,
     hasAccountDetails,
     instance,
-    isLoading,
+    isLoadingRef,
     navigate,
     statuses,
   ]);

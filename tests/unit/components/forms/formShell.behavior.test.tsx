@@ -231,6 +231,39 @@ describe('form shell behavior slice', () => {
     expect(screen.getByTestId('unsaved-form-prompt')).toBeInTheDocument();
   });
 
+  it('rejects non-element children', () => {
+    expect.hasAssertions();
+
+    const preventError = (event: ErrorEvent) => {
+      event.preventDefault();
+    };
+    globalThis.addEventListener('error', preventError);
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    try {
+      expect(() =>
+        render(
+          <MemoryRouter>
+            <FormikForm
+              initialValues={{}}
+              onSubmit={vi.fn<Submit>()}
+              promptPath='/invalid'
+            >
+              {'invalid child'}
+            </FormikForm>
+          </MemoryRouter>,
+        ),
+      ).toThrow(
+        'React.Children.only expected to receive a single React element child.',
+      );
+    } finally {
+      consoleError.mockRestore();
+      globalThis.removeEventListener('error', preventError);
+    }
+  });
+
   it('formikForm validates soft and hard Yup schemas and supports empty children', async () => {
     expect.hasAssertions();
 

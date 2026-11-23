@@ -6,6 +6,20 @@ import type { WizardFormProps, WizardStepProps } from './types';
 import WizardRoutedStep from './WizardRoutedStep';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
+const flattenChildren = (
+  children: React.ReactNode,
+  isRoot = true,
+): React.ReactNode[] => {
+  if (children === null || children === undefined) {
+    return isRoot ? [] : [children];
+  }
+  if (Array.isArray(children)) {
+    const childArray = children as React.ReactNode[];
+    return childArray.flatMap((child) => flattenChildren(child, false));
+  }
+  return [children];
+};
+
 const WizardForm: FC<WizardFormProps> = (props: Readonly<WizardFormProps>) => {
   const {
     children,
@@ -24,12 +38,11 @@ const WizardForm: FC<WizardFormProps> = (props: Readonly<WizardFormProps>) => {
   const resolvedPath = useResolvedPath('').pathname;
   const parentPath = useResolvedPath('..').pathname;
 
-  const reactChildren: React.ReactElement<WizardStepProps<FormikValues>>[] = [];
-  React.Children.forEach(children, (child) => {
+  const reactChildren = flattenChildren(children).map((child) => {
     if (!React.isValidElement<WizardStepProps<FormikValues>>(child)) {
       throw new Error('WizardForm only accepts children of type WizardStep');
     }
-    reactChildren.push(child);
+    return child;
   });
 
   const url = reactChildren.reduce(

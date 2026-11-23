@@ -38,7 +38,7 @@ export const useInstrumentAndRequestLookups = () => {
   const context = useFormikContext<InstrumentAndRequestStep>();
   const measurementCategory = context.getFieldMeta('measurementCategory')
     .value as string | undefined;
-  const isLoadingMeasurementCategories = useRef(false);
+  const isLoadingMeasurementCategoriesRef = useRef(false);
   const [measurementCategories, setMeasurementCategories] =
     useState<LookupResponse[]>();
   const [artefactTypes, setArtefactTypes] = useState<LookupResponse[]>();
@@ -48,12 +48,12 @@ export const useInstrumentAndRequestLookups = () => {
     if (
       measurementCategories !== undefined ||
       accounts.length === 0 ||
-      isLoadingMeasurementCategories.current
+      isLoadingMeasurementCategoriesRef.current
     ) {
       return;
     }
 
-    isLoadingMeasurementCategories.current = true;
+    isLoadingMeasurementCategoriesRef.current = true;
     const loadMeasurementCategories = async () => {
       try {
         const client = new LookupClient();
@@ -71,7 +71,7 @@ export const useInstrumentAndRequestLookups = () => {
         setArtefactTypes(artefactTypeResult);
       } catch (e) {
         AppLogger.error('Failed to retrieve look ups', e as Error);
-        isLoadingMeasurementCategories.current = false;
+        isLoadingMeasurementCategoriesRef.current = false;
       }
     };
     void loadMeasurementCategories();

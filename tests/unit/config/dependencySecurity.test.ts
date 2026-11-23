@@ -323,12 +323,12 @@ describe('transitive security dependency floors', () => {
 
 describe('lint cohort', () => {
   const cohort = new Map([
-    ['eslint', '10.14.0'],
+    ['eslint', '10.15.0'],
     ['@eslint/js', '10.0.1'],
-    ['typescript-eslint', '8.72.1'],
-    ['@eslint-react/eslint-plugin', '5.28.8'],
+    ['typescript-eslint', '8.73.0'],
+    ['@eslint-react/eslint-plugin', '5.30.6'],
     ['eslint-plugin-react-hooks', '7.1.1'],
-    ['@stylistic/eslint-plugin', '5.10.0'],
+    ['@stylistic/eslint-plugin', '6.0.1'],
     ['globals', '17.14.0'],
   ]);
 

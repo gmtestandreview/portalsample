@@ -79,7 +79,7 @@ const AttachmentNew = (
   const attachments: AttachmentDto[] = Array.isArray(value) ? value : [];
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const unidentifiedAttachmentKeys = useRef(
+  const unidentifiedAttachmentKeysRef = useRef(
     new WeakMap<AttachmentDto, string>(),
   );
 
@@ -182,10 +182,10 @@ const AttachmentNew = (
   const renderAttachments = () => {
     return attachments.map((attachment, i) => {
       let attachmentKey =
-        attachment.id ?? unidentifiedAttachmentKeys.current.get(attachment);
+        attachment.id ?? unidentifiedAttachmentKeysRef.current.get(attachment);
       if (attachmentKey === undefined) {
         attachmentKey = globalThis.crypto.randomUUID();
-        unidentifiedAttachmentKeys.current.set(attachment, attachmentKey);
+        unidentifiedAttachmentKeysRef.current.set(attachment, attachmentKey);
       }
       return (
         <AttachmentItemNew

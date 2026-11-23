@@ -334,6 +334,10 @@ export default defineConfig(
     rules: {
       'storybook/meta-satisfies-type': 'error',
       'storybook/csf-component': 'error',
+      'storybook/no-uninstalled-addons': [
+        'error',
+        { packageJsonLocation: packageJsonPath },
+      ],
       'no-restricted-imports': [
         'error',
         {
@@ -349,6 +353,7 @@ export default defineConfig(
     },
   },
   {
+    extends: [storybook.configs['flat/recommended']],
     files: storybookFiles,
     name: 'nmi/storybook-runner-boundaries',
     rules: {

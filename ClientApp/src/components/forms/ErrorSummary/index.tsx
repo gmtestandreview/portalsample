@@ -183,8 +183,8 @@ const useFocusSummaryOnFailedSubmit = ({
   isValidating,
   submitCount,
 }: SummaryFocusState) => {
-  const focusedSubmitCount = useRef(0);
-  const focusTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+  const focusedSubmitCountRef = useRef(0);
+  const focusTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
 
@@ -193,17 +193,17 @@ const useFocusSummaryOnFailedSubmit = ({
       isSubmitting ||
       isValidating ||
       !hasErrors ||
-      submitCount === focusedSubmitCount.current
+      submitCount === focusedSubmitCountRef.current
     ) {
       return;
     }
-    focusedSubmitCount.current = submitCount;
-    focusTimeout.current = handleAlertScroll();
+    focusedSubmitCountRef.current = submitCount;
+    focusTimeoutRef.current = handleAlertScroll();
   }, [hasErrors, isSubmitting, isValidating, submitCount]);
 
   useEffect(
     () => () => {
-      clearTimeout(focusTimeout.current);
+      clearTimeout(focusTimeoutRef.current);
     },
     [],
   );

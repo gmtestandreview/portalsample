@@ -97,7 +97,7 @@ const NumberInput = ({
     typeof formattedValue === 'string' ? formattedValue : undefined;
   const displayFormat = getDisplayFormat(format, phoneFormatValue);
   const { setValue } = helpers;
-  const lastAppliedDefaultValue =
+  const lastAppliedDefaultValueRef =
     useRef<NumberInputProps['defaultValue']>(undefined);
   useEffect(() => {
     const hasDefaultValue = defaultValue !== undefined && defaultValue !== null;
@@ -105,9 +105,9 @@ const NumberInput = ({
     if (
       hasDefaultValue &&
       !field.value &&
-      lastAppliedDefaultValue.current !== defaultValue
+      lastAppliedDefaultValueRef.current !== defaultValue
     ) {
-      lastAppliedDefaultValue.current = defaultValue;
+      lastAppliedDefaultValueRef.current = defaultValue;
       void setValue(defaultValue);
     }
   }, [defaultValue, field.value, setValue]);

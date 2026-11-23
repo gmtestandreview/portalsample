@@ -137,6 +137,19 @@ describe(RhfWizardRoutedStep, () => {
     expect(screen.getByRole('textbox', { name: 'Detail' })).toHaveValue('');
   });
 
+  it('uses the unprefixed title for a single-step wizard', async () => {
+    expect.hasAssertions();
+
+    renderStep({
+      allSteps: steps.slice(0, 1),
+      stepStatuses: [{ status: FormStepStatus.NotStarted }],
+    });
+
+    await waitForLoaded();
+
+    expect(document.title).toBe('Test wizard | NMI Services portal');
+  });
+
   it('shows the saving spinner and sends a normalized save-and-next payload before navigating', async () => {
     expect.hasAssertions();
 

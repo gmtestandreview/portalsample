@@ -13,7 +13,7 @@ import AppLogger from '../../../instrumentation/AppLogger';
 const CreateAcceptQuote = () => {
   const { id } = useParams<{ id?: string }>();
   const { accounts, instance } = useMsal();
-  const isSaving = useRef(false);
+  const isSavingRef = useRef(false);
   const [applicationId, setApplicationId] = useState<string>();
 
   useEffect(() => {
@@ -43,13 +43,13 @@ const CreateAcceptQuote = () => {
         });
       }
     };
-    if (!isSaving.current) {
+    if (!isSavingRef.current) {
       void createApplication();
     }
     return () => {
-      isSaving.current = true;
+      isSavingRef.current = true;
     };
-  }, [accounts, id, instance, isSaving]);
+  }, [accounts, id, instance, isSavingRef]);
 
   return applicationId ? (
     <Navigate to={`/accept-quote/${applicationId}/report-recipient`} />
