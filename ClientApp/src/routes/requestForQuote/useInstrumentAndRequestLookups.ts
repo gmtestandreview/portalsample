@@ -1,5 +1,5 @@
 import { useFormikContext } from 'formik';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { CRMLookupTypes, LookupClient } from '../../api/web-api-client';
@@ -42,14 +42,7 @@ export const useInstrumentAndRequestLookups = () => {
   const [measurementCategories, setMeasurementCategories] =
     useState<LookupResponse[]>();
   const [artefactTypes, setArtefactTypes] = useState<LookupResponse[]>();
-  const [artefactTypesSelected, setArtefactTypesSelected] =
-    useState<SelectInputOption<string>[]>();
-  const noMeasurementId = useRef('');
-  const noInstrumentId = useRef('');
-  const [
-    isInstrumentOrArtefactTypeDisabled,
-    setIsInstrumentOrArtefactTypeDisabled,
-  ] = useState(false);
+  const [noMeasurementId, setNoMeasurementId] = useState('');
 
   useEffect(() => {
     if (
@@ -73,7 +66,7 @@ export const useInstrumentAndRequestLookups = () => {
           client.getLookup(CRMLookupTypes.TCArtefactTypePortalCategory),
         ]);
         const [sorted, lastId] = sortList(result, 'No measurement', 'label');
-        noMeasurementId.current = lastId;
+        setNoMeasurementId(lastId);
         setMeasurementCategories(sorted);
         setArtefactTypes(artefactTypeResult);
       } catch (e) {
@@ -84,27 +77,23 @@ export const useInstrumentAndRequestLookups = () => {
     void loadMeasurementCategories();
   }, [accounts, instance, measurementCategories]);
 
-  useEffect(() => {
-    if (measurementCategories === undefined || artefactTypes === undefined) {
-      return;
+  // The artefact options and the disabled flag follow from the lookups and the
+  // selected category, so derive them instead of syncing state from an effect.
+  const lookupsLoaded =
+    measurementCategories !== undefined && artefactTypes !== undefined;
+  const artefactTypesSelected = useMemo(() => {
+    if (artefactTypes === undefined || !lookupsLoaded) {
+      return undefined;
     }
-
     if (measurementCategory === undefined) {
-      setArtefactTypesSelected([]);
-      setIsInstrumentOrArtefactTypeDisabled(false);
-      return;
+      return [] as SelectInputOption<string>[];
     }
-
-    const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
-      artefactTypes,
-      measurementCategory,
-    );
-    noInstrumentId.current = lastId;
-    setArtefactTypesSelected(options);
-    setIsInstrumentOrArtefactTypeDisabled(
-      measurementCategory === noMeasurementId.current,
-    );
-  }, [artefactTypes, measurementCategories, measurementCategory]);
+    return getArtefactTypeOptions(artefactTypes, measurementCategory).options;
+  }, [artefactTypes, lookupsLoaded, measurementCategory]);
+  const isInstrumentOrArtefactTypeDisabled =
+    lookupsLoaded &&
+    measurementCategory !== undefined &&
+    measurementCategory === noMeasurementId;
 
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];
@@ -119,23 +108,14 @@ export const useInstrumentAndRequestLookups = () => {
   const onMeasurementCategoryChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setIsInstrumentOrArtefactTypeDisabled(false);
     void context.setFieldValue('instrumentOrArtefactType', '');
     void context.setFieldTouched('instrumentOrArtefactType', false);
-    if (artefactTypes !== undefined) {
-      const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
+    if (artefactTypes !== undefined && event.target.value === noMeasurementId) {
+      const { noInstrumentId } = getArtefactTypeOptions(
         artefactTypes,
         event.target.value,
       );
-      noInstrumentId.current = lastId;
-      setArtefactTypesSelected(options);
-      if (event.target.value === noMeasurementId.current) {
-        void context.setFieldValue(
-          'instrumentOrArtefactType',
-          noInstrumentId.current,
-        );
-        setIsInstrumentOrArtefactTypeDisabled(true);
-      }
+      void context.setFieldValue('instrumentOrArtefactType', noInstrumentId);
     }
   };
 

@@ -1,7 +1,7 @@
 import { useField, useFormikContext } from 'formik';
 
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import {
   dateOnlyToPickerDate,
   dateOnlyToStoredDateTimeString,
@@ -37,16 +37,12 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
 
   const [_field, _meta] = useField<DateFieldValue>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext();
-  const [currentDate, setCurrentDate] = useState<Date | null>(null);
-
-  useEffect(() => {
-    if (!currentDate && _field.value) {
-      const dateOnlyValue = parseApiDateOnlyInput(_field.value);
-      if (dateOnlyValue) {
-        setCurrentDate(dateOnlyToPickerDate(dateOnlyValue));
-      }
-    }
-  }, [_field.value, currentDate]);
+  const currentDate = useMemo(() => {
+    const dateOnlyValue = _field.value
+      ? parseApiDateOnlyInput(_field.value)
+      : null;
+    return dateOnlyValue ? dateOnlyToPickerDate(dateOnlyValue) : null;
+  }, [_field.value]);
 
   const dateOnChange = async (dateUpdateValue: Date | string | null) => {
     let dateString: string | null;

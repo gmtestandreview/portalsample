@@ -245,6 +245,10 @@ describe('workflow step components', () => {
 
     resetWorkflowStepComponentsMocks();
 
+    // The mocked Formik context is static, so model the field after the select
+    // has updated it: the type lock is derived from the stored category.
+    mocks.formikValues = { measurementCategory: 'no-measurement' };
+
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
     ).default;

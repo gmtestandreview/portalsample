@@ -46,8 +46,6 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   const location = useLocation();
   const path = location.pathname;
   const { announcement } = useRouteAccessibility();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [modalState, setModalState] = useState<ModalState>(() => ({
     showBranchSelector: !!getBranchModalNotification(),
     showRFQDeleteModal: false,
@@ -127,15 +125,19 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
     autoShowBranchSelector || modalState.showBranchSelector;
   const showRFQDelete = modalState.showRFQDeleteModal;
 
-  useEffect(() => {
-    if (autoShowBranchSelector && !modalState.showBranchSelector) {
-      setModalState((prev) => ({
-        ...prev,
-        showBranchSelector: true,
-        branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
-      }));
-    }
-  }, [autoShowBranchSelector, modalState.showBranchSelector]);
+  // When the branch selector is forced open, expose that through the modal
+  // context directly rather than copying it into state from an effect.
+  const contextModalState = useMemo<ModalState>(
+    () =>
+      autoShowBranchSelector && !modalState.showBranchSelector
+        ? {
+            ...modalState,
+            showBranchSelector: true,
+            branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
+          }
+        : modalState,
+    [autoShowBranchSelector, modalState],
+  );
 
   useEffect(() => {
     if (path && path !== '/' && !path.includes('dashboard')) {
@@ -143,11 +145,8 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
     }
   }, [path]);
 
-  useEffect(() => {
-    setIsModalOpen(
-      showBranchSelector || showRFQDelete || showTermsAndConditions,
-    );
-  }, [showBranchSelector, showRFQDelete, showTermsAndConditions, isModalOpen]);
+  const isModalOpen =
+    showBranchSelector || showRFQDelete || showTermsAndConditions;
 
   const renderWithLayout = () => (
     <Layout>
@@ -184,7 +183,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   }
 
   return (
-    <ModalStateCtx.Provider value={modalState}>
+    <ModalStateCtx.Provider value={contextModalState}>
       <ModalDispatchCtx.Provider value={modalDispatch}>
         {/* For WCAG - DIV wrapper work around for HTML "inert" tag not yet included in ReactJS v18 */}
         <div {...{ inert: isModalOpen ? '' : undefined }}>

@@ -618,6 +618,29 @@ describe('custom date picker', () => {
     expectDatePickerOffsetsAfterReopen(nextDate);
   });
 
+  it('clears the selected date when the current date is removed', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const props = {
+      calendarButtonTitle: 'Date',
+      dateOnBlur: vi.fn<() => void>(),
+      dateOnChange: vi.fn<() => void>(),
+      name: 'clearedDate',
+    };
+    const { rerender } = render(
+      <CustomDatePicker
+        {...props}
+        currentDate={new Date('2026-06-01T00:00:00.000Z')}
+      />,
+    );
+
+    rerender(<CustomDatePicker {...props} currentDate={null} />);
+    await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+    expect(screen.getByTestId('selected-date')).toBeEmptyDOMElement();
+  });
+
   it('accounts for rendered feedback and inline-help heights in offsets', async () => {
     expect.hasAssertions();
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import AutoSuggestContainer from './AutoSuggestContainer';
 import type { AutoSuggestProps, AutoSuggestOption } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
@@ -68,11 +68,16 @@ const AutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
+  // Adopt a newly selected option as the search term (derived during render,
+  // not synced from an effect).
+  const [previousSelectedOption, setPreviousSelectedOption] =
+    useState(selectedOption);
+  if (selectedOption !== previousSelectedOption) {
+    setPreviousSelectedOption(selectedOption);
     if (selectedOption) {
       setSearchTerm(selectedOption);
     }
-  }, [selectedOption]);
+  }
 
   const onCancel = () => {
     requestIdRef.current += 1;

@@ -369,6 +369,20 @@ describe.each(['formik', 'rhf'] as const)(
         expect(currentPath()).toBe('/other');
       });
 
+      it('lets a valid submit handler navigate away from a dirty form', async () => {
+        expect.hasAssertions();
+
+        const { user, onSubmit, router } = await renderShell(kind);
+        onSubmit.mockImplementation(() => router.navigate('/other'));
+
+        await user.type(screen.getByRole('textbox', { name: 'name' }), 'Alex');
+        await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+        await expect(
+          screen.findByText('Other page'),
+        ).resolves.toBeInTheDocument();
+      });
+
       it('blocks a clean form whose last submit was rejected', async () => {
         expect.hasAssertions();
 

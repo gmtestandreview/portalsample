@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import RhfAutoSuggestContainer from './RhfAutoSuggestContainer';
 import type { AutoSuggestProps, AutoSuggestOption } from '../AutoSuggest/types';
 import { omitUndefined } from '../../../utils/omitUndefined';
@@ -72,11 +72,16 @@ const RhfAutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
+  // Adopt a newly selected option as the search term (derived during render,
+  // not synced from an effect).
+  const [previousSelectedOption, setPreviousSelectedOption] =
+    useState(selectedOption);
+  if (selectedOption !== previousSelectedOption) {
+    setPreviousSelectedOption(selectedOption);
     if (selectedOption) {
       setSearchTerm(selectedOption);
     }
-  }, [selectedOption]);
+  }
 
   const onCancel = () => {
     requestIdRef.current += 1;

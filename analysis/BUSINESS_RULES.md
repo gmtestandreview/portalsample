@@ -402,7 +402,7 @@ Implementation status identifiers include `QuoteDrafted`, `QuoteAvailable`,
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
 `ClientApp/src/routes/dashboard/dashboard.helpers.ts:114-148`,
-`ClientApp/src/routes/quotation/index.tsx:192-199` **Plain English:**
+`ClientApp/src/routes/quotation/index.tsx:168-175` **Plain English:**
 Immediately after a customer accepts a quote and returns to the dashboard, the
 portal optimistically shows the record as accepted before CRM has propagated the
 status change. **Specification:**

@@ -1,7 +1,7 @@
 import { orIfEmpty } from '../../utils/orIfEmpty';
 import { useField, useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { ChangeEvent } from 'react';
 import { Alert, Card, Col, Container } from 'react-bootstrap';
 import HidableField from '../../components/forms/HidableField';
@@ -10,10 +10,10 @@ import TextAreaInput from '../../components/Inputs/TextAreaInput';
 import type { TAApplicationAndInstrumentProps } from './types';
 import {
   type LookupResponse,
+  type ApplicationAndInstrumentStepDto,
   PatternApprovalRequiredValues,
   type PatternApprovalRequiredValueOptions,
 } from '../../api/web-api-client';
-import type { ApplicationAndInstrumentStepDto } from '../../api/web-api-client';
 import {
   applicationTypes,
   newCertificateSubOptions,
@@ -252,20 +252,12 @@ const ApplicationAndInstrument = (
   const patternApprovalFieldName = getName('patternApprovalType');
   const patternApprovalType = context.getFieldMeta(patternApprovalFieldName)
     .value as string | undefined;
-  const [selectedApplication, setSelectedApplication] = useState<string | null>(
-    () =>
-      orIfEmpty(
-        patternApprovalType,
-        PatternApprovalRequiredValues.NewCertificate,
-      ),
+  // The selected application is the Formik field value (defaulting to a new
+  // certificate), so derive it instead of mirroring it into local state.
+  const selectedApplication: string = orIfEmpty(
+    patternApprovalType,
+    PatternApprovalRequiredValues.NewCertificate,
   );
-  const [instrumentCategories, setInstrumentCategories] =
-    useState<LookupResponse[]>();
-  const [instrumentTypes, setInstrumentTypes] = useState<LookupResponse[]>();
-  const [instrumentTypesSelected, setInstrumentTypesSelected] =
-    useState<SelectInputOption<string>[]>();
-  const noInstrumentCategoriestId = useRef('');
-  const noInstrumentTypeId = useRef('');
 
   // Lookup values are loaded in the parent component and passed through Formik context, so we can access them via context.values
   // without needing to make separate API calls here. We just need to transform them into the format needed for the dropdowns.
@@ -282,103 +274,80 @@ const ApplicationAndInstrument = (
     getName('instrumentCategoryLookup'),
   );
 
-  const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
-    useState(false);
-
-  const getInstrumentTypes = useCallback(
-    (
-      values: LookupResponse[],
-      parentId: string | undefined,
-    ): SelectInputOption<string>[] => {
-      const options: SelectInputOption<string>[] = [];
-      if (parentId !== undefined && parentId !== '') {
-        for (const l of values) {
-          if (l.parentId === parentId) {
-            options.push({ displayText: l.label ?? '', value: l.id ?? '' });
-          }
-        }
-      } else if (isSummary) {
-        for (const l of values) {
+  const getInstrumentTypes = (
+    values: LookupResponse[],
+    parentId: string | undefined,
+  ) => {
+    const options: SelectInputOption<string>[] = [];
+    if (parentId !== undefined && parentId !== '') {
+      for (const l of values) {
+        if (l.parentId === parentId) {
           options.push({ displayText: l.label ?? '', value: l.id ?? '' });
         }
       }
-      const [sorted, lastId] = sortList(
-        options,
-        'No instrument',
-        'displayText',
+    } else if (isSummary) {
+      for (const l of values) {
+        options.push({ displayText: l.label ?? '', value: l.id ?? '' });
+      }
+    }
+    const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
+
+    return { options: sorted, noInstrumentTypeId: lastId };
+  };
+
+  // Default the application type once the saved step values have loaded.
+  useEffect(() => {
+    if (patternApprovalType === undefined && !isSummary) {
+      void setFieldValue(
+        patternApprovalFieldName,
+        PatternApprovalRequiredValues.NewCertificate,
+        false,
       );
-      noInstrumentTypeId.current = lastId;
-
-      return sorted;
-    },
-    [isSummary],
-  );
-
-  // Sync the local selection with Formik after asynchronous step values load.
-  useEffect(() => {
-    if (patternApprovalType === undefined) {
-      if (!isSummary) {
-        void setFieldValue(
-          patternApprovalFieldName,
-          PatternApprovalRequiredValues.NewCertificate,
-          false,
-        );
-      }
-      return;
     }
-    if (patternApprovalType !== selectedApplication) {
-      setSelectedApplication(patternApprovalType);
+  }, [isSummary, patternApprovalFieldName, patternApprovalType, setFieldValue]);
+
+  // Formik starts with an empty step while the controller loads the saved
+  // values. Keep the controls empty until both lookup responses arrive; the
+  // categories, types and disabled flag then follow from the Formik fields, so
+  // they are derived here instead of synced into state from an effect.
+  const categoryLookup = _categoryLookupField.value;
+  const typeLookup = _typeLookupField.value;
+  const lookupsLoaded =
+    categoryLookup !== undefined && typeLookup !== undefined;
+  const sortedCategories = useMemo(() => {
+    if (categoryLookup === undefined || typeLookup === undefined) {
+      return undefined;
     }
-  }, [
-    isSummary,
-    patternApprovalFieldName,
-    patternApprovalType,
-    selectedApplication,
-    setFieldValue,
-  ]);
-
-  useEffect(() => {
-    const result = _categoryLookupField.value;
-    const artefactTypeResult = _typeLookupField.value;
-
-    // Formik starts with an empty step while the controller loads the saved
-    // values. Keep the controls empty until both lookup responses arrive, then
-    // derive them again when Formik rehydrates the step.
-    if (result === undefined || artefactTypeResult === undefined) {
-      setInstrumentCategories(undefined);
-      setInstrumentTypes(undefined);
-      setInstrumentTypesSelected([]);
-      setIsInstrumentTypeDisabled(false);
-      return;
-    }
-
     try {
-      const [sorted, lastId] = sortList(result, 'No measurement', 'label');
-      noInstrumentCategoriestId.current = lastId;
-      setInstrumentCategories(sorted);
-      setInstrumentTypes(artefactTypeResult);
-      if (_instrumentTypeField.value !== undefined || isSummary) {
-        setInstrumentTypesSelected(
-          getInstrumentTypes(artefactTypeResult, _instrumentCatField.value),
-        );
-        setIsInstrumentTypeDisabled(
-          !isSummary &&
-            _instrumentCatField.value === noInstrumentCategoriestId.current,
-        );
-      } else {
-        setInstrumentTypesSelected([]);
-      }
+      const [sorted, lastId] = sortList(
+        categoryLookup,
+        'No measurement',
+        'label',
+      );
+      return {
+        categories: sorted,
+        noInstrumentCategoryId: lastId,
+        types: typeLookup,
+      };
     } catch (e) {
       AppLogger.error('Failed to retrieve look ups', e as Error);
+      return undefined;
     }
-  }, [
-    _categoryLookupField.value,
-    _typeLookupField.value,
-    _instrumentCatField.value,
-    _instrumentTypeField.value,
-    getInstrumentTypes,
-    isSummary,
-  ]);
+  }, [categoryLookup, typeLookup]);
+  const instrumentCategories = sortedCategories?.categories;
+  const instrumentTypes = lookupsLoaded ? typeLookup : undefined;
+  const typesAreListed =
+    _instrumentTypeField.value !== undefined || isSummary === true;
+  const instrumentTypesSelected =
+    sortedCategories !== undefined && typesAreListed
+      ? getInstrumentTypes(sortedCategories.types, _instrumentCatField.value)
+          .options
+      : [];
+  const isInstrumentTypeDisabled =
+    sortedCategories !== undefined &&
+    typesAreListed &&
+    !isSummary &&
+    _instrumentCatField.value === sortedCategories.noInstrumentCategoryId;
 
   const getInstrumentCategories = () => {
     const options: SelectInputOption<string>[] = [];
@@ -414,20 +383,17 @@ const ApplicationAndInstrument = (
   // console.log('Selected application oth options: ', _othField.value);
 
   const onInstrumentCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setIsInstrumentTypeDisabled(false);
     void context.setFieldValue('instrumentType', '');
     void context.setFieldTouched('instrumentType', false);
-    if (instrumentTypes !== undefined) {
-      setInstrumentTypesSelected(
-        getInstrumentTypes(instrumentTypes, event.target.value),
+    if (
+      instrumentTypes !== undefined &&
+      event.target.value === sortedCategories?.noInstrumentCategoryId
+    ) {
+      const { noInstrumentTypeId } = getInstrumentTypes(
+        instrumentTypes,
+        event.target.value,
       );
-      if (event.target.value === noInstrumentCategoriestId.current) {
-        void context.setFieldValue(
-          'instrumentType',
-          noInstrumentTypeId.current,
-        );
-        setIsInstrumentTypeDisabled(true);
-      }
+      void context.setFieldValue('instrumentType', noInstrumentTypeId);
     }
   };
   const instrumentCategoryId = _instrumentCatField.value;
@@ -442,7 +408,6 @@ const ApplicationAndInstrument = (
   const onApplicationTypeChange = (
     applicationType: PatternApprovalRequiredValues,
   ) => {
-    setSelectedApplication(applicationType);
     void context.setFieldValue(
       getName('patternApprovalType'),
       applicationType,
@@ -527,7 +492,7 @@ const ApplicationAndInstrument = (
           <SelectInput<string>
             name={getName('instrumentType')}
             label='Select the type of your instrument'
-            options={instrumentTypesSelected ?? []}
+            options={instrumentTypesSelected}
             isSummary={isSummary}
             readOnly={isInstrumentTypeDisabled}
             addBlank

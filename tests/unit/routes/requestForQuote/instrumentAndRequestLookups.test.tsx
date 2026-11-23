@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { Formik } from 'formik';
+import { Formik, useFormikContext } from 'formik';
 import type { ChangeEvent, ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
@@ -201,7 +201,31 @@ describe(useInstrumentAndRequestLookups, () => {
     expect(result.current.isInstrumentOrArtefactTypeDisabled).toBe(true);
   });
 
-  it('rebuilds artefact options when the measurement category changes', async () => {
+  it('offers no artefact options while the measurement category is blank', async () => {
+    expect.hasAssertions();
+
+    resetMsalMock();
+    clients.lookup.methods.getLookup.mockReset();
+    wrapperInitialValues.value = { measurementCategory: '' };
+    grantToken();
+    clients.lookup.methods.getLookup
+      .mockResolvedValueOnce([{ id: 'category-1', label: 'Category 1' }])
+      .mockResolvedValueOnce([
+        { id: 'artefact-1', label: 'Artefact 1', parentId: 'category-1' },
+      ]);
+
+    const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
+      wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.artefactTypesSelected).toStrictEqual([]);
+  });
+
+  it('rebuilds artefact options when the measurement category field changes', async () => {
     expect.hasAssertions();
 
     resetMsalMock();
@@ -217,22 +241,26 @@ describe(useInstrumentAndRequestLookups, () => {
         { id: 'artefact-1', label: 'Artefact 1', parentId: 'category-1' },
       ]);
 
-    const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
-      wrapper,
-    });
+    const { result } = renderHook(
+      () => ({
+        formik: useFormikContext<InstrumentAndRequestStep>(),
+        lookups: useInstrumentAndRequestLookups(),
+      }),
+      { wrapper },
+    );
 
     await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.lookups.isLoading).toBe(false);
     });
 
     await act(async () => {
-      result.current.onMeasurementCategoryChange({
-        target: { value: 'category-1' },
-      } as React.ChangeEvent<HTMLSelectElement>);
-      await Promise.resolve();
+      await result.current.formik.setFieldValue(
+        'measurementCategory',
+        'category-1',
+      );
     });
 
-    expect(result.current.artefactTypesSelected).toStrictEqual([
+    expect(result.current.lookups.artefactTypesSelected).toStrictEqual([
       { displayText: 'Artefact 1', value: 'artefact-1' },
     ]);
   });

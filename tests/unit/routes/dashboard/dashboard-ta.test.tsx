@@ -1210,6 +1210,37 @@ describe('pattern/type approval dashboard', () => {
     expect(pagination).toHaveAttribute('data-total', '0');
   });
 
+  it('lists requests on the active tab when the saved profile has no tab', async () => {
+    expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
+
+    mockAccountDetails = {
+      ...BASE_ACCOUNT,
+      userProfile: {
+        ...BASE_ACCOUNT.userProfile,
+        patternApprovalDashboard: omitKeys(BASE_FILTERS, 'filterActiveTab'),
+      },
+    };
+    mockAccountContextState.value = {
+      details: mockAccountDetails,
+      ...mockAccountDispatchState.value,
+    };
+    mockGetDrafts.mockResolvedValue({
+      ...EMPTY_RESPONSE,
+      items: [{ referenceId: 'TA-NOTAB' }],
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    await screen.findAllByText('TA-NOTAB');
+
+    expect(screen.getAllByTestId('request-item')[0]).toHaveAttribute(
+      'data-tab',
+      'drafts',
+    );
+  });
+
   it('classifies a load failure that carries no status', async () => {
     expect.hasAssertions();
 

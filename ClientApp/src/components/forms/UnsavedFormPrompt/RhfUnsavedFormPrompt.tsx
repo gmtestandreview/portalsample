@@ -11,12 +11,13 @@ import UnsavedChangesPrompt from './UnsavedChangesPrompt';
  */
 const RhfUnsavedFormPrompt = ({ path }: Readonly<{ path?: string }>) => {
   const { clearErrors } = useFormContext();
-  const { isDirty, isValid, submitCount } = useFormState();
+  const { isDirty, isSubmitting, isValid, submitCount } = useFormState();
 
   return (
     <UnsavedChangesPrompt
       path={path}
       isDirty={isDirty}
+      isSubmitting={isSubmitting}
       isValid={isValid}
       submitCount={submitCount}
       onProceed={() => {

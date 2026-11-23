@@ -1,7 +1,7 @@
 import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useAccount, useMsal } from '@azure/msal-react';
@@ -71,9 +71,14 @@ const AddressLookup = (
   const { instance, accounts, inProgress } = useMsal();
   const account = useAccount(accounts[0] ?? {});
 
-  useEffect(() => {
-    setText(_field.value?.searchText);
-  }, [_field.value?.searchText]);
+  // Keep the text in step with the field's searchText (derived during render,
+  // not synced from an effect).
+  const fieldSearchText = _field.value?.searchText;
+  const [previousSearchText, setPreviousSearchText] = useState(fieldSearchText);
+  if (fieldSearchText !== previousSearchText) {
+    setPreviousSearchText(fieldSearchText);
+    setText(fieldSearchText);
+  }
 
   const fetchAddressOptions = async (
     term: string,
@@ -204,7 +209,7 @@ const AddressLookup = (
   const onEnterManually = () => {
     void setTouched(false);
     void setValue({
-      ...(_field.value ?? {}),
+      ..._field.value,
       isManuallyEntered: true,
     });
   };

@@ -1,6 +1,6 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type React from 'react';
 import { Alert } from 'react-bootstrap';
 import { useFormState } from 'react-hook-form';
@@ -214,17 +214,11 @@ const FormikErrorsSummary = ({
 }: FormikErrorsSummaryProps) => {
   const { errors, submitCount, isValidating, isSubmitting } =
     useFormikContext<FormikValues>();
-  const [errorSummary, setErrorSummary] = useState<FormikErrors<FormikValues>>(
-    {},
-  );
+  // Errors are only summarised once the form has been submitted.
+  const errorSummary: FormikErrors<FormikValues> =
+    submitCount > 0 ? errors : {};
   const sanitizedErrorSummary = sanitizeErrorData(errorSummary);
   const hasErrors = Object.keys(sanitizedErrorSummary).length > 0;
-
-  useEffect(() => {
-    if (submitCount > 0) {
-      setErrorSummary(errors);
-    }
-  }, [errors, submitCount]);
 
   useFocusSummaryOnFailedSubmit({
     hasErrors,

@@ -170,6 +170,12 @@ export const mswHandlers = [
       headers: { 'Content-Type': 'application/javascript' },
     }),
   ),
+  http.get('https://images.unsplash.com/photo-*', () =>
+    HttpResponse.text(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1" />',
+      { headers: { 'Content-Type': 'image/svg+xml' } },
+    ),
+  ),
   http.get('/api/dashboard', () => HttpResponse.json([])),
   http.get('/api/dashboard/get-filtered-dashboard-quotes', () =>
     HttpResponse.json(dashboardPageResponse),

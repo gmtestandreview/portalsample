@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { useField } from 'formik';
 import type { FormikProps } from 'formik';
 import type { ChangeEvent, ReactNode } from 'react';
 import {
@@ -89,15 +90,20 @@ vi.mock(
         readOnly?: boolean;
       }) => {
         captured.selects.set(name, { options, readOnly, onChange });
+        // The real SelectInput runs the caller's onChange and then updates its
+        // Formik field; the step derives its dependent options from that field.
+        const field = useField(name)[0];
 
         return (
           <select
             aria-label={label}
+            name={name}
             data-testid={`select-${name}`}
             data-readonly={String(readOnly ?? false)}
-            onChange={(event: ChangeEvent<HTMLSelectElement>) =>
-              onChange?.(event)
-            }
+            onChange={(event: ChangeEvent<HTMLSelectElement>) => {
+              onChange?.(event);
+              field.onChange(event);
+            }}
           >
             <option value='' />
             {options.map((option) => (

@@ -349,10 +349,23 @@ describe('storybook MSW handlers', () => {
     await expect(response.text()).resolves.toBe('');
   });
 
+  it('answers Unsplash photo requests with a deterministic image fixture', async () => {
+    expect.hasAssertions();
+
+    const response = await fetch(
+      'https://images.unsplash.com/photo-example?w=600&auto=format&fit=crop',
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toContain('image/svg+xml');
+    await expect(response.text()).resolves.toContain('<svg');
+  });
+
   it.each([
     'https://www.googletagmanager.com/gtag/destination?id=storybook-test-ga-id',
     'https://www.google-analytics.com/g/collect?v=2',
     'https://example.com/gtag/js?id=storybook-test-ga-id',
+    'https://images.unsplash.com/not-a-photo?w=600',
   ])('does not stub other foreign request %s', async (requestUrl) => {
     expect.hasAssertions();
 

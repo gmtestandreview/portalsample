@@ -80,6 +80,12 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   const accountLoadAttemptedForRef = useRef<string | null>(null);
   const { inProgress, accounts, instance } = useMsal();
 
+  // Clear the account while MSAL is logging out. Done during render (guarded so
+  // it settles after one pass) instead of from an effect.
+  if (inProgress === InteractionStatus.Logout && accountDetails !== null) {
+    setAccountDetails(null);
+  }
+
   const setAgree = useCallback(() => {
     setAccountDetails((prev) => {
       if (!prev) return prev;
@@ -289,7 +295,6 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
     const [firstAccount] = accounts;
     if (inProgress === InteractionStatus.Logout) {
       accountLoadAttemptedForRef.current = null;
-      setAccountDetails(null);
     } else if (
       !errored &&
       inProgress === InteractionStatus.None &&

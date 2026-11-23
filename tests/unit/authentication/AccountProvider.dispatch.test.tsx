@@ -467,6 +467,31 @@ describe('accountProvider dispatch callbacks', () => {
     expect(providerMocks.signIn).not.toHaveBeenCalled();
   });
 
+  it('drops loaded account details when MSAL starts a logout', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
+    const { rerender } = render(
+      <AccountProvider>
+        <AccountConsumer />
+      </AccountProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org');
+    });
+
+    providerMocks.inProgress = 'logout';
+    rerender(
+      <AccountProvider>
+        <AccountConsumer />
+      </AccountProvider>,
+    );
+
+    expect(screen.getByTestId('details')).toHaveTextContent('null');
+  });
+
   it('uses the active account without request-level navigation callbacks', async () => {
     expect.hasAssertions();
 

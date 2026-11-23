@@ -6,6 +6,8 @@ import RouteLeavingGuard from '../../RouteLeavingGuard';
 export interface UnsavedChangesPromptProps {
   path?: string | undefined;
   isDirty: boolean;
+  /** Allows the active submit handler to navigate before the count settles. */
+  isSubmitting?: boolean;
   /** True when the form currently has no validation errors. */
   isValid: boolean;
   submitCount: number;
@@ -20,12 +22,15 @@ export interface UnsavedChangesPromptProps {
 const UnsavedChangesPrompt = ({
   path,
   isDirty,
+  isSubmitting = false,
   isValid,
   submitCount,
   onProceed,
 }: Readonly<UnsavedChangesPromptProps>) => {
-  const isDirtyUnsaved = isDirty && (submitCount === 0 || !isValid);
-  const isServerRejected = !isDirty && !isValid && submitCount > 0;
+  const isDirtyUnsaved =
+    !isSubmitting && isDirty && (submitCount === 0 || !isValid);
+  const isServerRejected =
+    !isSubmitting && !isDirty && !isValid && submitCount > 0;
   const proceedProps = onProceed === undefined ? {} : { onProceed };
 
   if (path === '/create-account/' || path === '/create-contact/') {
