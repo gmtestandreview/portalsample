@@ -130,6 +130,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-jsx-a11y-x": "^0.2.0",
     "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-perf": "^3.4.0",
     "eslint-plugin-react-refresh": "^0.5.8",
     "eslint-plugin-security": "^4.2.1",
     "eslint-plugin-sonarjs": "^4.2.2",
@@ -190,6 +191,9 @@
     "msw": true
   },
   "msw": {
-    "workerDirectory": ["ClientApp/public", "storybook-static"]
+    "workerDirectory": [
+      "ClientApp/public",
+      "storybook-static"
+    ]
   }
 }
