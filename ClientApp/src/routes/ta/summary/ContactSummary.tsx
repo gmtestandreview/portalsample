@@ -16,11 +16,20 @@ type ContactSummaryContact = Omit<Partial<ContactDto>, 'title'> & {
   title?: string | undefined;
 };
 
+export interface ContactSummaryLabels {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  mobile?: string;
+}
+
 interface ContactSummaryProps {
   /** Id prefix for the rows, e.g. `organisationAndContact.contact`. */
   name: string;
   contact: ContactSummaryContact | undefined;
   hideTitleOther?: boolean;
+  /** Replaces the default label of a row, e.g. to mark it optional. */
+  labels?: ContactSummaryLabels;
 }
 
 /** Read-only contact block, matching `ContactDetailsInput` in summary mode. */
@@ -28,6 +37,7 @@ const ContactSummary = ({
   name,
   contact,
   hideTitleOther = false,
+  labels,
 }: Readonly<ContactSummaryProps>) => {
   const title = titleText(contact?.title);
 
@@ -58,13 +68,13 @@ const ContactSummary = ({
         />
       )}
       <SummaryDisplay
-        label='First name'
+        label={labels?.firstName ?? 'First name'}
         id={`${name}.firstName`}
         as='p'
         value={contact?.firstName ?? ''}
       />
       <SummaryDisplay
-        label='Last name'
+        label={labels?.lastName ?? 'Last name'}
         id={`${name}.lastName`}
         as='p'
         value={contact?.lastName ?? ''}
@@ -76,13 +86,13 @@ const ContactSummary = ({
         value={contact?.role ?? ''}
       />
       <SummaryDisplay
-        label='Business phone'
+        label={labels?.phone ?? 'Business phone'}
         id={`${name}.phone`}
         value={contact?.phone ?? ''}
         format={getPhoneNumberFormat(contact?.phone)}
       />
       <SummaryDisplay
-        label='Mobile phone'
+        label={labels?.mobile ?? 'Mobile phone'}
         id={`${name}.mobile`}
         value={contact?.mobile ?? ''}
         format={MOBILE_FORMAT}
