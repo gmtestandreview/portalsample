@@ -31,6 +31,7 @@ interface Values {
 type Props = RhfWizardRoutedStepProps<Values>;
 type Save = NonNullable<Props['onSaveAndNext']>;
 type Load = Props['loadStepValues'];
+type RenderStepOverrides = Partial<Props> & { omitBannerTitle?: boolean };
 
 const initialValues: Values = { name: '', detail: '', hidden: '' };
 const hard = Yup.object({
@@ -62,7 +63,8 @@ const steps = [
   </Step>,
 ];
 
-const renderStep = (overrides: Partial<Props> = {}) => {
+const renderStep = (overrides: RenderStepOverrides = {}) => {
+  const { omitBannerTitle = false, ...propsOverrides } = overrides;
   const props: Props = {
     title: 'First step',
     location: '/first',
@@ -77,10 +79,10 @@ const renderStep = (overrides: Partial<Props> = {}) => {
     currentStepIndex: 0,
     locationOnCompletion: '/done',
     locationAfterExit: '/draft',
-    bannerTitle: 'Test wizard',
     validateHard: hard,
     hidingFields: { hidden: true },
-    ...overrides,
+    ...(omitBannerTitle ? {} : { bannerTitle: 'Test wizard' }),
+    ...propsOverrides,
   };
   const path = props.url + props.location;
   return {
@@ -143,11 +145,12 @@ describe(RhfWizardRoutedStep, () => {
     renderStep({
       allSteps: steps.slice(0, 1),
       stepStatuses: [{ status: FormStepStatus.NotStarted }],
+      omitBannerTitle: true,
     });
 
     await waitForLoaded();
 
-    expect(document.title).toBe('Test wizard | NMI Services portal');
+    expect(document.title).toBe('| NMI Services portal');
   });
 
   it('shows the saving spinner and sends a normalized save-and-next payload before navigating', async () => {

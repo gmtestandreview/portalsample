@@ -324,6 +324,21 @@ describe('wizard control behavior', () => {
     }
   });
 
+  it('handles an explicitly empty WizardForm', () => {
+    expect.hasAssertions();
+
+    render(
+      <MemoryRouter>
+        <WizardForm
+          children={null as unknown as React.ReactElement}
+          locationOnCompletion='/complete'
+        />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+  });
+
   it('renders the real WizardStep through analytics and error-boundary wrappers', () => {
     expect.hasAssertions();
 

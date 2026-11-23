@@ -1,5 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import CustomPagination from '@/components/Pagination';
 
@@ -207,6 +208,20 @@ describe('custom pagination', () => {
     expect(screen.queryByLabelText('Page 9')).not.toBeInTheDocument();
 
     resetPaginationState();
+  });
+
+  it('supports server rendering', () => {
+    expect.hasAssertions();
+
+    const markup = renderToString(
+      <CustomPagination
+        currentPage={1}
+        totalPages={3}
+        onPageChange={vi.fn<() => void>()}
+      />,
+    );
+
+    expect(markup).toContain('Results page navigation');
   });
 
   it.each([

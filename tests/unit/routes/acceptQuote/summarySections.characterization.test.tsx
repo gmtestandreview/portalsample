@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { Form, Formik } from 'formik';
+import type { FormikConfig } from 'formik';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -186,7 +187,9 @@ const renderSummary = async (scenario: Scenario) => {
             <Formik<SummaryAndAcceptStep>
               initialValues={scenario.values}
               initialStatus={{ hidden: hidingFields }}
-              onSubmit={vi.fn<(...args: unknown[]) => unknown>()}
+              onSubmit={vi.fn<
+                NonNullable<FormikConfig<SummaryAndAcceptStep>['onSubmit']>
+              >()}
             >
               <Form noValidate>
                 <SummaryAndAccept name='' cRMQuoteRequestId='crm-1' />
