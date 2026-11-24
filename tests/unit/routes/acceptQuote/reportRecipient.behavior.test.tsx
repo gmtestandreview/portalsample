@@ -156,7 +156,12 @@ function StepHarness({
       }}
     >
       <Form noValidate>
-        <ReportRecipient id={id} isSummary={isSummary} />
+        <ReportRecipient
+          id={id}
+          isSummary={isSummary}
+          summaryValues={{ reportRecipient: values }}
+          summaryHidden={{}}
+        />
         <button type='submit'>Continue</button>
         <SaveAndExitButton />
       </Form>
@@ -180,6 +185,38 @@ describe('reportRecipient behavior', () => {
       },
     });
   };
+
+  it('renders the report recipient summary without a form context', async () => {
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
+    mocks.getReportRecipient.mockResolvedValue({
+      reportAddressType: ReportAddressTypeValues.Other,
+      rfqOrganisation: {
+        streetAddress,
+        postalAddress,
+        postalAddressSameAsStreetAddress: false,
+      },
+    });
+
+    render(
+      <ReportRecipient
+        id='RFQ-1'
+        isSummary
+        summaryValues={{
+          reportRecipient: {
+            organisationName: 'Acme Labs',
+            reportAddressType: ReportAddressTypeValues.Other,
+            businessStreetAddress: postalAddress,
+          },
+        }}
+        summaryHidden={{}}
+      />,
+    );
+
+    expect(await screen.findByText('Acme Labs')).toBeInTheDocument();
+    expect(screen.getByText(/PO Box 9/)).toBeInTheDocument();
+  });
 
   it('describes the street and postal address options from the loaded organisation', async () => {
     expect.hasAssertions();
@@ -472,11 +509,12 @@ describe('reportRecipient behavior', () => {
       reportAddressType: ReportAddressTypeValues.Other,
       rfqOrganisation: { streetAddress, postalAddress },
     });
-    renderStep({ isSummary: true });
+    renderStep({
+      isSummary: true,
+      values: { businessStreetAddress: postalAddress },
+    });
 
-    await expect(
-      screen.findByTestId('address-lookup'),
-    ).resolves.toBeInTheDocument();
+    await expect(screen.findByText(/PO Box 9/)).resolves.toBeInTheDocument();
   });
 
   it('reloads the recipient when the quotation id changes', async () => {

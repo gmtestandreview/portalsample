@@ -1,32 +1,21 @@
 import { useMsal } from '@azure/msal-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Row from 'react-bootstrap/Row';
 import { Alert } from 'react-bootstrap';
-import { prefixedPropertyOf } from '../../utils';
 import { AcceptQuoteClient } from '../../api/web-api-client';
 import type {
   AcceptQuotePreInfoDto,
-  PaymentDetailsStep,
 } from '../../api/web-api-client';
 import type { PaymentDetailsProps } from './types';
-import TextInput from '../../components/Inputs/TextInput';
-import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
-import HidableField from '../../components/forms/HidableField';
-import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
 import PaymentDetailsFormikBridge from './paymentDetailsFormikBridge';
-
-const getName = prefixedPropertyOf<PaymentDetailsStep>('paymentDetails');
+import PaymentDetailsSummary from './summary/PaymentDetailsSummary';
+import type { SummaryAndAcceptStep } from '../../api/web-api-client';
 
 type PaymentDetailsLoadResult =
   | { kind: 'loaded'; preInfo: AcceptQuotePreInfoDto | undefined }
   | { kind: 'inactive' };
-
-function getNameForUse(name: keyof PaymentDetailsStep): string {
-  return getName(name);
-}
 
 const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   const { isSummary, id } = props;
@@ -130,68 +119,10 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
         </Alert>
       )}
       {isSummary ? (
-        <>
-          <Row className='mb-4'>
-            <TextInput
-              label='Purchase Order (PO) number (optional)'
-              name={getNameForUse('purchaseOrderNo')}
-              placeholder='Enter purchase order number'
-              inlineHelp={
-                <>
-                  {'Purchase order can be provided at a later date.'}
-                  <span className='d-block pt-1'>
-                    Your NMI Quotation ID
-                    {acceptQuotePreInfo?.quotationIdNum &&
-                      ` ${acceptQuotePreInfo.quotationIdNum}`}
-                  </span>
-                </>
-              }
-              isSummary
-            />
-            <RadioButtonGroup
-              legend='The invoice will be sent to the following contact'
-              name={getNameForUse('invoiceSentTo')}
-              id='q-invoiceSentTo'
-              isSummary
-              options={[
-                {
-                  label: 'The main contact person for this request',
-                  value: 'SamePerson',
-                  id: 'invoiceSentTo-SamePerson',
-                },
-                {
-                  label: 'A different invoice contact person',
-                  value: 'DifferentPerson',
-                  id: 'invoiceSentTo-DifferentPerson',
-                },
-              ]}
-            />
-          </Row>
-          <HidableField name={getNameForUse('rfqHide')}>
-            <Row className='mb-4'>
-              <h2 className='h4 my-3'>Invoice contact person</h2>
-              <ContactDetailsInput
-                key='contact'
-                name='requestForQuote.contact'
-                isSummary
-              />
-            </Row>
-          </HidableField>
-          <HidableField name={getNameForUse('contactHide')}>
-            <Row className='mb-4'>
-              <h2 className='h4 my-3'>Invoice contact person</h2>
-              <ContactDetailsInput
-                key='contact'
-                name={getNameForUse('contact')}
-                isSummary
-                firstNameLabel='First name (optional)'
-                lastNameLabel='Last name (optional)'
-                businessPhoneLabel='Business phone (optional)'
-                mobilePhoneLabel='Mobile phone (optional)'
-              />
-            </Row>
-          </HidableField>
-        </>
+        <PaymentDetailsSummary
+          values={props.summaryValues ?? ({} as SummaryAndAcceptStep)}
+          hidden={props.summaryHidden ?? {}}
+        />
       ) : (
         <PaymentDetailsFormikBridge
           quotationId={acceptQuotePreInfo?.quotationIdNum}

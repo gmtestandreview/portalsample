@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
+import { useFormikContext } from 'formik';
 import { Col, Row, Container } from 'react-bootstrap';
 import { Link, useParams } from 'react-router';
 import {
@@ -45,10 +46,28 @@ import {
   openPdfPageInNewTab,
 } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
+import type { SummaryAndAcceptStep } from '../../api/web-api-client';
+import type { Hideable } from '../../components/forms/types';
 
 const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted, cRMQuoteRequestId } = props;
+  const { values: summaryValues, status } =
+    useFormikContext<SummaryAndAcceptStep>();
+  const statusHidden =
+    typeof status === 'object' && status !== null
+      ? (status as { hidden?: unknown }).hidden
+      : undefined;
+  const summaryHidden: Hideable<
+    Partial<SummaryAndAcceptStep>,
+    Partial<SummaryAndAcceptStep>
+  > =
+    typeof statusHidden === 'object' && statusHidden !== null
+      ? (statusHidden as Hideable<
+          Partial<SummaryAndAcceptStep>,
+          Partial<SummaryAndAcceptStep>
+        >)
+      : {};
   const { accounts, instance } = useMsal();
   const account = useAccountState();
   const [acceptQuotePreInfo, setAcceptQuotePreInfo] = useState<
@@ -208,7 +227,13 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             eventKey='1'
             className='mb-4 py-2'
           >
-            <ReportRecipient isSummary name='reportRecipient' id={id} />
+            <ReportRecipient
+              isSummary
+              name='reportRecipient'
+              id={id}
+              summaryValues={summaryValues}
+              summaryHidden={summaryHidden}
+            />
             {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/report-recipient`} />
             )}
@@ -220,7 +245,13 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             eventKey='2'
             className='mb-4 py-2'
           >
-            <DeliveryAndReturn isSummary name='deliveryAndReturn' id={id} />
+            <DeliveryAndReturn
+              isSummary
+              name='deliveryAndReturn'
+              id={id}
+              summaryValues={summaryValues}
+              summaryHidden={summaryHidden}
+            />
             {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/delivery-and-return`} />
             )}
@@ -232,7 +263,13 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             eventKey='3'
             className='mb-4 py-2'
           >
-            <PaymentDetails isSummary name='paymentDetails' id={id} />
+            <PaymentDetails
+              isSummary
+              name='paymentDetails'
+              id={id}
+              summaryValues={summaryValues}
+              summaryHidden={summaryHidden}
+            />
             {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/payment-details`} />
             )}
