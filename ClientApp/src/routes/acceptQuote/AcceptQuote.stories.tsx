@@ -7,6 +7,7 @@ import DeliveryAndReturn from './deliveryAndReturn';
 import QuotationSummary from './quotationSummary';
 import SummaryAndAccept from './summaryAndAccept';
 import { withPortalProviders } from '../../storybook/storybookHarness';
+import { toState } from '../../utils/apiEnumMappings';
 
 const reportRecipientHandler = http.get(
   '/api/accept-quote/:id/report-recipient',
@@ -107,8 +108,8 @@ const meta = preview.meta({
     },
     portal: {
       initialEntries: ['/accept-quote/123/report-recipient'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           organisationName: 'Storybook Organisation',
           reportAddressType: 'BusinessAddress',
           businessStreetAddress: {},
@@ -155,7 +156,23 @@ export const ReportRecipientStep = meta.story({
 });
 
 export const ReportRecipientSummaryOtherAddress = meta.story({
-  render: () => <ReportRecipient id='123' isSummary />,
+  render: () => (
+    <ReportRecipient
+      id='123'
+      isSummary
+      summaryValues={{
+        reportRecipient: {
+          organisationName: 'Storybook Organisation',
+          businessStreetAddress: {
+            line1: '200 Custom Street',
+            suburb: 'Sydney',
+            state: toState('NSW'),
+            postcode: '2000',
+          },
+        },
+      }}
+    />
+  ),
   beforeEach({ msw }) {
     msw.use(reportRecipientOtherAddressHandler);
   },
@@ -163,8 +180,8 @@ export const ReportRecipientSummaryOtherAddress = meta.story({
     docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/summary-and-accept'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           reportRecipient: {
             organisationName: 'Storybook Organisation',
             businessStreetAddress: {
@@ -188,7 +205,7 @@ export const ReportRecipientSummaryOtherAddress = meta.story({
       canvas.getByText(/organisation name for report/i),
     ).toBeVisible();
     // Both assertions above are static summary chrome and pass before the fetch resolves.
-    // The "Other" address is the settled-state contract: its value comes from Formik and
+    // The "Other" address is the settled-state contract: its value comes from RHF and
     // is available immediately, but it is only rendered once reportRecipientStep has
     // loaded and reports reportAddressType 'Other'.
     await expect(await canvas.findByText(/200 Custom Street/)).toBeVisible();
@@ -204,8 +221,8 @@ export const PaymentDetailsStep = meta.story({
       providerLifecycleSentinel: 'payment-details-prepaid',
       accountContextLifecycleSentinel: 'payment-details-prepaid',
       sessionStorageSentinel: 'storybook:accept-quote:payment-details:prepaid',
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           purchaseOrderNo: 'PO-4455',
           invoiceSentTo: 'DifferentPerson',
           contact: {
@@ -256,8 +273,8 @@ export const PaymentDetailsPostpaid = meta.story({
       providerLifecycleSentinel: 'payment-details-postpaid',
       accountContextLifecycleSentinel: 'payment-details-postpaid',
       sessionStorageSentinel: 'storybook:accept-quote:payment-details:postpaid',
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           purchaseOrderNo: '',
           invoiceSentTo: 'SamePerson',
           contact: {
@@ -321,8 +338,8 @@ export const DeliveryAndReturnStep = meta.story({
     docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/delivery-and-return'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           returnContactType: 'SamePerson',
           returnAddressType: 'BusinessAddress',
           returnOrganisationName: '',
@@ -433,8 +450,8 @@ export const SummaryAndAcceptStep = meta.story({
     docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/summary-and-accept'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           associatedDisputes: 'No',
           acceptanceOfQuote: false,
         },
