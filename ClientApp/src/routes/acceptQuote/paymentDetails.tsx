@@ -2,9 +2,7 @@ import { useMsal } from '@azure/msal-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { AcceptQuoteClient } from '../../api/web-api-client';
-import type {
-  AcceptQuotePreInfoDto,
-} from '../../api/web-api-client';
+import type { AcceptQuotePreInfoDto } from '../../api/web-api-client';
 import type { PaymentDetailsProps } from './types';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';

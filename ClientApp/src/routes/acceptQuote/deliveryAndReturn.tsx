@@ -1,10 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import { Alert, Col, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import {
-  AcceptQuoteClient,
-  AccountsClient,
-} from '../../api/web-api-client';
+import { AcceptQuoteClient, AccountsClient } from '../../api/web-api-client';
 import type {
   AcceptQuotePreInfoDto,
   AddressDetailsDto,

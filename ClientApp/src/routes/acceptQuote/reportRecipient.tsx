@@ -2,9 +2,7 @@ import { useMsal } from '@azure/msal-react';
 import { Alert } from 'react-bootstrap';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReportRecipientProps } from './types';
-import {
-  AcceptQuoteClient,
-} from '../../api/web-api-client';
+import { AcceptQuoteClient } from '../../api/web-api-client';
 import type {
   AddressDetailsDto,
   ReportRecipientStep,

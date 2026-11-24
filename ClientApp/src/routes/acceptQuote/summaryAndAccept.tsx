@@ -61,13 +61,12 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
   const summaryHidden: Hideable<
     Partial<SummaryAndAcceptStep>,
     Partial<SummaryAndAcceptStep>
-  > =
-    typeof statusHidden === 'object' && statusHidden !== null
-      ? (statusHidden as Hideable<
-          Partial<SummaryAndAcceptStep>,
-          Partial<SummaryAndAcceptStep>
-        >)
-      : {};
+  > = typeof statusHidden === 'object' && statusHidden !== null
+    ? (statusHidden as Hideable<
+        Partial<SummaryAndAcceptStep>,
+        Partial<SummaryAndAcceptStep>
+      >)
+    : {};
   const { accounts, instance } = useMsal();
   const account = useAccountState();
   const [acceptQuotePreInfo, setAcceptQuotePreInfo] = useState<
