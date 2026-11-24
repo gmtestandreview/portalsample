@@ -23,97 +23,140 @@ interface PillProps {
   text: string;
 }
 
+const pillPropsByStatus = new Map<string, PillProps>([
+  [
+    'Withdrawn',
+    {
+      bgColour: 'secondary',
+      textColour: 'light',
+      text: DashboardItemStatus.ReportWithdrawn,
+    },
+  ],
+  ...['Quote offer is accepted', 'Quote - Accepted'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'success-dark',
+          textColour: 'light',
+          text: DashboardItemStatus.QuoteAccepted,
+        },
+      ] as [string, PillProps],
+  ),
+  ...['Report is available', 'Report - Issued', 'Issued'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'success-dark',
+          textColour: 'light',
+          text: DashboardItemStatus.ReportIssued,
+        },
+      ] as [string, PillProps],
+  ),
+  ...['Report is in-progress', 'Report - In progress'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'success-dark',
+          textColour: 'light',
+          text: DashboardItemStatus.ReportInProgress,
+        },
+      ] as [string, PillProps],
+  ),
+  ...['Instrument/Artefact received', 'Artefact - Received'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'success-dark',
+          textColour: 'light',
+          text: DashboardItemStatus.ArtifactReceived,
+        },
+      ] as [string, PillProps],
+  ),
+  [
+    'Quote request drafted',
+    {
+      bgColour: 'light',
+      textColour: 'dark',
+      text: DashboardItemStatus.QuoteDrafted,
+    },
+  ],
+  ...['Quote offer is available', 'Quote - Available'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'info',
+          textColour: 'light',
+          text: DashboardItemStatus.QuoteAvailable,
+        },
+      ] as [string, PillProps],
+  ),
+  ...['Quote offer declined', 'Quote - Declined'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'danger',
+          textColour: 'light',
+          text: DashboardItemStatus.QuoteDeclined,
+        },
+      ] as [string, PillProps],
+  ),
+  ...['Quote offer expired', 'Quote - Expired'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'danger-light',
+          textColour: 'dark',
+          text: DashboardItemStatus.QuoteExpired,
+        },
+      ] as [string, PillProps],
+  ),
+  ...['Quote request submitted', 'Submitted'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'info',
+          textColour: 'light',
+          text: DashboardItemStatus.QuoteSubmitted,
+        },
+      ] as [string, PillProps],
+  ),
+  ...['Report is withdrawn', 'Report - Withdrawn'].map(
+    (status) =>
+      [
+        status,
+        {
+          bgColour: 'success-dark',
+          textColour: 'light',
+          text: DashboardItemStatus.ReportWithdrawn,
+        },
+      ] as [string, PillProps],
+  ),
+  [
+    'Draft',
+    {
+      bgColour: 'light',
+      textColour: 'dark',
+      text: PaDashboardItemStatus.PaDraft,
+    },
+  ],
+]);
+
 const getPillProps = (itemStatus: string): PillProps => {
-  switch (itemStatus) {
-    case 'Withdrawn':
-      return {
-        bgColour: 'secondary',
-        textColour: 'light',
-        text: DashboardItemStatus.ReportWithdrawn,
-      };
-    case 'Quote offer is accepted':
-    case 'Quote - Accepted':
-      return {
-        bgColour: 'success-dark',
-        textColour: 'light',
-        text: DashboardItemStatus.QuoteAccepted,
-      };
-    case 'Report is available':
-    case 'Report - Issued':
-    case 'Issued':
-      return {
-        bgColour: 'success-dark',
-        textColour: 'light',
-        text: DashboardItemStatus.ReportIssued,
-      };
-    case 'Report is in-progress':
-    case 'Report - In progress':
-      return {
-        bgColour: 'success-dark',
-        textColour: 'light',
-        text: DashboardItemStatus.ReportInProgress,
-      };
-    case 'Instrument/Artefact received':
-    case 'Artefact - Received':
-      return {
-        bgColour: 'success-dark',
-        textColour: 'light',
-        text: DashboardItemStatus.ArtifactReceived,
-      };
-    case 'Quote request drafted':
-      return {
-        bgColour: 'light',
-        textColour: 'dark',
-        text: DashboardItemStatus.QuoteDrafted,
-      };
-    case 'Quote offer is available':
-    case 'Quote - Available':
-      return {
-        bgColour: 'info',
-        textColour: 'light',
-        text: DashboardItemStatus.QuoteAvailable,
-      };
-    case 'Quote offer declined':
-    case 'Quote - Declined':
-      return {
-        bgColour: 'danger',
-        textColour: 'light',
-        text: DashboardItemStatus.QuoteDeclined,
-      };
-    case 'Quote offer expired':
-    case 'Quote - Expired':
-      return {
-        bgColour: 'danger-light',
-        textColour: 'dark',
-        text: DashboardItemStatus.QuoteExpired,
-      };
-    case 'Quote request submitted':
-    case 'Submitted':
-      return {
-        bgColour: 'info',
-        textColour: 'light',
-        text: DashboardItemStatus.QuoteSubmitted,
-      };
-    case 'Report is withdrawn':
-    case 'Report - Withdrawn':
-      return {
-        bgColour: 'success-dark',
-        textColour: 'light',
-        text: DashboardItemStatus.ReportWithdrawn,
-      };
-    case 'Draft':
-      return {
-        bgColour: 'light',
-        textColour: 'dark',
-        text: PaDashboardItemStatus.PaDraft,
-      };
-    default:
-      return {
-        bgColour: 'info',
-        textColour: 'light',
-        text: itemStatus,
-      };
-  }
+  return (
+    pillPropsByStatus.get(itemStatus) ?? {
+      bgColour: 'info',
+      textColour: 'light',
+      text: itemStatus,
+    }
+  );
 };
 
 /**
