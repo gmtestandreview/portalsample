@@ -8,7 +8,7 @@ import type {
   ReportRecipientStep,
 } from '../../api/web-api-client';
 import { useAccountState } from '../../authentication/hooks';
-import ReportRecipientFormikBridge from './reportRecipientFormikBridge';
+import ReportRecipientFormFields from './reportRecipientFormFields';
 import AppLogger from '../../instrumentation/AppLogger';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
@@ -125,7 +125,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
         </Alert>
       )}
       {!isSummary && (
-        <ReportRecipientFormikBridge
+        <ReportRecipientFormFields
           streetAddress={streetAddress}
           postalAddress={postalAddress}
         />

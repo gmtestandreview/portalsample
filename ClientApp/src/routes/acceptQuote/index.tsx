@@ -1,12 +1,18 @@
 import { useMsal } from '@azure/msal-react';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
-import WizardForm from '../../components/forms/WizardForm';
-import type { WizardFormProps } from '../../components/forms/WizardForm/types';
+import RhfWizardRoutedStep from '../../components/forms/WizardForm/RhfWizardRoutedStep';
+import type { RhfWizardRoutedStepProps } from '../../components/forms/WizardForm/RhfWizardRoutedStep';
+import type { FormValues } from '../../components/forms/types';
+import type { WizardStepElement } from '../../components/forms/WizardForm/wizardStepContracts';
 import WizardStep from '../../components/forms/WizardForm/WizardStep';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import { useAccountState } from '../../authentication/hooks';
-import { AcceptQuoteClient, QuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  FormStepStatus,
+  QuoteClient,
+} from '../../api/web-api-client';
 import type { FormStepStatusDto } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
@@ -27,10 +33,11 @@ const AcceptQuote = () => {
   const { id } = useParams();
   const account = useAccountState();
   const navigate = useNavigate();
+  const currentPath = useLocation().pathname;
 
   useBodyClass('wizard');
 
-  const acceptQuoteWizardProps: WizardFormProps = {
+  const acceptQuoteWizardProps = {
     locationOnCompletion: `/submitted-success/${id ?? ''}`,
     lastStepNextButtonTitle: 'Submit and accept',
     nextButtonTitle: 'Save and next',
@@ -43,7 +50,15 @@ const AcceptQuote = () => {
       noButtonTitle: 'No, go back',
       yesButtonTitle: 'Yes, submit',
     },
-  };
+  } satisfies Pick<
+    RhfWizardRoutedStepProps<FormValues>,
+    | 'locationOnCompletion'
+    | 'lastStepNextButtonTitle'
+    | 'nextButtonTitle'
+    | 'previousButtonTitle'
+    | 'canSaveDraft'
+    | 'confirmationOnSubmission'
+  >;
 
   const isLoadingRef = useRef(false);
   const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
@@ -92,63 +107,91 @@ const AcceptQuote = () => {
 
   if (!account?.details) return null;
   const accountDetails = account.details;
-  return statuses ? (
-    <WizardForm {...acceptQuoteWizardProps}>
-      <WizardStep
-        {...reportRecipientProps(
-          id ?? '',
-          referenceId,
-          accounts,
-          instance,
-          accountDetails,
-          statuses,
-          bannerTitle,
-        )}
-      >
-        <ReportRecipient name='' id={id} />
-      </WizardStep>
-      <WizardStep
-        {...deliveryAndReturnProps(
-          id ?? '',
-          accounts,
-          instance,
-          accountDetails,
-          statuses,
-          bannerTitle,
-        )}
-      >
-        <DeliveryAndReturn name='' id={id} />
-      </WizardStep>
-      <WizardStep
-        {...paymentDetailsProps(
-          id ?? '',
-          accounts,
-          instance,
-          accountDetails,
-          statuses,
-          bannerTitle,
-        )}
-      >
-        <PaymentDetails name='' id={id} />
-      </WizardStep>
-      <WizardStep
-        {...summaryAndAcceptProps(
-          id ?? '',
-          accounts,
-          instance,
-          accountDetails,
-          statuses,
-          bannerTitle,
-        )}
-      >
-        <SummaryAndAccept name='' cRMQuoteRequestId={crmQuoteRequestId} />
-      </WizardStep>
-    </WizardForm>
-  ) : (
-    <BlockUISpinner>
-      <p>Loading...</p>
-    </BlockUISpinner>
+  if (!statuses) {
+    return (
+      <BlockUISpinner>
+        <p>Loading...</p>
+      </BlockUISpinner>
+    );
+  }
+
+  const stepProps = [
+    reportRecipientProps(
+      id ?? '',
+      referenceId,
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      bannerTitle,
+    ),
+    deliveryAndReturnProps(
+      id ?? '',
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      bannerTitle,
+    ),
+    paymentDetailsProps(
+      id ?? '',
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      bannerTitle,
+    ),
+    summaryAndAcceptProps(
+      id ?? '',
+      accounts,
+      instance,
+      accountDetails,
+      statuses,
+      bannerTitle,
+    ),
+  ] as const;
+  const steps = [
+    <WizardStep key='report-recipient' {...stepProps[0]}>
+      <ReportRecipient id={id} />
+    </WizardStep>,
+    <WizardStep key='delivery-and-return' {...stepProps[1]}>
+      <DeliveryAndReturn id={id} />
+    </WizardStep>,
+    <WizardStep key='payment-details' {...stepProps[2]}>
+      <PaymentDetails id={id} />
+    </WizardStep>,
+    <WizardStep key='summary-and-accept' {...stepProps[3]}>
+      <SummaryAndAccept
+        id={id}
+        cRMQuoteRequestId={crmQuoteRequestId}
+        summaryHidden={stepProps[3].hidingFields ?? {}}
+      />
+    </WizardStep>,
+  ] satisfies readonly WizardStepElement[];
+  const firstIncompleteStepIndex = statuses.findIndex(
+    ({ status }) => status !== FormStepStatus.Completed,
   );
+  const matchedStepIndex = steps.findIndex(({ props }) =>
+    currentPath.endsWith(props.location),
+  );
+  const currentStepIndex =
+    matchedStepIndex >= 0
+      ? matchedStepIndex
+      : firstIncompleteStepIndex >= 0
+        ? firstIncompleteStepIndex
+        : steps.length - 1;
+  const activeStepProps = stepProps[currentStepIndex]!;
+
+  const wizardProps = {
+    ...acceptQuoteWizardProps,
+    ...activeStepProps,
+    allSteps: steps,
+    currentStepIndex,
+    url: `/accept-quote/${id ?? ''}`,
+    location: activeStepProps.location,
+  } as RhfWizardRoutedStepProps<FormValues>;
+
+  return <RhfWizardRoutedStep<FormValues> {...wizardProps} />;
 };
 
 export default AcceptQuote;

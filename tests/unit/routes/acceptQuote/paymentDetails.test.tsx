@@ -1,8 +1,9 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { describe, expect, it, vi } from 'vitest';
 import {
   InvoiceSentToValues,
+  type SummaryAndAcceptStep,
   type AcceptQuotePreInfoDto,
 } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -151,26 +152,43 @@ function deferred<T>() {
 const defaultProps = { id: 'TEST-001' };
 const PaymentDetails = paymentDetails;
 
+const paymentDetailsTree = (
+  props: React.ComponentProps<typeof PaymentDetails> = defaultProps,
+) => (
+  <RhfForm
+    initialValues={
+      props.isSummary
+        ? { paymentDetails: {} }
+        : {
+            purchaseOrderNo: '',
+            invoiceSentTo: InvoiceSentToValues.SamePerson,
+            contact: {},
+          }
+    }
+    hidingFields={{}}
+    onSubmit={async () => undefined}
+    onSaveAndExit={async () => undefined}
+  >
+    {({ onFormSubmit }) => (
+      <form noValidate onSubmit={onFormSubmit}>
+        <PaymentDetails
+          {...props}
+          summaryValues={
+            props.summaryValues ??
+            ({
+              paymentDetails: {},
+              requestForQuote: { contact: {} },
+            } as SummaryAndAcceptStep)
+          }
+        />
+      </form>
+    )}
+  </RhfForm>
+);
+
 const renderPaymentDetails = (
   props: React.ComponentProps<typeof PaymentDetails> = defaultProps,
-) =>
-  render(
-    <Formik
-      initialValues={
-        props.isSummary
-          ? { paymentDetails: {} }
-          : {
-              purchaseOrderNo: '',
-              invoiceSentTo: InvoiceSentToValues.SamePerson,
-              contact: {},
-            }
-      }
-      initialStatus={{ hidden: {} }}
-      onSubmit={vi.fn<() => void>()}
-    >
-      <PaymentDetails {...props} />
-    </Formik>,
-  );
+) => render(paymentDetailsTree(props));
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -311,31 +329,31 @@ describe('payment details', () => {
       ).toHaveAttribute('name', 'invoiceSentTo');
     });
 
-    it('prefixes key names with paymentDetails. in summary mode', async () => {
+    it('renders read-only payment values in summary mode', async () => {
       expect.hasAssertions();
       expect.hasAssertions();
 
       resetPaymentDetailsMocks();
 
-      mockGetPaymentDetails.mockResolvedValue(
-        makePreInfo('Standard', 'Q-SUMMARY-001'),
-      );
-      renderPaymentDetails({ ...defaultProps, isSummary: true });
+      renderPaymentDetails({
+        ...defaultProps,
+        isSummary: true,
+        summaryValues: {
+          paymentDetails: {
+            purchaseOrderNo: 'PO-SUMMARY-001',
+            invoiceSentTo: InvoiceSentToValues.SamePerson,
+          },
+          requestForQuote: { contact: {} },
+        } as SummaryAndAcceptStep,
+      });
 
-      expect(screen.getByTestId('text-input')).toHaveAttribute(
-        'data-name',
-        'paymentDetails.purchaseOrderNo',
-      );
-      await expect(
-        screen.findByText(/Q-SUMMARY-001/),
-      ).resolves.toBeInTheDocument();
-      expect(screen.getByTestId('radio-group')).toHaveAttribute(
-        'data-name',
-        'paymentDetails.invoiceSentTo',
-      );
+      expect(await screen.findByText('PO-SUMMARY-001')).toBeInTheDocument();
+      expect(
+        screen.getByText('The main contact person for this request'),
+      ).toBeInTheDocument();
     });
 
-    it('includes the loaded quotation ID in summary help copy', async () => {
+    it('includes the loaded quotation ID in purchase-order help copy', async () => {
       expect.hasAssertions();
       expect.hasAssertions();
 
@@ -345,7 +363,7 @@ describe('payment details', () => {
         makePreInfo('Standard', 'RFQ-2026-042'),
       );
 
-      renderPaymentDetails({ ...defaultProps, isSummary: true });
+      renderPaymentDetails({ ...defaultProps, isSummary: false });
 
       await expect(
         screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
@@ -358,7 +376,7 @@ describe('payment details', () => {
 
     resetPaymentDetailsMocks();
 
-    const view = renderPaymentDetails({ ...defaultProps, isSummary: true });
+    const view = renderPaymentDetails({ ...defaultProps, isSummary: false });
 
     await waitFor(() => {
       expect(mockGetPaymentDetails).toHaveBeenCalledWith('TEST-001');
@@ -367,21 +385,13 @@ describe('payment details', () => {
     mockGetPaymentDetails.mockResolvedValueOnce(
       makePreInfo('Prepaid', 'Q-TEST-002'),
     );
-    view.rerender(
-      <Formik
-        initialValues={{ paymentDetails: {} }}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<() => void>()}
-      >
-        <PaymentDetails id='TEST-002' isSummary />
-      </Formik>,
-    );
+    view.rerender(paymentDetailsTree({ id: 'TEST-002', isSummary: false }));
 
     await waitFor(() => {
       expect(mockGetPaymentDetails).toHaveBeenCalledWith('TEST-002');
     });
 
-    expect(screen.getByText(/Q-TEST-002/)).toBeInTheDocument();
+    await expect(screen.findByText(/Q-TEST-002/)).resolves.toBeInTheDocument();
   });
 
   it('keeps the latest payment request authoritative when responses resolve out of order', async () => {
@@ -399,19 +409,7 @@ describe('payment details', () => {
 
     const view = renderPaymentDetails();
 
-    view.rerender(
-      <Formik
-        initialValues={{
-          purchaseOrderNo: '',
-          invoiceSentTo: InvoiceSentToValues.SamePerson,
-          contact: {},
-        }}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<() => void>()}
-      >
-        <PaymentDetails id='TEST-002' />
-      </Formik>,
-    );
+    view.rerender(paymentDetailsTree({ id: 'TEST-002' }));
 
     await waitFor(() => {
       expect(mockGetPaymentDetails.mock.calls).toStrictEqual([

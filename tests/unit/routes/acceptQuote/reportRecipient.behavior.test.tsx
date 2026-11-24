@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { ReportAddressTypeValues, State } from '@/api/web-api-client';
@@ -13,7 +13,6 @@ import {
   reportRecipientSaveValidation,
   reportRecipientSubmitValidation,
 } from '@/routes/acceptQuote/validation';
-import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import { defined } from '../../helpers/defined';
 
@@ -131,41 +130,45 @@ interface StepHarnessProps {
   onSubmit?: (values: ReportRecipientStep) => void;
 }
 
-// Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
+// The RHF harness uses the same hard/soft schemas and hidden field rules as the routed shell.
+type TestFormValues = ReportRecipientStep &
+  Record<string, any> & {
+    saveAndExit?: boolean;
+  };
+
 function StepHarness({
   id = 'RFQ-1',
   values = {},
   isSummary,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
+  const initialValues = values as TestFormValues;
+  const handleSubmit = async (submitted: TestFormValues) => {
+    onSubmit(submitted);
+  };
+
   return (
-    <Formik<ReportRecipientStep & { saveAndExit?: boolean }>
-      initialValues={values}
-      initialStatus={{ hidden: hidingFields }}
-      enableReinitialize
-      validate={(formValues) =>
-        validateForm(
-          formValues.saveAndExit
-            ? reportRecipientSaveValidation
-            : reportRecipientSubmitValidation,
-          hidingFields,
-        )(formValues)
-      }
-      onSubmit={(submitted) => {
-        onSubmit(removeHidden(submitted, submitted, hidingFields));
-      }}
+    <RhfForm<TestFormValues>
+      initialValues={initialValues}
+      hidingFields={hidingFields}
+      validateHard={reportRecipientSubmitValidation}
+      validateSoft={reportRecipientSaveValidation}
+      onSubmit={handleSubmit}
+      onSaveAndExit={handleSubmit}
     >
-      <Form noValidate>
-        <ReportRecipient
-          id={id}
-          isSummary={isSummary}
-          summaryValues={{ reportRecipient: values }}
-          summaryHidden={{}}
-        />
-        <button type='submit'>Continue</button>
-        <SaveAndExitButton />
-      </Form>
-    </Formik>
+      {({ onFormSubmit }) => (
+        <form noValidate onSubmit={onFormSubmit}>
+          <ReportRecipient
+            id={id}
+            isSummary={isSummary}
+            summaryValues={{ reportRecipient: values }}
+            summaryHidden={{}}
+          />
+          <button type='submit'>Continue</button>
+          <SaveAndExitButton />
+        </form>
+      )}
+    </RhfForm>
   );
 }
 

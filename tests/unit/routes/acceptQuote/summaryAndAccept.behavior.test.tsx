@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -11,7 +11,6 @@ import {
   summaryAndAcceptSubmitValidation,
 } from '@/routes/acceptQuote/validation';
 import { summaryAndAcceptOwnHidingFields } from '@/routes/acceptQuote/summaryAndAcceptProps';
-import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import { defined } from '../../helpers/defined';
@@ -109,56 +108,51 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule73>,
 );
 
-type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
+type Values = SummaryAndAcceptStep &
+  Record<string, any> & {
+    saveAndExit?: boolean;
+  };
 
 interface StepHarnessProps {
   values?: Values;
   onSubmit?: (values: SummaryAndAcceptStep) => void;
 }
 
-// Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
 function StepHarness({
   values = {},
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
+  const handleSubmit = async (submitted: Values) => {
+    onSubmit(submitted);
+  };
+
   return (
     <MemoryRouter initialEntries={['/summary/quote-1']}>
       <Routes>
         <Route
           path='/summary/:id'
           element={
-            <Formik<Values>
+            <RhfForm<Values>
               initialValues={values}
-              initialStatus={{ hidden: summaryAndAcceptOwnHidingFields }}
-              enableReinitialize
-              validate={(formValues) =>
-                validateForm(
-                  formValues.saveAndExit
-                    ? summaryAndAcceptSaveValidation
-                    : summaryAndAcceptSubmitValidation,
-                  summaryAndAcceptOwnHidingFields,
-                )(formValues)
-              }
-              onSubmit={(submitted) => {
-                onSubmit(
-                  removeHidden(
-                    submitted,
-                    submitted,
-                    summaryAndAcceptOwnHidingFields,
-                  ),
-                );
-              }}
+              hidingFields={summaryAndAcceptOwnHidingFields}
+              validateHard={summaryAndAcceptSubmitValidation}
+              validateSoft={summaryAndAcceptSaveValidation}
+              onSubmit={handleSubmit}
+              onSaveAndExit={handleSubmit}
             >
-              <Form noValidate>
-                <ErrorSummary />
-                <SummaryAndAccept
-                  cRMQuoteRequestId='CRM-1'
-                  isSubmitted={false}
-                />
-                <button type='submit'>Continue</button>
-                <SaveAndExitButton />
-              </Form>
-            </Formik>
+              {({ onFormSubmit }) => (
+                <form noValidate onSubmit={onFormSubmit}>
+                  <ErrorSummary />
+                  <SummaryAndAccept
+                    cRMQuoteRequestId='CRM-1'
+                    isSubmitted={false}
+                    summaryHidden={summaryAndAcceptOwnHidingFields}
+                  />
+                  <button type='submit'>Continue</button>
+                  <SaveAndExitButton />
+                </form>
+              )}
+            </RhfForm>
           }
         />
       </Routes>

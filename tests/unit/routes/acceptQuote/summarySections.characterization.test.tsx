@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { Form, Formik } from 'formik';
-import type { FormikConfig } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -164,7 +163,7 @@ const hidingFields = summaryAndAcceptProps(
   {} as never,
   [],
   'Banner',
-).hidingFields;
+).hidingFields as never;
 
 const textOf = (id: string) => {
   const section = document.querySelector(`#${id}`);
@@ -178,23 +177,30 @@ const renderSummary = async (scenario: Scenario) => {
   mocks.getDeliveryAndReturn.mockResolvedValue(scenario.deliveryAndReturn);
   mocks.getPaymentDetails.mockResolvedValue(scenario.paymentDetails);
 
+  type Values = SummaryAndAcceptStep & Record<string, any>;
+  const handleSubmit = async (_values: Values) => undefined;
+
   render(
     <MemoryRouter initialEntries={['/summary/quote-1']}>
       <Routes>
         <Route
           path='/summary/:id'
           element={
-            <Formik<SummaryAndAcceptStep>
-              initialValues={scenario.values}
-              initialStatus={{ hidden: hidingFields }}
-              onSubmit={vi.fn<
-                NonNullable<FormikConfig<SummaryAndAcceptStep>['onSubmit']>
-              >()}
+            <RhfForm<Values>
+              initialValues={scenario.values as Values}
+              hidingFields={hidingFields}
+              onSubmit={handleSubmit}
+              onSaveAndExit={handleSubmit}
             >
-              <Form noValidate>
-                <SummaryAndAccept name='' cRMQuoteRequestId='crm-1' />
-              </Form>
-            </Formik>
+              {({ onFormSubmit }) => (
+                <form noValidate onSubmit={onFormSubmit}>
+                  <SummaryAndAccept
+                    cRMQuoteRequestId='crm-1'
+                    summaryHidden={hidingFields}
+                  />
+                </form>
+              )}
+            </RhfForm>
           }
         />
       </Routes>

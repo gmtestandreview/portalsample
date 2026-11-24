@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -16,7 +16,6 @@ import {
   deliveryAndReturnSubmitValidation,
 } from '@/routes/acceptQuote/validation';
 import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
-import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import { defined } from '../../helpers/defined';
 
@@ -126,35 +125,39 @@ interface StepHarnessProps {
   onSubmit?: (values: DeliveryAndReturnStep) => void;
 }
 
-// Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
+// The RHF harness uses the same hard/soft schemas and hidden field rules as the routed shell.
+type TestFormValues = DeliveryAndReturnStep &
+  Record<string, any> & {
+    saveAndExit?: boolean;
+  };
+
 function StepHarness({
   values = {},
   onSubmit = vi.fn<(...args: unknown[]) => void>(),
 }: Readonly<StepHarnessProps>) {
+  const initialValues = values as TestFormValues;
+  const handleSubmit = async (submitted: TestFormValues) => {
+    onSubmit(submitted);
+  };
+
   return (
     <MemoryRouter>
-      <Formik<DeliveryAndReturnStep & { saveAndExit?: boolean }>
-        initialValues={values}
-        initialStatus={{ hidden: hidingFields }}
-        enableReinitialize
-        validate={(formValues) =>
-          validateForm(
-            formValues.saveAndExit
-              ? deliveryAndReturnSaveValidation
-              : deliveryAndReturnSubmitValidation,
-            hidingFields,
-          )(formValues)
-        }
-        onSubmit={(submitted) => {
-          onSubmit(removeHidden(submitted, submitted, hidingFields));
-        }}
+      <RhfForm<TestFormValues>
+        initialValues={initialValues}
+        hidingFields={hidingFields}
+        validateHard={deliveryAndReturnSubmitValidation}
+        validateSoft={deliveryAndReturnSaveValidation}
+        onSubmit={handleSubmit}
+        onSaveAndExit={handleSubmit}
       >
-        <Form noValidate>
-          <DeliveryAndReturn id='RFQ-1' />
-          <button type='submit'>Continue</button>
-          <SaveAndExitButton />
-        </Form>
-      </Formik>
+        {({ onFormSubmit }) => (
+          <form noValidate onSubmit={onFormSubmit}>
+            <DeliveryAndReturn id='RFQ-1' />
+            <button type='submit'>Continue</button>
+            <SaveAndExitButton />
+          </form>
+        )}
+      </RhfForm>
     </MemoryRouter>
   );
 }

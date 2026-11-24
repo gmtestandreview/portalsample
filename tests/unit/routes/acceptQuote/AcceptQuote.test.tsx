@@ -136,6 +136,22 @@ vi.mock(
 );
 
 vi.mock(
+  import('../../../../ClientApp/src/components/forms/WizardForm/RhfWizardRoutedStep') as unknown as string,
+  () =>
+    ({
+      default: ({ allSteps }: { allSteps: React.ReactNode[] }) => (
+        <div data-testid='rhf-wizard-form'>
+          {allSteps.map((step, index) => (
+            <div key={index} data-testid='rhf-wizard-step'>
+              {step}
+            </div>
+          ))}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule60>,
+);
+
+vi.mock(
   import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep') as unknown as string,
   () =>
     ({
@@ -252,10 +268,10 @@ describe('acceptQuote container', () => {
 
     expect(screen.getByTestId('block-spinner')).toBeInTheDocument();
     expect(screen.getByText('Loading...')).toBeInTheDocument();
-    expect(screen.queryByTestId('wizard-form')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('rhf-wizard-form')).not.toBeInTheDocument();
   });
 
-  it('renders the four-step WizardForm once step statuses resolve', async () => {
+  it('renders the four-step RHF wizard once step statuses resolve', async () => {
     expect.hasAssertions();
 
     resetAcceptQuoteMocks();
@@ -263,11 +279,11 @@ describe('acceptQuote container', () => {
     await renderAcceptQuote();
 
     await waitFor(() => {
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+      expect(screen.getByTestId('rhf-wizard-form')).toBeInTheDocument();
     });
 
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
-    expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
+    expect(screen.getAllByTestId('rhf-wizard-step')).toHaveLength(4);
     expect([
       screen.getByTestId('step-report-recipient'),
       screen.getByTestId('step-delivery-and-return'),
@@ -287,7 +303,7 @@ describe('acceptQuote container', () => {
       expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-Q-42');
     });
 
-    expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    expect(screen.getByTestId('rhf-wizard-form')).toBeInTheDocument();
   });
 
   it('navigates to /not-found and logs when getStepStatuses rejects', async () => {
@@ -395,11 +411,11 @@ describe('acceptQuote container', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+      expect(screen.getByTestId('rhf-wizard-form')).toBeInTheDocument();
     });
 
     expect(mocks.getStepStatuses).toHaveBeenCalledWith('');
-    expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
+    expect(screen.getAllByTestId('rhf-wizard-step')).toHaveLength(4);
   });
 
   it('renders nothing until the signed-in account has details', async () => {

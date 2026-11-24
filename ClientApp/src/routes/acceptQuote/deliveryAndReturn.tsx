@@ -14,7 +14,7 @@ import { useAccountState } from '../../authentication/hooks';
 import MailingLabel from '../../components/Utilities/mailingLabel';
 import AppLogger from '../../instrumentation/AppLogger';
 import DeliveryInstructions from '../../components/Utilities/deliveryInstructions';
-import DeliveryAndReturnFormikBridge from './deliveryAndReturnFormikBridge';
+import DeliveryAndReturnFormFields from './deliveryAndReturnFormFields';
 import DeliveryAndReturnSummary from './summary/DeliveryAndReturnSummary';
 import type { SummaryAndAcceptStep } from '../../api/web-api-client';
 
@@ -179,7 +179,7 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
               postalAddress={postalAddress}
             />
           ) : (
-            <DeliveryAndReturnFormikBridge
+            <DeliveryAndReturnFormFields
               streetAddress={streetAddress}
               postalAddress={postalAddress}
             />

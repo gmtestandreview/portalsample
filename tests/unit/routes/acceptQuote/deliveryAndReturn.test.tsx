@@ -1,9 +1,12 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Formik, Form } from 'formik';
+import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
 import { MemoryRouter } from 'react-router';
 import type { ReactNode } from 'react';
-import type { AddressDetailsDto } from '../../../../ClientApp/src/api/web-api-client';
+import type {
+  AddressDetailsDto,
+  SummaryAndAcceptStep,
+} from '../../../../ClientApp/src/api/web-api-client';
 import DeliveryAndReturn from '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn';
 
 // ─── hoisted mock refs ────────────────────────────────────────────────────────
@@ -108,15 +111,30 @@ vi.mock(
 function makeTree(id: string, isSummary?: boolean): ReactNode {
   return (
     <MemoryRouter>
-      <Formik
-        initialValues={{}}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<() => void>()}
+      <RhfForm
+        initialValues={{
+          requestForQuote: { contact: {} },
+          deliveryAndReturn: { contact: {} },
+        }}
+        hidingFields={{}}
+        onSubmit={async () => undefined}
+        onSaveAndExit={async () => undefined}
       >
-        <Form noValidate>
-          <DeliveryAndReturn id={id} isSummary={isSummary} />
-        </Form>
-      </Formik>
+        {({ onFormSubmit }) => (
+          <form noValidate onSubmit={onFormSubmit}>
+            <DeliveryAndReturn
+              id={id}
+              isSummary={isSummary}
+              summaryValues={
+                {
+                  requestForQuote: { contact: {} },
+                  deliveryAndReturn: { contact: {} },
+                } as SummaryAndAcceptStep
+              }
+            />
+          </form>
+        )}
+      </RhfForm>
     </MemoryRouter>
   );
 }

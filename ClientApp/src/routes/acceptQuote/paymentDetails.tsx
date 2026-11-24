@@ -7,7 +7,7 @@ import type { PaymentDetailsProps } from './types';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
-import PaymentDetailsFormikBridge from './paymentDetailsFormikBridge';
+import PaymentDetailsFormFields from './paymentDetailsFormFields';
 import PaymentDetailsSummary from './summary/PaymentDetailsSummary';
 import type { SummaryAndAcceptStep } from '../../api/web-api-client';
 
@@ -122,7 +122,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
           hidden={props.summaryHidden ?? {}}
         />
       ) : (
-        <PaymentDetailsFormikBridge
+        <PaymentDetailsFormFields
           quotationId={acceptQuotePreInfo?.quotationIdNum}
         />
       )}

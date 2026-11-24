@@ -1,5 +1,5 @@
-import { Form, Formik } from 'formik';
 import { render, waitFor } from '@testing-library/react';
+import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
 import { describe, expect, it, vi } from 'vitest';
 import type * as ReactRouterModule from 'react-router';
 import type * as HelperFunctionsModule from '../../../../ClientApp/src/routes/common/helperFunctions';
@@ -234,11 +234,18 @@ vi.mock(
 
 function renderComponent() {
   return render(
-    <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
-      <Form>
-        <SummaryAndAccept />
-      </Form>
-    </Formik>,
+    <RhfForm
+      initialValues={{}}
+      hidingFields={{}}
+      onSubmit={async () => undefined}
+      onSaveAndExit={async () => undefined}
+    >
+      {({ onFormSubmit }) => (
+        <form noValidate onSubmit={onFormSubmit}>
+          <SummaryAndAccept />
+        </form>
+      )}
+    </RhfForm>,
   );
 }
 
@@ -285,11 +292,18 @@ describe(SummaryAndAccept, () => {
 
     mocks.route.id = 'quote-2';
     rerender(
-      <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
-        <Form>
-          <SummaryAndAccept />
-        </Form>
-      </Formik>,
+      <RhfForm
+        initialValues={{}}
+        hidingFields={{}}
+        onSubmit={async () => undefined}
+        onSaveAndExit={async () => undefined}
+      >
+        {({ onFormSubmit }) => (
+          <form noValidate onSubmit={onFormSubmit}>
+            <SummaryAndAccept />
+          </form>
+        )}
+      </RhfForm>,
     );
 
     await waitFor(() => {
