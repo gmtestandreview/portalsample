@@ -9,7 +9,6 @@ import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
 import PaymentDetailsFormFields from './paymentDetailsFormFields';
 import PaymentDetailsSummary from './summary/PaymentDetailsSummary';
-import type { SummaryAndAcceptStep } from '../../api/web-api-client';
 
 type PaymentDetailsLoadResult =
   | { kind: 'loaded'; preInfo: AcceptQuotePreInfoDto | undefined }
@@ -118,7 +117,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       )}
       {isSummary ? (
         <PaymentDetailsSummary
-          values={props.summaryValues ?? ({} as SummaryAndAcceptStep)}
+          values={props.summaryValues ?? {}}
           hidden={props.summaryHidden ?? {}}
         />
       ) : (

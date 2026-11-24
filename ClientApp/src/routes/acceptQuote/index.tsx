@@ -171,16 +171,15 @@ const AcceptQuote = () => {
   const firstIncompleteStepIndex = statuses.findIndex(
     ({ status }) => status !== FormStepStatus.Completed,
   );
-  const matchedStepIndex = steps.findIndex(({ props }) =>
-    currentPath.endsWith(props.location),
+  const matchedStepIndex = stepProps.findIndex(({ location }) =>
+    currentPath.endsWith(location),
   );
-  const currentStepIndex =
-    matchedStepIndex >= 0
-      ? matchedStepIndex
-      : firstIncompleteStepIndex >= 0
-        ? firstIncompleteStepIndex
-        : steps.length - 1;
-  const activeStepProps = stepProps[currentStepIndex]!;
+  const currentStepIndex = (() => {
+    if (matchedStepIndex >= 0) return matchedStepIndex;
+    if (firstIncompleteStepIndex >= 0) return firstIncompleteStepIndex;
+    return steps.length - 1;
+  })();
+  const activeStepProps = stepProps.at(currentStepIndex) ?? stepProps[3];
 
   const wizardProps = {
     ...acceptQuoteWizardProps,

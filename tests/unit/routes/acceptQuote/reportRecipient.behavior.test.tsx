@@ -143,7 +143,7 @@ function StepHarness({
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
   const initialValues = values as TestFormValues;
-  const handleSubmit = async (submitted: TestFormValues) => {
+  const handleSubmit = (submitted: TestFormValues) => {
     onSubmit(submitted);
   };
 
@@ -217,7 +217,7 @@ describe('reportRecipient behavior', () => {
       />,
     );
 
-    expect(await screen.findByText('Acme Labs')).toBeInTheDocument();
+    await expect(screen.findByText('Acme Labs')).resolves.toBeInTheDocument();
     expect(screen.getByText(/PO Box 9/)).toBeInTheDocument();
   });
 

@@ -111,7 +111,7 @@ function Harness({
   values = initialValues,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
-  const handleSubmit = async (submittedValues: TestFormValues) => {
+  const handleSubmit = (submittedValues: TestFormValues) => {
     onSubmit(submittedValues);
   };
 

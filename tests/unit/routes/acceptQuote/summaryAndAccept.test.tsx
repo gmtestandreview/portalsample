@@ -237,8 +237,8 @@ function renderComponent() {
     <RhfForm
       initialValues={{}}
       hidingFields={{}}
-      onSubmit={async () => undefined}
-      onSaveAndExit={async () => undefined}
+      onSubmit={() => undefined}
+      onSaveAndExit={() => undefined}
     >
       {({ onFormSubmit }) => (
         <form noValidate onSubmit={onFormSubmit}>
@@ -295,8 +295,8 @@ describe(SummaryAndAccept, () => {
       <RhfForm
         initialValues={{}}
         hidingFields={{}}
-        onSubmit={async () => undefined}
-        onSaveAndExit={async () => undefined}
+        onSubmit={() => undefined}
+        onSaveAndExit={() => undefined}
       >
         {({ onFormSubmit }) => (
           <form noValidate onSubmit={onFormSubmit}>

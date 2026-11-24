@@ -16,7 +16,6 @@ import AppLogger from '../../instrumentation/AppLogger';
 import DeliveryInstructions from '../../components/Utilities/deliveryInstructions';
 import DeliveryAndReturnFormFields from './deliveryAndReturnFormFields';
 import DeliveryAndReturnSummary from './summary/DeliveryAndReturnSummary';
-import type { SummaryAndAcceptStep } from '../../api/web-api-client';
 
 const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   const { isSummary, id } = props;
@@ -172,7 +171,7 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
           </Row>
           {isSummary ? (
             <DeliveryAndReturnSummary
-              values={props.summaryValues ?? ({} as SummaryAndAcceptStep)}
+              values={props.summaryValues ?? {}}
               hidden={props.summaryHidden ?? {}}
               deliveryAndReturnStep={deliveryAndReturnStep}
               streetAddress={streetAddress}

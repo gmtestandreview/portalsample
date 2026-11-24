@@ -13,7 +13,6 @@ import AppLogger from '../../instrumentation/AppLogger';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import ReportRecipientSummary from './summary/ReportRecipientSummary';
-import type { SummaryAndAcceptStep } from '../../api/web-api-client';
 
 type ReportRecipientLoadResult =
   | { kind: 'loaded'; step: ReportRecipientStep }
@@ -132,7 +131,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
       )}
       {isSummary && (
         <ReportRecipientSummary
-          values={props.summaryValues ?? ({} as SummaryAndAcceptStep)}
+          values={props.summaryValues ?? {}}
           hidden={props.summaryHidden ?? {}}
           reportAddressType={reportRecipientStep?.reportAddressType}
           streetAddress={streetAddress}

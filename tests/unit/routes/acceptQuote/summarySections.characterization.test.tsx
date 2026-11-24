@@ -178,7 +178,7 @@ const renderSummary = async (scenario: Scenario) => {
   mocks.getPaymentDetails.mockResolvedValue(scenario.paymentDetails);
 
   type Values = SummaryAndAcceptStep & Record<string, any>;
-  const handleSubmit = async (_values: Values) => undefined;
+  const handleSubmit = (_values: Values) => undefined;
 
   render(
     <MemoryRouter initialEntries={['/summary/quote-1']}>

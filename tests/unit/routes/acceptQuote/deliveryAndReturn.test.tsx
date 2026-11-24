@@ -3,10 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
 import { MemoryRouter } from 'react-router';
 import type { ReactNode } from 'react';
-import type {
-  AddressDetailsDto,
-  SummaryAndAcceptStep,
-} from '../../../../ClientApp/src/api/web-api-client';
+import type { AddressDetailsDto } from '../../../../ClientApp/src/api/web-api-client';
 import DeliveryAndReturn from '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn';
 
 // ─── hoisted mock refs ────────────────────────────────────────────────────────
@@ -117,20 +114,18 @@ function makeTree(id: string, isSummary?: boolean): ReactNode {
           deliveryAndReturn: { contact: {} },
         }}
         hidingFields={{}}
-        onSubmit={async () => undefined}
-        onSaveAndExit={async () => undefined}
+        onSubmit={() => undefined}
+        onSaveAndExit={() => undefined}
       >
         {({ onFormSubmit }) => (
           <form noValidate onSubmit={onFormSubmit}>
             <DeliveryAndReturn
               id={id}
               isSummary={isSummary}
-              summaryValues={
-                {
-                  requestForQuote: { contact: {} },
-                  deliveryAndReturn: { contact: {} },
-                } as SummaryAndAcceptStep
-              }
+              summaryValues={{
+                requestForQuote: { contact: {} },
+                deliveryAndReturn: { contact: {} },
+              }}
             />
           </form>
         )}

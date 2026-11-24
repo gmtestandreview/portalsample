@@ -136,7 +136,7 @@ function StepHarness({
   onSubmit = vi.fn<(...args: unknown[]) => void>(),
 }: Readonly<StepHarnessProps>) {
   const initialValues = values as TestFormValues;
-  const handleSubmit = async (submitted: TestFormValues) => {
+  const handleSubmit = (submitted: TestFormValues) => {
     onSubmit(submitted);
   };
 

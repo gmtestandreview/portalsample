@@ -3,7 +3,6 @@ import RhfForm from '@/components/forms/RhfForm';
 import { describe, expect, it, vi } from 'vitest';
 import {
   InvoiceSentToValues,
-  type SummaryAndAcceptStep,
   type AcceptQuotePreInfoDto,
 } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -166,19 +165,18 @@ const paymentDetailsTree = (
           }
     }
     hidingFields={{}}
-    onSubmit={async () => undefined}
-    onSaveAndExit={async () => undefined}
+    onSubmit={() => undefined}
+    onSaveAndExit={() => undefined}
   >
     {({ onFormSubmit }) => (
       <form noValidate onSubmit={onFormSubmit}>
         <PaymentDetails
           {...props}
           summaryValues={
-            props.summaryValues ??
-            ({
+            props.summaryValues ?? {
               paymentDetails: {},
               requestForQuote: { contact: {} },
-            } as SummaryAndAcceptStep)
+            }
           }
         />
       </form>
@@ -344,10 +342,12 @@ describe('payment details', () => {
             invoiceSentTo: InvoiceSentToValues.SamePerson,
           },
           requestForQuote: { contact: {} },
-        } as SummaryAndAcceptStep,
+        },
       });
 
-      expect(await screen.findByText('PO-SUMMARY-001')).toBeInTheDocument();
+      await expect(
+        screen.findByText('PO-SUMMARY-001'),
+      ).resolves.toBeInTheDocument();
       expect(
         screen.getByText('The main contact person for this request'),
       ).toBeInTheDocument();
