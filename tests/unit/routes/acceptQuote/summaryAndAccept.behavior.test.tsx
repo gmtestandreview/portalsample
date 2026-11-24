@@ -122,8 +122,9 @@ function StepHarness({
   values = {},
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
-  const handleSubmit = (submitted: Values) => {
+  const handleSubmit = async (submitted: Values) => {
     onSubmit(submitted);
+    return Promise.resolve();
   };
 
   return (
