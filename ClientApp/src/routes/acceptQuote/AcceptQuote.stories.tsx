@@ -386,6 +386,7 @@ export const QuotationSummaryStep = meta.story({
     docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/quotation-summary'],
+      rhf: null,
       formik: {
         initialValues: {},
       },
@@ -397,6 +398,7 @@ export const QuotationSummaryStep = meta.story({
     // QuoteDetails renders the quotation id only when quotationData has arrived, so this
     // is the settled-state contract for the QuotationSummary and ViewPdfQuote subtree.
     await expect(await canvas.findByText('Q-2024-000456')).toBeVisible();
+    await expect(canvasElement.querySelector('form form')).toBeNull();
   },
 });
 

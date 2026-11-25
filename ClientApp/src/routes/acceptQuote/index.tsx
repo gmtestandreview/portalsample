@@ -1,5 +1,5 @@
 import { useMsal } from '@azure/msal-react';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 import RhfWizardRoutedStep from '../../components/forms/WizardForm/RhfWizardRoutedStep';
 import type { RhfWizardRoutedStepProps } from '../../components/forms/WizardForm/RhfWizardRoutedStep';
@@ -8,11 +8,7 @@ import type { WizardStepElement } from '../../components/forms/WizardForm/wizard
 import WizardStep from '../../components/forms/WizardForm/WizardStep';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import { useAccountState } from '../../authentication/hooks';
-import {
-  AcceptQuoteClient,
-  FormStepStatus,
-  QuoteClient,
-} from '../../api/web-api-client';
+import { AcceptQuoteClient, QuoteClient } from '../../api/web-api-client';
 import type { FormStepStatusDto } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
@@ -33,7 +29,6 @@ const AcceptQuote = () => {
   const { id } = useParams();
   const account = useAccountState();
   const navigate = useNavigate();
-  const currentPath = useLocation().pathname;
 
   useBodyClass('wizard');
 
@@ -168,40 +163,33 @@ const AcceptQuote = () => {
       />
     </WizardStep>,
   ] satisfies readonly WizardStepElement[];
-  const firstIncompleteStepIndex = statuses.findIndex(
-    ({ status }) => status !== FormStepStatus.Completed,
-  );
-  const matchedStepIndex = stepProps.findIndex(({ location }) =>
-    currentPath.endsWith(location),
-  );
-  const currentStepIndex = (() => {
-    if (matchedStepIndex >= 0) return matchedStepIndex;
-    if (firstIncompleteStepIndex >= 0) return firstIncompleteStepIndex;
-    return steps.length - 1;
-  })();
-  const activeStepProps = (() => {
-    switch (currentStepIndex) {
-      case 0:
-        return stepProps[0];
-      case 1:
-        return stepProps[1];
-      case 2:
-        return stepProps[2];
-      default:
-        return stepProps[3];
-    }
-  })();
+  const url = id ? `/accept-quote/${id}` : '/accept-quote';
 
-  const wizardProps = {
-    ...acceptQuoteWizardProps,
-    ...activeStepProps,
-    allSteps: steps,
-    currentStepIndex,
-    url: `/accept-quote/${id ?? ''}`,
-    location: activeStepProps.location,
-  } as RhfWizardRoutedStepProps<FormValues>;
+  return (
+    <Routes>
+      {stepProps.map((step, currentStepIndex) => {
+        const wizardProps = {
+          ...acceptQuoteWizardProps,
+          ...step,
+          allSteps: steps,
+          currentStepIndex,
+          url,
+        } as RhfWizardRoutedStepProps<FormValues>;
 
-  return <RhfWizardRoutedStep<FormValues> {...wizardProps} />;
+        return (
+          <Route
+            key={step.location}
+            path={step.location}
+            element={<RhfWizardRoutedStep<FormValues> {...wizardProps} />}
+          />
+        );
+      })}
+      <Route
+        path='*'
+        element={<Navigate to={`${url}${stepProps[3].location}`} replace />}
+      />
+    </Routes>
+  );
 };
 
 export default AcceptQuote;
