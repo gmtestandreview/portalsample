@@ -10,7 +10,7 @@ const canvasElementErrors = (canvas: {
   canvas
     .getAllByText(/is required|not a valid/)
     .filter((element) => element.classList.contains('invalid-feedback'))
-    .map((element) => element.textContent ?? '');
+    .map((element) => element.textContent);
 
 const CREATE_BUTTON_NAME = 'Create account';
 const CONFIRMATION_TITLE = 'Create account confirmation';
