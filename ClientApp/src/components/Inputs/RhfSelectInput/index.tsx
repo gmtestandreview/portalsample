@@ -27,6 +27,7 @@ const RhfSelectInput = <T extends string | number = string>(
     onChange,
     isSummary,
     addBlank,
+    readOnly,
   } = props;
 
   const {
@@ -64,6 +65,29 @@ const RhfSelectInput = <T extends string | number = string>(
         as='p'
         value={selected?.displayText ?? ''}
       />
+    );
+  }
+
+  if (readOnly === true) {
+    const selectedText =
+      options?.find((option) => option.value === controlledValue)
+        ?.displayText ?? '';
+    return (
+      <Form.Group controlId={controlId} className='form-field-container'>
+        <Form.Label className={inlineHelp ? 'pb-0' : ''}>{label}</Form.Label>
+        {inlineHelp ? (
+          <Form.Text as='p' id={helpId} className='contextual-help text-muted'>
+            {inlineHelp}
+          </Form.Text>
+        ) : null}
+        <Form.Control
+          className='form-field form-text-input-read'
+          type='text'
+          name={fieldName}
+          readOnly
+          value={selectedText === '' ? String(fieldValue) : selectedText}
+        />
+      </Form.Group>
     );
   }
 
