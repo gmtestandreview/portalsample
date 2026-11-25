@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
-import WizardForm from '../../../components/forms/WizardForm';
-import type { WizardFormProps } from '../../../components/forms/WizardForm/types';
-import WizardStep from '../../../components/forms/WizardForm/WizardStep';
+import RhfSingleStepWizard from '../../../components/forms/WizardForm/RhfSingleStepWizard';
+import type { RhfWizardRoutedStepProps } from '../../../components/forms/WizardForm/RhfWizardRoutedStep';
+import type { FormValues } from '../../../components/forms/types';
 import addBranchProps from './addBranchProps';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
@@ -15,7 +15,7 @@ import type { AccountContextState } from '../../../authentication/accountContext
 import { useModalDispatch } from '../../../components/modals/ModalContext';
 import OrganisationDetails from '../organisationDetails';
 
-const addBranchWizardProps: WizardFormProps = {
+const addBranchWizardProps = {
   locationOnCompletion: '/',
   lastStepNextButtonTitle: 'Save and close',
   // nextButtonTitle: 'Save and next',
@@ -26,7 +26,13 @@ const addBranchWizardProps: WizardFormProps = {
     yesButtonTitle: 'Yes, submit',
     noButtonTitle: 'No, cancel',
   },
-};
+} satisfies Pick<
+  RhfWizardRoutedStepProps<FormValues>,
+  | 'locationOnCompletion'
+  | 'lastStepNextButtonTitle'
+  | 'canSaveDraft'
+  | 'confirmationOnSubmission'
+>;
 
 const statuses: FormStepStatusDto[] = [{ status: FormStepStatus.NotStarted }];
 
@@ -43,19 +49,18 @@ const AddBranch = () => {
   useHtmlTitle('Add branch or location | NMI Services portal');
   useBodyClass('wizard');
   return (
-    <WizardForm {...addBranchWizardProps}>
-      <WizardStep
-        {...addBranchProps(
-          accounts,
-          instance,
-          statuses,
-          account,
-          onShowBranchSelector,
-        )}
-      >
-        <OrganisationDetails />
-      </WizardStep>
-    </WizardForm>
+    <RhfSingleStepWizard
+      wizard={addBranchWizardProps}
+      step={addBranchProps(
+        accounts,
+        instance,
+        statuses,
+        account,
+        onShowBranchSelector,
+      )}
+    >
+      <OrganisationDetails />
+    </RhfSingleStepWizard>
   );
 };
 

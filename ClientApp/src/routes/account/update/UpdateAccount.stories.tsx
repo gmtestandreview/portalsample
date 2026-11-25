@@ -140,12 +140,41 @@ export const ConfirmationCancelThenConfirmSaves = meta.story({
       await canvas.findByRole('heading', { name: 'Home destination' }),
     ).toBeVisible();
     await expect(state.observed.savedBodies).toHaveLength(1);
-    await expect(state.observed.savedBodies[0]).toMatchObject({
-      formStep: {
-        id: ORGANISATION_ID,
-        businessOrTradingName: 'Calibration Services',
-      },
+    await expect(state.observed.savedBodies[0]).toEqual({
+      formStep: accountStepValues,
     });
+  },
+});
+
+export const PostalAddressFollowsSameAsStreetToggle = meta.story({
+  parameters: { docs: { story: { inline: false } } },
+  beforeEach({ msw }) {
+    msw.use(...accountHandlers());
+  },
+  play: async ({ canvas, userEvent }) => {
+    await canvas.findByDisplayValue('Calibration Services');
+    const sameAsStreet = canvas.getByRole('checkbox', {
+      name: 'Same as street address',
+    });
+
+    await expect(sameAsStreet).toBeChecked();
+    await expect(
+      canvas.queryByRole('combobox', { name: 'Postal address' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(sameAsStreet);
+
+    await expect(
+      await canvas.findByRole('combobox', { name: 'Postal address' }),
+    ).toBeVisible();
+
+    await userEvent.click(sameAsStreet);
+
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('combobox', { name: 'Postal address' }),
+      ).not.toBeInTheDocument(),
+    );
   },
 });
 

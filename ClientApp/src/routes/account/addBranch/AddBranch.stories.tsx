@@ -140,8 +140,8 @@ export const ConfirmationCancelThenConfirmAdds = meta.story({
       await canvas.findByRole('heading', { name: 'Home destination' }),
     ).toBeVisible();
     await expect(state.observed.savedBodies).toHaveLength(1);
-    await expect(state.observed.savedBodies[0]).toMatchObject({
-      formStep: { branchOrLocationName: 'Melbourne Laboratory' },
+    await expect(state.observed.savedBodies[0]).toEqual({
+      formStep: branchStepValues,
     });
     await expect(state.observed.signInCount).toBe(1);
     await expect(state.observed.branchSelectorRequests).toEqual([true]);
