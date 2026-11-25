@@ -2,21 +2,19 @@ import { useField, useFormikContext } from 'formik';
 
 import type React from 'react';
 import { useMemo } from 'react';
-import {
-  dateOnlyToPickerDate,
-  dateOnlyToStoredDateTimeString,
-  formatDateOnlyForDisplay,
-  parseApiDateOnlyInput,
-  parseDateOnlyInput,
-} from '../../../utils/dateOnly';
 import SummaryDisplay from '../../SummaryDisplay';
 import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import { omitKeys } from '../../../utils/omitKeys';
 import { getControlId } from '../getControlId';
-
-type DateFieldValue = string | Date | null | undefined;
+import {
+  hasBlurChange,
+  toPickerDate,
+  toStoredDateValue,
+  toSummaryText,
+} from './dateFieldValue';
+import type { DateFieldValue } from './dateFieldValue';
 
 const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   const {
@@ -37,44 +35,17 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
 
   const [_field, _meta] = useField<DateFieldValue>(name);
   const { setFieldValue, setFieldTouched } = useFormikContext();
-  const currentDate = useMemo(() => {
-    const dateOnlyValue = _field.value
-      ? parseApiDateOnlyInput(_field.value)
-      : null;
-    return dateOnlyValue ? dateOnlyToPickerDate(dateOnlyValue) : null;
-  }, [_field.value]);
+  const currentDate = useMemo(() => toPickerDate(_field.value), [_field.value]);
 
   const dateOnChange = async (dateUpdateValue: Date | string | null) => {
-    let dateString: string | null;
-
-    if (dateUpdateValue === null) {
-      dateString = null;
-    } else if (typeof dateUpdateValue === 'string') {
-      const dateOnlyValue = parseDateOnlyInput(dateUpdateValue);
-      dateString = dateOnlyValue
-        ? dateOnlyToStoredDateTimeString(dateOnlyValue)
-        : dateUpdateValue;
-    } else {
-      const dateOnlyValue = parseDateOnlyInput(dateUpdateValue);
-      dateString = dateOnlyValue
-        ? dateOnlyToStoredDateTimeString(dateOnlyValue)
-        : null;
-    }
-
-    await setFieldValue(_field.name, dateString, true);
+    await setFieldValue(_field.name, toStoredDateValue(dateUpdateValue), true);
   };
 
   const dateOnBlur = async (event: React.FocusEvent) => {
     const element = event.target as HTMLInputElement;
     const dateUpdateValue = element.value;
-    const currentDateOnlyValue = parseDateOnlyInput(_field.value);
-    const updateDateOnlyValue = parseDateOnlyInput(dateUpdateValue);
-    const dateChanged =
-      currentDateOnlyValue && updateDateOnlyValue
-        ? currentDateOnlyValue !== updateDateOnlyValue
-        : dateUpdateValue !== _field.value;
 
-    if (dateChanged) {
+    if (hasBlurChange(_field.value, dateUpdateValue)) {
       await dateOnChange(dateUpdateValue || null);
     }
 
@@ -82,17 +53,12 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   };
 
   if (isSummary) {
-    const dateOnlyValue = parseApiDateOnlyInput(_field.value);
-    const displayValue = dateOnlyValue
-      ? formatDateOnlyForDisplay(dateOnlyValue)
-      : String(_field.value ?? '');
-
     return (
       <SummaryDisplay
         as='p'
         id={getControlId(id, name)}
         label={label}
-        value={displayValue}
+        value={toSummaryText(_field.value)}
       />
     );
   }

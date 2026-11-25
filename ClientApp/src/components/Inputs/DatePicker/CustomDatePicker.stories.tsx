@@ -6,8 +6,7 @@ import CustomDatePicker from './CustomDatePicker';
 /**
  * `CustomDatePicker` composes `CustomDateInput` with react-datepicker to provide the
  * portal's accessible, AU-locale date field (dd/mm/yyyy) with Today/Close calendar
- * actions. It reads Formik state through its custom input, so stories run inside a
- * Formik context. The calendar opens on interaction; the default story shows the
+ * actions. The calendar opens on interaction; the default story shows the
  * collapsed field.
  */
 const meta = preview.meta({
@@ -16,11 +15,6 @@ const meta = preview.meta({
   decorators: [withPortalProviders],
   parameters: {
     layout: 'padded',
-    portal: {
-      formik: {
-        initialValues: { testDate: '' },
-      },
-    },
   },
   args: {
     name: 'testDate',

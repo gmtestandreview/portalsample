@@ -56,7 +56,7 @@ export interface CustomInputForwardRefProps {
   inlineHelp?: ReactNode;
   /** Visible label for the date field. */
   label?: string;
-  /** Formik field name and base for generated accessibility identifiers. */
+  /** Field name and base for generated accessibility identifiers. */
   name: string;
   /** Called when focus leaves the complete input-and-button control. */
   onBlur?: FocusEventHandler;

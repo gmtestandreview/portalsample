@@ -1,4 +1,3 @@
-import { useField } from 'formik';
 import React, { useState } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 
@@ -11,7 +10,8 @@ import type {
 } from './types';
 
 /**
- * Formik-connected text input and calendar trigger used by `CustomDatePicker`.
+ * Text input and calendar trigger used by `CustomDatePicker`; form-library neutral,
+ * the owner passes `hasError` and `errorMessage`.
  * The input and button behave as one focusable field so validation and calendar
  * state remain consistent while focus moves between them.
  */
@@ -48,7 +48,6 @@ const CustomDateInput = React.forwardRef<
   // Omit it so it is not forwarded to the DOM input.
   const theRest = omitKeys(remainingProps, 'handleCloseCalendar');
 
-  const [, _meta] = useField(name);
   const helpId = inlineHelp ? `help-${name}` : undefined;
   const [focused, setFocused] = useState(false);
 
@@ -141,7 +140,7 @@ const CustomDateInput = React.forwardRef<
             onKeyDown,
           })}
           className={`form-field form-text-input ${className ?? ''}`}
-          isInvalid={!!(_meta.touched && _meta.error)}
+          isInvalid={hasError === true}
           onBlur={handleCustomBlur}
           onFocus={handleCustomFocus}
           ref={forwardedControlRef}

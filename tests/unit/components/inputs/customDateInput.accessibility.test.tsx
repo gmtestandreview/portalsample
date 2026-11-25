@@ -193,29 +193,24 @@ describe('customDateInput accessibility', () => {
     ).toBeDisabled();
   });
 
-  it('uses Formik touched errors to mark the text control invalid', () => {
+  it('marks the text control invalid when the owner reports an error', () => {
     expect.hasAssertions();
 
     render(
-      <Formik
-        initialErrors={{ calibrationDate: 'Required' }}
-        initialTouched={{ calibrationDate: true }}
-        initialValues={{ calibrationDate: '' }}
-        onSubmit={vi.fn<() => void>()}
-      >
-        <div id='date-wrapper'>
-          <CustomDateInput
-            calendarButtonTitle='Calibration date'
-            calendarOnKeyDown={vi.fn<() => void>()}
-            handleCloseCalendar={vi.fn<() => void>()}
-            handleEnsureCalendarClosed={vi.fn<() => void>()}
-            handleOpenCalendar={vi.fn<() => void>()}
-            label='Calibration date'
-            name='calibrationDate'
-            wrapperUUID='date-wrapper'
-          />
-        </div>
-      </Formik>,
+      <div id='date-wrapper'>
+        <CustomDateInput
+          calendarButtonTitle='Calibration date'
+          calendarOnKeyDown={vi.fn<() => void>()}
+          errorMessage='Required'
+          handleCloseCalendar={vi.fn<() => void>()}
+          handleEnsureCalendarClosed={vi.fn<() => void>()}
+          handleOpenCalendar={vi.fn<() => void>()}
+          hasError
+          label='Calibration date'
+          name='calibrationDate'
+          wrapperUUID='date-wrapper'
+        />
+      </div>,
     );
 
     expect(

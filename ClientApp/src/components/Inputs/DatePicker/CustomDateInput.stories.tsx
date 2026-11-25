@@ -5,8 +5,8 @@ import CustomDateInput from './CustomDateInput';
 
 /**
  * `CustomDateInput` is the text-field + calendar-button control that
- * `CustomDatePicker` plugs into react-datepicker as its custom input. It reads its
- * Formik field state via `useField`, so the stories run inside a Formik context.
+ * `CustomDatePicker` plugs into react-datepicker as its custom input. It is form-library
+ * neutral: the owning field passes `hasError` and `errorMessage`.
  */
 const meta = preview.meta({
   title: 'Components/Inputs/DatePicker/CustomDateInput',
@@ -14,11 +14,6 @@ const meta = preview.meta({
   decorators: [withPortalProviders],
   parameters: {
     layout: 'padded',
-    portal: {
-      formik: {
-        initialValues: { testDate: '' },
-      },
-    },
   },
   args: {
     name: 'testDate',
