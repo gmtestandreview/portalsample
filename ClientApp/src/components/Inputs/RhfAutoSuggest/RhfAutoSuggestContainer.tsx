@@ -20,6 +20,10 @@ const keys = {
   ESC: 'Escape',
 };
 
+interface RhfAutoSuggestContainerProps<T> extends AutoSuggestContainerProps<T> {
+  touchOnChange?: boolean;
+}
+
 const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
   const state = useContext(ComboBoxStateContext);
   const previousHasOptionsRef = useRef(false);
@@ -38,12 +42,12 @@ const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
 
 /**
  * React Hook Form counterpart of `AutoSuggestContainer`. It reads the field
- * through `useController`, so it must render inside a `FormProvider`. The field
- * is marked touched as soon as the user types, and its validation message shows
- * once it is touched or the form has been submitted.
+ * through `useController`, so it must render inside a `FormProvider`. By
+ * default the field becomes touched as soon as the user types; consumers can
+ * instead mark it touched on blur when matching a Formik field's behavior.
  */
 const RhfAutoSuggestContainer = <T,>(
-  props: Readonly<AutoSuggestContainerProps<T>>,
+  props: Readonly<RhfAutoSuggestContainerProps<T>>,
 ) => {
   const {
     id,
@@ -62,6 +66,7 @@ const RhfAutoSuggestContainer = <T,>(
     onSelectedOption,
     onCancel,
     placeholder,
+    touchOnChange = true,
   } = props;
 
   const {
@@ -103,7 +108,9 @@ const RhfAutoSuggestContainer = <T,>(
           items={options}
           inputValue={searchTerm ?? ''}
           onInputChange={(value) => {
-            onFieldBlur();
+            if (touchOnChange) {
+              onFieldBlur();
+            }
             void onSearchTermChange(value);
           }}
           onChange={(key) => {
@@ -168,6 +175,7 @@ const RhfAutoSuggestContainer = <T,>(
               autoComplete='off'
               spellCheck={false}
               onKeyDown={onKeyDown}
+              onBlur={!touchOnChange ? onFieldBlur : undefined}
               className='search-box form-field'
               {...omitUndefined({ placeholder })}
               aria-describedby={describedBy}
