@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
+  '../../../ClientApp/src/components/forms/CommonForms/RhfContactDetails',
   () =>
     ({
       default: ({ name, roleLabel }: { name: string; roleLabel: string }) => (
@@ -10,7 +10,7 @@ vi.mock(
           {roleLabel}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule71>,
+    }) satisfies __ExactMockModule<__TestMockModule168>,
 );
 
 vi.mock(

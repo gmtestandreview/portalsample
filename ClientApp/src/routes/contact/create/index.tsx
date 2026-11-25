@@ -1,8 +1,8 @@
 import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
-import WizardForm from '../../../components/forms/WizardForm';
-import type { WizardFormProps } from '../../../components/forms/WizardForm/types';
-import WizardStep from '../../../components/forms/WizardForm/WizardStep';
+import RhfSingleStepWizard from '../../../components/forms/WizardForm/RhfSingleStepWizard';
+import type { RhfWizardRoutedStepProps } from '../../../components/forms/WizardForm/RhfWizardRoutedStep';
+import type { FormValues } from '../../../components/forms/types';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import { FormStepStatus } from '../../../api/web-api-client';
@@ -15,7 +15,7 @@ import type { AccountContextState } from '../../../authentication/accountContext
 import ContactDetails from '../contactDetails';
 import updateContactProps from './createContactProps';
 
-const updateContactWizardProps: WizardFormProps = {
+const updateContactWizardProps = {
   locationOnCompletion: '/success-creating-account',
   lastStepNextButtonTitle: 'Create account',
   canSaveDraft: false,
@@ -25,7 +25,13 @@ const updateContactWizardProps: WizardFormProps = {
     yesButtonTitle: 'Yes, submit',
     noButtonTitle: 'No, cancel',
   },
-};
+} satisfies Pick<
+  RhfWizardRoutedStepProps<FormValues>,
+  | 'locationOnCompletion'
+  | 'lastStepNextButtonTitle'
+  | 'canSaveDraft'
+  | 'confirmationOnSubmission'
+>;
 
 const statuses: FormStepStatusDto[] = [{ status: FormStepStatus.NotStarted }];
 
@@ -43,19 +49,18 @@ const CreateContact = () => {
   useHtmlTitle('Update contact | NMI Services portal');
   useBodyClass('wizard');
   return (
-    <WizardForm {...updateContactWizardProps}>
-      <WizardStep
-        {...updateContactProps(
-          accounts,
-          instance,
-          statuses,
-          account,
-          contactId,
-        )}
-      >
-        <ContactDetails />
-      </WizardStep>
-    </WizardForm>
+    <RhfSingleStepWizard
+      wizard={updateContactWizardProps}
+      step={updateContactProps(
+        accounts,
+        instance,
+        statuses,
+        account,
+        contactId,
+      )}
+    >
+      <ContactDetails />
+    </RhfSingleStepWizard>
   );
 };
 

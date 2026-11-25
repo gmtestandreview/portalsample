@@ -9,8 +9,8 @@ const meta = preview.meta({
   parameters: {
     layout: 'padded',
     portal: {
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           contact: {
             title: 'Ms',
             firstName: 'Taylor',
@@ -27,37 +27,3 @@ const meta = preview.meta({
 });
 
 export const Default = meta.story();
-
-export const ValidationState = meta.story({
-  parameters: {
-    portal: {
-      formik: {
-        initialValues: {
-          contact: {
-            title: '',
-            firstName: '',
-            lastName: '',
-            role: '',
-            email: '',
-            businessPhone: '',
-            mobilePhone: '',
-          },
-        },
-        initialErrors: {
-          contact: {
-            firstName: 'Enter a first name.',
-            lastName: 'Enter a last name.',
-            email: 'Enter an email address.',
-          },
-        },
-        initialTouched: {
-          contact: {
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-      },
-    },
-  },
-});
