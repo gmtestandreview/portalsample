@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import type { OrgNameOption } from '../../../api/web-api-client';
 import { getFilteredSuggestions } from '../OrganisationNameLookup/suggestionUtils';
@@ -6,6 +6,7 @@ import type { OrganisationNameLookupProps } from '../OrganisationNameLookup';
 import type { AutoSuggestOption } from '../AutoSuggest/types';
 import RhfAutoSuggestContainer from '../RhfAutoSuggest/RhfAutoSuggestContainer';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import useDebounce from '../../Utilities/useDebounce';
 
 const RhfOrganisationNameLookup = (
   props: Readonly<OrganisationNameLookupProps>,
@@ -40,44 +41,35 @@ const RhfOrganisationNameLookup = (
     setSearchTerm(value ?? '');
   }
 
-  const [suggestions, setSuggestions] = useState<AutoSuggestOption<string>[]>(
-    [],
-  );
+  const debouncedTerm = useDebounce(searchTerm, 300);
+  const [dismissedTerm, setDismissedTerm] = useState<string>();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!searchTerm.trim() || optionsFieldName === undefined) {
-        setSuggestions((previous) => (previous.length === 0 ? previous : []));
-        return;
-      }
+  const suggestions = useMemo<AutoSuggestOption<string>[]>(() => {
+    if (
+      !searchTerm.trim() ||
+      !debouncedTerm.trim() ||
+      optionsFieldName === undefined ||
+      dismissedTerm === searchTerm
+    ) {
+      return [];
+    }
 
-      const filtered = getFilteredSuggestions({
-        inputValue: searchTerm,
-        matchType,
-        maxResults,
-        options: (options ?? []) as unknown as Record<string, unknown>[],
-        optionsFieldName,
-        ...(parentName === undefined ? {} : { parentOptionsName, parentValue }),
-      });
-      const next = filtered.map((displayText) => ({
-        id: displayText,
-        displayText,
-        value: displayText,
-      }));
-
-      setSuggestions((previous) =>
-        previous.length === next.length &&
-        previous.every((option, index) => option.id === next[index]?.id)
-          ? previous
-          : next,
-      );
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    return getFilteredSuggestions({
+      inputValue: debouncedTerm,
+      matchType,
+      maxResults,
+      options: (options ?? []) as unknown as Record<string, unknown>[],
+      optionsFieldName,
+      ...(parentName === undefined ? {} : { parentOptionsName, parentValue }),
+    }).map((displayText) => ({
+      id: displayText,
+      displayText,
+      value: displayText,
+    }));
   }, [
     searchTerm,
+    debouncedTerm,
+    dismissedTerm,
     options,
     parentValue,
     optionsFieldName,
@@ -106,7 +98,7 @@ const RhfOrganisationNameLookup = (
   };
 
   const onCancel = () => {
-    setSuggestions([]);
+    setDismissedTerm(searchTerm);
   };
 
   const help = inlineHelpTitle ? (

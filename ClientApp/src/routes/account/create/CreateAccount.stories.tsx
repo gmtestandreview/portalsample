@@ -4,6 +4,14 @@ import preview from '../../../../../.storybook/preview';
 import CreateAccount from '.';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
+const canvasElementErrors = (canvas: {
+  getAllByText: (m: RegExp) => HTMLElement[];
+}) =>
+  canvas
+    .getAllByText(/is required|not a valid/)
+    .filter((element) => element.classList.contains('invalid-feedback'))
+    .map((element) => element.textContent ?? '');
+
 const CREATE_BUTTON_NAME = 'Create account';
 const CONFIRMATION_TITLE = 'Create account confirmation';
 
@@ -169,5 +177,59 @@ export const ConfirmCreatesAccount = meta.story({
       ],
     ]);
     await expect(state.observed.completedCount).toBe(1);
+  },
+});
+
+export const InvalidSubmitShowsInlineFieldErrors = meta.story({
+  parameters: { docs: { story: { inline: false } } },
+  beforeEach({ msw }) {
+    msw.use(
+      ...accountHandlers({
+        ...validStepValues,
+        businessWebsiteAddress: 'not a website',
+        streetAddress: {},
+        postalAddressSameAsStreetAddress: false,
+        postalAddress: {},
+      }),
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await canvas.findByDisplayValue('Calibration Services');
+    await userEvent.click(
+      await canvas.findByRole('button', { name: CREATE_BUTTON_NAME }),
+    );
+
+    const website = await canvas.findByRole('textbox', {
+      name: 'Business website address (optional)',
+    });
+
+    await waitFor(() =>
+      expect(website).toHaveAttribute('aria-invalid', 'true'),
+    );
+    await expect(website).toHaveAccessibleDescription(
+      'Business website address is not a valid website address',
+    );
+
+    const street = canvas.getByRole('combobox', { name: 'Address' });
+    const postal = canvas.getByRole('combobox', { name: 'Postal address' });
+
+    await expect(street).toHaveAttribute('aria-invalid', 'true');
+    await expect(street).toHaveAccessibleDescription(
+      /Street address is required/,
+    );
+    await expect(postal).toHaveAttribute('aria-invalid', 'true');
+    await expect(postal).toHaveAccessibleDescription(
+      /Postal address is required/,
+    );
+
+    const inlineErrors = canvasElementErrors(canvas);
+
+    await expect(inlineErrors).toEqual(
+      expect.arrayContaining([
+        'Business website address is not a valid website address',
+        'Street address is required',
+        'Postal address is required',
+      ]),
+    );
   },
 });

@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { ReactNode } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import RhfOrganisationNameLookup from '@/components/Inputs/RhfOrganisationNameLookup';
 
 interface LookupValues {
@@ -59,7 +59,17 @@ const renderLookup = () =>
 const getInput = () =>
   screen.getByRole('combobox', { name: 'Business or trading name' });
 
+const settleDebounce = () => {
+  act(() => {
+    vi.advanceTimersByTime(400);
+  });
+};
+
 describe(RhfOrganisationNameLookup, () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('writes typed free text to the RHF field before a suggestion is selected', async () => {
     expect.hasAssertions();
 
@@ -122,16 +132,16 @@ describe(RhfOrganisationNameLookup, () => {
   it('keeps the same suggestions when the search text changes without changing the matches', async () => {
     expect.hasAssertions();
 
-    const user = userEvent.setup();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const user = userEvent.setup({ delay: null });
     renderLookup();
     await user.type(getInput(), 'Acme');
-    await screen.findByRole('option', { name: /Acme Instruments/ });
+    settleDebounce();
+
+    expect(screen.getAllByRole('option')).toHaveLength(1);
+
     await user.type(getInput(), ' ');
-    await act(async () => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 400);
-      });
-    });
+    settleDebounce();
 
     expect(screen.getAllByRole('option')).toHaveLength(1);
   });
@@ -167,7 +177,8 @@ describe(RhfOrganisationNameLookup, () => {
   it('offers no suggestions without an options field name', async () => {
     expect.hasAssertions();
 
-    const user = userEvent.setup();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const user = userEvent.setup({ delay: null });
     render(
       <LookupHarness>
         <RhfOrganisationNameLookup
@@ -177,11 +188,7 @@ describe(RhfOrganisationNameLookup, () => {
       </LookupHarness>,
     );
     await user.type(getInput(), 'Acme');
-    await act(async () => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 400);
-      });
-    });
+    settleDebounce();
 
     expect(screen.queryByRole('option')).not.toBeInTheDocument();
     expect(screen.getByTestId('business-name')).toHaveTextContent('Acme');
@@ -190,7 +197,8 @@ describe(RhfOrganisationNameLookup, () => {
   it('copes with missing options and a missing value, using the default label', async () => {
     expect.hasAssertions();
 
-    const user = userEvent.setup();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const user = userEvent.setup({ delay: null });
     render(
       <LookupHarness values={{}}>
         <RhfOrganisationNameLookup
@@ -201,11 +209,7 @@ describe(RhfOrganisationNameLookup, () => {
     );
     const input = screen.getByRole('combobox', { name: 'Organisation name' });
     await user.type(input, 'Acme');
-    await act(async () => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, 400);
-      });
-    });
+    settleDebounce();
 
     expect(screen.queryByRole('option')).not.toBeInTheDocument();
   });
