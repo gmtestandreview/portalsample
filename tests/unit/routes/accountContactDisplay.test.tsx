@@ -77,6 +77,70 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule71>,
 );
 
+vi.mock(
+  '../../../ClientApp/src/components/Inputs/RhfTextInput',
+  () =>
+    ({
+      default: ({ label, name }: { label: string; name: string }) => (
+        <div data-testid={`text-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule162>,
+);
+
+vi.mock(
+  '../../../ClientApp/src/components/Inputs/RhfNumberInput',
+  () =>
+    ({
+      default: ({ label, name }: { label: string; name: string }) => (
+        <div data-testid={`number-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule163>,
+);
+
+vi.mock(
+  '../../../ClientApp/src/components/Inputs/RhfCheckbox',
+  () =>
+    ({
+      default: ({ label, name }: { label: string; name: string }) => (
+        <div data-testid={`checkbox-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule164>,
+);
+
+vi.mock(
+  '../../../ClientApp/src/components/Inputs/RhfAddressLookup',
+  () =>
+    ({
+      default: ({ label, name }: { label: string; name: string }) => (
+        <div data-testid={`address-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule165>,
+);
+
+vi.mock(
+  '../../../ClientApp/src/components/Inputs/RhfOrganisationNameLookup',
+  () =>
+    ({
+      default: ({ label, name }: { label: string; name: string }) => (
+        <div data-testid={`organisation-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule166>,
+);
+
+vi.mock(
+  '../../../ClientApp/src/components/forms/RhfHidableField',
+  () =>
+    ({
+      default: ({
+        children,
+        name,
+      }: {
+        children: React.ReactNode;
+        name: string;
+      }) => <div data-testid={`hidable-${name}`}>{children}</div>,
+    }) satisfies __ExactMockModule<__TestMockModule167>,
+);
+
 describe('account and contact display sections', () => {
   it('renders account details fields', async () => {
     expect.hasAssertions();

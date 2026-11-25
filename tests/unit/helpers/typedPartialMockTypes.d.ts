@@ -217,3 +217,15 @@ type __TestMockModule157 = typeof import('@/App');
 type __TestMockModule158 = typeof import('@/trustedtypes');
 type __TestMockModule159 = typeof import('dompurify');
 type __TestMockModule160 = typeof import('@/analytics/GoogleAnalyticsTracker');
+type __TestMockModule161 =
+  typeof import('@/components/forms/WizardForm/RhfSingleStepWizard');
+type __TestMockModule162 = typeof import('@/components/Inputs/RhfTextInput');
+type __TestMockModule163 = typeof import('@/components/Inputs/RhfNumberInput');
+type __TestMockModule164 = typeof import('@/components/Inputs/RhfCheckbox');
+type __TestMockModule165 =
+  typeof import('@/components/Inputs/RhfAddressLookup');
+type __TestMockModule166 =
+  typeof import('@/components/Inputs/RhfOrganisationNameLookup');
+type __TestMockModule167 = typeof import('@/components/forms/RhfHidableField');
+type __TestMockModule168 =
+  typeof import('@/components/forms/CommonForms/RhfContactDetails');

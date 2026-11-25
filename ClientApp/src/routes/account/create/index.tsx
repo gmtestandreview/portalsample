@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
-import WizardForm from '../../../components/forms/WizardForm';
-import type { WizardFormProps } from '../../../components/forms/WizardForm/types';
-import WizardStep from '../../../components/forms/WizardForm/WizardStep';
+import RhfSingleStepWizard from '../../../components/forms/WizardForm/RhfSingleStepWizard';
+import type { RhfWizardRoutedStepProps } from '../../../components/forms/WizardForm/RhfWizardRoutedStep';
+import type { FormValues } from '../../../components/forms/types';
 import AccountDetails from '../accountDetails';
 import createAccountProps from './createAccountProps';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
@@ -14,7 +14,7 @@ import {
 } from '../../../authentication/hooks';
 import type { AccountContextState } from '../../../authentication/accountContext';
 
-const createAccountWizardProps: WizardFormProps = {
+const createAccountWizardProps = {
   locationOnCompletion: '/success-creating-account',
   lastStepNextButtonTitle: 'Create account',
   // nextButtonTitle: 'Save and next',
@@ -25,7 +25,13 @@ const createAccountWizardProps: WizardFormProps = {
     yesButtonTitle: 'Yes, submit',
     noButtonTitle: 'No, cancel',
   },
-};
+} satisfies Pick<
+  RhfWizardRoutedStepProps<FormValues>,
+  | 'locationOnCompletion'
+  | 'lastStepNextButtonTitle'
+  | 'canSaveDraft'
+  | 'confirmationOnSubmission'
+>;
 
 const statuses: FormStepStatusDto[] = [{ status: FormStepStatus.NotStarted }];
 
@@ -40,13 +46,12 @@ const CreateAccount = () => {
   useHtmlTitle('Create portal account | NMI Services portal');
   useBodyClass('wizard');
   return (
-    <WizardForm {...createAccountWizardProps}>
-      <WizardStep
-        {...createAccountProps(accounts, instance, statuses, account)}
-      >
-        <AccountDetails />
-      </WizardStep>
-    </WizardForm>
+    <RhfSingleStepWizard
+      wizard={createAccountWizardProps}
+      step={createAccountProps(accounts, instance, statuses, account)}
+    >
+      <AccountDetails />
+    </RhfSingleStepWizard>
   );
 };
 

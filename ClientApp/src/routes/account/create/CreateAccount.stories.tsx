@@ -147,8 +147,19 @@ export const ConfirmCreatesAccount = meta.story({
 
     await waitFor(() => expect(state.observed.savedBodies).toHaveLength(1));
 
-    await expect(state.observed.savedBodies[0]).toMatchObject({
-      formStep: { id: 11, name: 'Calibration Services Pty Ltd' },
+    await expect(state.observed.savedBodies[0]).toEqual({
+      formStep: {
+        id: 11,
+        abn: '12345678901',
+        name: 'Calibration Services Pty Ltd',
+        businessOrTradingName: 'Calibration Services',
+        branchOrLocationName: 'Sydney Laboratory',
+        businessWebsiteAddress: 'https://example.gov.au',
+        contact: {},
+        streetAddress: validStepValues.streetAddress,
+        postalAddressSameAsStreetAddress: true,
+        status: 'NotStarted',
+      },
     });
     await expect(state.observed.organisationAndBranch).toEqual([
       [
