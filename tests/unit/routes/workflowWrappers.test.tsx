@@ -426,16 +426,28 @@ const resetWorkflowWrapperMocks = () => {
     setCompleted: vi.fn<() => void>(),
     setContactCompleted: vi.fn<() => void>(),
     setDefaultOrganisationId:
-      vi.fn<(defaultOrganisationId: number | undefined, defaultOrganisationCRMId: string | undefined) => void>(),
+      vi.fn<
+        (
+          defaultOrganisationId: number | undefined,
+          defaultOrganisationCRMId: string | undefined,
+        ) => void
+      >(),
     setTargetOrganisation:
-      vi.fn<(targetOrganisationAbn: string, targetOrganisationName: string) => void>(),
+      vi.fn<
+        (targetOrganisationAbn: string, targetOrganisationName: string) => void
+      >(),
     setOrganisationAndBranch:
-      vi.fn<(organisationName: string, tradingName: string, branchName: string) => void>(),
+      vi.fn<
+        (
+          organisationName: string,
+          tradingName: string,
+          branchName: string,
+        ) => void
+      >(),
     setShowBranchSelector: vi.fn<(show: boolean) => void>(),
     setShowRFQSelectModal:
       vi.fn<(show: boolean, rfqId: string, callingPath: string) => void>(),
-    setUserProfile:
-      vi.fn<(userProfile: unknown) => Promise<boolean>>(),
+    setUserProfile: vi.fn<(userProfile: unknown) => Promise<boolean>>(),
   } satisfies AccountDispatchContext);
   mocks.requestForQuoteGetStepStatuses.mockResolvedValue([
     { name: 'Organisation and contact', status: 'current' },
