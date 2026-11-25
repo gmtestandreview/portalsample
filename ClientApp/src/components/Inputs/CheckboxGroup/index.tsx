@@ -130,9 +130,4 @@ const CheckboxGroup = <T,>(
   );
 };
 
-// CheckboxGroup.defaultProps = {
-//     containerClassName: '',
-//     className: '',
-// };
-
 export default CheckboxGroup;
