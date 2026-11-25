@@ -47,7 +47,7 @@ const renderLookup = () =>
 const getInput = () =>
   screen.getByRole('combobox', { name: 'Business or trading name' });
 
-describe('RhfOrganisationNameLookup', () => {
+describe(RhfOrganisationNameLookup, () => {
   it('writes typed free text to the RHF field before a suggestion is selected', async () => {
     expect.hasAssertions();
 
@@ -67,7 +67,9 @@ describe('RhfOrganisationNameLookup', () => {
     await user.type(getInput(), 'Acme');
 
     expect(screen.getByTestId('touched')).toHaveTextContent('untouched');
+
     await user.tab();
+
     expect(screen.getByTestId('touched')).toHaveTextContent('touched');
   });
 
@@ -99,6 +101,7 @@ describe('RhfOrganisationNameLookup', () => {
     await user.clear(getInput());
 
     expect(screen.getByTestId('business-name')).toBeEmptyDOMElement();
+
     await waitFor(() => {
       expect(screen.queryByRole('option')).not.toBeInTheDocument();
     });

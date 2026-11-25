@@ -73,7 +73,9 @@ const RhfOrganisationNameLookup = (
       );
     }, 300);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [
     searchTerm,
     options,
