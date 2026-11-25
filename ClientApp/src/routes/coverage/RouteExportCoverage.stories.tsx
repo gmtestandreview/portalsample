@@ -111,7 +111,7 @@ export const AccountCreated = meta.story({
 export const ContactDetails = meta.story({
   render: () => <ContactDetailsRoute />,
   parameters: {
-    portal: { formik: { initialValues: { contact: {} } } },
+    portal: { rhf: { defaultValues: { contact: {} } } },
   },
   play: async ({ canvas }) => {
     await expect(

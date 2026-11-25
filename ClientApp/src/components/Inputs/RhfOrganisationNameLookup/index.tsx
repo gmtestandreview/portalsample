@@ -95,8 +95,8 @@ const RhfOrganisationNameLookup = (
     });
   };
 
-  const onSelectedOption = (option?: AutoSuggestOption<string>) => {
-    const selectedValue = option?.value ?? searchTerm;
+  const onSelectedOption = (option: AutoSuggestOption<string>) => {
+    const selectedValue = option.value;
     setSearchTerm(selectedValue);
     setValue(name, selectedValue, {
       shouldDirty: true,

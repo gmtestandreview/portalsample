@@ -25,7 +25,11 @@ const createStep = (onSaveAndNext: Save): WizardStepProps<Values> => ({
   bannerTitle: 'Single step banner',
 });
 
-const renderWizard = (onSaveAndNext: Save, initialPath = '/flow') =>
+const renderWizard = (
+  onSaveAndNext: Save,
+  initialPath = '/flow',
+  path = '/flow/*',
+) =>
   renderWithRouter(
     <RhfSingleStepWizard
       wizard={{
@@ -38,7 +42,7 @@ const renderWizard = (onSaveAndNext: Save, initialPath = '/flow') =>
       <RhfTextInput name='name' label='Name' />
     </RhfSingleStepWizard>,
     {
-      path: '/flow/*',
+      path,
       initialPath,
       extraRoutes: [{ path: '/done', element: <h1>Done page</h1> }],
     },
@@ -84,5 +88,15 @@ describe(RhfSingleStepWizard, () => {
       screen.findByRole('link', { name: 'Name: Name is required' }),
     ).resolves.toBeInTheDocument();
     expect(onSaveAndNext).not.toHaveBeenCalled();
+  });
+
+  it('resolves the base url when mounted at the application root', async () => {
+    expect.hasAssertions();
+
+    renderWizard(vi.fn<Save>().mockResolvedValue(undefined), '/', '/*');
+
+    await expect(
+      screen.findByDisplayValue('Loaded name'),
+    ).resolves.toBeInTheDocument();
   });
 });
