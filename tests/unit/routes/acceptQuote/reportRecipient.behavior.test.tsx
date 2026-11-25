@@ -145,6 +145,7 @@ function StepHarness({
   const initialValues = values as TestFormValues;
   const handleSubmit = (submitted: TestFormValues) => {
     onSubmit(submitted);
+    return Promise.resolve();
   };
 
   return (

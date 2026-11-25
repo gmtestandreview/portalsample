@@ -2,8 +2,11 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { describe, expect, it, vi } from 'vitest';
 import { StrictMode } from 'react';
-import { MemoryRouter, Route, Routes } from 'react-router';
-import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
+import { createMemoryRouter, RouterProvider } from 'react-router';
+import type {
+  AccountDetails,
+  AccountDispatchContext,
+} from '../../../ClientApp/src/authentication/accountContext';
 import type { useAccountState as UseAccountState } from '../../../ClientApp/src/authentication/hooks';
 import type * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
 
@@ -16,6 +19,9 @@ const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
   requestForQuoteGetStepStatuses: vi.fn<(...args: unknown[]) => unknown>(),
   acceptQuoteGetStepStatuses: vi.fn<(...args: unknown[]) => unknown>(),
+  getReportRecipient: vi.fn<(...args: unknown[]) => unknown>(),
+  getDeliveryAndReturn: vi.fn<(...args: unknown[]) => unknown>(),
+  getSummaryAndAccept: vi.fn<(...args: unknown[]) => unknown>(),
   createApplication: vi.fn<(...args: unknown[]) => unknown>(),
   copyApplication: vi.fn<(...args: unknown[]) => unknown>(),
   getQuoteRequestDetails: vi.fn<(...args: unknown[]) => unknown>(),
@@ -23,7 +29,9 @@ const mocks = vi.hoisted(() => ({
   getPaymentDetails: vi.fn<(...args: unknown[]) => unknown>(),
   appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
   appLoggerVerbose: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerTrace: vi.fn<(...args: unknown[]) => unknown>(),
   useAccountState: vi.fn<(...args: unknown[]) => unknown>(),
+  useAccountDispatch: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock(
@@ -51,6 +59,8 @@ vi.mock(
     ({
       useAccountState:
         mocks.useAccountState as unknown as typeof UseAccountState,
+      useAccountDispatch:
+        mocks.useAccountDispatch as unknown as () => AccountDispatchContext,
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
@@ -79,6 +89,9 @@ vi.mock(
             setAuthToken: mocks.setAuthToken,
             getStepStatuses: mocks.acceptQuoteGetStepStatuses,
             getPaymentDetails: mocks.getPaymentDetails,
+            getReportRecipient: mocks.getReportRecipient,
+            getDeliveryAndReturn: mocks.getDeliveryAndReturn,
+            getSummaryAndAccept: mocks.getSummaryAndAccept,
           };
         },
       ),
@@ -126,6 +139,29 @@ vi.mock(
         </section>
       ),
     }) satisfies __ExactMockModule<__TestMockModule60>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/components/forms/WizardForm/RhfWizardRoutedStep') as unknown as string,
+  () => ({
+    default: ({
+      allSteps,
+      currentStepIndex,
+      locationOnCompletion,
+    }: {
+      allSteps: readonly React.ReactNode[];
+      currentStepIndex: number;
+      locationOnCompletion: string;
+    }) => (
+      <section
+        data-testid='wizard-form'
+        data-complete-location={locationOnCompletion}
+        data-current-step={currentStepIndex}
+      >
+        {allSteps}
+      </section>
+    ),
+  }),
 );
 
 vi.mock(
@@ -218,6 +254,7 @@ vi.mock(
     ({
       default: {
         error: mocks.appLoggerError,
+        trace: mocks.appLoggerTrace,
         verbose: mocks.appLoggerVerbose,
       },
     }) satisfies __ExactMockModule<__TestMockModule5>,
@@ -340,38 +377,42 @@ const renderAt = (
   initialPath: string,
   element: React.ReactNode,
   routePath = initialPath,
-) =>
-  render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route path={routePath} element={element} />
-        <Route path='/not-found' element={<div data-testid='not-found' />} />
-        <Route path='*' element={<div data-testid='fallback-route' />} />
-      </Routes>
-    </MemoryRouter>,
+) => {
+  const router = createMemoryRouter(
+    [
+      { path: routePath, element },
+      { path: '/not-found', element: <div data-testid='not-found' /> },
+      { path: '*', element: <div data-testid='fallback-route' /> },
+    ],
+    { initialEntries: [initialPath] },
   );
+
+  return render(<RouterProvider router={router} />);
+};
 
 const renderWithNavigationDestinations = (
   initialPath: string,
   element: React.ReactNode,
   routePath: string,
-) =>
-  render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route path={routePath} element={element} />
-        <Route
-          path='/request-for-quote/:id/organisation-and-contact'
-          element={<div data-testid='rfq-created-destination' />}
-        />
-        <Route
-          path='/accept-quote/:id/report-recipient'
-          element={<div data-testid='accept-created-destination' />}
-        />
-        <Route path='*' element={<div data-testid='fallback-route' />} />
-      </Routes>
-    </MemoryRouter>,
+) => {
+  const router = createMemoryRouter(
+    [
+      { path: routePath, element },
+      {
+        path: '/request-for-quote/:id/organisation-and-contact',
+        element: <div data-testid='rfq-created-destination' />,
+      },
+      {
+        path: '/accept-quote/:id/report-recipient',
+        element: <div data-testid='accept-created-destination' />,
+      },
+      { path: '*', element: <div data-testid='fallback-route' /> },
+    ],
+    { initialEntries: [initialPath] },
   );
+
+  return render(<RouterProvider router={router} />);
+};
 
 const resetWorkflowWrapperMocks = () => {
   vi.clearAllMocks();
@@ -380,6 +421,22 @@ const resetWorkflowWrapperMocks = () => {
     mocks.acquireTokenSilent,
   );
   mocks.useAccountState.mockReturnValue({ details: accountDetails });
+  mocks.useAccountDispatch.mockReturnValue({
+    setAgree: vi.fn<() => void>(),
+    setCompleted: vi.fn<() => void>(),
+    setContactCompleted: vi.fn<() => void>(),
+    setDefaultOrganisationId:
+      vi.fn<(defaultOrganisationId: number | undefined, defaultOrganisationCRMId: string | undefined) => void>(),
+    setTargetOrganisation:
+      vi.fn<(targetOrganisationAbn: string, targetOrganisationName: string) => void>(),
+    setOrganisationAndBranch:
+      vi.fn<(organisationName: string, tradingName: string, branchName: string) => void>(),
+    setShowBranchSelector: vi.fn<(show: boolean) => void>(),
+    setShowRFQSelectModal:
+      vi.fn<(show: boolean, rfqId: string, callingPath: string) => void>(),
+    setUserProfile:
+      vi.fn<(userProfile: unknown) => Promise<boolean>>(),
+  } satisfies AccountDispatchContext);
   mocks.requestForQuoteGetStepStatuses.mockResolvedValue([
     { name: 'Organisation and contact', status: 'current' },
   ]);
@@ -390,6 +447,9 @@ const resetWorkflowWrapperMocks = () => {
       crmQuoteRequestId: 'CRM-QUOTE-1',
     },
   ]);
+  mocks.getReportRecipient.mockResolvedValue({});
+  mocks.getDeliveryAndReturn.mockResolvedValue({});
+  mocks.getSummaryAndAccept.mockResolvedValue({});
   mocks.createApplication.mockResolvedValue({ referenceId: 'APP-1' });
   mocks.copyApplication.mockResolvedValue({ referenceId: 'APP-COPY-1' });
   mocks.getQuoteRequestDetails.mockResolvedValue({
@@ -958,6 +1018,64 @@ describe('workflow route wrappers', () => {
       stepCount: 4,
       stepLabels: [true, true, true, true],
     });
+  });
+
+  it('selects the matching middle accept-quote steps', async () => {
+    expect.hasAssertions();
+
+    for (const [step, expectedIndex] of [
+      ['delivery-and-return', '1'],
+      ['payment-details', '2'],
+    ] as const) {
+      resetWorkflowWrapperMocks();
+      const AcceptQuote = (
+        await import('../../../ClientApp/src/routes/acceptQuote')
+      ).default;
+      const rendered = renderAt(
+        `/accept-quote/AQ-1/${step}`,
+        <AcceptQuote />,
+        '/accept-quote/:id/*',
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('wizard-form')).toHaveAttribute(
+          'data-current-step',
+          expectedIndex,
+        );
+      });
+      rendered.unmount();
+    }
+  });
+
+  it('selects the final step when all accept-quote steps are complete and the path is unmatched', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowWrapperMocks();
+    mocks.acceptQuoteGetStepStatuses.mockResolvedValue([
+      {
+        name: 'Report recipient',
+        status: 'Completed',
+        crmQuoteRequestId: 'CRM-QUOTE-1',
+      },
+    ]);
+    const AcceptQuote = (
+      await import('../../../ClientApp/src/routes/acceptQuote')
+    ).default;
+
+    renderAt(
+      '/accept-quote/AQ-1/unmatched',
+      <AcceptQuote />,
+      '/accept-quote/:id/*',
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-form')).toHaveAttribute(
+        'data-current-step',
+        '3',
+      );
+    });
+
+    expect(screen.getByText('Summary and accept step')).toBeInTheDocument();
   });
 
   it('redirects accept-quote to not found when status loading fails', async () => {

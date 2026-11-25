@@ -1,5 +1,7 @@
 import AppDetails from './appDetails';
 
-const TAApplicationManage = () => <AppDetails />;
+const TAApplicationManage = () => {
+  return <AppDetails />;
+};
 
 export default TAApplicationManage;

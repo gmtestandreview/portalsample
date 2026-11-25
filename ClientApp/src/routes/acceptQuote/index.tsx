@@ -179,7 +179,18 @@ const AcceptQuote = () => {
     if (firstIncompleteStepIndex >= 0) return firstIncompleteStepIndex;
     return steps.length - 1;
   })();
-  const activeStepProps = stepProps.at(currentStepIndex) ?? stepProps[3];
+  const activeStepProps = (() => {
+    switch (currentStepIndex) {
+      case 0:
+        return stepProps[0];
+      case 1:
+        return stepProps[1];
+      case 2:
+        return stepProps[2];
+      default:
+        return stepProps[3];
+    }
+  })();
 
   const wizardProps = {
     ...acceptQuoteWizardProps,

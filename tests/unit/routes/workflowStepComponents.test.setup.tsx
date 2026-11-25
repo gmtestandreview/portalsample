@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
+import { FormProvider, useForm } from 'react-hook-form';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -677,12 +678,40 @@ export const renderRoute = (
   routePath = '/workflow/:id',
 ) =>
   render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route path={routePath} element={element} />
-      </Routes>
-    </MemoryRouter>,
+    <RouteWithFormProvider
+      initialPath={initialPath}
+      element={element}
+      routePath={routePath}
+    />,
   );
+
+const RouteWithFormProvider = ({
+  initialPath,
+  element,
+  routePath,
+}: {
+  initialPath: string;
+  element: ReactNode;
+  routePath: string;
+}) => {
+  const methods = useForm();
+
+  return (
+    <FormProvider {...methods}>
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route path={routePath} element={element} />
+        </Routes>
+      </MemoryRouter>
+    </FormProvider>
+  );
+};
+
+export const renderRouteWithFormProvider = (
+  initialPath: string,
+  element: ReactNode,
+  routePath = '/workflow/:id',
+) => renderRoute(initialPath, element, routePath);
 
 export const triggerInputChange = (name: string, value: string | null) => {
   const handler = mocks.inputChangeHandlers.get(name);

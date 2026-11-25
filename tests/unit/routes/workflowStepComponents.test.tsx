@@ -12,6 +12,7 @@ import {
   basePreInfo,
   mocks,
   renderRoute,
+  renderRouteWithFormProvider,
   streetAddress,
   triggerInputChange,
 } from './workflowStepComponents.test.setup';
@@ -546,16 +547,21 @@ describe('workflow step components', () => {
     });
     renderRoute(
       '/accept-quote/AQ-1/report-recipient',
-      <ReportRecipient id='AQ-1' name='reportRecipient' isSummary />,
+      <ReportRecipient
+        id='AQ-1'
+        name='reportRecipient'
+        isSummary
+        summaryValues={{
+          reportRecipient: { businessStreetAddress: streetAddress },
+        }}
+      />,
       '/accept-quote/:id/*',
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('address-lookup')).toHaveAttribute(
-        'data-name',
-        'reportRecipient.businessStreetAddress',
-      );
+      expect(screen.getByText(/1 National Circuit/)).toBeInTheDocument();
     });
+    expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
   });
 
   it('renders delivery/return editable, no-delivery, and summary branches', async () => {
@@ -754,7 +760,7 @@ describe('workflow step components', () => {
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
-    const { unmount } = renderRoute(
+    const { unmount } = renderRouteWithFormProvider(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='' />,
       '/accept-quote/:id/*',
@@ -773,7 +779,7 @@ describe('workflow step components', () => {
     mocks.getPaymentDetails.mockResolvedValueOnce({
       acceptQuotePreInfo: { ...basePreInfo, paymentTerms: 'Postpaid' },
     });
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='paymentDetails' isSummary />,
       '/accept-quote/:id/*',
@@ -795,7 +801,7 @@ describe('workflow step components', () => {
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
-    const { unmount } = renderRoute(
+    const { unmount } = renderRouteWithFormProvider(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='' />,
       '/accept-quote/:id/*',
@@ -839,7 +845,7 @@ describe('workflow step components', () => {
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
-    const payment = renderRoute(
+    const payment = renderRouteWithFormProvider(
       '/accept-quote/payment-details',
       <PaymentDetails id={undefined} name='' />,
       '/accept-quote/*',
@@ -957,7 +963,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',
@@ -1010,7 +1016,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-2/summary-and-accept',
       <SummaryAndAccept
         id='AQ-2'
@@ -1050,7 +1056,7 @@ describe('workflow step components', () => {
     const SummaryAndAccept = (
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',
@@ -1102,7 +1108,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    const { unmount } = renderRoute(
+    const { unmount } = renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',
@@ -1140,7 +1146,7 @@ describe('workflow step components', () => {
         branchOrLocationName: 'Branch only',
       },
     });
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-2/summary-and-accept',
       <SummaryAndAccept id='AQ-2' name='' cRMQuoteRequestId='CRM-2' />,
       '/accept-quote/:id/*',
@@ -1163,7 +1169,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',

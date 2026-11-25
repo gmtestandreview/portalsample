@@ -113,6 +113,7 @@ function Harness({
 }: Readonly<HarnessProps>) {
   const handleSubmit = (submittedValues: TestFormValues) => {
     onSubmit(submittedValues);
+    return Promise.resolve();
   };
 
   return (
