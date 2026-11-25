@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/codemod/codemod/refs/heads/main/schemas/workflow.json
+
+version: "1"
+
+params:
+  schema:
+    preRunScript:
+      name: Pre-run script
+      description: Optional shell command to run before the migration.
+      type: string
+      default: "echo 'React Router migration starting'"
+    postRunScript:
+      name: Post-run script
+      description: Optional shell command to run after the migration.
+      type: string
+      default: "echo 'React Router migration complete'"
+    targetVersion:
+      name: React Router v7 range
+      description: A v7 semver range to assign when react-router needs upgrading.
+      type: string
+      default: "^7.0.0"
+    updateLockfile:
+      name: Update lockfile
+      description: Run the detected package manager only when a manifest was changed.
+      type: boolean
+      default: false
+    runAiCleanup:
+      name: AI review and cleanup
+      description: Let AI review remaining edge cases after deterministic transforms.
+      type: boolean
+      default: true
+
+nodes:
+  - id: apply-transforms
+    name: Apply AST Transformations
+    type: automatic
+    steps:
+      - name: Run pre-migration command
+        run: $PARAM_PRERUNSCRIPT
+      - name: "Scan matching typescript files and apply fixes"
+        js-ast-grep:
+          js_file: scripts/codemod.ts
+          base_path: "."
+          language: "typescript"
+          include:
+            - "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}"
+          exclude:
+            - "**/node_modules/**"
+            - "**/.git/**"
+            - "**/generated/**"
+            - "**/build/**"
+            - "**/dist/**"
+            - "**/coverage/**"
+      - name: Reconcile root dependencies and lockfile
+        run: |
+          TARGET_VERSION="$PARAM_TARGETVERSION" UPDATE_LOCKFILE="$PARAM_UPDATELOCKFILE" sh "$CODEMOD_PATH/scripts/reconcile-manifests.sh" .
+      - name: AI review and cleanup
+        if: params.runAiCleanup == true
+        ai:
+          prompt: |
+            The AST-based codemod has already run. Review the resulting diff and warnings for remaining React Router v6-to-v7 import edge cases. Clean up only cases that can be resolved conservatively, preserve the requested migration intent and existing behavior, and avoid unrelated rewrites. Do not automatically add removed v6 future flags or strip json/defer wrappers. Flag unsupported behavioral upgrades rather than inventing fixes.
+      - name: Run post-migration command
+        run: $PARAM_POSTRUNSCRIPT

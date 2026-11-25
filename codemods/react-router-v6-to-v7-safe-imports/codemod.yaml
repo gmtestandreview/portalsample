@@ -1,0 +1,23 @@
+schema_version: '1.0'
+name: react-router-v6-to-v7-safe-imports
+version: 0.0.1
+description: React Router v6 to v7 — safe import migration
+author: Codemod Builder
+license: MIT
+targets:
+  languages:
+    - typescript
+keywords:
+  - transformation
+  - migration
+registry:
+  access: private
+  visibility: private
+capabilities: []
+workflows:
+  - name: main
+    default: true
+    path: workflow.yaml
+repository:
+  url: https://github.com/gmtestandreview/portalsample
+  directory: codemods/react-router-v6-to-v7-safe-imports
