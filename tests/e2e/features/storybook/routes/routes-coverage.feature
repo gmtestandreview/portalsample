@@ -58,8 +58,8 @@ Feature: Route storybook coverage
     Then the story iframe should contain "Organisation details"
 
   Scenario: Account creation validation story renders the error message
-    When I load the Storybook story "routes-account-createaccountstep--organisation-details-validation"
-    Then the story iframe should contain "Enter a valid business website address."
+    When I load the Storybook story "routes-account-create--invalid-submit-shows-inline-field-errors"
+    Then the story iframe should contain "Business website address is not a valid website address"
 
   Scenario: Account created story renders the success heading
     When I load the Storybook story "routes-account-accountcreated--default"
@@ -70,8 +70,8 @@ Feature: Route storybook coverage
     Then the story iframe should contain "Important information"
 
   Scenario: Contact details validation story renders the inline validation error
-    When I load the Storybook story "routes-contact-contactdetailsstep--validation-state"
-    Then the story iframe should contain "Enter a first name."
+    When I load the Storybook story "routes-contact-create--invalid-submit-shows-inline-field-errors"
+    Then the story iframe should contain "First name is required"
 
   Scenario: Request for quote organisation step renders the section heading
     When I load the Storybook story "routes-requestforquote--organisation-and-contact-step"
@@ -84,12 +84,12 @@ Feature: Route storybook coverage
     And the story iframe should contain "Request details"
 
   Scenario: Request for quote organisation validation story renders the validation message
-    When I load the Storybook story "routes-requestforquote--organisation-and-contact-validation"
-    Then the story iframe should contain "Select whether this is the correct branch or location."
+    When I load the Storybook story "routes-requestforquote-wizard--different-contact-requires-contact-details"
+    Then the story iframe should contain "First name is required"
 
   Scenario: Request for quote instrument validation story renders the validation message
-    When I load the Storybook story "routes-requestforquote--instrument-and-request-validation"
-    Then the story iframe should contain "Enter a serial number."
+    When I load the Storybook story "routes-requestforquote-wizard--instrument-step-blocks-invalid-submit"
+    Then the story iframe should contain "Enter a manufacturer."
 
   Scenario: Request for quote created story renders the submitted heading
     When I load the Storybook story "routes-requestforquote-requestcreated--submitted"

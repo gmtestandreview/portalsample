@@ -502,9 +502,9 @@ Then(
   },
 );
 
-Then('the AutoSuggestContainer owner is visible', async ({ page }) => {
+Then('the RhfAutoSuggestContainer owner is visible', async ({ page }) => {
   await expect(
-    page.getByText('AutoSuggestContainer', { exact: true }).last(),
+    page.getByText('RhfAutoSuggestContainer', { exact: true }).last(),
   ).toBeVisible();
 });
 

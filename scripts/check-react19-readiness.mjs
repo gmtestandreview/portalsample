@@ -1,4 +1,4 @@
-// Guard for the Formik to React Hook Form migration: new RHF code must not use
+// Guard for the React Hook Form code: it must not use
 // APIs that React 19 removes. Run: node scripts/check-react19-readiness.mjs
 import { join, relative, sep } from 'node:path';
 import { listDirectory, readTextFile, statPath } from './safe-file-io.mjs';
@@ -8,8 +8,7 @@ const SCAN_ROOTS = [
   join('ClientApp', 'src', 'components', 'forms'),
   join('ClientApp', 'src', 'components', 'Inputs'),
 ];
-// Only the RHF-native surface is held to the rule; legacy Formik inputs are
-// deleted in phase Z, not rewritten.
+// The shared form shell and the RHF inputs are held to the rule.
 const IN_SCOPE = (path) =>
   path.includes(`${sep}forms${sep}`) || /[\\/]Rhf[^\\/]*[\\/]/.test(path);
 const EXTENSIONS = new Set(['.ts', '.tsx']);

@@ -238,7 +238,7 @@ export default defineConfig(
       ],
       '@typescript-eslint/no-empty-object-type': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
-      // Upstream rule currently overflows on FormikForm/index.tsx.
+      // Upstream rule currently overflows on the form shell components.
       '@typescript-eslint/no-unsafe-class-instance-assignment': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',

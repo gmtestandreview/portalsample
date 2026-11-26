@@ -208,7 +208,7 @@ describe('rhf checkbox group behavior', () => {
     expect(document.querySelector('.row .col')).not.toBeNull();
   });
 
-  it('renders nothing in summary mode, as the Formik group did for array values', () => {
+  it('renders nothing in summary mode, as the earlier group did for array values', () => {
     expect.hasAssertions();
 
     const { container } = render(

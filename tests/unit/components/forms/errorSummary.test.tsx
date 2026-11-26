@@ -1,5 +1,4 @@
 import { act, render, screen } from '@testing-library/react';
-import { Form, Formik, type FormikConfig, type FormikProps } from 'formik';
 import { MemoryRouter } from 'react-router';
 import { vi, describe, it, expect } from 'vitest';
 import ErrorSummary from '@/components/forms/ErrorSummary';
@@ -9,9 +8,8 @@ import type {
 } from '@/api/web-api-client';
 import { HttpStatusCode } from '@/types';
 import { defined } from '../../helpers/defined';
-
-type EmptyFormikSubmit = FormikConfig<Record<string, never>>['onSubmit'];
-type NameFormikSubmit = FormikConfig<{ name: string }>['onSubmit'];
+import { FieldHarness, createFormHandle } from '../inputs/rhfTestHarness';
+import type { Resolver } from 'react-hook-form';
 
 const TestRouter = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>{children}</MemoryRouter>
@@ -207,9 +205,7 @@ describe('error summary', () => {
 
     render(
       <TestRouter>
-        <Formik initialValues={{}} onSubmit={vi.fn<EmptyFormikSubmit>()}>
-          <ErrorSummary serverErrors={{ errors: undefined }} />
-        </Formik>
+        <ErrorSummary serverErrors={{ errors: undefined }} />
       </TestRouter>,
     );
 
@@ -295,40 +291,6 @@ describe('error summary', () => {
     }
   });
 
-  it('skips undefined error entries in sanitizeErrorData (line 140 else-if false branch)', async () => {
-    expect.hasAssertions();
-
-    vi.useRealTimers();
-    vi.clearAllMocks();
-
-    let formikInstance: FormikProps<{ name: string }> | null = null;
-
-    render(
-      <TestRouter>
-        <Formik
-          initialValues={{ name: '' }}
-          validate={() => ({ name: undefined as any, extra: 'Shown' as any })}
-          onSubmit={vi.fn<NameFormikSubmit>()}
-          innerRef={(instance) => {
-            formikInstance = instance;
-          }}
-        >
-          <Form>
-            <ErrorSummary />
-          </Form>
-        </Formik>
-      </TestRouter>,
-    );
-
-    await act(async () => {
-      await defined(formikInstance, 'Formik instance').submitForm();
-    });
-
-    // sanitizeErrorData is called with { name: undefined, extra: 'Shown' }.
-    // 'name: undefined' exercises the else branch at line 140 (value is neither object nor string).
-    expect(document.querySelector('#form-error-summary')).not.toBeNull();
-  });
-
   it('scrolls and focuses the summary after a failed submit settles', async () => {
     expect.hasAssertions();
 
@@ -338,35 +300,36 @@ describe('error summary', () => {
     vi.useFakeTimers();
 
     try {
-      let formikInstance: FormikProps<{ name: string }> | null = null;
+      const resolver: Resolver<{ name: string }> = (values) =>
+        values.name
+          ? { values, errors: {} }
+          : {
+              values: {},
+              errors: { name: { type: 'required', message: 'Required' } },
+            };
+      const form = createFormHandle<{ name: string }>();
 
       render(
         <TestRouter>
-          <Formik
-            initialValues={{ name: '' }}
-            validate={(values) => (values.name ? {} : { name: 'Required' })}
-            onSubmit={vi.fn<NameFormikSubmit>()}
-            innerRef={(instance) => {
-              formikInstance = instance;
-            }}
+          <FieldHarness
+            field='name'
+            defaultValue=''
+            resolver={resolver}
+            form={form}
           >
-            <Form>
-              <ErrorSummary />
-            </Form>
-          </Formik>
+            <ErrorSummary />
+          </FieldHarness>
         </TestRouter>,
       );
 
       const scrollIntoView = vi.spyOn(HTMLElement.prototype, 'scrollIntoView');
 
-      // Submit once: sets submitCount=1 and errors → errorSummary state updates → hasErrors=true
-      await act(async () => {
-        await defined(formikInstance, 'Formik instance').submitForm();
-      });
+      // A submit with errors sets submitCount and shows the summary.
+      await form.submit();
 
       expect(document.querySelector('#form-error-summary')).not.toBeNull();
 
-      // The failed submit above settles with errors and no pending submission, so
+      // The failed submit settles with errors and no pending submission, so
       // the summary schedules its focus once; let the timer fire.
       act(() => {
         vi.advanceTimersByTime(200);
@@ -379,5 +342,95 @@ describe('error summary', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('renders the remaining server error branches', () => {
+    expect.hasAssertions();
+
+    const { rerender } = render(
+      <TestRouter>
+        <ErrorSummary serverErrors={{ status: HttpStatusCode.Conflict }} />
+      </TestRouter>,
+    );
+
+    expect(
+      screen.getByText(/Another person has already saved this page/i),
+    ).toBeInTheDocument();
+
+    rerender(
+      <TestRouter>
+        <ErrorSummary serverErrors={{ status: HttpStatusCode.Forbidden }} />
+      </TestRouter>,
+    );
+
+    expect(screen.getByText(/Please contact support/i)).toBeInTheDocument();
+
+    rerender(
+      <TestRouter>
+        <ErrorSummary serverErrors={{ status: 500 }} />
+      </TestRouter>,
+    );
+
+    expect(screen.getByText('Server error')).toBeInTheDocument();
+  });
+
+  it('links a nested field error to its dotted path', async () => {
+    expect.hasAssertions();
+
+    const resolver: Resolver<{ contacts: { firstName: string }[] }> = () => ({
+      values: {},
+      errors: {
+        contacts: [{ firstName: { type: 'required', message: 'Required' } }],
+      },
+    });
+    const form = createFormHandle<{ contacts: { firstName: string }[] }>();
+
+    render(
+      <TestRouter>
+        <FieldHarness
+          field='contacts'
+          defaultValue={[{ firstName: '' }]}
+          resolver={resolver}
+          form={form}
+        >
+          <ErrorSummary />
+        </FieldHarness>
+      </TestRouter>,
+    );
+    await form.submit();
+
+    await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
+      'Contacts: (#1): Required',
+    );
+    expect(
+      screen.getByRole('link', { name: 'Contacts: (#1): Required' }),
+    ).toHaveAttribute('href', '#contacts.0.firstName');
+  });
+
+  it('ignores an empty nested error group instead of stringifying it', async () => {
+    expect.hasAssertions();
+
+    const resolver: Resolver<{ group: Record<string, never> }> = () => ({
+      values: {},
+      errors: { group: {} },
+    });
+    const form = createFormHandle<{ group: Record<string, never> }>();
+
+    render(
+      <TestRouter>
+        <FieldHarness
+          field='group'
+          defaultValue={{}}
+          resolver={resolver}
+          form={form}
+        >
+          <ErrorSummary disableLinkedError />
+        </FieldHarness>
+      </TestRouter>,
+    );
+    await form.submit();
+
+    expect(screen.queryByText('[object Object]')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('form-error-summary')).not.toBeInTheDocument();
   });
 });

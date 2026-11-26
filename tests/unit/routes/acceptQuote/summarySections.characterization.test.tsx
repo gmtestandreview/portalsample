@@ -20,9 +20,9 @@ import summaryAndAcceptProps from '@/routes/acceptQuote/summaryAndAcceptProps';
  * Characterisation of the three read-only sections of the accept-quote
  * summary page (report recipient, delivery and return, payment details).
  *
- * The expected text was captured from the Formik-backed summary components
+ * The expected text was captured from the earlier summary components
  * and is the parity contract for the form-free replacements: the text each
- * section shows must not change when the sections stop reading Formik.
+ * section shows must not change when the sections stop reading form state.
  */
 
 const mocks = vi.hoisted(() => {

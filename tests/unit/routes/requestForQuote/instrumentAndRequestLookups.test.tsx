@@ -39,7 +39,7 @@ vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
 const wrapperInitialValues = { value: {} as InstrumentAndRequestStep };
 
 const Provider = ({ children }: { readonly children: ReactNode }) => {
-  // `values` re-syncs the form when it changes, like Formik's enableReinitialize.
+  // `values` re-syncs the form when it changes, like enableReinitialize.
   const methods = useForm<InstrumentAndRequestStep>({
     values: wrapperInitialValues.value,
   });
@@ -313,7 +313,7 @@ describe(useInstrumentAndRequestLookups, () => {
     const { form, formState } = result.current;
 
     expect(form.getValues('instrumentOrArtefactType')).toBe('');
-    // Untouched, as Formik's setFieldTouched(name, false) did.
+    // Untouched, as resetting touched does.
     expect(form.getFieldState('instrumentOrArtefactType').isTouched).toBe(
       false,
     );

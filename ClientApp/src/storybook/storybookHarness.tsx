@@ -12,13 +12,6 @@ import {
   type ComponentType,
   type ReactNode,
 } from 'react';
-import {
-  Formik,
-  Form as FormikForm,
-  type FormikConfig,
-  type FormikErrors,
-  type FormikTouched,
-} from 'formik';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   createMemoryRouter,
@@ -155,14 +148,6 @@ const baseMsalInstance = {
   ssoSilent: noopAsync,
 } as unknown as IMsalContext['instance'];
 
-export interface PortalFormikConfig {
-  initialValues: Record<string, unknown>;
-  validationSchema?: unknown;
-  initialErrors?: FormikErrors<Record<string, unknown>>;
-  initialTouched?: FormikTouched<Record<string, unknown>>;
-  initialStatus?: Record<string, unknown>;
-}
-
 export interface PortalRhfConfig {
   defaultValues: Record<string, unknown>;
 }
@@ -193,7 +178,6 @@ export interface PortalStoryParameters {
   accountDispatch?: Partial<AccountDispatchContext>;
   modalState?: Partial<ModalState>;
   modalDispatch?: Partial<ModalDispatch>;
-  formik?: PortalFormikConfig;
   /** Wraps the story in a React Hook Form `FormProvider`. */
   rhf?: PortalRhfConfig;
   /** Emits an opt-in provider lifecycle sentinel for isolation tests. */
@@ -303,34 +287,6 @@ const createMsalContext = (
     accounts: overrides?.accounts ?? defaultAccounts,
     logger: overrides?.logger ?? mockLogger,
   };
-};
-
-const withOptionalFormik = (
-  children: ReactNode,
-  formik?: PortalFormikConfig,
-) => {
-  if (!formik) {
-    return <>{children}</>;
-  }
-
-  const formikConfig: FormikConfig<Record<string, unknown>> = {
-    initialValues: formik.initialValues,
-    initialStatus: { hidden: {}, ...formik.initialStatus },
-    validationSchema: formik.validationSchema,
-    onSubmit: noop,
-    ...(formik.initialErrors === undefined
-      ? {}
-      : { initialErrors: formik.initialErrors }),
-    ...(formik.initialTouched === undefined
-      ? {}
-      : { initialTouched: formik.initialTouched }),
-  };
-
-  return (
-    <Formik {...formikConfig}>
-      <FormikForm noValidate>{children}</FormikForm>
-    </Formik>
-  );
 };
 
 const RhfStoryForm = ({
@@ -690,7 +646,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
   };
   const msalContext = createMsalContext(authenticated, portal.msalContext);
   const storyContent = withOptionalFetch(
-    withOptionalRhf(withOptionalFormik(<Story />, portal.formik), portal.rhf),
+    withOptionalRhf(<Story />, portal.rhf),
     portal.fetch,
   );
   const providerContent = portal.providerLifecycleSentinel ? (

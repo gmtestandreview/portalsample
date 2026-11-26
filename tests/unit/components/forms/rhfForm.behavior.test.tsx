@@ -207,7 +207,7 @@ describe('rhfForm shell behavior', () => {
     });
     await settle();
 
-    // Formik kept the soft schema here (quirk Q1); the shell does not.
+    // The previous shell kept the soft schema here (quirk Q1); this shell does not.
     await user.click(screen.getByLabelText('Name'));
     await user.tab();
 

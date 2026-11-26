@@ -50,7 +50,7 @@ function FormHarness({
   readonly initialValues: Record<string, unknown>;
   readonly resolver?: Resolver<Record<string, unknown>>;
 }) {
-  // `values` re-syncs on rerender, like Formik's enableReinitialize.
+  // `values` re-syncs on rerender, like enableReinitialize.
   const methods = useForm<Record<string, unknown>>({
     values: initialValues,
     ...(resolver === undefined ? {} : { resolver }),

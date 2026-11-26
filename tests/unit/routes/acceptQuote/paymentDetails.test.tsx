@@ -73,47 +73,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// Stub form-input children — they require Formik context which is outside this component's scope
-vi.mock(
-  import('@/components/Inputs/TextInput'),
-  () =>
-    ({
-      default: ({
-        inlineHelp,
-        name,
-      }: {
-        inlineHelp?: React.ReactNode;
-        name: string;
-      }) => (
-        <div data-testid={`text-input`} data-name={name}>
-          {inlineHelp}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule29>,
-);
-vi.mock(
-  import('@/components/Inputs/RadioButtonGroup'),
-  () =>
-    ({
-      default: ({ name }: { name: string }) => (
-        <div data-testid={`radio-group`} data-name={name} />
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule52>,
-);
-vi.mock(
-  '@/components/forms/HidableField',
-  () =>
-    ({
-      default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule70>,
-);
-vi.mock(
-  import('@/components/forms/CommonForms/ContactDetails'),
-  () =>
-    ({
-      default: () => <div data-testid='contact-details' />,
-    }) satisfies __ExactMockModule<__TestMockModule71>,
-);
+// Stub the spinner; the RHF form inputs render for real inside RhfForm below.
 vi.mock(
   import('@/components/BlockUISpinner'),
   () =>

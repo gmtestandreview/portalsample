@@ -263,7 +263,7 @@ describe(RhfCertificateNumberLookup, () => {
     expect.hasAssertions();
 
     // Mirrors the Variation step: parentName is set but no parentOptionsName, so no
-    // record can match the parent and the list stays empty. Preserved from Formik.
+    // record can match the parent and the list stays empty. Preserved from the earlier lookup.
     const user = setup();
     renderLookup([alpha], { parentName: 'id' }, { id: 'app-1' });
     await typeAndSettle(user, 'Alpha');

@@ -1,19 +1,16 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Field, Form, Formik, useFormikContext } from 'formik';
-import type { FormikConfig, FormikValues } from 'formik';
-import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { MemoryRouter, useLocation } from 'react-router';
 import * as Yup from 'yup';
 import Details from '@/components/forms/Details';
 import FormBanner from '@/components/forms/FormBanner';
-import HidableField from '@/components/forms/HidableField';
-import UnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt';
+import RhfUnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt';
 import type { RouteLeavingGuardProps } from '@/components/RouteLeavingGuard/types';
-import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
 import type { ValidationSchema } from '@/components/forms/types';
+import { FieldHarness } from '../inputs/rhfTestHarness';
 
 vi.mock(
   import('@/components/RouteLeavingGuard'),
@@ -37,45 +34,16 @@ vi.mock(
     }) satisfies Partial<__TestMockModule20>,
 );
 
-interface FormikHarnessProps<TValues extends FormikValues> {
-  readonly initialValues: TValues;
-  readonly initialStatus?: FormikConfig<TValues>['initialStatus'];
-  readonly initialErrors?: FormikConfig<TValues>['initialErrors'];
-  readonly initialTouched?: FormikConfig<TValues>['initialTouched'];
-  readonly validate?: FormikConfig<TValues>['validate'];
-  readonly onSubmit?: FormikConfig<TValues>['onSubmit'];
-  readonly children: React.ReactNode;
-}
+const NameInput = () => {
+  const { register } = useFormContext();
 
-interface AccountFormValues {
-  account: {
-    type: string;
-  };
-}
-
-function FormikHarness<TValues extends FormikValues>({
-  initialValues,
-  initialStatus,
-  initialErrors,
-  initialTouched,
-  validate,
-  onSubmit = vi.fn<() => void>(),
-  children,
-}: FormikHarnessProps<TValues>) {
   return (
-    <Formik
-      enableReinitialize
-      initialValues={initialValues}
-      {...(initialStatus === undefined ? {} : { initialStatus })}
-      {...(initialErrors === undefined ? {} : { initialErrors })}
-      {...(initialTouched === undefined ? {} : { initialTouched })}
-      {...(validate === undefined ? {} : { validate })}
-      onSubmit={onSubmit}
-    >
-      <Form>{children}</Form>
-    </Formik>
+    <>
+      <label htmlFor='name'>Name</label>
+      <input id='name' {...register('name')} />
+    </>
   );
-}
+};
 
 function LocationProbe() {
   const location = useLocation();
@@ -179,65 +147,16 @@ describe('form helper components', () => {
     expect(screen.getByTestId('location')).toHaveTextContent('/dashboard');
   });
 
-  it('shows and hides HidableField based on form status rules', async () => {
-    expect.hasAssertions();
-
-    const { rerender } = render(
-      <FormikHarness
-        initialValues={{ account: { type: 'business', abn: '123' } }}
-        initialStatus={{
-          hidden: {
-            account: {
-              abn: ({ account }: AccountFormValues) =>
-                account.type !== 'business',
-            },
-          },
-        }}
-      >
-        <HidableField name='account.abn'>
-          <p>ABN field</p>
-        </HidableField>
-      </FormikHarness>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('ABN field')).toBeInTheDocument();
-    });
-
-    rerender(
-      <FormikHarness
-        initialValues={{ account: { type: 'individual', abn: '123' } }}
-        initialStatus={{
-          hidden: {
-            account: {
-              abn: ({ account }: AccountFormValues) =>
-                account.type !== 'business',
-            },
-          },
-        }}
-      >
-        <HidableField name='account.abn'>
-          <p>ABN field</p>
-        </HidableField>
-      </FormikHarness>,
-    );
-
-    await waitFor(() => {
-      expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
-    });
-  });
-
-  it('passes create-account logout wording to UnsavedFormPrompt when dirty and unsubmitted', async () => {
+  it('passes create-account logout wording to RhfUnsavedFormPrompt when dirty and unsubmitted', async () => {
     expect.hasAssertions();
 
     const user = userEvent.setup();
 
     render(
-      <FormikHarness initialValues={{ name: '' }}>
-        <label htmlFor='name'>Name</label>
-        <Field id='name' name='name' />
-        <UnsavedFormPrompt path='/create-account/' />
-      </FormikHarness>,
+      <FieldHarness field='name' defaultValue=''>
+        <NameInput />
+        <RhfUnsavedFormPrompt path='/create-account/' />
+      </FieldHarness>,
     );
 
     await user.type(screen.getByLabelText('Name'), 'Alex');
@@ -258,11 +177,10 @@ describe('form helper components', () => {
     const user = userEvent.setup();
 
     render(
-      <FormikHarness initialValues={{ name: '' }}>
-        <label htmlFor='name'>Name</label>
-        <Field id='name' name='name' />
-        <UnsavedFormPrompt path='/create-contact/' />
-      </FormikHarness>,
+      <FieldHarness field='name' defaultValue=''>
+        <NameInput />
+        <RhfUnsavedFormPrompt path='/create-contact/' />
+      </FieldHarness>,
     );
 
     await user.type(screen.getByLabelText('Name'), 'Alex');
@@ -273,43 +191,13 @@ describe('form helper components', () => {
     );
   });
 
-  it('blocks UnsavedFormPrompt for server rejected clean forms and allows clean valid forms', async () => {
+  it('allows a clean, unsubmitted form to leave', () => {
     expect.hasAssertions();
 
-    const { rerender, unmount } = render(
-      <FormikHarness initialValues={{ name: '' }}>
-        <UnsavedFormPrompt />
-      </FormikHarness>,
-    );
-
-    expect(screen.getByTestId('route-leaving-guard')).toHaveAttribute(
-      'data-when',
-      'false',
-    );
-
-    rerender(
-      <FormikHarness
-        initialValues={{ name: '' }}
-        validate={() => ({ name: 'Server rejected' })}
-        onSubmit={vi.fn<() => void>()}
-      >
-        <AutoSubmit />
-        <UnsavedFormPrompt />
-      </FormikHarness>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('route-leaving-guard')).toHaveAttribute(
-        'data-when',
-        'true',
-      );
-    });
-
-    unmount();
     render(
-      <FormikHarness initialValues={{ name: '' }}>
-        <UnsavedFormPrompt />
-      </FormikHarness>,
+      <FieldHarness field='name' defaultValue=''>
+        <RhfUnsavedFormPrompt />
+      </FieldHarness>,
     );
 
     expect(screen.getByTestId('route-leaving-guard')).toHaveAttribute(
@@ -319,24 +207,7 @@ describe('form helper components', () => {
   });
 });
 
-function AutoSubmit() {
-  const { submitForm } = useFormikContext();
-  useEffect(() => {
-    void submitForm();
-  }, [submitForm]);
-
-  return null;
-}
-
 describe('form utility helpers', () => {
-  it('counts top-level Formik error keys only when the value is object-like', () => {
-    expect.hasAssertions();
-    expect(countOfErrors({ firstName: 'Required', lastName: 'Required' })).toBe(
-      2,
-    );
-    expect(countOfErrors('not an object' as any)).toBe(0);
-  });
-
   it('detects hidden fields from direct, group, ancestor, and callback rules', () => {
     expect.hasAssertions();
 

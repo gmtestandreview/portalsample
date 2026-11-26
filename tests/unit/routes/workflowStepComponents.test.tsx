@@ -55,23 +55,6 @@ const resetWorkflowStepComponentsMocks = () => {
   } satisfies AuthenticationResult);
   mocks.useAccountState.mockReturnValue({ details: accountDetails });
   mocks.dashboardNotification = null;
-  mocks.inputChangeHandlers.clear();
-  mocks.formikValues = {
-    sourceReferenceId: 'SOURCE-1',
-    isCorrectBranchOrLocation: 'No',
-    organisationCount: '2',
-    businessOrTradingName: 'Trading',
-    branchOrLocationName: 'Branch',
-    name: 'National Measurement Institute',
-    abn: '12345678901',
-    currentContact: {
-      title: 'Dr',
-      firstName: 'Alex',
-      lastName: 'Tester',
-      email: 'alex@example.test',
-    },
-    measurementCategory: 'measurement-1',
-  };
   mocks.getLookup
     .mockResolvedValueOnce([
       { id: 'measurement-1', label: 'Mass' },
@@ -146,10 +129,6 @@ describe('workflow step components', () => {
     expect.hasAssertions();
 
     resetWorkflowStepComponentsMocks();
-    delete mocks.formikValues['businessOrTradingName'];
-    delete mocks.formikValues['branchOrLocationName'];
-    delete mocks.formikValues['organisationCount'];
-    delete mocks.formikValues['abn'];
 
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')

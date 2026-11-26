@@ -1,16 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Formik } from 'formik';
-import type { FormikConfig } from 'formik';
-import AutoSuggest from '@/components/Inputs/AutoSuggest';
-import AutoSuggestContainer from '@/components/Inputs/AutoSuggest/AutoSuggestContainer';
+import { FormProvider, useForm } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
+import RhfAutoSuggest from '@/components/Inputs/RhfAutoSuggest';
+import RhfAutoSuggestContainer from '@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer';
 import type {
   AutoSuggestContainerProps,
   AutoSuggestProps,
 } from '@/components/Inputs/AutoSuggest/types';
-import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
+import RhfOrganisationNameLookup from '@/components/Inputs/RhfOrganisationNameLookup';
 import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
+import { FieldHarness, createFormHandle } from './rhfTestHarness';
 
 /**
  * Resolves the text React Aria's own label relationship points at.
@@ -34,28 +35,26 @@ const reactAriaLabelText = (control: HTMLElement): string | null => {
     .trim();
 };
 
-const renderWithFormik = (
-  children: React.ReactNode,
-  initialValues: Record<string, unknown> = {},
-  fieldState: {
-    initialErrors?: Record<string, string>;
-    initialTouched?: Record<string, boolean>;
-  } = {},
-) =>
-  render(
-    <Formik
-      initialValues={initialValues}
-      {...(fieldState.initialErrors === undefined
-        ? {}
-        : { initialErrors: fieldState.initialErrors })}
-      {...(fieldState.initialTouched === undefined
-        ? {}
-        : { initialTouched: fieldState.initialTouched })}
-      onSubmit={vi.fn<FormikConfig<Record<string, unknown>>['onSubmit']>()}
-    >
-      {children}
-    </Formik>,
+const Harness = ({
+  children,
+  defaultValues,
+}: Readonly<{
+  children: React.ReactNode;
+  defaultValues: Record<string, unknown>;
+}>) => {
+  const methods = useForm({ defaultValues });
+
+  return (
+    <FormProvider {...methods}>
+      <form>{children}</form>
+    </FormProvider>
   );
+};
+
+const renderWithForm = (
+  children: React.ReactNode,
+  defaultValues: Record<string, unknown> = {},
+) => render(<Harness defaultValues={defaultValues}>{children}</Harness>);
 
 const suburbOptions = [
   { id: 'suburb-option-sydney', displayText: 'Sydney NSW', value: 'sydney' },
@@ -107,8 +106,8 @@ describe('combobox accessibility', () => {
 
     cleanup();
 
-    renderWithFormik(
-      <AutoSuggestContainer
+    renderWithForm(
+      <RhfAutoSuggestContainer
         name='suburb'
         label='Suburb'
         options={[
@@ -157,8 +156,8 @@ describe('combobox accessibility', () => {
 
     cleanup();
 
-    renderWithFormik(
-      <OrganisationNameLookup
+    renderWithForm(
+      <RhfOrganisationNameLookup
         name='organisationName'
         label='Organisation name'
         optionsFieldName='name'
@@ -173,30 +172,31 @@ describe('combobox accessibility', () => {
     );
 
     const user = userEvent.setup();
-    // Not a React Aria owner: this combobox is a hand-rolled Bootstrap
-    // ListGroup on a native input, so the native label association is the
-    // correct naming mechanism and `reactAriaLabelText` does not apply.
+    // The migrated lookup renders through the React Aria ComboBox, so the
+    // widget itself carries the name rather than a native label echo.
     const combobox = screen.getByRole('combobox', {
       name: 'Organisation name',
     });
 
     expect(combobox.tagName).toBe('INPUT');
+    expect(reactAriaLabelText(combobox)).toBe('Organisation name');
 
     await user.type(combobox, 'ac');
-    await screen.findByRole('listbox', { name: 'Suggested options' });
+    await screen.findByRole('listbox', {
+      name: 'Suggestions Organisation name',
+    });
     await user.keyboard('{ArrowDown}');
+
+    const firstOption = screen.getByRole('option', {
+      name: /ACME Calibration/,
+    });
 
     await waitFor(() => {
       expect(combobox).toHaveAttribute('aria-expanded', 'true');
-      expect(combobox).toHaveAttribute(
-        'aria-activedescendant',
-        'organisationName-option-0',
-      );
+      expect(combobox).toHaveAttribute('aria-activedescendant', firstOption.id);
     });
 
-    expect(
-      screen.getByRole('option', { name: /ACME Calibration/ }),
-    ).toHaveAttribute('aria-selected', 'true');
+    expect(firstOption).toHaveClass('highlighted');
   });
 
   it.each([
@@ -220,8 +220,8 @@ describe('combobox accessibility', () => {
     ({ overrides, visibleMarker }) => {
       expect.hasAssertions();
 
-      renderWithFormik(
-        <AutoSuggestContainer<string> {...baseSuburbProps} {...overrides} />,
+      renderWithForm(
+        <RhfAutoSuggestContainer<string> {...baseSuburbProps} {...overrides} />,
         {
           suburb: 'Syd',
         },
@@ -244,8 +244,8 @@ describe('combobox accessibility', () => {
       .fn<NonNullable<AutoSuggestProps<string>['getOptions']>>()
       .mockResolvedValue(suburbOptions);
 
-    renderWithFormik(
-      <AutoSuggest<string>
+    renderWithForm(
+      <RhfAutoSuggest<string>
         name='suburb'
         label='Suburb'
         getOptions={getOptions}
@@ -277,23 +277,34 @@ describe('combobox accessibility', () => {
     expectCancelledCombobox(combobox);
   });
 
-  it('keeps the React Aria label while the field carries a validation error', () => {
+  it('keeps the React Aria label while the field carries a validation error', async () => {
     expect.hasAssertions();
 
     cleanup();
 
-    renderWithFormik(
-      <AutoSuggestContainer<string>
-        {...baseSuburbProps}
-        searchTerm=''
-        inlineHelp='Start typing a suburb'
-      />,
-      { suburb: '' },
-      {
-        initialErrors: { suburb: 'Suburb is required' },
-        initialTouched: { suburb: true },
+    const resolver: Resolver<{ suburb: string }> = () => ({
+      values: {},
+      errors: {
+        suburb: { type: 'required', message: 'Suburb is required' },
       },
+    });
+    const form = createFormHandle<{ suburb: string }>();
+
+    render(
+      <FieldHarness
+        field='suburb'
+        defaultValue=''
+        resolver={resolver}
+        form={form}
+      >
+        <RhfAutoSuggestContainer<string>
+          {...baseSuburbProps}
+          searchTerm=''
+          inlineHelp='Start typing a suburb'
+        />
+      </FieldHarness>,
     );
+    await form.submit();
 
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });
 

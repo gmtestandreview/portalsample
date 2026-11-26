@@ -1,17 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Formik } from 'formik';
 import CustomDateInput from '@/components/Inputs/DatePicker/CustomDateInput';
 
 const renderInput = (
   props: Partial<React.ComponentProps<typeof CustomDateInput>> = {},
 ) =>
   render(
-    <Formik
-      initialValues={{ calibrationDate: '' }}
-      onSubmit={vi.fn<() => void>()}
-    >
+    <>
       <div id='date-wrapper'>
         <CustomDateInput
           calendarButtonTitle='Calibration date'
@@ -25,7 +21,7 @@ const renderInput = (
           {...props}
         />
       </div>
-    </Formik>,
+    </>,
   );
 
 const expectCalendarFocusState = (input: HTMLElement) => {
@@ -168,10 +164,7 @@ describe('customDateInput accessibility', () => {
     ).toBeDisabled();
 
     rerender(
-      <Formik
-        initialValues={{ calibrationDate: '' }}
-        onSubmit={vi.fn<() => void>()}
-      >
+      <>
         <div id='date-wrapper'>
           <CustomDateInput
             calendarButtonTitle='Calibration date'
@@ -185,7 +178,7 @@ describe('customDateInput accessibility', () => {
             wrapperUUID='date-wrapper'
           />
         </div>
-      </Formik>,
+      </>,
     );
 
     expect(

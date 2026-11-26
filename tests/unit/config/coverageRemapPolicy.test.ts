@@ -128,7 +128,7 @@ const allowedReviewedPatterns = new Set([
   'ClientApp/src/components/{Accordion,Alert,Pagination,RouteLeavingGuard,SteppedNavigation,SummaryDisplay}/types.ts',
   'ClientApp/src/components/Inputs/{AddressLookup,AutoSuggest,Checkbox,DatePicker,RadioButton,RadioButtonGroup,SelectInput,TextAreaInput}/types.ts',
   'ClientApp/src/components/SearchFilter/{filterMenuProps,searchBoxProps}.ts',
-  'ClientApp/src/components/forms/{types.ts,Details/types.ts,ErrorSummary/types.ts,FormBanner/types.ts,FormikForm/types.ts,HidableField/types.ts}',
+  'ClientApp/src/components/forms/{types.ts,Details/types.ts,ErrorSummary/types.ts,FormBanner/types.ts,HidableField/types.ts}',
 ]);
 
 describe('unit coverage denominator', () => {

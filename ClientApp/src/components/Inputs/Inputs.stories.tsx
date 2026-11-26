@@ -1,22 +1,22 @@
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
-import TextInput from './TextInput';
-import SelectInput from './SelectInput';
-import Checkbox from './Checkbox';
-import NumberInput from './NumberInput';
-import TextAreaInput from './TextAreaInput';
-import RadioButtonGroup from './RadioButtonGroup';
+import RhfTextInput from './RhfTextInput';
+import RhfSelectInput from './RhfSelectInput';
+import RhfCheckbox from './RhfCheckbox';
+import RhfNumberInput from './RhfNumberInput';
+import RhfTextAreaInput from './RhfTextAreaInput';
+import RhfRadioButtonGroup from './RhfRadioButtonGroup';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
 const meta = preview.meta({
   title: 'Components/Inputs',
-  component: TextInput,
+  component: RhfTextInput,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'padded',
     portal: {
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           organisationName: 'Storybook Organisation',
           measurementCategory: 'electrical',
           includeCertificate: true,
@@ -37,12 +37,12 @@ export const CommonFieldSet = meta.story({
   },
   render: () => (
     <div style={{ minWidth: 720 }}>
-      <TextInput
+      <RhfTextInput
         label='Organisation name'
         name='organisationName'
         inlineHelp='Used on quotations and measurement reports.'
       />
-      <SelectInput
+      <RhfSelectInput
         name='measurementCategory'
         label='Measurement category'
         options={[
@@ -51,7 +51,7 @@ export const CommonFieldSet = meta.story({
           { displayText: 'Temperature', value: 'temperature' },
         ]}
       />
-      <RadioButtonGroup
+      <RhfRadioButtonGroup
         legend='Invoice contact'
         name='contactOption'
         id='invoice-contact-option'
@@ -68,17 +68,17 @@ export const CommonFieldSet = meta.story({
           },
         ]}
       />
-      <Checkbox
+      <RhfCheckbox
         label='Include measurement certificate'
         name='includeCertificate'
       />
-      <NumberInput
+      <RhfNumberInput
         label='Number of items'
         name='quantity'
         decimalScale={0}
         allowNegative={false}
       />
-      <TextAreaInput
+      <RhfTextAreaInput
         label='Testing/calibration requirements'
         name='requirements'
         rows={4}

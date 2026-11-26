@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Formik } from 'formik';
 import RouteLeavingGuard from '@/components/RouteLeavingGuard';
 
 const resetBlocker = vi.fn<() => void>();
@@ -64,11 +63,7 @@ describe('routeLeavingGuard unblocked actions', () => {
   it('ignores close and confirm actions when navigation is not blocked', () => {
     expect.hasAssertions();
 
-    render(
-      <Formik initialValues={{}} onSubmit={vi.fn<() => void>()}>
-        <RouteLeavingGuard />
-      </Formik>,
-    );
+    render(<RouteLeavingGuard />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Hide modal' }));
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));

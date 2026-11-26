@@ -163,7 +163,7 @@ describe('storybook documentation architecture', () => {
     );
 
     expect(autoSuggestStory).toMatch(
-      /subcomponents:\s*\{\s*AutoSuggestContainer\s*\}/,
+      /subcomponents:\s*\{\s*RhfAutoSuggestContainer\s*\}/,
     );
     expect(autoSuggestStory).toMatch(
       /name:\s*['"]Loading \(AutoSuggestContainer\)['"]/,

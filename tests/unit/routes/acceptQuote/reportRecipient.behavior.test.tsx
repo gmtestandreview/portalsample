@@ -77,16 +77,6 @@ vi.mock(
 
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
-// The edit form renders the RHF twin; the summary branch keeps the Formik one.
-vi.mock(
-  '@/components/Inputs/AddressLookup',
-  () =>
-    ({
-      default: ({ label }: { label: string }) => (
-        <div data-testid='address-lookup'>{label}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule31>,
-);
 vi.mock(
   '@/components/Inputs/RhfAddressLookup',
   () =>

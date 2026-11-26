@@ -28,7 +28,7 @@ export const APPLICATION_VENDOR_CHUNK_GROUPS = [
   },
   {
     name: 'forms',
-    test: /[\\/]node_modules[\\/](formik|yup)[\\/]/,
+    test: /[\\/]node_modules[\\/]yup[\\/]/,
   },
   {
     name: 'ui',
@@ -36,7 +36,7 @@ export const APPLICATION_VENDOR_CHUNK_GROUPS = [
   },
   {
     name: 'utilities',
-    // Lodash remains a transitive runtime dependency of Formik and Slate.
+    // Lodash remains a transitive runtime dependency of Slate.
     test: /[\\/]node_modules[\\/](lodash|date-fns)[\\/]/,
   },
 ] as const satisfies readonly VendorChunkGroup[];

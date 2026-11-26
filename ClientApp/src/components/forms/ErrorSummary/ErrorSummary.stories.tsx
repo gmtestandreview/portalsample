@@ -7,13 +7,6 @@ const meta = preview.meta({
   title: 'Components/Forms/ErrorSummary',
   component: ErrorSummary,
   decorators: [withPortalProviders],
-  parameters: {
-    portal: {
-      formik: {
-        initialValues: {},
-      },
-    },
-  },
 });
 
 /**

@@ -386,10 +386,6 @@ export const QuotationSummaryStep = meta.story({
     docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/quotation-summary'],
-      rhf: null,
-      formik: {
-        initialValues: {},
-      },
     },
   },
   play: async ({ canvasElement }) => {

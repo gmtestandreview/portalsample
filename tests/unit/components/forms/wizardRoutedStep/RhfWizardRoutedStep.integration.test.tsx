@@ -13,23 +13,25 @@ import {
   AccountDispatchCtx,
   type AccountDispatchContext,
 } from '../../../../../ClientApp/src/authentication/accountContext';
-import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep';
+import RhfWizardRoutedStep from '../../../../../ClientApp/src/components/forms/WizardForm/RhfWizardRoutedStep';
+import type { RhfWizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/RhfWizardRoutedStep';
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
-import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
-import type { DiscardProps } from '../../../../../ClientApp/src/components/forms/types';
-import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
+import type {
+  DiscardProps,
+  FormValues,
+} from '../../../../../ClientApp/src/components/forms/types';
+import RhfTextInput from '../../../../../ClientApp/src/components/Inputs/RhfTextInput';
 import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
-import { type FormikValues } from 'formik';
 import { getDashboardNotification } from '../../../../../ClientApp/src/storage/notification';
 
 type AppLogger = typeof AppLoggerModule;
 type SaveHandler = NonNullable<
-  WizardRoutedStepProps<FormikValues>['onSaveAndNext']
+  RhfWizardRoutedStepProps<FormValues>['onSaveAndNext']
 >;
 type ExitHandler = NonNullable<
-  WizardRoutedStepProps<FormikValues>['onSaveAndExit']
+  RhfWizardRoutedStepProps<FormValues>['onSaveAndExit']
 >;
-type LoadStepHandler = WizardRoutedStepProps<FormikValues>['loadStepValues'];
+type LoadStepHandler = RhfWizardRoutedStepProps<FormValues>['loadStepValues'];
 import { defined } from '../../../helpers/defined';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
@@ -142,7 +144,7 @@ function makeStepElementAt(location: string, title: string) {
 }
 
 function makeRouter(
-  propsOverride: Partial<WizardRoutedStepProps<FormikValues>>,
+  propsOverride: Partial<RhfWizardRoutedStepProps<FormValues>>,
   extraRoutes: { path: string; element: React.ReactNode }[] = [],
   accountState = mockStateValue,
   accountDispatch: typeof mockDispatch | null = mockDispatch,
@@ -150,7 +152,7 @@ function makeRouter(
   const defaultStatuses: FormStepStatusDto[] = [
     { status: FormStepStatus.NotStarted },
   ];
-  const defaultProps: WizardRoutedStepProps<FormikValues> = {
+  const defaultProps: RhfWizardRoutedStepProps<FormValues> = {
     title: 'Test Step',
     location: '/step-1',
     url: '',
@@ -171,7 +173,7 @@ function makeRouter(
         element: (
           <AccountStateCtx.Provider value={accountState}>
             <AccountDispatchCtx.Provider value={accountDispatch}>
-              <WizardRoutedStep {...defaultProps} />
+              <RhfWizardRoutedStep {...defaultProps} />
             </AccountDispatchCtx.Provider>
           </AccountStateCtx.Provider>
         ),
@@ -273,7 +275,7 @@ describe('wizardRoutedStep — error navigation', () => {
             >
               Change redirect callback
             </button>
-            <WizardRoutedStep
+            <RhfWizardRoutedStep
               title='Test Step'
               location='/step-1'
               url=''
@@ -340,7 +342,7 @@ describe('wizardRoutedStep — error navigation', () => {
             >
               Change load callback
             </button>
-            <WizardRoutedStep
+            <RhfWizardRoutedStep
               title='Test Step'
               location='/step-1'
               url=''
@@ -407,7 +409,7 @@ describe('wizardRoutedStep — error navigation', () => {
             >
               Enter copied instrument step
             </button>
-            <WizardRoutedStep
+            <RhfWizardRoutedStep
               title='Instrument and request'
               location='/instrument-and-request'
               url='/request-for-quote/RFQ-2023-009012-COPY'
@@ -426,7 +428,7 @@ describe('wizardRoutedStep — error navigation', () => {
                   stepStatuses={[]}
                   loadStepValues={() => Promise.resolve({ stepValues: {} })}
                 >
-                  <TextInput name='organisation' label='Organisation' />
+                  <RhfTextInput name='organisation' label='Organisation' />
                 </WizardStep>,
                 <WizardStep
                   key='instrument'
@@ -436,7 +438,7 @@ describe('wizardRoutedStep — error navigation', () => {
                   stepStatuses={[]}
                   loadStepValues={() => Promise.resolve({ stepValues: {} })}
                 >
-                  <TextInput name='manufacturer' label='Manufacturer' />
+                  <RhfTextInput name='manufacturer' label='Manufacturer' />
                 </WizardStep>,
               ]}
               currentStepIndex={stepIndex}
@@ -664,7 +666,7 @@ describe('wizardRoutedStep — error navigation', () => {
           element: (
             <AccountStateCtx.Provider value={mockStateValue}>
               <AccountDispatchCtx.Provider value={mockDispatch}>
-                <WizardRoutedStep
+                <RhfWizardRoutedStep
                   title='Second'
                   location='/step-2'
                   url=''

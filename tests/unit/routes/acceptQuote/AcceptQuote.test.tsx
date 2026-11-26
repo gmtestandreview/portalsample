@@ -132,16 +132,6 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/WizardForm') as unknown as string,
-  () =>
-    ({
-      default: ({ children }: { children: React.ReactNode }) => (
-        <div data-testid='wizard-form'>{children}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule60>,
-);
-
-vi.mock(
   import('../../../../ClientApp/src/components/forms/WizardForm/RhfWizardRoutedStep') as unknown as string,
   () =>
     ({

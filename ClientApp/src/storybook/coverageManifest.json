@@ -1293,20 +1293,6 @@
     },
     {
       "source": "ClientApp/src/components/forms/ErrorSummary/types.ts",
-      "export": "FormikErrorsSummaryProps",
-      "classification": "nonvisual",
-      "owner": "FormikErrorsSummaryProps",
-      "reason": "This export is an interface-only prop contract for Formik error-summary behavior and has no runtime component or independently renderable Storybook surface.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration contains only the disable-linked-error option; rendered error-summary behavior belongs to its consuming component.",
-        "reviewedSourceDigest": "sha256:9d166f7f407959b35b41384a625dcf54896c46433834f07f46467d26ecb8e77f"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/forms/ErrorSummary/types.ts",
       "export": "ErrorSummaryProps",
       "classification": "nonvisual",
       "owner": "ErrorSummaryProps",
@@ -1331,20 +1317,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains only banner text, visibility flags, and discard prop types; the consuming FormBanner component owns rendered behavior.",
         "reviewedSourceDigest": "sha256:ac537293db96a07fa77086d8ce68cfba1b21f586d894280f36132bb0e0de5119"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/forms/FormikForm/types.ts",
-      "export": "FormikFormProps",
-      "classification": "nonvisual",
-      "owner": "FormikFormProps",
-      "reason": "This export is an interface-only prop contract for FormikForm and has no runtime component or independently renderable Storybook surface.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration contains Formik values, callbacks, children, banner, discard, and visibility prop types; rendered behavior belongs to the FormikForm implementation.",
-        "reviewedSourceDigest": "sha256:9463113098a6aeeedff78bf17eaf7b893f4c9f93ab0f37879252d37272215586"
       }
     },
     {
@@ -1488,20 +1460,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/CommonForms/ContactDetails/index.tsx",
-      "export": "ContactDetailsProps",
-      "classification": "nonvisual",
-      "owner": "ContactDetailsProps",
-      "reason": "This export is an interface-only prop contract for contact-details inputs and has no runtime component or independently renderable Storybook surface.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration is an interface-only input contract; the ContactDetails implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:b98cd304b60e87b99bc80c88f942249d3cb0b836c3e82bfab6c79d3b4442e36a"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/IntentButton/index.tsx",
       "export": "IntentButtonChildren",
       "classification": "nonvisual",
@@ -1628,20 +1586,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/useFormikRhfBridge.ts",
-      "export": "BridgedValues",
-      "classification": "nonvisual",
-      "owner": "BridgedValues",
-      "reason": "This export is a type-only values contract for the Formik/RHF bridge and has no runtime component or independently renderable Storybook surface.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source export is a type-only field-values intersection that adds the wizard save flag; the bridge hook owns runtime behavior.",
-        "reviewedSourceDigest": "sha256:2d7317dd70cad1cd49d1f283bb874e38e21fbee4af0c36a538951eb17c145ff1"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/formPath.ts",
       "export": "getIn",
       "classification": "nonvisual",
@@ -1651,7 +1595,7 @@
       "states": [],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source export delegates nested path lookup to Formik and returns data only; form components own rendered behavior.",
+        "rationale": "The source export performs nested path lookup natively and returns data only; form components own rendered behavior.",
         "reviewedSourceDigest": "sha256:d29059ebd91024aa03ef94b00498ba237e7914b78b218fadc3b143010f32693d"
       }
     },
@@ -1665,7 +1609,7 @@
       "states": [],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source export delegates immutable nested updates to Formik and returns data only; form components own rendered behavior.",
+        "rationale": "The source export performs immutable nested updates natively and returns data only; form components own rendered behavior.",
         "reviewedSourceDigest": "sha256:d29059ebd91024aa03ef94b00498ba237e7914b78b218fadc3b143010f32693d"
       }
     },
@@ -1768,20 +1712,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/useFormikRhfBridge.ts",
-      "export": "useFormikRhfBridge",
-      "classification": "nonvisual",
-      "owner": "useFormikRhfBridge",
-      "reason": "This export is a bridge hook with no standalone rendered output or independently renderable Storybook surface.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source export coordinates Formik and React Hook Form state and returns form methods; consuming form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:2d7317dd70cad1cd49d1f283bb874e38e21fbee4af0c36a538951eb17c145ff1"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/RhfForm/index.tsx",
       "export": "useRhfFormApi",
       "classification": "nonvisual",
@@ -1821,20 +1751,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export tests whether a value is a non-null object and returns a boolean; form components own rendered behavior.",
         "reviewedSourceDigest": "sha256:d29059ebd91024aa03ef94b00498ba237e7914b78b218fadc3b143010f32693d"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/forms/RhfHidableField/hiddenRulesContext.tsx",
-      "export": "useHiddenRules",
-      "classification": "nonvisual",
-      "owner": "useHiddenRules",
-      "reason": "This export is a context-access hook with no standalone rendered output or independently renderable Storybook surface.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source export reads the current hidden-field rules and returns data only; RhfHidableField owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:81839e7dbeb89aee6be1c4c884cc518ace105c69fa1c549a93c58c19e1ba9602"
       }
     },
     {
@@ -2342,62 +2258,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/Inputs/CertificateNumberLookup/index.tsx",
-      "export": "CertificateNumberLookupProps",
-      "classification": "nonvisual",
-      "owner": "CertificateNumberLookupProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "claude-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
-        "reviewedSourceDigest": "sha256:1cc10b5aa191fb03cb53b62d29ec053fd29be432e429d66986d5704be8268bc1"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/Checkbox/types.ts",
-      "export": "CheckboxProps",
-      "classification": "nonvisual",
-      "owner": "CheckboxProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:4800f4c13e98c279b9b7462a33ad3e5312c22dc4a038329716a1158db3ddd9a9"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/CheckboxGroup/types.ts",
-      "export": "CheckboxGroupProps",
-      "classification": "nonvisual",
-      "owner": "CheckboxGroupProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:4caf747ab7c095254a12b44569f967ee3e53d8c98c7d2d3f62ea1f05cbefd9c9"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/CheckboxGroup/types.ts",
-      "export": "CheckboxOption",
-      "classification": "nonvisual",
-      "owner": "CheckboxOption",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:4caf747ab7c095254a12b44569f967ee3e53d8c98c7d2d3f62ea1f05cbefd9c9"
-      }
-    },
-    {
       "source": "ClientApp/src/components/Inputs/DatePicker/types.ts",
       "export": "CustomDatePickerProps",
       "classification": "nonvisual",
@@ -2496,20 +2356,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/Inputs/OrganisationNameLookup/index.tsx",
-      "export": "OrganisationNameLookupProps",
-      "classification": "nonvisual",
-      "owner": "OrganisationNameLookupProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "claude-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
-        "reviewedSourceDigest": "sha256:4a81fcb1147e7779963b37699b298c0223dedb43f5975d941177159cf64ebcc0"
-      }
-    },
-    {
       "source": "ClientApp/src/components/Inputs/RadioButton/types.ts",
       "export": "RadioButtonProps",
       "classification": "nonvisual",
@@ -2521,20 +2367,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
         "reviewedSourceDigest": "sha256:f7c77eca14a96b6b3fe01b953a22f181b2d4c0d4d4bc97c5fcf8d0927a0c0855"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/RadioButtonGroup/types.ts",
-      "export": "RadioButtonGroupProps",
-      "classification": "nonvisual",
-      "owner": "RadioButtonGroupProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:163094011cef33b3ee932ca1a34de720758528b78401f7127015f04920587b1b"
       }
     },
     {
@@ -2661,62 +2493,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
         "reviewedSourceDigest": "sha256:8a1bfe806e85f6cba9ab1c4755d6cd6c87eabc83d299c096568111b310064a8c"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/TextAreaInput/types.ts",
-      "export": "TextAreaInputProps",
-      "classification": "nonvisual",
-      "owner": "TextAreaInputProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:79a76dda830ca0d698229af4145ae5dd71c118f9a4407764c083e8f7c4d7eac4"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/TextInput/index.tsx",
-      "export": "TextInputProps",
-      "classification": "nonvisual",
-      "owner": "TextInputProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:db67cc461f6a235fb23d32d81b3e24ab7ad6acf58522632b49b249867bb1b723"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/TextReadOnly/index.tsx",
-      "export": "FormatInputValueFunction",
-      "classification": "nonvisual",
-      "owner": "FormatInputValueFunction",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:b2ea85f2e483f1aa43b3c0ad6b88aaf0a66349b4d90c74f5486b3a5ac6f4a0b8"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/TextReadOnly/index.tsx",
-      "export": "TextReadOnlyProps",
-      "classification": "nonvisual",
-      "owner": "TextReadOnlyProps",
-      "reason": "The source inventory classifies this exported declaration as nonvisual (nonvisual); it is a type-level contract with no independently renderable Storybook surface or UI state claim.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:b2ea85f2e483f1aa43b3c0ad6b88aaf0a66349b4d90c74f5486b3a5ac6f4a0b8"
       }
     },
     {
@@ -4512,141 +4288,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/Inputs/AddressLookup/ManualAddressInput.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "AddressLookup",
-      "reason": "The Default story directly imports this export and its play function asserts the exact \"1 Main Street, Canberra ACT 2600 (1 of 2)\" marker.",
-      "docsOwnerId": "components-inputs-addresslookup--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Default story exposes the observable \"1 Main Street, Canberra ACT 2600 (1 of 2)\" state or behavior for AddressLookup.",
-          "storyFile": "ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx",
-          "storyExport": "Default",
-          "storyId": "components-inputs-addresslookup--default",
-          "assertionFile": "ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx",
-          "assertionExport": "Default.play",
-          "assertionMarker": "1 Main Street, Canberra ACT 2600 (1 of 2)",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-addresslookup--default at distance 1 for this source, and the generated index resolves components-inputs-addresslookup--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:62dbadc5f43bf25602cb1964ebb5f92f17869cf7cbab06975a6598f52142283f"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/AddressLookup/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "AddressLookup",
-      "reason": "The Default story directly imports this export and its play function asserts the exact \"1 Main Street, Canberra ACT 2600 (1 of 2)\" marker.",
-      "docsOwnerId": "components-inputs-addresslookup--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Default story exposes the observable \"1 Main Street, Canberra ACT 2600 (1 of 2)\" state or behavior for AddressLookup.",
-          "storyFile": "ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx",
-          "storyExport": "Default",
-          "storyId": "components-inputs-addresslookup--default",
-          "assertionFile": "ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx",
-          "assertionExport": "Default.play",
-          "assertionMarker": "1 Main Street, Canberra ACT 2600 (1 of 2)",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-addresslookup--default at distance 1 for this source, and the generated index resolves components-inputs-addresslookup--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:409b8b4d2ad98853dfca840e24b67081a60b1eb74063df5122660785942a882a"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "AttachmentItemNew",
-      "reason": "The Editable story directly imports this export and its play function asserts the exact \"calibration-certificate.pdf\" marker.",
-      "docsOwnerId": "components-inputs-attachment-attachmentitemnew--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Editable story exposes the observable \"calibration-certificate.pdf\" state or behavior for AttachmentItemNew.",
-          "storyFile": "ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.stories.tsx",
-          "storyExport": "Editable",
-          "storyId": "components-inputs-attachment-attachmentitemnew--editable",
-          "assertionFile": "ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.stories.tsx",
-          "assertionExport": "Editable.play",
-          "assertionMarker": "calibration-certificate.pdf",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-attachment-attachmentitemnew--editable at distance 1 for this source, and the generated index resolves components-inputs-attachment-attachmentitemnew--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:a44b9a6da9338554807f9cd11b69abc5b10f01073266fd39f444427f872e900f"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/Attachment/index-new.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "AttachmentNew",
-      "reason": "The Documents Without Ids story directly imports this export and its play function asserts the exact \"certificate.pdf\" marker.",
-      "docsOwnerId": "components-inputs-attachment-attachmentnew--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Documents Without Ids story exposes the observable \"certificate.pdf\" state or behavior for AttachmentNew.",
-          "storyFile": "ClientApp/src/components/Inputs/Attachment/index-new.stories.tsx",
-          "storyExport": "DocumentsWithoutIds",
-          "storyId": "components-inputs-attachment-attachmentnew--documents-without-ids",
-          "assertionFile": "ClientApp/src/components/Inputs/Attachment/index-new.stories.tsx",
-          "assertionExport": "DocumentsWithoutIds.play",
-          "assertionMarker": "certificate.pdf",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-attachment-attachmentnew--documents-without-ids at distance 1 for this source, and the generated index resolves components-inputs-attachment-attachmentnew--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:e2ae8428b92dcbd47b90b66fdc80123b91734a2be65828572c3603cd5955f7e0"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "AutoSuggest",
-      "reason": "The Empty State story directly imports this export and its play function asserts the exact \"combobox\" marker.",
-      "docsOwnerId": "components-inputs-autosuggest--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Empty State story exposes the observable \"combobox\" state or behavior for AutoSuggest.",
-          "storyFile": "ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx",
-          "storyExport": "EmptyState",
-          "storyId": "components-inputs-autosuggest--empty-state",
-          "assertionFile": "ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx",
-          "assertionExport": "EmptyState.play",
-          "assertionMarker": "xyz",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-autosuggest--empty-state at distance 1 for this source, and the generated index resolves components-inputs-autosuggest--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:dbaf54b560cc89da62b078eeb271ddb867096d38a02609b97ddc85ec79561b4e"
-      }
-    },
-    {
       "source": "ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestOption.tsx",
       "export": "default",
       "classification": "direct",
@@ -4671,60 +4312,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-autosuggest-autosuggestoption--default at distance 1 for this source, and the generated index resolves components-inputs-autosuggest-autosuggestoption--documentation as the matching docs owner.",
         "reviewedSourceDigest": "sha256:ca2ca6d9a8a3ad44355310a3b4e198c6c82127f0680c9554bcc3da0a95f946ba"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/AutoSuggest/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "AutoSuggest",
-      "reason": "The Empty State story directly imports this export and its play function asserts the exact \"combobox\" marker.",
-      "docsOwnerId": "components-inputs-autosuggest--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Empty State story exposes the observable \"combobox\" state or behavior for AutoSuggest.",
-          "storyFile": "ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx",
-          "storyExport": "EmptyState",
-          "storyId": "components-inputs-autosuggest--empty-state",
-          "assertionFile": "ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx",
-          "assertionExport": "EmptyState.play",
-          "assertionMarker": "xyz",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-autosuggest--empty-state at distance 1 for this source, and the generated index resolves components-inputs-autosuggest--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:be006252a56cf8a1777ca4e88b3ffedb14939479171281d674ede267455f4404"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/Checkbox/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "Inputs",
-      "reason": "The Common Field Set story directly imports this export and its play function asserts the exact \"Calibrate at five operating points.\" marker.",
-      "docsOwnerId": "components-inputs--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Common Field Set story exposes the observable \"Calibrate at five operating points.\" state or behavior for Inputs.",
-          "storyFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "storyExport": "CommonFieldSet",
-          "storyId": "components-inputs--common-field-set",
-          "assertionFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "assertionExport": "CommonFieldSet.play",
-          "assertionMarker": "Calibrate at five operating points.",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:4c2dfa0b0732d97a2f7c45c6910eb8c335daca8fad5bb32be0099049789ff7c5"
       }
     },
     {
@@ -4779,141 +4366,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-datepicker-customdatepicker--collapsed at distance 1 for this source, and the generated index resolves components-inputs-datepicker-customdatepicker--documentation as the matching docs owner.",
         "reviewedSourceDigest": "sha256:e037fbf31fa30d719d8c525ca7663d88401b94a342fdcc22c748a07aef5bf843"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/NumberInput/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "Inputs",
-      "reason": "The Common Field Set story directly imports this export and its play function asserts the exact \"Calibrate at five operating points.\" marker.",
-      "docsOwnerId": "components-inputs--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Common Field Set story exposes the observable \"Calibrate at five operating points.\" state or behavior for Inputs.",
-          "storyFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "storyExport": "CommonFieldSet",
-          "storyId": "components-inputs--common-field-set",
-          "assertionFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "assertionExport": "CommonFieldSet.play",
-          "assertionMarker": "Calibrate at five operating points.",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:bb7a2c545df619fc774e4bf4727f266fed69f871ea2d8c77bbfd4912a74341bf"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/RadioButtonGroup/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "Inputs",
-      "reason": "The Common Field Set story directly imports this export and its play function asserts the exact \"Calibrate at five operating points.\" marker.",
-      "docsOwnerId": "components-inputs--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Common Field Set story exposes the observable \"Calibrate at five operating points.\" state or behavior for Inputs.",
-          "storyFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "storyExport": "CommonFieldSet",
-          "storyId": "components-inputs--common-field-set",
-          "assertionFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "assertionExport": "CommonFieldSet.play",
-          "assertionMarker": "Calibrate at five operating points.",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:0697a6a4079c217efc33a5cd626224a9be20303198a7533d042b83bc46d4fe85"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/SelectInput/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "Inputs",
-      "reason": "The Common Field Set story directly imports this export and its play function asserts the exact \"Calibrate at five operating points.\" marker.",
-      "docsOwnerId": "components-inputs--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Common Field Set story exposes the observable \"Calibrate at five operating points.\" state or behavior for Inputs.",
-          "storyFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "storyExport": "CommonFieldSet",
-          "storyId": "components-inputs--common-field-set",
-          "assertionFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "assertionExport": "CommonFieldSet.play",
-          "assertionMarker": "Calibrate at five operating points.",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:4073f6d227b9ba020cc57838f286eca13c3d857422acd63b0699fb4d9657600f"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/TextAreaInput/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "Inputs",
-      "reason": "The Common Field Set story directly imports this export and its play function asserts the exact \"Calibrate at five operating points.\" marker.",
-      "docsOwnerId": "components-inputs--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Common Field Set story exposes the observable \"Calibrate at five operating points.\" state or behavior for Inputs.",
-          "storyFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "storyExport": "CommonFieldSet",
-          "storyId": "components-inputs--common-field-set",
-          "assertionFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "assertionExport": "CommonFieldSet.play",
-          "assertionMarker": "Calibrate at five operating points.",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "claude-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
-        "reviewedSourceDigest": "sha256:8d6aae28b5db842c5a6e140e87d13fef1d4d7b555117e36e94271f3746db260f"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/TextInput/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "Inputs",
-      "reason": "The Common Field Set story directly imports this export and its play function asserts the exact \"Calibrate at five operating points.\" marker.",
-      "docsOwnerId": "components-inputs--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Common Field Set story exposes the observable \"Calibrate at five operating points.\" state or behavior for Inputs.",
-          "storyFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "storyExport": "CommonFieldSet",
-          "storyId": "components-inputs--common-field-set",
-          "assertionFile": "ClientApp/src/components/Inputs/Inputs.stories.tsx",
-          "assertionExport": "CommonFieldSet.play",
-          "assertionMarker": "Calibrate at five operating points.",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:db67cc461f6a235fb23d32d81b3e24ab7ad6acf58522632b49b249867bb1b723"
       }
     },
     {
@@ -6026,33 +5478,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/Inputs/DatePicker/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "Inputs",
-      "reason": "The Text Input Disabled story directly imports this export and its play function asserts the exact \"user@example.com\" marker.",
-      "docsOwnerId": "forms-inputs--documentation",
-      "states": [
-        {
-          "name": "default-reviewed-baseline",
-          "applicability": "required",
-          "outcome": "The Text Input Disabled story exposes the observable \"user@example.com\" state or behavior for Inputs.",
-          "storyFile": "ClientApp/src/components/forms/Forms.stories.tsx",
-          "storyExport": "TextInputDisabled",
-          "storyId": "forms-inputs--text-input-disabled",
-          "assertionFile": "ClientApp/src/components/forms/Forms.stories.tsx",
-          "assertionExport": "TextInputDisabled.play",
-          "assertionMarker": "user@example.com",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned forms-inputs--text-input-disabled at distance 1 for this source, and the generated index resolves forms-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:018dd8293ec95bdf285e18b4603ad5bb4d5a1447231b6f5f459f0dbe3e8a38cd"
-      }
-    },
-    {
       "source": "ClientApp/src/components/Pagination/index.tsx",
       "export": "default",
       "classification": "direct",
@@ -6841,20 +6266,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/FormikForm/formikHelpers.ts",
-      "export": "default",
-      "classification": "nonvisual",
-      "owner": "default",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:45335aa22119afd3ad6861630bf7fca41937ff4cd0a1c089f78bfb27c8e5949a"
-      }
-    },
-    {
       "source": "ClientApp/src/routes/acceptQuote/deliveryAndReturnFormFields.tsx",
       "export": "default",
       "classification": "nonvisual",
@@ -6866,20 +6277,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
         "reviewedSourceDigest": "sha256:2263abb97ebb34f9e3497b5f3fab10bcfdef5e40aa08f5833b0b9f0b7ebe50dd"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/acceptQuote/deliveryAndReturnFormikBridge.tsx",
-      "export": "default",
-      "classification": "nonvisual",
-      "owner": "default",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:f8a8a4ae9b1fef3bbe4e05f173dc6991c54423cd0db957629b84733d77c599bf"
       }
     },
     {
@@ -6939,62 +6336,6 @@
       }
     },
     {
-      "source": "ClientApp/src/routes/acceptQuote/formikBridgeHelpers.ts",
-      "export": "CONTACT_TOUCH_PATHS",
-      "classification": "nonvisual",
-      "owner": "CONTACT_TOUCH_PATHS",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:5710a022232a9f2b68162244e95e99e0b393e3dde42e2d8ca8d67a79dcbe1b03"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/acceptQuote/formikBridgeHelpers.ts",
-      "export": "NO_HIDDEN_RULES",
-      "classification": "nonvisual",
-      "owner": "NO_HIDDEN_RULES",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:5710a022232a9f2b68162244e95e99e0b393e3dde42e2d8ca8d67a79dcbe1b03"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/acceptQuote/formikBridgeHelpers.ts",
-      "export": "addressTouchPaths",
-      "classification": "nonvisual",
-      "owner": "addressTouchPaths",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:5710a022232a9f2b68162244e95e99e0b393e3dde42e2d8ca8d67a79dcbe1b03"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/acceptQuote/formikBridgeHelpers.ts",
-      "export": "createBridgedNamePredicate",
-      "classification": "nonvisual",
-      "owner": "createBridgedNamePredicate",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:5710a022232a9f2b68162244e95e99e0b393e3dde42e2d8ca8d67a79dcbe1b03"
-      }
-    },
-    {
       "source": "ClientApp/src/routes/acceptQuote/paymentDetailsFormFields.tsx",
       "export": "default",
       "classification": "nonvisual",
@@ -7006,20 +6347,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
         "reviewedSourceDigest": "sha256:a836ee9ecc839fe1bc66c43ccc8ed53b23cda8b9f8e182470acf534ba5a8435b"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/acceptQuote/paymentDetailsFormikBridge.tsx",
-      "export": "default",
-      "classification": "nonvisual",
-      "owner": "default",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:c633c598886e339b732a159d9400415f8a34c9d19904acb3de71c680a18cae1c"
       }
     },
     {
@@ -7048,20 +6375,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
         "reviewedSourceDigest": "sha256:6d4a41609f5a32b5b26aa6a9980e54b1d65e32c02b2648c0c2a7ca5f328b2fcf"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/acceptQuote/reportRecipientFormikBridge.tsx",
-      "export": "default",
-      "classification": "nonvisual",
-      "owner": "default",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:603d3da4c2bc084442d8072a900e97d21747f8b2a4add63126f3db082d1a3a5e"
       }
     },
     {
@@ -7104,20 +6417,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
         "reviewedSourceDigest": "sha256:48ed45be255465c438bcfbcaba5db3261b3fc1714869476020bc95cd82853205"
-      }
-    },
-    {
-      "source": "ClientApp/src/routes/acceptQuote/summaryAndAcceptFormikBridge.tsx",
-      "export": "default",
-      "classification": "nonvisual",
-      "owner": "default",
-      "reason": "The source export is a non-renderable helper, type, option, validation, or configuration surface; it has no standalone Storybook render contract.",
-      "docsOwnerId": null,
-      "states": [],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:f099ea5c8696f30c546b55a3332dd20b2d083f4ce76336f2e613190e2f4a0d92"
       }
     },
     {
@@ -10323,18 +9622,18 @@
       "classification": "consumer",
       "owner": "default",
       "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "components-inputs-attachment-attachmentnew--documentation",
+      "docsOwnerId": "components-inputs-attachment-rhfattachment--documentation",
       "states": [
         {
           "name": "documented-render",
           "applicability": "required",
           "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/Inputs/Attachment/index-new.stories.tsx",
-          "storyExport": "DocumentsWithoutIds",
-          "storyId": "components-inputs-attachment-attachmentnew--documents-without-ids",
-          "assertionFile": "ClientApp/src/components/Inputs/Attachment/index-new.stories.tsx",
-          "assertionExport": "DocumentsWithoutIds.play",
-          "assertionMarker": "manual.pdf",
+          "storyFile": "ClientApp/src/components/Inputs/RhfAttachment/RhfAttachment.stories.tsx",
+          "storyExport": "EmptyUploader",
+          "storyId": "components-inputs-attachment-rhfattachment--empty-uploader",
+          "assertionFile": "ClientApp/src/components/Inputs/RhfAttachment/RhfAttachment.stories.tsx",
+          "assertionExport": "EmptyUploader.play",
+          "assertionMarker": "Drag and drop files here",
           "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
         }
       ],
@@ -10777,141 +10076,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/Inputs/AuthorisedAgent/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-typeapproval-organisationandcontact--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/ta/organisationAndContact.stories.tsx",
-          "storyExport": "EditStep",
-          "storyId": "routes-typeapproval-organisationandcontact--edit-step",
-          "assertionFile": "ClientApp/src/routes/ta/organisationAndContact.stories.tsx",
-          "assertionExport": "EditStep.play",
-          "assertionMarker": "Organisation type",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:cf6bbc50b9781385ddadf376c07d0a3f15f70c929cbb16284cd2b17e4a81b4cf"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/CertificateNumberLookup/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-typeapproval-applicationandinstrument--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx",
-          "storyExport": "EditStep",
-          "storyId": "routes-typeapproval-applicationandinstrument--edit-step",
-          "assertionFile": "ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx",
-          "assertionExport": "EditStep.play",
-          "assertionMarker": "Instrument details",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "claude-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
-        "reviewedSourceDigest": "sha256:1cc10b5aa191fb03cb53b62d29ec053fd29be432e429d66986d5704be8268bc1"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/CheckboxGroup/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-typeapproval-applicationandinstrument--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx",
-          "storyExport": "EditStep",
-          "storyId": "routes-typeapproval-applicationandinstrument--edit-step",
-          "assertionFile": "ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx",
-          "assertionExport": "EditStep.play",
-          "assertionMarker": "Instrument details",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:958d9a58bec751c3f6997c1e3a473ff42cc5132a7762fe0097d585071a7f7882"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/OrganisationNameLookup/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-account-createaccountstep--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/account/AccountRoute.stories.tsx",
-          "storyExport": "OrganisationDetails",
-          "storyId": "routes-account-createaccountstep--organisation-details",
-          "assertionFile": "ClientApp/src/routes/account/AccountRoute.stories.tsx",
-          "assertionExport": "OrganisationDetails.play",
-          "assertionMarker": "Business or Trading name (optional)",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "claude-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
-        "reviewedSourceDigest": "sha256:4a81fcb1147e7779963b37699b298c0223dedb43f5975d941177159cf64ebcc0"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/RadioButton/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "forms-inputs--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/forms/Forms.stories.tsx",
-          "storyExport": "CheckboxDefault",
-          "storyId": "forms-inputs--checkbox-default",
-          "assertionFile": "ClientApp/src/components/forms/Forms.stories.tsx",
-          "assertionExport": "CheckboxDefault.play",
-          "assertionMarker": "I agree to the terms and conditions of the NMI Services portal.",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:d18ba4e470c54f68904ec51ba63b86ebbeeefef84c3aee07e689693f10b41102"
-      }
-    },
-    {
       "source": "ClientApp/src/components/Inputs/RhfAddressLookup/RhfManualAddressInput.tsx",
       "export": "default",
       "classification": "consumer",
@@ -11233,33 +10397,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
         "reviewedSourceDigest": "sha256:f5d0194cf6a56885b29a6187034a18f35a8f4b6584e5bc535a6bb60f97edfe2b"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/Inputs/TextReadOnly/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "forms-inputs--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/forms/Forms.stories.tsx",
-          "storyExport": "CheckboxDefault",
-          "storyId": "forms-inputs--checkbox-default",
-          "assertionFile": "ClientApp/src/components/forms/Forms.stories.tsx",
-          "assertionExport": "CheckboxDefault.play",
-          "assertionMarker": "I agree to the terms and conditions of the NMI Services portal.",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:b2ea85f2e483f1aa43b3c0ad6b88aaf0a66349b4d90c74f5486b3a5ac6f4a0b8"
       }
     },
     {
@@ -11858,33 +10995,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/CommonForms/ContactDetails/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-acceptquote--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx",
-          "storyExport": "DeliveryAndReturnStep",
-          "storyId": "routes-acceptquote--delivery-and-return-step",
-          "assertionFile": "ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx",
-          "assertionExport": "DeliveryAndReturnStep.play",
-          "assertionMarker": "Please deliver to the loading dock at the rear of the building.",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:b98cd304b60e87b99bc80c88f942249d3cb0b836c3e82bfab6c79d3b4442e36a"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/CommonForms/RhfContactDetails/index.tsx",
       "export": "default",
       "classification": "consumer",
@@ -12020,60 +11130,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/FormikForm/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "forms-wizardform--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "storyExport": "Step1ContactDetails",
-          "storyId": "forms-wizardform--step-1-contact-details",
-          "assertionFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "assertionExport": "Step1ContactDetails.play",
-          "assertionMarker": "Contact details",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:9f090a41259b5928e89eeddbbdef2799965e549f79f7d1c56191bc575e8b6700"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/forms/HidableField/index.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-acceptquote--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx",
-          "storyExport": "DeliveryAndReturnStep",
-          "storyId": "routes-acceptquote--delivery-and-return-step",
-          "assertionFile": "ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx",
-          "assertionExport": "DeliveryAndReturnStep.play",
-          "assertionMarker": "Please deliver to the loading dock at the rear of the building.",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:d8f65aed562d130fd42086412d728a504e5819b2a52e79e30485d8bb9d14b83b"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/IntentButton/index.tsx",
       "export": "default",
       "classification": "consumer",
@@ -12128,33 +11184,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/RhfHidableField/hiddenRulesContext.tsx",
-      "export": "RhfHiddenRulesProvider",
-      "classification": "consumer",
-      "owner": "RhfHiddenRulesProvider",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "components-forms-errorsummary--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/forms/ErrorSummary/ErrorSummary.stories.tsx",
-          "storyExport": "ConflictError",
-          "storyId": "components-forms-errorsummary--conflict-error",
-          "assertionFile": "ClientApp/src/components/forms/ErrorSummary/ErrorSummary.stories.tsx",
-          "assertionExport": "ConflictError.play",
-          "assertionMarker": "form-error-summary",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:81839e7dbeb89aee6be1c4c884cc518ace105c69fa1c549a93c58c19e1ba9602"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/RhfHidableField/index.tsx",
       "export": "default",
       "classification": "consumer",
@@ -12186,19 +11215,19 @@
       "export": "default",
       "classification": "consumer",
       "owner": "default",
-      "reason": "Save and exit is driven through the Formik banner (intent flag) and through WizardForm (save in flight, success navigation, failure). In-flight display is not supported by this control (no pending state). The RHF branch is not exercised by these stories.",
+      "reason": "Save and exit is driven through the form banner (save-and-exit callback) and through WizardForm (save in flight, success navigation, failure). In-flight display is not supported by this control (no pending state).",
       "docsOwnerId": "forms-wizardform--documentation",
       "states": [
         {
-          "name": "formik-click-sets-save-and-exit",
+          "name": "click-invokes-save-and-exit",
           "applicability": "required",
-          "outcome": "Clicking Save and exit sets the Formik saveAndExit intent to true.",
+          "outcome": "Clicking Save and exit invokes the banner save-and-exit callback exactly once.",
           "storyFile": "ClientApp/src/components/forms/FormBanner/FormBanner.stories.tsx",
           "storyExport": "SaveAndExit",
           "storyId": "components-forms-formbanner--save-and-exit",
           "assertionFile": "ClientApp/src/components/forms/FormBanner/FormBanner.stories.tsx",
           "assertionExport": "SaveAndExit.play",
-          "assertionMarker": "saveAndExit=true",
+          "assertionMarker": "onSaveAndExit",
           "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
         },
         {
@@ -12237,19 +11266,19 @@
       "export": "default",
       "classification": "consumer",
       "owner": "default",
-      "reason": "The default Submit control is driven by direct Formik stories for the valid and invalid outcomes, and the render-prop path is driven through WizardForm Save and next. In-flight display is not supported by this control (it has no pending state). The RHF branch is not exercised by these stories.",
+      "reason": "The default Submit control is driven by direct RhfForm stories for the valid and invalid outcomes, and the render-prop path is driven through WizardForm Save and next. In-flight display is not supported by this control (it has no pending state).",
       "docsOwnerId": "components-forms-submitformbutton--documentation",
       "states": [
         {
           "name": "valid-submit-saves-values",
           "applicability": "required",
-          "outcome": "A valid submit calls the form submit once with the values and clears the click flag, leaving saveAndExit false.",
+          "outcome": "A valid submit calls the form submit once with the values and records a single submit attempt.",
           "storyFile": "ClientApp/src/components/forms/SubmitFormButton/SubmitFormButton.stories.tsx",
           "storyExport": "ValidSubmit",
           "storyId": "components-forms-submitformbutton--valid-submit",
           "assertionFile": "ClientApp/src/components/forms/SubmitFormButton/SubmitFormButton.stories.tsx",
           "assertionExport": "ValidSubmit.play",
-          "assertionMarker": "submitCount=1 saveAndExit=false submitClick=false",
+          "assertionMarker": "submitCount=1",
           "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
         },
         {
@@ -12300,57 +11329,9 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The shared unsaved-changes rule is rendered through both adapters; its dirty-and-unsubmitted branch is driven by Formik and RHF stories that block, cancel and confirm a navigation. The logout-copy path branch, the dirty-and-submitted-invalid branch and the server-rejected branch are not exercised, and browser refresh is not intercepted.",
+      "reason": "The shared unsaved-changes rule is rendered through the RHF adapter; its dirty-and-unsubmitted branch is driven by RHF stories that block, cancel and confirm a navigation. The logout-copy path branch, the dirty-and-submitted-invalid branch and the server-rejected branch are not exercised, and browser refresh is not intercepted.",
       "docsOwnerId": "forms-unsavedformprompt--documentation",
       "states": [
-        {
-          "name": "formik-clean-navigates",
-          "applicability": "required",
-          "outcome": "With an untouched Formik form, following the link lands on the destination route, no dialog is shown and the last observed pathname is /other.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikCleanNavigates",
-          "storyId": "forms-unsavedformprompt--formik-clean-navigates",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikCleanNavigates.play",
-          "assertionMarker": "Destination reached",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
-        {
-          "name": "formik-dirty-navigation-blocked",
-          "applicability": "required",
-          "outcome": "After editing the Formik field, following the link opens the \"Unsaved changes\" dialog with a Discard changes action; the form heading stays rendered, the destination is not rendered and no /other pathname is observed.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikDirtyBlocked",
-          "storyId": "forms-unsavedformprompt--formik-dirty-blocked",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikDirtyBlocked.play",
-          "assertionMarker": "Discard changes",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
-        {
-          "name": "formik-cancel-retains-value",
-          "applicability": "required",
-          "outcome": "Cancel on the guard dialog closes it, keeps the Formik field at the typed value \"Beta Labs\" and leaves the location on /form.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikCancelRetainsValue",
-          "storyId": "forms-unsavedformprompt--formik-cancel-retains-value",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikCancelRetainsValue.play",
-          "assertionMarker": "Beta Labs",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
-        {
-          "name": "formik-confirm-proceeds",
-          "applicability": "required",
-          "outcome": "Discard changes on the guard dialog closes it and navigates to the destination route; the last observed pathname is /other.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikConfirmProceeds",
-          "storyId": "forms-unsavedformprompt--formik-confirm-proceeds",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikConfirmProceeds.play",
-          "assertionMarker": "/other",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
         {
           "name": "rhf-clean-navigates",
           "applicability": "required",
@@ -12419,108 +11400,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/UnsavedFormPrompt/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "default",
-      "reason": "Formik stories edit a field, follow a router link and assert the guard dialog blocks the navigation, Cancel keeps the typed value and Discard changes proceeds to the destination, plus a clean form navigating without a dialog. Browser refresh is not intercepted and is recorded as not supported. The logout-copy path variant, the dirty-and-submitted-invalid branch and the server-rejected branch are not exercised.",
-      "docsOwnerId": "forms-unsavedformprompt--documentation",
-      "states": [
-        {
-          "name": "formik-clean-navigates",
-          "applicability": "required",
-          "outcome": "With an untouched Formik form, following the link lands on the destination route, no dialog is shown and the last observed pathname is /other.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikCleanNavigates",
-          "storyId": "forms-unsavedformprompt--formik-clean-navigates",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikCleanNavigates.play",
-          "assertionMarker": "Destination reached",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
-        {
-          "name": "formik-dirty-navigation-blocked",
-          "applicability": "required",
-          "outcome": "After editing the Formik field, following the link opens the \"Unsaved changes\" dialog with a Discard changes action; the form heading stays rendered, the destination is not rendered and no /other pathname is observed.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikDirtyBlocked",
-          "storyId": "forms-unsavedformprompt--formik-dirty-blocked",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikDirtyBlocked.play",
-          "assertionMarker": "Discard changes",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
-        {
-          "name": "formik-cancel-retains-value",
-          "applicability": "required",
-          "outcome": "Cancel on the guard dialog closes it, keeps the Formik field at the typed value \"Beta Labs\" and leaves the location on /form.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikCancelRetainsValue",
-          "storyId": "forms-unsavedformprompt--formik-cancel-retains-value",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikCancelRetainsValue.play",
-          "assertionMarker": "Beta Labs",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
-        {
-          "name": "formik-confirm-proceeds",
-          "applicability": "required",
-          "outcome": "Discard changes on the guard dialog closes it and navigates to the destination route; the last observed pathname is /other.",
-          "storyFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "storyExport": "FormikConfirmProceeds",
-          "storyId": "forms-unsavedformprompt--formik-confirm-proceeds",
-          "assertionFile": "ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedFormPrompt.stories.tsx",
-          "assertionExport": "FormikConfirmProceeds.play",
-          "assertionMarker": "/other",
-          "rationale": "The marker is an exact string literal inside an expect(...) call in the named story play function; the play asserts the described consequence around it."
-        },
-        {
-          "name": "browser-refresh-or-close",
-          "applicability": "not-supported",
-          "outcome": "Browser refresh, reload and tab close are not intercepted by the unsaved-changes guard, which blocks in-app useBlocker navigation only, and a reload cannot be simulated or intercepted from a story.",
-          "storyFile": null,
-          "storyExport": null,
-          "storyId": null,
-          "assertionFile": null,
-          "assertionExport": null,
-          "assertionMarker": null,
-          "rationale": "RouteLeavingGuard registers only a react-router blocker and no beforeunload handler, so a reload discards the form without a prompt; the stories deliberately make no claim about it rather than faking an unload."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The dedicated Forms/UnsavedFormPrompt stories render the export under the portal providers and a real router; their play functions block, cancel and confirm a dirty navigation and the focused MCP result is the render evidence.",
-        "reviewedSourceDigest": "sha256:a3f7032bff5219529fc5877560837399197ffb3cb4449f23c7f98f4a5f4dd80a"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/forms/WizardForm/NextStepButton.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "forms-wizardform--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "storyExport": "Step1ContactDetails",
-          "storyId": "forms-wizardform--step-1-contact-details",
-          "assertionFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "assertionExport": "Step1ContactDetails.play",
-          "assertionMarker": "Contact details",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c6bc2f7c1923aa060411d35f0cd45a60c22f29c0727e442db4b07ccc1ec509d3"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/WizardForm/PreviousStepButton.tsx",
       "export": "default",
       "classification": "consumer",
@@ -12548,33 +11427,6 @@
       }
     },
     {
-      "source": "ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx",
-      "export": "default",
-      "classification": "consumer",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "forms-wizardform--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "storyExport": "Step1ContactDetails",
-          "storyId": "forms-wizardform--step-1-contact-details",
-          "assertionFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "assertionExport": "Step1ContactDetails.play",
-          "assertionMarker": "Contact details",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "claude-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
-        "reviewedSourceDigest": "sha256:c1a4639a6229deda3c4ba91a9ebf3572180f5851d961a7653f1fc8a41cc2b13b"
-      }
-    },
-    {
       "source": "ClientApp/src/components/forms/WizardForm/WizardStep.tsx",
       "export": "default",
       "classification": "direct",
@@ -12599,33 +11451,6 @@
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
         "reviewedSourceDigest": "sha256:5eb0e3327d7e4a1b4ddb778b7b47412dc00b1c0a8b16c5d00cae7aa12524d3cc"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/forms/WizardForm/index.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "forms-wizardform--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "storyExport": "Step1ContactDetails",
-          "storyId": "forms-wizardform--step-1-contact-details",
-          "assertionFile": "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
-          "assertionExport": "Step1ContactDetails.play",
-          "assertionMarker": "Contact details",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:6c57e77d142d6a04e3e3a01b6ad29142986d73f2a3124e168ae49c3550b1e701"
       }
     },
     {

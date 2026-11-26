@@ -126,7 +126,7 @@ const resetApplicationDetailsSummaryState = () => {
 };
 
 describe('application details summary', () => {
-  it('shows the loaded organisation, application and documents without a Formik form', async () => {
+  it('shows the loaded organisation, application and documents without a form', async () => {
     expect.hasAssertions();
 
     resetApplicationDetailsSummaryState();

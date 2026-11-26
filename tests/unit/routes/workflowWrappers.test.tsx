@@ -118,30 +118,6 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/WizardForm') as unknown as string,
-  () =>
-    ({
-      default: ({
-        children,
-        locationOnCompletion,
-        lastStepNextButtonTitle,
-      }: {
-        children: React.ReactNode;
-        locationOnCompletion: string;
-        lastStepNextButtonTitle: string;
-      }) => (
-        <section
-          data-testid='wizard-form'
-          data-complete-location={locationOnCompletion}
-          data-last-button={lastStepNextButtonTitle}
-        >
-          {children}
-        </section>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule60>,
-);
-
-vi.mock(
   import('../../../ClientApp/src/components/forms/WizardForm/RhfWizardRoutedStep') as unknown as string,
   () => ({
     default: ({

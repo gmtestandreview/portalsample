@@ -1,8 +1,8 @@
 import preview from '../../../../../.storybook/preview';
-import { useFormikContext } from 'formik';
 import { useLocation } from 'react-router';
-import { expect, within } from 'storybook/test';
+import { expect, fn, waitFor, within } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
+import RhfForm from '../RhfForm';
 import FormBanner from '.';
 
 const meta = preview.meta({
@@ -14,14 +14,7 @@ const meta = preview.meta({
   },
 });
 
-const FormikSubmissionProbe = () => {
-  const { values } = useFormikContext<Record<string, unknown>>();
-  return (
-    <output aria-label='Form submission state'>
-      saveAndExit={values['saveAndExit'] === true ? 'true' : 'false'}
-    </output>
-  );
-};
+const onSaveAndExit = fn();
 
 const DiscardLocationProbe = () => {
   const location = useLocation();
@@ -33,11 +26,9 @@ const DiscardLocationProbe = () => {
  * Requires router context (useNavigate) provided by withPortalProviders.
  */
 export const SaveAndExit = meta.story({
-  // SaveAndExitButton calls useFormikContext() — Formik context is required.
-  parameters: {
-    portal: {
-      formik: { initialValues: {} },
-    },
+  // SaveAndExitButton reads the RHF shell, so the banner renders inside RhfForm.
+  beforeEach: () => {
+    onSaveAndExit.mockClear();
   },
   args: {
     title: 'Request for Quote',
@@ -45,10 +36,9 @@ export const SaveAndExit = meta.story({
     showSaveAndExitButton: true,
   },
   render: (args) => (
-    <>
+    <RhfForm initialValues={{}} onSubmit={fn()} onSaveAndExit={onSaveAndExit}>
       <FormBanner {...args} />
-      <FormikSubmissionProbe />
-    </>
+    </RhfForm>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -62,9 +52,7 @@ export const SaveAndExit = meta.story({
 
     canvas.getByRole('button', { name: 'Save and exit', hidden: true }).click();
 
-    await expect(
-      await canvas.findByLabelText('Form submission state'),
-    ).toHaveTextContent('saveAndExit=true');
+    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
   },
 });
 

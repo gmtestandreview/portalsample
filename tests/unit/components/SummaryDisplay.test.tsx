@@ -170,6 +170,15 @@ describe('summary display', () => {
     expect(screen.getByText('1 2 3 4')).toHaveClass('visually-hidden');
   });
 
+  it('renders the value without a label row when no label is given', () => {
+    expect.hasAssertions();
+
+    const { container } = render(<SummaryDisplay value='Only value' />);
+
+    expect(screen.getByText('Only value')).toBeInTheDocument();
+    expect(container.querySelector('.form-label')).toBeNull();
+  });
+
   it('renders no field value for unsupported display modes', () => {
     expect.hasAssertions();
 

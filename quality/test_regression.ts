@@ -68,15 +68,6 @@ test('BUG-003: missing App Insights config disables telemetry instead of loading
 test('BUG-004: pristine valid create-account forms do not trigger route-leave confirmation', async () => {
   let capturedWhen: boolean | undefined;
 
-  const formikContext = () => ({
-    dirty: false,
-    isValid: true,
-    submitCount: 0,
-    isSubmitting: false,
-    errors: {},
-  });
-
-  vi.doMock('formik', () => ({ useFormikContext: formikContext }));
   vi.doMock('../ClientApp/src/components/RouteLeavingGuard', () => ({
     default: ({ when }: { when: boolean }) => {
       capturedWhen = when;
@@ -84,10 +75,23 @@ test('BUG-004: pristine valid create-account forms do not trigger route-leave co
     },
   }));
 
-  const { default: UnsavedFormPrompt } =
-    await import('../ClientApp/src/components/forms/UnsavedFormPrompt');
+  const { FormProvider, useForm } = await import('react-hook-form');
+  const { default: RhfUnsavedFormPrompt } =
+    await import('../ClientApp/src/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt');
 
-  render(createElement(UnsavedFormPrompt, { path: '/create-account/' }));
+  const PristineForm = () => {
+    const methods = useForm<Record<string, unknown>>({
+      defaultValues: { name: '' },
+    });
+
+    return createElement(
+      FormProvider,
+      { ...methods, children: null },
+      createElement(RhfUnsavedFormPrompt, { path: '/create-account/' }),
+    );
+  };
+
+  render(createElement(PristineForm));
 
   expect(capturedWhen).toBe(false);
 });

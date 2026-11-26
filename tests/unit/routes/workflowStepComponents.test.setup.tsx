@@ -6,7 +6,6 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import type { FormikProps } from 'formik';
 import { vi, type Mock } from 'vitest';
 import type {
   AccountDetails,
@@ -17,11 +16,6 @@ import * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
 import type * as AppLoggerModule from '../../../ClientApp/src/instrumentation/AppLogger';
 import type * as NotificationModule from '../../../ClientApp/src/storage/notification';
-
-interface InputChangeEvent {
-  target: { value: string | null };
-}
-type InputChangeHandler = (event: InputChangeEvent) => void;
 
 const mocks: {
   acquireTokenSilent: Mock<IPublicClientApplication['acquireTokenSilent']>;
@@ -62,12 +56,6 @@ const mocks: {
   appLoggerVerbose: Mock<typeof AppLoggerModule.default.verbose>;
   useAccountState: Mock<() => AccountStateContext>;
   setShowRFQSelectModal: Mock<AccountDispatchContext['setShowRFQSelectModal']>;
-  formikValues: Record<string, unknown>;
-  setFieldValue: Mock<FormikProps<Record<string, unknown>>['setFieldValue']>;
-  setFieldTouched: Mock<
-    FormikProps<Record<string, unknown>>['setFieldTouched']
-  >;
-  inputChangeHandlers: Map<string, InputChangeHandler>;
   dashboardNotification: { message: string; severity: string } | null;
   setDashboardNotification: Mock<
     typeof NotificationModule.setDashboardNotification
@@ -138,12 +126,6 @@ const mocks: {
     useAccountState: vi.fn<() => AccountStateContext>(),
     setShowRFQSelectModal:
       vi.fn<AccountDispatchContext['setShowRFQSelectModal']>(),
-    formikValues: {},
-    setFieldValue:
-      vi.fn<FormikProps<Record<string, unknown>>['setFieldValue']>(),
-    setFieldTouched:
-      vi.fn<FormikProps<Record<string, unknown>>['setFieldTouched']>(),
-    inputChangeHandlers: new Map<string, InputChangeHandler>(),
     dashboardNotification: null as { message: string; severity: string } | null,
     setDashboardNotification:
       vi.fn<typeof NotificationModule.setDashboardNotification>(),
@@ -244,150 +226,6 @@ vi.mock(
   },
 );
 
-vi.mock(import('formik') as unknown as string, () => {
-  const getPath = (path: string, values = mocks.formikValues) =>
-    path.split('.').reduce<unknown>((value, part) => {
-      if (value === null || typeof value !== 'object') return undefined;
-      return Reflect.get(value, part);
-    }, values);
-
-  return {
-    useFormikContext: () => ({
-      initialValues: mocks.formikValues,
-      values: mocks.formikValues,
-      submitCount: 0,
-      setFieldValue: mocks.setFieldValue,
-      setFieldTouched: mocks.setFieldTouched,
-      getFieldMeta: (name: string) => ({
-        // Real Formik returns both the current `value` and `initialValue`; the
-        // mock's `values` and `initialValues` are the same object here, so both
-        // resolve through `getPath`.
-        value: getPath(name),
-        initialValue: getPath(name),
-      }),
-    }),
-    useField: (name: string) => [{ value: getPath(name) ?? '' }],
-    getIn: (values: Record<string, unknown>, name: string) =>
-      getPath(name, values),
-  } satisfies __ExactMockModule<__TestMockModule147>;
-});
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/TextInput') as unknown as string,
-  () =>
-    ({
-      default: ({ label, name }: { label: string; name: string }) => (
-        <div data-testid='text-input' data-name={name}>
-          {label}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule29>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/TextAreaInput') as unknown as string,
-  () =>
-    ({
-      default: ({ label, name }: { label: string; name: string }) => (
-        <div data-testid='textarea-input' data-name={name}>
-          {label}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule134>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/RadioButtonGroup') as unknown as string,
-  () =>
-    ({
-      default: ({
-        legend,
-        name,
-        options,
-      }: {
-        legend: string;
-        name: string;
-        options: { label: string }[];
-      }) => (
-        <fieldset data-testid='radio-group' data-name={name}>
-          <legend>{legend}</legend>
-          {options.map((option) => (
-            <span key={option.label}>{option.label}</span>
-          ))}
-        </fieldset>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule52>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/SelectInput') as unknown as string,
-  () =>
-    ({
-      default: ({
-        label,
-        name,
-        options,
-        onChange,
-        readOnly,
-      }: {
-        label: string;
-        name: string;
-        options: { value: string; displayText: string }[];
-        onChange?: InputChangeHandler;
-        readOnly?: boolean;
-      }) => {
-        if (onChange) mocks.inputChangeHandlers.set(name, onChange);
-        return (
-          <label>
-            {label}
-            <input
-              data-testid={`select-${name}`}
-              data-readonly={readOnly ? 'true' : 'false'}
-              value={options[0]?.value ?? ''}
-              readOnly
-            />
-          </label>
-        );
-      },
-    }) satisfies __ExactMockModule<__TestMockModule131>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/NumberInput') as unknown as string,
-  () =>
-    ({
-      default: ({ label, name }: { label: string; name: string }) => (
-        <div data-testid='number-input' data-name={name}>
-          {label}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule30>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/DatePicker') as unknown as string,
-  () =>
-    ({
-      default: ({ label, name }: { label: string; name: string }) => (
-        <div data-testid='date-picker' data-name={name}>
-          {label}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule148>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/AddressLookup') as unknown as string,
-  () =>
-    ({
-      default: ({ label, name }: { label: string; name: string }) => (
-        <div data-testid='address-lookup' data-name={name}>
-          {label}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule31>,
-);
-
 vi.mock(
   import('../../../ClientApp/src/components/Inputs/RhfAddressLookup') as unknown as string,
   () =>
@@ -398,40 +236,6 @@ vi.mock(
         </div>
       ),
     }) satisfies __ExactMockModule<__TestMockModule69>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/Inputs/Checkbox') as unknown as string,
-  () =>
-    ({
-      default: ({ label, name }: { label: string; name: string }) => (
-        <div data-testid='checkbox' data-name={name}>
-          {label}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule79>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/forms/HidableField') as unknown as string,
-  () =>
-    ({
-      default: ({ children, name }: { children: ReactNode; name: string }) => (
-        <div data-testid='hidable-field' data-name={name}>
-          {children}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule70>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/components/forms/CommonForms/ContactDetails') as unknown as string,
-  () =>
-    ({
-      default: ({ name }: { name: string }) => (
-        <div data-testid='contact-details'>{name}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule71>,
 );
 
 vi.mock(
@@ -712,13 +516,5 @@ export const renderRouteWithFormProvider = (
   element: ReactNode,
   routePath = '/workflow/:id',
 ) => renderRoute(initialPath, element, routePath);
-
-export const triggerInputChange = (name: string, value: string | null) => {
-  const handler = mocks.inputChangeHandlers.get(name);
-  if (!handler)
-    throw new Error(`No input change handler registered for ${name}`);
-
-  handler({ target: { value } });
-};
 
 export { mocks };

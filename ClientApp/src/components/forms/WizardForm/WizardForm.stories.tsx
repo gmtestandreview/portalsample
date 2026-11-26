@@ -2,10 +2,11 @@ import preview from '../../../../../.storybook/preview';
 import { within, expect, fn, waitFor } from 'storybook/test';
 import { Container, Row, Col } from 'react-bootstrap';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
-import WizardForm from './index';
+import RhfWizardForm from './RhfWizardForm';
 import WizardStep from './WizardStep';
-import TextInput from '../../Inputs/TextInput';
-import SelectInput from '../../Inputs/SelectInput';
+import * as Yup from 'yup';
+import RhfTextInput from '../../Inputs/RhfTextInput';
+import RhfSelectInput from '../../Inputs/RhfSelectInput';
 import { FormStepStatus } from '../../../api/web-api-client';
 import type { FormStepStatusDto } from '../../../api/web-api-client';
 
@@ -42,7 +43,7 @@ const meta = preview.meta({
 export const Step1ContactDetails = meta.story({
   parameters: { portal: { initialEntries: ['/step-1'] } },
   render: () => (
-    <WizardForm
+    <RhfWizardForm
       locationOnCompletion='/dashboard'
       locationAfterExit='/dashboard'
       nextButtonTitle='Save and next'
@@ -63,9 +64,9 @@ export const Step1ContactDetails = meta.story({
         })}
         bannerTitle='Create account'
       >
-        <TextInput name='firstName' label='First name' />
-        <TextInput name='lastName' label='Last name' />
-        <TextInput name='email' label='Email address' type='email' />
+        <RhfTextInput name='firstName' label='First name' />
+        <RhfTextInput name='lastName' label='Last name' />
+        <RhfTextInput name='email' label='Email address' />
       </WizardStep>
       <WizardStep<{ comments: string }>
         title='Review and submit'
@@ -78,7 +79,7 @@ export const Step1ContactDetails = meta.story({
       >
         <p>Review your details and submit your account creation request.</p>
       </WizardStep>
-    </WizardForm>
+    </RhfWizardForm>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -105,7 +106,7 @@ export const Step2WithPreviousCompleted = meta.story({
     },
   },
   render: () => (
-    <WizardForm
+    <RhfWizardForm
       locationOnCompletion='/dashboard'
       locationAfterExit='/dashboard'
       nextButtonTitle='Save and next'
@@ -128,8 +129,8 @@ export const Step2WithPreviousCompleted = meta.story({
         })}
         bannerTitle='Instrument details'
       >
-        <TextInput name='firstName' label='First name' />
-        <TextInput name='lastName' label='Last name' />
+        <RhfTextInput name='firstName' label='First name' />
+        <RhfTextInput name='lastName' label='Last name' />
       </WizardStep>
       <WizardStep<{ state: string; notes: string }>
         title='Organisation details'
@@ -145,15 +146,15 @@ export const Step2WithPreviousCompleted = meta.story({
         onSaveAndNext={() => undefined}
         bannerTitle='Instrument details'
       >
-        <SelectInput<string>
+        <RhfSelectInput
           name='state'
           label='State or territory'
           options={stateOptions}
           addBlank
         />
-        <TextInput name='notes' label='Additional notes' />
+        <RhfTextInput name='notes' label='Additional notes' />
       </WizardStep>
-    </WizardForm>
+    </RhfWizardForm>
   ),
   play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
@@ -178,7 +179,7 @@ export const Step2WithPreviousCompleted = meta.story({
 export const ThreeStepSummaryPage = meta.story({
   parameters: { portal: { initialEntries: ['/step-3'] } },
   render: () => (
-    <WizardForm
+    <RhfWizardForm
       locationOnCompletion='/dashboard'
       locationAfterExit='/dashboard'
       lastStepNextButtonTitle='Submit request'
@@ -195,7 +196,7 @@ export const ThreeStepSummaryPage = meta.story({
         loadStepValues={() => ({ stepValues: { manufacturer: 'Fluke' } })}
         bannerTitle='Request for quote'
       >
-        <TextInput name='manufacturer' label='Manufacturer' />
+        <RhfTextInput name='manufacturer' label='Manufacturer' />
       </WizardStep>
       <WizardStep<{ deliveryDate: string }>
         title='Delivery'
@@ -205,7 +206,7 @@ export const ThreeStepSummaryPage = meta.story({
         loadStepValues={() => ({ stepValues: { deliveryDate: '' } })}
         bannerTitle='Request for quote'
       >
-        <TextInput name='deliveryDate' label='Delivery date' type='date' />
+        <RhfTextInput name='deliveryDate' label='Delivery date' />
       </WizardStep>
       <WizardStep<Record<string, never>>
         title='Summary'
@@ -227,7 +228,7 @@ export const ThreeStepSummaryPage = meta.story({
           </Row>
         </Container>
       </WizardStep>
-    </WizardForm>
+    </RhfWizardForm>
   ),
 });
 
@@ -247,8 +248,9 @@ const exitDestinations = [
   { path: '/dashboard', element: <WizardCompleteDestination /> },
 ];
 
-const requireFirstName = (values: { firstName?: string }) =>
-  values.firstName ? {} : { firstName: 'Enter your first name' };
+const requireFirstName = Yup.object({
+  firstName: Yup.string().required('Enter your first name'),
+});
 
 interface SaveWizardProps {
   readonly onExit?: () => Promise<void>;
@@ -256,7 +258,7 @@ interface SaveWizardProps {
 }
 
 const SaveWizard = ({ onExit, validateHard }: SaveWizardProps) => (
-  <WizardForm
+  <RhfWizardForm
     locationOnCompletion='/dashboard'
     locationAfterExit='/exited'
     nextButtonTitle='Save and next'
@@ -280,7 +282,7 @@ const SaveWizard = ({ onExit, validateHard }: SaveWizardProps) => (
       onSaveAndNext={onSaveAndNext}
       {...(validateHard ? { validateHard } : {})}
     >
-      <TextInput name='firstName' label='First name' />
+      <RhfTextInput name='firstName' label='First name' />
     </WizardStep>
     <WizardStep<{ comments: string }>
       title='Review and submit'
@@ -293,7 +295,7 @@ const SaveWizard = ({ onExit, validateHard }: SaveWizardProps) => (
     >
       <p>Review your details.</p>
     </WizardStep>
-  </WizardForm>
+  </RhfWizardForm>
 );
 
 /**

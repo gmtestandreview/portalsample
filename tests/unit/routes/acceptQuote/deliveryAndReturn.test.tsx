@@ -204,7 +204,7 @@ describe(DeliveryAndReturn, () => {
         }),
       ).not.toBeInTheDocument();
 
-      // Drain setIsLoading(false) and any Formik re-renders still in the
+      // Drain setIsLoading(false) and any form re-renders still in the
       // microtask queue so they don't fire outside act() after the test ends.
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
@@ -380,7 +380,7 @@ describe(DeliveryAndReturn, () => {
         expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id');
       });
       // Drain queued state updates (setIsLoading(false) from catch block,
-      // plus any Formik re-renders) so they don't fire outside act().
+      // plus any form re-renders) so they don't fire outside act().
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
       });

@@ -3,7 +3,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import type { FormikValues } from 'formik';
 import {
   FormStepStatus,
   type FormStepStatusDto,
@@ -13,13 +12,14 @@ import {
   AccountDispatchCtx,
   type AccountDispatchContext,
 } from '../../../../../ClientApp/src/authentication/accountContext';
-import WizardForm from '../../../../../ClientApp/src/components/forms/WizardForm';
+import RhfWizardForm from '../../../../../ClientApp/src/components/forms/WizardForm/RhfWizardForm';
+import type { FormValues } from '../../../../../ClientApp/src/components/forms/types';
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
 import type { WizardStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
 import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
 
 type AppLogger = typeof AppLoggerModule;
-type SaveStepFn = NonNullable<WizardStepProps<FormikValues>['onSaveAndNext']>;
+type SaveStepFn = NonNullable<WizardStepProps<FormValues>['onSaveAndNext']>;
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -126,7 +126,10 @@ function makeTwoStepRouter(
             element: (
               <AccountStateCtx.Provider value={mockStateValue}>
                 <AccountDispatchCtx.Provider value={mockDispatch}>
-                  <WizardForm locationOnCompletion='/done' canSaveDraft={false}>
+                  <RhfWizardForm
+                    locationOnCompletion='/done'
+                    canSaveDraft={false}
+                  >
                     <WizardStep
                       title='Step 1'
                       location='/step-1'
@@ -149,7 +152,7 @@ function makeTwoStepRouter(
                     >
                       <div data-testid='step-2-content'>Step 2 Content</div>
                     </WizardStep>
-                  </WizardForm>
+                  </RhfWizardForm>
                 </AccountDispatchCtx.Provider>
               </AccountStateCtx.Provider>
             ),
@@ -178,7 +181,10 @@ function makeSplitSplatTwoStepRouter(
             element: (
               <AccountStateCtx.Provider value={mockStateValue}>
                 <AccountDispatchCtx.Provider value={mockDispatch}>
-                  <WizardForm locationOnCompletion='/done' canSaveDraft={false}>
+                  <RhfWizardForm
+                    locationOnCompletion='/done'
+                    canSaveDraft={false}
+                  >
                     <WizardStep
                       title='Step 1'
                       location='/step-1'
@@ -201,7 +207,7 @@ function makeSplitSplatTwoStepRouter(
                     >
                       <div data-testid='step-2-content'>Step 2 Content</div>
                     </WizardStep>
-                  </WizardForm>
+                  </RhfWizardForm>
                 </AccountDispatchCtx.Provider>
               </AccountStateCtx.Provider>
             ),
@@ -431,7 +437,10 @@ describe('wizardForm — step navigation', () => {
           element: (
             <AccountStateCtx.Provider value={mockStateValue}>
               <AccountDispatchCtx.Provider value={mockDispatch}>
-                <WizardForm locationOnCompletion='/done' canSaveDraft={false}>
+                <RhfWizardForm
+                  locationOnCompletion='/done'
+                  canSaveDraft={false}
+                >
                   <WizardStep
                     title='Root step'
                     location='/step-1'
@@ -442,7 +451,7 @@ describe('wizardForm — step navigation', () => {
                   >
                     <div data-testid='root-step-content'>Root step</div>
                   </WizardStep>
-                </WizardForm>
+                </RhfWizardForm>
               </AccountDispatchCtx.Provider>
             </AccountStateCtx.Provider>
           ),

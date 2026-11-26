@@ -517,7 +517,7 @@ export const InstrumentStepBlocksInvalidSubmit = meta.story({
     );
 
     // The date input flags the error with Bootstrap's invalid class, not
-    // aria-invalid (unchanged from the Formik date picker).
+    // aria-invalid (unchanged from the earlier date picker).
     await expect(availability).toHaveClass('is-invalid');
     await expect(availability).toHaveAccessibleDescription(
       /Cannot select a date earlier than today/,

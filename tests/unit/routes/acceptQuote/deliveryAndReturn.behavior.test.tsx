@@ -84,17 +84,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// The lookup talks to the address service; stand in a marker element. The edit
-// form renders the RHF twin once migrated; the summary keeps the Formik one.
-vi.mock(
-  import('@/components/Inputs/AddressLookup') as unknown as string,
-  () =>
-    ({
-      default: ({ label }: { label: string }) => (
-        <div data-testid='address-lookup'>{label}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule31>,
-);
+// The lookup talks to the address service; stand in a marker element.
 vi.mock(
   import('@/components/Inputs/RhfAddressLookup') as unknown as string,
   () =>

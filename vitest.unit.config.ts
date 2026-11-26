@@ -51,7 +51,7 @@ const coverageConfig: CoverageOptions = {
     'ClientApp/src/components/{Accordion,Alert,Pagination,RouteLeavingGuard,SteppedNavigation,SummaryDisplay}/types.ts',
     'ClientApp/src/components/Inputs/{AddressLookup,AutoSuggest,Checkbox,DatePicker,RadioButton,RadioButtonGroup,SelectInput,TextAreaInput}/types.ts',
     'ClientApp/src/components/SearchFilter/{filterMenuProps,searchBoxProps}.ts',
-    'ClientApp/src/components/forms/{types.ts,Details/types.ts,ErrorSummary/types.ts,FormBanner/types.ts,FormikForm/types.ts,HidableField/types.ts}',
+    'ClientApp/src/components/forms/{types.ts,Details/types.ts,ErrorSummary/types.ts,FormBanner/types.ts,HidableField/types.ts}',
     'ClientApp/src/components/tiles/StandardPathway/types.ts',
   ],
   thresholds: {
@@ -98,7 +98,7 @@ export default defineConfig({
       printBasicPrototype: false,
       printFunctionName: false,
     },
-    // Heavy route tests render full Formik/RHF trees under V8 coverage with
+    // Heavy route tests render full RHF trees under V8 coverage with
     // two workers; hosted runners exceed Vitest's 5s default on them.
     testTimeout: UNIT_TEST_TIMEOUT_MS,
     include: ['tests/unit/**/*.test.{ts,tsx}'],

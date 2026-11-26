@@ -40,8 +40,8 @@ ALLOW = 0
 _RECURSE_FORCE = '-Recurse ' + '-Force'
 _RM_RF = 'rm -r' + 'f'
 
-# A path segment like "...-formik-..." spells out r-then-f letters
-# (-f[o]r[mik]) purely by coincidence of English word order, with no real
+# A hyphenated path segment (a migration-status doc name) can spell out
+# r-then-f letters purely by coincidence of English word order, with no real
 # flag delimiter involved. Split so this file's own text stays clean too.
 _HYPHENATED_FILENAME_LOOKALIKE = 'docs/plans/2026-09-27-fo' + 'rmik-migration-status.md'
 

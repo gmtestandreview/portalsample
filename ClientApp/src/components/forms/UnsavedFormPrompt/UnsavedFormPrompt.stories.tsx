@@ -2,17 +2,15 @@ import preview from '../../../../../.storybook/preview';
 import type { userEvent } from 'storybook/test';
 import { expect, screen, waitFor, within } from 'storybook/test';
 import { Link } from 'react-router';
-import TextInput from '../../Inputs/TextInput';
 import RhfTextInput from '../../Inputs/RhfTextInput';
 import {
   withPortalProviders,
   type PortalLocationObservation,
 } from '../../../storybook/storybookHarness';
-import UnsavedFormPrompt from '.';
 import RhfUnsavedFormPrompt from './RhfUnsavedFormPrompt';
 
 /**
- * Dirty-navigation contract shared by the Formik and React Hook Form adapters:
+ * Dirty-navigation contract of the React Hook Form adapter:
  * a dirty form blocks in-app navigation behind the guard modal, Cancel keeps the
  * user on the form with their entered value, and Discard proceeds to the
  * destination. A clean form navigates without a modal.
@@ -28,15 +26,6 @@ const INITIAL_NAME = 'Acme Pty Ltd';
 const CHANGED_NAME = 'Beta Labs';
 const NAME_LABEL = 'Organisation name';
 const GUARD_NAME = /unsaved changes/i;
-
-const FormikSurface = () => (
-  <>
-    <UnsavedFormPrompt />
-    <h2>Formik organisation form</h2>
-    <TextInput name='organisationName' label={NAME_LABEL} />
-    <Link to={DESTINATION_PATH}>Leave this form</Link>
-  </>
-);
 
 const RhfSurface = () => (
   <>
@@ -66,17 +55,15 @@ const locationLogs = (): Record<
   confirm: createLocationLog(),
 });
 
-const formikLog = locationLogs();
 const rhfLog = locationLogs();
 
 /** Clears every recorded pathname so each play only sees its own navigation. */
 const resetLocationLogs = () => {
-  for (const log of [...Object.values(formikLog), ...Object.values(rhfLog)]) {
+  for (const log of Object.values(rhfLog)) {
     log.pathnames.length = 0;
   }
 };
 const portalFor = (
-  flavour: 'formik' | 'rhf',
   observeLocation: (location: PortalLocationObservation) => void,
 ) => ({
   initialEntries: [FORM_PATH],
@@ -84,14 +71,12 @@ const portalFor = (
     { path: DESTINATION_PATH, element: <p>Destination reached</p> },
   ],
   observeLocation,
-  ...(flavour === 'formik'
-    ? { formik: { initialValues: { organisationName: INITIAL_NAME } } }
-    : { rhf: { defaultValues: { organisationName: INITIAL_NAME } } }),
+  rhf: { defaultValues: { organisationName: INITIAL_NAME } },
 });
 
 const meta = preview.meta({
   title: 'Forms/UnsavedFormPrompt',
-  component: UnsavedFormPrompt,
+  component: RhfUnsavedFormPrompt,
   decorators: [withPortalProviders],
   beforeEach: resetLocationLogs,
   parameters: {
@@ -99,8 +84,8 @@ const meta = preview.meta({
     docs: {
       description: {
         component:
-          'Formik and React Hook Form adapters over the shared unsaved-changes rule. ' +
-          'They block in-app navigation while the form is dirty. Browser refresh, reload and tab close are not intercepted and are not covered by these stories.',
+          'React Hook Form adapter over the shared unsaved-changes rule. ' +
+          'It blocks in-app navigation while the form is dirty. Browser refresh, reload and tab close are not intercepted and are not covered by these stories.',
       },
     },
   },
@@ -120,89 +105,9 @@ const makeDirtyAndLeave = async (canvas: PlayCanvas, user: PlayUser) => {
 const expectGuardGone = () =>
   waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
 
-export const FormikCleanNavigates = meta.story({
-  name: 'Formik — clean form navigates without a modal',
-  parameters: { portal: portalFor('formik', formikLog.clean.observeLocation) },
-  render: () => <FormikSurface />,
-  play: async ({ canvas, userEvent: user }) => {
-    await user.click(canvas.getByRole('link', { name: 'Leave this form' }));
-
-    await expect(await canvas.findByText('Destination reached')).toBeVisible();
-    await expect(screen.queryByRole('dialog')).toBeNull();
-    await expect(formikLog.clean.pathnames.at(-1)).toBe('/other');
-  },
-});
-
-export const FormikDirtyBlocked = meta.story({
-  name: 'Formik — dirty navigation is blocked',
-  parameters: {
-    portal: portalFor('formik', formikLog.blocked.observeLocation),
-  },
-  render: () => <FormikSurface />,
-  play: async ({ canvas, userEvent: user }) => {
-    const { dialog } = await makeDirtyAndLeave(canvas, user);
-    await waitFor(() => expect(dialog).toBeVisible());
-
-    await expect(
-      within(dialog).getByRole('button', { name: 'Discard changes' }),
-    ).toBeVisible();
-    await expect(
-      canvas.getByRole('heading', {
-        level: 2,
-        name: 'Formik organisation form',
-      }),
-    ).toBeVisible();
-    await expect(canvas.queryByText('Destination reached')).toBeNull();
-    await expect(formikLog.blocked.pathnames.at(-1)).toBe('/form');
-    await expect(formikLog.blocked.pathnames).not.toContain('/other');
-  },
-});
-
-export const FormikCancelRetainsValue = meta.story({
-  name: 'Formik — cancel retains the entered value',
-  parameters: { portal: portalFor('formik', formikLog.cancel.observeLocation) },
-  render: () => <FormikSurface />,
-  play: async ({ canvas, userEvent: user }) => {
-    const { dialog } = await makeDirtyAndLeave(canvas, user);
-    await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
-    await expectGuardGone();
-
-    await expect(canvas.getByLabelText(NAME_LABEL)).toHaveValue('Beta Labs');
-    await expect(
-      canvas.getByRole('heading', {
-        level: 2,
-        name: 'Formik organisation form',
-      }),
-    ).toBeVisible();
-    await expect(canvas.queryByText('Destination reached')).toBeNull();
-    await expect(formikLog.cancel.pathnames.at(-1)).toBe('/form');
-    await expect(formikLog.cancel.pathnames).not.toContain('/other');
-  },
-});
-
-export const FormikConfirmProceeds = meta.story({
-  name: 'Formik — confirm proceeds to the destination',
-  parameters: {
-    portal: portalFor('formik', formikLog.confirm.observeLocation),
-  },
-  render: () => <FormikSurface />,
-  play: async ({ canvas, userEvent: user }) => {
-    const { dialog } = await makeDirtyAndLeave(canvas, user);
-    await user.click(
-      within(dialog).getByRole('button', { name: 'Discard changes' }),
-    );
-
-    await expect(await canvas.findByText('Destination reached')).toBeVisible();
-
-    await expectGuardGone();
-
-    await expect(formikLog.confirm.pathnames.at(-1)).toBe('/other');
-  },
-});
-
 export const RhfCleanNavigates = meta.story({
   name: 'RHF — clean form navigates without a modal',
-  parameters: { portal: portalFor('rhf', rhfLog.clean.observeLocation) },
+  parameters: { portal: portalFor(rhfLog.clean.observeLocation) },
   render: () => <RhfSurface />,
   play: async ({ canvas, userEvent: user }) => {
     await user.click(canvas.getByRole('link', { name: 'Leave this form' }));
@@ -215,7 +120,7 @@ export const RhfCleanNavigates = meta.story({
 
 export const RhfDirtyBlocked = meta.story({
   name: 'RHF — dirty navigation is blocked',
-  parameters: { portal: portalFor('rhf', rhfLog.blocked.observeLocation) },
+  parameters: { portal: portalFor(rhfLog.blocked.observeLocation) },
   render: () => <RhfSurface />,
   play: async ({ canvas, userEvent: user }) => {
     const { dialog } = await makeDirtyAndLeave(canvas, user);
@@ -235,7 +140,7 @@ export const RhfDirtyBlocked = meta.story({
 
 export const RhfCancelRetainsValue = meta.story({
   name: 'RHF — cancel retains the entered value',
-  parameters: { portal: portalFor('rhf', rhfLog.cancel.observeLocation) },
+  parameters: { portal: portalFor(rhfLog.cancel.observeLocation) },
   render: () => <RhfSurface />,
   play: async ({ canvas, userEvent: user }) => {
     const { dialog } = await makeDirtyAndLeave(canvas, user);
@@ -254,7 +159,7 @@ export const RhfCancelRetainsValue = meta.story({
 
 export const RhfConfirmProceeds = meta.story({
   name: 'RHF — confirm proceeds to the destination',
-  parameters: { portal: portalFor('rhf', rhfLog.confirm.observeLocation) },
+  parameters: { portal: portalFor(rhfLog.confirm.observeLocation) },
   render: () => <RhfSurface />,
   play: async ({ canvas, userEvent: user }) => {
     const { dialog } = await makeDirtyAndLeave(canvas, user);

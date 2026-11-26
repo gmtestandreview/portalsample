@@ -352,7 +352,6 @@ describe('vite config', () => {
       matches('react-runtime', '/node_modules/react-dom/client.js'),
       matches('react-runtime', '/node_modules/react-router/index.js'),
       matches('auth', '/node_modules/@azure/msal-react/index.js'),
-      matches('forms', '/node_modules/formik/index.js'),
       matches('forms', '/node_modules/yup/index.js'),
       matches('ui', '/node_modules/react-bootstrap/index.js'),
       matches('utilities', '/node_modules/lodash/get.js'),
@@ -361,18 +360,7 @@ describe('vite config', () => {
         'react-runtime',
         '/ClientApp/src/authentication/redirectBridge.ts',
       ),
-    ]).toStrictEqual([
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      false,
-    ]);
+    ]).toStrictEqual([true, true, true, true, true, true, true, true, false]);
   });
 
   it('keeps the complete legacy-to-Vite mapping synchronized with the design', () => {

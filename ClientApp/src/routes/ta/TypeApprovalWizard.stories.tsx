@@ -7,9 +7,9 @@ import { withPortalProviders } from '../../storybook/storybookHarness';
 /**
  * Characterization of the type-approval wizard: exact save/submit payloads, hidden
  * fields, reset/untouch behaviour and inline validation. These stories were written
- * and run against the Formik shell first and must pass unchanged on the RHF shell.
+ * and run against the previous shell first and must pass unchanged on the RHF shell.
  *
- * Recorded deviations from Formik (controller-approved): missing contact fields show
+ * Recorded deviations from the previous shell (controller-approved): missing contact fields show
  * inline errors (`DifferentContactShowsInlineErrors`), and pressing Enter on free text
  * in the certificate lookup keeps the typed `certificateNumber` but no longer sends a
  * free-text `certificateNumberId` (`VariationCertificateLookupEnterKeepsTextWithoutId`).
@@ -368,7 +368,7 @@ export const DifferentContactRequiresContactDetails = meta.story({
 });
 
 /**
- * RHF deviation from Formik, which showed these fields in the error summary only:
+ * RHF deviation from the previous shell, which showed these fields in the error summary only:
  * each missing contact field now also carries `aria-invalid` and an accessible
  * description naming the problem.
  */
@@ -556,7 +556,7 @@ export const CategoryChangeUntouchesInstrumentType = meta.story({
 });
 
 /**
- * Pinned Formik quirk (design Q3): after a failed submit, picking another
+ * Pinned legacy quirk (design Q3): after a failed submit, picking another
  * application type calls `resetForm({errors:{}, touched:{}})`, which clears the
  * errors but also reverts every value (including the chosen type) to the loaded
  * values. The RHF shell must match until a change is approved.
@@ -708,7 +708,7 @@ export const VariationCertificateLookupSavesNumberAndId = meta.story({
 });
 
 /**
- * Recorded deviation: Formik committed Enter on free text as the certificate id too.
+ * Recorded deviation: the previous shell committed Enter on free text as the certificate id too.
  * The RHF lookup keeps the typed text only; an id is sent only for a chosen suggestion.
  */
 export const VariationCertificateLookupEnterKeepsTextWithoutId = meta.story({
@@ -779,7 +779,7 @@ export const SupportingDocumentsStepSavesLoadedDocuments = meta.story({
 });
 
 /**
- * Pinned Formik behaviour: the wizard step does not block "Save and next" when no
+ * Pinned legacy behaviour: the wizard step does not block "Save and next" when no
  * document has been uploaded (the required-document message is only raised by the
  * upload controls themselves), so the empty list is saved and the summary opens.
  */
@@ -811,7 +811,7 @@ export const SupportingDocumentsStepWithoutDocumentsStillSaves = meta.story({
 });
 
 /**
- * Pinned Formik behaviour: the acceptance rules are `boolean().oneOf([true])`, which
+ * Pinned legacy behaviour: the acceptance rules are `boolean().oneOf([true])`, which
  * passes an acceptance that was never touched, so an untouched summary submits after
  * the confirmation dialog and the payload carries no acceptance flags.
  */
@@ -846,7 +846,7 @@ export const SummarySubmitsAfterConfirmation = meta.story({
       await canvas.findByRole('heading', { name: 'Submitted destination' }),
     ).toBeVisible();
     await expect(state.observed.submitBodies).toHaveLength(1);
-    // The loaded summary also carries the instrument lookup lists, which Formik
+    // The loaded summary also carries the instrument lookup lists, which the form
     // sends back as part of the step.
     await expect(state.observed.submitBodies[0]).toMatchObject({
       applicationId: APPLICATION_ID,
