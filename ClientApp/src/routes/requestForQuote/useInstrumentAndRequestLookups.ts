@@ -106,7 +106,7 @@ export const useInstrumentAndRequestLookups = () => {
   };
 
   const onMeasurementCategoryChange = (value: string) => {
-    // Equivalent of Formik's setFieldValue('') + setFieldTouched(false): untouch
+    // Clears the value and untouches the field (setValue('') then resetField touched): untouch
     // the field but keep its saved baseline, dirty state and error, then clear
     // the value so it still reads as changed (the unsaved-changes prompt relies
     // on that). "No measurement" then applies the "no instrument" default.

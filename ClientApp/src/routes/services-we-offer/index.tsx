@@ -228,8 +228,6 @@ const ServicesWeOffer = () => {
   }
 
   const renderErrors = () => (
-    // TO DO - do we use the FormikError component instead?
-    // errors: FormikErrors<FormikValues>, disableLinkedError?: boolean) => (
     <Alert
       variant='danger'
       role='alert'

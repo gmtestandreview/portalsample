@@ -1,12 +1,26 @@
 import { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import type { OrgNameOption } from '../../../api/web-api-client';
 import { getFilteredSuggestions } from '../OrganisationNameLookup/suggestionUtils';
-import type { OrganisationNameLookupProps } from '../OrganisationNameLookup';
 import type { AutoSuggestOption } from '../AutoSuggest/types';
 import RhfAutoSuggestContainer from '../RhfAutoSuggest/RhfAutoSuggestContainer';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import useDebounce from '../../Utilities/useDebounce';
+
+export interface OrganisationNameLookupProps {
+  id?: string;
+  name: string;
+  label?: string;
+  placeholder?: string;
+  inlineHelpTitle?: string;
+  inlineHelp?: string | ReactNode;
+  optionsFieldName?: string;
+  parentName?: string;
+  parentOptionsName?: string;
+  matchType?: 'startsWith' | 'includes' | 'endsWith';
+  maxResults?: number;
+}
 
 const RhfOrganisationNameLookup = (
   props: Readonly<OrganisationNameLookupProps>,

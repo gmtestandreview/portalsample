@@ -8,10 +8,11 @@ import RhfAddressLookup from '../../components/Inputs/RhfAddressLookup';
 import RhfRadioButtonGroup from '../../components/Inputs/RhfRadioButtonGroup';
 import RhfTextInput from '../../components/Inputs/RhfTextInput';
 import RhfHidableField from '../../components/forms/RhfHidableField';
-import type { BridgedValues } from '../../components/forms/useFormikRhfBridge';
 import { getFormattedAddress } from '../common/helperFunctions';
 
-export type ReportRecipientFormValues = ReportRecipientStep & BridgedValues;
+export type ReportRecipientFormValues = ReportRecipientStep & {
+  saveAndExit?: boolean;
+};
 
 interface ReportRecipientFormFieldsProps {
   streetAddress?: AddressDetailsDto | undefined;

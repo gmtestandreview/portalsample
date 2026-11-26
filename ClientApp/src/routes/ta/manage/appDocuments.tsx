@@ -155,7 +155,7 @@ const ApplicationDocuments = () => {
     }
   };
 
-  // `values` re-syncs the form when the saved documents change, like Formik's
+  // `values` re-syncs the form when the saved documents change, like an
   // `enableReinitialize`.
   const methods = useForm<AppDocumentsFormValues>({
     values: {

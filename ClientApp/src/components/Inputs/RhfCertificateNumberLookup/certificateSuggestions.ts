@@ -46,7 +46,7 @@ interface GetCertificateSuggestionsArgs {
 }
 
 /**
- * The records to suggest for the typed text. Same rules as the Formik lookup:
+ * The records to suggest for the typed text. Same rules as the earlier lookup:
  * nothing under two characters; when a parent field is configured and has a
  * value, records must also match the parent; matches are limited to
  * `maxResults` and then sorted by the looked-up field.

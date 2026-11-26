@@ -8,11 +8,11 @@ import type { RhfCheckboxGroupProps, RhfCheckboxOption } from './types';
 
 /**
  * React Hook Form counterpart of `CheckboxGroup`. The field holds the array of
- * selected option values (as the Formik checkbox array did), so it must render
+ * selected option values (as a checkbox array does), so it must render
  * inside a `FormProvider`. Ticking appends the value; unticking removes it.
  * `onChange` is a side-effect hook run after the update.
  *
- * In summary mode nothing is rendered: the Formik group compared the whole
+ * In summary mode nothing is rendered: the earlier group compared the whole
  * array to a single option value, which never matched, so it rendered nothing
  * either. Summaries render their own selected labels.
  */

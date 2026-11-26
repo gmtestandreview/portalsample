@@ -52,8 +52,8 @@ const CustomDateInput = React.forwardRef<
   const [focused, setFocused] = useState(false);
 
   // This is required as the input field and calendar button have different onFocus/onBlur events
-  // which triggered Formik onBlur if either were blurred.  This approach ensures that the Formik
-  // onBlur is only called if the new focus is not on the input field or calendar button
+  // which triggered the field onBlur if either were blurred.  This approach ensures that the
+  // field onBlur is only called if the new focus is not on the input field or calendar button
   const handleInputAndButtonFocusEvents = (
     event: React.FocusEvent<any>,
     targetLosingFocus: Element | null,

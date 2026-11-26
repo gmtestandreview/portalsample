@@ -47,7 +47,7 @@ const toFieldErrors = <TFieldValues extends FieldValues>(
 };
 
 /**
- * Yup resolver for the RHF wizard shell. Keeps the Formik shell's rules: the
+ * Yup resolver for the RHF wizard shell. Keeps the wizard shell's rules: the
  * soft schema applies to save and exit, the hard schema otherwise, only the
  * first message per path is kept, and errors on hidden fields are dropped.
  */

@@ -11,7 +11,7 @@ const stringOrEmpty = (value: unknown): string =>
 /**
  * React Hook Form counterpart of the stand-alone `RadioButton` (one radio laid
  * out by the caller). Checked state is a string comparison with the field
- * value, as in the Formik radio, so boolean and enum-backed fields both work.
+ * value, as in the earlier radio, so boolean and enum-backed fields both work.
  * Selecting always writes `value` to the field; `onChange` is a side-effect
  * hook run afterwards.
  */

@@ -171,7 +171,7 @@ const isPlainRecord = (value: unknown): value is Record<string, unknown> => {
  * Drops objects that are empty only because a control registered a field under
  * them. React Hook Form creates a parent object (for example `streetAddress`
  * or `form`) as soon as a nested field registers, even when no value was ever
- * loaded or typed; Formik left such parents absent. An empty object is kept
+ * loaded or typed; such parents stay absent. An empty object is kept
  * when the loaded values already had that path, so a saved `{}` round-trips.
  */
 const removeUnloadedEmptyObjects = (

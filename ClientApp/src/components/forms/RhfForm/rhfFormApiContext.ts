@@ -5,7 +5,7 @@ import type { SubmitMode } from './wizardYupResolver';
 export interface RhfFormApi {
   /**
    * Validates with the mode's schema, then calls the matching handler. Never
-   * rejects: a handler that throws is logged, as Formik's handleSubmit did.
+   * rejects: a handler that throws is logged.
    */
   submit: (mode: SubmitMode) => Promise<void>;
   /** Native form submit (Enter key, submit button): behaves as `next`. */
@@ -22,7 +22,3 @@ export const useRhfFormApi = (): RhfFormApi => {
   }
   return api;
 };
-
-/** True under `RhfForm`. Shell-neutral controls use it to pick their adapter. */
-export const useIsRhfShell = (): boolean =>
-  useContext(RhfFormApiContext) !== null;

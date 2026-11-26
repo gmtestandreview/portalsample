@@ -1,5 +1,3 @@
-import { useFormikContext } from 'formik';
-import type { FormikValues, FormikErrors } from 'formik';
 import { useEffect, useRef } from 'react';
 import type React from 'react';
 import { Alert } from 'react-bootstrap';
@@ -9,14 +7,12 @@ import type {
   ProblemDetails,
   ValidationProblemDetails,
 } from '../../../api/web-api-client';
-import type { ErrorSummaryProps, FormikErrorsSummaryProps } from './types';
+import type { ErrorSummaryProps } from './types';
 import HashLink from '../../Utilities/hashLink';
 import { HttpStatusCode } from '../../../types';
 import { omitUndefined } from '../../../utils/omitUndefined';
-import { useIsRhfShell } from '../RhfForm/rhfFormApiContext';
 import { flattenRhfErrors } from './rhfErrors';
 
-type ErrorData = Record<string, unknown> | readonly unknown[];
 type FlatErrorData = Record<string, string>;
 
 const isValidationProblemDetails = (
@@ -123,25 +119,6 @@ const renderServerError = (error: string | React.JSX.Element) => (
   </ErrorSummaryAlert>
 );
 
-const sanitizeErrorData = (
-  errorData: ErrorData,
-  prefixToAdd: false | string = false,
-  resultBuilder: FlatErrorData | null = null,
-): FlatErrorData => {
-  const result: FlatErrorData = resultBuilder ?? {};
-
-  const prefix = prefixToAdd === false ? '' : `${prefixToAdd}.`;
-
-  Object.entries(errorData).forEach(([key, value]) => {
-    if (typeof value === 'object' && value !== null) {
-      sanitizeErrorData(value as ErrorData, prefix + key, result);
-    } else if (typeof value === 'string') {
-      result[prefix + key] = value;
-    }
-  });
-  return result;
-};
-
 const formatServerErrorKeys = (
   validationErrors: Record<string, string[]>,
   prefixToRemove?: string,
@@ -209,38 +186,16 @@ const useFocusSummaryOnFailedSubmit = ({
   );
 };
 
-const FormikErrorsSummary = ({
-  disableLinkedError,
-}: FormikErrorsSummaryProps) => {
-  const { errors, submitCount, isValidating, isSubmitting } =
-    useFormikContext<FormikValues>();
-  // Errors are only summarised once the form has been submitted.
-  const errorSummary: FormikErrors<FormikValues> =
-    submitCount > 0 ? errors : {};
-  const sanitizedErrorSummary = sanitizeErrorData(errorSummary);
-  const hasErrors = Object.keys(sanitizedErrorSummary).length > 0;
-
-  useFocusSummaryOnFailedSubmit({
-    hasErrors,
-    isSubmitting,
-    isValidating,
-    submitCount,
-  });
-
-  if (!hasErrors) {
-    return null;
-  }
-  return renderErrors(sanitizedErrorSummary, disableLinkedError);
-};
-
 /**
- * RHF counterpart of `FormikErrorsSummary`. Errors are shown once the form has
- * been submitted; before that they only mark their fields. The messages are
+ * Summarises the form's errors. They are shown once the form has been
+ * submitted; before that they only mark their fields. The messages are
  * read through `flattenRhfErrors`, which never touches the DOM `ref` RHF keeps
  * on each error. Focus is not moved to a field (`shouldFocusError: false`), so
  * the summary alone takes it.
  */
-const RhfErrorsSummary = ({ disableLinkedError }: FormikErrorsSummaryProps) => {
+const RhfErrorsSummary = ({
+  disableLinkedError,
+}: Pick<ErrorSummaryProps, 'disableLinkedError'>) => {
   const { errors, submitCount, isValidating, isSubmitting } = useFormState();
   const flatErrors = submitCount > 0 ? flattenRhfErrors(errors) : {};
   const hasErrors = Object.keys(flatErrors).length > 0;
@@ -264,7 +219,6 @@ const ErrorSummary = ({
   disableLinkedError,
   isWafViolation,
 }: Readonly<ErrorSummaryProps>) => {
-  const isRhfShell = useIsRhfShell();
   useEffect(() => {
     if (serverErrors) {
       const timeoutId = handleAlertScroll();
@@ -278,9 +232,7 @@ const ErrorSummary = ({
     const { errors: validationErrors } = serverErrors;
     if (validationErrors) {
       return renderErrors(
-        sanitizeErrorData(
-          formatServerErrorKeys(validationErrors, prefixToRemove),
-        ),
+        formatServerErrorKeys(validationErrors, prefixToRemove),
         disableLinkedError,
       );
     }
@@ -338,8 +290,7 @@ const ErrorSummary = ({
     return renderServerError(error);
   }
 
-  const Summary = isRhfShell ? RhfErrorsSummary : FormikErrorsSummary;
-  return <Summary {...omitUndefined({ disableLinkedError })} />;
+  return <RhfErrorsSummary {...omitUndefined({ disableLinkedError })} />;
 };
 
 export default ErrorSummary;

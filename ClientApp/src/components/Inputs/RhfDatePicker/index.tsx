@@ -17,7 +17,7 @@ import { useRhfFieldA11y } from '../useRhfFieldA11y';
 /**
  * React Hook Form counterpart of `DatePicker`. It reads the form through
  * `useController`, so it must render inside a `FormProvider`. It stores the same
- * value as the Formik picker: a `yyyy-MM-ddT00:00:00+00:00` string, `null` when
+ * value as the earlier picker: a `yyyy-MM-ddT00:00:00+00:00` string, `null` when
  * cleared, or the typed text when it is not a date. Calendar picks store at once;
  * text typed in the box is stored when focus leaves it, and the field is touched
  * then.

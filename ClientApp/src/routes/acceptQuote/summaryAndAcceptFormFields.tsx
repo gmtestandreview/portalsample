@@ -3,9 +3,10 @@ import RhfRadioButtonGroup from '../../components/Inputs/RhfRadioButtonGroup';
 import RhfTextAreaInput from '../../components/Inputs/RhfTextAreaInput';
 import RhfHidableField from '../../components/forms/RhfHidableField';
 import type { SummaryAndAcceptStep } from '../../api/web-api-client';
-import type { BridgedValues } from '../../components/forms/useFormikRhfBridge';
 
-export type SummaryAndAcceptFormValues = SummaryAndAcceptStep & BridgedValues;
+export type SummaryAndAcceptFormValues = SummaryAndAcceptStep & {
+  saveAndExit?: boolean;
+};
 
 const MAX_DISPUTE_CHARACTERS = 300;
 const DISPUTE_ROWS = 4;

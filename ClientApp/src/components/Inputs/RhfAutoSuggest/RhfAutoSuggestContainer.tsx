@@ -44,7 +44,7 @@ const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
  * React Hook Form counterpart of `AutoSuggestContainer`. It reads the field
  * through `useController`, so it must render inside a `FormProvider`. By
  * default the field becomes touched as soon as the user types; consumers can
- * instead mark it touched on blur when matching a Formik field's behavior.
+ * instead mark it touched on blur when matching a native field's behavior.
  */
 const RhfAutoSuggestContainer = <T,>(
   props: Readonly<RhfAutoSuggestContainerProps<T>>,

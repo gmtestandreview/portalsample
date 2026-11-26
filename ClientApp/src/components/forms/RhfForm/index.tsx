@@ -73,7 +73,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
     defaultValues: initialValues as DefaultValues<T>,
     resolver,
     context: validationContext,
-    // Formik validates on every change and blur, before and after a submit; 'all'
+    // The shell validates on every change and blur, before and after a submit; 'all'
     // does the same ('onTouched' skips blur once the form has been submitted).
     // Errors only show once a field is touched or the form is submitted.
     mode: 'all',

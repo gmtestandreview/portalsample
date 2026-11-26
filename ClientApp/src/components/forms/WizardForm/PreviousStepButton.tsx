@@ -1,7 +1,7 @@
 import { orIfEmpty } from '../../../utils/orIfEmpty';
 import React from 'react';
-import type { FormikValues } from 'formik';
 import { Link } from 'react-router';
+import type { FormValues } from '../types';
 import type { PreviousStepButtonProps, WizardStepProps } from './types';
 
 const PreviousStepButton = ({
@@ -16,7 +16,7 @@ const PreviousStepButton = ({
   }
 
   const previousChild = steps[currentStepIndex - 1];
-  if (!React.isValidElement<WizardStepProps<FormikValues>>(previousChild)) {
+  if (!React.isValidElement<WizardStepProps<FormValues>>(previousChild)) {
     throw new Error('WizardForm only accepts children of type WizardStep');
   }
   return (

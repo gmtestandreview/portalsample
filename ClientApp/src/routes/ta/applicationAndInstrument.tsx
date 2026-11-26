@@ -354,7 +354,7 @@ const ApplicationAndInstrument = (
 
   const onInstrumentCategoryChange = (categoryId: string) => {
     const typeName = getName('instrumentType');
-    // Equivalent of Formik's setFieldValue('') + setFieldTouched(false): untouch
+    // Clears the value and untouches the field (setValue('') then resetField touched): untouch
     // the field but keep its saved baseline, dirty state and error, then clear
     // the value so it still reads as changed (the unsaved-changes prompt relies
     // on that). "No measurement" then applies the "no instrument" default.
@@ -382,7 +382,7 @@ const ApplicationAndInstrument = (
   // The radio has already written the chosen type to the form when this runs.
   const onApplicationTypeChange = () => {
     if (submitCount > 0) {
-      // Formik's `resetForm({ errors: {}, touched: {} })` after a failed submit
+      // A reset with empty errors and touched after a failed submit
       // also put every value back to its loaded one, not just the errors and
       // touched state, so this reset does the same.
       reset();

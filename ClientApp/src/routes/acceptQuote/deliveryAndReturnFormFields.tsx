@@ -10,14 +10,15 @@ import RhfTextAreaInput from '../../components/Inputs/RhfTextAreaInput';
 import RhfTextInput from '../../components/Inputs/RhfTextInput';
 import RhfContactDetails from '../../components/forms/CommonForms/RhfContactDetails';
 import RhfHidableField from '../../components/forms/RhfHidableField';
-import type { BridgedValues } from '../../components/forms/useFormikRhfBridge';
 import { getFormattedAddress } from '../common/helperFunctions';
 import {
   RETURN_CONTACT_TYPE_OPTIONS,
   RETURN_METHOD_OPTIONS,
 } from './deliveryAndReturnOptions';
 
-export type DeliveryAndReturnFormValues = DeliveryAndReturnStep & BridgedValues;
+export type DeliveryAndReturnFormValues = DeliveryAndReturnStep & {
+  saveAndExit?: boolean;
+};
 
 const MAX_NOTES_CHARACTERS = 300;
 const NOTES_ROWS = 3;

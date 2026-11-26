@@ -61,7 +61,7 @@ const fetchLookups = async (
 /**
  * Loads the CRM lookups the instrument summary resolves ids against. Returns
  * `undefined` while loading. A failed load is logged and leaves it
- * `undefined`, so the summary keeps its spinner, as the Formik summary does.
+ * `undefined`, so the summary keeps its spinner, as the earlier summary did.
  */
 export const useRfqInstrumentLookups = (): RfqInstrumentLookups | undefined => {
   const { accounts, instance } = useMsal();

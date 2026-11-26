@@ -11,7 +11,7 @@ const isFieldError = (
  * A RHF field error is `{ type, message, ref }` where `ref` is a live DOM node.
  * A leaf is read for its message only: its other keys are never visited, so the
  * `ref` cannot reach `sanitizeErrorData`, a log line, a snapshot or a payload.
- * Nested objects and arrays recurse, giving the same dotted paths Formik's
+ * Nested objects and arrays recurse, giving the same dotted paths the legacy
  * errors produce (`contacts.0.firstName`).
  */
 export const flattenRhfErrors = (

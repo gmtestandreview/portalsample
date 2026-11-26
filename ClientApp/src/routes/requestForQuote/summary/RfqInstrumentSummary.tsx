@@ -142,7 +142,7 @@ const InstrumentDetails = ({ step, lookups }: InstrumentDetailsProps) => (
     />
     <SummaryDisplay
       label='Number of items'
-      // A count of 0 shows as empty, as the Formik summary does.
+      // A count of 0 shows as empty, as the earlier summary did.
       value={step?.numberOfItems ? String(step.numberOfItems) : undefined}
       as='span'
       id={`${ROOT}.numberOfItems`}
