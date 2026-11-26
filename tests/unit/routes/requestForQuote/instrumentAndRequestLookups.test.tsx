@@ -343,4 +343,31 @@ describe(useInstrumentAndRequestLookups, () => {
       'none',
     );
   });
+
+  it('falls back to empty text for artefact types that lack a label or id', async () => {
+    expect.hasAssertions();
+
+    resetMsalMock();
+    clients.lookup.methods.getLookup.mockReset();
+    wrapperInitialValues.value = { measurementCategory: 'category-1' };
+    grantToken();
+    clients.lookup.methods.getLookup
+      .mockResolvedValueOnce([{ id: 'category-1', label: 'Category 1' }])
+      .mockResolvedValueOnce([
+        { parentId: 'category-1' },
+        { id: 'artefact-2', label: 'Artefact 2', parentId: 'category-1' },
+      ]);
+
+    const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
+      wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.artefactTypesSelected).toStrictEqual(
+      expect.arrayContaining([{ displayText: '', value: '' }]),
+    );
+  });
 });

@@ -175,4 +175,55 @@ describe(RhfWizardForm, () => {
 
     consoleError.mockRestore();
   });
+
+  it('renders no routes when there are no children', () => {
+    expect.hasAssertions();
+
+    const router = createMemoryRouter(
+      [
+        {
+          path: '*',
+          element: (
+            <RhfWizardForm locationOnCompletion='/done'>
+              {null as unknown as React.ReactElement}
+            </RhfWizardForm>
+          ),
+        },
+      ],
+      { initialEntries: ['/'] },
+    );
+    const { container } = render(<RouterProvider router={router} />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('rejects an empty entry nested inside the children', async () => {
+    expect.hasAssertions();
+
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const router = createMemoryRouter(
+      [
+        {
+          path: '*',
+          element: (
+            <RhfWizardForm locationOnCompletion='/done'>
+              {[null] as unknown as React.ReactElement}
+            </RhfWizardForm>
+          ),
+        },
+      ],
+      { initialEntries: ['/'] },
+    );
+    render(<RouterProvider router={router} />);
+
+    await expect(
+      screen.findByText(
+        'RhfWizardForm only accepts children of type WizardStep',
+      ),
+    ).resolves.toBeInTheDocument();
+
+    consoleError.mockRestore();
+  });
 });
