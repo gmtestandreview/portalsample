@@ -149,7 +149,7 @@ const ReportDetails = (props: {
             <Col xs={8} lg={9}>
               <p className='mb-0'>
                 <InTextLink
-                  onClick={(e) => {
+                  onClick={() => {
                     showQuoteRequest();
                   }}
                 >

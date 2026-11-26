@@ -66,6 +66,7 @@ describe(AppDetailsContent, () => {
         isDataLoading
         setActiveTab={vi.fn<() => void>()}
         onTabChange={vi.fn<() => void>()}
+        onDownloadFile={vi.fn<() => Promise<void>>()}
       />,
     );
 
@@ -94,6 +95,7 @@ describe(AppDetailsContent, () => {
         isModalOpen={false}
         setActiveTab={setActiveTab}
         onTabChange={vi.fn<(key: string | null) => void>()}
+        onDownloadFile={vi.fn<() => Promise<void>>()}
       />,
     );
 
@@ -139,6 +141,7 @@ describe(AppDetailsContent, () => {
         isModalOpen
         setActiveTab={vi.fn<Dispatch<SetStateAction<string>>>()}
         onTabChange={vi.fn<(key: string | null) => void>()}
+        onDownloadFile={vi.fn<() => Promise<void>>()}
       />,
     );
 

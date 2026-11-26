@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Col, Container, Nav, Row, Tab } from 'react-bootstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import type { FormikValues } from 'formik';
@@ -11,41 +10,28 @@ import CustomBreadcrumb from '../../../components/Breadcrumb';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import BackToDashboardButton from '../../../components/Buttons/BackToDashboardButton';
-import type {
-  ApplicationDetailsDto,
-  RequestForPatternApprovalAppDetails,
-} from '../../../api/web-api-client';
+import type { RequestForPatternApprovalAppDetails } from '../../../api/web-api-client';
 import { RequestForPatternApprovalClient } from '../../../api/web-api-client';
 import FormikForm from '../../../components/forms/FormikForm';
 import appDetailsProps from './appDetailsProps';
-import useAccountContext from '../../../authentication/hooks';
-import type { AccountDetails } from '../../../authentication/accountContext';
-import type { TAApplicationDetailsProps } from '../types';
 import ApplicationDocuments from './appDocuments';
 import ApplicationMessages from './appMessages';
 import { tokenRequest } from '../../../authentication/authConfig';
 import AppDetailsContent from './appDetailsContent';
 import ApplicationTimeline from './appTimeline';
 import AppLogger from '../../../instrumentation/AppLogger';
-import { ApplicationsManageTab } from './types';
 import { base64toBlob } from '../../../utils';
 
 const POLL_MS = 5000;
 
-const ApplicationDetails = (props: TAApplicationDetailsProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+const ApplicationDetails = () => {
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [appDetails, setAppDetails] = useState<FormikValues | null>(null);
-  const navigate = useNavigate();
   const { id } = useParams();
   const { accounts, instance } = useMsal();
-  const account = useAccountContext();
-  const accountDetails: AccountDetails = account!.details!;
-  const options = appDetailsProps(id, accounts, instance, accountDetails, '');
-  const { loadStepValues, hidingFields } = options;
-  const [applicationType, setApplicationType] = useState<string | null>(null);
-  const [messageCount, setMessageCount] = useState<number>(0);
+  const options = appDetailsProps(id, accounts, instance);
+  const { loadStepValues } = options;
+  const [, setMessageCount] = useState<number>(0);
   // const messagesRoute = `/ta/${id}/manage?tab=messages`;
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const disposedRef = useRef(false);
@@ -64,7 +50,7 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
       const client = new RequestForPatternApprovalClient();
       const tokenResult = await instance.acquireTokenSilent({
         ...tokenRequest,
-        account: accounts[0],
+        ...(accounts[0] ? { account: accounts[0] } : {}),
       });
       client.setAuthToken(tokenResult.accessToken);
       const count = await client.getAppMessageCount(id, id, undefined);
@@ -92,7 +78,7 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
   const getTabFromQuery = () => {
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    return tab && TAB_KEYS.includes(tab) ? tab : TAB_KEYS[0];
+    return tab && TAB_KEYS.includes(tab) ? tab : 'details';
   };
   const [activeTab, setActiveTab] = useState(getTabFromQuery);
   const [loadMessagesTab, setLoadMessagesTab] = useState(
@@ -160,7 +146,7 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent({
           ...tokenRequest,
-          account: accounts[0],
+          ...(accounts[0] ? { account: accounts[0] } : {}),
         });
         client.setAuthToken(tokenResult.accessToken);
         const response = await client.getSupportingDocument(id, fileName, id);
@@ -193,9 +179,6 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
       try {
         const result = await loadStepValues();
         setAppDetails(result.formValues);
-        const appType = result.formValues
-          ?.applicationDetails as ApplicationDetailsDto;
-        setApplicationType(appType.patternApprovalType || '');
         // setIsDataLoading(true);
       } catch (e) {
         AppLogger.error('Failed to load application details', e as Error, {
@@ -214,7 +197,7 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
         <Tab.Container
           id='appl-manage-tabs'
           activeKey={activeTab}
-          defaultActiveKey={ApplicationsManageTab.Details}
+          defaultActiveKey='details'
           onSelect={handleTabSelect}
           mountOnEnter
         >
@@ -227,8 +210,8 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
             <span className='d-flex flex-nowrap'>
               <Nav.Item as='li' role='presentation'>
                 <Nav.Link
-                  id={ApplicationsManageTab.Details}
-                  eventKey={ApplicationsManageTab.Details}
+                  id='details'
+                  eventKey='details'
                   className='px-3'
                   // onClick={() => {
                   //     changeTab(DashboardTab.Drafts);
@@ -240,12 +223,12 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
               </Nav.Item>
               <Nav.Item as='li' role='presentation'>
                 <Nav.Link
-                  id={ApplicationsManageTab.Messages}
-                  eventKey={ApplicationsManageTab.Messages}
+                  id='messages'
+                  eventKey='messages'
                   className='px-3'
                   onClick={() => {
                     // when already on Messages, force another refresh
-                    if (activeTab === ApplicationsManageTab.Messages) {
+                    if (activeTab === 'messages') {
                       refreshMessagesTab();
                     }
                   }}
@@ -255,8 +238,8 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
               </Nav.Item>
               <Nav.Item as='li' role='presentation'>
                 <Nav.Link
-                  id={ApplicationsManageTab.Documents}
-                  eventKey={ApplicationsManageTab.Documents}
+                  id='documents'
+                  eventKey='documents'
                   className='px-3'
                   // onClick={() => {
                   //     changeTab(DashboardTab.Requests);
@@ -268,8 +251,8 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
               </Nav.Item>
               <Nav.Item as='li' role='presentation'>
                 <Nav.Link
-                  id={ApplicationsManageTab.Timeline}
-                  eventKey={ApplicationsManageTab.Timeline}
+                  id='timeline'
+                  eventKey='timeline'
                   className='px-3'
                   // onClick={() => {
                   //     changeTab(DashboardTab.Requests);
@@ -292,7 +275,7 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
               {data ? (
                 <AppDetailsContent
                   name='applicationDetails'
-                  isModalOpen={isModalOpen}
+                  isModalOpen={false}
                   isDataLoading={isDataLoading}
                   setActiveTab={setActiveTab}
                   onTabChange={handleTabSelect}
@@ -309,7 +292,7 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
               <ApplicationDocuments onDownloadFile={downloadFile} />
             </Tab.Pane>
             <Tab.Pane eventKey='timeline' tabIndex={0} mountOnEnter>
-              <ApplicationTimeline name='timelineDetails' />
+              <ApplicationTimeline />
             </Tab.Pane>
           </Tab.Content>
         </Tab.Container>
@@ -345,7 +328,7 @@ const ApplicationDetails = (props: TAApplicationDetailsProps) => {
   return (
     <FormikForm<RequestForPatternApprovalAppDetails>
       initialValues={appDetails as RequestForPatternApprovalAppDetails}
-      isLoading={isLoading}
+      isLoading={false}
       isSummaryPage
       onSubmit={() => Promise.resolve()}
       promptPath=''

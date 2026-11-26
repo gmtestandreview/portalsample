@@ -12,6 +12,7 @@ import ApplicationDocuments from './appDocuments';
 const meta = preview.meta({
   title: 'Routes/TypeApproval/Manage/ApplicationDocuments',
   component: ApplicationDocuments,
+  args: { onDownloadFile: () => Promise.resolve() },
   decorators: [withPortalProviders],
   parameters: {
     layout: 'fullscreen',

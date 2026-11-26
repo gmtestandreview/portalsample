@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Col, Row, Container, Button } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
   getQuotationNotification,

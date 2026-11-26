@@ -45,6 +45,8 @@ export interface TASupportingDocumentsProps {
     React.SetStateAction<UploadProgress | undefined>
   >;
   uploading?: boolean;
+  isSubmitted?: boolean;
+  onDownloadFile?: (fileName: string) => Promise<void>;
   handleCancelFile?: (fileName: string) => Promise<void>;
   disableUpload?: boolean | undefined;
   suppressDocChanges?: boolean;

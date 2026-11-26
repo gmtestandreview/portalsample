@@ -1,5 +1,5 @@
 import { Col, Row, Alert, Table } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import type {
   InstrumentArtefactDto,
   PagedListOfInstrumentArtefactDto,

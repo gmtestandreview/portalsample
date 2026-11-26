@@ -1,6 +1,6 @@
 import { PublicClientApplication } from '@azure/msal-browser';
 import { createRoot } from 'react-dom/client';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router';
 import { MsalProvider } from '@azure/msal-react';
 import { StrictMode } from 'react';
 import AccountProvider from './authentication/AccountProvider';

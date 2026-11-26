@@ -1,13 +1,13 @@
 import { useMsal } from '@azure/msal-react';
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 import { Card, Row, Col, Form } from 'react-bootstrap';
 import parse from 'html-react-parser';
-import type { CustomElement } from '../../../components/SlateEditor/SlateEditor';
-import SlateEditor, {
+import SlateEditor from '../../../components/SlateEditor/SlateEditor';
+import {
   serializeToHtml,
-} from '../../../components/SlateEditor/SlateEditor';
-import useAccountContext from '../../../authentication/hooks';
+  type CustomElement,
+} from '../../../components/SlateEditor/slateHtml';
 
 import AppLogger from '../../../instrumentation/AppLogger';
 import type { RequestForPatternApprovalApplicationMessage } from '../../../api/web-api-client';
@@ -27,14 +27,11 @@ const DEFAULT_DASHBOARD_PAGESIZE = 10;
 const ApplicationMessages = () => {
   const { accounts, instance } = useMsal();
   const { id } = useParams();
-  const account = useAccountContext();
-  const navigate = useNavigate();
-
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen] = useState(false);
   const [message, setMessage] =
     useState<RequestForPatternApprovalApplicationMessage>();
-  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+  const [selectedMessage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -62,7 +59,7 @@ const ApplicationMessages = () => {
           const client = new RequestForPatternApprovalClient();
           const tokenResult = await instance.acquireTokenSilent({
             ...tokenRequest,
-            account: accounts[0],
+            ...(accounts[0] ? { account: accounts[0] } : {}),
           });
           client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppMessages(
@@ -115,7 +112,7 @@ const ApplicationMessages = () => {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent({
           ...tokenRequest,
-          account: accounts[0],
+          ...(accounts[0] ? { account: accounts[0] } : {}),
         });
         client.setAuthToken(tokenResult.accessToken);
         await client.addAppMessage(id, sanitizedHtmlContent);
@@ -209,14 +206,6 @@ const ApplicationMessages = () => {
     return parse(safeHtml);
   };
 
-  const renderFooter = (footer: string) =>
-    footer && (
-      <>
-        <p className='mt-2 mb-0'>Regards,</p>
-        <p className='my-0'>{footer}</p>
-      </>
-    );
-
   const renderMessageFrom = (footer: string) =>
     footer && (
       <>
@@ -248,7 +237,7 @@ const ApplicationMessages = () => {
               messageCount !== undefined &&
               messageCount > 0 &&
               message.requestForPatternApprovalMessageDetails!.items!.map(
-                (msg, index) => (
+                (msg) => (
                   <li key={msg.id} id={msg.id}>
                     <Card
                       className={`border-0 border-bottom mb-1 shadow-sm ${selectedMessage === msg.regardingId ? ' selectedMessage' : ''}`}

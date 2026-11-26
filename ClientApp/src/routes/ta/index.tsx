@@ -1,5 +1,5 @@
 import { useMsal } from '@azure/msal-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import WizardForm from '../../components/forms/WizardForm';
 import type { WizardFormProps } from '../../components/forms/WizardForm/types';

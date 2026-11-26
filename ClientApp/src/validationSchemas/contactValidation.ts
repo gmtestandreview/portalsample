@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import type { ContactDto } from '../api/web-api-client';
+import { YesNo, type ContactDto } from '../api/web-api-client';
 import {
   NotEmpty,
   nullableString,
@@ -50,6 +50,16 @@ export const emailSchema = (label: string, required = true) =>
   (required ? requiredNullableString(label) : nullableString(label))
     .maxLength(100)
     .email();
+
+export const whenAnswerIsNo = (
+  answerKey: string,
+  buildSchema: () => yup.Schema,
+) =>
+  yup.mixed().when(answerKey, {
+    is: (answer: YesNo | undefined) => answer === YesNo.No,
+    then: buildSchema,
+    otherwise: () => yup.mixed(),
+  });
 
 const phoneRequired =
   () => (value: string | null | undefined, context: yup.TestContext) =>

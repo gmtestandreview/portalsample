@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { Col, Row, Container } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
   getReportingNotification,
   clearReportingNotification,
-  setReportingNotification,
   getDashboardInfoNotification,
   setDashboardInfoNotification,
   clearDashboardInfoNotification,
@@ -24,7 +23,7 @@ import HeaderIntroText from '../../components/HeaderIntroText';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import ReportDetails from './reportDetails';
-import NMIContactDetails from './nMIContactDetails';
+import NMIContactDetails from '../common/NMIContactDetails';
 import ViewMeasurementReport from '../../components/Utilities/ViewMeasurementReport';
 import { tokenRequest } from '../../authentication/authConfig';
 import { handleReportFileError } from '../common/helperFunctions';
@@ -83,10 +82,10 @@ const MeasurementReport = () => {
   const { id } = useParams<{ id?: string }>();
   const { inProgress, accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);
-  const [errored, setErrored] = useState(false);
+  const [errored] = useState(false);
   const [reload, setReload] = useState(false);
-  const [forbidden, setForbidden] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
+  const [forbidden] = useState(false);
+  const [showInfo] = useState(false);
   const [noThirdPartyAccess, setNoThirdPartyAccess] = useState(false);
   const [measurementReportData, setMeasurementReportData] = useState<
     RequestForQuoteDetails | undefined
@@ -107,6 +106,9 @@ const MeasurementReport = () => {
 
   useEffect(() => {
     const getReportDetails = async () => {
+      const account = accounts[0];
+      if (!account) return;
+
       try {
         AppLogger.verbose('MeasurementReport.getReportDetails', { Id: id });
         setFileError(false);
@@ -114,7 +116,7 @@ const MeasurementReport = () => {
         const client = new QuoteClient();
         const tokenResult = await instance.acquireTokenSilent({
           ...tokenRequest,
-          account: accounts[0],
+          account,
         });
         client.setAuthToken(tokenResult.accessToken);
         const details = await client.getQuoteRequestDetailsByRefId(
@@ -175,7 +177,7 @@ const MeasurementReport = () => {
       severity: NotificationSeverity.Error,
     });
     if (accountContext) {
-      accountContext.setTargetOrganisation(
+      accountContext.setTargetOrganisation?.(
         accountContext?.details?.abn ?? '',
         accountContext?.details?.organisation ?? '',
       );
@@ -211,7 +213,10 @@ const MeasurementReport = () => {
           </div>
         </Col>
       </Row>
-      <NMIContactDetails quotationData={measurementReportData} />
+      <NMIContactDetails
+        heading='Contact your NMI test officer if you have any questions about the report outcomes.'
+        quotationData={measurementReportData}
+      />
     </>
   );
 

@@ -1,5 +1,5 @@
 import { Row } from 'react-bootstrap';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router';
 import { getIn, useField, useFormikContext } from 'formik';
 import type { TAOrganisationAndContactProps } from './types';
 import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';

@@ -42,8 +42,7 @@ const ApplicationDocuments = ({
   const { accounts, instance } = useMsal();
   const { id } = useParams();
   const [isDataLoading, setIsDataLoading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen] = useState(false);
 
   // SupportingDocuments upload state and handlers (from ta/index.tsx)
   const [uploading, setUploading] = useState(false);
@@ -70,7 +69,7 @@ const ApplicationDocuments = ({
           const client = new RequestForPatternApprovalClient();
           const tokenResult = await instance.acquireTokenSilent({
             ...tokenRequest,
-            account: accounts[0],
+            ...(accounts[0] ? { account: accounts[0] } : {}),
           });
           client.setAuthToken(tokenResult.accessToken);
           const beforeCall = new Date();
@@ -112,7 +111,7 @@ const ApplicationDocuments = ({
       const client = new ProgressClient();
       const tokenResult = await instance.acquireTokenSilent({
         ...tokenRequest,
-        account: accounts[0],
+        ...(accounts[0] ? { account: accounts[0] } : {}),
       });
       while (!controller.signal.aborted) {
         try {
@@ -155,7 +154,7 @@ const ApplicationDocuments = ({
       const client = new ProgressClient();
       const tokenResult = await instance.acquireTokenSilent({
         ...tokenRequest,
-        account: accounts[0],
+        ...(accounts[0] ? { account: accounts[0] } : {}),
       });
       client.setAuthToken(tokenResult.accessToken);
       await client.cancelFile(uploadIdRef.current, fileName);
@@ -238,7 +237,7 @@ const ApplicationDocuments = ({
                   const client = new RequestForPatternApprovalClient();
                   const tokenResult = await instance.acquireTokenSilent({
                     ...tokenRequest,
-                    account: accounts[0],
+                    ...(accounts[0] ? { account: accounts[0] } : {}),
                   });
                   client.setAuthToken(tokenResult.accessToken);
                   values.form.documents.forEach((doc) => {
