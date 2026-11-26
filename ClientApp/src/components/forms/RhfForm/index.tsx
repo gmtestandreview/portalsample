@@ -92,7 +92,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
       validationContext.setSubmitMode(mode);
       try {
         await handleSubmit(async (values) => {
-          const payload = normalizeSubmitValues(values, hidden);
+          const payload = normalizeSubmitValues(values, hidden, initialValues);
           if (mode === 'saveAndExit' && onSaveAndExit) {
             await onSaveAndExit(payload);
           } else {
@@ -105,7 +105,14 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         validationContext.setSubmitMode('next');
       }
     },
-    [handleSubmit, hidden, onSaveAndExit, onSubmit, validationContext],
+    [
+      handleSubmit,
+      hidden,
+      initialValues,
+      onSaveAndExit,
+      onSubmit,
+      validationContext,
+    ],
   );
 
   const api = useMemo<RhfFormApi>(

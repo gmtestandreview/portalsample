@@ -1,6 +1,6 @@
 import { Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router';
-import { useFormikContext } from 'formik';
+import { useWatch } from 'react-hook-form';
 import {
   CustomAccordion,
   CustomAccordionBody,
@@ -11,28 +11,18 @@ import type { TASummaryProps } from './types';
 import OrganisationSummary from './summary/OrganisationSummary';
 import ApplicationSummary from './summary/ApplicationSummary';
 import type { TaSummarySectionProps } from './summary/types';
-import SupportingDocuments from './supportingDocuments';
+import RhfSupportingDocuments from './rhfSupportingDocuments';
 import useBodyClass from '../../components/Utilities/useBodyClass';
-import Checkbox from '../../components/Inputs/Checkbox';
+import RhfCheckbox from '../../components/Inputs/RhfCheckbox';
+import { useHiddenRules } from '../../components/forms/RhfHidableField/hiddenRulesContext';
 import InTextLink from '../../components/InTextLink';
-
-interface TaFormikStatus {
-  hidden?: TaSummarySectionProps['hidden'];
-}
-
-const isTaFormikStatus = (status: unknown): status is TaFormikStatus =>
-  typeof status === 'object' && status !== null && 'hidden' in status;
 
 const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted } = props;
-  const formikContext = useFormikContext<TaSummarySectionProps['values']>();
-  const { values } = formikContext;
-  const status: unknown = formikContext.status as unknown;
-  // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
-  const hidden: TaSummarySectionProps['hidden'] = isTaFormikStatus(status)
-    ? (status.hidden ?? {})
-    : {};
+  const values = useWatch<TaSummarySectionProps['values']>();
+  // The wizard keeps its hiding rules in the RHF hidden-rules context.
+  const hidden = useHiddenRules() as TaSummarySectionProps['hidden'];
 
   useBodyClass('summary');
   return (
@@ -77,7 +67,7 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
             eventKey='1'
             className='mb-4 py-2'
           >
-            <SupportingDocuments
+            <RhfSupportingDocuments
               isSummary
               name='supportingDocuments.form.documents'
               onUploadAttachment={() => Promise.resolve([])} // Not used
@@ -103,12 +93,11 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
                   conditions before submitting your application.
                 </strong>
               </p>
-              <Checkbox
+              <RhfCheckbox
                 label='I have read NMI P 106 (approval and certification procedures)'
                 name='acceptNMIP106'
                 isSummary={false}
                 containerClassName='mb-0 pe-1 -w-auto'
-                validationClassName='ms-4 px-3'
               />
               <InTextLink
                 href='https://www.industry.gov.au/sites/default/files/2026-03/nmi-p-106.pdf'
@@ -119,12 +108,11 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
                 of measuring instruments (PDF)
               </InTextLink>
 
-              <Checkbox
+              <RhfCheckbox
                 label='I have read and accept the terms and conditions associated with this application '
                 name='acceptTermsAndConditions'
                 isSummary={false}
                 containerClassName='mb-0 pe-1 -w-auto'
-                validationClassName='ms-4 px-3'
               />
               <InTextLink
                 href='https://www.industry.gov.au/national-measurement-institute/pattern-approval/application-pattern-approval/pattern-approval-terms-and-conditions'
@@ -134,12 +122,11 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
                 Pattern approval terms and conditions
               </InTextLink>
 
-              <Checkbox
+              <RhfCheckbox
                 label='I declare that the measuring Instrument has been designed and contracted to the relevant Australian safety standards and, where appropriate, that the measuring Instrument complies with the relevant safety test scheme'
                 name='acceptDeclaration'
                 isSummary={false}
                 containerClassName='mb-0 pe-1 -w-auto'
-                validationClassName='ms-4 px-3'
               />
             </Row>
           </CustomAccordionBody>

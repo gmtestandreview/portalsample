@@ -1,8 +1,9 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { useField } from 'formik';
-import type { FormikProps } from 'formik';
+import { useController, useFormContext } from 'react-hook-form';
+import type { FieldErrors, UseFormReturn } from 'react-hook-form';
+import { useEffect } from 'react';
 import type { ChangeEvent, ReactNode } from 'react';
 import {
   PatternApprovalRequiredValueOptions,
@@ -10,7 +11,7 @@ import {
 } from '../../../../ClientApp/src/api/web-api-client';
 
 import { resetMsalMock } from '../../helpers/mockMsal';
-import { FormikWrapper } from '../../helpers/formik';
+import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
@@ -24,7 +25,7 @@ const captured = vi.hoisted(() => ({
     {
       options: { displayText: string; value: string }[];
       readOnly?: boolean | undefined;
-      onChange?: ((event: unknown) => void) | undefined;
+      onChange?: ((value: string) => void) | undefined;
     }
   >(),
   checkboxGroups: new Map<
@@ -63,17 +64,17 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
-// HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
+// RhfHidableField decides visibility from the hide rules; that is its logic, not this file's.
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/HidableField'),
+  import('../../../../ClientApp/src/components/forms/RhfHidableField'),
   (() =>
     ({
       default: ({ children }: { children: ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule70>) as unknown as __DynamicPartialMockFactory<__TestMockModule70>,
+    }) satisfies __ExactMockModule<__TestMockModule167>) as unknown as __DynamicPartialMockFactory<__TestMockModule167>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/SelectInput'),
+  import('../../../../ClientApp/src/components/Inputs/RhfSelectInput'),
   (() =>
     ({
       default: ({
@@ -86,13 +87,13 @@ vi.mock(
         name: string;
         label: string;
         options: { displayText: string; value: string }[];
-        onChange?: (event: unknown) => void;
+        onChange?: (value: string) => void;
         readOnly?: boolean;
       }) => {
         captured.selects.set(name, { options, readOnly, onChange });
-        // The real SelectInput runs the caller's onChange and then updates its
-        // Formik field; the step derives its dependent options from that field.
-        const field = useField(name)[0];
+        // The real select updates its form field and then runs the caller's
+        // onChange; the step derives its dependent options from that field.
+        const { field } = useController({ name });
 
         return (
           <select
@@ -101,8 +102,8 @@ vi.mock(
             data-testid={`select-${name}`}
             data-readonly={String(readOnly ?? false)}
             onChange={(event: ChangeEvent<HTMLSelectElement>) => {
-              onChange?.(event);
-              field.onChange(event);
+              field.onChange(event.target.value);
+              onChange?.(event.target.value);
             }}
           >
             <option value='' />
@@ -114,11 +115,11 @@ vi.mock(
           </select>
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule131>) as unknown as __DynamicPartialMockFactory<__TestMockModule131>,
+    }) satisfies __ExactMockModule<__TestMockModule169>) as unknown as __DynamicPartialMockFactory<__TestMockModule169>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/CheckboxGroup'),
+  import('../../../../ClientApp/src/components/Inputs/RhfCheckboxGroup'),
   (() =>
     ({
       default: ({
@@ -134,69 +135,37 @@ vi.mock(
           <div data-testid={`checkboxes-${name}`} data-count={options.length} />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule132>) as unknown as __DynamicPartialMockFactory<__TestMockModule132>,
+    }) satisfies __ExactMockModule<__TestMockModule170>) as unknown as __DynamicPartialMockFactory<__TestMockModule170>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/RadioButton'),
-  (() =>
-    ({
-      default: ({
-        id,
-        label,
-        checked,
-        onChange,
-        value,
-      }: {
-        id: string;
-        label: string;
-        checked: boolean;
-        onChange: (event: unknown) => void;
-        value: string;
-      }) => (
-        <label htmlFor={id}>
-          <input
-            type='radio'
-            id={id}
-            name='applicationType'
-            value={value}
-            checked={checked}
-            onChange={onChange}
-          />
-          {label}
-        </label>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule133>) as unknown as __DynamicPartialMockFactory<__TestMockModule133>,
-);
-
-vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  import('../../../../ClientApp/src/components/Inputs/RhfTextInput'),
   (() =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`text-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>) as unknown as __DynamicPartialMockFactory<__TestMockModule29>,
+    }) satisfies __ExactMockModule<__TestMockModule162>) as unknown as __DynamicPartialMockFactory<__TestMockModule162>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextAreaInput'),
+  import('../../../../ClientApp/src/components/Inputs/RhfTextAreaInput'),
   (() =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`textarea-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule134>) as unknown as __DynamicPartialMockFactory<__TestMockModule134>,
+    }) satisfies __ExactMockModule<__TestMockModule171>) as unknown as __DynamicPartialMockFactory<__TestMockModule171>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/CertificateNumberLookup'),
+  import('../../../../ClientApp/src/components/Inputs/RhfCertificateNumberLookup'),
   (() =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`certificate-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule135>) as unknown as __DynamicPartialMockFactory<__TestMockModule135>,
+    }) satisfies __ExactMockModule<__TestMockModule172>) as unknown as __DynamicPartialMockFactory<__TestMockModule172>,
 );
 
 vi.mock(
@@ -265,7 +234,34 @@ const baseValues = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-let formik: FormikProps<Record<string, unknown>> | undefined;
+/** What the form currently holds, captured from inside the provider. */
+interface FormHandle {
+  methods: UseFormReturn | undefined;
+  errors: FieldErrors;
+  touched: Record<string, unknown>;
+  submitCount: number;
+}
+
+let form: FormHandle | undefined;
+
+/** The form methods; fails the test if the step never rendered. */
+const methods = () => defined(form?.methods, 'form methods');
+
+const FormProbe = () => {
+  const context = useFormContext();
+  const { errors, touchedFields, submitCount } = context.formState;
+
+  useEffect(() => {
+    form = {
+      methods: context,
+      errors,
+      touched: touchedFields,
+      submitCount,
+    };
+  });
+
+  return null;
+};
 
 const renderStep = async ({
   values = baseValues(),
@@ -280,28 +276,31 @@ const renderStep = async ({
     await import('../../../../ClientApp/src/routes/ta/applicationAndInstrument')
   ).default;
 
-  const result = render(
-    <FormikWrapper
-      initialValues={values}
-      innerRef={(bag) => {
-        formik = bag;
-      }}
-    >
+  const tree = (initialValues: Record<string, unknown>) => (
+    <RhfForm initialValues={initialValues} onSubmit={() => undefined}>
+      <FormProbe />
       <ApplicationAndInstrument name={name} isSummary={isSummary} />
-    </FormikWrapper>,
+    </RhfForm>
   );
+  const result = render(tree(values));
 
   await act(async () => {
     await Promise.resolve();
   });
 
-  return result;
+  return {
+    ...result,
+    /** Simulates the saved step values arriving: a new initial values object. */
+    reload: (next: Record<string, unknown>) => {
+      result.rerender(tree(next));
+    },
+  };
 };
 
 const resetApplicationAndInstrumentMocks = () => {
   resetMsalMock();
   mocks.appLoggerError.mockReset();
-  formik = undefined;
+  form = undefined;
   captured.selects.clear();
   captured.checkboxGroups.clear();
   captured.infoPanel = undefined as unknown as typeof captured.infoPanel;
@@ -325,7 +324,7 @@ describe('application and instrument step', () => {
       expect(screen.getByLabelText('Other options')).not.toBeChecked();
     });
 
-    it('starts on a new certificate when nothing is stored', async () => {
+    it('selects nothing when no type is stored, leaving the default to the loader', async () => {
       expect.hasAssertions();
 
       resetApplicationAndInstrumentMocks();
@@ -336,7 +335,7 @@ describe('application and instrument step', () => {
 
       expect(
         screen.getByLabelText('New Certificate of Approval (CoA)'),
-      ).toBeChecked();
+      ).not.toBeChecked();
       expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
     });
 
@@ -381,11 +380,16 @@ describe('application and instrument step', () => {
       await renderStep();
 
       await act(async () => {
-        await formik?.submitForm();
+        await methods().handleSubmit(
+          () => undefined,
+          () => undefined,
+        )();
       });
       await act(async () => {
-        formik?.setErrors({ instrumentCategory: 'Category is required' });
-        await formik?.setTouched({ instrumentCategory: true });
+        methods().setError('instrumentCategory', {
+          type: 'manual',
+          message: 'Category is required',
+        });
         await Promise.resolve();
       });
 
@@ -395,10 +399,10 @@ describe('application and instrument step', () => {
 
       // Switching type changes which fields even apply, so errors about the old branch go.
       await waitFor(() => {
-        expect(formik?.errors).toStrictEqual({});
+        expect(form?.errors).toStrictEqual({});
       });
 
-      expect(formik?.touched).toStrictEqual({});
+      expect(form?.touched).toStrictEqual({});
     });
 
     it('leaves validation alone when the type changes before any submit', async () => {
@@ -410,7 +414,10 @@ describe('application and instrument step', () => {
       await renderStep();
 
       await act(async () => {
-        formik?.setErrors({ instrumentCategory: 'Category is required' });
+        methods().setError('instrumentCategory', {
+          type: 'manual',
+          message: 'Category is required',
+        });
         await Promise.resolve();
       });
 
@@ -418,9 +425,9 @@ describe('application and instrument step', () => {
         screen.getByLabelText('Variation or request a minor edit'),
       );
 
-      expect(formik?.errors).toStrictEqual({
-        instrumentCategory: 'Category is required',
-      });
+      expect(form?.errors['instrumentCategory']?.message).toBe(
+        'Category is required',
+      );
     });
 
     it('offers the sub-options belonging to each application type', async () => {
@@ -610,18 +617,14 @@ describe('application and instrument step', () => {
 
       resetApplicationAndInstrumentMocks();
 
-      await renderStep({
+      const { reload } = await renderStep({
         values: baseValues({
           instrumentCategoryLookup: undefined,
           instrumentTypeLookup: undefined,
         }),
       });
 
-      await act(async () => {
-        await formik?.setValues(
-          baseValues({ instrumentCategory: 'cat-weighing' }),
-        );
-      });
+      reload(baseValues({ instrumentCategory: 'cat-weighing' }));
 
       await waitFor(() => {
         expect(
@@ -676,9 +679,7 @@ describe('application and instrument step', () => {
       });
 
       await act(async () => {
-        selectNamed('instrumentCategory').onChange?.({
-          target: { value: 'cat-weighing' },
-        });
+        selectNamed('instrumentCategory').onChange?.('cat-weighing');
         await Promise.resolve();
       });
 
@@ -686,7 +687,7 @@ describe('application and instrument step', () => {
       expect(selectNamed('instrumentType').options).toStrictEqual([]);
 
       await waitFor(() => {
-        expect(formik?.values['instrumentType']).toBe('');
+        expect(methods().getValues('instrumentType')).toBe('');
       });
     });
 
@@ -762,7 +763,7 @@ describe('application and instrument step', () => {
         ).toStrictEqual(['Tape measure']);
       });
 
-      expect(formik?.values['instrumentType']).toBe('');
+      expect(methods().getValues('instrumentType')).toBe('');
     });
 
     it('picks the none instrument and locks the type when no measurement applies', async () => {
@@ -784,7 +785,7 @@ describe('application and instrument step', () => {
       // Choosing "no measurement instrument" has exactly one valid type, so it is chosen for
       // the user and the field is locked rather than left as an empty required box.
       await waitFor(() => {
-        expect(formik?.values['instrumentType']).toBe('type-none');
+        expect(methods().getValues('instrumentType')).toBe('type-none');
       });
 
       expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
@@ -1066,7 +1067,10 @@ describe('application and instrument step', () => {
 
       resetApplicationAndInstrumentMocks();
 
-      await renderStep({ name: 'applicationAndInstrument' });
+      await renderStep({
+        name: 'applicationAndInstrument',
+        values: { applicationAndInstrument: baseValues() },
+      });
 
       expect(
         screen.getByLabelText('New Certificate of Approval (CoA)'),

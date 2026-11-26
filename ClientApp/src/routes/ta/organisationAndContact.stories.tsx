@@ -6,7 +6,7 @@ import OrganisationAndContact from './organisationAndContact';
 /**
  * `OrganisationAndContact` is the organisation/contact step of the type-approval wizard.
  * It captures the organisation type, name and authorised agent, plus the application's
- * main contact. Every field is Formik-bound under the step `name` prefix, so the story
+ * main contact. Every field is form-bound under the step `name` prefix, so the story
  * provides a matching initial-values context.
  */
 const meta = preview.meta({
@@ -18,8 +18,8 @@ const meta = preview.meta({
     portal: {
       authenticated: true,
       initialEntries: ['/ta/PA-1/organisation-details'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           sourceReferenceId: '',
           organisationAndContact: {
             organisationType: '',

@@ -8,7 +8,7 @@ import SummaryAndSubmit from './summaryAndSubmit';
  * captured Organisation, Application and Supporting-documents sections as review
  * accordions, plus the terms-and-conditions declarations the applicant must accept
  * before submitting. While editable it shows review guidance and Edit buttons; once
- * submitted it shows a back-to-dashboard link. All sections are Formik-bound.
+ * submitted it shows a back-to-dashboard link. All sections are form-bound.
  */
 const initialValues = {
   organisationAndContact: {},
@@ -28,7 +28,7 @@ const meta = preview.meta({
     portal: {
       authenticated: true,
       initialEntries: ['/ta/PA-1/summary'],
-      formik: { initialValues },
+      rhf: { defaultValues: initialValues },
     },
   },
   args: {

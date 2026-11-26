@@ -362,6 +362,46 @@ export const DifferentContactRequiresContactDetails = meta.story({
   },
 });
 
+/**
+ * RHF deviation from Formik, which showed these fields in the error summary only:
+ * each missing contact field now also carries `aria-invalid` and an accessible
+ * description naming the problem.
+ */
+export const DifferentContactShowsInlineErrors = meta.story({
+  beforeEach({ msw }) {
+    msw.use(statuses(...orgSteps));
+    msw.use(
+      ...wizardHandlers({
+        organisation: { ...orgValues, isPrincipalContact: 'No', contact: {} },
+      }),
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await waitFor(() =>
+      expect(
+        canvas.getAllByRole('radio', { name: /A different contact person/ })[0],
+      ).toBeChecked(),
+    );
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Save and next' }),
+    );
+    await canvas.findByRole('link', { name: /First name/ });
+
+    for (const [label, message] of [
+      ['First name', /First name/i],
+      ['Last name', /Last name/i],
+      ['Email', /Email/i],
+    ] as const) {
+      const field = canvas.getAllByLabelText(label, { exact: false })[0];
+
+      await waitFor(() =>
+        expect(field).toHaveAttribute('aria-invalid', 'true'),
+      );
+      await expect(field).toHaveAccessibleDescription(message);
+    }
+  },
+});
+
 export const ApplicationStepSavesPayloadWithSubOptions = meta.story({
   parameters: {
     portal: { initialEntries: [`${BASE}/application-details`] },

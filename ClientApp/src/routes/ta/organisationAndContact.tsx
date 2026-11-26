@@ -1,22 +1,18 @@
 import Row from 'react-bootstrap/Row';
-import { useField } from 'formik';
+import { useWatch } from 'react-hook-form';
 import type { TAOrganisationAndContactProps } from './types';
-import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
-import HidableField from '../../components/forms/HidableField';
-import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
-import AuthorisedAgent from '../../components/Inputs/AuthorisedAgent';
-import TextInput from '../../components/Inputs/TextInput';
-import AddressLookup from '../../components/Inputs/AddressLookup';
+import RhfContactDetails from '../../components/forms/CommonForms/RhfContactDetails';
+import RhfHidableField from '../../components/forms/RhfHidableField';
+import RhfRadioButtonGroup from '../../components/Inputs/RhfRadioButtonGroup';
+import RhfAuthorisedAgent from '../../components/Inputs/RhfAuthorisedAgent';
+import RhfTextInput from '../../components/Inputs/RhfTextInput';
+import RhfAddressLookup from '../../components/Inputs/RhfAddressLookup';
 
+/** Shows one form value as text; re-renders as the value changes. */
 const GetFieldValue = ({ fieldName }: Readonly<{ fieldName: string }>) => {
-  const [_field] = useField(fieldName);
-  return <>{_field.value}</>;
+  const value: unknown = useWatch({ name: fieldName });
+  return <>{typeof value === 'string' ? value : ''}</>;
 };
-
-/* const GetFieldValueString = ({ fieldName }: { fieldName: string }) => {
-    const [_field] = useField(fieldName);
-    return _field.value;
-}; */
 
 const OrganisationAndContact = (
   props: Readonly<TAOrganisationAndContactProps>,
@@ -85,7 +81,7 @@ const OrganisationAndContact = (
   return (
     <>
       <Row className={isSummary ? '' : 'mb-4'}>
-        <RadioButtonGroup
+        <RhfRadioButtonGroup
           legend='Organisation type'
           name={getName('isManufacturer')}
           id='q-isManufacturer'
@@ -110,13 +106,13 @@ const OrganisationAndContact = (
         />
       </Row>
       <Row>
-        <HidableField name={getName('isCurrentOrganisationHide')}>
-          <TextInput
+        <RhfHidableField name={getName('isCurrentOrganisationHide')}>
+          <RhfTextInput
             label='Organisation name'
             isSummary={isSummary}
             name={getName('name')}
           />
-          <AddressLookup
+          <RhfAddressLookup
             isSummary={isSummary}
             name={getName('streetAddress')}
             label='Business address'
@@ -124,21 +120,21 @@ const OrganisationAndContact = (
             key='returnAddress'
             placeholder='Start typing and then select your address from the drop-down list'
           />
-        </HidableField>
-        <HidableField name={getName('isManufacturerHide')}>
-          <AuthorisedAgent
+        </RhfHidableField>
+        <RhfHidableField name={getName('isManufacturerHide')}>
+          <RhfAuthorisedAgent
             key='authorisedAgent'
             name={getName('authorisedAgent')}
             isSummary={isSummary}
           />
-        </HidableField>
+        </RhfHidableField>
       </Row>
       <Row className='mb-4'>
         <h2 className={isSummary ? 'h3 my-3' : ''}>
           Contact
           {!isSummary ? ' information' : ''}
         </h2>
-        <RadioButtonGroup
+        <RhfRadioButtonGroup
           legend='Who is the main contact person for this application?'
           name={getName('isPrincipalContact')}
           id='q-isPrincipalContact'
@@ -173,16 +169,16 @@ const OrganisationAndContact = (
             },
           ]}
         />
-        <HidableField name={getName('principalContactHide')}>
-          <ContactDetailsInput
+        <RhfHidableField name={getName('principalContactHide')}>
+          <RhfContactDetails
             key='contact'
             name={getName('contact')}
             isSummary={isSummary}
           />
-        </HidableField>
+        </RhfHidableField>
       </Row>
       <Row>
-        <RadioButtonGroup
+        <RhfRadioButtonGroup
           legend='Invoice/Account contact person'
           name={getName('isPrincipalInvoiceContact')}
           id='q-isPrincipalInvoiceContact'
@@ -208,13 +204,13 @@ const OrganisationAndContact = (
             },
           ]}
         />
-        <HidableField name={getName('principalInvoiceContactHide')}>
-          <ContactDetailsInput
+        <RhfHidableField name={getName('principalInvoiceContactHide')}>
+          <RhfContactDetails
             key='invoiceContact'
             name={getName('invoiceContact')}
             isSummary={isSummary}
           />
-        </HidableField>
+        </RhfHidableField>
       </Row>
     </>
   );

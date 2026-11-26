@@ -13136,33 +13136,6 @@
       }
     },
     {
-      "source": "ClientApp/src/routes/ta/supportingDocuments.tsx",
-      "export": "default",
-      "classification": "direct",
-      "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "routes-typeapproval-supportingdocuments--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/routes/ta/supportingDocuments.stories.tsx",
-          "storyExport": "EditStep",
-          "storyId": "routes-typeapproval-supportingdocuments--edit-step",
-          "assertionFile": "ClientApp/src/routes/ta/supportingDocuments.stories.tsx",
-          "assertionExport": "EditStep.play",
-          "assertionMarker": "Upload one or more supporting documents",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "claude-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
-        "reviewedSourceDigest": "sha256:83962b01728dd68da3ee29a3f0686ac13d5dcdad1c6691d8eef2df382f8cac71"
-      }
-    },
-    {
       "source": "ClientApp/src/components/AriaComponents/DatePicker/DatePicker.tsx",
       "export": "DatePicker",
       "classification": "direct",

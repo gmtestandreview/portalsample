@@ -1,5 +1,4 @@
 import { act, render } from '@testing-library/react';
-import { Formik } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import {
   PatternApprovalRequiredValueOptions,
@@ -9,6 +8,7 @@ import {
   YesNo,
 } from '../../../../../ClientApp/src/api/web-api-client';
 import type { RequestForPatternApprovalAppDetails } from '../../../../../ClientApp/src/api/web-api-client';
+import RhfForm from '../../../../../ClientApp/src/components/forms/RhfForm';
 import ApplicationAndInstrument from '../../../../../ClientApp/src/routes/ta/applicationAndInstrument';
 import OrganisationAndContact from '../../../../../ClientApp/src/routes/ta/organisationAndContact';
 import appDetailsProps from '../../../../../ClientApp/src/routes/ta/manage/appDetailsProps';
@@ -144,7 +144,7 @@ const fixtures: Record<string, RequestForPatternApprovalAppDetails> = {
 const lines = (html: string) => html.split('><');
 
 /**
- * The Formik summary renders `Applying for` as a `ul` that `SummaryDisplay`
+ * The form-backed summary renders `Applying for` as a `ul` that `SummaryDisplay`
  * draws without a value, so the chosen sub-options never show. The new view
  * shows them (asserted separately below); drop them here so every other
  * difference still fails the comparison.
@@ -155,18 +155,18 @@ const withoutSubOptionValues = (html: string) =>
     '$1',
   );
 
-const renderLegacy = async (values: RequestForPatternApprovalAppDetails) => {
+const renderFormBacked = async (
+  values: RequestForPatternApprovalAppDetails,
+) => {
   const result = render(
-    <Formik
+    <RhfForm
       initialValues={values}
-      initialStatus={{ hidden }}
+      hidingFields={hidden as never}
       onSubmit={() => undefined}
     >
-      <>
-        <OrganisationAndContact isSummary name='organisationAndContact' />
-        <ApplicationAndInstrument isSummary name='applicationAndInstrument' />
-      </>
-    </Formik>,
+      <OrganisationAndContact isSummary name='organisationAndContact' />
+      <ApplicationAndInstrument isSummary name='applicationAndInstrument' />
+    </RhfForm>,
   );
   await act(async () => {
     await Promise.resolve();
@@ -186,7 +186,7 @@ const resetSummaryParityMocks = () => {
   resetMsalMock();
 };
 
-describe('form-free TA summary parity with the Formik summary', () => {
+describe('form-free TA summary parity with the form-backed summary', () => {
   it.each(Object.entries(fixtures))(
     'renders the same markup for %s',
     async (_name, values) => {
@@ -194,17 +194,17 @@ describe('form-free TA summary parity with the Formik summary', () => {
 
       resetSummaryParityMocks();
 
-      const legacy = await renderLegacy(values);
+      const formBacked = await renderFormBacked(values);
       document.body.innerHTML = '';
       const summary = renderSummary(values);
 
       expect(lines(withoutSubOptionValues(summary))).toStrictEqual(
-        lines(legacy),
+        lines(formBacked),
       );
     },
   );
 
-  it('shows the chosen sub-options that the Formik summary leaves blank', () => {
+  it('shows the chosen sub-options that the form-backed summary leaves blank', () => {
     expect.hasAssertions();
 
     resetSummaryParityMocks();

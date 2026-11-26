@@ -192,7 +192,6 @@ type __TestMockModule138 = typeof import('@/routes/ta/organisationAndContact');
 type __TestMockModule139 =
   typeof import('@/routes/ta/applicationAndInstrument');
 type __TestMockModule140 = typeof import('@/routes/ta/summaryAndSubmit');
-type __TestMockModule141 = typeof import('@/routes/ta/supportingDocuments');
 type __TestMockModule142 =
   typeof import('@/components/SlateEditor/SlateEditor');
 type __TestMockModule143 = typeof import('@/components/Inputs/AuthorisedAgent');
@@ -229,3 +228,16 @@ type __TestMockModule166 =
 type __TestMockModule167 = typeof import('@/components/forms/RhfHidableField');
 type __TestMockModule168 =
   typeof import('@/components/forms/CommonForms/RhfContactDetails');
+type __TestMockModule169 = typeof import('@/components/Inputs/RhfSelectInput');
+type __TestMockModule170 =
+  typeof import('@/components/Inputs/RhfCheckboxGroup');
+type __TestMockModule171 =
+  typeof import('@/components/Inputs/RhfTextAreaInput');
+type __TestMockModule172 =
+  typeof import('@/components/Inputs/RhfCertificateNumberLookup');
+type __TestMockModule173 =
+  typeof import('@/components/forms/WizardForm/RhfWizardForm');
+type __TestMockModule174 =
+  typeof import('@/components/Inputs/RhfRadioButtonGroup');
+type __TestMockModule175 =
+  typeof import('@/components/Inputs/RhfAuthorisedAgent');

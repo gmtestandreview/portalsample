@@ -1,8 +1,8 @@
-import { Form, Formik } from 'formik';
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { ReactNode } from 'react';
+import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
 
 import OrganisationAndContact from '../../../../ClientApp/src/routes/ta/organisationAndContact';
 import SummaryAndSubmit from '../../../../ClientApp/src/routes/ta/summaryAndSubmit';
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/Checkbox'),
+  import('../../../../ClientApp/src/components/Inputs/RhfCheckbox'),
   (() =>
     ({
       default: ({
@@ -110,11 +110,11 @@ vi.mock(
           {label}
         </label>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule79>) as unknown as __DynamicPartialMockFactory<__TestMockModule79>,
+    }) satisfies __ExactMockModule<__TestMockModule164>) as unknown as __DynamicPartialMockFactory<__TestMockModule164>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
+  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
   (() =>
     ({
       default: ({
@@ -146,11 +146,11 @@ vi.mock(
           />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule141>) as unknown as __DynamicPartialMockFactory<__TestMockModule141>,
+    }) satisfies __ExactMockModule<__TestMockModule130>) as unknown as __DynamicPartialMockFactory<__TestMockModule130>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
+  import('../../../../ClientApp/src/components/Inputs/RhfRadioButtonGroup'),
   (() =>
     ({
       default: ({
@@ -183,21 +183,21 @@ vi.mock(
           ))}
         </section>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule52>) as unknown as __DynamicPartialMockFactory<__TestMockModule52>,
+    }) satisfies __ExactMockModule<__TestMockModule174>) as unknown as __DynamicPartialMockFactory<__TestMockModule174>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/HidableField'),
+  import('../../../../ClientApp/src/components/forms/RhfHidableField'),
   (() =>
     ({
       default: ({ children, name }: { children: ReactNode; name: string }) => (
         <div data-testid={`hidable-${name}`}>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule70>) as unknown as __DynamicPartialMockFactory<__TestMockModule70>,
+    }) satisfies __ExactMockModule<__TestMockModule167>) as unknown as __DynamicPartialMockFactory<__TestMockModule167>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  import('../../../../ClientApp/src/components/Inputs/RhfTextInput'),
   (() =>
     ({
       default: ({
@@ -217,11 +217,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>) as unknown as __DynamicPartialMockFactory<__TestMockModule29>,
+    }) satisfies __ExactMockModule<__TestMockModule162>) as unknown as __DynamicPartialMockFactory<__TestMockModule162>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/AddressLookup'),
+  import('../../../../ClientApp/src/components/Inputs/RhfAddressLookup'),
   (() =>
     ({
       default: ({
@@ -247,11 +247,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule31>) as unknown as __DynamicPartialMockFactory<__TestMockModule31>,
+    }) satisfies __ExactMockModule<__TestMockModule165>) as unknown as __DynamicPartialMockFactory<__TestMockModule165>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/AuthorisedAgent'),
+  import('../../../../ClientApp/src/components/Inputs/RhfAuthorisedAgent'),
   (() =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
@@ -261,11 +261,11 @@ vi.mock(
           data-summary={String(isSummary)}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule143>) as unknown as __DynamicPartialMockFactory<__TestMockModule143>,
+    }) satisfies __ExactMockModule<__TestMockModule175>) as unknown as __DynamicPartialMockFactory<__TestMockModule175>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
+  import('../../../../ClientApp/src/components/forms/CommonForms/RhfContactDetails'),
   (() =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
@@ -275,7 +275,7 @@ vi.mock(
           data-summary={String(isSummary)}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule71>) as unknown as __DynamicPartialMockFactory<__TestMockModule71>,
+    }) satisfies __ExactMockModule<__TestMockModule168>) as unknown as __DynamicPartialMockFactory<__TestMockModule168>,
 );
 
 const formValues = {
@@ -295,42 +295,40 @@ const formValues = {
   },
 };
 
-const renderWithFormik = (children: ReactNode) =>
+const renderWithForm = (children: ReactNode) =>
   render(
-    <Formik
+    <RhfForm
       initialValues={formValues}
-      initialStatus={{ hidden: {} }}
-      onSubmit={vi.fn<() => void>()}
+      hidingFields={{}}
+      onSubmit={() => undefined}
     >
-      <Form>{children}</Form>
-    </Formik>,
+      {children}
+    </RhfForm>,
   );
 
 const renderSummary = (
   isSubmitted = false,
-  initialStatus: unknown = { hidden: {} },
+  hidingFields: Record<string, boolean> | undefined = {},
 ) =>
   render(
     <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
-      <Formik
+      <RhfForm
         initialValues={formValues}
-        initialStatus={initialStatus}
-        onSubmit={vi.fn<() => void>()}
+        hidingFields={hidingFields}
+        onSubmit={() => undefined}
       >
-        <Form>
-          <Routes>
-            <Route
-              path='/ta/:id/summary'
-              element={
-                <SummaryAndSubmit
-                  isSubmitted={isSubmitted}
-                  name='summaryAndSubmit'
-                />
-              }
-            />
-          </Routes>
-        </Form>
-      </Formik>
+        <Routes>
+          <Route
+            path='/ta/:id/summary'
+            element={
+              <SummaryAndSubmit
+                isSubmitted={isSubmitted}
+                name='summaryAndSubmit'
+              />
+            }
+          />
+        </Routes>
+      </RhfForm>
     </MemoryRouter>,
   );
 
@@ -347,7 +345,7 @@ describe(OrganisationAndContact, () => {
 
     resetTaComponentsMocks();
 
-    renderWithFormik(
+    renderWithForm(
       <OrganisationAndContact
         isSummary={false}
         name='organisationAndContact'
@@ -408,7 +406,7 @@ describe(OrganisationAndContact, () => {
 
     resetTaComponentsMocks();
 
-    renderWithFormik(<OrganisationAndContact isSummary name='' />);
+    renderWithForm(<OrganisationAndContact isSummary name='' />);
 
     const principalContact = screen.getByTestId('radio-isPrincipalContact');
 
@@ -453,16 +451,14 @@ describe(SummaryAndSubmit, () => {
 
     render(
       <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
-        <Formik initialValues={formValues} onSubmit={vi.fn<() => void>()}>
-          <Form>
-            <Routes>
-              <Route
-                path='/ta/:id/summary'
-                element={<SummaryAndSubmit name='summaryAndSubmit' />}
-              />
-            </Routes>
-          </Form>
-        </Formik>
+        <RhfForm initialValues={formValues} onSubmit={() => undefined}>
+          <Routes>
+            <Route
+              path='/ta/:id/summary'
+              element={<SummaryAndSubmit name='summaryAndSubmit' />}
+            />
+          </Routes>
+        </RhfForm>
       </MemoryRouter>,
     );
 
@@ -476,16 +472,14 @@ describe(SummaryAndSubmit, () => {
 
     render(
       <MemoryRouter initialEntries={['/summary']}>
-        <Formik initialValues={formValues} onSubmit={vi.fn<() => void>()}>
-          <Form>
-            <Routes>
-              <Route
-                path='/summary'
-                element={<SummaryAndSubmit name='summaryAndSubmit' />}
-              />
-            </Routes>
-          </Form>
-        </Formik>
+        <RhfForm initialValues={formValues} onSubmit={() => undefined}>
+          <Routes>
+            <Route
+              path='/summary'
+              element={<SummaryAndSubmit name='summaryAndSubmit' />}
+            />
+          </Routes>
+        </RhfForm>
       </MemoryRouter>,
     );
 
@@ -510,7 +504,10 @@ describe(SummaryAndSubmit, () => {
     const checkboxes = screen.getAllByTestId('checkbox');
 
     expect({
-      bodyClassCalls: mocks.useBodyClass.mock.calls,
+      // The shell re-renders once when it syncs its defaults; only the class matters.
+      bodyClasses: [
+        ...new Set(mocks.useBodyClass.mock.calls.map(([name]) => name)),
+      ],
       guidance: screen.getByText(/Before you submit your request/).textContent,
       organisation: screen.getByText('Organisation name').textContent,
       application: screen.getByText('Application type').textContent,
@@ -533,7 +530,7 @@ describe(SummaryAndSubmit, () => {
         .getAttribute('target'),
       backButton: screen.queryByTestId('back-button'),
     }).toStrictEqual({
-      bodyClassCalls: [['summary']],
+      bodyClasses: ['summary'],
       guidance: expect.stringMatching(
         /Before you submit your request/,
       ) as unknown,
@@ -564,12 +561,12 @@ describe(SummaryAndSubmit, () => {
       .toHaveBeenCalledWith([]);
   });
 
-  it('uses empty hiding rules when hidden status is undefined', () => {
+  it('renders the summaries with an explicit empty set of hiding rules', () => {
     expect.hasAssertions();
 
     resetTaComponentsMocks();
 
-    renderSummary(false, { hidden: undefined });
+    renderSummary(false, {});
 
     expect(screen.getByText('Application type')).toBeInTheDocument();
   });
