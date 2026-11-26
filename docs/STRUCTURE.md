@@ -117,10 +117,10 @@ portal.measurement.gov.au/           ← workspace root
     │   │   │   └── TermsAndCondition/   ← T&C acceptance modal
     │   │   ├── forms/
     │   │   │   ├── WizardForm/           ← ★ Multi-step form engine (compound component)
-    │   │   │   │   ├── index.tsx         ←   Orchestrator: children → Routes
+    │   │   │   │   ├── RhfWizardForm.tsx ←   Orchestrator: children → Routes
     │   │   │   │   ├── WizardStep.tsx    ←   Step wrapper: ErrorBoundary + GA
-    │   │   │   │   ├── WizardRoutedStep.tsx ← Routed step: loads values, runs submit
-    │   │   │   │   ├── NextStepButton.tsx   ← "Next" button with final-step variant
+    │   │   │   │   ├── RhfWizardRoutedStep.tsx ← Routed step: loads values, runs submit
+    │   │   │   │   ├── RhfNextStepButton.tsx ← "Next" button with final-step variant
     │   │   │   │   ├── PreviousStepButton.tsx ← "Back" button
     │   │   │   │   └── types.ts          ←   WizardFormProps, WizardStepProps types
     │   │   │   ├── RhfForm/               ← Base RHF wrapper used by RhfWizardRoutedStep

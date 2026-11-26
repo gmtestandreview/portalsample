@@ -60,7 +60,11 @@ type PathContainer = Record<string, unknown>;
 const isArrayIndex = (key: string): boolean =>
   String(Math.floor(Number(key))) === key && Number(key) >= 0;
 
-/** Shallow copy that keeps the prototype of the container being copied. */
+/**
+ * Shallow copy that keeps the prototype of the container being copied. Only
+ * plain objects, class instances and arrays are supported; Date and Map
+ * containers are not copied faithfully.
+ */
 const shallowClone = (value: object): PathContainer =>
   Array.isArray(value)
     ? ([...(value as unknown[])] as unknown as PathContainer)

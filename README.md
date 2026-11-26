@@ -14,7 +14,7 @@ with a full local development, testing, and Storybook toolchain.
 | Language            | TypeScript 5                                               |
 | Routing             | React Router v7                                            |
 | Auth                | Azure AD B2C (`@azure/msal-browser` / `@azure/msal-react`) |
-| Forms               | Formik + Yup with custom string extensions                 |
+| Forms               | React Hook Form + Yup with custom string extensions        |
 | CSS                 | Bootstrap 5 (custom NMI theme) + SCSS                      |
 | API client          | Auto-generated NSwag/OpenAPI (`web-api-client.ts`)         |
 | Bundler             | Vite 8                                                     |

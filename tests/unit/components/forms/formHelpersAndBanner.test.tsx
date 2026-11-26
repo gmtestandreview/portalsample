@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useFormContext } from 'react-hook-form';
 import { MemoryRouter, useLocation } from 'react-router';
@@ -191,14 +191,18 @@ describe('form helper components', () => {
     );
   });
 
-  it('allows a clean, unsubmitted form to leave', () => {
+  it('allows a clean, unsubmitted form to leave', async () => {
     expect.hasAssertions();
 
-    render(
-      <FieldHarness field='name' defaultValue=''>
-        <RhfUnsavedFormPrompt />
-      </FieldHarness>,
-    );
+    // Validity settles asynchronously after mount; wait for it before asserting.
+    await act(async () => {
+      render(
+        <FieldHarness field='name' defaultValue=''>
+          <RhfUnsavedFormPrompt />
+        </FieldHarness>,
+      );
+      await Promise.resolve();
+    });
 
     expect(screen.getByTestId('route-leaving-guard')).toHaveAttribute(
       'data-when',

@@ -94,15 +94,14 @@ Client-side persistence is `sessionStorage` only (`ClientApp/src/storage/**`).
 not the runner's bundled one.
 
 **Key libraries** (installed versions): `react-aria-components` 1.19.0 (**67
-files** — the largest UI dependency), `formik` 2.4.9 (63 files), `yup` 1.7.1
-with 19 custom string validators, `@azure/msal-browser` 3.30.0 /
-`@azure/msal-react` 2.2.0, `bootstrap` 5.3.8, `react-bootstrap` 2.10.10,
-`dompurify` 3.4.14, `date-fns` 3.6.0, `slate` 0.124.1, App Insights 3.4.2,
-`react-ga4` 2.1.0.
+files** — the largest UI dependency), `react-hook-form`, `yup` 1.7.1 with 19
+custom string validators, `@azure/msal-browser` 3.30.0 / `@azure/msal-react`
+2.2.0, `bootstrap` 5.3.8, `react-bootstrap` 2.10.10, `dompurify` 3.4.14,
+`date-fns` 3.6.0, `slate` 0.124.1, App Insights 3.4.2, `react-ga4` 2.1.0.
 
 Lodash is not a direct application dependency or first-party import. It remains
-installed transitively through Formik, `slate-dom`, and `slate-react`; its type
-package is also retained transitively by `slate-react`.
+installed transitively through `slate-dom`, and `slate-react`; its type package
+is also retained transitively by `slate-react`.
 
 **Build:** Vite 8 is the canonical development and production pipeline, with
 Vite-backed Storybook and Vitest Browser Mode. Production build verification

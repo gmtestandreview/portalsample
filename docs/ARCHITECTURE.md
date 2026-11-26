@@ -261,8 +261,8 @@ Route tree hanging off `RouterProvider`:
   useAccountDispatch() hooks
 - `ClientApp/src/components/modals/ModalContext.tsx` — ModalStateCtx /
   ModalDispatchCtx + useModalState() / useModalDispatch()
-- `ClientApp/src/components/forms/WizardForm/index.tsx` — compound component
-  pattern
+- `ClientApp/src/components/forms/WizardForm/RhfWizardForm.tsx` — compound
+  component pattern
 - `ClientApp/src/components/forms/RhfForm/wizardYupResolver.ts` — hard/soft
   validator dispatch contract
 - `ClientApp/src/instrumentation/AppInsightsService.ts` — telemetry singleton

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { test, expect, vi, afterEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { createElement } from 'react';
 import getUnexpectedErrorRoute from '../ClientApp/src/routes/common/errorRoutes';
 import { HttpStatusCode } from '../ClientApp/src/types';
@@ -91,7 +91,11 @@ test('BUG-004: pristine valid create-account forms do not trigger route-leave co
     );
   };
 
-  render(createElement(PristineForm));
+  // Validity settles asynchronously after mount; wait for it before asserting.
+  await act(async () => {
+    render(createElement(PristineForm));
+    await Promise.resolve();
+  });
 
   expect(capturedWhen).toBe(false);
 });
