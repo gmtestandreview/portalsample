@@ -6,6 +6,7 @@ const dashboardNotificationKey = 'dashboardNotification';
 const manageAccessNotificationKey = 'manageAccessNotification';
 const getStartedNotificationKey = 'getStartedNotification';
 const reportingNotificationKey = 'reportingNotification';
+const quotationNotificationKey = 'quotationNotification';
 const dashboardInfoNotificationKey = 'dashboardInfoNotification';
 
 export const getBranchModalNotification = () =>
@@ -19,6 +20,9 @@ export const getManageAccessNotification = () =>
 
 export const getReportingNotification = () =>
   SessionStorageCache().getItem<Notification>(reportingNotificationKey);
+
+export const getQuotationNotification = () =>
+  SessionStorageCache().getItem<Notification>(quotationNotificationKey);
 
 export const getGetStartedNotification = () =>
   SessionStorageCache().getItem<Notification>(getStartedNotificationKey);
@@ -40,6 +44,10 @@ export const setManageAccessNotification = (item: Notification) => {
 
 export const setReportingNotification = (item: Notification) => {
   SessionStorageCache().setItem(item, reportingNotificationKey);
+};
+
+export const setQuotationNotification = (item: Notification) => {
+  SessionStorageCache().setItem(item, quotationNotificationKey);
 };
 
 export const setGetStartedNotification = (item: Notification) => {
@@ -64,6 +72,10 @@ export const clearManageAccessNotification = () => {
 
 export const clearReportingNotification = () => {
   SessionStorageCache().removeItem(reportingNotificationKey);
+};
+
+export const clearQuotationNotification = () => {
+  SessionStorageCache().removeItem(quotationNotificationKey);
 };
 
 export const clearGetStartedNotification = () => {

@@ -1,120 +1,99 @@
-import { orIfEmpty } from '../../../utils/orIfEmpty';
-import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
-import { useParams } from 'react-router';
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Col, Container, Nav, Row, Tab } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
-import { FormProvider, useForm } from 'react-hook-form';
+import type { FormikValues } from 'formik';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 
-import CustomBreadcrumb, {
-  type CustomBreadcrumbItem,
-} from '../../../components/Breadcrumb';
+import type { CustomBreadcrumbItem } from '../../../components/Breadcrumb';
+import CustomBreadcrumb from '../../../components/Breadcrumb';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import BlockUISpinner from '../../../components/BlockUISpinner';
-import {
-  CustomAccordion,
-  CustomAccordionBody,
-} from '../../../components/Accordion';
 import BackToDashboardButton from '../../../components/Buttons/BackToDashboardButton';
-import {
-  type ApplicationDetailsDto,
-  type RequestForPatternApprovalAppDetails,
-  RequestForPatternApprovalClient,
+import type {
+  ApplicationDetailsDto,
+  RequestForPatternApprovalAppDetails,
 } from '../../../api/web-api-client';
-import StatusPill from '../../../components/Pill/StatusPill';
-import { toPaDashboardItemStatus } from '../../common/helperFunctions';
-import ApplicationSummary from '../summary/ApplicationSummary';
+import { RequestForPatternApprovalClient } from '../../../api/web-api-client';
+import FormikForm from '../../../components/forms/FormikForm';
 import appDetailsProps from './appDetailsProps';
-import OrganisationSummary from '../summary/OrganisationSummary';
-import RhfSupportingDocuments from '../rhfSupportingDocuments';
+import useAccountContext from '../../../authentication/hooks';
+import type { AccountDetails } from '../../../authentication/accountContext';
+import type { TAApplicationDetailsProps } from '../types';
 import ApplicationDocuments from './appDocuments';
-import { silentRequestFor } from '../../../authentication/silentRequest';
+import ApplicationMessages from './appMessages';
+import { tokenRequest } from '../../../authentication/authConfig';
+import AppDetailsContent from './appDetailsContent';
+import ApplicationTimeline from './appTimeline';
 import AppLogger from '../../../instrumentation/AppLogger';
-import { joinNameParts } from '../../../utils';
-
-const ApplicationMessages = lazy(() => import('./appMessages'));
+import { ApplicationsManageTab } from './types';
+import { base64toBlob } from '../../../utils';
 
 const POLL_MS = 5000;
 
-const TAB_KEYS = ['details', 'messages', 'documents', 'timeline'];
-
-const getTabFromQuery = () => {
-  const params = new URLSearchParams(globalThis.location.search);
-  const tab = params.get('tab');
-  return tab && TAB_KEYS.includes(tab) ? tab : TAB_KEYS[0];
-};
-
-const ApplicationDetails = () => {
+const ApplicationDetails = (props: TAApplicationDetailsProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const [appDetails, setAppDetails] =
-    useState<RequestForPatternApprovalAppDetails>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appDetails, setAppDetails] = useState<FormikValues | null>(null);
+  const navigate = useNavigate();
   const { id } = useParams();
   const { accounts, instance } = useMsal();
-  const options = useMemo(
-    () => appDetailsProps(id, accounts, instance),
-    [accounts, id, instance],
-  );
+  const account = useAccountContext();
+  const accountDetails: AccountDetails = account!.details!;
+  const options = appDetailsProps(id, accounts, instance, accountDetails, '');
   const { loadStepValues, hidingFields } = options;
-  const hidden = hidingFields ?? {};
-  const methods = useForm<RequestForPatternApprovalAppDetails>({
-    values: appDetails,
-  });
   const [applicationType, setApplicationType] = useState<string | null>(null);
   const [messageCount, setMessageCount] = useState<number>(0);
+  // const messagesRoute = `/ta/${id}/manage?tab=messages`;
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pollGenerationRef = useRef(0);
+  const disposedRef = useRef(false);
 
-  const fetchMessageCountData = useCallback(async (): Promise<
-    number | undefined
-  > => {
-    if (!id || accounts.length === 0) return undefined;
+  const clearPollTimeout = () => {
+    if (pollTimeoutRef.current) {
+      clearTimeout(pollTimeoutRef.current);
+      pollTimeoutRef.current = null;
+    }
+  };
+
+  const fetchMessageCountData = useCallback(async () => {
+    if (!id || accounts.length === 0) return;
 
     try {
       const client = new RequestForPatternApprovalClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
+      const tokenResult = await instance.acquireTokenSilent({
+        ...tokenRequest,
+        account: accounts[0],
+      });
       client.setAuthToken(tokenResult.accessToken);
-      const count = await client.getAppMessageCount(id, id);
+      const count = await client.getAppMessageCount(id, id, undefined);
 
-      return count || 0;
+      if (disposedRef.current) return;
+      setMessageCount(count || 0);
     } catch {
-      return undefined;
+      // optional: log
     }
   }, [accounts, id, instance]);
 
-  // The application type loads asynchronously and the id is a route param, so
-  // either may be absent; show only what is known.
-  const applicationLabel = joinNameParts(
-    applicationType,
-    id === undefined ? undefined : `(${id})`,
-  );
-
+  // Default bread crumbs for all PA Manage tabs
   const breadcrumbs: CustomBreadcrumbItem[] = [
     { to: '/', text: 'Dashboard' },
-    { to: '', text: applicationLabel },
+    { to: '', text: `Application details - ${id}` },
+    // { to: '', text: `${id} - ${applicationType || 'Application details'}` },
   ];
 
-  useHtmlTitle(`${applicationLabel} manage | NMI Services portal`);
-  useBodyClass('pa-application-manage');
+  useHtmlTitle(`Application details - ${id} | NMI Services portal`); // Default title for all PA Manage tabs
+  // useHtmlTitle(`${applicationType || 'Application details'} - ${id} manage | NMI Services portal`);
+  useBodyClass('pa-application-manage'); // Default body class for all PA Manage tabs
 
-  const formattedDate = (dateToFormat: Date | string | undefined) =>
-    dateToFormat
-      ? new Date(dateToFormat).toLocaleDateString('en-AU', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        })
-      : '';
-
+  // Query param-based tab navigation (?tab=...)
+  const TAB_KEYS = ['details', 'messages', 'documents', 'timeline'];
+  const getTabFromQuery = () => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    return tab && TAB_KEYS.includes(tab) ? tab : TAB_KEYS[0];
+  };
   const [activeTab, setActiveTab] = useState(getTabFromQuery);
   const [loadMessagesTab, setLoadMessagesTab] = useState(
     () => getTabFromQuery() === 'messages',
@@ -125,40 +104,36 @@ const ApplicationDetails = () => {
     const onPopState = () => {
       setActiveTab(getTabFromQuery());
     };
-    globalThis.addEventListener('popstate', onPopState);
+    window.addEventListener('popstate', onPopState);
     return () => {
-      globalThis.removeEventListener('popstate', onPopState);
+      window.removeEventListener('popstate', onPopState);
     };
   }, []);
 
   useEffect(() => {
-    const pollGeneration = ++pollGenerationRef.current;
+    disposedRef.current = false;
 
     const poll = async () => {
-      const nextMessageCount = await fetchMessageCountData();
-      if (pollGenerationRef.current === pollGeneration) {
-        if (nextMessageCount !== undefined) {
-          setMessageCount(nextMessageCount);
-        }
-        // The rule cannot trace the clear through clearPollTimeout(),
-        // which this effect's cleanup calls and which does invoke
-        // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
-        pollTimeoutRef.current = setTimeout(() => {
-          void poll();
-        }, POLL_MS);
+      await fetchMessageCountData();
+      if (!disposedRef.current) {
+        pollTimeoutRef.current = setTimeout(poll, POLL_MS);
       }
     };
 
-    void poll();
+    poll();
 
     return () => {
-      pollGenerationRef.current += 1;
-      if (pollTimeoutRef.current !== null) {
-        clearTimeout(pollTimeoutRef.current);
-        pollTimeoutRef.current = null;
-      }
+      clearPollTimeout();
     };
   }, [fetchMessageCountData]);
+
+  useEffect(
+    () => () => {
+      disposedRef.current = true;
+      clearPollTimeout();
+    },
+    [],
+  );
 
   const refreshMessagesTab = () => {
     setLoadMessagesTab(true);
@@ -179,271 +154,69 @@ const ApplicationDetails = () => {
     }
   };
 
+  const downloadFile = async (fileName: string): Promise<void> => {
+    try {
+      if (accounts.length > 0 && id) {
+        const client = new RequestForPatternApprovalClient();
+        const tokenResult = await instance.acquireTokenSilent({
+          ...tokenRequest,
+          account: accounts[0],
+        });
+        client.setAuthToken(tokenResult.accessToken);
+        const response = await client.getSupportingDocument(id, fileName, id);
+        if (response?.fileData) {
+          const blob = base64toBlob(
+            response!.fileData,
+            'application/octet-stream',
+          );
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.setAttribute('download', fileName ?? 'download');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(downloadUrl);
+        }
+        return;
+      }
+    } catch (error) {
+      AppLogger.error('Failed to download file', error as Error, {
+        fileName: fileName ?? 'undefined',
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsDataLoading(true);
       try {
         const result = await loadStepValues();
-        // The loader returns the DTO itself; `InitialValue` only widens it with the
-        // empty-string form default that this page never produces.
-        setAppDetails(result.formValues as RequestForPatternApprovalAppDetails);
-        const appType = result.formValues.applicationDetails as
-          | ApplicationDetailsDto
-          | undefined;
-        setApplicationType(orIfEmpty(appType?.patternApprovalType, null));
-        setMessageCount(appType?.messageCount ?? 0);
-      } catch (error) {
-        // Previously unguarded: a rejected load became an unhandled rejection, and because
-        // setIsDataLoading(false) sat only on the success path the page stayed on its
-        // spinner for good. Reading applicationDetails without a guard threw for the same
-        // reason - which is the only way the `|| {}` further down was ever reachable.
-        AppLogger.error('Failed to load application details', error as Error, {
+        setAppDetails(result.formValues);
+        const appType = result.formValues
+          ?.applicationDetails as ApplicationDetailsDto;
+        setApplicationType(appType.patternApprovalType || '');
+        // setIsDataLoading(true);
+      } catch (e) {
+        AppLogger.error('Failed to load application details', e as Error, {
           Id: id,
         });
       } finally {
         setIsDataLoading(false);
       }
     };
-    void fetchData();
-  }, [id, loadStepValues]);
-
-  function routeToMessages() {
-    handleTabSelect('messages');
-  }
-
-  const detailsTabContent = (details: RequestForPatternApprovalAppDetails) => {
-    const {
-      referenceId,
-      lastUpdated,
-      assessedAs,
-      status,
-      statusDetail,
-      title,
-      submittedDate,
-    } = details.applicationDetails ?? {};
-    const mappedStatus = toPaDashboardItemStatus(status);
-    return (
-      <Row className='mb-4'>
-        <Col aria-busy={isDataLoading} aria-live='polite'>
-          {isDataLoading ? (
-            <BlockUISpinner partial>
-              <p>Loading data...</p>
-            </BlockUISpinner>
-          ) : (
-            <div className='appl-items mb-5'>
-              <h2 className='visually-hidden'>Details</h2>
-              <Row className='mb-5'>
-                <Col>
-                  <h3 id='applStatus' className='h2 mb-3'>
-                    Application status
-                  </h3>
-                  <CustomAccordion
-                    id='applicationStatus'
-                    containerClassName='mb-3'
-                  >
-                    <CustomAccordionBody
-                      name={title ?? 'Application details'}
-                      eventKey='0'
-                      className='mb-4 py-2'
-                      nameRHS={
-                        <StatusPill
-                          status={mappedStatus ?? status ?? 'Unknown status'}
-                        />
-                      }
-                    >
-                      {/* Application Status content body */}
-                      <Row>
-                        <Col md={12}>
-                          <p className='fw-bold small pb-0 mb-0'>
-                            Reference ID
-                          </p>
-                          <p className='small'>{referenceId}</p>
-                        </Col>
-                        <Col md={12}>
-                          <p className='fw-bold small pb-0 mb-0'>
-                            Last Updated
-                          </p>
-                          <p className='small'>{formattedDate(lastUpdated)}</p>
-                        </Col>
-                        <Col md={12}>
-                          <p className='fw-bold small pb-0 mb-0'>
-                            Application submitted
-                          </p>
-                          <p className='small'>
-                            {formattedDate(submittedDate)}
-                          </p>
-                        </Col>
-                        <Col md={12}>
-                          <p className='fw-bold small pb-0 mb-0'>
-                            Assessed by NMI as
-                          </p>
-                          <p className='small'>{assessedAs}</p>
-                        </Col>
-                        <Col md={12}>
-                          <p className='fw-bold small pb-0 mb-0'>
-                            Status detail
-                          </p>
-                          <p className='small'>
-                            <StatusPill
-                              status={
-                                mappedStatus ?? status ?? 'Unknown status'
-                              }
-                              className='visually-hidden -me-2'
-                            />
-                            {statusDetail}
-                          </p>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col md={12}>
-                          <Button
-                            onClick={() => {
-                              routeToMessages();
-                            }}
-                            type='button'
-                            className='btn btn-secondary'
-                            title={`${messageCount} unread messages`}
-                          >
-                            <span>
-                              <span className='d-none d-md-inline-block'>
-                                {'Messages '}
-                              </span>
-                              {messageCount > 0 && (
-                                <>
-                                  <span className='-me-md-2'>
-                                    <output
-                                      className='badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white'
-                                      style={{
-                                        fontFamily: 'monospace',
-                                        top: '-10px',
-                                      }}
-                                    >
-                                      {messageCount}
-                                    </output>
-                                  </span>
-                                  <span className='visually-hidden'>
-                                    {' unread'}
-                                  </span>
-                                </>
-                              )}
-                            </span>
-                          </Button>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col md={12}>
-                          {/* <Button variant='link'>Withdraw application</Button> */}
-                        </Col>
-                      </Row>
-                    </CustomAccordionBody>
-                  </CustomAccordion>
-                </Col>
-              </Row>
-              <Row className='mb-5'>
-                <Col>
-                  <h3 id='recordOfSubmittedAppl' className='h2 mb-3'>
-                    Record of application submitted
-                  </h3>
-                  <CustomAccordion
-                    id='organisationAndContact'
-                    containerClassName='mb-3'
-                  >
-                    <CustomAccordionBody
-                      name='Organisation details'
-                      eventKey='1'
-                      className='mb-4 py-2'
-                    >
-                      <OrganisationSummary values={details} hidden={hidden} />
-                      {/* {!isSubmitted ? <EditButton link={`/ta/${id}/organisation-details`} /> : null} */}
-                    </CustomAccordionBody>
-                  </CustomAccordion>
-                  <CustomAccordion
-                    id='applicationAndInstrument'
-                    containerClassName='mb-3'
-                  >
-                    <CustomAccordionBody
-                      name='Application details'
-                      eventKey='2'
-                      className='mb-4 py-2'
-                    >
-                      <ApplicationSummary values={details} hidden={hidden} />
-                      {/* {!isSubmitted ? <EditButton link={`/ta/${id}/application-details`} /> : null} */}
-                    </CustomAccordionBody>
-                  </CustomAccordion>
-                  <CustomAccordion
-                    id='supportingDocuments'
-                    containerClassName='mb-3'
-                  >
-                    <CustomAccordionBody
-                      name='Supporting documents'
-                      eventKey='3'
-                      className='mb-4 py-2'
-                      nameRHS={
-                        <button
-                          type='button'
-                          className='btn btn-link text-nowrap'
-                          title='Jump to the documents tab'
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const params = new URLSearchParams(
-                              window.location.search,
-                            );
-                            params.set('tab', 'documents');
-                            const newUrl = `${window.location.pathname}?${params.toString()}`;
-                            window.history.pushState({}, '', newUrl);
-                            window.scrollTo(0, 0);
-                            setActiveTab('documents');
-                          }}
-                        >
-                          View documents
-                        </button>
-                      }
-                    >
-                      <RhfSupportingDocuments
-                        isSummary
-                        suppressDocChanges
-                        name='supportingDocuments.form.documents'
-                        onUploadAttachment={() => Promise.resolve([])} // Not used
-                        attachment={{
-                          onUploadFiles: () => Promise.resolve([]), // Not used
-                        }}
-                      />
-                      {/*  {!isSubmitted ? <EditButton link={`/ta/${id}/supporting-documents`} /> : null} */}
-                    </CustomAccordionBody>
-                  </CustomAccordion>
-                </Col>
-              </Row>
-            </div>
-          )}
-        </Col>
-      </Row>
-    );
-  };
-
-  const timelineTabContent = (
-    <Row className='mb-4'>
-      <Col aria-busy={isDataLoading} aria-live='polite'>
-        {isDataLoading ? (
-          <BlockUISpinner partial>
-            <p>Loading data...</p>
-          </BlockUISpinner>
-        ) : (
-          <div className='appl-items mb-5'>
-            <h2 className='visually-hidden'>Timeline</h2>
-            <h3 className='mb-2'>Timeline tab content</h3>
-          </div>
-        )}
-      </Col>
-    </Row>
-  );
+    fetchData();
+  }, [accounts, id, instance]);
 
   const renderTabSubView = (data: RequestForPatternApprovalAppDetails) => (
     <Row className='mb-0'>
-      <Col className='px-0'>
+      <Col className='mt-1 mt-md-0 px-0'>
         <Tab.Container
           id='appl-manage-tabs'
-          {...(activeTab !== undefined && { activeKey: activeTab })}
+          activeKey={activeTab}
+          defaultActiveKey={ApplicationsManageTab.Details}
           onSelect={handleTabSelect}
+          mountOnEnter
         >
           <Nav
             as='ul'
@@ -454,8 +227,8 @@ const ApplicationDetails = () => {
             <span className='d-flex flex-nowrap'>
               <Nav.Item as='li' role='presentation'>
                 <Nav.Link
-                  id='details-tab'
-                  eventKey='details'
+                  id={ApplicationsManageTab.Details}
+                  eventKey={ApplicationsManageTab.Details}
                   className='px-3'
                   // onClick={() => {
                   //     changeTab(DashboardTab.Drafts);
@@ -467,12 +240,12 @@ const ApplicationDetails = () => {
               </Nav.Item>
               <Nav.Item as='li' role='presentation'>
                 <Nav.Link
-                  id='messages-tab'
-                  eventKey='messages'
+                  id={ApplicationsManageTab.Messages}
+                  eventKey={ApplicationsManageTab.Messages}
                   className='px-3'
                   onClick={() => {
                     // when already on Messages, force another refresh
-                    if (activeTab === 'messages') {
+                    if (activeTab === ApplicationsManageTab.Messages) {
                       refreshMessagesTab();
                     }
                   }}
@@ -482,8 +255,8 @@ const ApplicationDetails = () => {
               </Nav.Item>
               <Nav.Item as='li' role='presentation'>
                 <Nav.Link
-                  id='documents-tab'
-                  eventKey='documents'
+                  id={ApplicationsManageTab.Documents}
+                  eventKey={ApplicationsManageTab.Documents}
                   className='px-3'
                   // onClick={() => {
                   //     changeTab(DashboardTab.Requests);
@@ -493,47 +266,50 @@ const ApplicationDetails = () => {
                   Documents
                 </Nav.Link>
               </Nav.Item>
-              {/* Temp hide Timeline tab
-                            <Nav.Item
-                                as='li'
-                                role='presentation'
-                            >
-                                <Nav.Link
-                                    id='timeline-tab'
-                                    eventKey='timeline'
-                                    className='px-3'
-                                    // onClick={() => {
-                                    //     changeTab(DashboardTab.Requests);
-                                    //     trackGAEvent(DashboardTab.Requests);
-                                    // }}
-                                >
-                                    Timeline
-                                </Nav.Link>
-                            </Nav.Item> */}
+              <Nav.Item as='li' role='presentation'>
+                <Nav.Link
+                  id={ApplicationsManageTab.Timeline}
+                  eventKey={ApplicationsManageTab.Timeline}
+                  className='px-3'
+                  // onClick={() => {
+                  //     changeTab(DashboardTab.Requests);
+                  //     trackGAEvent(DashboardTab.Requests);
+                  // }}
+                >
+                  Timeline
+                </Nav.Link>
+              </Nav.Item>
             </span>
           </Nav>
           <Tab.Content className='tab-content-border -bg-white py-3'>
-            <Tab.Pane eventKey='details' tabIndex={0}>
-              {detailsTabContent(data)}
-            </Tab.Pane>
-            <Tab.Pane eventKey='messages' tabIndex={0}>
-              {loadMessagesTab ? (
-                <Suspense
-                  fallback={
-                    <BlockUISpinner partial>
-                      <p>Loading messages...</p>
-                    </BlockUISpinner>
-                  }
-                >
-                  <ApplicationMessages key={messagesRefreshKey} />
-                </Suspense>
+            <Tab.Pane eventKey='details' tabIndex={0} mountOnEnter>
+              {isDataLoading ? (
+                <BlockUISpinner partial>
+                  <p>Loading data...</p>
+                </BlockUISpinner>
+              ) : null}
+
+              {data ? (
+                <AppDetailsContent
+                  name='applicationDetails'
+                  isModalOpen={isModalOpen}
+                  isDataLoading={isDataLoading}
+                  setActiveTab={setActiveTab}
+                  onTabChange={handleTabSelect}
+                  onDownloadFile={downloadFile}
+                />
               ) : null}
             </Tab.Pane>
-            <Tab.Pane eventKey='documents' tabIndex={0}>
-              <ApplicationDocuments />
+            <Tab.Pane eventKey='messages' tabIndex={0} mountOnEnter>
+              {loadMessagesTab ? (
+                <ApplicationMessages key={messagesRefreshKey} />
+              ) : null}
             </Tab.Pane>
-            <Tab.Pane eventKey='timeline' tabIndex={0}>
-              {timelineTabContent}
+            <Tab.Pane eventKey='documents' tabIndex={0} mountOnEnter>
+              <ApplicationDocuments onDownloadFile={downloadFile} />
+            </Tab.Pane>
+            <Tab.Pane eventKey='timeline' tabIndex={0} mountOnEnter>
+              <ApplicationTimeline name='timelineDetails' />
             </Tab.Pane>
           </Tab.Content>
         </Tab.Container>
@@ -552,7 +328,8 @@ const ApplicationDetails = () => {
         <Col md={12} lg={9}>
           <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
             <span className='visually-hidden'>Pattern/type approval:</span>
-            {orIfEmpty(data.applicationDetails?.title, 'Application details')}
+            {data?.applicationDetails?.title ||
+              `${id || ''} - Application details`}
             <span className='visually-hidden'> manage</span>
           </h1>
           {/* <HeaderIntroText className='mb-4'>
@@ -566,23 +343,28 @@ const ApplicationDetails = () => {
   );
 
   return (
-    <FormProvider {...methods}>
-      {isDataLoading && (
-        <BlockUISpinner>
-          <p>Loading...</p>
-        </BlockUISpinner>
-      )}
-      <div aria-busy={isDataLoading} aria-live='off'>
-        <Container fluid className='default-banner-background mb-5'>
-          <Container>{renderTitle(appDetails)}</Container>
-        </Container>
-        <Container style={{ marginTop: '-6.2rem' }}>
-          <Container>{renderTabSubView(appDetails)}</Container>
-        </Container>
-      </div>
-      <Container>
-        <Row className='mb-4'>
-          {/* <div className='d-grid d-md-block'>
+    <FormikForm<RequestForPatternApprovalAppDetails>
+      initialValues={appDetails as RequestForPatternApprovalAppDetails}
+      isLoading={isLoading}
+      isSummaryPage
+      onSubmit={() => Promise.resolve()}
+      promptPath=''
+      bannerTitle=''
+      hidingFields={options.hidingFields}
+    >
+      {(formik) => (
+        <>
+          <div aria-busy={isDataLoading} aria-live='off'>
+            <Container fluid className='default-banner-background mb-5'>
+              <Container>{renderTitle(formik.values)}</Container>
+            </Container>
+            <Container style={{ marginTop: '-6.2rem' }}>
+              <Container>{renderTabSubView(formik.values)}</Container>
+            </Container>
+          </div>
+          <Container>
+            <Row className='mb-4'>
+              {/* <div className='d-grid d-md-block'>
                         <Link
                             data-testid='go-to-dashboard-button'
                             to='/dashboard'
@@ -593,10 +375,12 @@ const ApplicationDetails = () => {
                             Back to dashboard
                         </Link>
                     </div> */}
-          <BackToDashboardButton />
-        </Row>
-      </Container>
-    </FormProvider>
+              <BackToDashboardButton />
+            </Row>
+          </Container>
+        </>
+      )}
+    </FormikForm>
   );
 };
 

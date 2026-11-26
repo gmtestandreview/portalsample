@@ -561,6 +561,7 @@ describe('workflow step components', () => {
     await waitFor(() => {
       expect(screen.getByText(/1 National Circuit/)).toBeInTheDocument();
     });
+
     expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
   });
 

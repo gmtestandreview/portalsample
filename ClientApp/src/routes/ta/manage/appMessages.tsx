@@ -1,43 +1,40 @@
-import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useMsal } from '@azure/msal-react';
-import { lazy, Suspense, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router';
 import { Card, Row, Col, Form } from 'react-bootstrap';
 import parse from 'html-react-parser';
-import {
+import type { CustomElement } from '../../../components/SlateEditor/SlateEditor';
+import SlateEditor, {
   serializeToHtml,
-  type CustomElement,
-} from '../../../components/SlateEditor/slateHtml';
-
-import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
-
-import useBodyClass from '../../../components/Utilities/useBodyClass';
+} from '../../../components/SlateEditor/SlateEditor';
+import useAccountContext from '../../../authentication/hooks';
 
 import AppLogger from '../../../instrumentation/AppLogger';
+import type { RequestForPatternApprovalApplicationMessage } from '../../../api/web-api-client';
 import {
   FilterMessages,
-  type RequestForPatternApprovalApplicationMessage,
   RequestForPatternApprovalClient,
 } from '../../../api/web-api-client';
-import { createAuthenticatedClient } from '../../../authentication/authenticatedClient';
+import { tokenRequest } from '../../../authentication/authConfig';
 import { formatDateTimeToString } from '../../../utils';
 import CustomPagination from '../../../components/Pagination';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import CustomPaginationHeader from '../../../components/PaginationHeader';
-import { sanitiseHtml, toFilterMessages } from '../../common/helperFunctions';
-
-const SlateEditor = lazy(
-  () => import('../../../components/SlateEditor/SlateEditor'),
-);
+import { sanitiseHtml } from '../../common/helperFunctions';
 
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 
 const ApplicationMessages = () => {
   const { accounts, instance } = useMsal();
   const { id } = useParams();
+  const account = useAccountContext();
+  const navigate = useNavigate();
+
   const [isDataLoading, setIsDataLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] =
     useState<RequestForPatternApprovalApplicationMessage>();
+  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -46,9 +43,6 @@ const ApplicationMessages = () => {
   const [messageView, setMessageView] = useState<FilterMessages>(
     FilterMessages.ShowAllMessages,
   );
-
-  useHtmlTitle('Application Messages | NMI Services portal');
-  useBodyClass('pa-application-messages');
 
   // Slate editor state
   const initialValue: CustomElement[] = [
@@ -65,11 +59,12 @@ const ApplicationMessages = () => {
       try {
         // Try do something useful here like fetch messages for the application and display them
         if (accounts.length > 0 && id) {
-          const client = await createAuthenticatedClient(
-            RequestForPatternApprovalClient,
-            accounts,
-            instance,
-          );
+          const client = new RequestForPatternApprovalClient();
+          const tokenResult = await instance.acquireTokenSilent({
+            ...tokenRequest,
+            account: accounts[0],
+          });
+          client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppMessages(
             id,
             DEFAULT_DASHBOARD_PAGESIZE,
@@ -77,19 +72,19 @@ const ApplicationMessages = () => {
             messageView,
             id,
           );
-          if (response.requestForPatternApprovalMessageDetails?.currentPage) {
+          if (response.requestForPatternApprovalMessageDetails!.currentPage) {
             setCurrentPage(
-              response.requestForPatternApprovalMessageDetails.currentPage,
+              response.requestForPatternApprovalMessageDetails!.currentPage,
             );
           }
-          if (response.requestForPatternApprovalMessageDetails?.totalPages) {
+          if (response.requestForPatternApprovalMessageDetails!.totalPages) {
             setTotalPages(
-              response.requestForPatternApprovalMessageDetails.totalPages,
+              response.requestForPatternApprovalMessageDetails!.totalPages,
             );
           }
-          if (response.requestForPatternApprovalMessageDetails?.totalCount) {
+          if (response.requestForPatternApprovalMessageDetails!.totalCount) {
             setTotalCount(
-              response.requestForPatternApprovalMessageDetails.totalCount,
+              response.requestForPatternApprovalMessageDetails!.totalCount,
             );
           }
           setMessage(response);
@@ -102,7 +97,7 @@ const ApplicationMessages = () => {
         setIsDataLoading(false);
       }
     };
-    void fetchMessages();
+    fetchMessages();
   }, [accounts, id, instance, currentPage, refreshTick, messageView]);
 
   const changePage = (page: number) => {
@@ -117,11 +112,12 @@ const ApplicationMessages = () => {
     try {
       // Try do something useful here like fetch messages for the application and display them
       if (accounts.length > 0 && id) {
-        const client = await createAuthenticatedClient(
-          RequestForPatternApprovalClient,
-          accounts,
-          instance,
-        );
+        const client = new RequestForPatternApprovalClient();
+        const tokenResult = await instance.acquireTokenSilent({
+          ...tokenRequest,
+          account: accounts[0],
+        });
+        client.setAuthToken(tokenResult.accessToken);
         await client.addAppMessage(id, sanitizedHtmlContent);
         setValue(initialValue);
         setEditorResetKey((prev) => prev + 1);
@@ -138,27 +134,19 @@ const ApplicationMessages = () => {
   };
 
   const renderEditor = () => (
-    <Suspense
-      fallback={
-        <BlockUISpinner partial>
-          <p>Loading editor...</p>
-        </BlockUISpinner>
-      }
-    >
-      <SlateEditor
-        key={editorResetKey}
-        value={value}
-        onSubmit={() => {
-          void handleEditorSubmit(value);
-        }}
-        setValue={setValue}
-        placeholder='Message NMI'
-      />
-    </Suspense>
+    <SlateEditor
+      key={editorResetKey}
+      value={value}
+      onSubmit={() => {
+        handleEditorSubmit(value);
+      }}
+      setValue={setValue}
+      placeholder='Message NMI'
+    />
   );
 
   const messageCount =
-    message?.requestForPatternApprovalMessageDetails?.items?.length;
+    message?.requestForPatternApprovalMessageDetails?.items!.length;
 
   const renderToolbar = () => (
     <>
@@ -169,19 +157,14 @@ const ApplicationMessages = () => {
           value={messageView}
           disabled={isDataLoading}
           onChange={(e) => {
-            const nextMessageView = toFilterMessages(e.target.value);
-            if (nextMessageView !== undefined) {
-              setMessageView(nextMessageView);
-            }
+            setMessageView(e.target.value as FilterMessages);
             setCurrentPage(1); // reset paging when filter changes
             setRefreshTick((prev) => prev + 1); // force refetch if already on page 1
           }}
         >
-          <option value={FilterMessages.ShowAllMessages}>All Messages</option>
-          <option value={FilterMessages.ShowNmiMessages}>NMI Messages</option>
-          <option value={FilterMessages.ShowPortalMessages}>
-            Portal Messages
-          </option>
+          <option value='1'>Show all messages</option>
+          <option value='2'>Messages from NMI</option>
+          <option value='3'>Messages from my organisation</option>
         </Form.Select>
       </Col>
       <Col className='text-end'>
@@ -198,12 +181,12 @@ const ApplicationMessages = () => {
     </>
   );
 
-  const renderNMIAvator = (avatar: string) => (
+  const renderNMIAvator = (avatar: string | undefined) => (
     <div
       className='d-flex align-items-center justify-content-center rounded-circle bg-nmi-navbar mb-3 mb-sm-0 me-3'
       style={{ width: 36, height: 36 }}
     >
-      <span className='fs-6 capitalized text-white'>{avatar}</span>
+      <span className='fs-6 capitalized text-white'>{avatar || 'NMI'}</span>
     </div>
   );
 
@@ -212,15 +195,13 @@ const ApplicationMessages = () => {
       className='d-flex align-items-center justify-content-center rounded-circle bg-primary mb-3 mb-sm-0 me-3'
       style={{ width: 36, height: 36 }}
     >
-      <span className='fs-6 capitalized text-white'>
-        {orIfEmpty(avatar, '?')}
-      </span>
+      <span className='fs-6 capitalized text-white'>{avatar || '?'}</span>
     </div>
   );
 
   const handlePaginationScroll = () => {
-    const messagesSection = document.getElementById('application-messages');
-    messagesSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const titleElement = document.getElementById('dash-type-title'); // TODO: change this to the title of the messages section when it is available
+    titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const renderHtmlBody = (html: string) => {
@@ -228,11 +209,20 @@ const ApplicationMessages = () => {
     return parse(safeHtml);
   };
 
-  const renderFooter = (footer: string | null | undefined) =>
+  const renderFooter = (footer: string) =>
     footer && (
       <>
         <p className='mt-2 mb-0'>Regards,</p>
         <p className='my-0'>{footer}</p>
+      </>
+    );
+
+  const renderMessageFrom = (footer: string) =>
+    footer && (
+      <>
+        <br />
+        <span className='visually-hidden'>From: </span>
+        <span className='my-0'>{footer}</span>
       </>
     );
 
@@ -245,23 +235,23 @@ const ApplicationMessages = () => {
         {renderToolbar()}
       </Row>
       <Row id='application-messages' className='message-items mb-4'>
-        {isDataLoading ? (
+        {!isModalOpen && isDataLoading ? (
           <BlockUISpinner partial>
             <p>Loading...</p>
           </BlockUISpinner>
         ) : (
           <ol className='list-unstyled'>
             {message && messageCount !== undefined && messageCount === 0 && (
-              <li className='text-center text-muted'>No messages to display</li>
+              <p className='text-center text-muted'>No messages to display</p>
             )}
             {message &&
               messageCount !== undefined &&
               messageCount > 0 &&
-              message.requestForPatternApprovalMessageDetails?.items?.map(
-                (msg) => (
+              message.requestForPatternApprovalMessageDetails!.items!.map(
+                (msg, index) => (
                   <li key={msg.id} id={msg.id}>
                     <Card
-                      className='border-0 border-bottom mb-1 shadow-sm'
+                      className={`border-0 border-bottom mb-1 shadow-sm ${selectedMessage === msg.regardingId ? ' selectedMessage' : ''}`}
                       tabIndex={0}
                     >
                       <Card.Body
@@ -283,18 +273,28 @@ const ApplicationMessages = () => {
                               </span>
                               <span className='text-end small text-muted'>
                                 {!!msg.messageSent &&
-                                  formatDateTimeToString(msg.messageSent)}
+                                  `${formatDateTimeToString(msg.messageSent)}`}
+                                {renderMessageFrom(msg.footer!)}
                               </span>
                             </p>
                             {typeof msg.body === 'string' ? (
                               <>
-                                <div className='body-text'>
+                                <div
+                                  // className={`body-text ${selectedMessage === msg.regardingId ? '' : 'text-truncate text-truncate-1'}`}
+                                  className='body-text'
+                                >
                                   {renderHtmlBody(msg.body)}
                                 </div>
-                                {renderFooter(msg.footer)}
+                                {/* Hide message footer */}
+                                {/* {renderFooter(msg.footer!)} */}
                               </>
                             ) : (
-                              <div className='body-text'>{msg.body}</div>
+                              <div
+                                // className={`body-text ${selectedMessage === msg.regardingId ? '' : 'text-truncate text-truncate-1'}`}
+                                className='body-text'
+                              >
+                                {msg.body}
+                              </div>
                             )}
                           </div>
                         </div>

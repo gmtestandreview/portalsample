@@ -1,6 +1,7 @@
+import type { MutableRefObject } from 'react';
 import { useRef, useState } from 'react';
-import '../../styles/media-print.scss';
 import { Button, Card, Col, Row } from 'react-bootstrap';
+import useBodyClass from './useBodyClass';
 
 export interface MailingLabelProps {
   quotationIdNum?: string | undefined;
@@ -15,42 +16,49 @@ export interface MailingLabelProps {
  * @param props MailingLabelProps
  * @returns jsx
  */
-const MailingLabel = ({
-  quotationIdNum,
-  nmiTestOfficerName,
-  nmiFacilityName,
-  nmiFacilityAddress,
-  showPrintOrCopy = true,
-}: Readonly<MailingLabelProps>) => {
-  const printAreaRef = useRef<HTMLDivElement | null>(null);
+const MailingLabel = (props: MailingLabelProps) => {
+  const {
+    quotationIdNum,
+    nmiTestOfficerName,
+    nmiFacilityName,
+    nmiFacilityAddress,
+    showPrintOrCopy = true,
+  } = props;
+
+  const printAreaRef = useRef() as MutableRefObject<HTMLDivElement>;
 
   const [isCopyClipboard, setIsCopyClipboard] = useState(false);
+
+  // Track if print label mode is active
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  useBodyClass(isPrinting ? 'print-label-page' : 'print-label-close');
 
   /**
    * React-To-Print handle the Print button click
    */
   const handlePrint = () => {
-    globalThis.print();
+    setIsPrinting(true);
+    setTimeout(() => {
+      window.print();
+      setIsPrinting(false);
+    }, 0);
   };
 
   /**
    * Copies the mailing label text to the clipboard
    */
   const copyToClipboardClick = () => {
-    /* v8 ignore next 3 */
-    if (!printAreaRef.current) {
-      setIsCopyClipboard(false);
-      return;
-    }
-
     const textToCopy = printAreaRef.current.innerText;
     navigator.clipboard
       .writeText(textToCopy)
       .then(() => {
         setIsCopyClipboard(true);
+        // console.log('Copied to clipboard:'); console.log(textToCopy);
       })
-      .catch(() => {
+      .catch((err) => {
         setIsCopyClipboard(false);
+        // console.log('Failed to copy: ', err);
       });
   };
 
@@ -94,7 +102,8 @@ const MailingLabel = ({
                   onClick={handlePrint}
                   title='Print shipping address label (opens in new window)'
                 >
-                  <i className='icon-printer me-1' aria-hidden='true' /> Print{' '}
+                  <i className='icon-printer me-1' aria-hidden='true' />
+                  Print
                   <span className='visually-hidden'>
                     shipping address label
                   </span>
@@ -110,12 +119,13 @@ const MailingLabel = ({
                 >
                   {isCopyClipboard ? (
                     <>
-                      <i className='icon-tick me-1' aria-hidden='true' />{' '}
+                      <i className='icon-tick me-1' aria-hidden='true' />
                       Copied!
                     </>
                   ) : (
                     <>
-                      <i className='icon-copy me-1' aria-hidden='true' /> Copy
+                      <i className='icon-copy me-1' aria-hidden='true' />
+                      Copy
                     </>
                   )}
 

@@ -1,14 +1,16 @@
-import Row from 'react-bootstrap/Row';
-import { useField } from 'formik';
+import { Row } from 'react-bootstrap';
+import { useLocation, useParams } from 'react-router-dom';
+import { getIn, useField, useFormikContext } from 'formik';
 import type { TAOrganisationAndContactProps } from './types';
 import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
 import HidableField from '../../components/forms/HidableField';
 import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
+import useAccountContext from '../../authentication/hooks';
 import AuthorisedAgent from '../../components/Inputs/AuthorisedAgent';
 import TextInput from '../../components/Inputs/TextInput';
 import AddressLookup from '../../components/Inputs/AddressLookup';
 
-const GetFieldValue = ({ fieldName }: Readonly<{ fieldName: string }>) => {
+const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
   const [_field] = useField(fieldName);
   return <>{_field.value}</>;
 };
@@ -18,16 +20,28 @@ const GetFieldValue = ({ fieldName }: Readonly<{ fieldName: string }>) => {
     return _field.value;
 }; */
 
-const OrganisationAndContact = (
-  props: Readonly<TAOrganisationAndContactProps>,
-) => {
+const organisationAndContact = (props: TAOrganisationAndContactProps) => {
   const { isSummary, name } = props;
+  const { values } = useFormikContext<any>();
+  const [sourceReferenceField] = useField('sourceReferenceId');
+  const accountContext = useAccountContext();
+  const location = useLocation();
+  const { id } = useParams();
+  const rFQId = id || '';
 
   // function getNameForUse(nameForUse: string | keyof DeliveryAndReturnStep): string { return getNameForUse2(nameForUse, isSummary); }
 
   function getName(localName: string) {
     return name ? `${name}.${localName}` : localName;
   }
+
+  const isCorrectBranchOrLocation =
+    getIn(values, getName('isCorrectBranchOrLocation')) ?? '';
+
+  const onShowBranchSelectorClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    accountContext?.setShowRFQSelectModal(true, rFQId, location.pathname);
+  };
 
   const renderMyContactDetails = () => (
     <>
@@ -82,6 +96,36 @@ const OrganisationAndContact = (
     </div>
   );
 
+  const renderHelpBranch = () => (
+    <>
+      Please use the &quot;Change branch/location&quot; below to change this
+      request before proceeding. The updated branch/location selection will also
+      be used for your dashboard view.
+    </>
+  );
+
+  const renderAgentForManufacturer = () => (
+    <>
+      Please attach authorisation as Agent and supply manufacturer details in
+      the form step &quot;Supporting documents&quot;
+    </>
+  );
+
+  const renderHelpIsCorrectBranchOrLocation = () => (
+    <>
+      Please ensure you are using the correct branch/location.
+      <br aria-hidden='true' />
+      <span className='visually-hidden'>{renderHelpBranch()}</span>
+    </>
+  );
+
+  const renderHelpOrganisationType = () => (
+    <>
+      Please ensure you are using the correct branch/location.
+      <br aria-hidden='true' />
+    </>
+  );
+
   return (
     <>
       <Row className={isSummary ? '' : 'mb-4'}>
@@ -90,6 +134,7 @@ const OrganisationAndContact = (
           name={getName('isManufacturer')}
           id='q-isManufacturer'
           containerClassName='mb-1'
+          // inlineHelp={renderHelpOrganisationType()}
           isSummary={isSummary}
           options={[
             {
@@ -133,7 +178,7 @@ const OrganisationAndContact = (
           />
         </HidableField>
       </Row>
-      <Row className='mb-4'>
+      <Row>
         <h2 className={isSummary ? 'h3 my-3' : ''}>
           Contact
           {!isSummary ? ' information' : ''}
@@ -181,7 +226,7 @@ const OrganisationAndContact = (
           />
         </HidableField>
       </Row>
-      <Row>
+      <Row className='mb-4'>
         <RadioButtonGroup
           legend='Invoice/Account contact person'
           name={getName('isPrincipalInvoiceContact')}
@@ -213,6 +258,10 @@ const OrganisationAndContact = (
             key='invoiceContact'
             name={getName('invoiceContact')}
             isSummary={isSummary}
+            firstNameLabel='First name (optional)'
+            lastNameLabel='Last name'
+            businessPhoneLabel='Business phone (optional)'
+            mobilePhoneLabel='Mobile phone (optional)'
           />
         </HidableField>
       </Row>
@@ -220,4 +269,4 @@ const OrganisationAndContact = (
   );
 };
 
-export default OrganisationAndContact;
+export default organisationAndContact;

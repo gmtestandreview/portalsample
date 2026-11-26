@@ -1,4 +1,3 @@
-import '../../styles/media-print.scss';
 import { useMsal } from '@azure/msal-react';
 import ExternalLinkIcon from '../Icons/ExternalLinkIcon';
 import InTextLink from '../InTextLink';
@@ -9,7 +8,7 @@ import {
   openPdfPageInNewTab,
 } from '../../routes/common/helperFunctions';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
-import { silentRequestFor } from '../../authentication/silentRequest';
+import { tokenRequest } from '../../authentication/authConfig';
 import AppLogger from '../../instrumentation/AppLogger';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 
@@ -26,25 +25,26 @@ export interface ViewPdfQuoteTermsProps {
  * @param props MailingLabelProps
  * @returns jsx
  */
-const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
+const ViewPdfQuoteTerms = (props: ViewPdfQuoteTermsProps) => {
   const { prefixText, suffixText, quotationData, setFileError, setIsLoading } =
     props;
 
   const { accounts, instance } = useMsal();
 
   const viewQuoteTermsPagePdf = async () => {
-    if (!quotationData) return;
     try {
-      AppLogger.verbose('viewQuoteTermsPagePdf.viewQuoteTermsPagePdf', {
-        crmQuoteRequestId: quotationData.crmQuoteRequestId,
-      });
-      setIsLoading(true);
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
+      AppLogger.verbose(
+        'viewQuoteTermsPagePdf.viewQuoteTermsPagePdf',
+        quotationData,
       );
+      setIsLoading(true);
+      const tokenResult = await instance.acquireTokenSilent({
+        ...tokenRequest,
+        account: accounts[0],
+      });
       const fileResponse = await getQuotationFileDetails(
         tokenResult.accessToken,
-        quotationData,
+        quotationData!,
         true,
       );
       if (
@@ -55,7 +55,7 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
         const fileUrl = getFileUrlFromBase64(fileResponse.fileData);
         // If the quote is declined then the terms pdf will have 3 pages instead of 2
         const pageNumber = getQuoteOfferPageNumber(
-          quotationData.quoteRequestStatus,
+          quotationData!.quoteRequestStatus,
         );
         openPdfPageInNewTab(fileUrl, pageNumber);
       }
@@ -72,8 +72,8 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
       <strong>Note: </strong>
       {prefixText}
       <InTextLink
-        onClick={(_e) => {
-          void viewQuoteTermsPagePdf();
+        onClick={() => {
+          viewQuoteTermsPagePdf();
           trackGAEvent('Terms', 'download');
         }}
       >

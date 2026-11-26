@@ -4,56 +4,57 @@ import InTextLink from '../../components/InTextLink';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import { formatDateToString, formatCurrencyAmount } from '../../utils';
 import {
-  getDashboardNotification,
-  clearDashboardNotification,
+  getQuotationNotification,
+  clearQuotationNotification,
 } from '../../storage/notification';
 import NotificationMessage from '../../components/Alert/NotificationMessage';
 import ExternalLinkIcon from '../../components/Icons/ExternalLinkIcon';
 import { QuoteStatus } from '../common/enums';
-import { getMakeModelDetails, toQuoteStatus } from '../common/helperFunctions';
-import { validPillStatuses } from '../common/quoteStatus';
+import { getMakeModelDetails } from '../common/helperFunctions';
+import { validPillStatuses } from '../common/statusPermissions';
 import QuoteStatusPill from '../../components/Pill/QuoteStatusPill';
-import MailingLabel from '../../components/Utilities/mailingLabel';
 import type { MailingLabelProps } from '../../components/Utilities/mailingLabel';
+import MailingLabel from '../../components/Utilities/mailingLabel';
 import DeliveryInstructions from '../../components/Utilities/deliveryInstructions';
-import { openInternalRouteInNewTab } from '../common/openWindow';
 
-const QuoteDetails = (
-  props: Readonly<{
-    quotationData: RequestForQuoteDetails | undefined;
-    isSummary: boolean | undefined;
-    fileError: boolean | undefined;
-  }>,
-) => {
+const QuoteDetails = (props: {
+  quotationData: RequestForQuoteDetails | undefined;
+  isSummary: boolean | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  fileError: boolean | undefined;
+}) => {
   const { quotationData, isSummary, fileError } = props;
 
   const setNotification = () => {
-    const dashboardNotification = getDashboardNotification();
-    return dashboardNotification ? (
+    const quotationNotification = getQuotationNotification();
+    return quotationNotification ? (
       <NotificationMessage
         id='notif-message-1'
         canClose
-        onClose={clearDashboardNotification}
-        {...dashboardNotification}
+        onClose={clearQuotationNotification}
+        {...quotationNotification}
       />
     ) : null;
   };
   const showQuoteRequest = () => {
-    if (quotationData?.quoteRequestIdNum) {
-      openInternalRouteInNewTab(
-        `/request-for-quote/${encodeURIComponent(quotationData.quoteRequestIdNum)}/view-summary`,
-      );
+    const quoteRequestWindow = window.open();
+    if (quoteRequestWindow !== null) {
+      quoteRequestWindow.document.body.style.height = '500';
+      quoteRequestWindow.document.body.style.width = '400';
+      quoteRequestWindow.location.href = `/request-for-quote/${quotationData?.quoteRequestIdNum}/view-summary`;
     }
   };
 
-  const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
   const showStatusPill = useMemo(
-    () => quoteStatus !== undefined && validPillStatuses.includes(quoteStatus),
-    [quoteStatus],
+    () =>
+      quotationData?.quoteRequestStatus &&
+      validPillStatuses.some((x) => x === quotationData?.quoteRequestStatus),
+    [quotationData?.quoteRequestStatus],
   );
 
-  const dashboardMessage = setNotification();
-  const showDashboardMessage = (message: React.JSX.Element | null) => (
+  const quotationMessage = setNotification();
+  const showQuotationMessage = (message: JSX.Element | null) => (
     <>
       {message && (
         <Container>
@@ -109,12 +110,13 @@ const QuoteDetails = (
         <>
           <Row className='mb-3'>
             <Col>
-              <h2>Quotation summary</h2>
+              <h2 className={isSummary ? 'h3 my-3' : ''}>Quotation summary</h2>
             </Col>
           </Row>
           <Row className='mb-3'>
-            {fileError && showDashboardMessage(dashboardMessage)}
-            {quoteStatus === QuoteStatus.QuoteAvailable && (
+            {fileError && showQuotationMessage(quotationMessage)}
+            {quotationData?.quoteRequestStatus ===
+              QuoteStatus.QuoteAvailable && (
               <Col>
                 <Alert
                   variant='info'
@@ -152,7 +154,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation ID</div>
             <p className='mb-0 text-break'>
               {/* TO DO - insert correct Quotation ID */}
-              {!!quotationData?.quotationIdNum && quotationData.quotationIdNum}
+              {!!quotationData?.quotationIdNum && quotationData?.quotationIdNum}
             </p>
           </div>
         </Col>
@@ -168,13 +170,13 @@ const QuoteDetails = (
                                     >
                                         {getPillText(quotationData!.quoteRequestStatus)}
                                     </Badge> */}
-                  {quoteStatus !== undefined && (
-                    <QuoteStatusPill status={quoteStatus} />
-                  )}
+                  <QuoteStatusPill
+                    status={quotationData!.quoteRequestStatus as QuoteStatus}
+                  />
                 </Col>
                 <p className='mb-0 text-break'>
                   {!!quotationData?.outcomeDate &&
-                    formatDateToString(new Date(quotationData.outcomeDate))}
+                    `${formatDateToString(new Date(quotationData?.outcomeDate))}`}
                 </p>
               </>
             )}
@@ -190,7 +192,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation offer date</div>
             <p className='mb-0 text-break'>
               {!!quotationData?.quotationOfferDate &&
-                formatDateToString(new Date(quotationData.quotationOfferDate))}
+                `${formatDateToString(new Date(quotationData?.quotationOfferDate))}`}
             </p>
           </div>
         </Col>
@@ -199,7 +201,7 @@ const QuoteDetails = (
             <div className='form-label mb-0'>Quotation valid until</div>
             <p className='mb-0 text-break'>
               {!!quotationData?.quotationValidUntil &&
-                formatDateToString(new Date(quotationData.quotationValidUntil))}
+                `${formatDateToString(new Date(quotationData?.quotationValidUntil))}`}
             </p>
           </div>
         </Col>
@@ -212,9 +214,7 @@ const QuoteDetails = (
             </div>
             <p className='mb-0 text-break'>
               {!!quotationData?.dateInstrumentRequiredNMI &&
-                formatDateToString(
-                  new Date(quotationData.dateInstrumentRequiredNMI),
-                )}
+                `${formatDateToString(new Date(quotationData?.dateInstrumentRequiredNMI))}`}
             </p>
           </div>
         </Col>
@@ -225,9 +225,7 @@ const QuoteDetails = (
             </div>
             <p className='mb-0 text-break'>
               {!!quotationData?.targetDateMesurementReport &&
-                formatDateToString(
-                  new Date(quotationData.targetDateMesurementReport),
-                )}
+                `${formatDateToString(new Date(quotationData?.targetDateMesurementReport))}`}
             </p>
           </div>
         </Col>
@@ -245,7 +243,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.serialNumber && quotationData.serialNumber}
+                {!!quotationData?.serialNumber && quotationData?.serialNumber}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -253,7 +251,7 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.manufacturer && quotationData.manufacturer}
+                {!!quotationData?.manufacturer && quotationData?.manufacturer}
               </p>
             </Col>
             <Col xs={4} md={2}>
@@ -261,19 +259,19 @@ const QuoteDetails = (
             </Col>
             <Col xs={8} md={10}>
               <p className='mb-0 text-break'>
-                {!!quotationData?.model && quotationData.model}
+                {!!quotationData?.model && quotationData?.model}
               </p>
             </Col>
             <Col xs={4} md={2}>
               <div className='mb-0'>Description:</div>
             </Col>
             <Col xs={8} md={10}>
-              <p className='text-break'>
-                {!!quotationData?.description && quotationData.description}
-              </p>
+              {!!quotationData?.description && (
+                <p className='text-break'>{quotationData?.description}</p>
+              )}
               <p className='mb-0'>
                 <InTextLink
-                  onClick={(_e) => {
+                  onClick={() => {
                     showQuoteRequest();
                   }}
                 >
@@ -313,7 +311,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.servicesOffered &&
-                  quotationData.servicesOffered}
+                  quotationData?.servicesOffered}
               </p>
             </Col>
           </Row>
@@ -324,7 +322,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.measurementReportCertificateRequired &&
-                  quotationData.measurementReportCertificateRequired}
+                  quotationData?.measurementReportCertificateRequired}
               </p>
             </Col>
           </Row>
@@ -335,7 +333,7 @@ const QuoteDetails = (
             <Col xs={12} md={7} lg={8} xl={9}>
               <p className='mb-0 text-break'>
                 {!!quotationData?.specialConditions &&
-                  quotationData.specialConditions}
+                  quotationData?.specialConditions}
               </p>
             </Col>
           </Row>
@@ -343,7 +341,7 @@ const QuoteDetails = (
       </Row>
       {quotationData && (
         <>
-          {quotationData.receiptandDispatchNA ? (
+          {quotationData?.receiptandDispatchNA ? (
             <Row>
               <Col md={12}>
                 <h3 className='h5 mb-0 py-2'>
@@ -361,15 +359,15 @@ const QuoteDetails = (
               <MailingLabel {...mailingLabelProps} />
               <DeliveryInstructions
                 deliveryInstructions={
-                  quotationData.nmiFacilityDeliveryInstructions
+                  quotationData?.nmiFacilityDeliveryInstructions
                 }
               />
             </Row>
           )}
         </>
       )}
-      {quotationData?.quoteRequestStatus !== undefined &&
-        quoteStatus !== QuoteStatus.QuoteExpired && (
+      {!!quotationData?.quoteRequestStatus &&
+        quotationData.quoteRequestStatus !== QuoteStatus.QuoteExpired && (
           <Row className='mb-3'>
             <Col md={12}>
               {/* Render field label + values
@@ -381,8 +379,8 @@ const QuoteDetails = (
                 </h3>
                 <p className='mb-0 text-break'>
                   {'AUD '}
-                  {!!quotationData.feePayableAmount &&
-                    formatCurrencyAmount(quotationData.feePayableAmount)}
+                  {!!quotationData?.feePayableAmount &&
+                    `${formatCurrencyAmount(quotationData?.feePayableAmount)}`}
                   {' (inc. GST)'}
                 </p>
               </div>

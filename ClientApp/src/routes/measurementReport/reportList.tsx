@@ -1,11 +1,13 @@
 import { Col, Row, Alert, Table } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import type {
   InstrumentArtefactDto,
   PagedListOfInstrumentArtefactDto,
 } from '../../api/web-api-client';
 import CustomPagination from '../../components/Pagination';
 import StatusPill from '../../components/Pill/StatusPill';
+import VisibilityTrimmed from '../../components/Utilities/visibilityTrimmed';
+import { showReportLink } from '../../authorisation/statusPermissions';
 import { ReportStatus } from '../common/enums';
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
@@ -17,12 +19,10 @@ const formattedDate = (dateToFormat: Date | string | undefined) =>
       })
     : '';
 
-const ReportList = (
-  props: Readonly<{
-    pagedListArtefactData: PagedListOfInstrumentArtefactDto;
-    setCurrentPage: (page: number) => void;
-  }>,
-) => {
+const ReportList = (props: {
+  pagedListArtefactData: PagedListOfInstrumentArtefactDto;
+  setCurrentPage: (page: number) => void;
+}) => {
   const { pagedListArtefactData, setCurrentPage } = props;
 
   return (
@@ -93,7 +93,7 @@ const ReportList = (
               </tr>
             </thead>
             <tbody key='instReportsTBodyKey'>
-              {pagedListArtefactData.items?.map(
+              {pagedListArtefactData?.items?.map(
                 (artefact: InstrumentArtefactDto) => (
                   <tr key={artefact.tmasTcReportName}>
                     <td data-header='Report ID' className='col-md-2'>
@@ -109,28 +109,34 @@ const ReportList = (
                       {artefact.tmasMeasurementCategoryName}
                     </td>
                     <td data-header='ReportStatus' className='col-md-2'>
-                      {artefact.tmasStatus !== undefined && (
-                        <StatusPill status={artefact.tmasStatus} />
-                      )}
+                      <StatusPill status={artefact.tmasStatus!} />
                     </td>
                     <td data-header='Action' className='col-md-2'>
                       <div>
-                        {artefact.tmasStatus !== ReportStatus.Withdrawn && (
+                        <VisibilityTrimmed
+                          isVisible={showReportLink(artefact.tmasStatus)}
+                        >
                           <Link
-                            to={`/report/${artefact.tmasTcQuoteName ?? ''}`}
+                            to={`/report/${artefact.tmasTcQuoteName}`}
                             className='d-block mb-2'
                           >
                             View report
                           </Link>
-                        )}
-                        <span className='visually-hidden'>{' or '}</span>
-                        <Link
-                          to={`/request-for-quote-copy/${artefact.tmasPortalRequestId ?? ''}`}
-                          aria-label='Request recalibration for this instrument/artefact'
-                          className='d-block mb-2 text-nowrap'
+                        </VisibilityTrimmed>
+                        <VisibilityTrimmed
+                          isVisible={
+                            artefact.tmasStatus !== ReportStatus.NotIssued
+                          }
                         >
-                          Request recalibration
-                        </Link>
+                          <span className='visually-hidden'>{' or '}</span>
+                          <Link
+                            to={`/request-for-quote-copy/${artefact.tmasPortalRequestId}`}
+                            aria-label='Request recalibration for this instrument/artefact'
+                            className='d-block mb-2 text-nowrap'
+                          >
+                            Request recalibration
+                          </Link>
+                        </VisibilityTrimmed>
                       </div>
                     </td>
                   </tr>
@@ -138,17 +144,14 @@ const ReportList = (
               )}
             </tbody>
           </Table>
-          {pagedListArtefactData.currentPage !== undefined &&
-            pagedListArtefactData.totalPages !== undefined && (
-              <CustomPagination
-                currentPage={pagedListArtefactData.currentPage}
-                totalPages={pagedListArtefactData.totalPages}
-                onPageChange={(page: number) => {
-                  setCurrentPage(page);
-                }}
-                containerClassName='d-flex justify-content-center'
-              />
-            )}
+          <CustomPagination
+            currentPage={pagedListArtefactData.currentPage!}
+            totalPages={pagedListArtefactData.totalPages!}
+            onPageChange={(page: number) => {
+              setCurrentPage(page);
+            }}
+            containerClassName='d-flex justify-content-center'
+          />
         </Col>
       </Row>
     </>

@@ -1,41 +1,54 @@
 import { useEffect, useMemo, useState } from 'react';
-import type React from 'react';
 import { Col, Row, Container, Button } from 'react-bootstrap';
+import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
-  getDashboardNotification,
-  clearDashboardNotification,
-  setDashboardNotification,
+  getQuotationNotification,
+  clearQuotationNotification,
+  setQuotationNotification,
   getDashboardInfoNotification,
+  setDashboardInfoNotification,
   clearDashboardInfoNotification,
+  setDashboardNotification,
 } from '../../storage/notification';
 import NotificationMessage from '../../components/Alert/NotificationMessage';
 import useHtmlTitle from '../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../components/Utilities/useBodyClass';
-import { useAccountState } from '../../authentication/hooks';
+import useAccountContext from '../../authentication/hooks';
 import { NotificationSeverity } from '../../storage/types';
-import CustomBreadcrumb from '../../components/Breadcrumb';
 import type { CustomBreadcrumbItem } from '../../components/Breadcrumb';
+import CustomBreadcrumb from '../../components/Breadcrumb';
 import HeaderIntroText from '../../components/HeaderIntroText';
 import type { QuotationtProps } from './types';
-import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
-import { silentRequestFor } from '../../authentication/silentRequest';
+import { ApplicationType, QuoteClient } from '../../api/web-api-client';
+import { tokenRequest } from '../../authentication/authConfig';
 import QuoteDetails from './quoteDetails';
-import NMIContactDetails from '../common/NMIContactDetails';
+import NMIContactDetails from './nMIContactDetails';
 import ConfirmationModal from '../../components/modals/ConfirmationModal';
 
 import { QuoteStatus } from '../common/enums';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
-import { proceedDeclineValidStatuses } from '../common/quoteStatus';
-import { toQuoteStatus } from '../common/helperFunctions';
+import { proceedDeclineValidStatuses } from '../common/statusPermissions';
 import AppLogger from '../../instrumentation/AppLogger';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 
-const showDashboardMessage = (message: React.JSX.Element | null) => (
+const showQuotationMessage = (message: JSX.Element | null) => (
+  <>
+    {message && (
+      <Container>
+        <Row>
+          <Col>{message}</Col>
+        </Row>
+      </Container>
+    )}
+  </>
+);
+
+const showDashboardMessage = (message: JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -48,18 +61,19 @@ const showDashboardMessage = (message: React.JSX.Element | null) => (
 );
 
 const setNotification = () => {
-  const dashboardNotification = getDashboardNotification();
-  return dashboardNotification ? (
+  const quotationNotification = getQuotationNotification();
+  return quotationNotification ? (
     <NotificationMessage
       id='notif-message-1'
       canClose
-      onClose={clearDashboardNotification}
-      {...dashboardNotification}
+      onClose={clearQuotationNotification}
+      {...quotationNotification}
     />
   ) : null;
 };
 
 const setInfoNotification = () => {
+  // Optionally bubble up error message to Dashboard
   const dashboardInfoNotification = getDashboardInfoNotification();
   return dashboardInfoNotification ? (
     <NotificationMessage
@@ -74,17 +88,23 @@ const setInfoNotification = () => {
 const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
+    const el: HTMLElement = document.querySelector('[id^="#notif-"]')!;
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);
 };
 
-const Quotation = (props: Readonly<QuotationtProps>) => {
+const Quotation = (props: QuotationtProps) => {
   const { id } = useParams<{ id?: string }>();
   const { isSummary } = props;
-  const { accounts, instance } = useMsal();
+  const { inProgress, accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);
+  const [errored, setErrored] = useState(false);
+  const [reload, setReload] = useState(false);
+  const [forbidden, setForbidden] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [noThirdPartyAccess, setNoThirdPartyAccess] = useState(false);
+  const [scrollToTop, setScrollToTop] = useState(false);
   const [quotationData, setQuotationData] = useState<
     RequestForQuoteDetails | undefined
   >();
@@ -96,8 +116,8 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   const showDeclineQuoteModal = () => {
     setDeclineQuoteDialogOpen(true);
   };
-  const accountState = useAccountState();
-  const dashboardMessage = setNotification();
+  const accountContext = useAccountContext();
+  const quotationMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();
 
   const navigate = useNavigate();
@@ -107,30 +127,31 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
     { to: '', text: 'Testing and calibration service - Quotation' },
   ];
 
-  const backButtonVisible = useMemo(() => {
-    const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
-    return (
-      quoteStatus !== undefined &&
-      proceedDeclineValidStatuses.includes(quoteStatus)
-    );
-  }, [quotationData?.quoteRequestStatus]);
+  const backButtonVisible = useMemo(
+    () =>
+      proceedDeclineValidStatuses.some(
+        (x) => x === quotationData?.quoteRequestStatus,
+      ),
+    [quotationData?.quoteRequestStatus],
+  );
 
   const declineQuote = async () => {
     setIsLoading(true);
     try {
       const client = new QuoteClient();
-      const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0]),
-      );
+      const tokenResult = await instance.acquireTokenSilent({
+        ...tokenRequest,
+        account: accounts[0],
+      });
 
       client.setAuthToken(tokenResult.accessToken);
       if (quotationData?.crmQuoteRequestId) {
         await client.declineQuote(
-          quotationData.crmQuoteRequestId,
-          accountState?.details?.givenName,
-          accountState?.details?.familyName,
+          quotationData?.crmQuoteRequestId,
+          accountContext?.details?.givenName,
+          accountContext?.details?.familyName,
         );
-        void navigate('/');
+        navigate('/');
       }
     } catch (e) {
       setFileError(true);
@@ -141,32 +162,55 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   };
 
   useEffect(() => {
-    let isActive = true;
+    const loadDataForDisplay = async () => {
+      if (accountContext?.details?.targetOrganisation?.targetOrganisationAbn) {
+        if (inProgress === InteractionStatus.None && accounts.length > 0) {
+          setIsLoading(true);
+          setIsLoading(false);
+          setReload(false);
+        }
+      }
+    };
+    setIsLoading(true);
+    loadDataForDisplay();
+    setIsLoading(false);
+    if (scrollToTop) {
+      handleAlertScroll();
+    }
+  }, [
+    accountContext,
+    accountContext?.details?.targetOrganisation?.targetOrganisationAbn,
+    accounts.length,
+    inProgress,
+    reload,
+    scrollToTop,
+  ]);
 
+  useEffect(() => {
     const getQuotationDetails = async () => {
       try {
         AppLogger.verbose('Quotation.getQuotationDetails', { Id: id });
         setIsLoading(true);
         setFileError(false);
         const quoteclient = new QuoteClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
-        );
+        const tokenResult = await instance.acquireTokenSilent({
+          ...tokenRequest,
+          account: accounts[0],
+        });
         quoteclient.setAuthToken(tokenResult.accessToken);
 
         const quoteData = await quoteclient.getQuoteRequestDetailsByRefId(
           ApplicationType.QuoteRequest,
           id,
         );
-        if (!isActive) return;
 
         // TS - This is to fix azure board issue 489452
         const newlyAcceptedQuoteId =
-          SessionStorageCache().getItem<string>('view-quote-id');
+          SessionStorageCache().getItem('view-quote-id');
         if (newlyAcceptedQuoteId) {
           if (
-            quoteData.quoteRequestIdNum === newlyAcceptedQuoteId &&
-            quoteData.quoteRequestStatus === QuoteStatus.QuoteAvailable
+            quoteData?.quoteRequestIdNum === newlyAcceptedQuoteId &&
+            quoteData?.quoteRequestStatus === QuoteStatus.QuoteAvailable
           ) {
             quoteData.quoteRequestStatus = QuoteStatus.QuoteAccepted;
             quoteData.outcomeDate = new Date();
@@ -175,39 +219,36 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         }
 
         setQuotationData(quoteData);
+        setIsLoading(false);
       } catch (e) {
-        if (!isActive) return;
-
         setFileError(true);
+        setIsLoading(false);
         AppLogger.error('Failed to load quotation details', e as Error, {
           Id: id,
         });
-        void navigate('/not-found');
-      } finally {
-        if (isActive) {
-          setIsLoading(false);
-        }
+        navigate('/not-found');
       }
     };
-
-    void getQuotationDetails();
-
-    return () => {
-      isActive = false;
+    const loadQuoteDetails = async () => {
+      setIsLoading(true);
+      await getQuotationDetails();
+      setIsLoading(false);
     };
-  }, [accounts, id, instance, navigate]);
+    loadQuoteDetails();
+  }, [accounts, id, instance]);
 
   useEffect(() => {
     if (fileError) {
-      handleAlertScroll();
-      setDashboardNotification({
+      setScrollToTop(true);
+      setQuotationNotification({
         message:
           'Oops - An unexpected error has occurred with downloading the PDF quote.' +
           ' Please wait a minute before reloading this page to try again.',
         severity: NotificationSeverity.Error,
       });
     } else {
-      clearDashboardNotification();
+      setScrollToTop(false);
+      clearQuotationNotification();
     }
   }, [fileError]);
 
@@ -216,19 +257,54 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   );
   useBodyClass('quotation');
 
-  useEffect(() => {
+  if (forbidden) {
+    setDashboardNotification({
+      message:
+        'We are unable to process your request. Your changes have not been saved. Please contact support.',
+      severity: NotificationSeverity.Error,
+    });
+  }
+
+  if (noThirdPartyAccess) {
+    setDashboardNotification({
+      message: `You no longer have access to the records
+      for ${accountContext?.details?.targetOrganisation?.targetOrganisationName}.
+      Your changes have not been saved.`,
+      severity: NotificationSeverity.Error,
+    });
+    if (accountContext) {
+      accountContext.setTargetOrganisation(
+        accountContext?.details?.abn ?? '',
+        accountContext?.details?.organisation ?? '',
+      );
+    }
+    setNoThirdPartyAccess(false);
+  }
+
+  if (errored) {
+    return <Navigate to='/server-error' />;
+  }
+
+  if (showInfo) {
+    setDashboardInfoNotification({
+      message:
+        'New initial reporting and/or ongoing reporting forms have been generated',
+      severity: NotificationSeverity.Information,
+    });
+  } else {
     clearDashboardInfoNotification();
-  }, []);
-  const quoteStatus = toQuoteStatus(quotationData?.quoteRequestStatus);
+  }
   const renderQuotationSummary = () => (
     <>
       <QuoteDetails
         quotationData={quotationData}
         isSummary={isSummary}
+        firstName={accountContext?.details?.givenName}
+        lastName={accountContext?.details?.familyName}
         fileError={fileError}
       />
-      {quotationData?.quoteRequestStatus !== undefined &&
-        quoteStatus !== QuoteStatus.QuoteExpired && (
+      {!!quotationData?.quoteRequestStatus &&
+        quotationData?.quoteRequestStatus !== QuoteStatus.QuoteExpired && (
           <Row className='mb-3'>
             <Col md={12}>
               <div>
@@ -253,10 +329,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
             </Col>
           </Row>
         )}
-      <NMIContactDetails
-        heading='Contact your NMI test officer if any of the details are not correct before proceeding.'
-        quotationData={quotationData}
-      />
+      <NMIContactDetails quotationData={quotationData} />
     </>
   );
 
@@ -267,8 +340,6 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
           <p>Loading...</p>
         </BlockUISpinner>
       )}
-      {!fileError && showDashboardMessage(dashboardMessage)}
-      {!fileError && showDashboardMessage(dashboardInfoMessage)}
       <div aria-busy={isLoading} aria-live='polite'>
         <Container fluid className='default-banner-background mb-5'>
           <Container>
@@ -289,6 +360,8 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
             </Row>
           </Container>
         </Container>
+        {!fileError && showQuotationMessage(quotationMessage)}
+        {!fileError && showDashboardMessage(dashboardInfoMessage)}
         <Container>{renderQuotationSummary()}</Container>
         <Container>
           <Row className='mb-4'>
@@ -304,7 +377,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
                         className='btn btn-tertiary'
                       >
                         <i className='icon-back me-1' aria-hidden='true' />
-                        {' Back to dashboard'}
+                        Back to dashboard
                       </Link>
                     </div>
                   </Row>
@@ -316,7 +389,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
                       className='btn btn-tertiary order-3 order-md-0'
                     >
                       <i className='icon-close me-1' aria-hidden='true' />
-                      {' Cancel'}
+                      Cancel
                     </Link>
                     <Button
                       variant='secondary'
@@ -328,7 +401,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
                     </Button>
                     <Link
                       data-testid='new-request-button'
-                      to={`/accept-quote-create/${id ?? ''}`}
+                      to={`/accept-quote-create/${id}`}
                       className='btn btn-primary'
                     >
                       Proceed with quote
@@ -348,17 +421,16 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
           <>
             <p>
               {'Are you sure you want to decline this Quotation ID '}
-              <strong>{quotationData?.quotationIdNum}</strong>
-              {'?'}
+              <strong>{quotationData?.quotationIdNum}</strong>?
             </p>
             <p>
               <strong>{'Note: '}</strong>
-              {' Declining this quote cannot be undone'}
+              Declining this quote cannot be undone
             </p>
           </>
         }
         onModalNo={closeDeclineQuoteModal}
-        onModalYes={() => void declineQuote()}
+        onModalYes={declineQuote}
         noButtonTitle='Cancel'
         yesButtonTitle='Decline quote'
       />

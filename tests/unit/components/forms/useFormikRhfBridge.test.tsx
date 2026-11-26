@@ -60,7 +60,7 @@ const renderBridge = (initialValues: BridgeValues) =>
     </Formik>,
   );
 
-describe('useFormikRhfBridge', () => {
+describe(useFormikRhfBridge, () => {
   it('mirrors only bridged React Hook Form edits into Formik values', async () => {
     expect.hasAssertions();
 
@@ -86,6 +86,7 @@ describe('useFormikRhfBridge', () => {
         external: 'Outer value',
       });
     });
+
     expect(
       JSON.parse(screen.getByTestId('formik-values').textContent),
     ).toMatchObject({ external: 'Outer value' });

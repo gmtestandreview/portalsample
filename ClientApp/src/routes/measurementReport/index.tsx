@@ -1,33 +1,48 @@
 import { useEffect, useState } from 'react';
-import type React from 'react';
 import { Col, Row, Container } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
-  getDashboardNotification,
-  clearDashboardNotification,
+  getReportingNotification,
+  clearReportingNotification,
+  setReportingNotification,
   getDashboardInfoNotification,
+  setDashboardInfoNotification,
   clearDashboardInfoNotification,
+  setDashboardNotification,
 } from '../../storage/notification';
 import NotificationMessage from '../../components/Alert/NotificationMessage';
 import useHtmlTitle from '../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../components/Utilities/useBodyClass';
-import { useAccountState } from '../../authentication/hooks';
-import CustomBreadcrumb from '../../components/Breadcrumb';
+import useAccountContext from '../../authentication/hooks';
+import { NotificationSeverity } from '../../storage/types';
 import type { CustomBreadcrumbItem } from '../../components/Breadcrumb';
+import CustomBreadcrumb from '../../components/Breadcrumb';
 import HeaderIntroText from '../../components/HeaderIntroText';
-import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
+import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import ReportDetails from './reportDetails';
-import NMIContactDetails from '../common/NMIContactDetails';
+import NMIContactDetails from './nMIContactDetails';
 import ViewMeasurementReport from '../../components/Utilities/ViewMeasurementReport';
-import { silentRequestFor } from '../../authentication/silentRequest';
+import { tokenRequest } from '../../authentication/authConfig';
 import { handleReportFileError } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
-const showDashboardMessage = (message: React.JSX.Element | null) => (
+const showReportingMessage = (message: JSX.Element | null) => (
+  <>
+    {message && (
+      <Container>
+        <Row>
+          <Col>{message}</Col>
+        </Row>
+      </Container>
+    )}
+  </>
+);
+
+const showDashboardMessage = (message: JSX.Element | null) => (
   <>
     {message && (
       <Container>
@@ -40,18 +55,19 @@ const showDashboardMessage = (message: React.JSX.Element | null) => (
 );
 
 const setNotification = () => {
-  const dashboardNotification = getDashboardNotification();
-  return dashboardNotification ? (
+  const reportingNotification = getReportingNotification();
+  return reportingNotification ? (
     <NotificationMessage
       id='notif-message-1'
       canClose
-      onClose={clearDashboardNotification}
-      {...dashboardNotification}
+      onClose={clearReportingNotification}
+      {...reportingNotification}
     />
   ) : null;
 };
 
 const setInfoNotification = () => {
+  // Optionally bubble up error message to Dashboard
   const dashboardInfoNotification = getDashboardInfoNotification();
   return dashboardInfoNotification ? (
     <NotificationMessage
@@ -67,13 +83,17 @@ const MeasurementReport = () => {
   const { id } = useParams<{ id?: string }>();
   const { inProgress, accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);
+  const [errored, setErrored] = useState(false);
   const [reload, setReload] = useState(false);
+  const [forbidden, setForbidden] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [noThirdPartyAccess, setNoThirdPartyAccess] = useState(false);
   const [measurementReportData, setMeasurementReportData] = useState<
     RequestForQuoteDetails | undefined
   >();
   const [fileError, setFileError] = useState(false);
-  const accountState = useAccountState();
-  const dashboardMessage = setNotification();
+  const accountContext = useAccountContext();
+  const reportingMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();
   const navigate = useNavigate();
 
@@ -83,16 +103,19 @@ const MeasurementReport = () => {
   ];
 
   const targetOrganisationAbn =
-    accountState?.details?.targetOrganisation?.targetOrganisationAbn;
+    accountContext!.details?.targetOrganisation?.targetOrganisationAbn;
 
   useEffect(() => {
     const getReportDetails = async () => {
       try {
         AppLogger.verbose('MeasurementReport.getReportDetails', { Id: id });
+        setFileError(false);
+        clearReportingNotification();
         const client = new QuoteClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
-        );
+        const tokenResult = await instance.acquireTokenSilent({
+          ...tokenRequest,
+          account: accounts[0],
+        });
         client.setAuthToken(tokenResult.accessToken);
         const details = await client.getQuoteRequestDetailsByRefId(
           ApplicationType.QuoteAccept,
@@ -106,11 +129,11 @@ const MeasurementReport = () => {
         AppLogger.error('Failed to get Measurement report data', e as Error, {
           Id: id,
         });
-        void navigate('/not-found');
+        navigate('/not-found');
       }
     };
     const loadDataForDisplay = async () => {
-      if (accountState?.details?.targetOrganisation?.targetOrganisationAbn) {
+      if (accountContext?.details?.targetOrganisation?.targetOrganisationAbn) {
         if (inProgress === InteractionStatus.None && accounts.length > 0) {
           setIsLoading(true);
           await getReportDetails();
@@ -119,9 +142,9 @@ const MeasurementReport = () => {
         }
       }
     };
-    void loadDataForDisplay();
+    loadDataForDisplay();
   }, [
-    accountState,
+    accountContext,
     targetOrganisationAbn,
     accounts.length,
     inProgress,
@@ -129,7 +152,6 @@ const MeasurementReport = () => {
     accounts,
     instance,
     id,
-    navigate,
   ]);
 
   useHtmlTitle(
@@ -137,7 +159,43 @@ const MeasurementReport = () => {
   );
   useBodyClass('report');
 
-  clearDashboardInfoNotification();
+  if (forbidden) {
+    setDashboardNotification({
+      message:
+        'We are unable to process your request. Your changes have not been saved. Please contact support.',
+      severity: NotificationSeverity.Error,
+    });
+  }
+
+  if (noThirdPartyAccess) {
+    setDashboardNotification({
+      message: `You no longer have access to the records 
+      for ${accountContext?.details?.targetOrganisation?.targetOrganisationName}. 
+      Your changes have not been saved.`,
+      severity: NotificationSeverity.Error,
+    });
+    if (accountContext) {
+      accountContext.setTargetOrganisation(
+        accountContext?.details?.abn ?? '',
+        accountContext?.details?.organisation ?? '',
+      );
+    }
+    setNoThirdPartyAccess(false);
+  }
+
+  if (errored) {
+    return <Navigate to='/server-error' />;
+  }
+
+  if (showInfo) {
+    setDashboardInfoNotification({
+      message:
+        'New initial reporting and/or ongoing reporting forms have been generated',
+      severity: NotificationSeverity.Information,
+    });
+  } else {
+    clearDashboardInfoNotification();
+  }
   const renderMeasurementReport = () => (
     <>
       <ReportDetails reportData={measurementReportData} fileError={fileError} />
@@ -153,10 +211,7 @@ const MeasurementReport = () => {
           </div>
         </Col>
       </Row>
-      <NMIContactDetails
-        heading='Contact your NMI test officer if you have any questions about the report outcomes.'
-        quotationData={measurementReportData}
-      />
+      <NMIContactDetails quotationData={measurementReportData} />
     </>
   );
 
@@ -167,8 +222,6 @@ const MeasurementReport = () => {
           <p>Loading...</p>
         </BlockUISpinner>
       )}
-      {!fileError && showDashboardMessage(dashboardMessage)}
-      {!fileError && showDashboardMessage(dashboardInfoMessage)}
       <div aria-busy={isLoading} aria-live='polite'>
         <Container fluid className='default-banner-background mb-5'>
           <Container>
@@ -189,6 +242,8 @@ const MeasurementReport = () => {
             </Row>
           </Container>
         </Container>
+        {!fileError && showReportingMessage(reportingMessage)}
+        {!fileError && showDashboardMessage(dashboardInfoMessage)}
         <Container>{renderMeasurementReport()}</Container>
         <Container>
           <Row className='mb-4'>
@@ -199,8 +254,8 @@ const MeasurementReport = () => {
                 replace
                 className='btn btn-tertiary'
               >
-                <i className='icon-back me-1' aria-hidden='true' /> Back to
-                dashboard
+                <i className='icon-back me-1' aria-hidden='true' />
+                Back to dashboard
               </Link>
             </div>
           </Row>

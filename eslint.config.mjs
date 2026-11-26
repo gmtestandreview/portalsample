@@ -7,6 +7,7 @@ import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import eslintReact from '@eslint-react/eslint-plugin';
 import globals from 'globals';
 import js from '@eslint/js';
+import json from '@eslint/json';
 import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
 import pluginSecurity from 'eslint-plugin-security';
 import { reactRefresh } from 'eslint-plugin-react-refresh';
@@ -179,6 +180,9 @@ export default defineConfig(
       noInlineConfig: true,
       reportUnusedDisableDirectives: 'error',
       reportUnusedInlineConfigs: 'error',
+    },
+    rules: {
+      'no-unused-expressions': 'error',
     },
     name: 'nmi/lint-governance',
   },
@@ -439,6 +443,16 @@ export default defineConfig(
     name: 'nmi/ambient-declarations',
     rules: { '@typescript-eslint/triple-slash-reference': 'off' },
   },
+  // lint JSON files
+  {
+    files: ['**/*.json'],
+    name: 'nmi/json',
+    ignores: ['package-lock.json'],
+    plugins: { json },
+    language: 'json/json',
+    extends: ['json/recommended'],
+  },
+
   // Oxfmt owns formatting; compatibility preset stays last.
   eslintConfigPrettier,
 ).map(stripDeprecatedRules);

@@ -3,25 +3,26 @@ import {
   authorisedAgentSchema,
   authorisedAgentSchemaSoft,
   contactSchema,
+  contactSchemaLastNameEmailOnly,
   contactSchemaSoft,
-  whenAnswerIsNo,
 } from '../../validationSchemas/contactValidation';
 import '../../validationSchemas/yupExtensions';
 import {
-  extAlphaNumMultiLineMatchRegex,
+  extAlphaNumericSchema,
+  extAlphaNumericMultiLineSchema,
   websiteUrlSchema,
 } from '../../validationSchemas/common';
-import {
-  type ApplicationAndInstrumentStep,
-  type OrganisationAndContact,
-  type PatternApprovalOrgAndContact,
-  PatternApprovalRequiredValues,
-  type RequestForPatternApprovalSummary,
-  YesNo,
+import type {
+  ApplicationAndInstrumentStep,
+  OrganisationAndContact,
+  PatternApprovalOrgAndContact,
+  RequestForPatternApprovalSummary,
 } from '../../api/web-api-client';
-import type { Validation } from '../../components/forms/types';
+import { PatternApprovalRequiredValues, YesNo } from '../../api/web-api-client';
+import type { Validation } from '../../components/forms/FormikForm/types';
 import { ValidationMessages } from './types';
 
+// eslint-disable-next-line import/prefer-default-export
 export const organisationAndContactSubmitValidation = yup.object<
   Validation<OrganisationAndContact>
 >({
@@ -31,7 +32,11 @@ export const organisationAndContactSubmitValidation = yup.object<
     .label('Business website address')
     .maxLength(100)
     .optional(),
-  contact: whenAnswerIsNo('isPrincipalContact', contactSchema),
+  contact: yup.mixed().when('isPrincipalContact', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => contactSchema(),
+    otherwise: () => yup.mixed(),
+  }),
   isManufacturer: yup
     .mixed<keyof typeof YesNo>()
     .label('Organisation type')
@@ -68,7 +73,11 @@ export const organisationAndContactSaveValidation = yup.object<
     .label('Business website address')
     .nullable()
     .maxLength(100),
-  contact: whenAnswerIsNo('isPrincipalContact', contactSchemaSoft),
+  contact: yup.mixed().when('isPrincipalContact', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => contactSchemaSoft(),
+    otherwise: () => yup.mixed(),
+  }),
 });
 
 export const supportingDocsSaveValidation = yup.object().shape({
@@ -91,12 +100,13 @@ export const supportingDocsSubmitValidation = yup.object().shape({
         }),
       )
       .min(1, ValidationMessages.RequiredDoc)
-      .test(
-        'all-have-category',
-        ValidationMessages.RequiredTag,
-        (docs) =>
-          !Array.isArray(docs) || docs.every((doc) => !!doc.attachmentCategory),
-      ),
+      .test('all-have-category', function (docs) {
+        if (!Array.isArray(docs)) return true;
+        const hasMissing = docs.some((doc) => !doc.attachmentCategory);
+        return hasMissing
+          ? this.createError({ message: ValidationMessages.RequiredTag })
+          : true;
+      }),
   }),
 });
 
@@ -107,20 +117,41 @@ export const patternApprovalOrgAndContactSubmitValidation = yup.object<
         .label('Business website address')
         .maxLength(100)
         .optional(), */
-  contact: whenAnswerIsNo('isPrincipalContact', contactSchema),
-  invoiceContact: whenAnswerIsNo('isPrincipalInvoiceContact', contactSchema),
-  authorisedAgent: whenAnswerIsNo('isManufacturer', authorisedAgentSchema),
+  contact: yup.mixed().when('isPrincipalContact', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => contactSchema(),
+    otherwise: () => yup.mixed(),
+  }),
+  invoiceContact: yup.mixed().when('isPrincipalInvoiceContact', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => contactSchemaLastNameEmailOnly(),
+    otherwise: () => yup.mixed(),
+  }),
+  authorisedAgent: yup.mixed().when('isManufacturer', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => authorisedAgentSchema(),
+    otherwise: () => yup.mixed(),
+  }),
 });
 
 export const patternApprovalOrgAndContactSaveValidation = yup.object<
   Validation<PatternApprovalOrgAndContact>
 >({
-  contact: whenAnswerIsNo('isPrincipalContact', contactSchemaSoft),
-  invoiceContact: whenAnswerIsNo(
-    'isPrincipalInvoiceContact',
-    contactSchemaSoft,
-  ),
-  authorisedAgent: whenAnswerIsNo('isManufacturer', authorisedAgentSchemaSoft),
+  contact: yup.mixed().when('isPrincipalContact', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => contactSchemaSoft(),
+    otherwise: () => yup.mixed(),
+  }),
+  invoiceContact: yup.mixed().when('isPrincipalInvoiceContact', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => contactSchemaSoft(),
+    otherwise: () => yup.mixed(),
+  }),
+  authorisedAgent: yup.mixed().when('isManufacturer', {
+    is: (x: YesNo | undefined) => x === YesNo.No,
+    then: () => authorisedAgentSchemaSoft(),
+    otherwise: () => yup.mixed(),
+  }),
 });
 
 export const applicationAndInstrumentSubmitValidation = yup.object<
@@ -134,8 +165,7 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: PatternApprovalRequiredValues | undefined) =>
-        x === PatternApprovalRequiredValues.NewCertificate,
+      is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
       then: () =>
         yup
           .array()
@@ -148,8 +178,7 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: PatternApprovalRequiredValues | undefined) =>
-        x === PatternApprovalRequiredValues.Variation,
+      is: (x: string) => x === PatternApprovalRequiredValues.Variation,
       then: () =>
         yup
           .array()
@@ -167,8 +196,7 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: PatternApprovalRequiredValues | undefined) =>
-        x === PatternApprovalRequiredValues.OtherApproval,
+      is: (x: string) => x === PatternApprovalRequiredValues.OtherApproval,
       then: () =>
         yup
           .array()
@@ -188,54 +216,36 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
               const hasReview = value.includes(REVIEW);
               const hasProvisional = value.includes(PROVISIONAL);
               const hasCertCancel = value.includes(CERTCANCEL);
-              // If CertCancel is selected, neither Review nor Provisional can be selected.
-              // The reverse phrasing is the same condition, so it needs no second check.
+              // If CertCancel is selected, neither Review nor Provisional can be selected
               if (hasCertCancel && (hasReview || hasProvisional)) return false;
+              // If both Review and Provisional are selected, CertCancel cannot be selected
+              if ((hasReview || hasProvisional) && hasCertCancel) return false;
               return true;
             },
           ),
     }),
   instrumentCategory: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument category').required(),
     otherwise: () => yup.string().label('Instrument category').nullable(),
   }),
   instrumentType: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument type').required(),
     otherwise: () => yup.string().label('Instrument type').nullable(),
   }),
   make: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
-    then: () =>
-      yup.string().label('Make').nullable().minEntered(2).maxLength(100),
+    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    then: () => extAlphaNumericSchema('Instrument make', 100, false).nullable(),
   }),
   model: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
-    then: () =>
-      yup.string().label('Model').nullable().minEntered(2).maxLength(100),
+    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    then: () => extAlphaNumericSchema('Model', 100, false).nullable(),
   }),
   certificateNumber: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.Variation,
-    then: () =>
-      yup
-        .string()
-        .label('Certificate Number')
-        .required()
-        .minEntered(2)
-        .maxLength(100),
-    otherwise: () =>
-      yup
-        .string()
-        .label('Certificate Number')
-        .nullable()
-        .minEntered(2)
-        .maxLength(100),
+    is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+    then: () => extAlphaNumericSchema('Certificate Number', 100, true),
+    otherwise: () => extAlphaNumericSchema('Certificate Number', 100, false),
   }),
   summary: yup
     .string()
@@ -263,69 +273,69 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
         }
         return false;
       },
-      then: (schema) => schema.required().minEntered(2),
-      otherwise: (schema) => schema,
-    })
-    .maxLength(500)
-    // To do - Explore create new Schema or stringExtensions Methods to support this
-    .test(
-      'description-valid-characters',
-      String.raw`Summary of application has invalid characters. Please remove any invalid characters such as degrees (°), semicolon (;), backslash (\), or pipe (|) to continue`,
-      (value) => {
-        if (!value || value.trim() === '') {
-          return true; // Skip validation if the field is blank or null
-        }
-        return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      },
-    ),
+      // This and the extAlphaNumericMultiLineSchema should be retrofitted to the rest of the Portal form fields post Nov 2026
+      then: () =>
+        extAlphaNumericMultiLineSchema('Summary of application', 500, true),
+      otherwise: () =>
+        extAlphaNumericMultiLineSchema('Summary of application', 500, false),
+    }),
 });
 
 export const applicationAndInstrumentSaveValidation = yup.object<
   Validation<ApplicationAndInstrumentStep>
 >({
   instrumentCategory: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument category').nullable(),
   }),
   instrumentType: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument Type').nullable(),
   }),
-  make: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
-    then: () => yup.string().label('Make').nullable().maxLength(100),
-  }),
-  model: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.NewCertificate,
-    then: () => yup.string().label('Model').nullable().maxLength(100),
-  }),
-  certificateNumber: yup.string().when('patternApprovalType', {
-    is: (x: PatternApprovalRequiredValues | undefined) =>
-      x === PatternApprovalRequiredValues.Variation,
-    then: () =>
-      yup.string().label('Certificate Number').nullable().maxLength(100),
-    otherwise: () =>
-      yup.string().label('Certificate Number').nullable().maxLength(100),
-  }),
+  make: yup
+    .string()
+    .label('Instrument make')
+    .maxLength(100)
+    .when('patternApprovalType', {
+      is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+      then: (schema) => schema.nullable(),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  model: yup
+    .string()
+    .label('Model')
+    .maxLength(100)
+    .when('patternApprovalType', {
+      is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+      then: (schema) => schema.nullable(),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  certificateNumber: yup
+    .string()
+    .label('Certificate Number')
+    .maxLength(100)
+    .when('patternApprovalType', {
+      is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+      then: (schema) => schema.nullable(),
+      otherwise: (schema) => schema.nullable(),
+    }),
   summary: yup
     .string()
     .label('Summary of application')
-    .maxLength(500)
-    // To do - Explore create new Schema or stringExtensions Methods to support this
-    .test(
-      'description-valid-characters',
-      'Summary of application has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
-      (value) => {
-        if (!value || value.trim() === '') {
-          return true; // Skip validation if the field is blank or null
-        }
-        return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
-      },
-    ),
+    .nullable()
+    .maxLength(500),
+  // This and the extAlphaNumericMultiLineSchema should be retrofitted to the rest of the Portal form fields post Nov 2026
+  // Remove check for Save and exit validation
+  // .test(
+  //     'description-valid-characters',
+  //     'Summary of application has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
+  //     (value) => {
+  //         if (!value || value.trim() === '') {
+  //             return true; // Skip validation if the field is blank or null
+  //         }
+  //         return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
+  //     },
+  // ),
 });
 
 export const summaryAndSubmitValidation = yup.object<

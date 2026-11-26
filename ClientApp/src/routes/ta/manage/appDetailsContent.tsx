@@ -1,4 +1,4 @@
-import type { Dispatch, FC, SetStateAction } from 'react';
+import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import {
@@ -9,20 +9,24 @@ import ApplicationAndInstrument from '../applicationAndInstrument';
 import OrganisationAndContact from '../organisationAndContact';
 import SupportingDocuments from '../supportingDocuments';
 import ApplicationDetailsStatus from './applicationDetailsStatus';
-
 interface AppDetailsContentProps {
+  name?: string;
   isModalOpen?: boolean;
   isDataLoading?: boolean;
-  setActiveTab: Dispatch<SetStateAction<string>>;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
   onTabChange: (key: string | null) => void;
+  onDownloadFile: (fileName: string) => Promise<void>;
 }
 
-const AppDetailsContent: FC<AppDetailsContentProps> = ({
+const AppDetailsContent: React.FC<AppDetailsContentProps> = ({
   isModalOpen,
   isDataLoading,
   setActiveTab,
   onTabChange,
+  onDownloadFile,
 }) => {
+  const isSubmitted = true; // details.applicationStatus === 'Submitted';
+
   return (
     <Row className='mb-4'>
       <Col
@@ -88,8 +92,9 @@ const AppDetailsContent: FC<AppDetailsContentProps> = ({
                     eventKey='3'
                     className='mb-4 py-2'
                     nameRHS={
-                      <button
-                        type='button'
+                      <span
+                        role='button'
+                        tabIndex={0}
                         className='btn btn-link text-nowrap'
                         title='Jump to the documents tab'
                         onClick={(e) => {
@@ -103,19 +108,35 @@ const AppDetailsContent: FC<AppDetailsContentProps> = ({
                           window.scrollTo(0, 0);
                           setActiveTab('documents');
                         }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation();
+                            const params = new URLSearchParams(
+                              window.location.search,
+                            );
+                            params.set('tab', 'documents');
+                            const newUrl = `${window.location.pathname}?${params.toString()}`;
+                            window.history.pushState({}, '', newUrl);
+                            window.scrollTo(0, 0);
+                            setActiveTab('documents');
+                          }
+                        }}
                       >
                         View{' '}
                         <span className='d-none d-sm-inline'>documents</span>
-                      </button>
+                      </span>
                     }
                   >
                     <SupportingDocuments
                       isSummary
                       suppressDocChanges
                       name='supportingDocuments.form.documents'
+                      onUploadAttachment={() => Promise.resolve([])} // Not used
                       attachment={{
                         onUploadFiles: () => Promise.resolve([]), // Not used
                       }}
+                      isSubmitted={isSubmitted}
+                      onDownloadFile={onDownloadFile}
                     />
                   </CustomAccordionBody>
                 </CustomAccordion>
