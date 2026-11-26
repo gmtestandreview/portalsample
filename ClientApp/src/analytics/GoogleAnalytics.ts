@@ -11,7 +11,7 @@ const trackGAPii = () => {
   const redactedEntries: [string, string][] = [];
 
   piiFields.forEach((field) => {
-    const key = field.dataset['pii'] ?? ''; // dataset.pii is always defined — querySelectorAll('[data-pii]') guarantees the attribute exists
+    const key = field.dataset['pii'] ?? ''; // Preserve empty markers without reading field values.
     redactedEntries.push([key, '[REDACTED]']);
   });
 

@@ -1,201 +1,263 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { useController, useFormContext } from 'react-hook-form';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Col, Row } from 'react-bootstrap';
+import { useController } from 'react-hook-form';
 import type { AttachmentDto } from '../../../api/web-api-client';
-import { formatBytes } from '../../../utils';
+import { formatBytes, formatDateToString } from '../../../utils';
 import ConfirmationModal from '../../modals/ConfirmationModal';
-import RhfSelectInput from '../RhfSelectInput';
-import type { SelectInputOption } from '../SelectInput/types';
 import { getFileUrlFromBase64 } from '../../../routes/common/helperFunctions';
+import { CATEGORY_OPTIONS } from './attachmentContracts';
 
 interface RhfAttachmentItemProps {
   attachment: AttachmentDto;
-  /** Field name of the whole attachment list, e.g. `form.documents`. */
   name: string;
   index: number;
+  categoryName?: string;
   canRemove: boolean;
   cancelButtonId: string;
   isSummary: boolean;
+  isSubmitted?: boolean;
+  busy?: boolean;
   onRemoveItem?: (attachment: AttachmentDto) => Promise<void>;
-  onCategoryUpdate?: (docId: string, category: string) => Promise<void>;
-  /** Called with a user-facing message when saving a category fails. */
-  onCategoryError?: (message: string) => void;
+  onChangeCategory: (
+    attachment: AttachmentDto,
+    index: number,
+    category: string,
+  ) => Promise<void>;
+  onDownloadFile?: (fileName: string) => Promise<void>;
+  onError: (message: string) => void;
 }
 
-const CATEGORY_OPTIONS: SelectInputOption<string>[] = [
-  { displayText: 'Test Report', value: 'Test Report' },
-  { displayText: 'Certificate', value: 'Certificate' },
-  { displayText: 'Specifications', value: 'Specifications' },
-  { displayText: 'Manuals', value: 'Manuals' },
-  { displayText: 'Photos or diagrams', value: 'Photos or diagrams' },
-  { displayText: 'Other', value: 'Other' },
-];
+type LocalUrl = { bytes: AttachmentDto['documentBytes']; url: string };
 
 const RhfAttachmentItem = ({
   attachment,
-  canRemove,
-  onRemoveItem,
-  cancelButtonId,
-  isSummary,
   name,
   index,
-  onCategoryUpdate,
-  onCategoryError,
+  categoryName = `${name}.${index}.attachmentCategory`,
+  canRemove,
+  cancelButtonId,
+  isSummary,
+  isSubmitted = false,
+  busy = false,
+  onRemoveItem,
+  onChangeCategory,
+  onDownloadFile,
+  onError,
 }: Readonly<RhfAttachmentItemProps>) => {
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
-  const categoryName = `${name}.${index}.attachmentCategory`;
-  const { field, formState } = useController({
-    name: categoryName,
-  });
-  // RHF keys touched state by field path, so it would stay with the row index
-  // when an earlier row is deleted. Local state stays with this row's key.
-  const [categoryTouched, setCategoryTouched] = useState<boolean>(false);
-  const { getValues, setValue } = useFormContext();
-  const initialCategory: unknown = field.value;
-  // What the server holds, and which save is newest, so a failed save only
-  // undoes itself and only while it is still the latest one.
-  const lastSavedCategoryRef = useRef<string | undefined>(
-    typeof initialCategory === 'string' ? initialCategory : undefined,
-  );
-  const latestSaveTokenRef = useRef(0);
-  const lastSavedTokenRef = useRef(0);
-  const isMountedRef = useRef(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryTouched, setCategoryTouched] = useState(false);
+  const [downloadPending, setDownloadPending] = useState(false);
+  const downloadGate = useRef(false);
+  const mounted = useRef(true);
+  const { field, formState } = useController({ name: categoryName });
+  const [localUrl, setLocalUrl] = useState<LocalUrl | undefined>(undefined);
+  const { documentBytes, attachmentName } = attachment;
   useEffect(() => {
-    isMountedRef.current = true;
+    mounted.current = true;
     return () => {
-      isMountedRef.current = false;
+      mounted.current = false;
     };
   }, []);
-  const closeModal = () => {
-    setDeleteDialogOpen(false);
-  };
-  const showModal = () => {
-    setDeleteDialogOpen(true);
-  };
-  const { documentBytes } = attachment;
-  // One object URL per document, not per render, released when it changes or the row goes.
-  const fileUrl = useMemo(
-    () => (documentBytes ? getFileUrlFromBase64(documentBytes) : undefined),
-    [documentBytes],
-  );
-  useEffect(
-    () => () => {
-      if (fileUrl) URL.revokeObjectURL(fileUrl);
-    },
-    [fileUrl],
-  );
-  // A submit attempt does not touch fields in RHF, so it counts as touched here.
-  const showCategoryError =
-    !field.value && (categoryTouched || formState.isSubmitted);
-
-  // The index can change while a save is in flight (an earlier row deleted),
-  // so find this document again instead of trusting the captured path.
-  const revertCategory = (token: number) => {
-    if (!isMountedRef.current || token !== latestSaveTokenRef.current) return;
-    const list: unknown = getValues(name);
-    if (!Array.isArray(list)) return;
-    const currentIndex = (list as AttachmentDto[]).findIndex(
-      (item) => item.id === attachment.id,
-    );
-    if (currentIndex < 0) return;
-    setValue(
-      `${name}.${currentIndex}.attachmentCategory`,
-      lastSavedCategoryRef.current,
-      {
-        shouldDirty: true,
-      },
-    );
-  };
-
-  const saveCategory = async (
-    update: NonNullable<typeof onCategoryUpdate>,
-    docId: string,
-    category: string,
-  ) => {
-    latestSaveTokenRef.current += 1;
-    const token = latestSaveTokenRef.current;
+  // Resource ownership belongs to the effect, never to render/useMemo.
+  useEffect(() => {
+    if (isSubmitted || !documentBytes) {
+      setLocalUrl(undefined);
+      return;
+    }
+    let url: string | undefined;
     try {
-      await update(docId, category);
-      if (token > lastSavedTokenRef.current) {
-        lastSavedTokenRef.current = token;
-        lastSavedCategoryRef.current = category;
-      }
+      const created = getFileUrlFromBase64(documentBytes);
+      if (typeof created === 'string' && created.startsWith('blob:'))
+        url = created;
     } catch {
-      // The error is left out of the message: it can carry tokens or PII.
-      revertCategory(token);
-      onCategoryError?.(
-        `Could not save the category for ${attachment.attachmentName ?? ''}.`,
-      );
+      // Fail closed; do not expose conversion exceptions or unsafe URLs.
+    }
+    setLocalUrl(url ? { bytes: documentBytes, url } : undefined);
+    return () => {
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [documentBytes, isSubmitted]);
+
+  const fileUrl =
+    !isSubmitted && localUrl && localUrl.bytes === documentBytes
+      ? localUrl.url
+      : undefined;
+  const category = typeof field.value === 'string' ? field.value : '';
+  const showCategoryError =
+    !isSummary && !category && (categoryTouched || formState.isSubmitted);
+  const isOriginNMI = attachment.attachmentOrigin === 'Pattern Approval';
+  const isPublished = attachment.attachmentPublishedStatus === 'Published';
+  const errorId = `${categoryName}-validation-msg`;
+  const canDownload = !!onDownloadFile && !!attachmentName;
+
+  const downloadSubmitted = async () => {
+    if (!onDownloadFile || !attachmentName || downloadGate.current) return;
+    downloadGate.current = true;
+    setDownloadPending(true);
+    try {
+      await onDownloadFile(attachmentName);
+    } catch {
+      if (mounted.current)
+        onError(`Could not download ${attachmentName}. Please try again.`);
+    } finally {
+      downloadGate.current = false;
+      if (mounted.current) setDownloadPending(false);
     }
   };
 
-  const onCategoryChange = (category: string) => {
-    if (onCategoryUpdate && attachment.id) {
-      void saveCategory(onCategoryUpdate, attachment.id, category);
-    }
+  const closeModal = () => setDeleteDialogOpen(false);
+  const selectCategory = (value: string) => {
+    if (busy || isSummary) return;
+    setCategoryTouched(true);
+    void onChangeCategory(attachment, index, value);
   };
 
   return (
-    <div className={`attachment mb-2 ${isSummary ? 'p-1' : 'p-4'}`}>
-      <div className='d-flex align-items-center'>
-        <div className='d-flex flex-fill align-items-center'>
+    <div className='attachment mb-2'>
+      <Row className='row-cols-2 row-cols-sm-2 row-cols-md-4 -align-items-center align-items-top'>
+        <Col
+          xs={{ span: 10, order: 1 }}
+          sm={{ span: 11, order: 1 }}
+          md={{ span: 5, order: 1 }}
+          className='d-flex -flex-fill -align-items-center pt-1'
+        >
           <i className='icon-file fs-2 me-2' aria-hidden='true' />
-          <div>
-            <a
-              href={fileUrl}
-              download={attachment.attachmentName}
-              className='attachment-name pt-0 text-left text-break'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              {attachment.attachmentName}
-            </a>
+          <div className='attachment-description -d-flex -flex-column mb-2 ms-1 me-2 -w-100'>
+            {isSubmitted && canDownload ? (
+              <button
+                type='button'
+                className='btn btn-link p-0 attachment-name pt-0 text-left text-break'
+                disabled={downloadPending}
+                onClick={() => {
+                  void downloadSubmitted();
+                }}
+              >
+                {attachmentName}
+              </button>
+            ) : !isSubmitted && fileUrl ? (
+              <a
+                href={fileUrl}
+                download={attachmentName}
+                className='attachment-name pt-0 text-left text-break'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                {attachmentName}
+              </a>
+            ) : (
+              <span className='attachment-name pt-0 text-left text-break'>
+                {attachmentName}
+                <span className='visually-hidden'> (Download unavailable)</span>
+              </span>
+            )}
+            {isPublished && isOriginNMI && (
+              <span
+                className='badge badge-sm rounded-pill bg-danger ms-2 small'
+                title='Published by NMI'
+              >
+                NMI
+              </span>
+            )}
             <br />
-            <span className='attachment-size fs-8 fw-normal text-left'>
+            <span className='attachment-size mt-1 fs-8 fw-normal text-left'>
               {attachment.attachmentSize
                 ? formatBytes(+attachment.attachmentSize)
                 : null}
             </span>
           </div>
-        </div>
-        {/* Blur bubbles from the select, so tabbing past it also counts as touched. */}
-        <div
-          className='ms-3'
-          style={{ width: '260px' }}
-          onBlur={() => {
-            setCategoryTouched(true);
-          }}
+        </Col>
+        <Col
+          xs={{ span: 10, offset: 1, order: 3 }}
+          sm={{ offset: 1, order: 3 }}
+          md={{ offset: 0, order: 2 }}
+          className='attachment-cat fw-normal small lh-sm'
         >
-          <RhfSelectInput
-            id={categoryName}
-            key={categoryName}
-            name={categoryName}
-            label='Category'
-            defaultDisplayText='Select'
-            options={CATEGORY_OPTIONS}
-            onChange={onCategoryChange}
-            isSummary={isSummary}
-            containerClassName='me-4 pe-2'
-            className={`form-select-sm${showCategoryError ? ' is-invalid' : ''}`}
-            addBlank
-          />
-        </div>
+          <div style={{ minWidth: '205px' }} className='me-4 pe-2 small'>
+            {isSummary ? (
+              <div>
+                <span className='visually-hidden'>Category: </span>
+                {CATEGORY_OPTIONS.find((option) => option.value === category)
+                  ?.displayText ?? category}
+              </div>
+            ) : (
+              <>
+                <label htmlFor={categoryName} className='visually-hidden'>
+                  Category
+                </label>
+                <select
+                  id={categoryName}
+                  name={field.name}
+                  ref={field.ref}
+                  value={category}
+                  disabled={busy}
+                  className={`form-select form-select-sm${showCategoryError ? ' is-invalid' : ''}`}
+                  aria-invalid={showCategoryError}
+                  aria-describedby={showCategoryError ? errorId : undefined}
+                  onBlur={() => {
+                    field.onBlur();
+                    setCategoryTouched(true);
+                  }}
+                  onChange={(event) =>
+                    selectCategory(event.currentTarget.value)
+                  }
+                >
+                  <option value=''>Select</option>
+                  {category &&
+                    !CATEGORY_OPTIONS.some(
+                      (option) => option.value === category,
+                    ) && (
+                      <option value={category} disabled>
+                        {category}
+                      </option>
+                    )}
+                  {CATEGORY_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.displayText}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
+          </div>
+        </Col>
+        <Col
+          xs={{ span: 10, offset: 1, order: 4 }}
+          sm={{ offset: 1, order: 4 }}
+          md={{ offset: 0, order: 3 }}
+          className='attachment-mod fw-normal small lh-sm'
+        >
+          {isSubmitted && !canRemove && (
+            <div className='mt-1'>
+              {isOriginNMI
+                ? attachment.attachmentAuthor
+                : attachment.attachmentPortalUsername}
+              <br />
+              {formatDateToString(attachment.attachmentModifiedDate)}
+            </div>
+          )}
+        </Col>
         {canRemove && (
-          <div className='d-flex align-items-center ms-3'>
+          <Col
+            xs={{ span: 1, order: 2 }}
+            sm={{ span: 1, order: 2 }}
+            md={{ span: 1, order: 4 }}
+            className='-d-none -d-md-flex d-flex -align-items-center justify-content-end'
+          >
             <Button
               variant='btn btn-flat'
               data-testid={cancelButtonId}
               id={cancelButtonId}
               name={cancelButtonId}
               title='Delete'
-              aria-label={`Delete ${attachment.attachmentName ?? ''}`}
-              className='p-0 fs-7 d-flex align-self-center'
-              onClick={showModal}
+              aria-label={`Delete ${attachmentName ?? ''}`}
+              disabled={busy}
+              className='d-flex align-self-top mt-2 p-0 fs-7'
+              onClick={() => setDeleteDialogOpen(true)}
             >
               <i className='icon-close' aria-hidden='true' />
-              <span className='visually-hidden'>{`Delete ${attachment.attachmentName ?? ''}`}</span>
+              <span className='visually-hidden'>{`Delete ${attachmentName ?? ''}`}</span>
             </Button>
-          </div>
+          </Col>
         )}
         {canRemove && (
           <ConfirmationModal
@@ -205,21 +267,24 @@ const RhfAttachmentItem = ({
             bodyText='Are you sure you want to remove this file?'
             onModalNo={closeModal}
             onModalYes={() => {
+              if (busy) return;
+              closeModal();
               void onRemoveItem?.(attachment);
             }}
             noButtonTitle='Cancel'
             yesButtonTitle='Yes, delete'
           />
         )}
-      </div>
-      {/* Reserve space for error message so layout doesn't shift */}
-      <div style={{ minHeight: 20 }}>
-        {showCategoryError && (
-          <div className='text-danger text-body'>
-            Select a category that best describes this document.
-          </div>
-        )}
-      </div>
+      </Row>
+      {!isSummary && (
+        <div style={{ minHeight: 20 }}>
+          {showCategoryError && (
+            <div id={errorId} className='text-danger text-body' role='alert'>
+              Select a category that best describes this document.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

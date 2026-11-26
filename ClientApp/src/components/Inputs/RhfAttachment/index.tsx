@@ -1,11 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
-import { useController } from 'react-hook-form';
-import type {
-  AttachmentDto,
-  ProblemDetails,
-} from '../../../api/web-api-client';
+import { useController, useFormContext } from 'react-hook-form';
+import type { AttachmentDto } from '../../../api/web-api-client';
 import { formatBytes } from '../../../utils';
 import BlockUISpinner from '../../BlockUISpinner';
 import type { AttachmentProps } from '../Attachment/types';
@@ -13,41 +10,19 @@ import RhfAttachmentItem from './RhfAttachmentItem';
 import ProgressBar from '../../Progress/ProgressBar';
 import ProgressFileList from '../../Progress/ProgressFileList';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import {
+  CATEGORY_OPTIONS,
+  categoryPath,
+  createMutationGate,
+  matchesSnapshot,
+  readAttachments,
+  remainingUnlockedCount,
+  sameUnidentifiedAttachment,
+  snapshotAttachments,
+  validateSelection,
+} from './attachmentContracts';
 
-const isAllowedFile = (file: File, allowedTypes: string[]) =>
-  file.name.includes('.') &&
-  allowedTypes.includes(`.${String(file.name.split('.').pop())}`);
-
-/** Returns one message per disallowed file, plus one if too many files were chosen. */
-const getUploadValidationErrors = (
-  files: File[],
-  allowedTypes: string[],
-  maxFiles: number,
-): string[] => {
-  const typeError =
-    `${files.length > 1 ? 'Files' : 'File'} must be` +
-    ` ${allowedTypes.length > 1 ? 'one of the following types' : 'of the following type'}:` +
-    ` ${allowedTypes.join(', ')}`;
-  const errors = files
-    .filter((file) => !isAllowedFile(file, allowedTypes))
-    .map(() => typeError);
-
-  if (files.length > maxFiles) {
-    errors.push(
-      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`,
-    );
-  }
-  return errors;
-};
-
-const isAttachmentDto = (value: unknown): value is AttachmentDto =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-/**
- * React Hook Form counterpart of `AttachmentNew`. It reads the attachment list
- * through `useController`, so it must render inside a `FormProvider`. The
- * field always holds a list, even when only one file is allowed.
- */
+/** RHF uses DTO arrays for new writes; legacy scalar reads retain their actual path. */
 const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const {
     id,
@@ -70,155 +45,326 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
     setErrors,
     onCategoryUpdate,
     disableUpload,
+    isSubmitted = false,
+    onDownloadFile,
   } = props;
-
   const { field, fieldState, formState } = useController({ name });
-  const value: unknown = field.value;
-  // A form may hand us a bare object or null; normalise once so every reader
-  // below, and each item's `name.index.category` path, sees a list.
-  const attachments: AttachmentDto[] = Array.isArray(value)
-    ? value.filter(isAttachmentDto)
-    : [];
-  const [isUploading, setIsUploading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const unidentifiedAttachmentKeysRef = useRef(
-    new WeakMap<AttachmentDto, string>(),
-  );
-
+  const { getValues, setValue } = useFormContext();
+  const collection = readAttachments(field.value);
+  const { items: attachments } = collection;
+  const [operation, setOperation] = useState<
+    'upload' | 'delete' | 'category' | null
+  >(null);
+  const gate = useRef(createMutationGate());
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+  const unidentifiedKeys = useRef(new WeakMap<AttachmentDto, string>());
+  const keyCounter = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+  const progressActive =
+    !!progress &&
+    progress.status !== 'Completed' &&
+    progress.status !== 'CompletedWithErrors';
+  const busy = operation !== null;
+  const isUploading = operation === 'upload';
+  const isDeleting = operation === 'delete';
+  const controlId = id ?? name;
+  const showFieldError =
+    !!fieldState.error && (fieldState.isTouched || formState.isSubmitted);
+  const describedBy = !collection.valid
+    ? `${controlId}-attachment-state-error`
+    : showFieldError
+      ? `${controlId}-validation-msg`
+      : `help-${controlId}`;
 
   const addErrors = (messages: string[]) => {
-    setErrors((newErrors) => [...newErrors, ...messages]);
+    if (mounted.current && messages.length)
+      setErrors((current) => [...current, ...messages]);
   };
-
-  // Repeated failures for one document would otherwise list the same line twice.
-  const onCategoryError = (message: string) => {
-    setErrors((current) =>
-      current.includes(message) ? current : [...current, message],
-    );
+  const reportError = (message: string) => {
+    if (mounted.current)
+      setErrors((current) =>
+        current.includes(message) ? current : [...current, message],
+      );
   };
-
   const clearFileInput = () => {
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
+    if (inputRef.current) inputRef.current.value = '';
   };
-
-  const uploadFiles = async (files: File[]) => {
-    const result = await onUploadFiles(files);
-    const uploadedAttachments: AttachmentDto[] = Array.isArray(result)
-      ? result
-      : [result];
-    field.onChange(uploadedAttachments);
+  const begin = (kind: NonNullable<typeof operation>) => {
+    if (
+      isSummary ||
+      progressActive ||
+      !mounted.current ||
+      !gate.current.acquire()
+    )
+      return false;
+    setOperation(kind);
+    return true;
   };
-
-  const uploadSelectedFiles = async (files: File[]) => {
-    const oversizeFiles = files.filter((file) => file.size > maxSizeInBytes);
-    addErrors(
-      oversizeFiles.map(
-        (file) =>
-          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInBytes)} limit.`,
-      ),
-    );
-
-    if (files.length === 1) {
-      if (oversizeFiles.length === 0) {
-        await uploadFiles(files);
-        clearFileInput();
-      }
-      return;
-    }
-
-    await uploadFiles(files.filter((file) => file.size <= maxSizeInBytes));
+  const finish = () => {
+    gate.current.release();
+    if (mounted.current) setOperation(null);
+  };
+  const writeCollection = (items: AttachmentDto[]) => {
+    setValue(name, items, { shouldDirty: true, shouldValidate: true });
   };
 
   const onInputFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    setErrors([]);
-    setIsUploading(true);
-    if (event.currentTarget.files !== null) {
-      const files = Array.from(event.currentTarget.files);
-      const allowedTypeList = allowedTypes
-        .split(',')
-        .map((type) => type.trim());
-      const validationErrors = getUploadValidationErrors(
-        files,
-        allowedTypeList,
-        maxFiles,
-      );
-
-      if (validationErrors.length > 0) {
-        addErrors(validationErrors);
-      } else {
-        try {
-          await uploadSelectedFiles(files);
-        } catch (error_) {
-          const problemDetails = error_ as ProblemDetails;
-          addErrors(
-            Object.values(
-              (problemDetails['errors'] as
-                | Record<string, string[]>
-                | undefined) ?? {},
-            ).flat(),
-          );
-        }
+    if (disableUpload || !collection.valid || !begin('upload')) return;
+    try {
+      const files = Array.from(event.currentTarget.files ?? []);
+      setErrors([]);
+      if (!files.length) return;
+      const before = readAttachments(getValues(name));
+      if (!before.valid) {
+        reportError(
+          'Invalid attachment data. Refresh the form before making changes.',
+        );
+        return;
       }
+      const errors = validateSelection(
+        files,
+        allowedTypes,
+        maxFiles,
+        allowMultiple === true,
+      );
+      if (errors.length) {
+        addErrors(errors);
+        return;
+      }
+      const accepted = files.filter((file) => file.size <= maxSizeInBytes);
+      addErrors(
+        files
+          .filter((file) => file.size > maxSizeInBytes)
+          .map(
+            (file) =>
+              `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInBytes)} limit.`,
+          ),
+      );
+      if (!accepted.length) return;
+      const snapshot = snapshotAttachments(before.items);
+      const result = await onUploadFiles(accepted);
+      if (!mounted.current) return;
+      const uploaded = readAttachments(result);
+      const current = readAttachments(getValues(name));
+      if (
+        result == null ||
+        !uploaded.valid ||
+        (!allowMultiple && uploaded.items.length > 1)
+      ) {
+        reportError(
+          'Upload returned invalid attachment data. Refresh the form before retrying.',
+        );
+        return;
+      }
+      if (
+        !current.valid ||
+        current.scalar !== before.scalar ||
+        !matchesSnapshot(snapshot, current.items)
+      ) {
+        reportError(
+          'Attachments changed during upload. Refresh the form to reconcile the uploaded files.',
+        );
+        return;
+      }
+      // The supplied implementations replace the list with the callback result, not append.
+      writeCollection(uploaded.items);
+    } catch {
+      // Arbitrary server errors may contain credentials or private document details.
+      reportError('Upload failed. Please try again or contact support.');
+    } finally {
+      clearFileInput();
+      finish();
     }
-    setIsUploading(false);
   };
 
   const onConfirmDeleteFile = async (attachment: AttachmentDto) => {
-    setErrors([]);
-    setIsDeleting(true);
+    if (!attachment.id || attachment.documentLocked || !begin('delete')) return;
+    const documentId = attachment.id;
     try {
-      if (attachment.id) {
-        await onDeleteFile(attachment.id);
-        field.onChange(
-          attachments.filter(
-            (item: AttachmentDto) => item.id !== attachment.id,
-          ),
+      setErrors([]);
+      const before = readAttachments(getValues(name));
+      const target = before.items.find((item) => item.id === documentId);
+      if (!before.valid || !target || target.documentLocked) return;
+      await onDeleteFile(
+        documentId,
+        remainingUnlockedCount(before.items, documentId),
+      );
+      if (!mounted.current) return;
+      const current = readAttachments(getValues(name));
+      if (!current.valid) {
+        reportError(
+          'File deleted but attachment data changed. Refresh the form to reconcile it.',
         );
-        clearFileInput();
+        return;
       }
-    } catch (error_) {
-      setErrors((newErrors) => [...newErrors, String(error_)]);
+      const deletedTarget = current.items.find(
+        (item) => item.id === documentId,
+      );
+      if (deletedTarget?.documentLocked) {
+        reportError(
+          'File deleted but its lock status changed. Refresh the form to reconcile it.',
+        );
+        return;
+      }
+      if (deletedTarget) {
+        // Re-read after the await; never replace the list with a captured stale array.
+        writeCollection(current.items.filter((item) => item.id !== documentId));
+      }
+      clearFileInput();
+    } catch {
+      reportError(
+        'Could not delete the file. Please try again or contact support.',
+      );
+    } finally {
+      finish();
     }
-    setIsDeleting(false);
   };
 
-  const renderAttachments = () =>
-    attachments.map((attachment, i) => {
-      let attachmentKey =
-        attachment.id ?? unidentifiedAttachmentKeysRef.current.get(attachment);
-      if (attachmentKey === undefined) {
-        attachmentKey = globalThis.crypto.randomUUID();
-        unidentifiedAttachmentKeysRef.current.set(attachment, attachmentKey);
+  const changeCategory = async (
+    attachment: AttachmentDto,
+    index: number,
+    category: string,
+  ) => {
+    if (
+      attachment.documentLocked ||
+      (category !== '' &&
+        !CATEGORY_OPTIONS.some((option) => option.value === category)) ||
+      !begin('category')
+    )
+      return;
+    try {
+      const before = readAttachments(getValues(name));
+      if (!before.valid) return;
+      const currentIndex = attachment.id
+        ? before.items.findIndex((item) => item.id === attachment.id)
+        : index;
+      const target = before.items[currentIndex];
+      if (!target || target.documentLocked) return;
+      if (
+        !attachment.id &&
+        (!sameUnidentifiedAttachment(attachment, target) ||
+          before.items.filter((item) =>
+            sameUnidentifiedAttachment(attachment, item),
+          ).length !== 1)
+      ) {
+        reportError(
+          'Cannot identify this attachment reliably. Refresh the form before changing its category.',
+        );
+        return;
       }
-      return (
-        <RhfAttachmentItem
-          key={attachmentKey}
-          attachment={attachment}
-          {...omitUndefined({ onCategoryUpdate })}
-          onCategoryError={onCategoryError}
-          name={name}
-          index={i}
-          canRemove={!isSummary && !attachment.documentLocked}
-          cancelButtonId={`cancel-button-${attachment.id ?? ''}`}
-          onRemoveItem={onConfirmDeleteFile}
-          isSummary={isSummary === true || !!attachment.documentLocked}
-        />
+      const previousCategory = target.attachmentCategory;
+      const snapshot = snapshotAttachments([target]);
+      if (onCategoryUpdate && target.id) {
+        // Server-first and mutually exclusive: no optimistic rollback or out-of-order local saves.
+        await onCategoryUpdate(target.id, category);
+      }
+      if (!mounted.current) return;
+      const latest = readAttachments(getValues(name));
+      const latestIndex = target.id
+        ? latest.items.findIndex((item) => item.id === target.id)
+        : currentIndex;
+      const latestTarget = latest.items[latestIndex];
+      if (
+        !latest.valid ||
+        !latestTarget ||
+        latestTarget.documentLocked ||
+        latestTarget.attachmentCategory !== previousCategory ||
+        (!target.id && !matchesSnapshot(snapshot, [latestTarget]))
+      ) {
+        reportError(
+          'Attachment changed while saving its category. Refresh the form to reconcile it.',
+        );
+        return;
+      }
+      setValue(categoryPath(name, latestIndex, latest.scalar), category, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+    } catch {
+      reportError(
+        `Could not save the category for ${attachment.attachmentName ?? 'this file'}.`,
       );
-    });
+    } finally {
+      finish();
+    }
+  };
+
+  const attachmentKey = (attachment: AttachmentDto) => {
+    if (attachment.id) return `id-${attachment.id}`;
+    const previous = unidentifiedKeys.current.get(attachment);
+    if (previous !== undefined) return previous;
+    keyCounter.current += 1;
+    const key = `local-${keyCounter.current}`;
+    unidentifiedKeys.current.set(attachment, key);
+    return key;
+  };
+
+  const renderAttachments = () => (
+    <>
+      {isSubmitted && (
+        <Row className='mx-1 mb-3 py-2 border-bottom border-muted d-none d-md-flex'>
+          <Col sm={10} md={5} className='small'>
+            Name
+          </Col>
+          <Col sm={5} md={3} className='small'>
+            Category
+          </Col>
+          <Col sm={5} md={3} className='small'>
+            Modified
+          </Col>
+          <Col sm={2} md={1} className='small'>
+            <span className='visually-hidden'>Action</span>
+          </Col>
+        </Row>
+      )}
+      <ul className='list-unstyled mb-0'>
+        {attachments.map((attachment, index) => {
+          const key = attachmentKey(attachment);
+          return (
+            <li id={`attachment-${index + 1}`} key={key}>
+              <RhfAttachmentItem
+                attachment={attachment}
+                name={name}
+                index={index}
+                categoryName={categoryPath(name, index, collection.scalar)}
+                canRemove={
+                  !isSummary && !attachment.documentLocked && !!attachment.id
+                }
+                cancelButtonId={`cancel-button-${attachment.id ?? key}`}
+                onRemoveItem={onConfirmDeleteFile}
+                onChangeCategory={changeCategory}
+                onError={reportError}
+                isSummary={isSummary === true || !!attachment.documentLocked}
+                isSubmitted={isSubmitted}
+                busy={busy || progressActive}
+                {...omitUndefined({ onDownloadFile })}
+              />
+            </li>
+          );
+        })}
+      </ul>
+    </>
+  );
 
   if (isSummary) {
-    return attachments.length > 0 ? (
+    if (!collection.valid)
+      return (
+        <span role='alert'>Invalid attachment data. Refresh the form.</span>
+      );
+    return attachments.length ? (
       <div className='attachments-summary'>{renderAttachments()}</div>
     ) : (
       <span>No details added</span>
     );
   }
-
-  const controlId = id ?? name;
 
   return (
     <>
@@ -256,7 +402,9 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                 {inlineHelp}
               </div>
               <input
-                disabled={disableUpload}
+                disabled={
+                  (disableUpload ?? busy) || progressActive || !collection.valid
+                }
                 ref={inputRef}
                 id={`drag-upload-${controlId}`}
                 data-testid={`drag-upload-${controlId}`}
@@ -266,7 +414,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                 readOnly
                 tabIndex={0}
                 title={
-                  disableUpload
+                  disableUpload || busy || progressActive || !collection.valid
                     ? 'Drag files disabled'
                     : (buttonTitle ?? 'Drag files here')
                 }
@@ -276,12 +424,17 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                   cursor: 'grab',
                   zIndex: 2,
                 }}
+                aria-describedby={describedBy}
+                aria-invalid={showFieldError || !collection.valid}
+                onBlur={field.onBlur}
                 onChange={(event) => {
                   void onInputFileChange(event);
                 }}
               />
               <input
-                disabled={disableUpload}
+                disabled={
+                  (disableUpload ?? busy) || progressActive || !collection.valid
+                }
                 type='button'
                 id={controlId}
                 name={name}
@@ -290,12 +443,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
                 // TO DO: Move the inline style into own class
                 className='d-flex d-md-inline-block gap-2 position-relative btn btn-nmi-secondary flex-grow-1 mx-auto mb-2'
                 style={{ zIndex: 3 }}
-                aria-describedby={
-                  (fieldState.isTouched || formState.isSubmitted) &&
-                  fieldState.error
-                    ? `${controlId}-validation-msg`
-                    : `help-${controlId}`
-                }
+                aria-describedby={describedBy}
                 onClick={() => {
                   inputRef.current?.click();
                 }}
@@ -317,6 +465,24 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
             </div>
           </Col>
         </Row>
+        {showFieldError && (
+          <div
+            id={`${controlId}-validation-msg`}
+            role='alert'
+            className='text-danger'
+          >
+            {fieldState.error?.message ?? 'Check the attachments.'}
+          </div>
+        )}
+        {!collection.valid && (
+          <p
+            id={`${controlId}-attachment-state-error`}
+            role='alert'
+            className='text-danger'
+          >
+            Invalid attachment data. Refresh the form before making changes.
+          </p>
+        )}
       </div>
       {isUploading && (
         <div
@@ -328,9 +494,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           <span className='ms-2'>Loading...</span>
         </div>
       )}
-      {progress &&
-      progress.status !== 'Completed' &&
-      progress.status !== 'CompletedWithErrors' ? (
+      {progress && progressActive ? (
         <Col role='status' aria-live='polite'>
           <ProgressBar
             percent={progress.percent ?? 0}
@@ -354,10 +518,14 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
               {attachments.length}
               {' files uploaded'}
             </h3>
-            <p className='h6 mb-3'>
-              Select a category to classify each document
-            </p>
-            <Col id='file-upload-attachments'>{renderAttachments()}</Col>
+            {attachments.some((attachment) => !attachment.documentLocked) && (
+              <p className='h6 mb-3'>
+                Select a category to classify each document
+              </p>
+            )}
+            <Col id='file-upload-attachments' className='attachments-upload'>
+              {renderAttachments()}
+            </Col>
           </Row>
         )
       )}
