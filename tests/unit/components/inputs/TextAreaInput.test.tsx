@@ -47,4 +47,17 @@ describe('text area input behavior', () => {
 
     expect(input).toHaveValue('');
   });
+
+  it('summarises a missing value as nothing', () => {
+    expect.hasAssertions();
+
+    render(
+      <Formik initialValues={{ notes: undefined }} onSubmit={() => undefined}>
+        <TextAreaInput label='Notes' name='notes' isSummary />
+      </Formik>,
+    );
+
+    expect(screen.getByText('Notes')).toBeInTheDocument();
+    expect(screen.queryByText('undefined')).not.toBeInTheDocument();
+  });
 });

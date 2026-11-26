@@ -188,6 +188,31 @@ describe('residual input branches', () => {
     );
   });
 
+  it('shows an empty box for a missing NumberInput value', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness initialValues={{ quantity: undefined }}>
+        <NumberInput name='quantity' label='Quantity' />
+      </Harness>,
+    );
+
+    expect(screen.getByRole('textbox', { name: 'Quantity' })).toHaveValue('');
+  });
+
+  it('summarises a missing NumberInput value as nothing', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness initialValues={{ quantity: null }}>
+        <NumberInput name='quantity' label='Quantity' isSummary />
+      </Harness>,
+    );
+
+    expect(screen.getByText('Quantity')).toBeInTheDocument();
+    expect(screen.queryByText('null')).not.toBeInTheDocument();
+  });
+
   it('renders the false Checkbox summary value', () => {
     expect.hasAssertions();
 

@@ -224,4 +224,22 @@ describe('rhf checkbox group behavior', () => {
 
     expect(container.querySelector('fieldset')).toBeNull();
   });
+
+  it('treats a stored value that is not a list as nothing selected and starts a list on tick', async () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness defaultValue={'sms' as unknown as string[]}>
+        <RhfCheckboxGroup name='methods' legend='Methods' options={options} />
+      </Harness>,
+    );
+
+    expect(screen.getByRole('checkbox', { name: 'SMS' })).not.toBeChecked();
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole('checkbox', { name: 'Post' }));
+
+    expect(screen.getByTestId('value')).toHaveTextContent('["post"]');
+  });
 });

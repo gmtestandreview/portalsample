@@ -174,10 +174,10 @@ const isPlainRecord = (value: unknown): value is Record<string, unknown> => {
  * loaded or typed; Formik left such parents absent. An empty object is kept
  * when the loaded values already had that path, so a saved `{}` round-trips.
  */
-const removeUnloadedEmptyObjects = <T>(values: T, loaded: unknown): T => {
-  if (!isPlainRecord(values)) {
-    return values;
-  }
+const removeUnloadedEmptyObjects = (
+  values: Record<string, unknown>,
+  loaded: unknown,
+): Record<string, unknown> => {
   const loadedEntries = new Map(
     Object.entries(isPlainRecord(loaded) ? loaded : {}),
   );
@@ -191,7 +191,7 @@ const removeUnloadedEmptyObjects = <T>(values: T, loaded: unknown): T => {
       ? []
       : [[key, pruned] as const];
   });
-  return Object.fromEntries(entries) as T;
+  return Object.fromEntries(entries);
 };
 
 /**
@@ -208,4 +208,4 @@ export const normalizeSubmitValues = <T extends FormValues>(
   removeUnloadedEmptyObjects(
     removeEmptyKeys(removeHidden(values, values, hidden)),
     loaded,
-  );
+  ) as T;

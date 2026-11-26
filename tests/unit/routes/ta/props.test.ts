@@ -320,6 +320,52 @@ describe('application and instrument loading and visibility', () => {
   });
 });
 
+describe('application and instrument default type', () => {
+  it('starts an unsaved step as a new certificate', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+    mocks.getApplicationAndInstrument.mockResolvedValueOnce({});
+
+    const props = applicationAndInstrumentProps(
+      'PA-1',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const loaded = await props.loadStepValues();
+
+    expect(loaded.stepValues.patternApprovalType).toBe(
+      PatternApprovalRequiredValues.NewCertificate,
+    );
+  });
+
+  it('keeps the application type that was already saved', async () => {
+    expect.hasAssertions();
+
+    resetTaPropsMocks();
+    mocks.getApplicationAndInstrument.mockResolvedValueOnce({
+      patternApprovalType: PatternApprovalRequiredValues.Variation,
+    });
+
+    const props = applicationAndInstrumentProps(
+      'PA-1',
+      accounts,
+      instance,
+      accountDetails,
+      stepStatuses,
+      'Type approval',
+    );
+    const loaded = await props.loadStepValues();
+
+    expect(loaded.stepValues.patternApprovalType).toBe(
+      PatternApprovalRequiredValues.Variation,
+    );
+  });
+});
+
 describe('application and instrument saving', () => {
   it('saves application/instrument details while stripping lookup-only values', async () => {
     expect.hasAssertions();

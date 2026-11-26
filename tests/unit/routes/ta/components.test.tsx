@@ -442,6 +442,28 @@ describe(OrganisationAndContact, () => {
   });
 });
 
+describe('organisation and contact without a stored current contact', () => {
+  it('shows no contact text instead of the word undefined', () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
+    render(
+      <RhfForm initialValues={{}} onSubmit={() => undefined}>
+        <OrganisationAndContact
+          isSummary={false}
+          name='organisationAndContact'
+        />
+      </RhfForm>,
+    );
+
+    expect(
+      screen.getByTestId('radio-organisationAndContact.isPrincipalContact')
+        .textContent,
+    ).not.toContain('undefined');
+  });
+});
+
 // function suite titles are required by vitest/prefer-describe-function-title.
 describe(SummaryAndSubmit, () => {
   it('renders the summaries when the form carries no hiding rules', () => {

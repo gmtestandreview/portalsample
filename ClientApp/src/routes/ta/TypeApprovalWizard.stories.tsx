@@ -8,6 +8,11 @@ import { withPortalProviders } from '../../storybook/storybookHarness';
  * Characterization of the type-approval wizard: exact save/submit payloads, hidden
  * fields, reset/untouch behaviour and inline validation. These stories were written
  * and run against the Formik shell first and must pass unchanged on the RHF shell.
+ *
+ * Recorded deviations from Formik (controller-approved): missing contact fields show
+ * inline errors (`DifferentContactShowsInlineErrors`), and pressing Enter on free text
+ * in the certificate lookup keeps the typed `certificateNumber` but no longer sends a
+ * free-text `certificateNumberId` (`VariationCertificateLookupEnterKeepsTextWithoutId`).
  */
 const APPLICATION_ID = 'TA-2024-000555';
 const BASE = `/ta/${APPLICATION_ID}`;
@@ -692,6 +697,52 @@ export const VariationCertificateLookupSavesNumberAndId = meta.story({
     await expect(state.observed.applicationBodies[0]).toEqual({
       applicationId: APPLICATION_ID,
       isCompletingStep: false,
+      formStep: {
+        patternApprovalType: 'Variation',
+        varSubOptions: ['VariationtoanExistingCoA'],
+        summary: 'Add a model',
+        certificateNumber: 'S 1/6A',
+      },
+    });
+  },
+});
+
+/**
+ * Recorded deviation: Formik committed Enter on free text as the certificate id too.
+ * The RHF lookup keeps the typed text only; an id is sent only for a chosen suggestion.
+ */
+export const VariationCertificateLookupEnterKeepsTextWithoutId = meta.story({
+  parameters: {
+    portal: { initialEntries: [`${BASE}/application-details`] },
+  },
+  beforeEach({ msw }) {
+    msw.use(statuses(...appSteps));
+    msw.use(
+      ...wizardHandlers({
+        application: {
+          patternApprovalType: 'Variation',
+          varSubOptions: ['VariationtoanExistingCoA'],
+          summary: 'Add a model',
+        },
+      }),
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await canvas.findByRole('heading', {
+      name: 'Variation details',
+      hidden: true,
+    });
+    await userEvent.type(
+      canvas.getByLabelText('Certificate number'),
+      'S 1/6A{Enter}',
+    );
+    // Enter submits the step (Save and next) with the typed text and no id.
+    await waitFor(() =>
+      expect(state.observed.applicationBodies).toHaveLength(1),
+    );
+    await expect(state.observed.applicationBodies[0]).toEqual({
+      applicationId: APPLICATION_ID,
+      isCompletingStep: true,
       formStep: {
         patternApprovalType: 'Variation',
         varSubOptions: ['VariationtoanExistingCoA'],
