@@ -1,4 +1,3 @@
-import type { FormikFormProps, FormikValues } from 'formik';
 import type { ReactNode } from 'react';
 import type { FormStepStatus } from '../../api/web-api-client';
 import {
@@ -13,7 +12,7 @@ import {
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
 import { DashboardTab } from '../../components/SearchFilter/types';
-import type { Hideable } from '../../components/forms/types';
+import type { FormValues, Hideable } from '../../components/forms/types';
 import type { InitialValue } from '../../types';
 
 export interface TASummaryProps {
@@ -114,17 +113,7 @@ export interface RequestForPatternApprovalSummaryDto {
   formStepStatus?: FormStepStatus;
 }
 
-export type SinglePageFormProps<T extends FormikValues> = Omit<
-  FormikFormProps,
-  | 'isLoading'
-  | 'promptPath'
-  | 'onSubmit'
-  | 'children'
-  | 'initialValues'
-  | 'canSaveDraft'
-  | 'showBanner'
-  | 'onSaveAndExit'
-> & {
+export interface SinglePageFormProps<T extends FormValues> {
   title: string;
   children?: ReactNode;
   location: string;
@@ -134,7 +123,7 @@ export type SinglePageFormProps<T extends FormikValues> = Omit<
   ) => SinglePageFormValues<T> | Promise<SinglePageFormValues<T>>;
   hidingFields: Hideable<Partial<T>, Partial<T>> | undefined;
   isSummaryPage?: boolean;
-};
-export interface SinglePageFormValues<T extends FormikValues> {
+}
+export interface SinglePageFormValues<T extends FormValues> {
   formValues: InitialValue<T>;
 }
