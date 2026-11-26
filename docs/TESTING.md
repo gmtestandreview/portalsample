@@ -265,7 +265,7 @@ Guidelines:
 
 | Concern               | Approach                                                                   |
 | --------------------- | -------------------------------------------------------------------------- |
-| Formik context        | Wrap components with a tiny helper Formik wrapper                          |
+| Form context          | Wrap components with `FieldHarness` (`rhfTestHarness.tsx`)                 |
 | React Router          | Use `MemoryRouter` or `createMemoryRouter` in tests                        |
 | App Insights          | Mock constructors and assert initialization config                         |
 | Date picker internals | Mock `react-datepicker` at the component boundary                          |

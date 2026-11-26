@@ -52,6 +52,6 @@ Key changes on branch:
 | Decision                   | Rationale                                                                         |
 | -------------------------- | --------------------------------------------------------------------------------- |
 | No Redux/Zustand           | Session-scoped wizard state fits sessionStorage; no global shared state needed    |
-| Formik → RHF migration     | Incremental, per-component via useFormikRhfBridge adapter                         |
+| Formik → RHF migration     | Complete: Formik and the bridge adapter were removed                              |
 | Vite (replacing Webpack 5) | Faster HMR, ESM-native, simpler config                                            |
 | SCSS @import shim          | Bootstrap 5 requires @import cascade; full @use migration deferred to Bootstrap 6 |

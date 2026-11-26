@@ -74,20 +74,14 @@ ClientApp/src/components/
 │   ├── Table, TagGroup, Toast, Tree, SearchField
 │   └── NmiIcon — custom icon font component
 ├── Inputs/                Form input wrappers
-│   ├── TextInput, TextAreaInput (Formik)
 │   ├── RhfTextInput, RhfTextAreaInput (RHF)
-│   ├── NumberInput, RadioButton, SelectInput, CheckBox
-│   ├── DatePicker, AddressLookup, AutoSuggest
-│   ├── Attachment/index-new.tsx (new attachment input)
 │   └── RhfAttachment, RhfAutoSuggest, RhfCheckbox, RhfRadioButtonGroup
 ├── forms/
-│   ├── CommonForms/ContactDetails     (Formik, NLOC-refactored on branch)
-│   ├── CommonForms/RhfContactDetails  (RHF equivalent)
+│   ├── CommonForms/RhfContactDetails
 │   ├── ErrorSummary/                  Validation error list
 │   ├── IntentButton/                  Wizard next/submit button
 │   ├── WizardForm/                    Stepper + useWizardStepController hook
 │   ├── RhfForm/wizardYupResolver      Yup resolver for RHF wizard
-│   ├── useFormikRhfBridge             Adapter: Formik context → RHF API
 │   ├── formPath.ts                    Wizard step path utilities
 │   ├── saveAwareYupResolver.ts        Resolver that tolerates Save-and-continue
 │   └── utils.ts                       Form helpers
@@ -107,12 +101,8 @@ ClientApp/src/components/
 
 ## Form Strategy
 
-Two form libraries coexist:
+Forms use one library:
 
-- **Formik** — original; used in older routes
-- **React Hook Form (RHF)** — active migration target; Waves 1–5 completed on
-  main
-- **`useFormikRhfBridge`** — adapter allows RHF-API code to run inside a Formik
-  context (incremental migration)
-- **Yup** — validation for both libraries; 19 custom string methods in
+- **React Hook Form (RHF)** — all forms (the Formik migration is complete)
+- **Yup** — validation via resolvers; 19 custom string methods in
   `stringExtensions.ts`

@@ -68,22 +68,22 @@ AuthenticatedElement (per protected route) — nested, not sibling:
               ↓
          WizardForm (for multi-step flows)
            └─ WizardStep × N → each step is a <Route> inside WizardForm
-                └─ FormikForm → form state, Yup validation, save/next/exit
+                └─ RhfForm → form state, Yup validation, save/next/exit
 ```
 
 ## 3) Layer / Module Responsibilities
 
-| Layer                 | Owns                                                                           | Must not own                       | Evidence                                                            |
-| --------------------- | ------------------------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------------------------- |
-| `routes/`             | Page-level orchestration, API calls, business state, `useEffect` data loading  | Reusable UI primitives, auth logic | `routes/dashboard/index.tsx`                                        |
-| `components/forms/`   | Multi-step form engine, Formik wrappers, validation summary, navigation guards | Direct API calls, business rules   | `components/forms/WizardForm/`                                      |
-| `components/` (other) | Reusable UI: inputs, layout, modals, tiles                                     | Business logic, direct API calls   | `components/Layout/`, `components/Inputs/`                          |
-| `authentication/`     | MSAL config, AccountContext state + mutations, auth guard, hooks               | Business domain logic, API calls   | `authentication/authConfig.ts`, `authentication/accountContext.tsx` |
-| `api/`                | Typed HTTP client contracts + bearer token header injection                    | State management, UI               | `api/web-api-client.ts`                                             |
-| `validationSchemas/`  | Yup schema definitions + 19 custom string validators                           | API calls, React state             | `validationSchemas/yupExtensions/stringExtensions.ts`               |
-| `storage/`            | Typed sessionStorage wrappers for cross-page state                             | Business logic, UI rendering       | `storage/sessionStorageCache.ts`                                    |
-| `instrumentation/`    | App Insights singleton, structured logging                                     | UI, routing                        | `instrumentation/AppInsightsService.ts`                             |
-| `utils/`              | Pure utility functions (date, string, bytes, currency)                         | Side effects, state                | `utils/index.ts`                                                    |
+| Layer                 | Owns                                                                                    | Must not own                       | Evidence                                                            |
+| --------------------- | --------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------- |
+| `routes/`             | Page-level orchestration, API calls, business state, `useEffect` data loading           | Reusable UI primitives, auth logic | `routes/dashboard/index.tsx`                                        |
+| `components/forms/`   | Multi-step form engine, React Hook Form wrappers, validation summary, navigation guards | Direct API calls, business rules   | `components/forms/WizardForm/`                                      |
+| `components/` (other) | Reusable UI: inputs, layout, modals, tiles                                              | Business logic, direct API calls   | `components/Layout/`, `components/Inputs/`                          |
+| `authentication/`     | MSAL config, AccountContext state + mutations, auth guard, hooks                        | Business domain logic, API calls   | `authentication/authConfig.ts`, `authentication/accountContext.tsx` |
+| `api/`                | Typed HTTP client contracts + bearer token header injection                             | State management, UI               | `api/web-api-client.ts`                                             |
+| `validationSchemas/`  | Yup schema definitions + 19 custom string validators                                    | API calls, React state             | `validationSchemas/yupExtensions/stringExtensions.ts`               |
+| `storage/`            | Typed sessionStorage wrappers for cross-page state                                      | Business logic, UI rendering       | `storage/sessionStorageCache.ts`                                    |
+| `instrumentation/`    | App Insights singleton, structured logging                                              | UI, routing                        | `instrumentation/AppInsightsService.ts`                             |
+| `utils/`              | Pure utility functions (date, string, bytes, currency)                                  | Side effects, state                | `utils/index.ts`                                                    |
 
 ## 4) Reused Patterns
 
@@ -149,7 +149,7 @@ Route tree hanging off `RouterProvider`:
                                 └─ RequestForQuote
                                      └─ WizardForm
                                           ├─ WizardStep (Step 1 — instruments)
-                                          │    └─ FormikForm → Yup schema → UnsavedFormPrompt
+                                          │    └─ RhfForm → Yup schema → RhfUnsavedFormPrompt
                                           ├─ WizardStep (Step 2 — organisation)
                                           └─ WizardStep (Step N — summary)
 
@@ -263,8 +263,8 @@ Route tree hanging off `RouterProvider`:
   ModalDispatchCtx + useModalState() / useModalDispatch()
 - `ClientApp/src/components/forms/WizardForm/index.tsx` — compound component
   pattern
-- `ClientApp/src/components/forms/FormikForm/index.tsx` — hard/soft validator
-  dispatch contract
+- `ClientApp/src/components/forms/RhfForm/wizardYupResolver.ts` — hard/soft
+  validator dispatch contract
 - `ClientApp/src/instrumentation/AppInsightsService.ts` — telemetry singleton
 - `ClientApp/src/routes/preConditions/PreConditions.tsx` — redirect + modal
   state machine implementation

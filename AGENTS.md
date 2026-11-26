@@ -75,7 +75,7 @@ heading.
 - **Language**: TypeScript
 - **Routing**: React Router v7 (`createBrowserRouter`)
 - **Auth**: Azure AD B2C via `@azure/msal-browser` / `@azure/msal-react`
-- **Forms**: Formik + Yup with custom string extensions
+- **Forms**: React Hook Form + Yup with custom string extensions
 - **CSS**: Bootstrap 5 (custom NMI theme) + SCSS partials
 - **API client**: Auto-generated `web-api-client.ts` (NSwag/OpenAPI)
 - **Analytics**: Azure Application Insights + Google Analytics
@@ -181,9 +181,9 @@ full authenticated user state. Access it via the hooks in
 
 ### Forms
 
-Forms use Formik. For unsaved-change detection use `<UnsavedFormPrompt>` (wraps
-`RouteLeavingGuard` using `useFormikContext`). Do not re-implement navigation
-guards.
+Forms use React Hook Form (`RhfForm`). For unsaved-change detection use
+`<RhfUnsavedFormPrompt>` (wraps `RouteLeavingGuard` using the form state). Do
+not re-implement navigation guards.
 
 ### SCSS Module System
 
@@ -224,7 +224,7 @@ properties.
 ### Storybook async/render hygiene
 
 Do not suppress React `act(...)` warnings in Storybook stories or setup. Treat
-them as ownership signals. For Formik, lookup-driven, or route stories, make
+them as ownership signals. For form, lookup-driven, or route stories, make
 component state either synchronously derived from props/context or explicitly
 await the user-visible settled state in the story play function with
 `canvas.findBy...` or `waitFor`. Do not put purely derived visibility/state

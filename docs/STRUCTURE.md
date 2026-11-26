@@ -123,8 +123,8 @@ portal.measurement.gov.au/           ← workspace root
     │   │   │   │   ├── NextStepButton.tsx   ← "Next" button with final-step variant
     │   │   │   │   ├── PreviousStepButton.tsx ← "Back" button
     │   │   │   │   └── types.ts          ←   WizardFormProps, WizardStepProps types
-    │   │   │   ├── FormikForm/           ← Base Formik wrapper used by WizardRoutedStep
-    │   │   │   ├── UnsavedFormPrompt/    ← Formik dirty-state navigation guard
+    │   │   │   ├── RhfForm/               ← Base RHF wrapper used by RhfWizardRoutedStep
+    │   │   │   ├── UnsavedFormPrompt/    ← RHF dirty-state navigation guard
     │   │   │   ├── ErrorSummary/         ← Validation error summary list
     │   │   │   ├── FormBanner/           ← Reference/title banner for form pages
     │   │   │   ├── HidableField/         ← Conditionally visible form field wrapper

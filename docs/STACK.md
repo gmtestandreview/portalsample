@@ -317,8 +317,8 @@ Versions are **as installed**. "Used by" is the count of files under
 `ClientApp/src` importing the package, excluding vendored trees.
 
 Lodash has no direct application dependency or first-party import. It remains
-installed transitively through Formik, `slate-dom`, and `slate-react`; the
-Lodash type package remains transitive through `slate-react`.
+installed transitively through `slate-dom` and `slate-react`; the Lodash type
+package remains transitive through `slate-react`.
 
 | Dependency                                | Installed  | Used by | Role                                                                                                           |
 | ----------------------------------------- | ---------- | ------: | -------------------------------------------------------------------------------------------------------------- |
@@ -326,7 +326,7 @@ Lodash type package remains transitive through `slate-react`.
 | `react-dom`                               | 18.3.1     |       — | DOM reconciler                                                                                                 |
 | `react-router`                            | **7.18.2** |       — | Client-side routing; **41 registered routes** in `App.tsx`                                                     |
 | `react-aria-components`                   | **1.19.0** |  **67** | Accessible UI primitives — the largest UI dependency by import count, and central to the WCAG 2.2 AA programme |
-| `formik`                                  | 2.4.9      |      63 | Form state across all multi-step wizards                                                                       |
+| `react-hook-form`                         | 7.92.0     |       — | Form state across all multi-step wizards                                                                       |
 | `yup`                                     | 1.7.1      |      13 | Schema validation; extended with 19 custom string methods                                                      |
 | `@azure/msal-browser`                     | 5.25.0     |       — | Azure AD B2C OAuth2 + PKCE with redirect bridge                                                                |
 | `@azure/msal-react`                       | 5.7.2      |       — | React bindings (`MsalProvider`, hooks)                                                                         |

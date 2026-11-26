@@ -50,7 +50,7 @@ npm run test:e2e:storybook
 ## Current Implementation Status
 
 - Shared Storybook harnessing now exists for router, auth/MSAL, account context,
-  modal context, and Formik-backed route steps.
+  modal context, and React Hook Form-backed route steps.
 - Shared UI coverage now includes both the high-priority migration families and
   the optional breadth pass, including `Header`, `Footer`, `Layout`, `Inputs`,
   `SearchFilter`, `Pagination`, `PaginationHeader`, `Pill`, `SteppedNavigation`,
