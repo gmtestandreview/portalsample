@@ -81,7 +81,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
     : [];
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const unidentifiedAttachmentKeys = useRef(
+  const unidentifiedAttachmentKeysRef = useRef(
     new WeakMap<AttachmentDto, string>(),
   );
 
@@ -189,10 +189,10 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const renderAttachments = () =>
     attachments.map((attachment, i) => {
       let attachmentKey =
-        attachment.id ?? unidentifiedAttachmentKeys.current.get(attachment);
+        attachment.id ?? unidentifiedAttachmentKeysRef.current.get(attachment);
       if (attachmentKey === undefined) {
         attachmentKey = globalThis.crypto.randomUUID();
-        unidentifiedAttachmentKeys.current.set(attachment, attachmentKey);
+        unidentifiedAttachmentKeysRef.current.set(attachment, attachmentKey);
       }
       return (
         <RhfAttachmentItem

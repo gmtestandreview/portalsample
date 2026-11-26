@@ -22,15 +22,15 @@ const keys = {
 
 const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
   const state = useContext(ComboBoxStateContext);
-  const previousHasOptions = useRef(false);
+  const previousHasOptionsRef = useRef(false);
 
   useEffect(() => {
-    if (hasOptions && state?.isFocused && !previousHasOptions.current) {
+    if (hasOptions && state?.isFocused && !previousHasOptionsRef.current) {
       state.open(null, 'input');
-    } else if (!hasOptions && previousHasOptions.current) {
+    } else if (!hasOptions && previousHasOptionsRef.current) {
       state?.close();
     }
-    previousHasOptions.current = hasOptions;
+    previousHasOptionsRef.current = hasOptions;
   }, [hasOptions, state]);
 
   return null;

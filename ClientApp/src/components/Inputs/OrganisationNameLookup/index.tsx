@@ -51,7 +51,7 @@ const OrganisationNameLookup = (
   const [activeIndex, setActiveIndex] = useState(-1);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const itemRefsRef = useRef<(HTMLLIElement | null)[]>([]);
   const controlId = getControlId(id, name);
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
 
@@ -123,7 +123,7 @@ const OrganisationNameLookup = (
   // Auto-scroll to active item
   useEffect(() => {
     const activeItem =
-      activeIndex >= 0 ? itemRefs.current.at(activeIndex) : undefined;
+      activeIndex >= 0 ? itemRefsRef.current.at(activeIndex) : undefined;
     if (activeItem) {
       activeItem.scrollIntoView({
         behavior: 'smooth',
@@ -275,7 +275,7 @@ const OrganisationNameLookup = (
                       });
                     }}
                     ref={(el: HTMLLIElement | null) => {
-                      itemRefs.current.splice(index, 1, el);
+                      itemRefsRef.current.splice(index, 1, el);
                     }}
                   >
                     <span aria-hidden='true'>{item}</span>
