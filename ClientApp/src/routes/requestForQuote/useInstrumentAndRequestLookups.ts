@@ -106,10 +106,15 @@ export const useInstrumentAndRequestLookups = () => {
   };
 
   const onMeasurementCategoryChange = (value: string) => {
-    // Equivalent of Formik's setFieldValue('') + setFieldTouched(false):
-    // reset to an untouched empty value, then apply the "no instrument"
-    // default when the "No measurement" category is picked.
-    resetField('instrumentOrArtefactType', { defaultValue: '' });
+    // Equivalent of Formik's setFieldValue('') + setFieldTouched(false): untouch
+    // the field but keep its saved baseline, dirty state and error, then clear
+    // the value so it still reads as changed (the unsaved-changes prompt relies
+    // on that). "No measurement" then applies the "no instrument" default.
+    resetField('instrumentOrArtefactType', {
+      keepDirty: true,
+      keepError: true,
+    });
+    setValue('instrumentOrArtefactType', '', { shouldDirty: true });
     if (artefactTypes !== undefined && value === noMeasurementId) {
       const { noInstrumentId } = getArtefactTypeOptions(artefactTypes, value);
       setValue('instrumentOrArtefactType', noInstrumentId, {

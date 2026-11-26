@@ -163,14 +163,10 @@ export const OrganisationStepSavesAndMovesOn = meta.story({
       }),
     ).toBeVisible();
     await expect(state.observed.organisationBodies).toHaveLength(1);
-    await expect(state.observed.organisationBodies[0]).toMatchObject({
+    await expect(state.observed.organisationBodies[0]).toEqual({
       applicationId: APPLICATION_ID,
       isCompletingStep: true,
-      formStep: {
-        abn: '12345678901',
-        isPrincipalContact: 'Yes',
-        organisationCount: 1,
-      },
+      formStep: organisationValues,
     });
   },
 });
@@ -193,9 +189,10 @@ export const OrganisationStepSaveAndExitSavesDraft = meta.story({
       await canvas.findByRole('heading', { name: 'Exit destination' }),
     ).toBeVisible();
     await expect(state.observed.organisationBodies).toHaveLength(1);
-    await expect(state.observed.organisationBodies[0]).toMatchObject({
+    await expect(state.observed.organisationBodies[0]).toEqual({
       applicationId: APPLICATION_ID,
       isCompletingStep: false,
+      formStep: organisationValues,
     });
   },
 });
@@ -221,8 +218,71 @@ export const DifferentContactRequiresContactDetails = meta.story({
       await canvas.findByRole('link', { name: /First name/ }),
     ).toBeVisible();
     await expect(state.observed.organisationBodies).toHaveLength(0);
+
+    // Each missing contact field shows its message inline and is marked invalid.
+    for (const [label, message] of [
+      ['First name', /First name is required/],
+      ['Last name', /Last name is required/],
+      ['Email', /Email address is required/],
+    ] as const) {
+      const field = canvas.getByLabelText(label, { exact: false });
+
+      await waitFor(() =>
+        expect(field).toHaveAttribute('aria-invalid', 'true'),
+      );
+      await expect(field).toHaveAccessibleDescription(message);
+    }
   },
 });
+
+/**
+ * With several branches the user must answer the branch radio; the answer is
+ * not required when the organisation has a single branch (the other stories).
+ */
+export const BranchAnswerIsRequiredForAnOrganisationWithSeveralBranches =
+  meta.story({
+    beforeEach({ msw }) {
+      msw.use(statuses('NotStarted', 'NotStarted', 'NotStarted'));
+      msw.use(
+        ...wizardHandlers({ ...organisationValues, organisationCount: 2 }),
+      );
+    },
+    play: async ({ canvas, userEvent }) => {
+      await canvas.findByText('Calibration Services Pty Ltd');
+      await userEvent.click(
+        await canvas.findByRole('button', { name: 'Save and next' }),
+      );
+
+      await expect(
+        await canvas.findByRole('link', { name: /correct branch\/location/ }),
+      ).toBeVisible();
+      const branchGroup = canvas.getByRole('radiogroup', {
+        name: /correct branch or location/,
+      });
+
+      await waitFor(() =>
+        expect(branchGroup).toHaveAttribute('aria-invalid', 'true'),
+      );
+      await expect(branchGroup).toHaveAccessibleDescription(
+        /Please confirm this is the correct branch\/location\./,
+      );
+      await expect(state.observed.organisationBodies).toHaveLength(0);
+
+      await userEvent.click(
+        canvas.getByRole('radio', { name: /Yes, this is the correct/ }),
+      );
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Save and next' }),
+      );
+
+      await expect(
+        await canvas.findByRole('heading', {
+          name: 'Instrument/artefact details',
+        }),
+      ).toBeVisible();
+      await expect(state.observed.organisationBodies).toHaveLength(1);
+    },
+  });
 
 export const InstrumentStepSavesPayloadWithApiDate = meta.story({
   parameters: {
@@ -309,11 +369,15 @@ export const InstrumentCategoryChangeResetsTypeAndLocksOnNoMeasurement =
       await waitFor(() =>
         expect(state.observed.instrumentBodies).toHaveLength(1),
       );
-      await expect(state.observed.instrumentBodies[0]).toMatchObject({
+      await expect(state.observed.instrumentBodies[0]).toEqual({
+        applicationId: APPLICATION_ID,
         isCompletingStep: false,
         formStep: {
+          ...instrumentValues,
           measurementCategory: 'no-measurement',
           instrumentOrArtefactType: 'no-instrument',
+          preferredInstrumentOrArtefactAvailabilityDate:
+            '2099-06-01T00:00:00.000Z',
         },
       });
     },
@@ -392,12 +456,18 @@ export const SerialNumberIsHiddenAndOmittedWhenNotAvailable = meta.story({
     await waitFor(() =>
       expect(state.observed.instrumentBodies).toHaveLength(1),
     );
-    const body = state.observed.instrumentBodies[0] as {
-      formStep: Record<string, unknown>;
-    };
-
-    await expect(body.formStep).toMatchObject({ hasSerialNumber: 'No' });
-    await expect(body.formStep).not.toHaveProperty('serialNumber');
+    await expect(state.observed.instrumentBodies[0]).toEqual({
+      applicationId: APPLICATION_ID,
+      isCompletingStep: true,
+      formStep: {
+        ...instrumentValues,
+        // toEqual treats undefined as absent: the key must be omitted.
+        serialNumber: undefined,
+        hasSerialNumber: 'No',
+        preferredInstrumentOrArtefactAvailabilityDate:
+          '2099-06-01T00:00:00.000Z',
+      },
+    });
   },
 });
 
@@ -431,6 +501,27 @@ export const InstrumentStepBlocksInvalidSubmit = meta.story({
       await canvas.findByRole('link', { name: /earlier than today/ }),
     ).toBeVisible();
     await expect(state.observed.instrumentBodies).toHaveLength(0);
+
+    // The errors stay inline on their fields after the lookups have settled.
+    const manufacturer = canvas.getByLabelText('Manufacturer');
+
+    await waitFor(() =>
+      expect(manufacturer).toHaveAttribute('aria-invalid', 'true'),
+    );
+    await expect(manufacturer).toHaveAccessibleDescription(
+      /Enter a manufacturer\./,
+    );
+
+    const availability = canvas.getByLabelText(
+      'Preferred Instrument/artefact availability date (optional)',
+    );
+
+    // The date input flags the error with Bootstrap's invalid class, not
+    // aria-invalid (unchanged from the Formik date picker).
+    await expect(availability).toHaveClass('is-invalid');
+    await expect(availability).toHaveAccessibleDescription(
+      /Cannot select a date earlier than today/,
+    );
   },
 });
 
@@ -460,7 +551,7 @@ export const SummaryShowsAnswersAndSubmitsAfterConfirmation = meta.story({
       await canvas.findByRole('heading', { name: 'Submitted destination' }),
     ).toBeVisible();
     await expect(state.observed.submitBodies).toHaveLength(1);
-    await expect(state.observed.submitBodies[0]).toMatchObject({
+    await expect(state.observed.submitBodies[0]).toEqual({
       applicationId: APPLICATION_ID,
       isCompletingStep: true,
       formStep: summaryValues,

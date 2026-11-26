@@ -262,7 +262,7 @@ describe(useInstrumentAndRequestLookups, () => {
     ]);
   });
 
-  it('clears the instrument type and its touched state when the category changes', async () => {
+  it('clears the instrument type, untouches it and keeps it dirty when the category changes', async () => {
     expect.hasAssertions();
 
     resetMsalMock();
@@ -280,10 +280,17 @@ describe(useInstrumentAndRequestLookups, () => {
       .mockResolvedValueOnce([]);
 
     const { result } = renderHook(
-      () => ({
-        form: useFormContext<InstrumentAndRequestStep>(),
-        lookups: useInstrumentAndRequestLookups(),
-      }),
+      () => {
+        const form = useFormContext<InstrumentAndRequestStep>();
+        // Reading formState during render subscribes the hook to its changes.
+        const { dirtyFields, errors, isDirty } = form.formState;
+
+        return {
+          form,
+          formState: { dirtyFields, errors, isDirty },
+          lookups: useInstrumentAndRequestLookups(),
+        };
+      },
       { wrapper },
     );
 
@@ -297,13 +304,27 @@ describe(useInstrumentAndRequestLookups, () => {
       result.current.form.setValue('instrumentOrArtefactType', 'artefact-1', {
         shouldTouch: true,
       });
+      result.current.form.setError('instrumentOrArtefactType', {
+        message: 'Select an instrument or artefact type.',
+      });
       result.current.lookups.onMeasurementCategoryChange('category-2');
     });
 
-    expect(result.current.form.getValues('instrumentOrArtefactType')).toBe('');
-    expect(
-      result.current.form.getFieldState('instrumentOrArtefactType').isTouched,
-    ).toBe(false);
+    const { form, formState } = result.current;
+
+    expect(form.getValues('instrumentOrArtefactType')).toBe('');
+    // Untouched, as Formik's setFieldTouched(name, false) did.
+    expect(form.getFieldState('instrumentOrArtefactType').isTouched).toBe(
+      false,
+    );
+    // The cleared value differs from the saved baseline, so the form stays
+    // dirty for the unsaved-changes prompt.
+    expect(formState.dirtyFields.instrumentOrArtefactType).toBe(true);
+    expect(formState.isDirty).toBe(true);
+    // The existing error is kept until the next validation replaces it.
+    expect(formState.errors.instrumentOrArtefactType?.message).toBe(
+      'Select an instrument or artefact type.',
+    );
   });
 
   it('defaults the instrument type to "No instrument" for the no-measurement category', async () => {
