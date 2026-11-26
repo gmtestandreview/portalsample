@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import { Navigate, useNavigate, useParams } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
-import WizardForm from '../../components/forms/WizardForm';
+import RhfWizardForm from '../../components/forms/WizardForm/RhfWizardForm';
 import type { WizardFormProps } from '../../components/forms/WizardForm/types';
 import WizardStep from '../../components/forms/WizardForm/WizardStep';
 import useBodyClass from '../../components/Utilities/useBodyClass';
@@ -139,7 +139,7 @@ const RequestForQuote = () => {
   };
 
   return statuses ? (
-    <WizardForm {...requestForQuoteWizardProps}>
+    <RhfWizardForm {...requestForQuoteWizardProps}>
       <WizardStep
         {...organisationAndContactProps(
           applicationId,
@@ -176,7 +176,7 @@ const RequestForQuote = () => {
       >
         <RequestForQuoteSummary name='' />
       </WizardStep>
-    </WizardForm>
+    </RhfWizardForm>
   ) : (
     <BlockUISpinner>
       <p>Loading...</p>

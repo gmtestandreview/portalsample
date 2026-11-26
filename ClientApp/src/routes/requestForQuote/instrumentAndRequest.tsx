@@ -1,15 +1,14 @@
 import Row from 'react-bootstrap/Row';
-import type { ChangeEvent } from 'react';
 import { Alert } from 'react-bootstrap';
-import TextAreaInput from '../../components/Inputs/TextAreaInput';
-import HidableField from '../../components/forms/HidableField';
-import SelectInput from '../../components/Inputs/SelectInput';
+import RhfTextAreaInput from '../../components/Inputs/RhfTextAreaInput';
+import RhfHidableField from '../../components/forms/RhfHidableField';
+import RhfSelectInput from '../../components/Inputs/RhfSelectInput';
 import type { SelectInputOption } from '../../components/Inputs/SelectInput/types';
-import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
+import RhfRadioButtonGroup from '../../components/Inputs/RhfRadioButtonGroup';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import NumberInput from '../../components/Inputs/NumberInput';
-import TextInput from '../../components/Inputs/TextInput';
-import DatePicker from '../../components/Inputs/DatePicker';
+import RhfNumberInput from '../../components/Inputs/RhfNumberInput';
+import RhfTextInput from '../../components/Inputs/RhfTextInput';
+import RhfDatePicker from '../../components/Inputs/RhfDatePicker';
 import { useInstrumentAndRequestLookups } from './useInstrumentAndRequestLookups';
 import { useStableToday } from './useStableToday';
 
@@ -64,9 +63,7 @@ const ImportantInformation = () => (
 
 interface InstrumentDetailsSectionProps {
   measurementCategoryOptions: SelectInputOption<string>[];
-  onMeasurementCategoryChange: (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => void;
+  onMeasurementCategoryChange: (value: string) => void;
   artefactTypesSelected: SelectInputOption<string>[];
   isInstrumentOrArtefactTypeDisabled: boolean;
 }
@@ -80,7 +77,7 @@ const InstrumentDetailsSection = ({
   return (
     <Row className='mb-4'>
       <h2 className=''>Instrument/artefact details</h2>
-      <RadioButtonGroup
+      <RhfRadioButtonGroup
         legend='Does this instrument/artefact have a serial number available?'
         name='hasSerialNumber'
         id='q-hasSerialNumber'
@@ -97,20 +94,20 @@ const InstrumentDetailsSection = ({
           },
         ]}
       />
-      <HidableField name='serialNumber'>
-        <TextInput label='Serial number' name='serialNumber' />
-      </HidableField>
-      <TextInput
+      <RhfHidableField name='serialNumber'>
+        <RhfTextInput label='Serial number' name='serialNumber' />
+      </RhfHidableField>
+      <RhfTextInput
         label='Manufacturer'
         name='manufacturer'
         inlineHelp='If the Manufacturer is known please enter it below, if unknown please enter "n/a" for not applicable.'
       />
-      <TextInput
+      <RhfTextInput
         label='Model'
         name='model'
         inlineHelp='If the Model is known please enter it below, if unknown please enter "n/a" for not applicable.'
       />
-      <TextAreaInput
+      <RhfTextAreaInput
         label='Description (optional)'
         name='description'
         inlineHelp={
@@ -143,7 +140,7 @@ const InstrumentDetailsSection = ({
         rows={2}
         maxCharacters={400}
       />
-      <NumberInput
+      <RhfNumberInput
         label='Number of items'
         name='numberOfItems'
         containerClassName='col-md-6'
@@ -151,7 +148,7 @@ const InstrumentDetailsSection = ({
         decimalScale={0}
         inlineHelp='If a set of items. e.g. set of weights'
       />
-      <SelectInput<string>
+      <RhfSelectInput
         name='measurementCategory'
         label='Measurement category'
         inlineHelp={
@@ -167,7 +164,7 @@ const InstrumentDetailsSection = ({
         onChange={onMeasurementCategoryChange}
         addBlank
       />
-      <SelectInput<string>
+      <RhfSelectInput
         name='instrumentOrArtefactType'
         label='Instrument/artefact type'
         inlineHelp={
@@ -193,15 +190,14 @@ const RequestDetailsSection = () => {
   return (
     <Row className='mb-4'>
       <h2 className=''>Request details</h2>
-      <TextInput
+      <RhfTextInput
         label='Previous NMI Quote or Report number (optional)'
         name='previousQuoteOrReportNumber'
         inlineHelp='If available please provide any previous NMI Quote or Report Number e.g. Q230123, RN230123'
       />
-      <TextAreaInput
+      <RhfTextAreaInput
         label='Testing/calibration requirements'
         name='testingAndCalibrationRequirements'
-        data-pii='testingAndCalibrationRequirements'
         inlineHelp={
           <>
             <span>
@@ -237,7 +233,7 @@ const RequestDetailsSection = () => {
         rows={4}
         maxCharacters={2000}
       />
-      <DatePicker
+      <RhfDatePicker
         name='preferredInstrumentOrArtefactAvailabilityDate'
         calendarButtonTitle='Prefered date for testing/calibration'
         label='Preferred Instrument/artefact availability date (optional)'
@@ -262,7 +258,7 @@ const RequestDetailsSection = () => {
           </>
         }
       />
-      <RadioButtonGroup
+      <RhfRadioButtonGroup
         legend='Measurement report/certificate required (additional fees may apply)'
         name='measurementReportAndCertificateRequired'
         id='q-measurementReportAndCertificateRequired'

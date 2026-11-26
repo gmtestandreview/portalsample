@@ -921,7 +921,9 @@ describe('workflow route wrappers', () => {
     renderAt(
       '/request-for-quote/RFQ-123/view-summary',
       <ViewRequestForQuoteSummary isSubmitted />,
-      '/request-for-quote/:id/*',
+      // Mounted as in App.tsx: the single step has an empty location, so it
+      // only matches when the route consumes the `view-summary` segment.
+      '/request-for-quote/:id/view-summary/*',
     );
 
     await waitFor(() => {

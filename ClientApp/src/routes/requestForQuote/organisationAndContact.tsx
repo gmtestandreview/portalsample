@@ -1,18 +1,18 @@
 import Row from 'react-bootstrap/Row';
 import { useLocation, useParams } from 'react-router';
 import { Alert, Button } from 'react-bootstrap';
-import { useFormikContext } from 'formik';
+import { useWatch } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
-import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
-import HidableField from '../../components/forms/HidableField';
-import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
+import RhfContactDetails from '../../components/forms/CommonForms/RhfContactDetails';
+import RhfHidableField from '../../components/forms/RhfHidableField';
+import RhfRadioButtonGroup from '../../components/Inputs/RhfRadioButtonGroup';
 import { formatTradingBranchFromStrings } from '../common/helperFunctions';
 import { useModalDispatch } from '../../components/modals/ModalContext';
 import { YesNo } from '../../api/web-api-client';
 import type { OrganisationAndContact as OrganisationAndContactValues } from '../../api/web-api-client';
 
 const OrganisationAndContact = () => {
-  const { values } = useFormikContext<OrganisationAndContactValues>();
+  const values = useWatch<OrganisationAndContactValues>();
   const {
     sourceReferenceId,
     abn,
@@ -164,7 +164,7 @@ const OrganisationAndContact = () => {
       </Row>
       {Number.parseInt(String(organisationCount ?? ''), 10) > 1 && (
         <Row className='mb-4'>
-          <RadioButtonGroup
+          <RhfRadioButtonGroup
             legend='Are you creating this request for the correct branch or location above?'
             name='isCorrectBranchOrLocation'
             id='q-isCorrectBranchOrLocation'
@@ -206,7 +206,7 @@ const OrganisationAndContact = () => {
       )}
       <Row className='mb-4'>
         <h2 className=''>Contact information</h2>
-        <RadioButtonGroup
+        <RhfRadioButtonGroup
           legend='Who is the main contact person for this request?'
           name='isPrincipalContact'
           id='q-isPrincipalContact'
@@ -240,9 +240,9 @@ const OrganisationAndContact = () => {
             },
           ]}
         />
-        <HidableField name='principalContactHide'>
-          <ContactDetailsInput key='contact' name='contact' />
-        </HidableField>
+        <RhfHidableField name='principalContactHide'>
+          <RhfContactDetails key='contact' name='contact' />
+        </RhfHidableField>
       </Row>
     </>
   );

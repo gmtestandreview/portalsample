@@ -1,6 +1,5 @@
-import { useFormikContext } from 'formik';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { CRMLookupTypes, LookupClient } from '../../api/web-api-client';
 import type {
@@ -35,9 +34,10 @@ const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
 // the rendered component because `isLoading` gates the only call site.
 export const useInstrumentAndRequestLookups = () => {
   const { accounts, instance } = useMsal();
-  const context = useFormikContext<InstrumentAndRequestStep>();
-  const measurementCategory = context.getFieldMeta('measurementCategory')
-    .value as string | undefined;
+  const { resetField, setValue } = useFormContext<InstrumentAndRequestStep>();
+  const measurementCategory = useWatch<InstrumentAndRequestStep>({
+    name: 'measurementCategory',
+  }) as string | undefined;
   const isLoadingMeasurementCategoriesRef = useRef(false);
   const [measurementCategories, setMeasurementCategories] =
     useState<LookupResponse[]>();
@@ -105,17 +105,16 @@ export const useInstrumentAndRequestLookups = () => {
     return options;
   };
 
-  const onMeasurementCategoryChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    void context.setFieldValue('instrumentOrArtefactType', '');
-    void context.setFieldTouched('instrumentOrArtefactType', false);
-    if (artefactTypes !== undefined && event.target.value === noMeasurementId) {
-      const { noInstrumentId } = getArtefactTypeOptions(
-        artefactTypes,
-        event.target.value,
-      );
-      void context.setFieldValue('instrumentOrArtefactType', noInstrumentId);
+  const onMeasurementCategoryChange = (value: string) => {
+    // Equivalent of Formik's setFieldValue('') + setFieldTouched(false):
+    // reset to an untouched empty value, then apply the "no instrument"
+    // default when the "No measurement" category is picked.
+    resetField('instrumentOrArtefactType', { defaultValue: '' });
+    if (artefactTypes !== undefined && value === noMeasurementId) {
+      const { noInstrumentId } = getArtefactTypeOptions(artefactTypes, value);
+      setValue('instrumentOrArtefactType', noInstrumentId, {
+        shouldDirty: true,
+      });
     }
   };
 

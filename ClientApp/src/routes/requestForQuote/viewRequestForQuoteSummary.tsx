@@ -3,7 +3,7 @@ import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import type { SummaryProps } from './types';
-import WizardForm from '../../components/forms/WizardForm';
+import RhfWizardForm from '../../components/forms/WizardForm/RhfWizardForm';
 import WizardStep from '../../components/forms/WizardForm/WizardStep';
 import viewRequestForQuoteSummaryProps from './viewRequestForQuoteSummaryProps';
 import RequestForQuoteSummary from './requestForQuoteSummary';
@@ -66,7 +66,7 @@ const ViewRequestForQuoteSummary = ({
 
   const accountDetails = account?.details;
   return statuses !== undefined && id !== undefined && accountDetails ? (
-    <WizardForm {...requestForQuoteWizardProps}>
+    <RhfWizardForm {...requestForQuoteWizardProps}>
       <WizardStep
         {...viewRequestForQuoteSummaryProps(
           id,
@@ -79,7 +79,7 @@ const ViewRequestForQuoteSummary = ({
       >
         <RequestForQuoteSummary name='' isSubmitted />
       </WizardStep>
-    </WizardForm>
+    </RhfWizardForm>
   ) : (
     <BlockUISpinner>
       <p>Loading...</p>

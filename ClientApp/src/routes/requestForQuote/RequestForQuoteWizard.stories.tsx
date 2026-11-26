@@ -319,6 +319,56 @@ export const InstrumentCategoryChangeResetsTypeAndLocksOnNoMeasurement =
     },
   });
 
+/**
+ * Changing the category clears the type and untouches it, so a message shown for
+ * the touched, empty type goes away until the field is touched again.
+ */
+export const CategoryChangeUntouchesInstrumentType = meta.story({
+  parameters: {
+    portal: { initialEntries: [`${BASE}/instrument-and-request`] },
+  },
+  beforeEach({ msw }) {
+    msw.use(statuses('Completed', 'NotStarted', 'NotStarted'));
+    msw.use(...wizardHandlers());
+  },
+  play: async ({ canvas, userEvent }) => {
+    await canvas.findByRole('heading', { name: 'Instrument/artefact details' });
+    await waitFor(() =>
+      expect(canvas.getByLabelText('Instrument/artefact type')).toHaveValue(
+        'digital-thermometer',
+      ),
+    );
+
+    await userEvent.selectOptions(
+      canvas.getByLabelText('Measurement category'),
+      'mass',
+    );
+    await userEvent.click(canvas.getByLabelText('Instrument/artefact type'));
+    await userEvent.tab();
+    const typeSelect = canvas.getByLabelText('Instrument/artefact type');
+
+    await waitFor(() =>
+      expect(typeSelect).toHaveAccessibleDescription(
+        /Instrument or artefact type/,
+      ),
+    );
+
+    await userEvent.selectOptions(
+      canvas.getByLabelText('Measurement category'),
+      'electrical',
+    );
+
+    await waitFor(() =>
+      expect(
+        canvas.getByLabelText('Instrument/artefact type'),
+      ).not.toHaveAccessibleDescription(/Instrument or artefact type/),
+    );
+    await expect(canvas.getByLabelText('Instrument/artefact type')).toHaveValue(
+      '',
+    );
+  },
+});
+
 export const SerialNumberIsHiddenAndOmittedWhenNotAvailable = meta.story({
   parameters: {
     portal: { initialEntries: [`${BASE}/instrument-and-request`] },

@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { Formik, useFormikContext } from 'formik';
-import type { ChangeEvent, ReactNode } from 'react';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import type {
@@ -38,14 +38,17 @@ vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
 
 const wrapperInitialValues = { value: {} as InstrumentAndRequestStep };
 
+const Provider = ({ children }: { readonly children: ReactNode }) => {
+  // `values` re-syncs the form when it changes, like Formik's enableReinitialize.
+  const methods = useForm<InstrumentAndRequestStep>({
+    values: wrapperInitialValues.value,
+  });
+
+  return <FormProvider {...methods}>{children}</FormProvider>;
+};
+
 const wrapper = ({ children }: { readonly children: ReactNode }) => (
-  <Formik<InstrumentAndRequestStep>
-    initialValues={wrapperInitialValues.value}
-    enableReinitialize
-    onSubmit={() => undefined}
-  >
-    {children}
-  </Formik>
+  <Provider>{children}</Provider>
 );
 
 // function suite titles are required by vitest/prefer-describe-function-title.
@@ -120,7 +123,7 @@ describe(useInstrumentAndRequestLookups, () => {
     });
   });
 
-  it('leaves the artefact types untouched when a category changes before they load', async () => {
+  it('leaves the artefact types untouched when a category changes before they load', () => {
     expect.hasAssertions();
 
     resetMsalMock();
@@ -133,11 +136,8 @@ describe(useInstrumentAndRequestLookups, () => {
       wrapper,
     });
 
-    await act(async () => {
-      result.current.onMeasurementCategoryChange({
-        target: { value: 'mass' },
-      } as unknown as ChangeEvent<HTMLSelectElement>);
-      await Promise.resolve();
+    act(() => {
+      result.current.onMeasurementCategoryChange('mass');
     });
 
     expect(result.current.artefactTypesSelected).toBeUndefined();
@@ -243,7 +243,7 @@ describe(useInstrumentAndRequestLookups, () => {
 
     const { result } = renderHook(
       () => ({
-        formik: useFormikContext<InstrumentAndRequestStep>(),
+        form: useFormContext<InstrumentAndRequestStep>(),
         lookups: useInstrumentAndRequestLookups(),
       }),
       { wrapper },
@@ -253,15 +253,94 @@ describe(useInstrumentAndRequestLookups, () => {
       expect(result.current.lookups.isLoading).toBe(false);
     });
 
-    await act(async () => {
-      await result.current.formik.setFieldValue(
-        'measurementCategory',
-        'category-1',
-      );
+    act(() => {
+      result.current.form.setValue('measurementCategory', 'category-1');
     });
 
     expect(result.current.lookups.artefactTypesSelected).toStrictEqual([
       { displayText: 'Artefact 1', value: 'artefact-1' },
     ]);
+  });
+
+  it('clears the instrument type and its touched state when the category changes', async () => {
+    expect.hasAssertions();
+
+    resetMsalMock();
+    clients.lookup.methods.getLookup.mockReset();
+    wrapperInitialValues.value = {
+      measurementCategory: 'category-1',
+      instrumentOrArtefactType: 'artefact-1',
+    };
+    grantToken();
+    clients.lookup.methods.getLookup
+      .mockResolvedValueOnce([
+        { id: 'category-1', label: 'Category 1' },
+        { id: 'category-2', label: 'Category 2' },
+      ])
+      .mockResolvedValueOnce([]);
+
+    const { result } = renderHook(
+      () => ({
+        form: useFormContext<InstrumentAndRequestStep>(),
+        lookups: useInstrumentAndRequestLookups(),
+      }),
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(result.current.lookups.isLoading).toBe(false);
+    });
+
+    act(() => {
+      // resetField only acts on registered fields, as in the rendered step.
+      result.current.form.register('instrumentOrArtefactType');
+      result.current.form.setValue('instrumentOrArtefactType', 'artefact-1', {
+        shouldTouch: true,
+      });
+      result.current.lookups.onMeasurementCategoryChange('category-2');
+    });
+
+    expect(result.current.form.getValues('instrumentOrArtefactType')).toBe('');
+    expect(
+      result.current.form.getFieldState('instrumentOrArtefactType').isTouched,
+    ).toBe(false);
+  });
+
+  it('defaults the instrument type to "No instrument" for the no-measurement category', async () => {
+    expect.hasAssertions();
+
+    resetMsalMock();
+    clients.lookup.methods.getLookup.mockReset();
+    wrapperInitialValues.value = { measurementCategory: 'category-1' };
+    grantToken();
+    clients.lookup.methods.getLookup
+      .mockResolvedValueOnce([
+        { id: 'category-1', label: 'Category 1' },
+        { id: 'no-measurement', label: 'No measurement' },
+      ])
+      .mockResolvedValueOnce([
+        { id: 'none', label: 'No instrument', parentId: 'no-measurement' },
+        { id: 'other', label: 'Other', parentId: 'no-measurement' },
+      ]);
+
+    const { result } = renderHook(
+      () => ({
+        form: useFormContext<InstrumentAndRequestStep>(),
+        lookups: useInstrumentAndRequestLookups(),
+      }),
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(result.current.lookups.isLoading).toBe(false);
+    });
+
+    act(() => {
+      result.current.lookups.onMeasurementCategoryChange('no-measurement');
+    });
+
+    expect(result.current.form.getValues('instrumentOrArtefactType')).toBe(
+      'none',
+    );
   });
 });
