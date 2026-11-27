@@ -306,7 +306,10 @@ describe(DeliveryAndReturn, () => {
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'test-id',
+          expect.any(AbortSignal),
+        );
       });
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
@@ -350,12 +353,18 @@ describe(DeliveryAndReturn, () => {
       });
       const { rerender } = render(makeTree('q-1'));
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-1');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'q-1',
+          expect.any(AbortSignal),
+        );
       });
 
       rerender(makeTree('q-2'));
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'q-2',
+          expect.any(AbortSignal),
+        );
       });
 
       expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(2);
@@ -363,6 +372,84 @@ describe(DeliveryAndReturn, () => {
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
       });
+    });
+
+    it('aborts the previous request and ignores its late response when id changes', async () => {
+      expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
+
+      let resolveFirst: ((value: unknown) => void) | undefined;
+      mocks.getDeliveryAndReturn
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              resolveFirst = resolve;
+            }),
+        )
+        .mockResolvedValueOnce({
+          ...baseApiResponse,
+          rfqOrganisation: {
+            ...baseApiResponse.rfqOrganisation,
+            streetAddress: { ...streetAddr, line1: '2 Second Quote St' },
+          },
+        });
+
+      const { rerender } = render(makeTree('q-1'));
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(1);
+      });
+      const firstSignal = (
+        mocks.getDeliveryAndReturn.mock.calls as unknown as [
+          string,
+          AbortSignal,
+        ][]
+      )[0]?.[1];
+
+      rerender(makeTree('q-2'));
+
+      await expect(
+        screen.findByText(/2 Second Quote St/),
+      ).resolves.toBeInTheDocument();
+      expect(firstSignal?.aborted).toBe(true);
+
+      await act(async () => {
+        resolveFirst?.({
+          ...baseApiResponse,
+          rfqOrganisation: {
+            ...baseApiResponse.rfqOrganisation,
+            streetAddress: { ...streetAddr, line1: '1 First Quote St' },
+          },
+        });
+        await Promise.resolve();
+      });
+
+      expect(screen.queryByText(/1 First Quote St/)).not.toBeInTheDocument();
+      expect(screen.getByText(/2 Second Quote St/)).toBeInTheDocument();
+    });
+
+    it('aborts the in-flight request on unmount', async () => {
+      expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
+
+      mocks.getDeliveryAndReturn.mockImplementation(
+        () => new Promise(() => undefined),
+      );
+      const { unmount } = render(makeTree('q-1'));
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(1);
+      });
+      const signal = (
+        mocks.getDeliveryAndReturn.mock.calls as unknown as [
+          string,
+          AbortSignal,
+        ][]
+      )[0]?.[1];
+
+      unmount();
+
+      expect(signal?.aborted).toBe(true);
     });
   });
 
@@ -377,7 +464,10 @@ describe(DeliveryAndReturn, () => {
       renderComponent();
       // Wait until the API call has been attempted — the effect has fired.
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'test-id',
+          expect.any(AbortSignal),
+        );
       });
       // Drain queued state updates (setIsLoading(false) from catch block,
       // plus any form re-renders) so they don't fire outside act().
@@ -387,6 +477,9 @@ describe(DeliveryAndReturn, () => {
 
       // Component must still be mounted with the info banner visible.
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
+      expect(screen.getByRole('alert').textContent).toMatch(
+        /could not load your delivery and return/i,
+      );
     });
   });
 });

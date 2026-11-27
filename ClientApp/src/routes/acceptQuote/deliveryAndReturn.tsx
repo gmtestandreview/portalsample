@@ -1,15 +1,14 @@
 import { useMsal } from '@azure/msal-react';
 import { Alert, Col, Row } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { AcceptQuoteClient, AccountsClient } from '../../api/web-api-client';
+import { AcceptQuoteClient } from '../../api/web-api-client';
 import type {
-  AcceptQuotePreInfoDto,
   AddressDetailsDto,
   DeliveryAndReturnStep,
 } from '../../api/web-api-client';
 import type { DeliveryAndReturnProps } from './types';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import { silentRequestFor } from '../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import { useAccountState } from '../../authentication/hooks';
 import MailingLabel from '../../components/Utilities/mailingLabel';
 import AppLogger from '../../instrumentation/AppLogger';
@@ -17,24 +16,34 @@ import DeliveryInstructions from '../../components/Utilities/deliveryInstruction
 import DeliveryAndReturnFormFields from './deliveryAndReturnFormFields';
 import DeliveryAndReturnSummary from './summary/DeliveryAndReturnSummary';
 
+interface LoadedDeliveryAndReturn {
+  step: DeliveryAndReturnStep;
+  streetAddress: AddressDetailsDto | undefined;
+  postalAddress: AddressDetailsDto | undefined;
+}
+
+const toLoaded = (step: DeliveryAndReturnStep): LoadedDeliveryAndReturn => {
+  const organisation = step.rfqOrganisation;
+  return {
+    step,
+    streetAddress: organisation?.streetAddress,
+    postalAddress: organisation?.postalAddressSameAsStreetAddress
+      ? organisation.streetAddress
+      : organisation?.postalAddress,
+  };
+};
+
 const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);
-  const [deliveryAndReturnStep, setDeliveryAndReturnStep] = useState<
-    DeliveryAndReturnStep | undefined
-  >();
-  const [acceptQuotePreInfo, setAcceptQuotePreInfo] = useState<
-    AcceptQuotePreInfoDto | undefined
-  >();
-  const [postalAddress, setPostalAddress] = useState<
-    AddressDetailsDto | undefined
-  >();
-  const [streetAddress, setStreetAddress] = useState<
-    AddressDetailsDto | undefined
-  >();
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [loaded, setLoaded] = useState<LoadedDeliveryAndReturn | undefined>();
   const account = useAccountState();
   const homeAccountId = account?.details?.homeAccountId;
+
+  const acceptQuotePreInfo = loaded?.step.acceptQuotePreInfo;
+  const { streetAddress, postalAddress } = loaded ?? {};
 
   const renderNoDeliveryInfoMsg = () => (
     <p className='mb-0'>
@@ -67,44 +76,46 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   );
 
   useEffect(() => {
-    const getAcceptQuotePreInfo = async () => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const load = async () => {
+      if (id === undefined) return;
+
+      setIsLoading(true);
+      setLoadFailed(false);
+      setLoaded(undefined);
       try {
         AppLogger.verbose('DeliveryAndReturn.getAcceptQuotePreInfo.', {
           homeAccountId,
         });
-        const acceptQuoteClient = new AcceptQuoteClient();
-        const accountsClient = new AccountsClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          AcceptQuoteClient,
+          accounts,
+          instance,
         );
-        acceptQuoteClient.setAuthToken(tokenResult.accessToken);
-        accountsClient.setAuthToken(tokenResult.accessToken);
+        const step = await client.getDeliveryAndReturn(id, signal);
+        if (signal.aborted) return;
 
-        if (id === undefined) return;
-
-        const deliveryAndReturn =
-          await acceptQuoteClient.getDeliveryAndReturn(id);
-        setDeliveryAndReturnStep(deliveryAndReturn);
-        setAcceptQuotePreInfo(deliveryAndReturn.acceptQuotePreInfo);
-
-        setStreetAddress(deliveryAndReturn.rfqOrganisation?.streetAddress);
-
-        if (deliveryAndReturn.rfqOrganisation?.postalAddressSameAsStreetAddress)
-          setPostalAddress(deliveryAndReturn.rfqOrganisation.streetAddress);
-        else setPostalAddress(deliveryAndReturn.rfqOrganisation?.postalAddress);
+        setLoaded(toLoaded(step));
       } catch (error) {
+        // A superseded request (id changed or unmounted) is not a failure.
+        if (signal.aborted) return;
+
+        setLoadFailed(true);
         AppLogger.error('Failed to load AcceptQuotePreInfo', error as Error, {
           Id: id,
         });
+      } finally {
+        if (!signal.aborted) setIsLoading(false);
       }
     };
 
-    const loadDataForDisplay = async () => {
-      setIsLoading(true);
-      await getAcceptQuotePreInfo();
-      setIsLoading(false);
+    void load();
+
+    return () => {
+      controller.abort();
     };
-    void loadDataForDisplay();
   }, [homeAccountId, accounts, id, instance]);
 
   return (
@@ -152,7 +163,13 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
           </div>
         </Alert>
       )}
-      {!acceptQuotePreInfo?.receiptAndDispatchNA && (
+      {loadFailed && (
+        <Alert variant='danger' role='alert' className='mb-4'>
+          We could not load your delivery and return details. Please refresh the
+          page or try again later.
+        </Alert>
+      )}
+      {!loadFailed && !acceptQuotePreInfo?.receiptAndDispatchNA && (
         <>
           <Row className='mb-4'>
             <h2 className={isSummary ? 'h3 my-3' : ''}>
@@ -173,7 +190,7 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
             <DeliveryAndReturnSummary
               values={props.summaryValues ?? {}}
               hidden={props.summaryHidden ?? {}}
-              deliveryAndReturnStep={deliveryAndReturnStep}
+              deliveryAndReturnStep={loaded?.step}
               streetAddress={streetAddress}
               postalAddress={postalAddress}
             />

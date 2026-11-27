@@ -210,7 +210,10 @@ const renderSummary = async (scenario: Scenario) => {
   // The step sections load their own data; wait for the slowest one.
   await waitFor(() => {
     expect(mocks.getPaymentDetails).toHaveBeenCalledWith('quote-1');
-    expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('quote-1');
+    expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+      'quote-1',
+      expect.any(AbortSignal),
+    );
     expect(mocks.getReportRecipient).toHaveBeenCalledWith('quote-1');
   });
   await screen.findByText('Quotation summary marker');

@@ -8,6 +8,8 @@ import {
   ReturnAddressTypeValues,
   ReturnContactTypeValues,
   ReturnMethodValues,
+  ShipmentModeValues,
+  ShipmentPriorityValues,
   type DeliveryAndReturnStep,
 } from '@/api/web-api-client';
 import DeliveryAndReturn from '@/routes/acceptQuote/deliveryAndReturn';
@@ -285,7 +287,7 @@ describe('deliveryAndReturn behavior: visibility', () => {
     expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
   });
 
-  it('keeps rendering and logs when the step fails to load', async () => {
+  it('logs and shows an error instead of the form when the step fails to load', async () => {
     expect.hasAssertions();
 
     resetDeliveryAndReturnBehaviorMocks();
@@ -301,7 +303,11 @@ describe('deliveryAndReturn behavior: visibility', () => {
       );
     });
 
-    expect(screen.getByTestId('info-summary')).toBeInTheDocument();
+    await expect(
+      screen.findByText(/could not load your delivery and return/i),
+    ).resolves.toBeInTheDocument();
+    expect(screen.queryByText('Return method')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
   });
 });
 
@@ -372,7 +378,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     });
   });
 
-  it('strips only the hidden return address (the carrier and contact wrappers do not strip)', async () => {
+  it('strips stale hidden carrier, contact and return address values before submit', async () => {
     expect.hasAssertions();
 
     resetDeliveryAndReturnBehaviorMocks();
@@ -385,7 +391,15 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
         returnAddressType: ReturnAddressTypeValues.BusinessAddress,
         returnMethod: ReturnMethodValues.ClientToArrange,
         carrierName: 'stale',
+        carrierAccountNumber: 'stale',
+        carrierContactPerson: 'stale',
+        carrierContactPhone: '0400000000',
         packagingNotes: 'stale',
+        insuranceNotes: 'stale',
+        specialInstructions: 'stale',
+        customsValue: 1,
+        shipmentMode: ShipmentModeValues.Road,
+        shipmentPriority: ShipmentPriorityValues.Standard,
         contact: { firstName: 'stale' },
         returnAddress: { line1: 'stale' },
       },
@@ -403,9 +417,44 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
       returnContactType: 'SamePerson',
       returnAddressType: 'BusinessAddress',
       returnMethod: 'ClientToArrange',
-      carrierName: 'stale',
-      packagingNotes: 'stale',
-      contact: { firstName: 'stale' },
+    });
+  });
+
+  it('keeps carrier and contact values while they are visible', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    const user = userEvent.setup();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
+    renderStep({
+      values: {
+        returnContactType: ReturnContactTypeValues.DifferentPerson,
+        returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+        returnMethod: ReturnMethodValues.ClientWillProvide,
+        carrierName: 'Carrier Co',
+        carrierAccountNumber: 'ACC-1',
+        contact: {
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          phone: '0400000000',
+        },
+      },
+      onSubmit,
+    });
+    await waitForLoad();
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(submittedValues(onSubmit)).toMatchObject({
+      carrierName: 'Carrier Co',
+      carrierAccountNumber: 'ACC-1',
+      contact: { firstName: 'Ada' },
     });
   });
 
