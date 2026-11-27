@@ -284,10 +284,10 @@ vi.mock(
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass') as unknown as string,
-  () =>
-    ({
-      default: vi.fn<() => void>(),
-    }) satisfies __ExactMockModule<__TestMockModule59>,
+  async () =>
+    (
+      await import('../helpers/commonModuleMocks')
+    ).noopHookModule() satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(

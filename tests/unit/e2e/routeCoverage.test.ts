@@ -4,15 +4,19 @@ import { routeCoverage } from '../../e2e/route-coverage';
 import { pathExists, readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
-const appSource = readTextFileSync(
-  path.join(repoRoot, 'ClientApp', 'src', 'App.tsx'),
+const routeConfigSource = readTextFileSync(
+  path.join(repoRoot, 'ClientApp', 'src', 'routes.ts'),
   repoRoot,
 );
 
-const declaredPaths = Array.from(
-  appSource.matchAll(/<Route\s+path='([^']+)'/g),
+const routePaths = Array.from(
+  routeConfigSource.matchAll(/\broute\(\s*['"]([^'"]+)['"]/gu),
   (match) => match[1],
 ).filter((routePath): routePath is string => routePath !== undefined);
+const declaredPaths = [
+  ...routePaths.map((routePath) => (routePath === '*' ? '*' : `/${routePath}`)),
+  ...(/\bindex\(\s*['"]/u.exec(routeConfigSource) ? ['/'] : []),
+];
 
 const scenarioContract = (scenario: unknown, featureSource: string) => {
   const hasScenario =
@@ -47,7 +51,7 @@ const coverageEntryContract = (entry: (typeof routeCoverage)[number]) => {
 };
 
 describe('playwright-BDD route coverage manifest', () => {
-  it('registers every route declared in App.tsx exactly once', () => {
+  it('registers every route declared in the Framework route config exactly once', () => {
     expect.hasAssertions();
 
     const registered = routeCoverage.map(({ path: routePath }) => routePath);

@@ -2,6 +2,8 @@
   "threshold": 3,
   "path": ["ClientApp/src", "tests"],
   "ignore": [
+    "**/package.json",
+    "**/package-lock.json",
     "**/node_modules/**",
     "**/*.min.js",
     "**/coverage/**",
@@ -88,6 +90,18 @@
   "format": ["javascript", "jsx", "typescript", "tsx", "python"],
   "minTokens": 50,
   "minLines": 5,
+  "max_lines": null,
+  "max_gap_lines": 0,
+  "similarity": 1.0,
+  "semantic": null,
+  "kind": [],
+  "mode": "mild",
+  "formats": [],
+  "ignorePattern": ["(?s)\\A/\\*.*?\\*/"],
   "reporters": ["console", "html", "json", "ai"],
-  "output": "report"
+  "output": "report",
+  "absolute": false,
+  "deadCode": true,
+  "includeTests": true,
+  "includeEntryExports": true
 }

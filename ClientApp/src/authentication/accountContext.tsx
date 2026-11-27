@@ -31,12 +31,12 @@ export interface TargetOrganisation {
   targetOrganisationName: string;
 }
 
-export interface AccountStateContext {
+export interface AccountStateContextValue {
   isLoading?: boolean;
   details: AccountDetails | null;
 }
 
-export interface AccountDispatchContext {
+export interface AccountDispatchContextValue {
   setAgree: () => void;
   setCompleted: () => void;
   setContactCompleted: () => void;
@@ -63,7 +63,10 @@ export interface AccountDispatchContext {
 }
 
 // Combined type kept for Props helper functions that need both state and dispatch.
-export type AccountContextState = AccountStateContext & AccountDispatchContext;
+export type AccountStateContext = AccountStateContextValue;
+export type AccountDispatchContext = AccountDispatchContextValue;
+export type AccountContextState =
+  AccountStateContextValue & AccountDispatchContextValue;
 
 export {
   AccountDispatchContext,

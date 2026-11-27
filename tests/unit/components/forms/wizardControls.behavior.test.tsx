@@ -18,10 +18,7 @@ interface WizardValues {
 type Submit = (values: WizardValues) => undefined | Promise<unknown>;
 type AnalyticsProps = ComponentProps<typeof GoogleAnalytics>;
 type ErrorBoundaryProps = ComponentProps<typeof ErrorBoundary>;
-type ErrorBoundaryMock = (
-  props: ErrorBoundaryProps,
-  context?: Record<string, never>,
-) => React.ReactElement;
+type ErrorBoundaryMock = (props: ErrorBoundaryProps) => React.ReactElement;
 
 const wrapperMocks = vi.hoisted(() => ({
   analytics: vi.fn<(props: AnalyticsProps) => React.ReactElement>(
@@ -296,14 +293,13 @@ describe('wizard control behavior', () => {
     expect(wrapperMocks.errorBoundary.mock.calls[0]?.[0]).toHaveProperty(
       'children',
     );
-    expect(wrapperMocks.errorBoundary.mock.calls[0]?.[1]).toStrictEqual({});
-    expect(wrapperMocks.analytics).toHaveBeenCalledWith(
+    expect(wrapperMocks.analytics).toHaveBeenCalledTimes(1);
+    expect(wrapperMocks.analytics.mock.calls[0]?.[0]).toStrictEqual(
       expect.objectContaining({
         anonymiseIp: false,
         sendPageView: true,
         testMode: false,
       }),
-      {},
     );
   });
 });

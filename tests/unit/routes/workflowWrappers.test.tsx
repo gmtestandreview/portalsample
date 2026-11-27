@@ -1,7 +1,13 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { describe, expect, it, vi } from 'vitest';
-import { StrictMode } from 'react';
+import { describe, expect, it, vi, type Mock } from 'vitest';
+import { StrictMode, useState, type ComponentType } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import type {
   AccountDetails,
@@ -30,8 +36,8 @@ const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
   appLoggerVerbose: vi.fn<(...args: unknown[]) => unknown>(),
   appLoggerTrace: vi.fn<(...args: unknown[]) => unknown>(),
-  useAccountState: vi.fn<(...args: unknown[]) => unknown>(),
   useAccountDispatch: vi.fn<(...args: unknown[]) => unknown>(),
+  useAccountState: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock(
@@ -190,12 +196,10 @@ vi.mock(
 
 vi.mock(
   import('../../../ClientApp/src/components/BlockUISpinner') as unknown as string,
-  () =>
-    ({
-      default: ({ children }: { children: React.ReactNode }) => (
-        <div data-testid='block-spinner'>{children}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule14>,
+  async () =>
+    (
+      await import('../helpers/commonModuleMocks')
+    ).blockUiSpinnerModule() satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 vi.mock(
@@ -210,18 +214,18 @@ vi.mock(
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass') as unknown as string,
-  () =>
-    ({
-      default: vi.fn<() => void>(),
-    }) satisfies __ExactMockModule<__TestMockModule59>,
+  async () =>
+    (
+      await import('../helpers/commonModuleMocks')
+    ).noopHookModule() satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle') as unknown as string,
-  () =>
-    ({
-      default: vi.fn<() => void>(),
-    }) satisfies __ExactMockModule<__TestMockModule89>,
+  async () =>
+    (
+      await import('../helpers/commonModuleMocks')
+    ).noopHookModule() satisfies __ExactMockModule<__TestMockModule89>,
 );
 
 vi.mock(
@@ -451,6 +455,18 @@ const resetWorkflowWrapperMocks = () => {
   });
 };
 
+const expectApplicationStepsLoadFailure = async (id: string) => {
+  await waitFor(() => {
+    expect(screen.getByTestId('not-found')).toBeInTheDocument();
+  });
+
+  expect(mocks.appLoggerError).toHaveBeenCalledWith(
+    'Failed to load application steps',
+    expect.any(Error),
+    { Id: id },
+  );
+};
+
 describe('workflow route wrappers', () => {
   it('renders the request-for-quote wizard after loading statuses', async () => {
     expect.hasAssertions();
@@ -552,15 +568,7 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('not-found')).toBeInTheDocument();
-    });
-
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load application steps',
-      expect.any(Error),
-      { Id: 'APP-2' },
-    );
+    await expectApplicationStepsLoadFailure('APP-2');
   });
 
   it('recovers from a rejected token refresh instead of deadlocking the wizard', async () => {
@@ -588,15 +596,8 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*',
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('not-found')).toBeInTheDocument();
-    });
+    await expectApplicationStepsLoadFailure('APP-5');
 
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load application steps',
-      expect.any(Error),
-      { Id: 'APP-5' },
-    );
     // The rejection must be handled before the client is ever built.
     expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
   });
@@ -1304,59 +1305,148 @@ describe('workflow route wrappers', () => {
     });
   });
 
-  it('marks quotation summary file errors when quote loading fails', async () => {
-    expect.hasAssertions();
+  it.each([
+    ['CRM-FAIL', 'Failed to get Quotedetails: CRM-FAIL'],
+    [undefined, 'Failed to get Quotedetails: '],
+  ] satisfies [string | undefined, string][])(
+    'logs and flags a file error when quote loading fails for id %s',
+    async (cRMQuoteRequestId, logMessage) => {
+      expect.hasAssertions();
 
-    resetWorkflowWrapperMocks();
+      resetWorkflowWrapperMocks();
 
-    mocks.getQuoteRequestDetails.mockRejectedValueOnce(
-      new Error('quote failed'),
-    );
-    const QuotationSummary = (
-      await import('../../../ClientApp/src/routes/acceptQuote/quotationSummary')
-    ).default;
-
-    renderAt(
-      '/quotation-summary',
-      <QuotationSummary cRMQuoteRequestId='CRM-FAIL' isSummary />,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('quotation-details')).toHaveAttribute(
-        'data-file-error',
-        'true',
+      mocks.getQuoteRequestDetails.mockRejectedValueOnce(
+        new Error('quote failed'),
       );
-    });
+      const QuotationSummary = (
+        await import(
+          '../../../ClientApp/src/routes/acceptQuote/quotationSummary'
+        )
+      ).default;
 
-    expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to get Quotedetails: CRM-FAIL',
-      expect.any(Error),
-    );
-  });
+      renderAt(
+        '/quotation-summary',
+        <QuotationSummary cRMQuoteRequestId={cRMQuoteRequestId} isSummary />,
+      );
 
-  it('logs quote loading failures with an empty id when none is supplied', async () => {
-    expect.hasAssertions();
+      await waitFor(() => {
+        expect(screen.getByTestId('quotation-details')).toHaveAttribute(
+          'data-file-error',
+          'true',
+        );
+      });
 
-    resetWorkflowWrapperMocks();
-
-    mocks.getQuoteRequestDetails.mockRejectedValueOnce(
-      new Error('quote failed'),
-    );
-    const QuotationSummary = (
-      await import('../../../ClientApp/src/routes/acceptQuote/quotationSummary')
-    ).default;
-
-    renderAt(
-      '/quotation-summary',
-      <QuotationSummary cRMQuoteRequestId={undefined} isSummary />,
-    );
-
-    await waitFor(() => {
+      expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
-        'Failed to get Quotedetails: ',
+        logMessage,
         expect.any(Error),
       );
-    });
-  });
+    },
+  );
+});
+
+// A harness whose button re-renders the wrapped route with a fresh MSAL
+// `accounts` array, so each route's effect re-runs while its first request is
+// still in flight.
+const RerenderHarness = ({ Wrapped }: Readonly<{ Wrapped: ComponentType }>) => {
+  const [, setTick] = useState(0);
+
+  return (
+    <>
+      <button
+        type='button'
+        onClick={() => {
+          setTick((tick) => tick + 1);
+        }}
+      >
+        rerender
+      </button>
+      <Wrapped />
+    </>
+  );
+};
+
+const rerenderWithFreshAccounts = () => {
+  mocks.msalAccounts = [{ homeAccountId: 'account-1' }];
+  fireEvent.click(screen.getByRole('button', { name: 'rerender' }));
+};
+
+type PendingRequest = Mock<(...args: unknown[]) => unknown>;
+
+describe('workflow route wrappers re-running effects while a request is in flight', () => {
+  it.each([
+    [
+      'creating a request-for-quote application',
+      '/request-for-quote-create',
+      '/request-for-quote-create',
+      async () =>
+        (await import('../../../ClientApp/src/routes/requestForQuote/create'))
+          .default,
+      mocks.createApplication,
+    ],
+    [
+      'copying a request-for-quote application',
+      '/request-for-quote-copy/RFQ-1',
+      '/request-for-quote-copy/:id',
+      async () =>
+        (await import('../../../ClientApp/src/routes/requestForQuote/copy'))
+          .default,
+      mocks.copyApplication,
+    ],
+    [
+      'creating an accept-quote application',
+      '/accept-quote-create/RFQ-1',
+      '/accept-quote-create/:id',
+      async () =>
+        (await import('../../../ClientApp/src/routes/acceptQuote/create'))
+          .default,
+      mocks.createApplication,
+    ],
+    [
+      'loading the submitted request-for-quote summary statuses',
+      '/request-for-quote/RFQ-1/view-summary',
+      '/request-for-quote/:id/view-summary/*',
+      async () => {
+        const ViewRequestForQuoteSummary = (
+          await import('../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary')
+        ).default;
+
+        return () => <ViewRequestForQuoteSummary isSubmitted />;
+      },
+      mocks.requestForQuoteGetStepStatuses,
+    ],
+  ] satisfies [
+    string,
+    string,
+    string,
+    () => Promise<ComponentType>,
+    PendingRequest,
+  ][])(
+    'does not repeat the request when re-rendered while %s',
+    async (_name, initialPath, routePath, load, request) => {
+      expect.hasAssertions();
+
+      resetWorkflowWrapperMocks();
+
+      request.mockReturnValue(new Promise(() => undefined));
+      const Wrapped = await load();
+
+      renderWithNavigationDestinations(
+        initialPath,
+        <RerenderHarness Wrapped={Wrapped} />,
+        routePath,
+      );
+
+      await waitFor(() => {
+        expect(request).toHaveBeenCalledTimes(1);
+      });
+
+      rerenderWithFreshAccounts();
+
+      expect(request).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('block-spinner')).toHaveTextContent(
+        'Loading...',
+      );
+    },
+  );
 });

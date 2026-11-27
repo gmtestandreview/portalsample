@@ -2,7 +2,7 @@ import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Menu, MenuTrigger, MenuItem, SubmenuTrigger } from './Menu';
 import { Button } from '../Button/Button';
-import type { StoryFn } from '@storybook/react-vite';
+import type { StoryObj } from '@storybook/react-vite';
 
 const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
@@ -13,10 +13,10 @@ const meta = preview.meta({
   },
 });
 
-type Story = StoryFn<typeof Menu>;
+type Story = StoryObj<typeof Menu>;
 
-export const Example = meta.story({
-  render: (args: Readonly<Parameters<Story>[0]>) => (
+const example = meta.story({
+  render: (args) => (
     <MenuTrigger>
       <Button>Edit</Button>
       <Menu {...args}>
@@ -36,3 +36,5 @@ export const Example = meta.story({
 
   args: {},
 });
+
+export const Example: Story = example as unknown as Story;

@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import type {
-  AccountDispatchContext as AccountDispatchContextValue,
-  AccountStateContext as AccountStateContextValue,
+  AccountDispatchContextValue,
+  AccountStateContextValue,
 } from './accountContext';
 
 export const AccountStateContext =

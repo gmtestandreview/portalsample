@@ -7,6 +7,7 @@ const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 
 export const localPatches = [
   'patches/html-react-parser+6.1.9.patch',
+  'patches/react-router-dev+7.18.7.patch',
   'patches/storybook-addon-mcp+10.6.3.patch',
 ];
 

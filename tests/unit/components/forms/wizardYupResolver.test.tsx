@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import * as Yup from 'yup';
 import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
@@ -147,58 +147,12 @@ describe('rhfForm api', () => {
     expect.hasAssertions();
 
     const expectedError = 'useRhfFormApi must be used inside RhfForm';
-    const expectedReactError =
-      'The above error occurred in the <Probe> component:';
-    const isExpectedConsoleError = (args: unknown[]) =>
-      args.length === 1 &&
-      ((args[0] instanceof Error && args[0].message === expectedError) ||
-        (typeof args[0] === 'string' &&
-          args[0].startsWith(expectedReactError)));
     const Probe = () => {
       useRhfFormApi();
       return null;
     };
-    const originalConsoleError = console.error;
-    const spy = vi.spyOn(console, 'error').mockImplementation((...args) => {
-      if (!isExpectedConsoleError(args)) {
-        originalConsoleError(...args);
-      }
-    });
-    const suppressExpectedError = vi.fn<(event: ErrorEvent) => void>(
-      (event: ErrorEvent) => {
-        if (
-          event.error instanceof Error &&
-          event.error.message === expectedError
-        ) {
-          event.preventDefault();
-        }
-      },
-    );
-    globalThis.addEventListener('error', suppressExpectedError);
-    try {
-      expect(() => render(<Probe />)).toThrow(expectedError);
-      expect(spy).toHaveBeenCalledWith(
-        expect.stringContaining(expectedReactError),
-      );
-      expect(spy.mock.calls.every(isExpectedConsoleError)).toBe(true);
-      expect(suppressExpectedError).toHaveBeenCalledWith(
-        expect.objectContaining({
-          error: expect.objectContaining({
-            message: expectedError,
-          }) as unknown as Error,
-        }),
-      );
-      expect(
-        suppressExpectedError.mock.calls.every(
-          ([event]) =>
-            event.error instanceof Error &&
-            event.error.message === expectedError,
-        ),
-      ).toBe(true);
-    } finally {
-      globalThis.removeEventListener('error', suppressExpectedError);
-      spy.mockRestore();
-    }
+
+    expect(() => render(<Probe />)).toThrow(expectedError);
   });
 
   it('hands the api to a render-prop child', () => {

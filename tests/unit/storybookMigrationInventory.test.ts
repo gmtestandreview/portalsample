@@ -70,13 +70,17 @@ describe('storybook migration inventory', () => {
   it('documents every App route path in the route inventory page', () => {
     expect.hasAssertions();
 
-    const appSource = readSource('App.tsx');
-    const rawPaths = [...appSource.matchAll(/path='([^']+)'/g)].map(
+    const routeConfigSource = readSource('routes.ts');
+    const routePaths = Array.from(
+      routeConfigSource.matchAll(/\broute\(\s*['"]([^'"]+)['"]/gu),
       (match) => match[1],
-    );
-    // Child wildcard routes ('*') are documented as 'parent/*' in the inventory,
-    // not as standalone rows. Strip all bare '*' entries then restore the
-    // top-level catch-all once.
+    ).filter((routePath): routePath is string => routePath !== undefined);
+    const rawPaths = [
+      ...routePaths.map((routePath) =>
+        routePath === '*' ? '*' : `/${routePath}`,
+      ),
+      ...(/\bindex\(\s*['"]/u.exec(routeConfigSource) ? ['/'] : []),
+    ];
     const uniquePaths = normalizeRoutePaths(rawPaths);
 
     expect(uniquePaths.length).toBeGreaterThan(20);

@@ -219,3 +219,9 @@ type __TestMockModule175 =
 
 type __TestMockModule60 =
   typeof import('@/components/forms/WizardForm/RhfWizardRoutedStep');
+
+type __TestMockModule176 =
+  typeof import('@/authentication/AuthenticatedElement');
+
+type __TestMockModule177 =
+  typeof import('@/components/ErrorBoundary/ErrorDisplay');
