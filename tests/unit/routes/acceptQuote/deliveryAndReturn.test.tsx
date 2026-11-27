@@ -428,6 +428,40 @@ describe(DeliveryAndReturn, () => {
       expect(screen.getByText(/2 Second Quote St/)).toBeInTheDocument();
     });
 
+    it('does not report a superseded request that rejects as a load failure', async () => {
+      expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
+
+      let rejectFirst: ((reason: unknown) => void) | undefined;
+      mocks.getDeliveryAndReturn
+        .mockImplementationOnce(
+          () =>
+            new Promise((_resolve, reject) => {
+              rejectFirst = reject;
+            }),
+        )
+        .mockResolvedValueOnce(baseApiResponse);
+
+      const { rerender } = render(makeTree('q-1'));
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(1);
+      });
+
+      rerender(makeTree('q-2'));
+
+      await expect(
+        screen.findByText(/10 Park St/),
+      ).resolves.toBeInTheDocument();
+
+      await act(async () => {
+        rejectFirst?.(new DOMException('Aborted', 'AbortError'));
+        await Promise.resolve();
+      });
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
     it('aborts the in-flight request on unmount', async () => {
       expect.hasAssertions();
 
