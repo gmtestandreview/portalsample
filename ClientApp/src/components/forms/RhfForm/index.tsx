@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { DefaultValues, FieldValues } from 'react-hook-form';
@@ -87,8 +87,12 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
     reset(initialValues);
   }, [initialValues, reset]);
 
+  const submitBlockedRef = useRef(false);
+
   const submit = useCallback(
     async (mode: SubmitMode) => {
+      if (submitBlockedRef.current) return;
+
       validationContext.setSubmitMode(mode);
       try {
         await handleSubmit(async (values) => {
@@ -121,6 +125,9 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
       onFormSubmit: (event) => {
         event?.preventDefault();
         void submit('next');
+      },
+      setSubmitBlocked: (blocked) => {
+        submitBlockedRef.current = blocked;
       },
     }),
     [submit],

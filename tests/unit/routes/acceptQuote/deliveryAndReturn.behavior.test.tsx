@@ -113,6 +113,7 @@ const postalAddress = {
 };
 
 interface StepHarnessProps {
+  id?: string | null;
   values?: DeliveryAndReturnStep;
   onSubmit?: (values: DeliveryAndReturnStep) => void;
 }
@@ -124,6 +125,7 @@ type TestFormValues = DeliveryAndReturnStep &
   };
 
 function StepHarness({
+  id = 'RFQ-1',
   values = {},
   onSubmit = vi.fn<(...args: unknown[]) => void>(),
 }: Readonly<StepHarnessProps>) {
@@ -145,7 +147,7 @@ function StepHarness({
       >
         {({ onFormSubmit }) => (
           <form noValidate onSubmit={onFormSubmit}>
-            <DeliveryAndReturn id='RFQ-1' />
+            <DeliveryAndReturn id={id ?? undefined} />
             <button type='submit'>Continue</button>
             <SaveAndExitButton />
           </form>
@@ -308,6 +310,76 @@ describe('deliveryAndReturn behavior: visibility', () => {
     ).resolves.toBeInTheDocument();
     expect(screen.queryByText('Return method')).not.toBeInTheDocument();
     expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
+  });
+
+  it('blocks Continue and Save and exit while the step failed to load', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    mocks.getDeliveryAndReturn.mockRejectedValue(new Error('boom'));
+    const user = userEvent.setup();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
+    renderStep({
+      values: {
+        returnContactType: ReturnContactTypeValues.SamePerson,
+        returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+        returnMethod: ReturnMethodValues.ClientToArrange,
+      },
+      onSubmit,
+    });
+    await screen.findByText(/could not load your delivery and return/i);
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await user.click(screen.getByRole('button', { name: 'Save and exit' }));
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('allows submit again once a reload succeeds', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    mocks.getDeliveryAndReturn.mockRejectedValueOnce(new Error('boom'));
+    const user = userEvent.setup();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
+    const values = {
+      returnContactType: ReturnContactTypeValues.SamePerson,
+      returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+      returnMethod: ReturnMethodValues.ClientToArrange,
+    };
+    const { rerender } = renderStep({ values, onSubmit });
+    await screen.findByText(/could not load your delivery and return/i);
+
+    rerender(<StepHarness id='RFQ-2' values={values} onSubmit={onSubmit} />);
+    await waitForLoad();
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('clears the loading spinner and loaded data when the id becomes undefined', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    const { rerender } = renderStep();
+    await waitForLoad();
+
+    mocks.getDeliveryAndReturn.mockReturnValue(new Promise(() => undefined));
+    rerender(<StepHarness id='RFQ-2' />);
+    await screen.findByText('Loading...');
+
+    rerender(<StepHarness id={null} />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    });
+
+    expect(screen.queryByText(/1 Street Road/)).not.toBeInTheDocument();
   });
 });
 

@@ -10,6 +10,11 @@ export interface RhfFormApi {
   submit: (mode: SubmitMode) => Promise<void>;
   /** Native form submit (Enter key, submit button): behaves as `next`. */
   onFormSubmit: (event?: FormEvent) => void;
+  /**
+   * A step whose own data failed to load calls this so the shell cannot save or
+   * complete it while the fields are not shown. While blocked, `submit` is a no-op.
+   */
+  setSubmitBlocked: (blocked: boolean) => void;
 }
 
 export const RhfFormApiContext = createContext<RhfFormApi | null>(null);

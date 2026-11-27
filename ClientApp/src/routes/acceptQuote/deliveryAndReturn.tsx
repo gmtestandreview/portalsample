@@ -1,6 +1,6 @@
 import { useMsal } from '@azure/msal-react';
 import { Alert, Col, Row } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AcceptQuoteClient } from '../../api/web-api-client';
 import type {
   AddressDetailsDto,
@@ -10,6 +10,7 @@ import type { DeliveryAndReturnProps } from './types';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import { useAccountState } from '../../authentication/hooks';
+import { RhfFormApiContext } from '../../components/forms/RhfForm/rhfFormApiContext';
 import MailingLabel from '../../components/Utilities/mailingLabel';
 import AppLogger from '../../instrumentation/AppLogger';
 import DeliveryInstructions from '../../components/Utilities/deliveryInstructions';
@@ -39,6 +40,7 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const [loaded, setLoaded] = useState<LoadedDeliveryAndReturn | undefined>();
+  const setSubmitBlocked = useContext(RhfFormApiContext)?.setSubmitBlocked;
   const account = useAccountState();
   const homeAccountId = account?.details?.homeAccountId;
 
@@ -75,12 +77,27 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
     </Alert>
   );
 
+  // The fields are hidden when the step's own load failed; the shell must not
+  // save or complete the step with values the user cannot see.
+  const blocksSubmit = loadFailed && !isSummary;
+  useEffect(() => {
+    setSubmitBlocked?.(blocksSubmit);
+    return () => {
+      setSubmitBlocked?.(false);
+    };
+  }, [blocksSubmit, setSubmitBlocked]);
+
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
 
     const load = async () => {
-      if (id === undefined) return;
+      if (id === undefined) {
+        setIsLoading(false);
+        setLoadFailed(false);
+        setLoaded(undefined);
+        return;
+      }
 
       setIsLoading(true);
       setLoadFailed(false);
