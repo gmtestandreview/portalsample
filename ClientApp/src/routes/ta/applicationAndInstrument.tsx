@@ -53,6 +53,41 @@ const getSubOptionLabels = (
   );
 };
 
+type ApplicationType = (typeof applicationTypes)[number];
+
+const ApplicationSubOptions = ({
+  application,
+  getName,
+  isSummary,
+}: Readonly<{
+  application: ApplicationType;
+  getName: (localName: string) => string;
+  isSummary: boolean | undefined;
+}>) => {
+  return (
+    <RhfHidableField name={getName(application.hideFieldName)}>
+      <div
+        id={`${application.key}-sub-options-group`}
+        className='mb-0 ms-3 px-4 collapse fade show'
+      >
+        <div>
+          <RhfCheckboxGroup
+            legend='Select all that apply'
+            name={getName(`${application.key}SubOptions`)}
+            id={`q-${application.key}-sub-options`}
+            containerClassName='mb-2'
+            legendClassName='visually-hidden'
+            className='checkbox-sm'
+            isSummary={isSummary}
+            supressFieldLevelMessages
+            options={application.subOptions}
+          />
+        </div>
+      </div>
+    </RhfHidableField>
+  );
+};
+
 interface ApplicationTypeSelectorProps {
   isSummary: boolean | undefined;
   getName: (localName: string) => string;
@@ -156,75 +191,11 @@ const ApplicationTypeSelector = ({
                     value={application.value}
                   />
                 </div>
-                {application.value ===
-                  PatternApprovalRequiredValues.NewCertificate && (
-                  <RhfHidableField name={getName('isApplNewHide')}>
-                    <div
-                      id={`${application.key}-sub-options-group`}
-                      className='mb-0 ms-3 px-4 collapse fade show'
-                    >
-                      <div>
-                        <RhfCheckboxGroup
-                          legend='Select all that apply'
-                          name={getName(`${application.key}SubOptions`)}
-                          id={`q-${application.key}-sub-options`}
-                          containerClassName='mb-2'
-                          legendClassName='visually-hidden'
-                          className='checkbox-sm'
-                          isSummary={isSummary}
-                          supressFieldLevelMessages
-                          options={newCertificateSubOptions}
-                        />
-                      </div>
-                    </div>
-                  </RhfHidableField>
-                )}
-                {application.value ===
-                  PatternApprovalRequiredValues.Variation && (
-                  <RhfHidableField name={getName('isApplVariationHide')}>
-                    <div
-                      id={`${application.key}-sub-options-group`}
-                      className='mb-0 ms-3 px-4 collapse fade show'
-                    >
-                      <div>
-                        <RhfCheckboxGroup
-                          legend='Select all that apply'
-                          name={getName(`${application.key}SubOptions`)}
-                          id={`q-${application.key}-sub-options`}
-                          containerClassName='mb-2'
-                          legendClassName='visually-hidden'
-                          className='checkbox-sm'
-                          isSummary={isSummary}
-                          supressFieldLevelMessages
-                          options={variationSubOptions}
-                        />
-                      </div>
-                    </div>
-                  </RhfHidableField>
-                )}
-                {application.value ===
-                  PatternApprovalRequiredValues.OtherApproval && (
-                  <RhfHidableField name={getName('isApplOtherHide')}>
-                    <div
-                      id={`${application.key}-sub-options-group`}
-                      className='mb-0 ms-3 px-4 collapse fade show'
-                    >
-                      <div>
-                        <RhfCheckboxGroup
-                          legend='Select all that apply'
-                          name={getName(`${application.key}SubOptions`)}
-                          id={`q-${application.key}-sub-options`}
-                          containerClassName='mb-2'
-                          legendClassName='visually-hidden'
-                          className='checkbox-sm'
-                          isSummary={isSummary}
-                          supressFieldLevelMessages
-                          options={otherApprovalSubOptions}
-                        />
-                      </div>
-                    </div>
-                  </RhfHidableField>
-                )}
+                <ApplicationSubOptions
+                  application={application}
+                  getName={getName}
+                  isSummary={isSummary}
+                />
               </Card.Body>
             </Card>
           ))}
@@ -234,31 +205,73 @@ const ApplicationTypeSelector = ({
   );
 };
 
-const ApplicationAndInstrument = (
-  props: Readonly<TAApplicationAndInstrumentProps>,
+const toOption = (l: LookupResponse): SelectInputOption<string> => ({
+  displayText: l.label ?? '',
+  value: l.id ?? '',
+});
+
+const getInstrumentTypes = (
+  values: LookupResponse[],
+  parentId: string | undefined,
+  isSummary: boolean | undefined,
 ) => {
-  const { isSummary, name } = props;
-  const getName = (localName: string) =>
-    name ? `${name}.${localName}` : localName;
-  const {
-    setValue,
-    resetField,
-    reset,
-    formState: { submitCount },
-  } = useFormContext<ApplicationAndInstrumentStepDto>();
-  const patternApprovalType = useWatch({
-    name: getName('patternApprovalType'),
-  }) as PatternApprovalRequiredValues | undefined;
-  // The saved step values default the application type to a new certificate
-  // when they load, so the selected application is just the field value.
-  const selectedApplication: string = orIfEmpty(
-    patternApprovalType,
-    PatternApprovalRequiredValues.NewCertificate,
+  const hasParent = parentId !== undefined && parentId !== '';
+  let matching: LookupResponse[] = [];
+  if (hasParent) {
+    matching = values.filter((l) => l.parentId === parentId);
+  } else if (isSummary) {
+    matching = values;
+  }
+  const [sorted, lastId] = sortList(
+    matching.map(toOption),
+    'No instrument',
+    'displayText',
   );
 
-  // Lookup values are loaded in the parent component and live in the form
-  // values, so we read them from there without making separate API calls here.
-  // We just need to transform them into the format needed for the dropdowns.
+  return { options: sorted, noInstrumentTypeId: lastId };
+};
+
+const OimlWarningPanel = () => (
+  <Alert
+    variant='warning'
+    className='d-flex'
+    role='alert'
+    aria-live='assertive'
+  >
+    <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
+      <div className='bgCircle me-3'>
+        <i className='icon-warning' aria-hidden='true' />
+      </div>
+    </div>
+    <div>
+      <p className='mb-3'>
+        <strong>{'Warning: '}</strong>
+        OIML certificates apply only to specific instrument types:
+      </p>
+      <ul>
+        <li>Continuous totalising automatic weighing instruments</li>
+        <li>Non-automatic weighing instruments</li>
+      </ul>
+      <p className='mb-0'>
+        You may keep this option selected, but the pattern approval examiner
+        could remove it during assessment.
+      </p>
+    </div>
+  </Alert>
+);
+
+// Lookup values are loaded in the parent component and live in the form
+// values, so they are read from there without separate API calls. The form
+// starts with an empty step while the controller loads the saved values, so the
+// controls stay empty until both lookup responses arrive; the categories,
+// types and disabled flag then follow from the form fields and are derived
+// here instead of synced into state from an effect.
+const useInstrumentSelection = (
+  getName: (localName: string) => string,
+  isSummary: boolean | undefined,
+) => {
+  const { setValue, resetField } =
+    useFormContext<ApplicationAndInstrumentStepDto>();
   const instrumentType = useWatch({ name: getName('instrumentType') }) as
     | string
     | undefined;
@@ -272,33 +285,6 @@ const ApplicationAndInstrument = (
     name: getName('instrumentCategoryLookup'),
   }) as LookupResponse[] | undefined;
 
-  const getInstrumentTypes = (
-    values: LookupResponse[],
-    parentId: string | undefined,
-  ) => {
-    const options: SelectInputOption<string>[] = [];
-    if (parentId !== undefined && parentId !== '') {
-      for (const l of values) {
-        if (l.parentId === parentId) {
-          options.push({ displayText: l.label ?? '', value: l.id ?? '' });
-        }
-      }
-    } else if (isSummary) {
-      for (const l of values) {
-        options.push({ displayText: l.label ?? '', value: l.id ?? '' });
-      }
-    }
-    const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
-
-    return { options: sorted, noInstrumentTypeId: lastId };
-  };
-
-  // The form starts with an empty step while the controller loads the saved
-  // values. Keep the controls empty until both lookup responses arrive; the
-  // categories, types and disabled flag then follow from the form fields, so
-  // they are derived here instead of synced into state from an effect.
-  const lookupsLoaded =
-    categoryLookup !== undefined && typeLookup !== undefined;
   const sortedCategories = useMemo(() => {
     if (categoryLookup === undefined || typeLookup === undefined) {
       return undefined;
@@ -319,12 +305,15 @@ const ApplicationAndInstrument = (
       return undefined;
     }
   }, [categoryLookup, typeLookup]);
-  const instrumentCategories = sortedCategories?.categories;
-  const instrumentTypes = lookupsLoaded ? typeLookup : undefined;
+
   const typesAreListed = instrumentType !== undefined || isSummary === true;
   const instrumentTypesSelected =
     sortedCategories !== undefined && typesAreListed
-      ? getInstrumentTypes(sortedCategories.types, instrumentCategory).options
+      ? getInstrumentTypes(
+          sortedCategories.types,
+          instrumentCategory,
+          isSummary,
+        ).options
       : [];
   const isInstrumentTypeDisabled =
     sortedCategories !== undefined &&
@@ -332,25 +321,11 @@ const ApplicationAndInstrument = (
     !isSummary &&
     instrumentCategory === sortedCategories.noInstrumentCategoryId;
 
-  const getInstrumentCategories = () => {
-    const options: SelectInputOption<string>[] = [];
-    for (const l of instrumentCategories ?? []) {
-      // `sortList` read every `label` to order these categories, so a missing
-      // label cannot reach this point.
-      options.push({ displayText: String(l.label), value: l.id ?? '' });
-    }
-    return options;
-  };
-
-  const newSubOptions = useWatch({ name: getName('newSubOptions') }) as
-    | PatternApprovalRequiredValueOptions[]
-    | undefined;
-  const varSubOptions = useWatch({ name: getName('varSubOptions') }) as
-    | PatternApprovalRequiredValueOptions[]
-    | undefined;
-  const othSubOptions = useWatch({ name: getName('othSubOptions') }) as
-    | PatternApprovalRequiredValueOptions[]
-    | undefined;
+  // `sortList` read every `label` to order these categories, so a missing
+  // label cannot reach this point.
+  const instrumentCategoryOptions: SelectInputOption<string>[] = (
+    sortedCategories?.categories ?? []
+  ).map((l) => ({ displayText: String(l.label), value: l.id ?? '' }));
 
   const onInstrumentCategoryChange = (categoryId: string) => {
     const typeName = getName('instrumentType');
@@ -364,20 +339,81 @@ const ApplicationAndInstrument = (
     });
     setValue(typeName as 'instrumentType', '', { shouldDirty: true });
     if (
-      instrumentTypes !== undefined &&
+      typeLookup !== undefined &&
       categoryId === sortedCategories?.noInstrumentCategoryId
     ) {
       const { noInstrumentTypeId } = getInstrumentTypes(
-        instrumentTypes,
+        typeLookup,
         categoryId,
+        isSummary,
       );
       setValue(typeName as 'instrumentType', noInstrumentTypeId, {
         shouldDirty: true,
       });
     }
   };
-  const instrumentCategoryId = instrumentCategory;
-  const instrumentTypeId = instrumentType;
+
+  return {
+    instrumentCategory,
+    instrumentType,
+    instrumentCategoryOptions,
+    instrumentTypesSelected,
+    isInstrumentTypeDisabled,
+    onInstrumentCategoryChange,
+  };
+};
+
+const ApplicationSummaryField = ({
+  name,
+  isSummary,
+}: Readonly<{ name: string; isSummary: boolean | undefined }>) => (
+  <RhfTextAreaInput
+    label='Summary of application'
+    name={name}
+    inlineHelp='To help NMI process your request, briefly describe why you are submitting this application'
+    rows={3}
+    maxCharacters={500}
+    isSummary={isSummary}
+  />
+);
+
+const ApplicationAndInstrument = (
+  props: Readonly<TAApplicationAndInstrumentProps>,
+) => {
+  const { isSummary, name } = props;
+  const getName = (localName: string) =>
+    name ? `${name}.${localName}` : localName;
+  const {
+    reset,
+    formState: { submitCount },
+  } = useFormContext<ApplicationAndInstrumentStepDto>();
+  const patternApprovalType = useWatch({
+    name: getName('patternApprovalType'),
+  }) as PatternApprovalRequiredValues | undefined;
+  // The saved step values default the application type to a new certificate
+  // when they load, so the selected application is just the field value.
+  const selectedApplication: string = orIfEmpty(
+    patternApprovalType,
+    PatternApprovalRequiredValues.NewCertificate,
+  );
+  const {
+    instrumentCategory,
+    instrumentType,
+    instrumentCategoryOptions,
+    instrumentTypesSelected,
+    isInstrumentTypeDisabled,
+    onInstrumentCategoryChange,
+  } = useInstrumentSelection(getName, isSummary);
+
+  const newSubOptions = useWatch({ name: getName('newSubOptions') }) as
+    | PatternApprovalRequiredValueOptions[]
+    | undefined;
+  const varSubOptions = useWatch({ name: getName('varSubOptions') }) as
+    | PatternApprovalRequiredValueOptions[]
+    | undefined;
+  const othSubOptions = useWatch({ name: getName('othSubOptions') }) as
+    | PatternApprovalRequiredValueOptions[]
+    | undefined;
 
   // The radio has already written the chosen type to the form when this runs.
   const onApplicationTypeChange = () => {
@@ -388,44 +424,6 @@ const ApplicationAndInstrument = (
       reset();
     }
   };
-
-  const renderInstrumentInfoPanel = () => (
-    <InstrumentInfoPanel
-      name='InstrumentInfo'
-      selectedInstrumentCategoryId={instrumentCategoryId}
-      selectedInstrumentTypeId={instrumentTypeId}
-      isNewCustomer={false}
-    />
-  );
-
-  const renderWarningPanel = () => (
-    <Alert
-      variant='warning'
-      className='d-flex'
-      role='alert'
-      aria-live='assertive'
-    >
-      <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
-        <div className='bgCircle me-3'>
-          <i className='icon-warning' aria-hidden='true' />
-        </div>
-      </div>
-      <div>
-        <p className='mb-3'>
-          <strong>{'Warning: '}</strong>
-          OIML certificates apply only to specific instrument types:
-        </p>
-        <ul>
-          <li>Continuous totalising automatic weighing instruments</li>
-          <li>Non-automatic weighing instruments</li>
-        </ul>
-        <p className='mb-0'>
-          You may keep this option selected, but the pattern approval examiner
-          could remove it during assessment.
-        </p>
-      </div>
-    </Alert>
-  );
 
   return (
     <>
@@ -448,7 +446,7 @@ const ApplicationAndInstrument = (
           <RhfSelectInput
             name={getName('instrumentCategory')}
             label='Select the category of your instrument'
-            options={getInstrumentCategories()}
+            options={instrumentCategoryOptions}
             onChange={onInstrumentCategoryChange}
             isSummary={isSummary}
             addBlank
@@ -466,10 +464,17 @@ const ApplicationAndInstrument = (
         {!isSummary && (
           // Inside a !isSummary guard, so the summary arm of a ternary here is dead.
           <Row className='mb-2'>
-            <Col md={12}>{renderInstrumentInfoPanel()}</Col>
+            <Col md={12}>
+              <InstrumentInfoPanel
+                name='InstrumentInfo'
+                selectedInstrumentCategoryId={instrumentCategory}
+                selectedInstrumentTypeId={instrumentType}
+                isNewCustomer={false}
+              />
+            </Col>
             <Col md={12}>
               <RhfHidableField name={getName('isApplOIMLHide')}>
-                {renderWarningPanel()}
+                <OimlWarningPanel />
               </RhfHidableField>
             </Col>
           </Row>
@@ -489,12 +494,8 @@ const ApplicationAndInstrument = (
               // inlineHelp='To help NMI process your request, briefly describe why you are submitting this application'
               isSummary={isSummary}
             />
-            <RhfTextAreaInput
-              label='Summary of application'
+            <ApplicationSummaryField
               name={getName('summary')}
-              inlineHelp='To help NMI process your request, briefly describe why you are submitting this application'
-              rows={3}
-              maxCharacters={500}
               isSummary={isSummary}
             />
           </Row>
@@ -516,12 +517,8 @@ const ApplicationAndInstrument = (
             parentName='id'
             isSummary={isSummary}
           />
-          <RhfTextAreaInput
-            label='Summary of application'
+          <ApplicationSummaryField
             name={getName('summary')}
-            inlineHelp='To help NMI process your request, briefly describe why you are submitting this application'
-            rows={3}
-            maxCharacters={500}
             isSummary={isSummary}
           />
         </Row>
@@ -541,12 +538,8 @@ const ApplicationAndInstrument = (
             optionsFieldName='lookupName'
             isSummary={isSummary}
           />
-          <RhfTextAreaInput
-            label='Summary of application'
+          <ApplicationSummaryField
             name={getName('summary')}
-            inlineHelp='To help NMI process your request, briefly describe why you are submitting this application'
-            rows={3}
-            maxCharacters={500}
             isSummary={isSummary}
           />
         </Row>

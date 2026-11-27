@@ -61,6 +61,103 @@ const ImportantInformation = () => (
   </Alert>
 );
 
+const hasSerialNumberOptions = [
+  { label: 'Yes', value: 'Yes', id: 'hasSerialNumber-Yes' },
+  { label: 'No', value: 'No', id: 'hasSerialNumber-No' },
+];
+
+const descriptionInlineHelp = (
+  <>
+    <span>
+      Describe the instrument or artefact, including its capacity, parameters,
+      or measurement range.
+    </span>
+    <span className='d-block pt-2'>
+      Examples:
+      <br />
+      &bull; 100 mL volumetric flask, Class A
+      <br />
+      &bull; Digital thermometer, -50 degree C to 150 degree C (instead of
+      &deg;C symbol)
+      <br />
+      &bull; 5 kg balance, readability 0.01 g
+      <br />
+    </span>
+    <span className='d-block pt-2'>
+      Important:
+      <br />
+      &bull; Where possible avoid using symbols (e.g., &deg;, &#59;, &#92;,
+      &#124;) and write the word instead
+      <br />
+      &bull; Enter a maximum of 400 characters
+    </span>
+  </>
+);
+
+const measurementCategoryInlineHelp = (
+  <>
+    <span>e.g. Temperature, pressure, mass and density etc</span>
+    <span className='d-block pt-1'>
+      If you cannot find a suitable Measurement category please select &quot;No
+      measurement category available&quot;
+    </span>
+  </>
+);
+
+const instrumentTypeInlineHelp = (
+  <>
+    <span>eg. Digital Thermometer, load cell, microphone, etc</span>
+    <span className='d-block pt-1'>
+      If you cannot find a suitable Instrument/Artefact type please select
+      &quot;No instrument/artefact type available&quot;
+    </span>
+  </>
+);
+
+const IdentificationFields = () => (
+  <>
+    <RhfRadioButtonGroup
+      legend='Does this instrument/artefact have a serial number available?'
+      name='hasSerialNumber'
+      id='q-hasSerialNumber'
+      options={hasSerialNumberOptions}
+    />
+    <RhfHidableField name='serialNumber'>
+      <RhfTextInput label='Serial number' name='serialNumber' />
+    </RhfHidableField>
+    <RhfTextInput
+      label='Manufacturer'
+      name='manufacturer'
+      inlineHelp='If the Manufacturer is known please enter it below, if unknown please enter "n/a" for not applicable.'
+    />
+    <RhfTextInput
+      label='Model'
+      name='model'
+      inlineHelp='If the Model is known please enter it below, if unknown please enter "n/a" for not applicable.'
+    />
+  </>
+);
+
+const DescriptionFields = () => (
+  <>
+    <RhfTextAreaInput
+      label='Description (optional)'
+      name='description'
+      inlineHelp={descriptionInlineHelp}
+      rows={2}
+      maxCharacters={400}
+    />
+    <RhfNumberInput
+      label='Number of items'
+      name='numberOfItems'
+      containerClassName='col-md-6'
+      allowNegative={false}
+      decimalScale={0}
+      inlineHelp='If a set of items. e.g. set of weights'
+    />
+  </>
+);
+
 interface InstrumentDetailsSectionProps {
   measurementCategoryOptions: SelectInputOption<string>[];
   onMeasurementCategoryChange: (value: string) => void;
@@ -73,116 +170,29 @@ const InstrumentDetailsSection = ({
   onMeasurementCategoryChange,
   artefactTypesSelected,
   isInstrumentOrArtefactTypeDisabled,
-}: Readonly<InstrumentDetailsSectionProps>) => {
-  return (
-    <Row className='mb-4'>
-      <h2 className=''>Instrument/artefact details</h2>
-      <RhfRadioButtonGroup
-        legend='Does this instrument/artefact have a serial number available?'
-        name='hasSerialNumber'
-        id='q-hasSerialNumber'
-        options={[
-          {
-            label: 'Yes',
-            value: 'Yes',
-            id: 'hasSerialNumber-Yes',
-          },
-          {
-            label: 'No',
-            value: 'No',
-            id: 'hasSerialNumber-No',
-          },
-        ]}
-      />
-      <RhfHidableField name='serialNumber'>
-        <RhfTextInput label='Serial number' name='serialNumber' />
-      </RhfHidableField>
-      <RhfTextInput
-        label='Manufacturer'
-        name='manufacturer'
-        inlineHelp='If the Manufacturer is known please enter it below, if unknown please enter "n/a" for not applicable.'
-      />
-      <RhfTextInput
-        label='Model'
-        name='model'
-        inlineHelp='If the Model is known please enter it below, if unknown please enter "n/a" for not applicable.'
-      />
-      <RhfTextAreaInput
-        label='Description (optional)'
-        name='description'
-        inlineHelp={
-          <>
-            <span>
-              Describe the instrument or artefact, including its capacity,
-              parameters, or measurement range.
-            </span>
-            <span className='d-block pt-2'>
-              Examples:
-              <br />
-              &bull; 100 mL volumetric flask, Class A
-              <br />
-              &bull; Digital thermometer, -50 degree C to 150 degree C (instead
-              of &deg;C symbol)
-              <br />
-              &bull; 5 kg balance, readability 0.01 g
-              <br />
-            </span>
-            <span className='d-block pt-2'>
-              Important:
-              <br />
-              &bull; Where possible avoid using symbols (e.g., &deg;, &#59;,
-              &#92;, &#124;) and write the word instead
-              <br />
-              &bull; Enter a maximum of 400 characters
-            </span>
-          </>
-        }
-        rows={2}
-        maxCharacters={400}
-      />
-      <RhfNumberInput
-        label='Number of items'
-        name='numberOfItems'
-        containerClassName='col-md-6'
-        allowNegative={false}
-        decimalScale={0}
-        inlineHelp='If a set of items. e.g. set of weights'
-      />
-      <RhfSelectInput
-        name='measurementCategory'
-        label='Measurement category'
-        inlineHelp={
-          <>
-            <span>e.g. Temperature, pressure, mass and density etc</span>
-            <span className='d-block pt-1'>
-              If you cannot find a suitable Measurement category please select
-              &quot;No measurement category available&quot;
-            </span>
-          </>
-        }
-        options={measurementCategoryOptions}
-        onChange={onMeasurementCategoryChange}
-        addBlank
-      />
-      <RhfSelectInput
-        name='instrumentOrArtefactType'
-        label='Instrument/artefact type'
-        inlineHelp={
-          <>
-            <span>eg. Digital Thermometer, load cell, microphone, etc</span>
-            <span className='d-block pt-1'>
-              If you cannot find a suitable Instrument/Artefact type please
-              select &quot;No instrument/artefact type available&quot;
-            </span>
-          </>
-        }
-        options={artefactTypesSelected}
-        readOnly={isInstrumentOrArtefactTypeDisabled}
-        addBlank
-      />
-    </Row>
-  );
-};
+}: Readonly<InstrumentDetailsSectionProps>) => (
+  <Row className='mb-4'>
+    <h2 className=''>Instrument/artefact details</h2>
+    <IdentificationFields />
+    <DescriptionFields />
+    <RhfSelectInput
+      name='measurementCategory'
+      label='Measurement category'
+      inlineHelp={measurementCategoryInlineHelp}
+      options={measurementCategoryOptions}
+      onChange={onMeasurementCategoryChange}
+      addBlank
+    />
+    <RhfSelectInput
+      name='instrumentOrArtefactType'
+      label='Instrument/artefact type'
+      inlineHelp={instrumentTypeInlineHelp}
+      options={artefactTypesSelected}
+      readOnly={isInstrumentOrArtefactTypeDisabled}
+      addBlank
+    />
+  </Row>
+);
 
 const RequestDetailsSection = () => {
   const today = useStableToday();

@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest';
 import * as yup from 'yup';
 
 describe('build regression smoke coverage', () => {
-  it('imports App with the root stylesheet path resolved', async () => {
+  it('imports the framework root with the root stylesheet path resolved', async () => {
     expect.hasAssertions();
 
-    const module = await import('@/App');
+    const module = await import('@/root');
 
     expect(module.default).toBeDefined();
   }, 60000);

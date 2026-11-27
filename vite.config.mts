@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import react from '@vitejs/plugin-react';
+import { reactRouter } from '@react-router/dev/vite';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { msw } from 'msw/vite';
 import { VITE_ENV_FIXTURES, VITE_ENV_KEYS } from './runtime-env-fixtures.ts';
@@ -218,7 +218,7 @@ export default defineConfig(({ command, mode }) => {
     define,
 
     plugins: [
-      react(),
+      reactRouter(),
       blockedGeneratedPathsPlugin(),
       envTemplatePlugin(envVars),
       runtimeEnvironmentPlugin(command),
@@ -272,10 +272,6 @@ export default defineConfig(({ command, mode }) => {
       emptyOutDir: true,
       sourcemap: true,
       rolldownOptions: {
-        input: {
-          main: path.resolve(dirname, 'index.html'),
-          redirect: path.resolve(dirname, 'redirect.html'),
-        },
         output: {
           entryFileNames: 'js/[name].[hash:8].js',
           chunkFileNames: 'js/[name].[hash:8].js',

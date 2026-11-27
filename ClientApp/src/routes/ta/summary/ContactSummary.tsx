@@ -32,13 +32,15 @@ interface ContactSummaryProps {
   labels?: ContactSummaryLabels;
 }
 
-/** Read-only contact block, matching `ContactDetailsInput` in summary mode. */
-const ContactSummary = ({
+const TitleRows = ({
   name,
   contact,
-  hideTitleOther = false,
-  labels,
-}: Readonly<ContactSummaryProps>) => {
+  hideTitleOther,
+}: Readonly<{
+  name: string;
+  contact: ContactSummaryContact | undefined;
+  hideTitleOther: boolean;
+}>) => {
   const title = titleText(contact?.title);
 
   return (
@@ -67,41 +69,68 @@ const ContactSummary = ({
           value={contact.titleOther ?? ''}
         />
       )}
-      <SummaryDisplay
-        label={labels?.firstName ?? 'First name'}
-        id={`${name}.firstName`}
-        as='p'
-        value={contact?.firstName ?? ''}
+    </>
+  );
+};
+
+const NO_LABELS: ContactSummaryLabels = {};
+
+const orEmpty = (value: string | undefined) => value ?? '';
+
+const labelOr = (label: string | undefined, fallback: string) =>
+  label ?? fallback;
+
+/** Read-only contact block, matching `ContactDetailsInput` in summary mode. */
+const ContactSummary = ({
+  name,
+  contact,
+  hideTitleOther = false,
+  labels = NO_LABELS,
+}: Readonly<ContactSummaryProps>) => {
+  const c: ContactSummaryContact = contact ?? {};
+
+  return (
+    <>
+      <TitleRows
+        name={name}
+        contact={contact}
+        hideTitleOther={hideTitleOther}
       />
       <SummaryDisplay
-        label={labels?.lastName ?? 'Last name'}
+        label={labelOr(labels.firstName, 'First name')}
+        id={`${name}.firstName`}
+        as='p'
+        value={orEmpty(c.firstName)}
+      />
+      <SummaryDisplay
+        label={labelOr(labels.lastName, 'Last name')}
         id={`${name}.lastName`}
         as='p'
-        value={contact?.lastName ?? ''}
+        value={orEmpty(c.lastName)}
       />
       <SummaryDisplay
         label='Role (optional)'
         id={`${name}.role`}
         as='p'
-        value={contact?.role ?? ''}
+        value={orEmpty(c.role)}
       />
       <SummaryDisplay
-        label={labels?.phone ?? 'Business phone'}
+        label={labelOr(labels.phone, 'Business phone')}
         id={`${name}.phone`}
-        value={contact?.phone ?? ''}
-        format={getPhoneNumberFormat(contact?.phone)}
+        value={orEmpty(c.phone)}
+        format={getPhoneNumberFormat(c.phone)}
       />
       <SummaryDisplay
-        label={labels?.mobile ?? 'Mobile phone'}
+        label={labelOr(labels.mobile, 'Mobile phone')}
         id={`${name}.mobile`}
-        value={contact?.mobile ?? ''}
+        value={orEmpty(c.mobile)}
         format={MOBILE_FORMAT}
       />
       <SummaryDisplay
         label='Email address'
         id={`${name}.email`}
         as='p'
-        value={contact?.email ?? ''}
+        value={orEmpty(c.email)}
       />
     </>
   );

@@ -5,7 +5,7 @@ import { RouterProvider, createMemoryRouter } from 'react-router';
 import type { RouteObject } from 'react-router';
 
 /**
- * Render a route component the way the application actually mounts it.
+ * Render a route component under an in-memory data router for an isolated test.
  *
  * `renderWithProviders` wraps children in a bare `MemoryRouter`, which is enough for a component
  * that only needs `<Link>` to resolve. It is not enough for the route modules under
@@ -13,7 +13,8 @@ import type { RouteObject } from 'react-router';
  * it is missing, so under a bare router they take the redirect branch and every assertion after it
  * is measuring the error path.
  *
- * This builds a real `createMemoryRouter` with the route pattern, so params resolve and loaders run.
+ * This builds a `createMemoryRouter` with an explicit route pattern, so params resolve, loaders run,
+ * and navigation can be observed without booting the full framework application.
  *
  * On asserting navigation: the plan called for a `useNavigate` spy, which needs `react-router`
  * itself to be mocked - and mocking the router out of a router test removes the thing under test.

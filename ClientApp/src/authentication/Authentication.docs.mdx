@@ -5,7 +5,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 # Authentication
 
 **MSAL, account context, and route-guard structure under
-`static/js/authentication`.**
+`ClientApp/src/authentication`.**
 
 ## Authentication Files
 
@@ -31,7 +31,7 @@ The application bootstrap composes authentication in this order:
 3. `MsalProvider`
 4. `AccountProvider`
 5. `StrictMode`
-6. `RouterProvider`
+6. `HydratedRouter` (React Router framework mode owns the router instance)
 
 ## Guard Rules
 

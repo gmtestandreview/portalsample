@@ -1,9 +1,19 @@
-import { describe, it, expect } from 'vitest';
-import type { ReactElement } from 'react';
+import { describe, expect, it } from 'vitest';
 
-import App from '../../../ClientApp/src/App';
-import AuthenticatedElement from '../../../ClientApp/src/authentication/AuthenticatedElement';
-import Layout from '../../../ClientApp/src/components/Layout';
+import routeConfig from '../../../ClientApp/src/routes';
+
+interface RouteEntry {
+  children?: RouteEntry[];
+  file: string;
+  index?: boolean;
+  path?: string;
+}
+
+interface FlattenedRoute {
+  file: string;
+  path: string;
+  parentFiles: string[];
+}
 
 const expectedPaths = [
   '/',
@@ -49,132 +59,61 @@ const expectedPaths = [
   '*',
 ] as const;
 
-const firstEagerErrorRoute = expectedPaths.indexOf('/server-error');
-const lazyFeaturePaths = expectedPaths.slice(1, firstEagerErrorRoute);
-const layoutPaths = new Set([
-  '/sign-out-helper',
-  '/help-guide',
-  '/help-guide/how-to-setup-access',
-  '/help-guide/faqs',
-]);
-const headerlessPaths = new Set([
-  '/create-account/*',
-  '/update-organisation/:id/*',
-  '/create-contact/*',
-  '/update-contact/*',
-  '/success-creating-account',
-  '/add-branch/*',
-  '/ta/:id/*',
-  '/ta/type-approval-success/:id/*',
-  '/request-for-quote/:id/view-summary/*',
-  '/request-for-quote/:id/*',
-  '/request-for-quote-success/:id/*',
-  '/submitted-success/:id/*',
-  '/accept-quote/:id/*',
-]);
+const flattenRoutes = (
+  entries: RouteEntry[],
+  parentFiles: string[] = [],
+): FlattenedRoute[] =>
+  entries.flatMap((entry) => {
+    const nextParentFiles = [...parentFiles, entry.file];
+    const currentRoute = entry.index
+      ? [{ path: '/', file: entry.file, parentFiles }]
+      : entry.path
+        ? [
+            {
+              path: entry.path === '*' ? '*' : `/${entry.path}`,
+              file: entry.file,
+              parentFiles,
+            },
+          ]
+        : [];
 
-type LazyComponent = () => ReactElement<{
-  children?: ReactElement<{ name?: string }>;
-  displayHeaderAndFooter?: boolean;
-}>;
-
-interface RouteWrapperProps {
-  children?: ReactElement<{ name?: string }>;
-  displayHeaderAndFooter?: boolean;
-}
-
-const loadComponent = async (path: (typeof lazyFeaturePaths)[number]) => {
-  const route = App.routes.find((candidate) => candidate.path === path);
-
-  if (route?.lazy === undefined) {
-    throw new Error(`Expected ${path} to define a lazy route module`);
-  }
-
-  const module = await (
-    route.lazy as () => Promise<{ Component: LazyComponent }>
-  )();
-
-  return module.Component;
-};
-
-const routeWrapperContract = (
-  path: string,
-  element: ReactElement<RouteWrapperProps>,
-) => {
-  if (layoutPaths.has(path)) return { type: element.type };
-  if (path === '/sign-out') {
-    return {
-      authenticated: element.type === AuthenticatedElement,
-      layout: element.type === Layout,
-    };
-  }
-  const contract = {
-    type: element.type,
-    displayHeaderAndFooter: element.props.displayHeaderAndFooter,
-  };
-  return path === '/request-for-quote/:id/view-summary/*'
-    ? { ...contract, childName: element.props.children?.props.name }
-    : contract;
-};
-
-const expectedRouteWrapperContract = (path: string) => {
-  if (layoutPaths.has(path)) return { type: Layout };
-  if (path === '/sign-out') return { authenticated: false, layout: false };
-  const contract = {
-    type: AuthenticatedElement,
-    displayHeaderAndFooter: headerlessPaths.has(path) ? false : undefined,
-  };
-  return path === '/request-for-quote/:id/view-summary/*'
-    ? { ...contract, childName: '' }
-    : contract;
-};
-
-describe('application route loading', () => {
-  it('renders the loading fallback for lazy routes', () => {
-    expect.hasAssertions();
-
-    const dashboardRoute = App.routes.find(
-      (candidate) => candidate.path === '/dashboard',
-    );
-
-    const fallback = dashboardRoute?.hydrateFallbackElement as ReactElement<{
-      children?: unknown;
-    }>;
-    const Fallback = fallback.type as () => ReactElement<{
-      children?: unknown;
-    }>;
-    const renderedFallback = Fallback();
-
-    expect(renderedFallback.type).toBeDefined();
-    expect(renderedFallback.props.children).toBeDefined();
+    return [
+      ...currentRoute,
+      ...(entry.children ? flattenRoutes(entry.children, nextParentFiles) : []),
+    ];
   });
 
+const routes = flattenRoutes(routeConfig as unknown as RouteEntry[]);
+const routeForPath = (path: string) =>
+  routes.find((candidate) => candidate.path === path);
+
+describe('framework route configuration', () => {
   it('preserves the complete route path contract', () => {
-    expect.hasAssertions();
-
-    expect(App.routes.map(({ path }) => path)).toStrictEqual(expectedPaths);
+    expect(routes.map((route) => route.path).sort()).toStrictEqual(
+      [...expectedPaths].sort(),
+    );
   });
 
-  it.each(lazyFeaturePaths)('loads %s through a route module', (path) => {
-    expect.hasAssertions();
-
-    const route = App.routes.find((candidate) => candidate.path === path);
-
-    expect(route?.lazy).toStrictEqual(expect.any(Function));
-    expect(route?.element).toBeUndefined();
+  it('preserves authentication and layout boundaries', () => {
+    expect(routeForPath('/dashboard')?.parentFiles).toContain(
+      './frameworkRoutes/authenticatedLayout.tsx',
+    );
+    expect(routeForPath('/create-contact/*')?.parentFiles).toContain(
+      './frameworkRoutes/authenticatedHeaderlessLayout.tsx',
+    );
+    expect(routeForPath('/help-guide')?.parentFiles).toContain(
+      './frameworkRoutes/publicLayout.tsx',
+    );
+    expect(routeForPath('/sign-out')?.parentFiles).toStrictEqual([]);
   });
 
-  it.each(lazyFeaturePaths)(
-    'resolves %s and preserves its outer route wrapper',
-    async (path) => {
-      expect.hasAssertions();
-
-      const Component = await loadComponent(path);
-      const element = Component();
-
-      expect(routeWrapperContract(path, element)).toStrictEqual(
-        expectedRouteWrapperContract(path),
-      );
-    },
-  );
+  it('uses framework route modules for page components', () => {
+    expect(routeForPath('/dashboard')?.file).toBe(
+      './routes/dashboard/index.tsx',
+    );
+    expect(routeForPath('/request-for-quote/:id/view-summary/*')?.file).toBe(
+      './routes/requestForQuote/viewRequestForQuoteSummary.tsx',
+    );
+    expect(routeForPath('/sign-out')?.file).toBe('./routes/sign-out/index.tsx');
+  });
 });

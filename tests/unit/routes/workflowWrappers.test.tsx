@@ -504,7 +504,7 @@ describe('workflow route wrappers', () => {
     //
     // This shipped once. The plain render above could not catch it, because RTL does not wrap
     // in StrictMode, so it took a browser-driven e2e run to surface. Rendering the wizard the
-    // way index.tsx actually renders it keeps that gap closed here.
+    // way the framework entry's StrictMode wrapper renders it keeps that gap closed here.
     const RequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote')
     ).default;
@@ -897,7 +897,7 @@ describe('workflow route wrappers', () => {
     renderAt(
       '/request-for-quote/RFQ-123/view-summary',
       <ViewRequestForQuoteSummary isSubmitted />,
-      // Mounted as in App.tsx: the single step has an empty location, so it
+      // Mounted as in a framework route module: the single step has an empty location, so it
       // only matches when the route consumes the `view-summary` segment.
       '/request-for-quote/:id/view-summary/*',
     );
