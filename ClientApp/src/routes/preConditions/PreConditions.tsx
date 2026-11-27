@@ -185,8 +185,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
   return (
     <ModalStateCtx.Provider value={contextModalState}>
       <ModalDispatchCtx.Provider value={modalDispatch}>
-        {/* For WCAG - DIV wrapper work around for HTML "inert" tag not yet included in ReactJS v18 */}
-        <div {...{ inert: isModalOpen ? '' : undefined }}>
+        <div inert={isModalOpen}>
           {displayHeaderAndFooter ? renderWithLayout() : renderWithoutLayout()}
         </div>
       </ModalDispatchCtx.Provider>

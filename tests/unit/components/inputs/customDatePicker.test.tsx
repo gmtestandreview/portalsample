@@ -14,7 +14,12 @@ type MockDatePickerKeyboardEvent = Pick<
 type MockDatePickerFocusEvent = Pick<React.FocusEvent, 'type'>;
 
 interface MockDatePickerProps {
-  customInput: React.ReactElement;
+  customInput: React.ReactElement<{
+    disabled?: boolean | undefined;
+    onBlur?: React.FocusEventHandler | undefined;
+    onKeyDown?: React.KeyboardEventHandler | undefined;
+    readOnly?: boolean | undefined;
+  }>;
   disabled?: boolean;
   highlightDates?: Date[];
   onBlur?: (event: MockDatePickerFocusEvent) => void;

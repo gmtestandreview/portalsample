@@ -211,7 +211,7 @@ export const RequestTabContent = ({
 }: RequestTabContentProps) => (
   <Row className='mb-4'>
     <Col
-      {...{ inert: isModalOpen ? '' : undefined }}
+      inert={isModalOpen}
       aria-busy={!isModalOpen && isDataLoading}
       aria-live={isModalOpen ? undefined : 'polite'}
     >

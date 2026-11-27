@@ -74,7 +74,7 @@ export const useWizardStepController = <T extends FormValues>(
   const navigate = useNavigate();
   const accountState = useAccountState();
   const accountDispatch = useAccountDispatch();
-  const controllerRef = useRef<AbortController | null>();
+  const controllerRef = useRef<AbortController | null>(null);
   const loadStepValuesRef = useRef(loadStepValues);
   const getRedirectionLocationOnErrorRef = useRef(
     getRedirectionLocationOnError,
