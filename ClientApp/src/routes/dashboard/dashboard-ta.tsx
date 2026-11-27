@@ -88,7 +88,9 @@ const DashboardTA = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [activeTab, setActiveTab] = useState(DashboardTab.Drafts);
   const [totalCount, setTotalCount] = useState(0);
-  const lastBranchResetOrganisationIdRef = useRef<number | undefined>(undefined);
+  const lastBranchResetOrganisationIdRef = useRef<number | undefined>(
+    undefined,
+  );
   const [initialFiltersLoaded, setInitialFiltersLoaded] = useState(false);
 
   useHtmlTitle('Dashboard Pattern/type approval | NMI Services portal');
