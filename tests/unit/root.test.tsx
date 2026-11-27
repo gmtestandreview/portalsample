@@ -6,16 +6,15 @@ import Root, { HydrateFallback, Layout } from '@/root';
 
 // `Links`, `Meta`, `Scripts` and `ScrollRestoration` need a framework-mode
 // router context that only exists in a real React Router build.
-vi.mock(
-  import('react-router'),
-  (async (importOriginal: () => Promise<Record<string, unknown>>) => ({
-    ...(await importOriginal()),
-    Links: () => <link rel='stylesheet' href='/stub.css' />,
-    Meta: () => <meta name='stub-meta' content='meta' />,
-    Scripts: () => <script src='/stub-entry.js' />,
-    ScrollRestoration: () => <div id='stub-scroll' />,
-  })) as unknown as __DynamicPartialMockFactory<__TestMockModule11>,
-);
+vi.mock(import('react-router'), (async (
+  importOriginal: () => Promise<Record<string, unknown>>,
+) => ({
+  ...(await importOriginal()),
+  Links: () => <link rel='stylesheet' href='/stub.css' />,
+  Meta: () => <meta name='stub-meta' content='meta' />,
+  Scripts: () => <script src='/stub-entry.js' />,
+  ScrollRestoration: () => <div id='stub-scroll' />,
+})) as unknown as __DynamicPartialMockFactory<__TestMockModule11>);
 
 const renderDocument = () =>
   new DOMParser().parseFromString(

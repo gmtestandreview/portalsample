@@ -65,8 +65,8 @@ export interface AccountDispatchContextValue {
 // Combined type kept for Props helper functions that need both state and dispatch.
 export type AccountStateContext = AccountStateContextValue;
 export type AccountDispatchContext = AccountDispatchContextValue;
-export type AccountContextState =
-  AccountStateContextValue & AccountDispatchContextValue;
+export type AccountContextState = AccountStateContextValue &
+  AccountDispatchContextValue;
 
 export {
   AccountDispatchContext,

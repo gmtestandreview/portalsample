@@ -1319,9 +1319,7 @@ describe('workflow route wrappers', () => {
         new Error('quote failed'),
       );
       const QuotationSummary = (
-        await import(
-          '../../../ClientApp/src/routes/acceptQuote/quotationSummary'
-        )
+        await import('../../../ClientApp/src/routes/acceptQuote/quotationSummary')
       ).default;
 
       renderAt(
