@@ -138,9 +138,9 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
       {...(methods as unknown as ReturnType<typeof useForm<FieldValues>>)}
     >
       <RhfHiddenRulesProvider rules={hidden}>
-        <RhfFormApiContext.Provider value={api}>
+        <RhfFormApiContext value={api}>
           {typeof children === 'function' ? children(api) : children}
-        </RhfFormApiContext.Provider>
+        </RhfFormApiContext>
       </RhfHiddenRulesProvider>
     </FormProvider>
   );

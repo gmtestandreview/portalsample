@@ -22,10 +22,10 @@ export function Toolbar(props: Readonly<ToolbarProps>) {
   );
 
   return (
-    <ToggleButtonGroupContext.Provider value={toggleButtonGroupValue}>
-      <SeparatorContext.Provider value={separatorValue}>
+    <ToggleButtonGroupContext value={toggleButtonGroupValue}>
+      <SeparatorContext value={separatorValue}>
         <RACToolbar {...props} />
-      </SeparatorContext.Provider>
-    </ToggleButtonGroupContext.Provider>
+      </SeparatorContext>
+    </ToggleButtonGroupContext>
   );
 }

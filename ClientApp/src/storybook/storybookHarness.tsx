@@ -269,9 +269,9 @@ export const PortalStoryRouter = ({
   );
 
   return (
-    <PortalRouterRuntimeContext.Provider value={runtime}>
+    <PortalRouterRuntimeContext value={runtime}>
       <RouterProvider router={router} />
-    </PortalRouterRuntimeContext.Provider>
+    </PortalRouterRuntimeContext>
   );
 };
 
@@ -419,7 +419,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
   );
 
   return (
-    <MsalContext.Provider value={msalContext}>
+    <MsalContext value={msalContext}>
       <AccountStateCtx.Provider value={accountState}>
         <AccountDispatchCtx.Provider value={accountDispatch}>
           <ModalStateCtx.Provider value={modalState}>
@@ -429,6 +429,6 @@ export const withPortalProviders: Decorator = (Story, context) => {
           </ModalStateCtx.Provider>
         </AccountDispatchCtx.Provider>
       </AccountStateCtx.Provider>
-    </MsalContext.Provider>
+    </MsalContext>
   );
 };

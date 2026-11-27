@@ -256,7 +256,7 @@ const renderModal = (opts: RenderOptions = {}) => {
 
   return render(
     <MemoryRouter>
-      <MsalContext.Provider value={msalContextValue}>
+      <MsalContext value={msalContextValue}>
         <AccountStateCtx.Provider
           value={{
             isLoading: false,
@@ -302,7 +302,7 @@ const renderModal = (opts: RenderOptions = {}) => {
             </ModalStateCtx.Provider>
           </AccountDispatchCtx.Provider>
         </AccountStateCtx.Provider>
-      </MsalContext.Provider>
+      </MsalContext>
     </MemoryRouter>,
   );
 };

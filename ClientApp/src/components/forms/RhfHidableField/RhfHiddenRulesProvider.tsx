@@ -17,7 +17,5 @@ export const RhfHiddenRulesProvider = ({
   rules,
   children,
 }: Readonly<RhfHiddenRulesProviderProps>) => (
-  <HiddenRulesContext.Provider value={rules}>
-    {children}
-  </HiddenRulesContext.Provider>
+  <HiddenRulesContext value={rules}>{children}</HiddenRulesContext>
 );

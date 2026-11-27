@@ -51,7 +51,7 @@ const renderStep = (
   step: React.ReactElement,
 ) =>
   render(
-    <ModalDispatchContext.Provider value={modalDispatch}>
+    <ModalDispatchContext value={modalDispatch}>
       <MemoryRouter initialEntries={[path]}>
         <Routes>
           <Route
@@ -64,7 +64,7 @@ const renderStep = (
           />
         </Routes>
       </MemoryRouter>
-    </ModalDispatchContext.Provider>,
+    </ModalDispatchContext>,
   );
 
 const organisationValues: Record<string, unknown> = {
