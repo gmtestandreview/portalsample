@@ -67,7 +67,7 @@
     "**/*.stats",
     "**/*.tag",
     "**/*.patch",
-     ".claude",
+    ".claude",
     ".claude/**",
     ".copilot-tracking",
     ".copilot-tracking/**",
@@ -84,7 +84,6 @@
     ".superpowers",
     ".superpowers/**",
     "**/*.stories.*"
-
   ],
   "format": ["javascript", "jsx", "typescript", "tsx", "python"],
   "minTokens": 50,
