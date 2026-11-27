@@ -319,8 +319,10 @@ describe(useInstrumentAndRequestLookups, () => {
     );
     // The cleared value differs from the saved baseline, so the form stays
     // dirty for the unsaved-changes prompt.
-    expect(formState.dirtyFields.instrumentOrArtefactType).toBe(true);
-    expect(formState.isDirty).toBe(true);
+    expect({
+      field: formState.dirtyFields.instrumentOrArtefactType,
+      form: formState.isDirty,
+    }).toStrictEqual({ field: true, form: true });
     // The existing error is kept until the next validation replaces it.
     expect(formState.errors.instrumentOrArtefactType?.message).toBe(
       'Select an instrument or artefact type.',

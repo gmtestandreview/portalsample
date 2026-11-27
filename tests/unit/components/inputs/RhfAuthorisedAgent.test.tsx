@@ -98,6 +98,17 @@ describe(RhfAuthorisedAgent, () => {
       'data-name',
       'agent.streetAddress',
     );
+  });
+
+  it('passes the address options to the address lookup', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness defaultValues={{ agent: { manufacturerName: 'Seed' } }}>
+        <RhfAuthorisedAgent name='agent' />
+      </Harness>,
+    );
+
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-max-results',
       '10',

@@ -143,9 +143,9 @@ describe('wizard control behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Finish' }));
 
-    expect(
-      await screen.findByRole('dialog', { name: 'Confirm submission' }),
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByRole('dialog', { name: 'Confirm submission' }),
+    ).resolves.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Confirm no' }));
 
@@ -199,7 +199,10 @@ describe('wizard control behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
 
-    expect(await screen.findByRole('dialog')).toHaveAttribute('aria-label', '');
+    await expect(screen.findByRole('dialog')).resolves.toHaveAttribute(
+      'aria-label',
+      '',
+    );
   });
 
   it.each([

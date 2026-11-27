@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { ReactNode } from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import RhfOrganisationNameLookup from '@/components/Inputs/RhfOrganisationNameLookup';
 
 interface LookupValues {
@@ -65,11 +65,15 @@ const settleDebounce = () => {
   });
 };
 
-describe(RhfOrganisationNameLookup, () => {
-  afterEach(() => {
+const setupFakeTimers = () => {
+  vi.useFakeTimers({ shouldAdvanceTime: true });
+  onTestFinished(() => {
     vi.useRealTimers();
   });
+  return userEvent.setup({ delay: null });
+};
 
+describe(RhfOrganisationNameLookup, () => {
   it('writes typed free text to the RHF field before a suggestion is selected', async () => {
     expect.hasAssertions();
 
@@ -132,8 +136,7 @@ describe(RhfOrganisationNameLookup, () => {
   it('keeps the same suggestions when the search text changes without changing the matches', async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    const user = userEvent.setup({ delay: null });
+    const user = setupFakeTimers();
     renderLookup();
     await user.type(getInput(), 'Acme');
     settleDebounce();
@@ -177,8 +180,7 @@ describe(RhfOrganisationNameLookup, () => {
   it('offers no suggestions without an options field name', async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    const user = userEvent.setup({ delay: null });
+    const user = setupFakeTimers();
     render(
       <LookupHarness>
         <RhfOrganisationNameLookup
@@ -197,8 +199,7 @@ describe(RhfOrganisationNameLookup, () => {
   it('copes with missing options and a missing value, using the default label', async () => {
     expect.hasAssertions();
 
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    const user = userEvent.setup({ delay: null });
+    const user = setupFakeTimers();
     render(
       <LookupHarness values={{}}>
         <RhfOrganisationNameLookup

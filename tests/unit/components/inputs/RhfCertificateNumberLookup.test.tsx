@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { Resolver, UseFormReturn } from 'react-hook-form';
 import type { ReactNode } from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import RhfCertificateNumberLookup from '@/components/Inputs/RhfCertificateNumberLookup';
 import type { RhfCertificateNumberLookupProps } from '@/components/Inputs/RhfCertificateNumberLookup';
 
@@ -104,14 +104,13 @@ const typeAndSettle = async (
 
 const setup = () => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
+  onTestFinished(() => {
+    vi.useRealTimers();
+  });
   return userEvent.setup({ delay: null });
 };
 
 describe(RhfCertificateNumberLookup, () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('writes typed text to the field without touching it or the id field', async () => {
     expect.hasAssertions();
 

@@ -62,6 +62,22 @@ describe('rhf checkbox group behavior', () => {
     expect(screen.getByLabelText(/Email/)).not.toBeChecked();
     expect(screen.getByLabelText('SMS')).toBeChecked();
     expect(screen.getByText('By email')).toBeInTheDocument();
+  });
+
+  it('wires the inline help and falls back to a name based id for options without one', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness defaultValue={['sms']}>
+        <RhfCheckboxGroup
+          name='methods'
+          legend='Methods'
+          options={options}
+          inlineHelp='Pick any'
+        />
+      </Harness>,
+    );
+
     expect(screen.getByText('Pick any')).toHaveAttribute('id', 'help-methods');
     // option without an id falls back to a name based id
     expect(screen.getByLabelText('Post')).toHaveAttribute('id', 'methods-2');

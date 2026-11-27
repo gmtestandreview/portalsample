@@ -5,7 +5,7 @@ export const isObject = (value: unknown): value is object =>
 // Path tokens, tried in this order at each position (sticky, so each one only
 // matches exactly where the scan currently is).
 const PLAIN_KEY = /[^.[\]]+/y;
-const INDEX_KEY = /\[(-?\d+(?:\.\d+)?)\]/y;
+const INDEX_KEY = /\[(-?\d+\.\d+|-?\d+)\]/y;
 const QUOTED_KEY = /\[(["'])((?:(?!\1)[^\\]|\\.)*?)\1\]/y;
 // An empty key sits before a `.` or `[]` that is followed by another separator
 // or the end of the path (`a..b`, `a[]`).
@@ -73,10 +73,10 @@ const shallowClone = (value: object): PathContainer =>
         value,
       ) as PathContainer);
 
-const keyAt = (keys: string[], index: number): string => String(keys[index]);
+const keyAt = (keys: string[], index: number): string => String(keys.at(index));
 
 const readKey = (container: unknown, key: string): unknown =>
-  (container as PathContainer)[key];
+  Reflect.get(Object(container) as PathContainer, key);
 
 /** Reads a nested value by dotted/bracketed path, returning `fallback` when absent. */
 export function getIn(
@@ -130,7 +130,7 @@ export function setIn<T extends object>(
       keyAt(keys, position + 1),
     );
 
-    cursor[keyAt(keys, position)] = next;
+    Reflect.set(cursor, keyAt(keys, position), next);
     cursor = next;
   }
 
@@ -145,7 +145,7 @@ export function setIn<T extends object>(
     // A single-key path never entered the loop, so `cursor` is `result`.
     Reflect.deleteProperty(cursor, leaf);
   } else {
-    cursor[leaf] = value;
+    Reflect.set(cursor, leaf, value);
   }
 
   return result as T;
