@@ -330,10 +330,10 @@ required at S3, S4, each flow cut-over, and Z; focused tests suffice between.
 - `tests/unit/helpers/rhfShell.tsx`: harness twin of `helpers/formik.tsx`.
 - Behaviour tests (9) and resolver tests (10) pin the S0 findings on the RHF
   side; new files are at 100% statements and branches.
-- **D-5 (proposed).** The form resets whenever a new `initialValues` object
-  arrives, even if deep-equal. Formik skipped the reset when equal, which let
-  edits leak between consecutive steps with identical shapes. Treat as an
-  improvement; no flow depends on the leak.
+- **D-5 (approved by the human, 2026-11-27).** The form resets whenever a new
+  `initialValues` object arrives, even if deep-equal. Formik skipped the reset
+  when equal, which let edits leak between consecutive steps with identical
+  shapes. Treat as an improvement; no flow depends on the leak.
 - S2.x closes the gap below: the shared suite now runs on both shells.
 
 ## S2.x delivered: shell-neutral controls and the shared contract suite
@@ -353,7 +353,7 @@ required at S3, S4, each flow cut-over, and Z; focused tests suffice between.
 - `FormBannerSlot` is the banner extracted from `FormikForm`.
 - `shellContract.test.tsx` runs summary, focus, save/submit, prompt and banner
   cases with `describe.each` over both shells.
-- **D-6 (proposed).** The RHF summary is derived from live errors once
-  `submitCount > 0`; Formik's kept a state snapshot that could go stale after a
-  reset. A caller-supplied banner must be a valid element (Formik threw via
-  `Children.only` otherwise).
+- **D-6 (approved by the human, 2026-11-27).** The RHF summary is derived from
+  live errors once `submitCount > 0`; Formik's kept a state snapshot that could
+  go stale after a reset. A caller-supplied banner must be a valid element
+  (Formik threw via `Children.only` otherwise).
