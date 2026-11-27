@@ -55,9 +55,11 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       if (!isActive || requestGenerationRef.current !== currentGeneration) {
         return;
       }
-      if (result.kind === 'loaded') {
-        setAcceptQuotePreInfo(result.preInfo);
-      }
+      // Reset on a failed or id-less load so the previous quote's terms
+      // are never shown against a different quote.
+      setAcceptQuotePreInfo(
+        result.kind === 'loaded' ? result.preInfo : undefined,
+      );
       setIsLoading(false);
     };
     void loadDataForDisplay();

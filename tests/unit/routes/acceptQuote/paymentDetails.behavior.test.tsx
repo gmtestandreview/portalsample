@@ -101,6 +101,7 @@ const initialValues: PaymentDetailsStep = {
 };
 
 interface HarnessProps {
+  id?: string;
   values?: PaymentDetailsStep;
   onSubmit?: (values: PaymentDetailsStep, helpers?: unknown) => void;
 }
@@ -108,6 +109,7 @@ interface HarnessProps {
 type TestFormValues = PaymentDetailsStep & Record<string, any>;
 
 function Harness({
+  id = 'TEST-001',
   values = initialValues,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
@@ -126,7 +128,7 @@ function Harness({
     >
       {({ onFormSubmit }) => (
         <form noValidate onSubmit={onFormSubmit}>
-          <PaymentDetails id='TEST-001' />
+          <PaymentDetails id={id} />
           <button type='submit'>Continue</button>
         </form>
       )}
@@ -496,6 +498,34 @@ describe('paymentDetails form behavior', () => {
     await expect(
       screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
     ).resolves.toBeInTheDocument();
+  });
+
+  it('clears the previous quote payment terms when the next quote fails to load', async () => {
+    expect.hasAssertions();
+
+    resetPaymentDetailsMocks();
+
+    mockGetPaymentDetails.mockResolvedValue({
+      acceptQuotePreInfo: {
+        paymentTerms: 'Prepaid',
+        quotationIdNum: 'Q-PREPAID',
+      },
+    });
+
+    const { rerender } = render(<Harness id='TEST-001' />);
+
+    await expect(
+      screen.findByText('Prepayment required'),
+    ).resolves.toBeInTheDocument();
+
+    mockGetPaymentDetails.mockRejectedValue(new Error('load failed'));
+    rerender(<Harness id='TEST-002' />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Prepayment required')).not.toBeInTheDocument();
+    });
+
+    expect(screen.queryByText(/Q-PREPAID/)).not.toBeInTheDocument();
   });
 
   it('shows the other-title field and validates optional invoice contact formats', async () => {
