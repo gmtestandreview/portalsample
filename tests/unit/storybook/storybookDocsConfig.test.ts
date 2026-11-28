@@ -423,6 +423,38 @@ describe('storybook documentation architecture', () => {
     expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/);
   });
 
+  it('removes the React Router framework plugins from Storybook Vite config', async () => {
+    expect.hasAssertions();
+
+    const viteFinal = requireViteFinal(storybookConfig.viteFinal);
+    const viteConfig: UserConfig = await viteFinal(
+      {
+        plugins: [
+          { name: 'react-router' },
+          { name: 'react-router:route-chunks-index' },
+          { name: 'prerender' },
+          { name: 'application-plugin' },
+        ],
+      },
+      {} as Parameters<typeof viteFinal>[1],
+    );
+    const pluginNames = (viteConfig.plugins ?? []).flatMap((plugin) => {
+      const pluginOptions = Array.isArray(plugin) ? plugin : [plugin];
+      return pluginOptions.flatMap((pluginOption) =>
+        typeof pluginOption === 'object' &&
+        pluginOption !== null &&
+        'name' in pluginOption
+          ? [pluginOption.name]
+          : [],
+      );
+    });
+
+    expect(pluginNames).not.toContain('react-router');
+    expect(pluginNames).not.toContain('react-router:route-chunks-index');
+    expect(pluginNames).not.toContain('prerender');
+    expect(pluginNames).toContain('application-plugin');
+  });
+
   it('preserves Sass compatibility and the size budget while splitting the preview runtime', async () => {
     expect.hasAssertions();
 

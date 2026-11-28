@@ -1,6 +1,6 @@
 {
   "threshold": 3,
-  "path": ["ClientApp/src", "tests"],
+  "path": ["ClientApp/src", "tests/unit"],
   "ignore": [
     "**/package.json",
     "**/package-lock.json",
@@ -90,13 +90,9 @@
   "format": ["javascript", "jsx", "typescript", "tsx", "python"],
   "minTokens": 50,
   "minLines": 5,
-  "max_lines": null,
-  "max_gap_lines": 0,
-  "similarity": 1.0,
   "semantic": null,
   "kind": [],
   "mode": "mild",
-  "formats": [],
   "ignorePattern": ["(?s)\\A/\\*.*?\\*/"],
   "reporters": ["console", "html", "json", "ai"],
   "output": "report",

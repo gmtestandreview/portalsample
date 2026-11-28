@@ -26,6 +26,7 @@ import {
   isStorybookMswDebugEnabled,
   onUnhandledStorybookRequest,
 } from './msw-policy';
+import { OversightDocsContainer } from 'storybook-addon-oversight/blocks';
 import {
   PortalStoryRouter,
   type PortalStoryParameters,
@@ -165,6 +166,7 @@ const preview = definePreview({
           <IconGallery />
         </>
       ),
+      container: OversightDocsContainer,
     },
   },
   initialGlobals: {
