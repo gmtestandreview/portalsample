@@ -44,13 +44,15 @@ const RhfSingleStepWizard = <T extends FormValues>(
     </WizardStep>,
   ] satisfies readonly WizardStepElement[];
 
-  const stepProps = {
+  // The shell is typed over the erased `FormValues`; the caller's `T` only
+  // constrains how `step` is authored, so it is narrowed once here.
+  const stepProps: RhfWizardRoutedStepProps<FormValues> = {
     ...wizard,
-    ...step,
+    ...(step as WizardStepProps<FormValues>),
     allSteps: steps,
     currentStepIndex: 0,
     url,
-  } as unknown as RhfWizardRoutedStepProps<FormValues>;
+  };
 
   return (
     <Routes>

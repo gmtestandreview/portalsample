@@ -5,7 +5,7 @@ import type {
   FormValues,
   Hideable,
   ModalProps,
-  Validation,
+  ValidationSchema,
 } from '../types';
 import type {
   FormStepStatusDto,
@@ -123,8 +123,8 @@ export interface WizardStepProps<T extends FormValues> {
   loadStepValues: (
     abortSignal?: AbortSignal,
   ) => WizardFormStepValues<T> | Promise<WizardFormStepValues<T>>;
-  validateHard?: Validation<T> | undefined;
-  validateSoft?: Validation<T> | undefined;
+  validateHard?: ValidationSchema | undefined;
+  validateSoft?: ValidationSchema | undefined;
   hidingFields?: Hideable<Partial<T>, Partial<T>> | undefined;
   bannerTitle?: string;
   bannerRefTitle?: string;

@@ -42,8 +42,7 @@
     "rootDir": ".",
     "outDir": "./dist/client/*",
     "paths": {
-      "@/*": ["./ClientApp/src/*"],
-      "@tests/*": ["./tests/*"]
+      "@/*": ["./ClientApp/src/*"]
     },
 
     "types": [

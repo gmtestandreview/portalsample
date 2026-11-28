@@ -103,8 +103,16 @@ are not yet verified.
 
 - [x] The project compiles successfully under TypeScript 6 (`typescript`
       `^6.0.3`; `npm run type-check` exits 0).
-- [ ] No new `any` or broad cast-based workarounds were introduced just to make
-      the migration compile.
+- [x] No new `any` or broad cast-based workarounds were introduced just to make
+      the migration compile. Reviewed 2026-11-28 against `main`: 0 added `any`,
+      `@ts-ignore`, `@ts-expect-error` or `@ts-nocheck` in `ClientApp/src` or
+      `tests`. `ClientApp/src` adds 4 `as unknown as` casts (2 story exports,
+      the RHF `Record<string, unknown>[]` options in
+      `RhfOrganisationNameLookup`, and `formPath.ts` `PathContainer`); the two
+      `RhfWizardRoutedStepProps` casts were removed on 2026-11-28 by typing the
+      step props to match what the wizard builds; `tests` adds 34 (mostly generated Vitest
+      mock-factory typings). The only `any` and `@ts-nocheck` live in the
+      NSwag-generated `web-api-client.ts`, which `tsconfig` excludes.
 - [x] Ref typings compile cleanly with strict nullability enabled.
 - [x] Library type packages used by React, React Router, MSAL, React Hook Form,
       and React Bootstrap are compatible with the installed TypeScript version
@@ -112,10 +120,19 @@ are not yet verified.
 
 ### 3.2 Config and Type Hygiene
 
-- [ ] `tsconfig` is present and valid in the real repo.
-- [ ] React JSX settings are valid for the upgraded toolchain.
-- [ ] Path aliases and generated API client types still resolve correctly.
-- [ ] No type regressions were introduced in touched files.
+- [x] `tsconfig` is present and valid in the real repo (`tsconfig.json`: `strict`
+      plus `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
+      `verbatimModuleSyntax`, `noUnused*`, `noImplicitReturns`).
+- [x] React JSX settings are valid for the upgraded toolchain (`jsx:
+      react-jsx`, `moduleResolution: bundler`).
+- [x] Path aliases and generated API client types still resolve correctly. The
+      `@/*` alias is declared in `tsconfig.json` and mapped in `vite.config.mts`,
+      `vitest.config.ts` and `vitest.unit.config.ts`, and is used by 98 test
+      files. The generated `web-api-client.ts` is excluded from type-checking.
+      The unused `@tests/*` path (no importers, no bundler mapping) was removed
+      from `tsconfig.json` on 2026-11-28.
+- [x] No type regressions were introduced in touched files (`npm run type-check`
+      exits 0).
 
 ---
 

@@ -84,7 +84,7 @@ const RhfWizardForm: FC<WizardFormProps> = (
           isSummaryPage,
           discard,
         } = step.props;
-        const stepProps = {
+        const stepProps: RhfWizardRoutedStepProps<FormValues> = {
           allSteps,
           currentStepIndex: index,
           initialValues,
@@ -116,7 +116,7 @@ const RhfWizardForm: FC<WizardFormProps> = (
             showBanner,
             confirmationOnSubmission,
           }),
-        } as unknown as RhfWizardRoutedStepProps<FormValues>;
+        };
 
         return (
           <Route

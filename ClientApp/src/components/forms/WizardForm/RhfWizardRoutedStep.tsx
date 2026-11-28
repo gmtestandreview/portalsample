@@ -30,9 +30,9 @@ export interface RhfWizardRoutedStepProps<
   title: string;
   location: string;
   initialValues: T;
-  validateHard?: ValidationSchema;
-  validateSoft?: ValidationSchema;
-  hidingFields?: Hideable;
+  validateHard?: ValidationSchema | undefined;
+  validateSoft?: ValidationSchema | undefined;
+  hidingFields?: Hideable<Partial<T>, Partial<T>> | undefined;
   bannerTitle?: string;
   bannerRefTitle?: string;
   bannerSubTitle?: string;
@@ -214,12 +214,21 @@ const RhfWizardRoutedStep = <T extends FormValues>(
     return null;
   }
 
+  // RhfForm stores hide rules type-erased (`Hideable` over `unknown`) because the
+  // hide-rules provider and resolver are shared across every form shape. The rules
+  // are still invoked with this step's own values, so narrowing here is sound.
+  const erasedHidingFields = hidingFields as Hideable | undefined;
+
   return (
     <RhfForm
       initialValues={stepValues}
       onSubmit={submitStep}
       onSaveAndExit={saveAndExitStep}
-      {...omitUndefined({ validateHard, validateSoft, hidingFields })}
+      {...omitUndefined({
+        validateHard,
+        validateSoft,
+        hidingFields: erasedHidingFields,
+      })}
     >
       <FormBannerSlot
         showBanner={showBanner !== false}

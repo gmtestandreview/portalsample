@@ -46,9 +46,14 @@ Migration baseline and closeout record for a target environment of:
    `StrictMode` and exercise route announcements, error-summary focus,
    autosuggest and organisation lookup, then confirm no duplicate notifications
    or console warnings (checklist Phase 4).
-2. **TypeScript hygiene review:** confirm no new `any` or broad casts were added
-   to get the migration compiling (checklist 3.1) and review `tsconfig` and path
-   aliases (3.2).
+2. **TypeScript hygiene (done 2026-11-28):** 0 added `any` or `@ts-*`
+   suppressions versus `main`; 4 added `as unknown as` casts in `ClientApp/src`
+   and 34 in `tests` (see checklist 3.1). The two `RhfWizardRoutedStepProps`
+   casts were removed by aligning the prop types with what the wizard builds
+   (schema-only `validateHard`/`validateSoft`, explicit `| undefined`, one
+   narrow documented `Hideable` erasure). `tsconfig` is strict and the `@/*`
+   alias resolves in Vite and Vitest. The unused `@tests/*` path was removed
+   from `tsconfig.json`.
 3. **.NET 10 host integration:** hosting model, asset pipeline, authentication,
    CI/CD publish. Requires the host repository (checklist Phase 6).
 
