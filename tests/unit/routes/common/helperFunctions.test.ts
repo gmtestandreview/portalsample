@@ -624,7 +624,7 @@ describe('route common helper functions', () => {
 
     vi.useFakeTimers();
     const notification = document.createElement('button');
-    notification.id = '#notif-test';
+    notification.id = 'notif-test';
     const scrollIntoView = vi
       .spyOn(notification, 'scrollIntoView')
       .mockImplementation(() => undefined);

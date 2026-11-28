@@ -31,7 +31,7 @@ import { QuoteStatus } from '../common/enums';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { proceedDeclineValidStatuses } from '../common/quoteStatus';
-import { toQuoteStatus } from '../common/helperFunctions';
+import { handleAlertScroll, toQuoteStatus } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 
@@ -69,15 +69,6 @@ const setInfoNotification = () => {
       {...dashboardInfoNotification}
     />
   ) : null;
-};
-
-const handleAlertScroll = () => {
-  window.scrollTo(0, 0);
-  setTimeout(() => {
-    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
-    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    el?.focus();
-  }, 100);
 };
 
 const Quotation = (props: Readonly<QuotationtProps>) => {
