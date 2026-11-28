@@ -65,17 +65,19 @@ const flattenRoutes = (
 ): FlattenedRoute[] =>
   entries.flatMap((entry) => {
     const nextParentFiles = [...parentFiles, entry.file];
-    const currentRoute = entry.index
-      ? [{ path: '/', file: entry.file, parentFiles }]
-      : entry.path
-        ? [
-            {
-              path: entry.path === '*' ? '*' : `/${entry.path}`,
-              file: entry.file,
-              parentFiles,
-            },
-          ]
-        : [];
+    let currentRoute: FlattenedRoute[] = [];
+
+    if (entry.index) {
+      currentRoute = [{ path: '/', file: entry.file, parentFiles }];
+    } else if (entry.path) {
+      currentRoute = [
+        {
+          path: entry.path === '*' ? '*' : `/${entry.path}`,
+          file: entry.file,
+          parentFiles,
+        },
+      ];
+    }
 
     return [
       ...currentRoute,
@@ -83,18 +85,22 @@ const flattenRoutes = (
     ];
   });
 
-const routes = flattenRoutes(routeConfig as unknown as RouteEntry[]);
+const routes = flattenRoutes(routeConfig);
 const routeForPath = (path: string) =>
   routes.find((candidate) => candidate.path === path);
 
 describe('framework route configuration', () => {
   it('preserves the complete route path contract', () => {
-    expect(routes.map((route) => route.path).sort()).toStrictEqual(
-      [...expectedPaths].sort(),
-    );
+    expect.hasAssertions();
+
+    expect(
+      routes.map((route) => route.path).sort((a, b) => a.localeCompare(b)),
+    ).toStrictEqual([...expectedPaths].sort((a, b) => a.localeCompare(b)));
   });
 
   it('preserves authentication and layout boundaries', () => {
+    expect.hasAssertions();
+
     expect(routeForPath('/dashboard')?.parentFiles).toContain(
       './frameworkRoutes/authenticatedLayout.tsx',
     );
@@ -108,6 +114,8 @@ describe('framework route configuration', () => {
   });
 
   it('uses framework route modules for page components', () => {
+    expect.hasAssertions();
+
     expect(routeForPath('/dashboard')?.file).toBe(
       './routes/dashboard/index.tsx',
     );

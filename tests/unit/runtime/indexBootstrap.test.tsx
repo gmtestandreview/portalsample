@@ -120,6 +120,9 @@ describe('framework client bootstrap', () => {
     await import('../../../ClientApp/src/entry.client');
 
     const [, application] = mocks.hydrateRoot.mock.calls[0] ?? [];
-    expect(application).toEqual(expect.objectContaining({ type: StrictMode }));
+
+    expect(application).toStrictEqual(
+      expect.objectContaining({ type: StrictMode }),
+    );
   });
 });
