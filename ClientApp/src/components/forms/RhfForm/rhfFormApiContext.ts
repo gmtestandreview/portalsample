@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { FormEvent } from 'react';
+import type { SyntheticEvent } from 'react';
 import type { SubmitMode } from './wizardYupResolver';
 
 export interface RhfFormApi {
@@ -9,7 +9,7 @@ export interface RhfFormApi {
    */
   submit: (mode: SubmitMode) => Promise<void>;
   /** Native form submit (Enter key, submit button): behaves as `next`. */
-  onFormSubmit: (event?: FormEvent) => void;
+  onFormSubmit: (event?: SyntheticEvent<HTMLFormElement>) => void;
   /**
    * A step whose own data failed to load calls this so the shell cannot save or
    * complete it while the fields are not shown. While blocked, `submit` is a no-op.

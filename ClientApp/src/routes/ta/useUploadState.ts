@@ -3,7 +3,7 @@ import type {
   IPublicClientApplication,
 } from '@azure/msal-browser';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import type { Dispatch, RefObject, SetStateAction } from 'react';
 import {
   type AttachmentDto,
   type FileParameter,
@@ -19,8 +19,8 @@ interface UploadState {
   setUploading: Dispatch<SetStateAction<boolean>>;
   progress: UploadProgress | undefined;
   setProgress: Dispatch<SetStateAction<UploadProgress | undefined>>;
-  abortRef: MutableRefObject<AbortController | null>;
-  uploadIdRef: MutableRefObject<string | null>;
+  abortRef: RefObject<AbortController | null>;
+  uploadIdRef: RefObject<string | null>;
 }
 
 interface UploadHandlersOptions {
