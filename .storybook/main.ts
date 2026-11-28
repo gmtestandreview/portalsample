@@ -95,7 +95,6 @@ export default defineMain({
     'storybook-addon-remix-react-router',
     'storybook-addon-code-editor',
     'storybook-addon-oversight',
-    '@etchteam/storybook-addon-a11y-interaction-tests'
   ],
 
   docs: {

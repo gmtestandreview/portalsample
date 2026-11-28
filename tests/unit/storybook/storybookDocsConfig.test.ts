@@ -416,6 +416,17 @@ describe('storybook documentation architecture', () => {
     expect(allDependencies).not.toHaveProperty('@storybook/addon-designs');
   });
 
+  it('keeps accessibility interaction helpers out of Storybook presets', () => {
+    expect.hasAssertions();
+
+    expect(allDependencies).toHaveProperty(
+      '@etchteam/storybook-addon-a11y-interaction-tests',
+    );
+    expect(storybookConfig.addons).not.toContain(
+      '@etchteam/storybook-addon-a11y-interaction-tests',
+    );
+  });
+
   it('enables agentic review for direct Storybook MCP clients', () => {
     expect.hasAssertions();
 

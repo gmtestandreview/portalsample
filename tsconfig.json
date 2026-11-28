@@ -33,6 +33,7 @@
     "resolvePackageJsonImports": true,
     "customConditions": ["module", "browser"],
     "esModuleInterop": true,
+    "stableTypeOrdering": true,
 
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
