@@ -48,9 +48,10 @@ undocumented properties. Verify every design-system property with `docs-list`
 and `docs-show`; use `get-storybook-story-instructions` and finish with
 `test-run`.
 
-Do not suppress React `act(...)` warnings. Form, lookup, and route stories must
-derive state synchronously or await settled UI with `findBy...`/`waitFor`; do
-not hide derived visibility behind `useEffect` plus `setState`.
+Never suppress React `act(...)` warnings under any circumstances. Form, lookup,
+and route stories must derive state synchronously or await settled UI with
+`findBy...`/`waitFor`; never hide derived visibility behind `useEffect` plus
+`setState`.
 
 When using Storybook MCP, start `npm run storybook`, verify
 `http://localhost:6006/mcp` and the configured server, and restart the client if

@@ -322,8 +322,12 @@ Released on the operator's explicit say-so, as this section requires.
 | tests/unit/coverage/coverageConfig.test.ts | external-session (coverage) | COVERAGE-GATE-001 | done   |
 | vitest.unit.config.ts                      | external-session (coverage) | COVERAGE-GATE-001 | done   |
 
-No claim is active. Agents dispatched from this session may write to these
-files.
+| ClientApp/src/components/AriaComponents/Menu/Menu.tsx | task3 | LINT-3 |
+active | |
+ClientApp/src/components/modals/BranchSelectorModal/useBranchSelection.ts |
+task3 | LINT-3 | active |
+
+Task 3 claims active for ESLint cleanup.
 
 **Resolved 2026-09-02 — Gate Clearance Plan Phase 1.** Both
 `ClientApp/src/**/setupTests.ts` and `ClientApp/src/**/*.stories copy.tsx` have
