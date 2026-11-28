@@ -1,10 +1,14 @@
 import { orIfEmpty } from '../../../utils/orIfEmpty';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
-import type { ReactElement } from 'react';
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 import { ErrorType } from './types';
-import type { WizardStepError, WizardStepProps } from './types';
+import type { WizardStepError } from './types';
+import type { FormValues } from '../types';
+import type {
+  WizardStepControllerOptions,
+  WizardStepElement,
+} from './wizardStepContracts';
 import { resolveErrorState } from './errorState';
 import { FormStepStatus } from '../../../api/web-api-client';
 import type { ProblemDetails } from '../../../api/web-api-client';
@@ -22,14 +26,6 @@ import { env } from '../../../env';
 import AppLogger from '../../../instrumentation/AppLogger';
 import { areFormValuesEqual } from '../../../utils/areFormValuesEqual';
 
-// The controller is form-library neutral: it loads a step, saves it, maps
-// failures to a view decision and navigates. The form shell (Formik today, React
-// Hook Form later) only renders the fields and calls `submitStep` /
-// `saveAndExitStep` with the values it collected.
-type StepValues = Record<string, any>;
-
-type StepElement = ReactElement<WizardStepProps<StepValues>>;
-
 const getSubmitBaseUrl = (result: unknown): string | undefined => {
   if (typeof result !== 'object' || result === null || !('baseUrl' in result)) {
     return undefined;
@@ -39,43 +35,28 @@ const getSubmitBaseUrl = (result: unknown): string | undefined => {
   return typeof baseUrl === 'string' ? baseUrl : undefined;
 };
 
-type StepProps = Pick<
-  WizardStepProps<StepValues>,
-  | 'stepStatuses'
-  | 'loadStepValues'
-  | 'onSaveAndExit'
-  | 'onSaveAndNext'
-  | 'getRedirectionLocationOnError'
-  | 'discard'
-> & {
-  url: string;
-  currentStepIndex: number;
-  allSteps: StepElement[];
-  locationAfterExit?: string;
-  locationOnCompletion: string;
-};
-
 /** What the step component should do with the current controller state. */
 export type WizardStepView =
   | { kind: 'form' }
   | { kind: 'navigate'; to: string }
   | { kind: 'blank' };
 
-export interface WizardStepController {
+export interface WizardStepController<T extends FormValues> {
   isLoading: boolean;
   /** Values loaded from the server for this step; the form's initial values. */
-  stepValues: StepValues;
+  stepValues: T;
   errorState: WizardStepError;
   view: WizardStepView;
-  submitStep: (values: StepValues) => Promise<void>;
-  saveAndExitStep: (values: StepValues) => Promise<void>;
+  submitStep: (values: T) => Promise<void>;
+  saveAndExitStep: (values: T) => Promise<void>;
   cancel: () => void;
 }
 
-export const useWizardStepController = (
-  props: Readonly<StepProps>,
-  initialValues: StepValues,
-): WizardStepController => {
+/** Loads and saves a wizard step and resolves navigation for either form shell. */
+export const useWizardStepController = <T extends FormValues>(
+  props: Readonly<WizardStepControllerOptions<T>>,
+  initialValues: T,
+): WizardStepController<T> => {
   const {
     stepStatuses,
     loadStepValues,
@@ -93,7 +74,7 @@ export const useWizardStepController = (
   const navigate = useNavigate();
   const accountState = useAccountState();
   const accountDispatch = useAccountDispatch();
-  const controllerRef = useRef<AbortController | null>();
+  const controllerRef = useRef<AbortController | null>(null);
   const loadStepValuesRef = useRef(loadStepValues);
   const getRedirectionLocationOnErrorRef = useRef(
     getRedirectionLocationOnError,
@@ -112,7 +93,7 @@ export const useWizardStepController = (
     controllerRef.current = controller;
   };
 
-  const [stepValues, setStepValues] = useState<StepValues>({
+  const [stepValues, setStepValues] = useState<T>({
     ...initialValues,
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -120,43 +101,46 @@ export const useWizardStepController = (
     kind: 'none',
   });
 
-  const loadData = useCallback(
-    async (options?: { keepErrorState?: boolean }) => {
-      if (!options?.keepErrorState) {
-        setErrorState({ kind: 'none' });
-      }
-      try {
-        abortSignal();
-        const currentStep = await loadStepValuesRef.current(
-          controllerRef.current?.signal,
-        );
-        setStepValues(nullOrUndefinedToEmpty(currentStep.stepValues));
-      } catch (error) {
-        const err = error as Error;
-        AppLogger.error('Could not load data for form step.', err);
-        const loadServerError = error as ProblemDetails;
-        AppLogger.trace(
-          'Could not load data for form step.',
-          SeverityLevel.Error,
-          {
-            problemDetails: loadServerError,
-            err,
-          },
-        );
-        setErrorState(
-          resolveErrorState(
-            error,
-            getRedirectionLocationOnErrorRef.current,
-            ErrorType.Load,
-          ),
-        );
-        AppLogger.error('Failed to Load step values', err);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [],
-  );
+  // A new step starts without the previous step's error. Reset it during
+  // render (guarded by the step it was last reset for) instead of from the
+  // load effect.
+  const [errorStepIndex, setErrorStepIndex] = useState(currentStepIndex);
+  if (errorStepIndex !== currentStepIndex) {
+    setErrorStepIndex(currentStepIndex);
+    setErrorState({ kind: 'none' });
+  }
+
+  const loadData = useCallback(async () => {
+    try {
+      abortSignal();
+      const currentStep = await loadStepValuesRef.current(
+        controllerRef.current?.signal,
+      );
+      setStepValues(nullOrUndefinedToEmpty(currentStep.stepValues));
+    } catch (error) {
+      const err = error as Error;
+      AppLogger.error('Could not load data for form step.', err);
+      const loadServerError = error as ProblemDetails;
+      AppLogger.trace(
+        'Could not load data for form step.',
+        SeverityLevel.Error,
+        {
+          problemDetails: loadServerError,
+          err,
+        },
+      );
+      setErrorState(
+        resolveErrorState(
+          error,
+          getRedirectionLocationOnErrorRef.current,
+          ErrorType.Load,
+        ),
+      );
+      AppLogger.error('Failed to Load step values', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     void loadData();
@@ -166,7 +150,7 @@ export const useWizardStepController = (
     if (errorState.kind === 'concurrency') {
       // Reload the saved values but keep the conflict banner, so the user is
       // told why their edits were replaced.
-      void loadData({ keepErrorState: true });
+      void loadData();
     }
   }, [errorState.kind, loadData]);
 
@@ -208,12 +192,12 @@ export const useWizardStepController = (
       ? allSteps.at(currentStepIndex + 1)
       : false;
 
-  const goToStep = (step: StepElement, baseUrl?: string) =>
+  const goToStep = (step: WizardStepElement, baseUrl?: string) =>
     baseUrl && url !== baseUrl
       ? navigate(`${baseUrl}${step.props.location}`, { replace: true })
       : navigate(`${url}${step.props.location}`);
 
-  const submitStep = async (values: StepValues) => {
+  const submitStep = async (values: T) => {
     if (onSaveAndNext) {
       abortSignal();
       setErrorState({ kind: 'none' });
@@ -261,7 +245,7 @@ export const useWizardStepController = (
     }
   };
 
-  const saveAndExitStep = async (values: StepValues) => {
+  const saveAndExitStep = async (values: T) => {
     if (onSaveAndExit) {
       abortSignal();
       setErrorState({ kind: 'none' });
@@ -335,8 +319,8 @@ interface ViewInput {
   errorState: WizardStepError;
   isLoading: boolean;
   currentStepIndex: number;
-  stepStatuses: StepProps['stepStatuses'];
-  allSteps: StepElement[];
+  stepStatuses: WizardStepControllerOptions<FormValues>['stepStatuses'];
+  allSteps: readonly WizardStepElement[];
   url: string;
 }
 

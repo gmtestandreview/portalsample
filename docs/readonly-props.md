@@ -95,7 +95,7 @@ For example, `Readonly<{ items: string[] }>` still contains a mutable array and
 does not satisfy the deeper rule. `Readonly<{ items: readonly string[] }>` can,
 but passing that array to a function requiring `string[]` may fail. Propagate
 readonly input types through genuinely read-only consumers, or deliberately copy
-an array at a mutation boundary. Do not blindly deep-wrap Formik values, React
+an array at a mutation boundary. Do not blindly deep-wrap form values, React
 events, mutable refs, API model instances or third-party callback contracts.
 
 `--audit-parameters` uses the installed ESLint configuration and prints those

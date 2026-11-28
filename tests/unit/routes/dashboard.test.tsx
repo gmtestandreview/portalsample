@@ -1527,4 +1527,26 @@ describe('dashboard', () => {
 
     expect(document.querySelectorAll('[inert]')).toHaveLength(3);
   });
+
+  it('shows a loading spinner on every tab pane while dashboard data is pending', async () => {
+    expect.hasAssertions();
+
+    resetDashboardMocks();
+
+    mockGetDrafts.mockReturnValue(new Promise<never>(() => undefined));
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    // Drafts and Requests share one pane layout; Instruments has its own.
+    await waitFor(() => {
+      expect(screen.getAllByTestId('block-spinner')).toHaveLength(3);
+    });
+
+    for (const spinner of screen.getAllByTestId('block-spinner')) {
+      expect(spinner).toHaveTextContent('Loading data...');
+    }
+
+    expect(screen.queryByTestId('no-requests')).not.toBeInTheDocument();
+    expect(document.querySelectorAll('[inert]')).toHaveLength(0);
+  });
 });

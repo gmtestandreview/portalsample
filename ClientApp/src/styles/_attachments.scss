@@ -30,7 +30,7 @@
     min-height: 1.25rem;
 
     .attachment-name {
-      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .attachment-size {
@@ -53,14 +53,43 @@
     width: 1rem;
   }
 }
-
+// Sumary and Submit view
 .attachments-summary {
   .attachment {
     font-weight: normal;
     background-color: transparent;
     border: none;
     border-radius: 0;
-    padding: 0;
+    padding: 0.5rem 0.25rem;
     margin-bottom: 0.5rem;
+  }
+
+  .attachment-cat.small p {
+    font-size: $font-size-sm;
+  }
+}
+
+// PA upload attachments view
+.attachments-upload {
+  .attachment {
+    padding: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+// PA manage view - Submitted
+.pa-application-manage {
+  .attachment-cat.small .mb-4 {
+    // Override the Component > isSummary .UI .margins; Bootstrap's .mb-4
+    // utility is itself !important, so this override must be too.
+    // stylelint-disable-next-line declaration-no-important
+    margin-bottom: 0 !important;
+  }
+
+  .form-label {
+    @include visually-hidden();
+  }
+
+  p {
+    font-size: $font-size-sm;
   }
 }

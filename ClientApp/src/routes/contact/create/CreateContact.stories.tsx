@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw/http';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import preview from '../../../../../.storybook/preview';
 import CreateContact from '.';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -121,9 +121,91 @@ export const ConfirmCreatesContact = meta.story({
       }),
     ).toBeVisible();
     await expect(state.observed.savedBodies).toHaveLength(1);
-    await expect(state.observed.savedBodies[0]).toMatchObject({
-      formStep: { contact: { firstName: 'Taylor', lastName: 'Nguyen' } },
+    await expect(state.observed.savedBodies[0]).toEqual({
+      formStep: contactForm,
     });
     await expect(state.observed.contactCompletedCount).toBe(1);
+  },
+});
+
+export const HiddenOtherTitleIsOmittedFromPayload = meta.story({
+  parameters: { docs: { story: { inline: false } } },
+  beforeEach({ msw }) {
+    msw.use(
+      ...contactHandlers({
+        ...contactForm,
+        contact: { ...contactForm.contact, titleOther: 'Chief' },
+      }),
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await canvas.findByDisplayValue('Taylor');
+    await expect(canvas.queryByLabelText('If "Other"')).not.toBeInTheDocument();
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: CREATE_BUTTON_NAME }),
+    );
+    await userEvent.click(
+      within(
+        await within(document.body).findByRole('dialog', {
+          name: CONFIRMATION_TITLE,
+        }),
+      ).getByRole('button', { name: 'Yes, submit' }),
+    );
+
+    await expect(
+      await canvas.findByRole('heading', {
+        name: 'Contact created destination',
+      }),
+    ).toBeVisible();
+    await expect(state.observed.savedBodies).toEqual([
+      { formStep: contactForm },
+    ]);
+  },
+});
+
+export const InvalidSubmitShowsInlineFieldErrors = meta.story({
+  parameters: { docs: { story: { inline: false } } },
+  beforeEach({ msw }) {
+    msw.use(
+      ...contactHandlers({
+        ...contactForm,
+        contact: {
+          ...contactForm.contact,
+          firstName: '',
+          lastName: '',
+          email: '',
+        },
+      }),
+    );
+  },
+  play: async ({ canvas, userEvent }) => {
+    await canvas.findByDisplayValue(/0400/);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: CREATE_BUTTON_NAME }),
+    );
+
+    const firstName = await canvas.findByRole('textbox', {
+      name: 'First name',
+    });
+
+    await waitFor(() =>
+      expect(firstName).toHaveAttribute('aria-invalid', 'true'),
+    );
+    await expect(firstName).toHaveAccessibleDescription(
+      'First name is required',
+    );
+
+    const lastName = canvas.getByRole('textbox', { name: 'Last name' });
+
+    await expect(lastName).toHaveAttribute('aria-invalid', 'true');
+    await expect(lastName).toHaveAccessibleDescription('Last name is required');
+
+    const email = canvas.getByRole('textbox', { name: 'Email address' });
+
+    await expect(email).toHaveAttribute('aria-invalid', 'true');
+    await expect(email).toHaveAccessibleDescription(
+      /Email address is required/,
+    );
   },
 });

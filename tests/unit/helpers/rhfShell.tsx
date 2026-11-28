@@ -28,7 +28,7 @@ export const ShellControls = ({ children }: { children?: ReactNode }) => {
 type ShellProps<T extends FormValues> = Omit<RhfFormProps<T>, 'children'>;
 
 /**
- * RHF counterpart of `helpers/formik.tsx`: renders `RhfForm` with the controls
+ * Renders `RhfForm` with the controls
  * above. Call `rerenderShell` with a new `initialValues` object to simulate a
  * reload.
  */

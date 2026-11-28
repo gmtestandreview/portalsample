@@ -35,8 +35,8 @@ private channel.
 
 The in-scope application code is the React and TypeScript single-page
 application under `ClientApp/src`, including routing, authentication
-integration, Formik/Yup validation, client-side storage, instrumentation,
-reusable components, Storybook fixtures, and tests.
+integration, React Hook Form/Yup validation, client-side storage,
+instrumentation, reusable components, Storybook fixtures, and tests.
 
 Important security-relevant areas include:
 

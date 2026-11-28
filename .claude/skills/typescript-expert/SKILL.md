@@ -2,19 +2,19 @@
 name: typescript-expert
 description: >-
   Use when writing, reviewing, debugging, refactoring, migrating, or hardening
-  TypeScript projects targeting 5.9.3 strict mode, including compiler or emit
+  TypeScript projects targeting 6.0.3 strict mode, including compiler or emit
   failures, ESLint or SonarQube findings or gate/profile evidence behind a
   TypeScript completion claim, module resolution, declaration/public typing,
   advanced types, project references, monorepos, or type-check performance. Do
   not use for unrelated JavaScript-only or UI/UX tasks.
 compatibility: >-
   Claude Code project skill. Requires Python 3.10+ for scripts/ts_diagnostic.py
-  and project/workspace-local or PATH TypeScript 5.9.3; optional
+  and project/workspace-local or PATH TypeScript 6.0.3; optional
   lint/build/test/Sonar gates depend on project tools. Sonar also requires
   configured network access and credentials.
 metadata:
   version: '1.3.0'
-  typescript: '5.9.3'
+  typescript: '6.0.3'
 ---
 
 # TypeScript Expert
@@ -45,7 +45,7 @@ change; this skill does not substitute for it.
 
 ## Non-negotiable rules
 
-1. Target TypeScript **5.9.3**. Verify the project compiler before relying on
+1. Target TypeScript **6.0.3**. Verify the project compiler before relying on
    version-specific behavior. A different version is unresolved until the
    project requirement is clarified or corrected.
 2. Preserve the project's runtime, package manager, framework, module system,
@@ -111,7 +111,7 @@ project); `--root` is the project being diagnosed:
 
 ```bash
 python <skill-dir>/scripts/ts_diagnostic.py \
-  --root <project> --expect-ts 5.9.3 --strict --typecheck --lint
+  --root <project> --expect-ts 6.0.3 --strict --typecheck --lint
 ```
 
 Add `--emit` only for a single-project emit check. If project references are
@@ -147,7 +147,7 @@ For TypeScript 5.9:
 - use project references for genuine project boundaries, not as a blanket
   performance tweak.
 
-Load `references/typescript-5.9.3-practices.md` for compiler/module, ESLint,
+Load `references/typescript-6.0.3-practices.md` for compiler/module, ESLint,
 SonarQube, or project-reference decisions.
 
 ### 3. Implement with strict types
@@ -160,7 +160,7 @@ runtime validation for external data.
 
 For errors from `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, or
 `noPropertyAccessFromIndexSignature`, load the strict-flag fallout section of
-`references/typescript-5.9.3-practices.md` before choosing a fix.
+`references/typescript-6.0.3-practices.md` before choosing a fix.
 
 Do not raise lint or Sonar findings in code you touch. When a fix would add
 branches or guards to an already complex function (for example, an index-access
@@ -204,7 +204,7 @@ For code changes, run the project's applicable gates and keep fixing until they
 pass. If the same gate still fails after three distinct fix attempts, or the fix
 would require weakening a rule, stop and report that gate as unresolved:
 
-- TypeScript 5.9.3 version check and strict-profile check;
+- TypeScript 6.0.3 version check and strict-profile check;
 - `tsc` type checking;
 - `tsc` emit when the project is required to emit with `tsc`;
 - ESLint using the project's configured rules, and the project formatter's check

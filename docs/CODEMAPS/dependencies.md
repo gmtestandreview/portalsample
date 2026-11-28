@@ -18,8 +18,7 @@
 | `react` / `react-dom`                       | UI framework (v18)                            |
 | `react-router`                              | Client-side routing (v7, createBrowserRouter) |
 | `@azure/msal-browser` / `@azure/msal-react` | Azure AD B2C auth                             |
-| `formik`                                    | Legacy form library                           |
-| `react-hook-form`                           | New form library (active migration)           |
+| `react-hook-form`                           | Form library                                  |
 | `yup`                                       | Schema validation for both form libs          |
 | `bootstrap`                                 | CSS framework (v5, custom NMI theme)          |
 | `sass`                                      | SCSS compilation                              |

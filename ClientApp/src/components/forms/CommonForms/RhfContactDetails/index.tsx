@@ -6,8 +6,19 @@ import RhfSelectInput from '../../../Inputs/RhfSelectInput';
 import RhfTextInput from '../../../Inputs/RhfTextInput';
 import RhfNumberInput from '../../../Inputs/RhfNumberInput';
 import RhfHidableField from '../../RhfHidableField';
-import type { ContactDetailsProps } from '../ContactDetails';
 import { getTitles } from '../titleOptions';
+
+export interface ContactDetailsProps {
+  name: string;
+  isSummary?: boolean | undefined;
+  titleLabel?: string;
+  firstNameLabel?: string;
+  lastNameLabel?: string;
+  roleLabel?: string;
+  businessPhoneLabel?: string;
+  mobilePhoneLabel?: string;
+  emailAddressLabel?: string;
+}
 
 const PHONE_FORMAT = 'checkPhoneFormat';
 const MOBILE_FORMAT = '#### ### ###';

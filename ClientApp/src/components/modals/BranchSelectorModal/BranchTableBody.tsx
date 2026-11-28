@@ -32,7 +32,10 @@ const BranchTableRow = ({
             id={`branch${index}`}
             name='branchSelector'
             value={branch.organisationId}
-            checked={branch.organisationId === selectedBranch}
+            checked={
+              branch.organisationId !== undefined &&
+              branch.organisationId === selectedBranch
+            }
             onChange={(e) => {
               onChange(
                 e,

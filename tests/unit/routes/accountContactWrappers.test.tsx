@@ -53,45 +53,28 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/WizardForm',
+  '../../../ClientApp/src/components/forms/WizardForm/RhfSingleStepWizard',
   () =>
     ({
       default: ({
         children,
-        locationOnCompletion,
-        lastStepNextButtonTitle,
+        wizard,
       }: {
         children: React.ReactNode;
-        locationOnCompletion: string;
-        lastStepNextButtonTitle: string;
+        wizard: {
+          locationOnCompletion: string;
+          lastStepNextButtonTitle: string;
+        };
       }) => (
         <section
           data-testid='wizard-form'
-          data-complete-location={locationOnCompletion}
-          data-last-button={lastStepNextButtonTitle}
+          data-complete-location={wizard.locationOnCompletion}
+          data-last-button={wizard.lastStepNextButtonTitle}
         >
           {children}
         </section>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule60>,
-);
-
-vi.mock(
-  '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () =>
-    ({
-      default: ({
-        children,
-        title,
-      }: {
-        children: React.ReactNode;
-        title?: string;
-      }) => (
-        <article data-testid='wizard-step' data-title={title}>
-          {children}
-        </article>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule24>,
+    }) satisfies __ExactMockModule<__TestMockModule161>,
 );
 
 vi.mock(

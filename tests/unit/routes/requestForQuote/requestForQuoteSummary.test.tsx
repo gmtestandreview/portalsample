@@ -5,7 +5,6 @@ import {
   screen,
   within,
 } from '@testing-library/react';
-import { Formik } from 'formik';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
@@ -13,6 +12,8 @@ import { YesNo } from '../../../../ClientApp/src/api/web-api-client';
 import type { RequestForQuoteSummary as RequestForQuoteSummaryValues } from '../../../../ClientApp/src/api/web-api-client';
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
 import { AccountStateCtx } from '../../../../ClientApp/src/authentication/accountContext';
+import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
+import type { Hideable } from '../../../../ClientApp/src/components/forms/types';
 import RequestForQuoteSummary from '../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary';
 import { resetMsalMock } from '../../helpers/mockMsal';
 import { defined } from '../../helpers/defined';
@@ -72,28 +73,32 @@ const fixtureValues = (name: string): RequestForQuoteSummaryValues => {
 
 interface RenderOptions {
   readonly isSubmitted?: boolean;
-  readonly status?: unknown;
+  /** Hide rules to apply instead of the wizard's. */
+  readonly hidden?: Hideable;
+  /** Renders without the wizard's hide rules, so nothing is hidden. */
+  readonly noHidingRules?: boolean;
   /** The signed-in account; omitted means no account provider at all. */
   readonly account?: Partial<AccountDetails>;
 }
 
-/** Renders the page inside the Formik context the wizard provides, once the lookups settle. */
+/** Renders the page inside the RHF shell the wizard provides, once the lookups settle. */
 const renderPage = async (
   values: RequestForQuoteSummaryValues,
   {
     isSubmitted = false,
-    status = { hidden: summaryHidden },
+    hidden = summaryHidden as Hideable,
+    noHidingRules = false,
     account,
   }: RenderOptions = {},
 ) => {
   const page = (
-    <Formik
+    <RhfForm
       initialValues={values}
-      initialStatus={status}
+      {...(noHidingRules ? {} : { hidingFields: hidden })}
       onSubmit={() => undefined}
     >
       <RequestForQuoteSummary name='' isSubmitted={isSubmitted} />
-    </Formik>
+    </RhfForm>
   );
   const result = render(
     <MemoryRouter initialEntries={[`/request-for-quote/${REQUEST_ID}/summary`]}>
@@ -132,7 +137,7 @@ const resetRequestForQuoteSummary = () => {
 
 // function suite titles are required by vitest/prefer-describe-function-title.
 describe(RequestForQuoteSummary, () => {
-  it('shows both sections with the values held by Formik', async () => {
+  it('shows both sections with the values held by the form', async () => {
     expect.hasAssertions();
 
     resetRequestForQuoteSummary();
@@ -169,18 +174,16 @@ describe(RequestForQuoteSummary, () => {
 
     const values = fixtureValues('fully populated with the principal contact');
     await renderPage(values, {
-      status: {
-        hidden: {
-          organisationAndContact: { principalContactHide: () => true },
-        },
-      },
+      hidden: {
+        organisationAndContact: { principalContactHide: () => true },
+      } as unknown as Hideable,
     });
 
     expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();
     expect(screen.queryByText('Lovelace', { exact: false })).toBeNull();
   });
 
-  it('copes with a Formik status that carries no hiding rules', async () => {
+  it('copes with a form that carries no hiding rules', async () => {
     expect.hasAssertions();
 
     resetRequestForQuoteSummary();
@@ -188,7 +191,7 @@ describe(RequestForQuoteSummary, () => {
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {
-        status: null,
+        noHidingRules: true,
       },
     );
 
@@ -311,19 +314,6 @@ describe(RequestForQuoteSummary, () => {
     expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();
   });
 
-  it('treats a status that declares hidden as undefined as no hiding rules', async () => {
-    expect.hasAssertions();
-
-    resetRequestForQuoteSummary();
-
-    await renderPage(
-      fixtureValues('fully populated with the principal contact'),
-      { status: { hidden: undefined } },
-    );
-
-    expect(screen.getByText('Lovelace', { exact: false })).toBeInTheDocument();
-  });
-
   it('uses an empty id in the edit links when the route carries no id', async () => {
     expect.hasAssertions();
 
@@ -335,15 +325,15 @@ describe(RequestForQuoteSummary, () => {
           <Route
             path='/request-for-quote/summary'
             element={
-              <Formik
+              <RhfForm
                 initialValues={fixtureValues(
                   'fully populated with the principal contact',
                 )}
-                initialStatus={{ hidden: summaryHidden }}
+                hidingFields={summaryHidden as Hideable}
                 onSubmit={() => undefined}
               >
                 <RequestForQuoteSummary name='' isSubmitted={false} />
-              </Formik>
+              </RhfForm>
             }
           />
           <Route path='*' element={<LocationProbe />} />

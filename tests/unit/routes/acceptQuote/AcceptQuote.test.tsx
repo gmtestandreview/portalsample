@@ -1,7 +1,13 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { describe, expect, it, vi } from 'vitest';
-import { MemoryRouter, Route, Routes } from 'react-router';
+import {
+  MemoryRouter,
+  Route,
+  Routes,
+  useLocation,
+  useNavigationType,
+} from 'react-router';
 import type * as ReactRouterModule from 'react-router';
 import type * as WebApiClientModule from '../../../../ClientApp/src/api/web-api-client';
 import type {
@@ -109,29 +115,45 @@ vi.mock(
 
 vi.mock(
   import('../../../../ClientApp/src/components/BlockUISpinner') as unknown as string,
-  () =>
-    ({
-      default: ({ children }: { children: React.ReactNode }) => (
-        <div data-testid='block-spinner'>{children}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule14>,
+  async () =>
+    (
+      await import('../../helpers/commonModuleMocks')
+    ).blockUiSpinnerModule() satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useBodyClass') as unknown as string,
-  () =>
-    ({
-      default: vi.fn<() => void>(),
-    }) satisfies __ExactMockModule<__TestMockModule59>,
+  async () =>
+    (
+      await import('../../helpers/commonModuleMocks')
+    ).noopHookModule() satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/WizardForm') as unknown as string,
+  import('../../../../ClientApp/src/components/forms/WizardForm/RhfWizardRoutedStep') as unknown as string,
   () =>
     ({
-      default: ({ children }: { children: React.ReactNode }) => (
-        <div data-testid='wizard-form'>{children}</div>
-      ),
+      default: ({
+        allSteps,
+        currentStepIndex,
+      }: {
+        allSteps: React.ReactNode[];
+        currentStepIndex: number;
+      }) => {
+        const { pathname } = useLocation();
+        const navigationType = useNavigationType();
+
+        return (
+          <div
+            data-testid='rhf-wizard-form'
+            data-step-count={allSteps.length}
+            data-pathname={pathname}
+            data-navigation-type={navigationType}
+          >
+            {allSteps.at(currentStepIndex)}
+          </div>
+        );
+      },
     }) satisfies __ExactMockModule<__TestMockModule60>,
 );
 
@@ -178,28 +200,28 @@ vi.mock(
   import('../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps') as unknown as string,
   () =>
     ({
-      default: () => ({}),
+      default: () => ({ location: '/report-recipient' }),
     }) satisfies __ExactMockModule<__TestMockModule65>,
 );
 vi.mock(
   import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps') as unknown as string,
   () =>
     ({
-      default: () => ({}),
+      default: () => ({ location: '/delivery-and-return' }),
     }) satisfies __ExactMockModule<__TestMockModule66>,
 );
 vi.mock(
   import('../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps') as unknown as string,
   () =>
     ({
-      default: () => ({}),
+      default: () => ({ location: '/payment-details' }),
     }) satisfies __ExactMockModule<__TestMockModule67>,
 );
 vi.mock(
   import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps') as unknown as string,
   () =>
     ({
-      default: () => ({}),
+      default: () => ({ location: '/summary-and-accept' }),
     }) satisfies __ExactMockModule<__TestMockModule68>,
 );
 
@@ -224,14 +246,16 @@ const resetAcceptQuoteMocks = () => {
 };
 
 describe('acceptQuote container', () => {
-  const renderAcceptQuote = async () => {
+  const renderAcceptQuote = async (
+    pathname = '/accept-quote/Q-42/report-recipient',
+  ) => {
     const AcceptQuote = (
       await import('../../../../ClientApp/src/routes/acceptQuote/index')
     ).default;
     return render(
-      <MemoryRouter initialEntries={['/accept-quote/Q-42']}>
+      <MemoryRouter initialEntries={[pathname]}>
         <Routes>
-          <Route path='/accept-quote/:id' element={<AcceptQuote />} />
+          <Route path='/accept-quote/:id/*' element={<AcceptQuote />} />
           <Route path='/not-found' element={<div data-testid='not-found' />} />
         </Routes>
       </MemoryRouter>,
@@ -252,10 +276,10 @@ describe('acceptQuote container', () => {
 
     expect(screen.getByTestId('block-spinner')).toBeInTheDocument();
     expect(screen.getByText('Loading...')).toBeInTheDocument();
-    expect(screen.queryByTestId('wizard-form')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('rhf-wizard-form')).not.toBeInTheDocument();
   });
 
-  it('renders the four-step WizardForm once step statuses resolve', async () => {
+  it('renders the four-step RHF wizard once step statuses resolve', async () => {
     expect.hasAssertions();
 
     resetAcceptQuoteMocks();
@@ -263,18 +287,57 @@ describe('acceptQuote container', () => {
     await renderAcceptQuote();
 
     await waitFor(() => {
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+      expect(screen.getByTestId('rhf-wizard-form')).toBeInTheDocument();
     });
 
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
-    expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
-    expect([
-      screen.getByTestId('step-report-recipient'),
-      screen.getByTestId('step-delivery-and-return'),
-      screen.getByTestId('step-payment-details'),
-      screen.getByTestId('step-summary-and-accept'),
-    ]).toHaveLength(4);
+    expect(screen.getByTestId('rhf-wizard-form')).toHaveAttribute(
+      'data-step-count',
+      '4',
+    );
+    expect(screen.getByTestId('step-report-recipient')).toBeInTheDocument();
   });
+
+  it.each(['/payment-details/', '/PAYMENT-DETAILS'])(
+    'renders the payment step at %s without redirecting',
+    async (stepPath) => {
+      expect.hasAssertions();
+
+      resetAcceptQuoteMocks();
+      const pathname = `/accept-quote/Q-42${stepPath}`;
+      await renderAcceptQuote(pathname);
+
+      await expect(
+        screen.findByTestId('step-payment-details'),
+      ).resolves.toBeInTheDocument();
+      expect(screen.getByTestId('rhf-wizard-form')).toHaveAttribute(
+        'data-pathname',
+        pathname,
+      );
+    },
+  );
+
+  it.each(['', '/extra/payment-details'])(
+    'replaces the unmatched wizard path %s with the final step',
+    async (stepPath) => {
+      expect.hasAssertions();
+
+      resetAcceptQuoteMocks();
+      await renderAcceptQuote(`/accept-quote/Q-42${stepPath}`);
+
+      await expect(
+        screen.findByTestId('step-summary-and-accept'),
+      ).resolves.toBeInTheDocument();
+
+      const wizard = screen.getByTestId('rhf-wizard-form');
+
+      expect(wizard).toHaveAttribute(
+        'data-pathname',
+        '/accept-quote/Q-42/summary-and-accept',
+      );
+      expect(wizard).toHaveAttribute('data-navigation-type', 'REPLACE');
+    },
+  );
 
   it('fetches quote request details using the crmQuoteRequestId from step statuses', async () => {
     expect.hasAssertions();
@@ -287,7 +350,7 @@ describe('acceptQuote container', () => {
       expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-Q-42');
     });
 
-    expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+    expect(screen.getByTestId('rhf-wizard-form')).toBeInTheDocument();
   });
 
   it('navigates to /not-found and logs when getStepStatuses rejects', async () => {
@@ -388,18 +451,21 @@ describe('acceptQuote container', () => {
     render(
       <MemoryRouter initialEntries={['/accept-quote']}>
         <Routes>
-          <Route path='/accept-quote' element={<AcceptQuote />} />
+          <Route path='/accept-quote/*' element={<AcceptQuote />} />
           <Route path='/not-found' element={<div data-testid='not-found' />} />
         </Routes>
       </MemoryRouter>,
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
+      expect(screen.getByTestId('rhf-wizard-form')).toBeInTheDocument();
     });
 
     expect(mocks.getStepStatuses).toHaveBeenCalledWith('');
-    expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
+    expect(screen.getByTestId('rhf-wizard-form')).toHaveAttribute(
+      'data-step-count',
+      '4',
+    );
   });
 
   it('renders nothing until the signed-in account has details', async () => {

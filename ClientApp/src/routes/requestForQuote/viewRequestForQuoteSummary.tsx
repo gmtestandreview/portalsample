@@ -3,7 +3,7 @@ import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import type { SummaryProps } from './types';
-import WizardForm from '../../components/forms/WizardForm';
+import RhfWizardForm from '../../components/forms/WizardForm/RhfWizardForm';
 import WizardStep from '../../components/forms/WizardForm/WizardStep';
 import viewRequestForQuoteSummaryProps from './viewRequestForQuoteSummaryProps';
 import RequestForQuoteSummary from './requestForQuoteSummary';
@@ -35,7 +35,7 @@ const ViewRequestForQuoteSummary = ({
     locationAfterExit: '/dashboard',
   };
 
-  const isLoading = useRef(false);
+  const isLoadingRef = useRef(false);
   const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
   useEffect(() => {
@@ -56,17 +56,17 @@ const ViewRequestForQuoteSummary = ({
         });
       }
     };
-    if (!isLoading.current) {
+    if (!isLoadingRef.current) {
       void loadApplicationSteps();
     }
     return () => {
-      isLoading.current = true;
+      isLoadingRef.current = true;
     };
-  }, [accounts, id, instance, isLoading]);
+  }, [accounts, id, instance, isLoadingRef]);
 
   const accountDetails = account?.details;
   return statuses !== undefined && id !== undefined && accountDetails ? (
-    <WizardForm {...requestForQuoteWizardProps}>
+    <RhfWizardForm {...requestForQuoteWizardProps}>
       <WizardStep
         {...viewRequestForQuoteSummaryProps(
           id,
@@ -79,7 +79,7 @@ const ViewRequestForQuoteSummary = ({
       >
         <RequestForQuoteSummary name='' isSubmitted />
       </WizardStep>
-    </WizardForm>
+    </RhfWizardForm>
   ) : (
     <BlockUISpinner>
       <p>Loading...</p>

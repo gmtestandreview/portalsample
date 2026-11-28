@@ -5,20 +5,11 @@ import {
   createContext,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
-  useRef,
   useState,
   type ComponentType,
   type ReactNode,
 } from 'react';
-import {
-  Formik,
-  Form as FormikForm,
-  type FormikConfig,
-  type FormikErrors,
-  type FormikTouched,
-} from 'formik';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   createMemoryRouter,
@@ -47,6 +38,12 @@ import {
 import type { UserProfile } from '../components/SearchFilter/types';
 import { omitUndefined } from '../utils/omitUndefined';
 import { fn } from 'storybook/test';
+import { withOptionalFetch } from './storybookFetch';
+import {
+  AccountContextLifecycleSentinel,
+  ProviderLifecycleSentinel,
+  SessionStorageLifecycleSentinel,
+} from './storybookSentinels';
 
 const noop = fn();
 const noopAsync = () => Promise.resolve();
@@ -155,14 +152,6 @@ const baseMsalInstance = {
   ssoSilent: noopAsync,
 } as unknown as IMsalContext['instance'];
 
-export interface PortalFormikConfig {
-  initialValues: Record<string, unknown>;
-  validationSchema?: unknown;
-  initialErrors?: FormikErrors<Record<string, unknown>>;
-  initialTouched?: FormikTouched<Record<string, unknown>>;
-  initialStatus?: Record<string, unknown>;
-}
-
 export interface PortalRhfConfig {
   defaultValues: Record<string, unknown>;
 }
@@ -193,7 +182,6 @@ export interface PortalStoryParameters {
   accountDispatch?: Partial<AccountDispatchContext>;
   modalState?: Partial<ModalState>;
   modalDispatch?: Partial<ModalDispatch>;
-  formik?: PortalFormikConfig;
   /** Wraps the story in a React Hook Form `FormProvider`. */
   rhf?: PortalRhfConfig;
   /** Emits an opt-in provider lifecycle sentinel for isolation tests. */
@@ -281,9 +269,9 @@ export const PortalStoryRouter = ({
   );
 
   return (
-    <PortalRouterRuntimeContext.Provider value={runtime}>
+    <PortalRouterRuntimeContext value={runtime}>
       <RouterProvider router={router} />
-    </PortalRouterRuntimeContext.Provider>
+    </PortalRouterRuntimeContext>
   );
 };
 
@@ -303,34 +291,6 @@ const createMsalContext = (
     accounts: overrides?.accounts ?? defaultAccounts,
     logger: overrides?.logger ?? mockLogger,
   };
-};
-
-const withOptionalFormik = (
-  children: ReactNode,
-  formik?: PortalFormikConfig,
-) => {
-  if (!formik) {
-    return <>{children}</>;
-  }
-
-  const formikConfig: FormikConfig<Record<string, unknown>> = {
-    initialValues: formik.initialValues,
-    initialStatus: { hidden: {}, ...formik.initialStatus },
-    validationSchema: formik.validationSchema,
-    onSubmit: noop,
-    ...(formik.initialErrors === undefined
-      ? {}
-      : { initialErrors: formik.initialErrors }),
-    ...(formik.initialTouched === undefined
-      ? {}
-      : { initialTouched: formik.initialTouched }),
-  };
-
-  return (
-    <Formik {...formikConfig}>
-      <FormikForm noValidate>{children}</FormikForm>
-    </Formik>
-  );
 };
 
 const RhfStoryForm = ({
@@ -357,229 +317,6 @@ const withOptionalRhf = (children: ReactNode, rhf?: PortalRhfConfig) => {
   return (
     <RhfStoryForm defaultValues={rhf.defaultValues}>{children}</RhfStoryForm>
   );
-};
-
-interface FetchOverride {
-  token: symbol;
-  fetchImpl: typeof globalThis.fetch;
-}
-
-const activeFetchOverrides: FetchOverride[] = [];
-let baselineFetch: typeof globalThis.fetch | undefined;
-let baselineWindowFetch: typeof globalThis.window.fetch | undefined;
-
-const applyActiveFetchOverride = () => {
-  const activeOverride = activeFetchOverrides.at(-1);
-  if (activeOverride) {
-    globalThis.fetch = activeOverride.fetchImpl;
-    globalThis.window.fetch = activeOverride.fetchImpl;
-    return;
-  }
-
-  if (baselineFetch && baselineWindowFetch) {
-    globalThis.fetch = baselineFetch;
-    globalThis.window.fetch = baselineWindowFetch;
-  }
-};
-
-const PatchedFetch = ({
-  children,
-  fetchImpl,
-}: {
-  children: ReactNode;
-  fetchImpl: typeof globalThis.fetch;
-}) => {
-  const tokenRef = useRef<symbol | null>(null);
-  const initialFetchRef = useRef(fetchImpl);
-
-  useLayoutEffect(() => {
-    if (activeFetchOverrides.length === 0) {
-      baselineFetch = globalThis.fetch;
-      baselineWindowFetch = Reflect.get(globalThis.window, 'fetch');
-    }
-
-    const token = Symbol('storybook-fetch-override');
-    tokenRef.current = token;
-    activeFetchOverrides.push({
-      token,
-      fetchImpl: initialFetchRef.current,
-    });
-    applyActiveFetchOverride();
-
-    return () => {
-      const overrideIndex = activeFetchOverrides.findIndex(
-        (override) => override.token === token,
-      );
-      if (overrideIndex >= 0) {
-        activeFetchOverrides.splice(overrideIndex, 1);
-      }
-      tokenRef.current = null;
-
-      applyActiveFetchOverride();
-      if (activeFetchOverrides.length === 0) {
-        baselineFetch = undefined;
-        baselineWindowFetch = undefined;
-      }
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    const activeOverride = activeFetchOverrides.find(
-      (override) => override.token === tokenRef.current,
-    );
-    if (activeOverride) {
-      activeOverride.fetchImpl = fetchImpl;
-      applyActiveFetchOverride();
-    }
-  }, [fetchImpl]);
-
-  return children;
-};
-
-const withOptionalFetch = (
-  children: ReactNode,
-  fetchImpl?: typeof globalThis.fetch,
-) => {
-  if (!fetchImpl) {
-    return <>{children}</>;
-  }
-
-  return <PatchedFetch fetchImpl={fetchImpl}>{children}</PatchedFetch>;
-};
-
-const ProviderLifecycleSentinel = ({
-  name,
-  children,
-}: {
-  name: string;
-  children: ReactNode;
-}) => {
-  useLayoutEffect(() => {
-    const body = globalThis.document.body;
-    const postLifecycleEvent = (phase: 'mounted' | 'cleaned') => {
-      const event = {
-        type: 'storybook-portal-provider' as const,
-        phase,
-        sentinel: name,
-      };
-      if (globalThis.window.parent !== globalThis.window) {
-        const parentWindow = globalThis.window
-          .parent as typeof globalThis.window & {
-          __storybookPortalProviderEvents?: (typeof event)[];
-        };
-        parentWindow.__storybookPortalProviderEvents?.push(event);
-      }
-    };
-
-    let cleaned = false;
-    const cleanup = () => {
-      if (cleaned) {
-        return;
-      }
-      cleaned = true;
-      if (body.dataset['storybookProviderSentinel'] === name) {
-        delete body.dataset['storybookProviderSentinel'];
-      }
-      postLifecycleEvent('cleaned');
-    };
-
-    body.dataset['storybookProviderSentinel'] = name;
-    postLifecycleEvent('mounted');
-    globalThis.addEventListener('pagehide', cleanup);
-
-    return () => {
-      globalThis.removeEventListener('pagehide', cleanup);
-      cleanup();
-    };
-  }, [name]);
-
-  return children;
-};
-
-const AccountContextLifecycleSentinel = ({
-  name,
-  children,
-}: {
-  name: string;
-  children: ReactNode;
-}) => {
-  const accountState = useContext(AccountStateCtx);
-  const accountDispatch = useContext(AccountDispatchCtx);
-  const targetOrganisationName =
-    accountState?.details?.targetOrganisation?.targetOrganisationName ?? null;
-  const targetOrganisationNameRef = useRef(targetOrganisationName);
-
-  useLayoutEffect(() => {
-    targetOrganisationNameRef.current = targetOrganisationName;
-  }, [targetOrganisationName]);
-
-  useLayoutEffect(() => {
-    accountDispatch?.setTargetOrganisation(name, `${name}:active`);
-  }, [accountDispatch, name]);
-
-  useLayoutEffect(() => {
-    if (targetOrganisationName !== `${name}:active`) {
-      return;
-    }
-
-    globalThis.document.body.dataset['storybookAccountTargetOrganisation'] =
-      targetOrganisationName;
-    if (globalThis.window.parent !== globalThis.window) {
-      const parentWindow = globalThis.window
-        .parent as typeof globalThis.window & {
-        __storybookAccountLifecycleEvents?: {
-          type: 'storybook-account-context';
-          phase: 'active' | 'cleaned';
-          sentinel: string;
-          targetOrganisationName: string | null;
-        }[];
-      };
-      parentWindow.__storybookAccountLifecycleEvents?.push({
-        type: 'storybook-account-context',
-        phase: 'active',
-        sentinel: name,
-        targetOrganisationName,
-      });
-    }
-  }, [name, targetOrganisationName]);
-
-  useLayoutEffect(() => {
-    let cleaned = false;
-    const cleanup = () => {
-      if (cleaned) {
-        return;
-      }
-      cleaned = true;
-      delete globalThis.document.body.dataset[
-        'storybookAccountTargetOrganisation'
-      ];
-      if (globalThis.window.parent !== globalThis.window) {
-        const parentWindow = globalThis.window
-          .parent as typeof globalThis.window & {
-          __storybookAccountLifecycleEvents?: {
-            type: 'storybook-account-context';
-            phase: 'active' | 'cleaned';
-            sentinel: string;
-            targetOrganisationName: string | null;
-          }[];
-        };
-        parentWindow.__storybookAccountLifecycleEvents?.push({
-          type: 'storybook-account-context',
-          phase: 'cleaned',
-          sentinel: name,
-          targetOrganisationName: targetOrganisationNameRef.current,
-        });
-      }
-    };
-
-    globalThis.addEventListener('pagehide', cleanup);
-    return () => {
-      globalThis.removeEventListener('pagehide', cleanup);
-      cleanup();
-    };
-  }, [name]);
-
-  return children;
 };
 
 const AccountContextLifecycleProvider = ({
@@ -627,43 +364,6 @@ const AccountContextLifecycleProvider = ({
   );
 };
 
-const SessionStorageLifecycleSentinel = ({
-  name,
-  children,
-}: {
-  name: string;
-  children: ReactNode;
-}) => {
-  useLayoutEffect(() => {
-    const storage = globalThis.sessionStorage;
-    const previousValue = storage.getItem(name);
-    const activeValue = `${name}:active`;
-    let cleaned = false;
-    const cleanup = () => {
-      if (cleaned) {
-        return;
-      }
-      cleaned = true;
-      if (previousValue === null) {
-        storage.removeItem(name);
-      } else {
-        storage.setItem(name, previousValue);
-      }
-    };
-
-    storage.setItem(name, `${name}:mounted`);
-    storage.setItem(name, activeValue);
-    globalThis.addEventListener('pagehide', cleanup);
-
-    return () => {
-      globalThis.removeEventListener('pagehide', cleanup);
-      cleanup();
-    };
-  }, [name]);
-
-  return children;
-};
-
 export const withPortalProviders: Decorator = (Story, context) => {
   const portal = getPortalParameters(context);
   const authenticated = portal.authenticated ?? true;
@@ -690,7 +390,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
   };
   const msalContext = createMsalContext(authenticated, portal.msalContext);
   const storyContent = withOptionalFetch(
-    withOptionalRhf(withOptionalFormik(<Story />, portal.formik), portal.rhf),
+    withOptionalRhf(<Story />, portal.rhf),
     portal.fetch,
   );
   const providerContent = portal.providerLifecycleSentinel ? (
@@ -719,7 +419,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
   );
 
   return (
-    <MsalContext.Provider value={msalContext}>
+    <MsalContext value={msalContext}>
       <AccountStateCtx.Provider value={accountState}>
         <AccountDispatchCtx.Provider value={accountDispatch}>
           <ModalStateCtx.Provider value={modalState}>
@@ -729,6 +429,6 @@ export const withPortalProviders: Decorator = (Story, context) => {
           </ModalStateCtx.Provider>
         </AccountDispatchCtx.Provider>
       </AccountStateCtx.Provider>
-    </MsalContext.Provider>
+    </MsalContext>
   );
 };

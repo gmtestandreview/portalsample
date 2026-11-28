@@ -1,5 +1,6 @@
 import { Alert } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
 import type { AlertProps, BaseAlertProps } from './types';
 import { omitUndefined } from '../../utils/omitUndefined';
 
@@ -29,19 +30,20 @@ const AlertMessage = (props: Readonly<BaseAlertProps>) => {
     ariaLive,
   } = props;
 
-  const [show, setShow] = useState<boolean>(true);
+  // Remember which content was dismissed: new content re-shows the alert
+  // without syncing state from an effect.
+  const [dismissed, setDismissed] = useState<{ content: ReactNode } | null>(
+    null,
+  );
+  const show = dismissed === null || dismissed.content !== children;
 
   const closeAlert = () => {
     if (onClose) {
       onClose();
     }
 
-    setShow(false);
+    setDismissed({ content: children });
   };
-
-  useEffect(() => {
-    setShow(true);
-  }, [children]);
 
   return (
     <Alert

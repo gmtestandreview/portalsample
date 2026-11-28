@@ -45,18 +45,18 @@ export interface CustomInputForwardRefProps {
   /** Validation message displayed when `hasError` is true. */
   errorMessage?: string;
   /** Ref used by the parent picker to access the validation message. */
-  forwardedFeedbackRef?: RefObject<HTMLDivElement>;
+  forwardedFeedbackRef?: RefObject<HTMLDivElement | null>;
   /** Ref used by the parent picker to access the contextual help text. */
-  forwardedInlineHelpRef?: RefObject<HTMLDivElement>;
+  forwardedInlineHelpRef?: RefObject<HTMLDivElement | null>;
   /** Ref used by the parent picker to focus or inspect the text input. */
-  forwardedControlRef?: RefObject<HTMLInputElement>;
+  forwardedControlRef?: RefObject<HTMLInputElement | null>;
   /** Controls whether the validation message is displayed. */
   hasError?: boolean;
   /** Contextual guidance associated with both the text input and calendar button. */
   inlineHelp?: ReactNode;
   /** Visible label for the date field. */
   label?: string;
-  /** Formik field name and base for generated accessibility identifiers. */
+  /** Field name and base for generated accessibility identifiers. */
   name: string;
   /** Called when focus leaves the complete input-and-button control. */
   onBlur?: FocusEventHandler;

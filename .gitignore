@@ -2,6 +2,7 @@
 node_modules/
 .npm-cache/
 .worktrees/
+.react-router/
 
 # Build output
 dist/

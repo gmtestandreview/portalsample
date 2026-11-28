@@ -220,7 +220,7 @@ const Dashboard = () => {
   const requestTabContent = (
     <Row className='mb-4'>
       <Col
-        {...{ inert: isModalOpen ? '' : undefined }}
+        inert={isModalOpen}
         aria-busy={!isModalOpen && isDataLoading}
         aria-live={isModalOpen ? undefined : 'polite'}
       >
@@ -255,7 +255,7 @@ const Dashboard = () => {
   const instrumentTabContent = (
     <Row className='mb-4'>
       <Col
-        {...{ inert: isModalOpen ? '' : undefined }}
+        inert={isModalOpen}
         aria-busy={!isModalOpen && isDataLoading}
         aria-live={isModalOpen ? undefined : 'polite'}
       >

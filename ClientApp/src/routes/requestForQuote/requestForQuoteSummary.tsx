@@ -1,6 +1,6 @@
 import { Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router';
-import { useFormikContext } from 'formik';
+import { useWatch } from 'react-hook-form';
 import {
   CustomAccordion,
   CustomAccordionBody,
@@ -16,24 +16,14 @@ import type {
   RfqSummarySectionProps,
 } from './summary/types';
 import { useAccountState } from '../../authentication/hooks';
-
-interface RfqFormikStatus {
-  hidden?: RfqSummarySectionProps['hidden'];
-}
-
-const isRfqFormikStatus = (status: unknown): status is RfqFormikStatus =>
-  typeof status === 'object' && status !== null && 'hidden' in status;
+import { useHiddenRules } from '../../components/forms/RhfHidableField/hiddenRulesContext';
 
 const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const isEditable = !isSubmitted;
-  const formikContext = useFormikContext<RfqSummarySectionProps['values']>();
-  const { values } = formikContext;
-  const status: unknown = formikContext.status as unknown;
-  // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
-  const hidden: RfqSummarySectionProps['hidden'] = isRfqFormikStatus(status)
-    ? (status.hidden ?? {})
-    : {};
+  const values = useWatch<RfqSummarySectionProps['values']>();
+  // The wizard keeps its hiding rules in the RHF hidden-rules context.
+  const hidden = useHiddenRules() as RfqSummarySectionProps['hidden'];
   const details = useAccountState()?.details;
   const accountName = [details?.givenName, details?.familyName]
     .filter(Boolean)

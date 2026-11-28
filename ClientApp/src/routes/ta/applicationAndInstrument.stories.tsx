@@ -18,8 +18,8 @@ const meta = preview.meta({
     portal: {
       authenticated: true,
       initialEntries: ['/ta/PA-1/application-details'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           patternApprovalType: 'new',
           applicationAndInstrument: {},
         },

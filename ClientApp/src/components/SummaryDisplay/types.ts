@@ -3,12 +3,12 @@ import type { ReactNode } from 'react';
 export type SummaryFormatInputValueFunction = (inputValue: string) => string;
 
 export interface SummaryDisplayProps {
-  label?: ReactNode | undefined;
+  label?: ReactNode;
   value?: string | undefined;
   id?: string | undefined;
-  descriptor?: ReactNode | undefined;
+  descriptor?: ReactNode;
   as?: string | undefined;
-  bodyText?: ReactNode | undefined;
+  bodyText?: ReactNode;
   containerClassName?: string | undefined;
   className?: string | undefined;
   format?: string | SummaryFormatInputValueFunction | undefined;

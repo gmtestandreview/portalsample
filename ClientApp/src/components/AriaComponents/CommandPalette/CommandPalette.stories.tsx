@@ -5,6 +5,7 @@ import { CommandPalette } from './CommandPalette';
 import { MenuItem } from '../Menu/Menu.tsx';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { useState, type ComponentProps } from 'react';
+import type { StoryObj } from '@storybook/react-vite';
 
 const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
@@ -51,7 +52,9 @@ const CommandPaletteStory = (args: ComponentProps<typeof CommandPalette>) => {
   );
 };
 
-export const Example = meta.story({
+type Story = StoryObj<typeof CommandPalette>;
+
+const example = meta.story({
   render: CommandPaletteStory,
   play: async ({ canvas, canvasElement }) => {
     const trigger = canvas.getByRole('button', {
@@ -80,3 +83,5 @@ export const Example = meta.story({
     await expect(menuItem).toHaveFocus();
   },
 });
+
+export const Example: Story = example as unknown as Story;

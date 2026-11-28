@@ -128,7 +128,7 @@ Router</Text></Tab><Tab id="parcel"><Parcel/><Text>Parcel</Text></Tab><Tab id="v
       </Step>
 
       <Step>
-        <Counter/>In your root layout, set the `lang` and `dir` attributes on the `<html>` element, and render a `RouterProvider` to configure React Aria links to use React Router.
+        <Counter/>In your root layout, set the `lang` and `dir` attributes on the `<html>` element. In framework mode, React Router supplies the router context; do not render a second `RouterProvider` in the root layout. React Aria links can use the framework router context directly.
 
         ```tsx
         // app/root.tsx

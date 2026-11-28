@@ -207,7 +207,7 @@ describe('rhfForm shell behavior', () => {
     });
     await settle();
 
-    // Formik kept the soft schema here (quirk Q1); the shell does not.
+    // The previous shell kept the soft schema here (quirk Q1); this shell does not.
     await user.click(screen.getByLabelText('Name'));
     await user.tab();
 
@@ -272,5 +272,70 @@ describe('rhfForm shell behavior', () => {
     });
 
     expect(onSubmit).toHaveBeenCalledWith({});
+  });
+});
+
+describe('rhf form payload for an absent nested object', () => {
+  it('omits the parent object when the user types then clears every nested field', async () => {
+    expect.hasAssertions();
+
+    interface Nested {
+      name: string;
+      contact?: { firstName?: string; lastName?: string };
+    }
+    const onSubmit = vi.fn<RhfFormProps<Nested>['onSubmit']>(() => undefined);
+
+    renderRhfShell<Nested>(
+      { initialValues: { name: 'Acme' }, onSubmit },
+      <>
+        <RhfTextInput name='contact.firstName' label='First name' />
+        <RhfTextInput name='contact.lastName' label='Last name' />
+      </>,
+    );
+
+    const user = userEvent.setup();
+    const first = screen.getByLabelText('First name');
+    const last = screen.getByLabelText('Last name');
+
+    await user.type(first, 'Ada');
+    await user.type(last, 'Lovelace');
+    await user.clear(first);
+    await user.clear(last);
+    await user.click(screen.getByTestId('next'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(onSubmit).toHaveBeenCalledWith({ name: 'Acme' });
+  });
+
+  it('keeps the parent object once a nested field has a value', async () => {
+    expect.hasAssertions();
+
+    interface Nested {
+      name: string;
+      contact?: { firstName?: string };
+    }
+    const onSubmit = vi.fn<RhfFormProps<Nested>['onSubmit']>(() => undefined);
+
+    renderRhfShell<Nested>(
+      { initialValues: { name: 'Acme' }, onSubmit },
+      <RhfTextInput name='contact.firstName' label='First name' />,
+    );
+
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText('First name'), 'Ada');
+    await user.click(screen.getByTestId('next'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      name: 'Acme',
+      contact: { firstName: 'Ada' },
+    });
   });
 });

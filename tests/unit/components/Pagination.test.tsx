@@ -1,5 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import CustomPagination from '@/components/Pagination';
 
@@ -181,6 +182,46 @@ describe('custom pagination', () => {
       page6: screen.queryByLabelText('Page 6') !== null,
       page7: screen.queryByLabelText('Page 7') !== null,
     }).toStrictEqual({ page1: false, page5: true, page6: true, page7: true });
+  });
+
+  it('uses the configured range when the viewport width is unavailable', () => {
+    expect.hasAssertions();
+
+    resetPaginationState();
+    Object.defineProperty(globalThis, 'innerWidth', {
+      configurable: true,
+      writable: true,
+      value: undefined,
+    });
+
+    render(
+      <CustomPagination
+        currentPage={6}
+        totalPages={20}
+        visiblePageRange={4}
+        onPageChange={vi.fn<() => void>()}
+      />,
+    );
+
+    expect(screen.getByLabelText('Page 4')).toBeInTheDocument();
+    expect(screen.getByLabelText('Page 8')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Page 9')).not.toBeInTheDocument();
+
+    resetPaginationState();
+  });
+
+  it('supports server rendering', () => {
+    expect.hasAssertions();
+
+    const markup = renderToString(
+      <CustomPagination
+        currentPage={1}
+        totalPages={3}
+        onPageChange={vi.fn<() => void>()}
+      />,
+    );
+
+    expect(markup).toContain('Results page navigation');
   });
 
   it.each([

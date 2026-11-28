@@ -1,6 +1,6 @@
 import preview from '../../../../../.storybook/preview';
 import type { ComponentProps } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
 import ContentModal from './index';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -17,10 +17,13 @@ const DismissibleContentModalDemo = ({
   ...args
 }: ComponentProps<typeof ContentModal>) => {
   const [open, setOpen] = useState(showModal);
+  const [previousShowModal, setPreviousShowModal] = useState(showModal);
 
-  useEffect(() => {
+  // Re-sync when the story arg changes, during render rather than in an effect.
+  if (showModal !== previousShowModal) {
+    setPreviousShowModal(showModal);
     setOpen(showModal);
-  }, [showModal]);
+  }
 
   const handleCancel = () => {
     onCancelModal();

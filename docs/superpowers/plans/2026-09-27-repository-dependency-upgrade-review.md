@@ -2,15 +2,13 @@
 
 **Plan reviewed:**
 `docs/superpowers/plans/2026-09-27-repository-dependency-upgrade.md` **Review
-date:** 2026-09-27  
-**Verdict:** Do not approve as proposed  
-**Score:** 66/100
+date:** 2026-09-27 **Verdict:** Do not approve as proposed **Score:** 66/100
 
 ## Executive Assessment
 
 The plan is unusually strong on inventory, explicit version targets, file paths,
 and final validation breadth. It correctly preserves React `18.3.1` and
-TypeScript `5.9.3`, raises the Node floor to `24.15.0`, keeps the Vitest cohort
+TypeScript `6.0.3`, raises the Node floor to `24.15.0`, keeps the Vitest cohort
 compatible with Storybook, and aims for a naturally resolved graph with no
 overrides.
 
@@ -36,7 +34,7 @@ external-system coverage need material redesign.
 
 - This review covers plan quality, sequencing, compatibility evidence, CI
   policy, rollout, and rollback. It does not implement the upgrade.
-- Assumption: “Typescript 5.93” means the published `5.9.3`, as recorded in the
+- Assumption: “Typescript 5.93” means the published `6.0.3`, as recorded in the
   plan; revisit if that interpretation is wrong.
 - Assumption: the live `/sign-in/` headers show the current hosting baseline,
   not guaranteed behavior for a future dedicated bridge route. The

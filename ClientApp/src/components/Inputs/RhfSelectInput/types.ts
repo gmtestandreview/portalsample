@@ -3,7 +3,7 @@ import type { SelectInputOption } from '../SelectInput/types';
 
 /**
  * Props for the vertical, label-above select. The legacy `SelectInput` extras
- * (`displayHorizontally`, `inlineHelpTitle`, `readOnly`) are added with their
+ * (`displayHorizontally`, `inlineHelpTitle`) are added with their
  * first RHF consumer, not before.
  */
 export interface RhfSelectInputProps<T extends string | number = string> {
@@ -22,4 +22,6 @@ export interface RhfSelectInputProps<T extends string | number = string> {
   onChange?: (value: T | '') => void;
   isSummary?: boolean | undefined;
   addBlank?: boolean;
+  /** Shows the selected option's text in a read-only box instead of a select. */
+  readOnly?: boolean;
 }

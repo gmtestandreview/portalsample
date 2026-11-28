@@ -1,6 +1,6 @@
 import type { Placement } from '@popperjs/core';
 import { enAU } from 'date-fns/locale';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import SecondaryButton from '../../Buttons/SecondaryButton';
 import CustomDateInput from './CustomDateInput';
@@ -71,9 +71,14 @@ const CustomDatePicker = (
   const customInputFeedbackRef = useRef<HTMLDivElement>(null);
   const datePickerRef = useRef<ReactDatePicker | null>(null);
 
-  useEffect(() => {
+  // Re-sync when the parent supplies a different date (compared by time value,
+  // since callers may pass a fresh Date instance every render).
+  const currentTime = currentDate?.getTime() ?? null;
+  const [previousTime, setPreviousTime] = useState(currentTime);
+  if (currentTime !== previousTime) {
+    setPreviousTime(currentTime);
     setSelectedDate(currentDate ?? null);
-  }, [currentDate]);
+  }
 
   const showCalendarInvalid = hasError === true || isInvalid;
 

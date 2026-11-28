@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';
-import { Form, Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { FormProvider, useForm, type FieldPath } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -15,7 +15,6 @@ import PaymentDetailsFormFields, {
   type PaymentDetailsFormValues,
 } from '@/routes/acceptQuote/paymentDetailsFormFields';
 import { paymentDetailsSubmitValidation } from '@/routes/acceptQuote/validation';
-import { removeHidden } from '@/components/forms/utils';
 import { defined } from '../../helpers/defined';
 
 const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
@@ -102,32 +101,38 @@ const initialValues: PaymentDetailsStep = {
 };
 
 interface HarnessProps {
+  id?: string;
   values?: PaymentDetailsStep;
   onSubmit?: (values: PaymentDetailsStep, helpers?: unknown) => void;
 }
 
+type TestFormValues = PaymentDetailsStep & Record<string, any>;
+
 function Harness({
+  id = 'TEST-001',
   values = initialValues,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
+  const handleSubmit = (submittedValues: TestFormValues) => {
+    onSubmit(submittedValues);
+    return Promise.resolve();
+  };
+
   return (
-    <Formik<PaymentDetailsStep>
-      initialValues={values}
-      initialStatus={{ hidden: hidingFields }}
-      validationSchema={paymentDetailsSubmitValidation}
-      enableReinitialize
-      onSubmit={(submittedValues, helpers) => {
-        onSubmit(
-          removeHidden(submittedValues, submittedValues, hidingFields),
-          helpers,
-        );
-      }}
+    <RhfForm<TestFormValues>
+      initialValues={values as TestFormValues}
+      hidingFields={hidingFields}
+      validateHard={paymentDetailsSubmitValidation}
+      onSubmit={handleSubmit}
+      onSaveAndExit={handleSubmit}
     >
-      <Form>
-        <PaymentDetails id='TEST-001' />
-        <button type='submit'>Continue</button>
-      </Form>
-    </Formik>
+      {({ onFormSubmit }) => (
+        <form noValidate onSubmit={onFormSubmit}>
+          <PaymentDetails id={id} />
+          <button type='submit'>Continue</button>
+        </form>
+      )}
+    </RhfForm>
   );
 }
 
@@ -212,7 +217,6 @@ describe('paymentDetails form behavior', () => {
           email: 'billing@nmi.gov.au',
         }),
       }),
-      expect.anything(),
     );
   });
 
@@ -494,6 +498,34 @@ describe('paymentDetails form behavior', () => {
     await expect(
       screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
     ).resolves.toBeInTheDocument();
+  });
+
+  it('clears the previous quote payment terms when the next quote fails to load', async () => {
+    expect.hasAssertions();
+
+    resetPaymentDetailsMocks();
+
+    mockGetPaymentDetails.mockResolvedValue({
+      acceptQuotePreInfo: {
+        paymentTerms: 'Prepaid',
+        quotationIdNum: 'Q-PREPAID',
+      },
+    });
+
+    const { rerender } = render(<Harness id='TEST-001' />);
+
+    await expect(
+      screen.findByText('Prepayment required'),
+    ).resolves.toBeInTheDocument();
+
+    mockGetPaymentDetails.mockRejectedValue(new Error('load failed'));
+    rerender(<Harness id='TEST-002' />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Prepayment required')).not.toBeInTheDocument();
+    });
+
+    expect(screen.queryByText(/Q-PREPAID/)).not.toBeInTheDocument();
   });
 
   it('shows the other-title field and validates optional invoice contact formats', async () => {

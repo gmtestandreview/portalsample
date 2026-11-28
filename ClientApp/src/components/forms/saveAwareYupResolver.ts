@@ -35,7 +35,7 @@ function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
 }
 
 /**
- * Builds an RHF resolver that preserves FormikForm's save-aware Yup behavior:
+ * Builds an RHF resolver that keeps the shell's save-aware Yup behavior:
  * soft validation for save-and-exit and hard validation for normal submit.
  */
 export function createSaveAwareYupResolver<

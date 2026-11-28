@@ -83,4 +83,21 @@ describe('suggestion filtering', () => {
       'Zoo Pty Ltd',
     ]);
   });
+
+  it.each([
+    ['startsWith', 'pty', ['Pty Alpha']],
+    ['endsWith', 'ltd', ['Beta Pty Ltd']],
+    ['includes', 'pty', ['Beta Pty Ltd', 'Pty Alpha']],
+  ] as const)('matches with %s', (matchType, inputValue, expected) => {
+    expect.hasAssertions();
+
+    expect(
+      getFilteredSuggestions({
+        inputValue,
+        matchType,
+        optionsFieldName: 'name',
+        options: [{ name: 'Beta Pty Ltd' }, { name: 'Pty Alpha' }],
+      }),
+    ).toStrictEqual(expected);
+  });
 });

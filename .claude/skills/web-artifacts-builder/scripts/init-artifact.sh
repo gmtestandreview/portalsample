@@ -8,14 +8,14 @@ NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
 
 echo "🔍 Detected Node.js version: $NODE_VERSION"
 
-if [ "$NODE_VERSION" -lt 18 ]; then
-  echo "❌ Error: Node.js 18 or higher is required"
+if [[ "$NODE_VERSION" -lt 18 ]]; then
+  echo "❌ Error: Node.js 18 or higher is required" >&2
   echo "   Current version: $(node -v)"
   exit 1
 fi
 
 # Set Vite version based on Node version
-if [ "$NODE_VERSION" -ge 20 ]; then
+if [[ "$NODE_VERSION" -ge 20 ]]; then
   VITE_VERSION="latest"
   echo "✅ Using Vite latest (Node 20+)"
 else
@@ -33,11 +33,11 @@ fi
 # Check if pnpm is installed
 if ! command -v pnpm &> /dev/null; then
   echo "📦 pnpm not found. Installing pnpm..."
-  npm install -g pnpm
+  npm install --ignore-scripts -g pnpm
 fi
 
 # Check if project name is provided
-if [ -z "$1" ]; then
+if [[ -z "$1" ]]; then
   echo "❌ Usage: ./create-react-shadcn-complete.sh <project-name>"
   exit 1
 fi
@@ -47,8 +47,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COMPONENTS_TARBALL="$SCRIPT_DIR/shadcn-components.tar.gz"
 
 # Check if components tarball exists
-if [ ! -f "$COMPONENTS_TARBALL" ]; then
-  echo "❌ Error: shadcn-components.tar.gz not found in script directory"
+if [[ ! -f "$COMPONENTS_TARBALL" ]]; then
+  echo "❌ Error: shadcn-components.tar.gz not found in script directory" >&2
   echo "   Expected location: $COMPONENTS_TARBALL"
   exit 1
 fi
@@ -69,7 +69,7 @@ echo "📦 Installing base dependencies..."
 pnpm install
 
 # Pin Vite version for Node 18
-if [ "$NODE_VERSION" -lt 20 ]; then
+if [[ "$NODE_VERSION" -lt 20 ]]; then
   echo "📌 Pinning Vite to $VITE_VERSION for Node 18 compatibility..."
   pnpm add -D vite@$VITE_VERSION
 fi

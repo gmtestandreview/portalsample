@@ -1,37 +1,49 @@
 ---
 name: react-best-practices
 description: >
-  React and Next.js (Pages Router) performance optimization guidelines adapted
-  from Vercel Engineering. Use when writing, reviewing, or refactoring React
-  components, Next.js pages, data fetching, bundle optimization, or performance
-  improvements. Triggers on tasks directly related to React components,
-  client-side data fetching, bundle optimization, re-renders, or
-  JavaScript/TypeScript performance in a Pages Router application.
+  React performance optimization guidelines adapted from Vercel Engineering for
+  a React 19 + React Router v7 + Vite client application. Use when writing,
+  reviewing, or refactoring React components, route modules, data fetching,
+  bundle optimization, or performance improvements. Triggers on tasks directly
+  related to React components, client-side data fetching, bundle optimization,
+  re-renders, or JavaScript/TypeScript performance.
 ---
 
 # React Best Practices
 
-Comprehensive performance optimization guide for React and Next.js (Pages
-Router) applications. Adapted from the
+Comprehensive performance optimization guide for React 19 applications built
+with React Router v7 and Vite. Adapted from the
 [Vercel Labs agent-skills repository](https://github.com/vercel-labs/agent-skills)
 (MIT licence, author: Vercel Engineering).
 
-**Scope**: This adaptation covers rules applicable to **Next.js Pages Router**
-with **stable React**. All React 19+ APIs, including `rendering-activity`, are
-excluded because this repository uses the Pages Router with stable React. Server
-Component rules (`server-*`) are also excluded. If this project migrates to the
-App Router, add those rules from the reference repo (see
+**Scope**: This adaptation covers framework-neutral rules that apply to a
+client-rendered **React 19** app using **React Router v7** and **Vite**. The
+upstream rules were written for Next.js, so translate Next.js-specific advice:
+
+- `next/dynamic` becomes `React.lazy` with `Suspense`, or route-level code
+  splitting through React Router's lazy route modules.
+- `getServerSideProps`, `getStaticProps` and API-route rules
+  (`async-api-routes`) do not apply. Fetch in React Router loaders or in the
+  component layer instead.
+- SWR is not a project dependency. Apply `client-swr-dedup` as a principle
+  (deduplicate requests) using the existing API client, not as a new library.
+- Server Component rules (`server-*`) are excluded because this app has no
+  server rendering. React 19 client APIs (`useTransition`, `useDeferredValue`,
+  `ref` as a prop) are in scope.
+
+If this project adopts server rendering, add the `server-*` rules from the
+reference repo (see
 [server-side performance rules](https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices/rules)).
 
 ## When to Apply
 
 Reference these guidelines when:
 
-- Writing new React components or Next.js pages
-- Implementing data fetching (client-side `getServerSideProps`,
-  `getStaticProps`, SWR, or `fetch`)
+- Writing new React components or route modules
+- Implementing data fetching (React Router loaders, the NSwag API client, or
+  `fetch`)
 - Reviewing code for performance issues
-- Refactoring existing React or Next.js code
+- Refactoring existing React code
 - Optimizing bundle size or load times
 
 ## Rule Categories by Priority
@@ -52,9 +64,8 @@ a rule from a higher-priority category conflicts with a lower-priority one, the
 higher-priority rule takes precedence.
 
 > **Note**: Server-Side Performance (`server-*`) rules from the original Vercel
-> collection are omitted here because they require React Server Components (App
-> Router). If this project migrates to the App Router, add those rules from the
-> reference repo.
+> collection are omitted here because they require React Server Components. If
+> this project adopts server rendering, add those rules from the reference repo.
 
 ## Quick Reference
 
@@ -65,7 +76,8 @@ higher-priority rule takes precedence.
 - `async-defer-await` — Move await into branches where actually used
 - `async-parallel` — Use `Promise.all()` for independent operations
 - `async-dependencies` — Use `better-all` for partial dependencies
-- `async-api-routes` — Start promises early, await late in API routes
+- `async-api-routes` — Start promises early, await late (loaders and handlers;
+  upstream wording is API routes)
 - `async-suspense-boundaries` — Use Suspense to stream content
 
 ### 2. Bundle Size Optimization (CRITICAL)
@@ -73,7 +85,8 @@ higher-priority rule takes precedence.
 - `bundle-barrel-imports` — Import directly; avoid barrel files
 - `bundle-analyzable-paths` — Prefer statically analysable import and
   file-system paths
-- `bundle-dynamic-imports` — Use `next/dynamic` for heavy components
+- `bundle-dynamic-imports` — Use `React.lazy` / lazy route modules for heavy
+  components
 - `bundle-defer-third-party` — Load analytics/logging after hydration
 - `bundle-conditional` — Load modules only when feature is activated
 - `bundle-preload` — Preload on hover/focus for perceived speed
@@ -162,5 +175,6 @@ Each rule file contains:
 ## Attribution
 
 Original rules authored by Vercel Engineering. Source:
-<https://github.com/vercel-labs/agent-skills> Licence: MIT Adapted for the AGDS
-Starter Kit (Pages Router, stable React) by removing RSC-specific rules.
+<https://github.com/vercel-labs/agent-skills> Licence: MIT Adapted for this
+repository (React 19, React Router v7, Vite) by removing RSC-specific rules and
+translating Next.js-specific advice.

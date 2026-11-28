@@ -1,11 +1,10 @@
 import { StrictMode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type { createStandardPublicClientApplication as CreateStandardPublicClientApplication } from '@azure/msal-browser';
-import type { createRoot as CreateRoot } from 'react-dom/client';
+import type { hydrateRoot as HydrateRoot } from 'react-dom/client';
 
 const mocks = vi.hoisted(() => ({
-  createRoot: vi.fn<(...args: unknown[]) => unknown>(),
-  render: vi.fn<(...args: unknown[]) => unknown>(),
+  hydrateRoot: vi.fn<(...args: unknown[]) => unknown>(),
   createStandardPublicClientApplication: vi
     .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ client: 'pca' }),
@@ -16,7 +15,7 @@ vi.mock(
   import('react-dom/client') as unknown as string,
   () =>
     ({
-      createRoot: mocks.createRoot as unknown as typeof CreateRoot,
+      hydrateRoot: mocks.hydrateRoot as unknown as typeof HydrateRoot,
     }) satisfies __ExactMockModule<__TestMockModule154>,
 );
 
@@ -43,7 +42,7 @@ vi.mock(
   import('react-router/dom') as unknown as string,
   () =>
     ({
-      RouterProvider: () => <main>Router provider</main>,
+      HydratedRouter: () => <main>Hydrated router</main>,
     }) satisfies __ExactMockModule<__TestMockModule155>,
 );
 
@@ -63,14 +62,6 @@ vi.mock(
     ({
       configuration: { auth: { clientId: 'client-id' } },
     }) satisfies __ExactMockModule<__TestMockModule8>,
-);
-
-vi.mock(
-  import('../../../ClientApp/src/App') as unknown as string,
-  () =>
-    ({
-      default: { routes: [] },
-    }) satisfies __ExactMockModule<__TestMockModule157>,
 );
 
 vi.mock(
@@ -103,49 +94,35 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule15>,
 );
 
-describe('application bootstrap', () => {
-  it('creates the root, initializes MSAL, installs Trusted Types, and renders providers', async () => {
+describe('framework client bootstrap', () => {
+  it('initializes MSAL and Trusted Types before hydrating the document', async () => {
     expect.hasAssertions();
 
     vi.resetModules();
-    document.body.innerHTML = '<div id="root"></div>';
-    mocks.createRoot.mockReturnValue({ render: mocks.render });
 
-    await import('../../../ClientApp/src/index');
+    await import('../../../ClientApp/src/entry.client');
 
-    expect(mocks.createRoot).toHaveBeenCalledWith(
-      document.getElementById('root'),
-    );
     expect(mocks.createStandardPublicClientApplication).toHaveBeenCalledWith({
       auth: { clientId: 'client-id' },
     });
     expect(mocks.createTrustedTypePolicy).toHaveBeenCalledWith();
-    expect(mocks.render).toHaveBeenCalledWith(expect.any(Object));
+    expect(mocks.hydrateRoot).toHaveBeenCalledWith(
+      document,
+      expect.any(Object),
+    );
   });
 
-  it('wraps the entire application in React Strict Mode', async () => {
+  it('wraps the hydrated router in Strict Mode', async () => {
     expect.hasAssertions();
 
     vi.resetModules();
-    document.body.innerHTML = '<div id="root"></div>';
-    mocks.createRoot.mockReturnValue({ render: mocks.render });
 
-    await import('../../../ClientApp/src/index');
+    await import('../../../ClientApp/src/entry.client');
 
-    expect(mocks.render).toHaveBeenCalledWith(
+    const [, application] = mocks.hydrateRoot.mock.calls[0] ?? [];
+
+    expect(application).toStrictEqual(
       expect.objectContaining({ type: StrictMode }),
     );
-  });
-
-  it('fails fast when the application root is absent', async () => {
-    expect.hasAssertions();
-
-    vi.resetModules();
-    document.body.innerHTML = '';
-
-    await expect(import('../../../ClientApp/src/index')).rejects.toThrow(
-      'Root element #root not found',
-    );
-    expect(mocks.createRoot).not.toHaveBeenCalled();
   });
 });

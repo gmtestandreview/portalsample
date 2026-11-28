@@ -1,7 +1,6 @@
 import preview from '../../../../.storybook/preview';
-import { expect, fn, userEvent, screen, waitFor, within } from 'storybook/test';
+import { expect, userEvent, screen, waitFor, within } from 'storybook/test';
 import { Routes, Route, Link } from 'react-router';
-import { Formik, Form } from 'formik';
 import RouteLeavingGuard from './index';
 
 const GuardHarness = ({
@@ -23,22 +22,20 @@ const GuardHarness = ({
     <Route
       path='/form'
       element={
-        <Formik initialValues={{}} onSubmit={fn()}>
-          <Form>
-            <RouteLeavingGuard
-              when={when}
-              title={title}
-              body={body}
-              cancelBtn={cancelBtn}
-              confirmBtn={confirmBtn}
-            />
-            <p>
-              You are on the form page. Changes are{' '}
-              <strong>{when ? 'unsaved' : 'saved'}</strong>.
-            </p>
-            <Link to='/other'>Leave this page</Link>
-          </Form>
-        </Formik>
+        <form>
+          <RouteLeavingGuard
+            when={when}
+            title={title}
+            body={body}
+            cancelBtn={cancelBtn}
+            confirmBtn={confirmBtn}
+          />
+          <p>
+            You are on the form page. Changes are{' '}
+            <strong>{when ? 'unsaved' : 'saved'}</strong>.
+          </p>
+          <Link to='/other'>Leave this page</Link>
+        </form>
       }
     />
     <Route path='/other' element={<p>You left the page.</p>} />

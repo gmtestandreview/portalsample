@@ -9,7 +9,7 @@ import {
 } from './safe-file-io.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const dist = path.join(root, 'dist');
+const dist = path.join(root, 'dist', 'client');
 
 const fail = (message) => {
   throw new Error(`[vite-build] ${message}`);
@@ -88,7 +88,7 @@ async function verifyHtmlEntry(fileName, expectedEntryName) {
     `${fileName} still contains an HTML template placeholder`,
   );
 
-  const scripts = htmlScriptSources(html);
+  const scripts = htmlJavaScriptReferences(html);
   assert(scripts.length > 0, `${fileName} has no emitted script entry`);
   assert(
     scripts.some((source) => source.includes(`/${expectedEntryName}.`)),
@@ -116,7 +116,7 @@ for (const asset of requiredRootAssets) {
   );
 }
 
-await verifyHtmlEntry('index.html', 'main');
+await verifyHtmlEntry('index.html', 'entry.client');
 await verifyHtmlEntry('redirect.html', 'redirect');
 
 const indexHtml = await readDistFile(path.join(dist, 'index.html'));
@@ -165,6 +165,7 @@ const isMaplessRuntimeFile = (file) => {
     fileName.startsWith('modulepreload-polyfill.') ||
     fileName.startsWith('preload-helper.') ||
     fileName.startsWith('rolldown-runtime.') ||
+    fileName.startsWith('manifest-') ||
     fileName === 'mockServiceWorker.js'
   );
 };

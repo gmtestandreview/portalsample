@@ -82,17 +82,38 @@ const saveStep =
     }
   };
 
+const isReturnContactHidden = (x: DeliveryAndReturnStep) =>
+  x.returnContactType === ReturnContactTypeValues.SamePerson;
+
+const isCarrierHidden = (x: DeliveryAndReturnStep) =>
+  x.returnMethod !== ReturnMethodValues.ClientWillProvide;
+
+/**
+ * Hide rules. `contactHide` and `carrierHide` drive the UI wrappers; the data
+ * keys below them (`contact`, the carrier fields, `returnAddress`) are what
+ * `removeHidden` strips from the submitted payload, so a value typed before the
+ * user changed their answer is not saved unvalidated.
+ */
 export const deliveryAndReturnHidingFields = {
-  contactHide: (x: DeliveryAndReturnStep) =>
-    x.returnContactType === ReturnContactTypeValues.SamePerson,
+  contactHide: isReturnContactHidden,
   contact: {
+    this: isReturnContactHidden,
     titleOther: (x: DeliveryAndReturnStep) =>
       String(x.contact?.title) !== 'Other',
   },
   returnAddress: (x: DeliveryAndReturnStep) =>
     x.returnAddressType !== ReturnAddressTypeValues.Other,
-  carrierHide: (x: DeliveryAndReturnStep) =>
-    x.returnMethod !== ReturnMethodValues.ClientWillProvide,
+  carrierHide: isCarrierHidden,
+  packagingNotes: isCarrierHidden,
+  carrierName: isCarrierHidden,
+  carrierAccountNumber: isCarrierHidden,
+  carrierContactPerson: isCarrierHidden,
+  carrierContactPhone: isCarrierHidden,
+  shipmentMode: isCarrierHidden,
+  shipmentPriority: isCarrierHidden,
+  insuranceNotes: isCarrierHidden,
+  customsValue: isCarrierHidden,
+  specialInstructions: isCarrierHidden,
 };
 
 const deliveryAndReturnProps = (

@@ -1,174 +1,51 @@
 import { useMsal } from '@azure/msal-react';
-import Row from 'react-bootstrap/Row';
-import { Alert, Col } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-import {
-  AcceptQuoteClient,
-  AccountsClient,
-  ReturnAddressTypeValues,
-} from '../../api/web-api-client';
+import { Alert, Col, Row } from 'react-bootstrap';
+import { useContext, useEffect, useState } from 'react';
+import { AcceptQuoteClient } from '../../api/web-api-client';
 import type {
-  AcceptQuotePreInfoDto,
   AddressDetailsDto,
   DeliveryAndReturnStep,
 } from '../../api/web-api-client';
-import { prefixedPropertyOf } from '../../utils';
 import type { DeliveryAndReturnProps } from './types';
-import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
-import HidableField from '../../components/forms/HidableField';
-import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import { silentRequestFor } from '../../authentication/silentRequest';
+import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
 import { useAccountState } from '../../authentication/hooks';
+import { RhfFormApiContext } from '../../components/forms/RhfForm/rhfFormApiContext';
 import MailingLabel from '../../components/Utilities/mailingLabel';
 import AppLogger from '../../instrumentation/AppLogger';
 import DeliveryInstructions from '../../components/Utilities/deliveryInstructions';
-import { getFormattedAddress } from '../common/helperFunctions';
-import DeliveryAndReturnFormikBridge from './deliveryAndReturnFormikBridge';
-import {
-  RETURN_CONTACT_TYPE_OPTIONS,
-  RETURN_METHOD_OPTIONS,
-} from './deliveryAndReturnOptions';
+import DeliveryAndReturnFormFields from './deliveryAndReturnFormFields';
+import DeliveryAndReturnSummary from './summary/DeliveryAndReturnSummary';
 
-const getName = prefixedPropertyOf<DeliveryAndReturnStep>('deliveryAndReturn');
-
-type ReturnAddressSummaryProps = Readonly<{
-  deliveryAndReturnStep: DeliveryAndReturnStep;
+interface LoadedDeliveryAndReturn {
+  step: DeliveryAndReturnStep;
   streetAddress: AddressDetailsDto | undefined;
   postalAddress: AddressDetailsDto | undefined;
-}>;
+}
 
-const ReturnAddressSummary = ({
-  deliveryAndReturnStep,
-  streetAddress,
-  postalAddress,
-}: ReturnAddressSummaryProps) => {
-  const {
-    returnAddressType,
-    rfqOrganisation,
-    returnOrganisationName,
-    returnAddress,
-  } = deliveryAndReturnStep;
-  let address: AddressDetailsDto | undefined;
-
-  const organisationName = returnOrganisationName;
-
-  switch (returnAddressType) {
-    case ReturnAddressTypeValues.BusinessAddress:
-      address = streetAddress;
-      break;
-    case ReturnAddressTypeValues.PostalAddress:
-      address = rfqOrganisation?.postalAddressSameAsStreetAddress
-        ? streetAddress
-        : postalAddress;
-      break;
-    case ReturnAddressTypeValues.Other:
-      address = returnAddress;
-      break;
-    default:
-      return null;
-  }
-
-  return (
-    <>
-      <h3>Instrument/artefact return address</h3>
-      <div className='mb-4'>
-        <div className='form-label mb-0'>
-          Return organisation name (optional)
-        </div>
-        {organisationName ? <p>{organisationName}</p> : <p>-</p>}
-      </div>
-      {address && (
-        <>
-          <div className='form-label mb-0'>Return address</div>
-          <p>{getFormattedAddress(address)}</p>
-        </>
-      )}
-    </>
-  );
+const toLoaded = (step: DeliveryAndReturnStep): LoadedDeliveryAndReturn => {
+  const organisation = step.rfqOrganisation;
+  return {
+    step,
+    streetAddress: organisation?.streetAddress,
+    postalAddress: organisation?.postalAddressSameAsStreetAddress
+      ? organisation.streetAddress
+      : organisation?.postalAddress,
+  };
 };
-
-type DeliveryAndReturnSummaryProps = Readonly<{
-  deliveryAndReturnStep: DeliveryAndReturnStep | undefined;
-  streetAddress: AddressDetailsDto | undefined;
-  postalAddress: AddressDetailsDto | undefined;
-}>;
-
-const DeliveryAndReturnSummary = ({
-  deliveryAndReturnStep,
-  streetAddress,
-  postalAddress,
-}: DeliveryAndReturnSummaryProps) => (
-  <>
-    <Row className='mb-4'>
-      <h2 className='h3 my-3'>Instrument/artefact return</h2>
-      <h3 className='h4 my-3'>Return contact person</h3>
-      <RadioButtonGroup
-        legend='Please select your contact person for the returned instrument/artefact when the job has completed'
-        name={getName('returnContactType')}
-        id='q-returnContactType'
-        isSummary
-        options={RETURN_CONTACT_TYPE_OPTIONS}
-      />
-    </Row>
-    <HidableField name={getName('rfqHide')}>
-      <Row className='mb-4'>
-        <h4 className='h5 my-3'>Return contact person details</h4>
-        <ContactDetailsInput
-          key='contact'
-          name='requestForQuote.contact'
-          isSummary
-        />
-      </Row>
-    </HidableField>
-    <HidableField name={getName('contactHide')}>
-      <Row className='mb-4'>
-        <h4 className='h5 my-3'>Return contact person details</h4>
-        <ContactDetailsInput
-          key='contact'
-          name={getName('contact')}
-          isSummary
-        />
-      </Row>
-    </HidableField>
-    {deliveryAndReturnStep && (
-      <ReturnAddressSummary
-        deliveryAndReturnStep={deliveryAndReturnStep}
-        streetAddress={streetAddress}
-        postalAddress={postalAddress}
-      />
-    )}
-    <Row className='mb-4'>
-      <h3 className='h4 my-3'>Return method</h3>
-      <RadioButtonGroup
-        legend='Choose your return method for the instrument/artefact'
-        name={getName('returnMethod')}
-        id='q-returnMethod'
-        isSummary
-        options={RETURN_METHOD_OPTIONS}
-      />
-    </Row>
-  </>
-);
 
 const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);
-  const [deliveryAndReturnStep, setDeliveryAndReturnStep] = useState<
-    DeliveryAndReturnStep | undefined
-  >();
-  const [acceptQuotePreInfo, setAcceptQuotePreInfo] = useState<
-    AcceptQuotePreInfoDto | undefined
-  >();
-  const [postalAddress, setPostalAddress] = useState<
-    AddressDetailsDto | undefined
-  >();
-  const [streetAddress, setStreetAddress] = useState<
-    AddressDetailsDto | undefined
-  >();
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [loaded, setLoaded] = useState<LoadedDeliveryAndReturn | undefined>();
+  const setSubmitBlocked = useContext(RhfFormApiContext)?.setSubmitBlocked;
   const account = useAccountState();
   const homeAccountId = account?.details?.homeAccountId;
+
+  const acceptQuotePreInfo = loaded?.step.acceptQuotePreInfo;
+  const { streetAddress, postalAddress } = loaded ?? {};
 
   const renderNoDeliveryInfoMsg = () => (
     <p className='mb-0'>
@@ -200,45 +77,62 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
     </Alert>
   );
 
+  // The fields are hidden when the step's own load failed; the shell must not
+  // save or complete the step with values the user cannot see.
+  const blocksSubmit = loadFailed && !isSummary;
   useEffect(() => {
-    const getAcceptQuotePreInfo = async () => {
+    setSubmitBlocked?.(blocksSubmit);
+    return () => {
+      setSubmitBlocked?.(false);
+    };
+  }, [blocksSubmit, setSubmitBlocked]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const load = async () => {
+      if (id === undefined) {
+        setIsLoading(false);
+        setLoadFailed(false);
+        setLoaded(undefined);
+        return;
+      }
+
+      setIsLoading(true);
+      setLoadFailed(false);
+      setLoaded(undefined);
       try {
         AppLogger.verbose('DeliveryAndReturn.getAcceptQuotePreInfo.', {
           homeAccountId,
         });
-        const acceptQuoteClient = new AcceptQuoteClient();
-        const accountsClient = new AccountsClient();
-        const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0]),
+        const client = await createAuthenticatedClient(
+          AcceptQuoteClient,
+          accounts,
+          instance,
         );
-        acceptQuoteClient.setAuthToken(tokenResult.accessToken);
-        accountsClient.setAuthToken(tokenResult.accessToken);
+        const step = await client.getDeliveryAndReturn(id, signal);
+        if (signal.aborted) return;
 
-        if (id === undefined) return;
-
-        const deliveryAndReturn =
-          await acceptQuoteClient.getDeliveryAndReturn(id);
-        setDeliveryAndReturnStep(deliveryAndReturn);
-        setAcceptQuotePreInfo(deliveryAndReturn.acceptQuotePreInfo);
-
-        setStreetAddress(deliveryAndReturn.rfqOrganisation?.streetAddress);
-
-        if (deliveryAndReturn.rfqOrganisation?.postalAddressSameAsStreetAddress)
-          setPostalAddress(deliveryAndReturn.rfqOrganisation.streetAddress);
-        else setPostalAddress(deliveryAndReturn.rfqOrganisation?.postalAddress);
+        setLoaded(toLoaded(step));
       } catch (error) {
+        // A superseded request (id changed or unmounted) is not a failure.
+        if (signal.aborted) return;
+
+        setLoadFailed(true);
         AppLogger.error('Failed to load AcceptQuotePreInfo', error as Error, {
           Id: id,
         });
+      } finally {
+        if (!signal.aborted) setIsLoading(false);
       }
     };
 
-    const loadDataForDisplay = async () => {
-      setIsLoading(true);
-      await getAcceptQuotePreInfo();
-      setIsLoading(false);
+    void load();
+
+    return () => {
+      controller.abort();
     };
-    void loadDataForDisplay();
   }, [homeAccountId, accounts, id, instance]);
 
   return (
@@ -286,7 +180,13 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
           </div>
         </Alert>
       )}
-      {!acceptQuotePreInfo?.receiptAndDispatchNA && (
+      {loadFailed && (
+        <Alert variant='danger' role='alert' className='mb-4'>
+          We could not load your delivery and return details. Please refresh the
+          page or try again later.
+        </Alert>
+      )}
+      {!loadFailed && !acceptQuotePreInfo?.receiptAndDispatchNA && (
         <>
           <Row className='mb-4'>
             <h2 className={isSummary ? 'h3 my-3' : ''}>
@@ -305,12 +205,14 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
           </Row>
           {isSummary ? (
             <DeliveryAndReturnSummary
-              deliveryAndReturnStep={deliveryAndReturnStep}
+              values={props.summaryValues ?? {}}
+              hidden={props.summaryHidden ?? {}}
+              deliveryAndReturnStep={loaded?.step}
               streetAddress={streetAddress}
               postalAddress={postalAddress}
             />
           ) : (
-            <DeliveryAndReturnFormikBridge
+            <DeliveryAndReturnFormFields
               streetAddress={streetAddress}
               postalAddress={postalAddress}
             />

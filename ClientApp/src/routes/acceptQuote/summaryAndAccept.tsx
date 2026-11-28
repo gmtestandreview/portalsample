@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useMsal } from '@azure/msal-react';
 import { Col, Row, Container } from 'react-bootstrap';
 import { Link, useParams } from 'react-router';
@@ -13,7 +14,6 @@ import type { SummaryAndAcceptProps } from './types';
 import ReportRecipient from './reportRecipient';
 import DeliveryAndReturn from './deliveryAndReturn';
 import PaymentDetails from './paymentDetails';
-import SummaryAndAcceptFormikBridge from './summaryAndAcceptFormikBridge';
 import {
   AcceptanceField,
   AssociatedDisputeFields,
@@ -45,10 +45,14 @@ import {
   openPdfPageInNewTab,
 } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
+import type { SummaryAndAcceptStep } from '../../api/web-api-client';
 
 const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted, cRMQuoteRequestId } = props;
+  const { control } = useFormContext<SummaryAndAcceptStep>();
+  const summaryValues = useWatch({ control });
+  const summaryHidden = props.summaryHidden ?? {};
   const { accounts, instance } = useMsal();
   const account = useAccountState();
   const [acceptQuotePreInfo, setAcceptQuotePreInfo] = useState<
@@ -208,7 +212,13 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             eventKey='1'
             className='mb-4 py-2'
           >
-            <ReportRecipient isSummary name='reportRecipient' id={id} />
+            <ReportRecipient
+              isSummary
+              name='reportRecipient'
+              id={id}
+              summaryValues={summaryValues}
+              summaryHidden={summaryHidden}
+            />
             {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/report-recipient`} />
             )}
@@ -220,7 +230,13 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             eventKey='2'
             className='mb-4 py-2'
           >
-            <DeliveryAndReturn isSummary name='deliveryAndReturn' id={id} />
+            <DeliveryAndReturn
+              isSummary
+              name='deliveryAndReturn'
+              id={id}
+              summaryValues={summaryValues}
+              summaryHidden={summaryHidden}
+            />
             {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/delivery-and-return`} />
             )}
@@ -232,7 +248,13 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             eventKey='3'
             className='mb-4 py-2'
           >
-            <PaymentDetails isSummary name='paymentDetails' id={id} />
+            <PaymentDetails
+              isSummary
+              name='paymentDetails'
+              id={id}
+              summaryValues={summaryValues}
+              summaryHidden={summaryHidden}
+            />
             {!isSubmitted && id !== undefined && (
               <EditButton link={`/accept-quote/${id}/payment-details`} />
             )}
@@ -245,184 +267,182 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
             className='mb-4 py-2'
           >
             <Row className='mb-4'>
-              <SummaryAndAcceptFormikBridge>
-                <AssociatedDisputeFields />
+              <AssociatedDisputeFields />
+              <p>
+                <strong>By accepting this Quotation and the</strong>{' '}
+                <InTextLink onClick={() => void downloadQuoteTermsPagePdf()}>
+                  Terms
+                  <ExternalLinkIcon className='ms-2' />
+                  <span className='visually-hidden'> Opens in a new tab</span>
+                </InTextLink>{' '}
+                <strong>
+                  form a contract between the Client and NMI
+                  (&apos;Contract&apos;).
+                </strong>
+              </p>
+              <Col md={6}>
                 <p>
-                  <strong>By accepting this Quotation and the</strong>{' '}
-                  <InTextLink onClick={() => void downloadQuoteTermsPagePdf()}>
-                    Terms
-                    <ExternalLinkIcon className='ms-2' />
-                    <span className='visually-hidden'> Opens in a new tab</span>
-                  </InTextLink>{' '}
-                  <strong>
-                    form a contract between the Client and NMI
-                    (&apos;Contract&apos;).
-                  </strong>
+                  <strong>Accepting for Client</strong>
+                  <br />
+                  {account?.details && (
+                    <span className='text-break'>
+                      {joinNameParts(
+                        account.details.givenName,
+                        account.details.familyName,
+                      )}
+                      <br />
+                    </span>
+                  )}
                 </p>
-                <Col md={6}>
+                {requestForQuote?.contact && (
                   <p>
-                    <strong>Accepting for Client</strong>
+                    <i>Request for quote by</i>
                     <br />
-                    {account?.details && (
+                    <span className='text-break'>
+                      {requestForQuote.contact.firstName}
+                      {requestForQuote.contact.lastName &&
+                        ` ${requestForQuote.contact.lastName}`}
+                      <br />
+                    </span>
+                    {requestForQuote.contact.role && (
                       <span className='text-break'>
-                        {joinNameParts(
-                          account.details.givenName,
-                          account.details.familyName,
-                        )}
+                        {requestForQuote.contact.role}
+                        <br />
+                      </span>
+                    )}
+                    {requestForQuote.contact.phone && (
+                      <span className='text-break'>
+                        {requestForQuote.contact.phone}
+                        <br />
+                      </span>
+                    )}
+                    {requestForQuote.contact.email && (
+                      <span className='text-break'>
+                        {requestForQuote.contact.email}
                         <br />
                       </span>
                     )}
                   </p>
-                  {requestForQuote?.contact && (
-                    <p>
-                      <i>Request for quote by</i>
-                      <br />
+                )}
+                {organisationDto && (
+                  <p className='mb-0'>
+                    {organisationPrimaryName && (
                       <span className='text-break'>
-                        {requestForQuote.contact.firstName}
-                        {requestForQuote.contact.lastName &&
-                          ` ${requestForQuote.contact.lastName}`}
+                        {organisationPrimaryName}
                         <br />
                       </span>
-                      {requestForQuote.contact.role && (
-                        <span className='text-break'>
-                          {requestForQuote.contact.role}
-                          <br />
-                        </span>
-                      )}
-                      {requestForQuote.contact.phone && (
-                        <span className='text-break'>
-                          {requestForQuote.contact.phone}
-                          <br />
-                        </span>
-                      )}
-                      {requestForQuote.contact.email && (
-                        <span className='text-break'>
-                          {requestForQuote.contact.email}
-                          <br />
-                        </span>
-                      )}
-                    </p>
-                  )}
-                  {organisationDto && (
-                    <p className='mb-0'>
-                      {organisationPrimaryName && (
-                        <span className='text-break'>
-                          {organisationPrimaryName}
-                          <br />
-                        </span>
-                      )}
-                      {organisationDto.name && (
-                        <span className='text-break'>
-                          {organisationDto.name}
-                          <br />
-                        </span>
-                      )}
-                      {organisationDto.abn && (
-                        <span className='text-break'>
-                          <span className='visually-hidden'>ABN: </span>
-                          <span>{organisationDto.abn}</span>
-                          <br />
-                        </span>
-                      )}
-                    </p>
-                  )}
-                  {organisationDto?.streetAddress && (
-                    <p>
-                      {organisationDto.streetAddress.line1 && (
-                        <span className='text-break'>
-                          {organisationDto.streetAddress.line1}
-                          <br />
-                        </span>
-                      )}
-                      {organisationDto.streetAddress.line2 && (
-                        <span className='text-break'>
-                          {organisationDto.streetAddress.line2}
-                          <br />
-                        </span>
-                      )}
-                      {organisationDto.streetAddress.line3 && (
-                        <span className='text-break'>
-                          {organisationDto.streetAddress.line3}
-                          <br />
-                        </span>
-                      )}
+                    )}
+                    {organisationDto.name && (
                       <span className='text-break'>
-                        {organisationDto.streetAddress.suburb}
-                        {organisationDto.streetAddress.state &&
-                          ` ${organisationDto.streetAddress.state}`}
-                        {organisationDto.streetAddress.postcode &&
-                          ` ${organisationDto.streetAddress.postcode}`}
+                        {organisationDto.name}
+                        <br />
                       </span>
-                    </p>
-                  )}
-                </Col>
-                <Col md={6}>
+                    )}
+                    {organisationDto.abn && (
+                      <span className='text-break'>
+                        <span className='visually-hidden'>ABN: </span>
+                        <span>{organisationDto.abn}</span>
+                        <br />
+                      </span>
+                    )}
+                  </p>
+                )}
+                {organisationDto?.streetAddress && (
                   <p>
-                    <strong>
-                      Accepting for the National Measurement Institute (NMI)
-                      <br />
-                    </strong>
-                    {acceptQuotePreInfo?.nmiCheckedByName && (
+                    {organisationDto.streetAddress.line1 && (
                       <span className='text-break'>
-                        {acceptQuotePreInfo.nmiCheckedByName}
+                        {organisationDto.streetAddress.line1}
                         <br />
                       </span>
                     )}
-                    {acceptQuotePreInfo?.nmiCheckedByJobTitle && (
+                    {organisationDto.streetAddress.line2 && (
                       <span className='text-break'>
-                        {acceptQuotePreInfo.nmiCheckedByJobTitle}
+                        {organisationDto.streetAddress.line2}
                         <br />
                       </span>
                     )}
-                    {acceptQuotePreInfo?.nmiCheckedByPhone && (
+                    {organisationDto.streetAddress.line3 && (
                       <span className='text-break'>
-                        {acceptQuotePreInfo.nmiCheckedByPhone}
+                        {organisationDto.streetAddress.line3}
                         <br />
                       </span>
                     )}
-                    {acceptQuotePreInfo?.nmiCheckedByEmail && (
-                      <span className='text-break'>
-                        {acceptQuotePreInfo.nmiCheckedByEmail}
-                        <br />
-                      </span>
-                    )}
+                    <span className='text-break'>
+                      {organisationDto.streetAddress.suburb}
+                      {organisationDto.streetAddress.state &&
+                        ` ${organisationDto.streetAddress.state}`}
+                      {organisationDto.streetAddress.postcode &&
+                        ` ${organisationDto.streetAddress.postcode}`}
+                    </span>
                   </p>
-                  {/*
+                )}
+              </Col>
+              <Col md={6}>
+                <p>
+                  <strong>
+                    Accepting for the National Measurement Institute (NMI)
+                    <br />
+                  </strong>
+                  {acceptQuotePreInfo?.nmiCheckedByName && (
+                    <span className='text-break'>
+                      {acceptQuotePreInfo.nmiCheckedByName}
+                      <br />
+                    </span>
+                  )}
+                  {acceptQuotePreInfo?.nmiCheckedByJobTitle && (
+                    <span className='text-break'>
+                      {acceptQuotePreInfo.nmiCheckedByJobTitle}
+                      <br />
+                    </span>
+                  )}
+                  {acceptQuotePreInfo?.nmiCheckedByPhone && (
+                    <span className='text-break'>
+                      {acceptQuotePreInfo.nmiCheckedByPhone}
+                      <br />
+                    </span>
+                  )}
+                  {acceptQuotePreInfo?.nmiCheckedByEmail && (
+                    <span className='text-break'>
+                      {acceptQuotePreInfo.nmiCheckedByEmail}
+                      <br />
+                    </span>
+                  )}
+                </p>
+                {/*
                                     RULE-050: Legal confirmation pending — OPEN-ITEMS-BACKLOG P2 item 17.
                                     Legal must confirm the ABN and registered address below are current
                                     for contract display. Recommendation 2026-06-04: externalise to
                                     VITE_NMI_ABN / VITE_NMI_ADDRESS in the target platform. Do not change
                                     the values during migration without Legal sign-off.
                                 */}
-                  <p className='mb-0'>
-                    <span className='text-break'>
-                      National Measurement Institute
-                    </span>
-                    <br />
-                    <span className='text-break'>ABN 74 599 608 295</span>
-                    <br />
-                    <span className='text-break'>36 Bradfield Road</span>
-                    <br />
-                    <span className='text-break'>West Lindfield NSW 2070</span>
-                    <br />
-                    <span className='text-break'>Australia</span>
-                  </p>
-                </Col>
-                <p>
-                  <strong>Note:</strong> This quotation for services, together
-                  with any written quotation price adjustment, upon payment, is
-                  a complying TAX INVOICE as per ATO GSTR2000/17
+                <p className='mb-0'>
+                  <span className='text-break'>
+                    National Measurement Institute
+                  </span>
+                  <br />
+                  <span className='text-break'>ABN 74 599 608 295</span>
+                  <br />
+                  <span className='text-break'>36 Bradfield Road</span>
+                  <br />
+                  <span className='text-break'>West Lindfield NSW 2070</span>
+                  <br />
+                  <span className='text-break'>Australia</span>
                 </p>
-                <AcceptanceField />
-                <InTextLink
-                  onClick={() => void downloadQuoteTermsPagePdf()}
-                  className='ms-5 ms-lg-0 mt-0 mt-lg-1 p-0 w-auto'
-                >
-                  terms and conditions
-                  <ExternalLinkIcon className='ms-2' />
-                  <span className='visually-hidden'> Opens in a new tab</span>
-                </InTextLink>
-              </SummaryAndAcceptFormikBridge>
+              </Col>
+              <p>
+                <strong>Note:</strong> This quotation for services, together
+                with any written quotation price adjustment, upon payment, is a
+                complying TAX INVOICE as per ATO GSTR2000/17
+              </p>
+              <AcceptanceField />
+              <InTextLink
+                onClick={() => void downloadQuoteTermsPagePdf()}
+                className='ms-5 ms-lg-0 mt-0 mt-lg-1 p-0 w-auto'
+              >
+                terms and conditions
+                <ExternalLinkIcon className='ms-2' />
+                <span className='visually-hidden'> Opens in a new tab</span>
+              </InTextLink>
             </Row>
           </CustomAccordionBody>
         </CustomAccordion>

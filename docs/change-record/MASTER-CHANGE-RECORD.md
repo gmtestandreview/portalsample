@@ -1389,7 +1389,7 @@ BATCH-E-PREREQ-003 is complete. All three Batch E prerequisites are now done.
 
 **Change ID:** CRD-040 **Source:**
 `docs/superpowers/plans/2026-06-05-eslint-linting-solution.md`; ESLint
-implementation and TypeScript 5.9.3 compatibility remediation **Status:**
+implementation and TypeScript 6.0.3 compatibility remediation **Status:**
 COMPLETE — lint gate configured and source-snapshot baseline documented
 **Security findings resolved:** None **Tests added:** 0 (lint infrastructure and
 documentation baseline) **Files changed:**
@@ -1398,7 +1398,7 @@ documentation baseline) **Files changed:**
   TypeScript, React, React Hooks, Storybook, tests, and config files
 - `package.json` / `package-lock.json` — `lint` and `lint:fix` scripts added;
   `@typescript-eslint/eslint-plugin` and `@typescript-eslint/parser` upgraded to
-  `^8.60.1` for TypeScript 5.9.3 support
+  `^8.60.1` for TypeScript 6.0.3 support
 - `ClientApp/src/components/Pagination/index.tsx` — stale `ban-types`
   suppression removed after the TypeScript ESLint rule rename
 - `docs/eslint-baseline.md` — CREATED/UPDATED; accepted warning baseline

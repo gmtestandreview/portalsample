@@ -1,10 +1,11 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { Formik, type FormikConfig, useFormikContext } from 'formik';
+import { useFormContext } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import UnsavedChangesPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedChangesPrompt';
-import UnsavedFormPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt';
+import RhfUnsavedFormPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt';
+import { FieldHarness, createFormHandle } from '../inputs/rhfTestHarness';
 
-type NameFormikSubmit = FormikConfig<{ name: string }>['onSubmit'];
 type Proceed = NonNullable<
   React.ComponentProps<typeof UnsavedChangesPrompt>['onProceed']
 >;
@@ -83,36 +84,46 @@ describe('unsaved changes prompt', () => {
   });
 });
 
-describe('unsavedFormPrompt (Formik)', () => {
+describe('rhfUnsavedFormPrompt', () => {
   const Probe = () => {
-    const { errors } = useFormikContext();
-    return <pre data-testid='errors'>{JSON.stringify(errors)}</pre>;
+    const {
+      formState: { errors },
+    } = useFormContext();
+    return (
+      <pre data-testid='errors'>{JSON.stringify(Object.keys(errors))}</pre>
+    );
   };
 
-  it('clears Formik errors when the guard confirms leaving', async () => {
+  it('clears form errors when the guard confirms leaving', async () => {
     expect.hasAssertions();
 
-    render(
-      <Formik
-        initialValues={{ name: '' }}
-        initialErrors={{ name: 'Required' }}
-        onSubmit={vi.fn<NameFormikSubmit>()}
-      >
-        <>
-          <UnsavedFormPrompt />
-          <Probe />
-        </>
-      </Formik>,
-    );
+    const resolver: Resolver<{ name: string }> = () => ({
+      values: {},
+      errors: { name: { type: 'required', message: 'Required' } },
+    });
+    const form = createFormHandle<{ name: string }>();
 
-    expect(screen.getByTestId('errors')).toHaveTextContent('Required');
+    render(
+      <FieldHarness
+        field='name'
+        defaultValue=''
+        resolver={resolver}
+        form={form}
+      >
+        <RhfUnsavedFormPrompt />
+        <Probe />
+      </FieldHarness>,
+    );
+    await form.submit();
+
+    expect(screen.getByTestId('errors')).toHaveTextContent('name');
 
     act(() => {
       guardProps.last?.onProceed?.();
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId('errors')).toHaveTextContent('{}');
+      expect(screen.getByTestId('errors')).toHaveTextContent('[]');
     });
   });
 });

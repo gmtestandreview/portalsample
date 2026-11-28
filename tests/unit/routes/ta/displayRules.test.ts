@@ -16,12 +16,8 @@ type DtoOverrides = Omit<
   Partial<ApplicationAndInstrumentStepDto>,
   'newSubOptions' | 'instrumentTypeContent'
 > & {
-  readonly newSubOptions?:
-    | ApplicationAndInstrumentStepDto['newSubOptions']
-    | undefined;
-  readonly instrumentTypeContent?:
-    | ApplicationAndInstrumentStepDto['instrumentTypeContent']
-    | undefined;
+  readonly newSubOptions?: ApplicationAndInstrumentStepDto['newSubOptions'];
+  readonly instrumentTypeContent?: ApplicationAndInstrumentStepDto['instrumentTypeContent'];
 };
 
 const content = (

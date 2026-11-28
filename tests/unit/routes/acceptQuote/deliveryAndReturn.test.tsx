@@ -1,6 +1,6 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Formik, Form } from 'formik';
+import RhfForm from '../../../../ClientApp/src/components/forms/RhfForm';
 import { MemoryRouter } from 'react-router';
 import type { ReactNode } from 'react';
 import type { AddressDetailsDto } from '../../../../ClientApp/src/api/web-api-client';
@@ -108,15 +108,28 @@ vi.mock(
 function makeTree(id: string, isSummary?: boolean): ReactNode {
   return (
     <MemoryRouter>
-      <Formik
-        initialValues={{}}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<() => void>()}
+      <RhfForm
+        initialValues={{
+          requestForQuote: { contact: {} },
+          deliveryAndReturn: { contact: {} },
+        }}
+        hidingFields={{}}
+        onSubmit={() => undefined}
+        onSaveAndExit={() => undefined}
       >
-        <Form noValidate>
-          <DeliveryAndReturn id={id} isSummary={isSummary} />
-        </Form>
-      </Formik>
+        {({ onFormSubmit }) => (
+          <form noValidate onSubmit={onFormSubmit}>
+            <DeliveryAndReturn
+              id={id}
+              isSummary={isSummary}
+              summaryValues={{
+                requestForQuote: { contact: {} },
+                deliveryAndReturn: { contact: {} },
+              }}
+            />
+          </form>
+        )}
+      </RhfForm>
     </MemoryRouter>
   );
 }
@@ -191,7 +204,7 @@ describe(DeliveryAndReturn, () => {
         }),
       ).not.toBeInTheDocument();
 
-      // Drain setIsLoading(false) and any Formik re-renders still in the
+      // Drain setIsLoading(false) and any form re-renders still in the
       // microtask queue so they don't fire outside act() after the test ends.
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
@@ -293,7 +306,10 @@ describe(DeliveryAndReturn, () => {
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'test-id',
+          expect.any(AbortSignal),
+        );
       });
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
@@ -337,12 +353,18 @@ describe(DeliveryAndReturn, () => {
       });
       const { rerender } = render(makeTree('q-1'));
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-1');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'q-1',
+          expect.any(AbortSignal),
+        );
       });
 
       rerender(makeTree('q-2'));
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'q-2',
+          expect.any(AbortSignal),
+        );
       });
 
       expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(2);
@@ -350,6 +372,118 @@ describe(DeliveryAndReturn, () => {
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
       });
+    });
+
+    it('aborts the previous request and ignores its late response when id changes', async () => {
+      expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
+
+      let resolveFirst: ((value: unknown) => void) | undefined;
+      mocks.getDeliveryAndReturn
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              resolveFirst = resolve;
+            }),
+        )
+        .mockResolvedValueOnce({
+          ...baseApiResponse,
+          rfqOrganisation: {
+            ...baseApiResponse.rfqOrganisation,
+            streetAddress: { ...streetAddr, line1: '2 Second Quote St' },
+          },
+        });
+
+      const { rerender } = render(makeTree('q-1'));
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(1);
+      });
+      const firstSignal = (
+        mocks.getDeliveryAndReturn.mock.calls as unknown as [
+          string,
+          AbortSignal,
+        ][]
+      )[0]?.[1];
+
+      rerender(makeTree('q-2'));
+
+      await expect(
+        screen.findByText(/2 Second Quote St/),
+      ).resolves.toBeInTheDocument();
+      expect(firstSignal?.aborted).toBe(true);
+
+      await act(async () => {
+        resolveFirst?.({
+          ...baseApiResponse,
+          rfqOrganisation: {
+            ...baseApiResponse.rfqOrganisation,
+            streetAddress: { ...streetAddr, line1: '1 First Quote St' },
+          },
+        });
+        await Promise.resolve();
+      });
+
+      expect(screen.queryByText(/1 First Quote St/)).not.toBeInTheDocument();
+      expect(screen.getByText(/2 Second Quote St/)).toBeInTheDocument();
+    });
+
+    it('does not report a superseded request that rejects as a load failure', async () => {
+      expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
+
+      let rejectFirst: ((reason: unknown) => void) | undefined;
+      mocks.getDeliveryAndReturn
+        .mockImplementationOnce(
+          () =>
+            new Promise((_resolve, reject) => {
+              rejectFirst = reject;
+            }),
+        )
+        .mockResolvedValueOnce(baseApiResponse);
+
+      const { rerender } = render(makeTree('q-1'));
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(1);
+      });
+
+      rerender(makeTree('q-2'));
+
+      await expect(
+        screen.findByText(/10 Park St/),
+      ).resolves.toBeInTheDocument();
+
+      await act(async () => {
+        rejectFirst?.(new DOMException('Aborted', 'AbortError'));
+        await Promise.resolve();
+      });
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('aborts the in-flight request on unmount', async () => {
+      expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
+
+      mocks.getDeliveryAndReturn.mockImplementation(
+        () => new Promise(() => undefined),
+      );
+      const { unmount } = render(makeTree('q-1'));
+      await waitFor(() => {
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(1);
+      });
+      const signal = (
+        mocks.getDeliveryAndReturn.mock.calls as unknown as [
+          string,
+          AbortSignal,
+        ][]
+      )[0]?.[1];
+
+      unmount();
+
+      expect(signal?.aborted).toBe(true);
     });
   });
 
@@ -364,16 +498,22 @@ describe(DeliveryAndReturn, () => {
       renderComponent();
       // Wait until the API call has been attempted — the effect has fired.
       await waitFor(() => {
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id');
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith(
+          'test-id',
+          expect.any(AbortSignal),
+        );
       });
       // Drain queued state updates (setIsLoading(false) from catch block,
-      // plus any Formik re-renders) so they don't fire outside act().
+      // plus any form re-renders) so they don't fire outside act().
       await act(async () => {
         // Drain pending microtasks/state updates so they don't fire outside act() after the test ends.
       });
 
       // Component must still be mounted with the info banner visible.
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
+      expect(screen.getByRole('alert').textContent).toMatch(
+        /could not load your delivery and return/i,
+      );
     });
   });
 });

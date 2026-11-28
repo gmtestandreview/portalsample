@@ -36,9 +36,9 @@ Markdown headings; do not use emphasis as headings or weaken
 
 ## Stack
 
-React 18, TypeScript, React Router v7, Azure AD B2C/MSAL, Formik/Yup, Bootstrap
-5/SCSS, NSwag API client, Application Insights/Google Analytics, Vite 8, Trusted
-Types, and DOMPurify.
+React 19, TypeScript, React Router v7, Azure AD B2C/MSAL, React Hook Form/Yup,
+Bootstrap 5/SCSS, NSwag API client, Application Insights/Google Analytics, Vite
+8, Trusted Types, and DOMPurify.
 
 ## Storybook
 
@@ -48,9 +48,10 @@ undocumented properties. Verify every design-system property with `docs-list`
 and `docs-show`; use `get-storybook-story-instructions` and finish with
 `test-run`.
 
-Do not suppress React `act(...)` warnings. Formik, lookup, and route stories
-must derive state synchronously or await settled UI with `findBy...`/`waitFor`;
-do not hide derived visibility behind `useEffect` plus `setState`.
+Never suppress React `act(...)` warnings under any circumstances. Form, lookup,
+and route stories must derive state synchronously or await settled UI with
+`findBy...`/`waitFor`; never hide derived visibility behind `useEffect` plus
+`setState`.
 
 When using Storybook MCP, start `npm run storybook`, verify
 `http://localhost:6006/mcp` and the configured server, and restart the client if
@@ -91,8 +92,9 @@ instrumentation: `ClientApp/src/instrumentation/AppInsightsService.ts`; storage:
   `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts`. Schema
   files using them must import the side-effect module, for example
   `import '../../validationSchemas/yupExtensions';`.
-- Forms use Formik and `<UnsavedFormPrompt>` for unsaved-change detection; do
-  not reimplement navigation guards.
+- Forms use React Hook Form (`RhfForm`, `RhfWizardForm`) and
+  `<RhfUnsavedFormPrompt>` for unsaved-change detection; do not reimplement
+  navigation guards.
 - New authored SCSS uses `@use`/`@forward`; authored Sass division uses
   `math.div()` with `@use 'sass:math'` first. Do not add Bootstrap imports
   beyond `ClientApp/src/styles/_bootstrap-import.scss`.

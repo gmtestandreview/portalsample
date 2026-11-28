@@ -160,9 +160,9 @@ Approval and component test expansion).
 
 > **`npm run type-check` is currently red on this branch** — two pre-existing
 > failures in `tests/unit/components/RequestList/paRequestItem.test.tsx` and
-> `tests/unit/components/inputs/AutoSuggest.index.test.tsx`. Neither blocks the
-> unit run (Vitest does not type-check), but `static-quality-node24` gates on
-> it, so CI will fail until they are fixed. It covers authentication,
+> `tests/unit/components/inputs/RhfAutoSuggest.index.test.tsx`. Neither blocks
+> the unit run (Vitest does not type-check), but `static-quality-node24` gates
+> on it, so CI will fail until they are fixed. It covers authentication,
 > generated-client boundaries, validation, storage, utilities, reusable
 > components, route workflows, configuration, coverage enforcement, and
 > route/Storybook drift checks.
@@ -265,7 +265,7 @@ Guidelines:
 
 | Concern               | Approach                                                                   |
 | --------------------- | -------------------------------------------------------------------------- |
-| Formik context        | Wrap components with a tiny helper Formik wrapper                          |
+| Form context          | Wrap components with `FieldHarness` (`rhfTestHarness.tsx`)                 |
 | React Router          | Use `MemoryRouter` or `createMemoryRouter` in tests                        |
 | App Insights          | Mock constructors and assert initialization config                         |
 | Date picker internals | Mock `react-datepicker` at the component boundary                          |

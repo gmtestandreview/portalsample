@@ -33,10 +33,12 @@ const RhfTextField = ({
   inlineHelp,
 }: Readonly<TextFieldProps>) => {
   const { control } = useFormContext<PaymentDetailsFormValues>();
-  const { field, fieldState } = useController({ control, name });
+  const { field, fieldState, formState } = useController({ control, name });
   const helpId = inlineHelp ? `help-${name}` : undefined;
   const validationMessageId = `${name}-validation-msg`;
-  const showError = fieldState.isTouched && fieldState.error?.message;
+  const showError =
+    (fieldState.isTouched || formState.isSubmitted) &&
+    fieldState.error?.message;
 
   return (
     <Form.Group className='form-field-container' controlId={name}>
@@ -136,12 +138,14 @@ const titleOptions = Object.values(Title).map((value) => ({
 
 const RhfTitleField = () => {
   const { control } = useFormContext<PaymentDetailsFormValues>();
-  const { field, fieldState } = useController({
+  const { field, fieldState, formState } = useController({
     control,
     name: 'contact.title',
   });
   const validationMessageId = 'contact.title-validation-msg';
-  const showError = fieldState.isTouched && fieldState.error?.message;
+  const showError =
+    (fieldState.isTouched || formState.isSubmitted) &&
+    fieldState.error?.message;
 
   return (
     <Form.Group controlId='contact.title' className='form-field-container'>
@@ -180,9 +184,11 @@ interface PhoneFieldProps {
 
 const RhfPhoneField = ({ name, label, format }: Readonly<PhoneFieldProps>) => {
   const { control } = useFormContext<PaymentDetailsFormValues>();
-  const { field, fieldState } = useController({ control, name });
+  const { field, fieldState, formState } = useController({ control, name });
   const validationMessageId = `${name}-validation-msg`;
-  const showError = fieldState.isTouched && fieldState.error?.message;
+  const showError =
+    (fieldState.isTouched || formState.isSubmitted) &&
+    fieldState.error?.message;
   const resolvedFormat =
     typeof format === 'function' ? format(field.value) : format;
   const { ref, ...fieldProps } = field;

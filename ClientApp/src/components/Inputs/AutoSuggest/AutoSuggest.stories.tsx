@@ -1,7 +1,7 @@
 import preview from '../../../../../.storybook/preview';
 import { expect, fn, screen, userEvent, within } from 'storybook/test';
-import AutoSuggest from './index';
-import AutoSuggestContainer from './AutoSuggestContainer';
+import RhfAutoSuggest from '../RhfAutoSuggest';
+import RhfAutoSuggestContainer from '../RhfAutoSuggest/RhfAutoSuggestContainer';
 import type { AutoSuggestOption } from './types';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
@@ -27,8 +27,8 @@ const getEmptyOptions = () => Promise.resolve<AutoSuggestOption<string>[]>([]);
 
 const meta = preview.meta({
   title: 'Components/Inputs/AutoSuggest',
-  component: AutoSuggest,
-  subcomponents: { AutoSuggestContainer },
+  component: RhfAutoSuggest,
+  subcomponents: { RhfAutoSuggestContainer },
   decorators: [withPortalProviders],
 });
 
@@ -42,13 +42,13 @@ export const WithSuggestions = meta.story({
   },
   parameters: {
     portal: {
-      formik: {
-        initialValues: { suburb: '' },
+      rhf: {
+        defaultValues: { suburb: '' },
       },
     },
   },
   render: () => (
-    <AutoSuggest
+    <RhfAutoSuggest
       name='suburb'
       label='Suburb'
       getOptions={getMockOptions}
@@ -95,13 +95,13 @@ export const EmptyState = meta.story({
   },
   parameters: {
     portal: {
-      formik: {
-        initialValues: { suburb: '' },
+      rhf: {
+        defaultValues: { suburb: '' },
       },
     },
   },
   render: () => (
-    <AutoSuggest
+    <RhfAutoSuggest
       name='suburb'
       label='Suburb'
       getOptions={getEmptyOptions}
@@ -140,13 +140,13 @@ export const Loading = meta.story({
   },
   parameters: {
     portal: {
-      formik: {
-        initialValues: { suburb: '' },
+      rhf: {
+        defaultValues: { suburb: '' },
       },
     },
   },
   render: () => (
-    <AutoSuggestContainer
+    <RhfAutoSuggestContainer
       name='suburb'
       label='Suburb (loading state)'
       options={[]}

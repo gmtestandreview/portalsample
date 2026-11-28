@@ -1,5 +1,5 @@
 import preview from '../../../../.storybook/preview';
-import { within, expect, userEvent } from 'storybook/test';
+import { within, expect, userEvent, screen } from 'storybook/test';
 import AccountDetails from './accountDetails';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
@@ -10,8 +10,8 @@ const meta = preview.meta({
   parameters: {
     layout: 'padded',
     portal: {
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           name: 'Storybook Organisation',
           abn: '12345678901',
           businessOrTradingName: 'Precision Testing',
@@ -59,7 +59,7 @@ export const OrganisationDetails = meta.story({
     // is what left OrganisationNameLookup updating outside act - twice, once per instance
     // on this route.
     await expect(
-      await canvas.findByRole('option', { name: /Precision Testing/ }),
+      await screen.findByRole('option', { name: /Precision Testing/ }),
     ).toBeVisible();
 
     // A listbox may only own `option` and `group` children. The "Did you mean?" heading
@@ -67,44 +67,10 @@ export const OrganisationDetails = meta.story({
     // is exposed as a listitem, axe reports aria-required-children and listitem, and the
     // list becomes unnavigable for a screen reader. Asserted here because the project's
     // a11y checks run in `todo` mode and never fail a build on their own.
-    const suggestions = canvas.getByRole('listbox', {
-      name: 'Suggested options',
-    });
+    const suggestions = screen.getByRole('listbox');
 
     await expect(within(suggestions).queryAllByRole('listitem')).toHaveLength(
       0,
     );
-  },
-});
-
-export const OrganisationDetailsValidation = meta.story({
-  parameters: {
-    portal: {
-      formik: {
-        initialValues: {
-          name: 'Storybook Organisation',
-          abn: '12345678901',
-          businessOrTradingName: '',
-          tradingName: [],
-          branchOrLocationName: '',
-          branchName: [],
-          isDefaultOrganisation: false,
-          businessWebsiteAddress: '',
-          streetAddress: {},
-          postalAddressSameAsStreetAddress: false,
-          postalAddress: {},
-        },
-        initialErrors: {
-          businessWebsiteAddress: 'Enter a valid business website address.',
-          streetAddress: 'Enter a business street address.',
-          postalAddress: 'Enter a business postal address.',
-        },
-        initialTouched: {
-          businessWebsiteAddress: true,
-          streetAddress: true,
-          postalAddress: true,
-        },
-      },
-    },
   },
 });

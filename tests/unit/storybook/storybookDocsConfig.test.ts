@@ -163,7 +163,7 @@ describe('storybook documentation architecture', () => {
     );
 
     expect(autoSuggestStory).toMatch(
-      /subcomponents:\s*\{\s*AutoSuggestContainer\s*\}/,
+      /subcomponents:\s*\{\s*RhfAutoSuggestContainer\s*\}/,
     );
     expect(autoSuggestStory).toMatch(
       /name:\s*['"]Loading \(AutoSuggestContainer\)['"]/,
@@ -347,11 +347,11 @@ describe('storybook documentation architecture', () => {
     );
   });
 
-  it('records Storybook 10.6.7 provenance and upstream wording ownership', () => {
+  it('records Storybook 10.6.9 provenance and upstream wording ownership', () => {
     expect.hasAssertions();
 
     expect([
-      componentDocsGuide.includes('Storybook 10.6.7'),
+      componentDocsGuide.includes('Storybook 10.6.9'),
       componentDocsGuide.includes('Storybook 9 Essential Changes'),
       componentDocsGuide.includes('upstream'),
       /not a local\s+wording fix/.test(componentDocsGuide),
@@ -395,11 +395,11 @@ describe('storybook documentation architecture', () => {
     ];
 
     for (const packageName of storybookPackages) {
-      expect(declaredVersion(packageName)).toBe('10.6.7');
+      expect(declaredVersion(packageName)).toBe('10.6.9');
     }
 
-    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.7');
-    expect(declaredVersion('eslint-plugin-storybook')).toBe('10.6.7');
+    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.9');
+    expect(declaredVersion('eslint-plugin-storybook')).toBe('10.6.9');
     expect(declaredVersion('@chromatic-com/storybook')).toBe('5.6.0');
     expect(declaredVersion('msw-storybook-addon')).toBe('3.0.3');
   });
@@ -416,11 +416,54 @@ describe('storybook documentation architecture', () => {
     expect(allDependencies).not.toHaveProperty('@storybook/addon-designs');
   });
 
+  it('keeps accessibility interaction helpers out of Storybook presets', () => {
+    expect.hasAssertions();
+
+    expect(allDependencies).toHaveProperty(
+      '@etchteam/storybook-addon-a11y-interaction-tests',
+    );
+    expect(storybookConfig.addons).not.toContain(
+      '@etchteam/storybook-addon-a11y-interaction-tests',
+    );
+  });
+
   it('enables agentic review for direct Storybook MCP clients', () => {
     expect.hasAssertions();
 
     expect(main).toMatch(/features:\s*\{[\s\S]*experimentalReview:\s*true/);
     expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/);
+  });
+
+  it('removes the React Router framework plugins from Storybook Vite config', async () => {
+    expect.hasAssertions();
+
+    const viteFinal = requireViteFinal(storybookConfig.viteFinal);
+    const viteConfig: UserConfig = await viteFinal(
+      {
+        plugins: [
+          { name: 'react-router' },
+          { name: 'react-router:route-chunks-index' },
+          { name: 'prerender' },
+          { name: 'application-plugin' },
+        ],
+      },
+      {} as Parameters<typeof viteFinal>[1],
+    );
+    const pluginNames = (viteConfig.plugins ?? []).flatMap((plugin) => {
+      const pluginOptions = Array.isArray(plugin) ? plugin : [plugin];
+      return pluginOptions.flatMap((pluginOption) =>
+        typeof pluginOption === 'object' &&
+        pluginOption !== null &&
+        'name' in pluginOption
+          ? [pluginOption.name]
+          : [],
+      );
+    });
+
+    expect(pluginNames).not.toContain('react-router');
+    expect(pluginNames).not.toContain('react-router:route-chunks-index');
+    expect(pluginNames).not.toContain('prerender');
+    expect(pluginNames).toContain('application-plugin');
   });
 
   it('preserves Sass compatibility and the size budget while splitting the preview runtime', async () => {

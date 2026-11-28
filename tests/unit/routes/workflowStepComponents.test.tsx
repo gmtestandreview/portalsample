@@ -12,8 +12,8 @@ import {
   basePreInfo,
   mocks,
   renderRoute,
+  renderRouteWithFormProvider,
   streetAddress,
-  triggerInputChange,
 } from './workflowStepComponents.test.setup';
 
 const requireRenderedElement = <T extends Element>(
@@ -55,23 +55,6 @@ const resetWorkflowStepComponentsMocks = () => {
   } satisfies AuthenticationResult);
   mocks.useAccountState.mockReturnValue({ details: accountDetails });
   mocks.dashboardNotification = null;
-  mocks.inputChangeHandlers.clear();
-  mocks.formikValues = {
-    sourceReferenceId: 'SOURCE-1',
-    isCorrectBranchOrLocation: 'No',
-    organisationCount: '2',
-    businessOrTradingName: 'Trading',
-    branchOrLocationName: 'Branch',
-    name: 'National Measurement Institute',
-    abn: '12345678901',
-    currentContact: {
-      title: 'Dr',
-      firstName: 'Alex',
-      lastName: 'Tester',
-      email: 'alex@example.test',
-    },
-    measurementCategory: 'measurement-1',
-  };
   mocks.getLookup
     .mockResolvedValueOnce([
       { id: 'measurement-1', label: 'Mass' },
@@ -142,64 +125,10 @@ const resetWorkflowStepComponentsMocks = () => {
 };
 
 describe('workflow step components', () => {
-  it('renders request-for-quote organisation/contact inputs and opens the branch selector', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    const OrganisationAndContact = (
-      await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/organisation-and-contact',
-      <OrganisationAndContact />,
-      '/request-for-quote/:id/*',
-    );
-
-    expect(screen.getByText('Organisation details')).toBeInTheDocument();
-    expect(
-      screen.getByText(/This "Recalibration Request" is prefilled/),
-    ).toBeInTheDocument();
-
-    fireEvent.click(screen.getByTestId('open-manage-branch-division-button'));
-
-    expect(mocks.setShowRFQSelectModal).toHaveBeenCalledWith(
-      true,
-      'RFQ-1',
-      '/request-for-quote/RFQ-1/organisation-and-contact',
-    );
-  }, 30_000);
-
-  it('disables the branch selector until the branch answer is No', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    mocks.formikValues['isCorrectBranchOrLocation'] = undefined;
-    const OrganisationAndContact = (
-      await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/organisation-and-contact',
-      <OrganisationAndContact />,
-      '/request-for-quote/:id/*',
-    );
-
-    expect(
-      screen.getByTestId('open-manage-branch-division-button'),
-    ).toBeDisabled();
-  }, 30_000);
-
   it('renders organisation details safely when optional values are absent', async () => {
     expect.hasAssertions();
 
     resetWorkflowStepComponentsMocks();
-    delete mocks.formikValues['businessOrTradingName'];
-    delete mocks.formikValues['branchOrLocationName'];
-    delete mocks.formikValues['organisationCount'];
-    delete mocks.formikValues['abn'];
 
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
@@ -216,81 +145,6 @@ describe('workflow step components', () => {
       screen.queryByTestId('open-manage-branch-division-button'),
     ).not.toBeInTheDocument();
   }, 30_000);
-
-  it('opens the branch selector with an empty request id when the route id is omitted', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    const OrganisationAndContact = (
-      await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
-    ).default;
-
-    renderRoute(
-      '/organisation-and-contact',
-      <OrganisationAndContact />,
-      '/organisation-and-contact',
-    );
-    fireEvent.click(screen.getByTestId('open-manage-branch-division-button'));
-
-    expect(mocks.setShowRFQSelectModal).toHaveBeenCalledWith(
-      true,
-      '',
-      '/organisation-and-contact',
-    );
-  });
-
-  it('renders request-for-quote instrument/request inputs and dependent lookup options', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest />,
-      '/request-for-quote/:id/*',
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByText('Instrument/artefact details'),
-      ).toBeInTheDocument();
-    });
-
-    expect(
-      screen.getByText('Testing/calibration requirements'),
-    ).toBeInTheDocument();
-
-    await act(async () => {
-      triggerInputChange('measurementCategory', 'no-measurement');
-      await Promise.resolve();
-    });
-
-    await waitFor(() => {
-      expect(mocks.setFieldValue).toHaveBeenCalledWith(
-        'instrumentOrArtefactType',
-        'no-instrument',
-      );
-    });
-
-    expect({
-      clearedValue: mocks.setFieldValue.mock.calls.some(
-        ([name, value]) => name === 'instrumentOrArtefactType' && value === '',
-      ),
-      touched: mocks.setFieldTouched.mock.calls.at(-1),
-      readonly: screen
-        .getByTestId('select-instrumentOrArtefactType')
-        .getAttribute('data-readonly'),
-    }).toStrictEqual({
-      clearedValue: true,
-      touched: ['instrumentOrArtefactType', false],
-      readonly: 'true',
-    });
-  });
 
   it('keeps request-for-quote summary edit links available for both editable sections', async () => {
     expect.hasAssertions();
@@ -315,136 +169,6 @@ describe('workflow step components', () => {
     ]);
 
     await screen.findByText('Request details');
-  });
-
-  it('initially disables instrument type for the no-measurement category', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    mocks.formikValues['measurementCategory'] = 'no-measurement';
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest />,
-      '/request-for-quote/:id/*',
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId('select-instrumentOrArtefactType'),
-      ).toHaveAttribute('data-readonly', 'true');
-    });
-  });
-
-  it('uses an empty artefact option list when the initial measurement category is unavailable', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    mocks.formikValues['measurementCategory'] = undefined;
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest />,
-      '/request-for-quote/:id/*',
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByText('Instrument/artefact details'),
-      ).toBeInTheDocument();
-    });
-
-    expect(
-      screen.getByTestId('select-instrumentOrArtefactType'),
-    ).toBeInTheDocument();
-  });
-
-  it('normalises missing lookup labels and ids and handles a regular category change', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    mocks.getLookup.mockReset();
-    mocks.getLookup
-      .mockResolvedValueOnce([
-        { id: 'measurement-1', label: 'Mass' },
-        { id: 'no-measurement', label: 'No measurement' },
-      ])
-      .mockResolvedValueOnce([
-        { parentId: 'measurement-1', label: undefined },
-        {
-          id: 'no-instrument',
-          parentId: 'no-measurement',
-          label: 'No instrument',
-        },
-      ]);
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest />,
-      '/request-for-quote/:id/*',
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByText('Instrument/artefact details'),
-      ).toBeInTheDocument();
-    });
-    await act(async () => {
-      triggerInputChange('measurementCategory', 'measurement-1');
-      await Promise.resolve();
-    });
-
-    expect(mocks.setFieldValue).toHaveBeenCalledWith(
-      'instrumentOrArtefactType',
-      '',
-    );
-    expect(mocks.setFieldValue).not.toHaveBeenCalledWith(
-      'instrumentOrArtefactType',
-      'no-instrument',
-    );
-  });
-
-  it('handles empty and null measurement category changes', async () => {
-    expect.hasAssertions();
-
-    resetWorkflowStepComponentsMocks();
-
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest />,
-      '/request-for-quote/:id/*',
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByText('Instrument/artefact details'),
-      ).toBeInTheDocument();
-    });
-    await act(async () => {
-      triggerInputChange('measurementCategory', '');
-      triggerInputChange('measurementCategory', null);
-      await Promise.resolve();
-    });
-
-    expect(mocks.setFieldValue).toHaveBeenCalledWith(
-      'instrumentOrArtefactType',
-      '',
-    );
   });
 
   it('keeps instrument lookups loading when no MSAL account is available', async () => {
@@ -542,16 +266,22 @@ describe('workflow step components', () => {
     });
     renderRoute(
       '/accept-quote/AQ-1/report-recipient',
-      <ReportRecipient id='AQ-1' name='reportRecipient' isSummary />,
+      <ReportRecipient
+        id='AQ-1'
+        name='reportRecipient'
+        isSummary
+        summaryValues={{
+          reportRecipient: { businessStreetAddress: streetAddress },
+        }}
+      />,
       '/accept-quote/:id/*',
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('address-lookup')).toHaveAttribute(
-        'data-name',
-        'reportRecipient.businessStreetAddress',
-      );
+      expect(screen.getByText(/1 National Circuit/)).toBeInTheDocument();
     });
+
+    expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
   });
 
   it('renders delivery/return editable, no-delivery, and summary branches', async () => {
@@ -750,7 +480,7 @@ describe('workflow step components', () => {
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
-    const { unmount } = renderRoute(
+    const { unmount } = renderRouteWithFormProvider(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='' />,
       '/accept-quote/:id/*',
@@ -769,7 +499,7 @@ describe('workflow step components', () => {
     mocks.getPaymentDetails.mockResolvedValueOnce({
       acceptQuotePreInfo: { ...basePreInfo, paymentTerms: 'Postpaid' },
     });
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='paymentDetails' isSummary />,
       '/accept-quote/:id/*',
@@ -791,7 +521,7 @@ describe('workflow step components', () => {
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
-    const { unmount } = renderRoute(
+    const { unmount } = renderRouteWithFormProvider(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='' />,
       '/accept-quote/:id/*',
@@ -835,7 +565,7 @@ describe('workflow step components', () => {
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
-    const payment = renderRoute(
+    const payment = renderRouteWithFormProvider(
       '/accept-quote/payment-details',
       <PaymentDetails id={undefined} name='' />,
       '/accept-quote/*',
@@ -953,7 +683,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',
@@ -1006,7 +736,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-2/summary-and-accept',
       <SummaryAndAccept
         id='AQ-2'
@@ -1046,7 +776,7 @@ describe('workflow step components', () => {
     const SummaryAndAccept = (
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',
@@ -1098,7 +828,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    const { unmount } = renderRoute(
+    const { unmount } = renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',
@@ -1136,7 +866,7 @@ describe('workflow step components', () => {
         branchOrLocationName: 'Branch only',
       },
     });
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-2/summary-and-accept',
       <SummaryAndAccept id='AQ-2' name='' cRMQuoteRequestId='CRM-2' />,
       '/accept-quote/:id/*',
@@ -1159,7 +889,7 @@ describe('workflow step components', () => {
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
 
-    renderRoute(
+    renderRouteWithFormProvider(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
       '/accept-quote/:id/*',

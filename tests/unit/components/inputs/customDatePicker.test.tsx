@@ -14,7 +14,12 @@ type MockDatePickerKeyboardEvent = Pick<
 type MockDatePickerFocusEvent = Pick<React.FocusEvent, 'type'>;
 
 interface MockDatePickerProps {
-  customInput: React.ReactElement;
+  customInput: React.ReactElement<{
+    disabled?: boolean | undefined;
+    onBlur?: React.FocusEventHandler | undefined;
+    onKeyDown?: React.KeyboardEventHandler | undefined;
+    readOnly?: boolean | undefined;
+  }>;
   disabled?: boolean;
   highlightDates?: Date[];
   onBlur?: (event: MockDatePickerFocusEvent) => void;
@@ -616,6 +621,29 @@ describe('custom date picker', () => {
     );
 
     expectDatePickerOffsetsAfterReopen(nextDate);
+  });
+
+  it('clears the selected date when the current date is removed', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const props = {
+      calendarButtonTitle: 'Date',
+      dateOnBlur: vi.fn<() => void>(),
+      dateOnChange: vi.fn<() => void>(),
+      name: 'clearedDate',
+    };
+    const { rerender } = render(
+      <CustomDatePicker
+        {...props}
+        currentDate={new Date('2026-06-01T00:00:00.000Z')}
+      />,
+    );
+
+    rerender(<CustomDatePicker {...props} currentDate={null} />);
+    await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
+    expect(screen.getByTestId('selected-date')).toBeEmptyDOMElement();
   });
 
   it('accounts for rendered feedback and inline-help heights in offsets', async () => {

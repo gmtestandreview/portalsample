@@ -5,15 +5,16 @@ reading individual files in isolation.
 
 ## 1) WizardRoutedStep validation contract (`validateHard` vs `validateSoft`)
 
-`WizardRoutedStep` passes both validators into `FormikForm`:
+`RhfWizardRoutedStep` passes both validators into `RhfForm` (via
+`wizardYupResolver`):
 
 - `validateHard`: blocking validation for forward submit/navigation
 - `validateSoft`: advisory validation for draft-save (`save and exit`)
 
 The dispatch logic lives in
-`ClientApp/src/components/forms/FormikForm/index.tsx`:
+`ClientApp/src/components/forms/RhfForm/wizardYupResolver.ts`:
 
-- If `values.saveAndExit === true`, `validateSoft` is used.
+- If the submit mode is `saveAndExit`, `validateSoft` is used.
 - Otherwise, `validateHard` is used.
 - If a validator is omitted, that branch returns `{}` (no validation errors).
 

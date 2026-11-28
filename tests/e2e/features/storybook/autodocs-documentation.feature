@@ -37,7 +37,7 @@ Feature: Storybook documentation architecture
   Scenario: Documentation ownership identifies the rendered AutoSuggest owner
     Given Storybook is running
     When I open the AutoSuggest documentation
-    Then the AutoSuggestContainer owner is visible
+    Then the RhfAutoSuggestContainer owner is visible
     And the Loading story is listed with its rendered owner
 
   Scenario: Documentation ownership exposes peer AcceptQuote step APIs

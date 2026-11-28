@@ -6,15 +6,15 @@
   "steps": [
     {
       "title": "The full source tree",
-      "file": "ClientApp/src/index.tsx",
+      "file": "ClientApp/src/entry.client.tsx",
       "line": 1,
-      "description": "Welcome. Everything editable is under `ClientApp/src/` (TS/TSX) and `ClientApp/src/styles/` (SCSS). Everything else is generated or vendor — don't touch it.\n\nThis file is the entry point. Three things happen before React renders:\n1. MSAL async init (Azure AD B2C)\n2. TrustedTypes/DOMPurify CSP policy\n3. React 18 `createRoot` render inside `MsalProvider → AccountProvider → StrictMode → RouterProvider`\n\nNote the top-level `await` on line 13 — requires bundler support."
+      "description": "Welcome. Everything editable is under `ClientApp/src/` (TS/TSX) and `ClientApp/src/styles/` (SCSS). Everything else is generated or vendor — don't touch it.\n\nThis is the React Router framework client entry. It initializes MSAL, creates the Trusted Types policy, then calls `hydrateRoot` inside `StrictMode → ErrorBoundary → MsalProvider → AccountProvider → HydratedRouter`. React Router owns the framework router; the entry does not create a separate browser router."
     },
     {
-      "title": "All 25+ routes",
-      "file": "ClientApp/src/App.tsx",
-      "line": 35,
-      "description": "Every route is here. Three patterns:\n- `<Layout>` — public pages (help, sign-out-helper)\n- `<AuthenticatedElement>` — protected pages (dashboard, services)\n- `<AuthenticatedElement displayHeaderAndFooter={false}>` — wizard flows that manage their own chrome (create-account, RFQ, accept-quote)\n\nThe wildcard `path='*'` at line 302 catches everything else → 404."
+      "title": "Framework route config",
+      "file": "ClientApp/src/routes.ts",
+      "line": 8,
+      "description": "The route config maps URL patterns to route modules and pathless layouts. Public routes use `publicLayout`; authenticated pages with full chrome use `authenticatedLayout`; wizard flows use `authenticatedHeaderlessLayout`. Add routes through this config. React Router's Vite plugin owns the framework router, so this file does not construct a `createBrowserRouter`. The final `*` route handles unmatched URLs."
     },
     {
       "title": "Auth guard",
@@ -30,9 +30,9 @@
     },
     {
       "title": "Multi-step forms — WizardForm",
-      "file": "ClientApp/src/components/forms/WizardForm/index.tsx",
-      "line": 10,
-      "description": "All multi-step data-entry flows (create account, RFQ, accept quote) run through `WizardForm`.\n\nIt's a compound component: `<WizardForm>` reads its `<WizardStep>` children and converts each to a `<Route>`. Navigation is done by React Router — going to the next step is just a route push.\n\nLine 27: validates children are `WizardStep` using `React.Children.forEach` — throws if not. Line 95: wildcard route redirects any unknown path to the last step."
+      "file": "ClientApp/src/components/forms/WizardForm/RhfWizardForm.tsx",
+      "line": 25,
+      "description": "`RhfWizardForm` is the React Hook Form wizard engine. It turns each `WizardStep` child into a nested `<Route>` and redirects unmatched wizard paths to the last step. It runs inside the parent framework route and uses that route's router context for navigation."
     },
     {
       "title": "Runtime config — the one rule",
@@ -42,7 +42,7 @@
     },
     {
       "title": "You've got the vibe",
-      "description": "In 6 steps you've seen:\n- Bootstrap sequence + provider hierarchy\n- Full route tree + auth guard pattern\n- Dashboard architecture (tabs, pagination, session workarounds)\n- WizardForm compound component\n- The env config rule\n\n**Two things to know before you write code:**\n1. Any Yup schema file that uses custom validators (`.phone()`, `.postcode()`, `.allowedFormat()`, etc.) **must** have: `import '../../validationSchemas/yupExtensions';` — or you get a silent runtime failure.\n2. Access user state via `useAccountState()` (read) and `useAccountDispatch()` (mutations) from `authentication/hooks.tsx`. For modal visibility, use `useModalState()` / `useModalDispatch()` from `components/modals/ModalContext`. Never import contexts directly.\n\n**Deeper dives:**\n- **New Joiner Onboarding** — full 14-step walkthrough\n- **WizardForm Deep Dive** — if you're touching a multi-step flow\n- **React 19 Migration Prep** — if you're scoping the upgrade"
+      "description": "In 6 steps you've seen:\n- Framework client bootstrap and provider hierarchy\n- Route config, pathless layouts, and auth guard pattern\n- Dashboard architecture (tabs, pagination, session workarounds)\n- WizardForm compound component\n- The env config rule\n\n**Two things to know before you write code:**\n1. Any Yup schema file that uses custom validators (`.phone()`, `.postcode()`, `.allowedFormat()`, etc.) **must** have: `import '../../validationSchemas/yupExtensions';` — or you get a silent runtime failure.\n2. Access user state via `useAccountState()` (read) and `useAccountDispatch()` (mutations) from `authentication/hooks.tsx`. For modal visibility, use `useModalState()` / `useModalDispatch()` from `components/modals/ModalContext`. Never import contexts directly.\n\n**Deeper dives:**\n- **New Joiner Onboarding** — full 14-step walkthrough\n- **WizardForm Deep Dive** — if you're touching a multi-step flow\n- **React 19 Migration Prep** — if you're scoping the upgrade"
     }
   ]
 }

@@ -1,17 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Formik } from 'formik';
 import CustomDateInput from '@/components/Inputs/DatePicker/CustomDateInput';
 
 const renderInput = (
   props: Partial<React.ComponentProps<typeof CustomDateInput>> = {},
 ) =>
   render(
-    <Formik
-      initialValues={{ calibrationDate: '' }}
-      onSubmit={vi.fn<() => void>()}
-    >
+    <>
       <div id='date-wrapper'>
         <CustomDateInput
           calendarButtonTitle='Calibration date'
@@ -25,7 +21,7 @@ const renderInput = (
           {...props}
         />
       </div>
-    </Formik>,
+    </>,
   );
 
 const expectCalendarFocusState = (input: HTMLElement) => {
@@ -168,10 +164,7 @@ describe('customDateInput accessibility', () => {
     ).toBeDisabled();
 
     rerender(
-      <Formik
-        initialValues={{ calibrationDate: '' }}
-        onSubmit={vi.fn<() => void>()}
-      >
+      <>
         <div id='date-wrapper'>
           <CustomDateInput
             calendarButtonTitle='Calibration date'
@@ -185,7 +178,7 @@ describe('customDateInput accessibility', () => {
             wrapperUUID='date-wrapper'
           />
         </div>
-      </Formik>,
+      </>,
     );
 
     expect(
@@ -193,29 +186,24 @@ describe('customDateInput accessibility', () => {
     ).toBeDisabled();
   });
 
-  it('uses Formik touched errors to mark the text control invalid', () => {
+  it('marks the text control invalid when the owner reports an error', () => {
     expect.hasAssertions();
 
     render(
-      <Formik
-        initialErrors={{ calibrationDate: 'Required' }}
-        initialTouched={{ calibrationDate: true }}
-        initialValues={{ calibrationDate: '' }}
-        onSubmit={vi.fn<() => void>()}
-      >
-        <div id='date-wrapper'>
-          <CustomDateInput
-            calendarButtonTitle='Calibration date'
-            calendarOnKeyDown={vi.fn<() => void>()}
-            handleCloseCalendar={vi.fn<() => void>()}
-            handleEnsureCalendarClosed={vi.fn<() => void>()}
-            handleOpenCalendar={vi.fn<() => void>()}
-            label='Calibration date'
-            name='calibrationDate'
-            wrapperUUID='date-wrapper'
-          />
-        </div>
-      </Formik>,
+      <div id='date-wrapper'>
+        <CustomDateInput
+          calendarButtonTitle='Calibration date'
+          calendarOnKeyDown={vi.fn<() => void>()}
+          errorMessage='Required'
+          handleCloseCalendar={vi.fn<() => void>()}
+          handleEnsureCalendarClosed={vi.fn<() => void>()}
+          handleOpenCalendar={vi.fn<() => void>()}
+          hasError
+          label='Calibration date'
+          name='calibrationDate'
+          wrapperUUID='date-wrapper'
+        />
+      </div>,
     );
 
     expect(

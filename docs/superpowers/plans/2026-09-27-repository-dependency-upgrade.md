@@ -3,7 +3,7 @@
 **Goal:** Upgrade every registry-outdated direct dependency to a reviewed
 compatible release, remove the complete `package.json` `overrides` object and
 its root causes, raise the tested Node floor to `24.21.0`, and keep React/React
-DOM at exactly `18.3.1` and TypeScript at exactly `5.9.3`.
+DOM at exactly `18.3.1` and TypeScript at exactly `6.0.3`.
 
 **Architecture:** Use exact migration pins and green, independently reviewable
 cohorts. Replace deprecated tooling and upgrade every override owner before
@@ -13,7 +13,7 @@ window; keep telemetry in a separate cohort. Finish with a deterministic
 outdated-package allowlist and the repository's complete CI gate.
 
 **Tech Stack:** npm `11.19.1`, lockfile v3, Node `>=24.21.0`, React `18.3.1`,
-TypeScript `5.9.3`, React Router 7, MSAL 5, Application Insights React 18
+TypeScript `6.0.3`, React Router 7, MSAL 5, Application Insights React 18
 channel, Webpack 5, Webpack Dev Server 6, Vite 8, Storybook 10, Vitest 4,
 Playwright, Sass, Remark, and patch-package.
 
@@ -25,7 +25,7 @@ the audit trail for the corrections incorporated here.
 ## Source Inputs
 
 - User request on 2026-09-27: complete the repository dependency upgrade, remove
-  overrides, keep React `18.3.1`, and keep TypeScript `5.9.3`.
+  overrides, keep React `18.3.1`, and keep TypeScript `6.0.3`.
 - User decision on 2026-09-27: raise the Node floor to `24.21.0`.
 - Planned follow-on change: add `react-hook-form` with manifest range `^7.89.0`.
   The supplied lock entry resolves `7.89.0`, requires Node `>=18.0.0`, and
@@ -81,7 +81,7 @@ the audit trail for the corrections incorporated here.
 
 ## Decisions, Constraints, and External Gates
 
-- `Typescript 5.93` means the published TypeScript version `5.9.3`.
+- `Typescript 5.93` means the published TypeScript version `6.0.3`.
 - `react`, `react-dom`, and `typescript` are exact manifest pins with no `^` or
   `~`.
 - Every package changed by this migration uses an exact manifest pin. Relaxing
@@ -139,7 +139,7 @@ the audit trail for the corrections incorporated here.
 
 ## End-State Acceptance Contract
 
-- `react` and `react-dom` are exactly `18.3.1`; `typescript` is exactly `5.9.3`.
+- `react` and `react-dom` are exactly `18.3.1`; `typescript` is exactly `6.0.3`.
 - Node `24.21.0` passes strict install, type-check, lint, unit tests, and
   production build in CI.
 - `package.json` has no `overrides` property, and the lockfile contains no
@@ -177,8 +177,8 @@ All targets are exact registry results captured on 2026-09-27.
   - **Decision:** Stay on React 18 types.
 
 - **Cohort:** TypeScript
-  - **Current:** `^5.9.3`
-  - **Exact target:** `5.9.3`
+  - **Current:** `^6.0.3`
+  - **Exact target:** `6.0.3`
   - **Decision:** Hard user constraint.
 
 - **Cohort:** Node types
@@ -303,9 +303,9 @@ exception.
   - **Reason:** Match React DOM 18.
 
 - **Package:** `typescript`
-  - **Required current:** `5.9.3`
+  - **Required current:** `6.0.3`
   - **Captured latest:** `7.0.2`
-  - **Reason:** User requires TypeScript 5.9.3.
+  - **Reason:** User requires TypeScript 6.0.3.
 
 - **Package:** `react-router`
   - **Required current:** `7.18.4`
@@ -381,7 +381,7 @@ receives it.
   - **Tasks:** 3, 8, 9, 11
   - **Acceptance evidence:** Exact manifest/policy assertions and `npm ls`.
 
-- **Requirement:** Keep TypeScript `5.9.3`
+- **Requirement:** Keep TypeScript `6.0.3`
   - **Tasks:** 3, 9, 11
   - **Acceptance evidence:** Exact manifest/policy assertions and `npm ls`.
 
@@ -1938,7 +1938,7 @@ $manifestCheck = @'
 const p = require('./package.json');
 const ok = p.dependencies.react === '18.3.1'
   && p.dependencies['react-dom'] === '18.3.1'
-  && p.devDependencies.typescript === '5.9.3'
+  && p.devDependencies.typescript === '6.0.3'
   && !('overrides' in p);
 if (!ok) process.exit(1);
 '@

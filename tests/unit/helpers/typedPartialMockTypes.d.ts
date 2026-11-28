@@ -28,7 +28,6 @@ type __TestMockModule17 = typeof import('react-aria-components/Breadcrumbs');
 type __TestMockModule18 = typeof import('react-aria-components/Link');
 type __TestMockModule19 = typeof import('@/assets/GovCrest.svg');
 type __TestMockModule20 = typeof import('@/components/RouteLeavingGuard');
-type __TestMockModule21 = typeof import('@/components/forms/UnsavedFormPrompt');
 type __TestMockModule22 = typeof import('@/analytics/GoogleAnalytics');
 type __TestMockModule23 =
   typeof import('@/components/modals/ConfirmationModal');
@@ -38,11 +37,6 @@ type __TestMockModule25 = typeof import('@/components/SteppedNavigation');
 type __TestMockModule26 = typeof import('@/authentication/hooks');
 type __TestMockModule27 = typeof import('@/components/modals/ModalContext');
 type __TestMockModule28 = typeof import('@/components/modals/ContentModal');
-type __TestMockModule29 = typeof import('@/components/Inputs/TextInput');
-type __TestMockModule30 = typeof import('@/components/Inputs/NumberInput');
-type __TestMockModule31 = typeof import('@/components/Inputs/AddressLookup');
-type __TestMockModule32 =
-  typeof import('@/components/Inputs/AutoSuggest/AutoSuggestContainer');
 type __TestMockModule33 =
   typeof import('@/components/Inputs/DatePicker/CustomDateInput');
 type __TestMockModule34 = typeof import('react-datepicker');
@@ -69,7 +63,6 @@ type __TestMockModule48 =
 type __TestMockModule49 = typeof import('react-bootstrap');
 type __TestMockModule50 = typeof import('@/components/Actions');
 type __TestMockModule51 = typeof import('react-bootstrap/Modal');
-type __TestMockModule52 = typeof import('@/components/Inputs/RadioButtonGroup');
 type __TestMockModule53 =
   typeof import('@/components/SearchFilter/TypeApproval/paFilterMenu');
 type __TestMockModule54 = typeof import('@/components/get-started/get-started');
@@ -80,7 +73,6 @@ type __TestMockModule57 = typeof import('@microsoft/applicationinsights-web');
 type __TestMockModule58 =
   typeof import('@microsoft/applicationinsights-react-js');
 type __TestMockModule59 = typeof import('@/components/Utilities/useBodyClass');
-type __TestMockModule60 = typeof import('@/components/forms/WizardForm');
 type __TestMockModule61 = typeof import('@/routes/acceptQuote/reportRecipient');
 type __TestMockModule62 =
   typeof import('@/routes/acceptQuote/deliveryAndReturn');
@@ -96,9 +88,6 @@ type __TestMockModule67 =
 type __TestMockModule68 =
   typeof import('@/routes/acceptQuote/summaryAndAcceptProps');
 type __TestMockModule69 = typeof import('@/components/Inputs/RhfAddressLookup');
-type __TestMockModule70 = typeof import('@/components/forms/HidableField');
-type __TestMockModule71 =
-  typeof import('@/components/forms/CommonForms/ContactDetails');
 type __TestMockModule72 = typeof import('@/storage/sessionStorageCache');
 type __TestMockModule73 =
   typeof import('@/routes/acceptQuote/quotationSummary');
@@ -107,9 +96,6 @@ type __TestMockModule75 = typeof import('@/components/Buttons/EditButton');
 type __TestMockModule76 = typeof import('@/components/HeaderIntroText');
 type __TestMockModule77 = typeof import('@/components/InTextLink');
 type __TestMockModule78 = typeof import('@/components/Icons/ExternalLinkIcon');
-type __TestMockModule79 = typeof import('@/components/Inputs/Checkbox');
-type __TestMockModule80 =
-  typeof import('@/components/Inputs/OrganisationNameLookup');
 type __TestMockModule81 = typeof import('@/routes/account/accountDetails');
 type __TestMockModule82 = typeof import('@/routes/account/organisationDetails');
 type __TestMockModule83 = typeof import('@/routes/contact/contactDetails');
@@ -180,28 +166,16 @@ type __TestMockModule128 =
 type __TestMockModule129 =
   typeof import('@/routes/ta/summary/ApplicationSummary');
 type __TestMockModule130 = typeof import('@/routes/ta/rhfSupportingDocuments');
-type __TestMockModule131 = typeof import('@/components/Inputs/SelectInput');
-type __TestMockModule132 = typeof import('@/components/Inputs/CheckboxGroup');
-type __TestMockModule133 = typeof import('@/components/Inputs/RadioButton');
-type __TestMockModule134 = typeof import('@/components/Inputs/TextAreaInput');
-type __TestMockModule135 =
-  typeof import('@/components/Inputs/CertificateNumberLookup');
 type __TestMockModule136 = typeof import('@/routes/ta/instrumentInfoPanel');
 type __TestMockModule137 = typeof import('@/components/SummaryDisplay');
 type __TestMockModule138 = typeof import('@/routes/ta/organisationAndContact');
 type __TestMockModule139 =
   typeof import('@/routes/ta/applicationAndInstrument');
 type __TestMockModule140 = typeof import('@/routes/ta/summaryAndSubmit');
-type __TestMockModule141 = typeof import('@/routes/ta/supportingDocuments');
 type __TestMockModule142 =
   typeof import('@/components/SlateEditor/SlateEditor');
-type __TestMockModule143 = typeof import('@/components/Inputs/AuthorisedAgent');
 type __TestMockModule144 = typeof import('@/routes/ta/manage/appDetails');
 type __TestMockModule145 = typeof import('@/components/Inputs/RhfAttachment');
-type __TestMockModule146 =
-  typeof import('@/components/Inputs/Attachment/index-new');
-type __TestMockModule147 = typeof import('formik');
-type __TestMockModule148 = typeof import('@/components/Inputs/DatePicker');
 type __TestMockModule149 =
   typeof import('@/routes/requestForQuote/organisationAndContact');
 type __TestMockModule150 =
@@ -213,7 +187,41 @@ type __TestMockModule153 = typeof import('@/routes/common/NMIContactDetails');
 type __TestMockModule154 = typeof import('react-dom/client');
 type __TestMockModule155 = typeof import('react-router/dom');
 type __TestMockModule156 = typeof import('@/authentication/AccountProvider');
-type __TestMockModule157 = typeof import('@/App');
+type __TestMockModule157 = typeof import('@/root');
 type __TestMockModule158 = typeof import('@/trustedtypes');
 type __TestMockModule159 = typeof import('dompurify');
 type __TestMockModule160 = typeof import('@/analytics/GoogleAnalyticsTracker');
+type __TestMockModule161 =
+  typeof import('@/components/forms/WizardForm/RhfSingleStepWizard');
+type __TestMockModule162 = typeof import('@/components/Inputs/RhfTextInput');
+type __TestMockModule163 = typeof import('@/components/Inputs/RhfNumberInput');
+type __TestMockModule164 = typeof import('@/components/Inputs/RhfCheckbox');
+type __TestMockModule165 =
+  typeof import('@/components/Inputs/RhfAddressLookup');
+type __TestMockModule166 =
+  typeof import('@/components/Inputs/RhfOrganisationNameLookup');
+type __TestMockModule167 = typeof import('@/components/forms/RhfHidableField');
+type __TestMockModule168 =
+  typeof import('@/components/forms/CommonForms/RhfContactDetails');
+type __TestMockModule169 = typeof import('@/components/Inputs/RhfSelectInput');
+type __TestMockModule170 =
+  typeof import('@/components/Inputs/RhfCheckboxGroup');
+type __TestMockModule171 =
+  typeof import('@/components/Inputs/RhfTextAreaInput');
+type __TestMockModule172 =
+  typeof import('@/components/Inputs/RhfCertificateNumberLookup');
+type __TestMockModule173 =
+  typeof import('@/components/forms/WizardForm/RhfWizardForm');
+type __TestMockModule174 =
+  typeof import('@/components/Inputs/RhfRadioButtonGroup');
+type __TestMockModule175 =
+  typeof import('@/components/Inputs/RhfAuthorisedAgent');
+
+type __TestMockModule60 =
+  typeof import('@/components/forms/WizardForm/RhfWizardRoutedStep');
+
+type __TestMockModule176 =
+  typeof import('@/authentication/AuthenticatedElement');
+
+type __TestMockModule177 =
+  typeof import('@/components/ErrorBoundary/ErrorDisplay');

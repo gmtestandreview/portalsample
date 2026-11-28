@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type React from 'react';
 import { Col, Row, Container, Button } from 'react-bootstrap';
-import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { Link, useNavigate, useParams } from 'react-router';
 import BlockUISpinner from '../../components/BlockUISpinner';
@@ -32,7 +31,7 @@ import { QuoteStatus } from '../common/enums';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { proceedDeclineValidStatuses } from '../common/quoteStatus';
-import { toQuoteStatus } from '../common/helperFunctions';
+import { handleAlertScroll, toQuoteStatus } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 import SessionStorageCache from '../../storage/sessionStorageCache';
 
@@ -72,22 +71,11 @@ const setInfoNotification = () => {
   ) : null;
 };
 
-const handleAlertScroll = () => {
-  window.scrollTo(0, 0);
-  setTimeout(() => {
-    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
-    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    el?.focus();
-  }, 100);
-};
-
 const Quotation = (props: Readonly<QuotationtProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSummary } = props;
-  const { inProgress, accounts, instance } = useMsal();
+  const { accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);
-  const [reload, setReload] = useState(false);
-  const [scrollToTop, setScrollToTop] = useState(false);
   const [quotationData, setQuotationData] = useState<
     RequestForQuoteDetails | undefined
   >();
@@ -142,27 +130,6 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (
-      accountState?.details?.targetOrganisation?.targetOrganisationAbn &&
-      inProgress === InteractionStatus.None &&
-      accounts.length > 0
-    ) {
-      setReload(false);
-    }
-
-    if (scrollToTop) {
-      handleAlertScroll();
-    }
-  }, [
-    accountState,
-    accountState?.details?.targetOrganisation?.targetOrganisationAbn,
-    accounts.length,
-    inProgress,
-    reload,
-    scrollToTop,
-  ]);
 
   useEffect(() => {
     let isActive = true;
@@ -223,7 +190,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
 
   useEffect(() => {
     if (fileError) {
-      setScrollToTop(true);
+      handleAlertScroll();
       setDashboardNotification({
         message:
           'Oops - An unexpected error has occurred with downloading the PDF quote.' +
@@ -231,7 +198,6 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         severity: NotificationSeverity.Error,
       });
     } else {
-      setScrollToTop(false);
       clearDashboardNotification();
     }
   }, [fileError]);

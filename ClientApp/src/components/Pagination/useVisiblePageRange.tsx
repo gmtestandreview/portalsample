@@ -1,46 +1,51 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useSyncExternalStore } from 'react';
+
+const subscribeToResize = (onStoreChange: () => void) => {
+  let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
+
+  const debouncedResizeHandler = () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(onStoreChange, 500);
+  };
+
+  globalThis.addEventListener('resize', debouncedResizeHandler);
+
+  return () => {
+    globalThis.removeEventListener('resize', debouncedResizeHandler);
+    clearTimeout(resizeTimeout);
+  };
+};
+
+const getViewportWidth = () => globalThis.innerWidth;
+const getServerViewportWidth = () => 0;
+
+const getVisiblePageRange = (viewportWidth: number, defaultRange: number) => {
+  if (viewportWidth >= 992) {
+    return 10; // Extra-large screens
+  }
+  if (viewportWidth >= 768) {
+    return 7; // Large screens
+  }
+  if (viewportWidth >= 576) {
+    return 5; // Medium screens
+  }
+  if (typeof globalThis.innerWidth !== 'number') {
+    return defaultRange;
+  }
+  return 3; // Small screens
+};
 
 const useVisiblePageRange = (defaultRange: number) => {
-  const [visiblePageRange, setVisiblePageRange] = useState(defaultRange);
+  const viewportWidth = useSyncExternalStore(
+    subscribeToResize,
+    getViewportWidth,
+    getServerViewportWidth,
+  );
 
-  useEffect(() => {
-    let resizeTimeout: NodeJS.Timeout;
-
-    const updateVisiblePageRange = () => {
-      if (window.innerWidth >= 992) {
-        setVisiblePageRange(10); // Extra-large screens
-        // console.log('LG screens = 10');
-      } else if (window.innerWidth >= 768) {
-        setVisiblePageRange(7); // Large screens
-        // console.log('MD screens = 7');
-      } else if (window.innerWidth >= 576) {
-        setVisiblePageRange(5); // Medium screens
-        // console.log('SM screens = 5');
-      } else {
-        setVisiblePageRange(3); // Small screens
-        // console.log('XS screens = 3');
-      }
-    };
-
-    const debouncedResizeHandler = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(updateVisiblePageRange, 500);
-    };
-
-    // Set initial value
-    updateVisiblePageRange();
-
-    // Add event listener for window resize
-    window.addEventListener('resize', debouncedResizeHandler);
-
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener('resize', debouncedResizeHandler);
-      clearTimeout(resizeTimeout);
-    };
-  }, []);
-
-  return visiblePageRange;
+  return useMemo(
+    () => getVisiblePageRange(viewportWidth, defaultRange),
+    [defaultRange, viewportWidth],
+  );
 };
 
 export default useVisiblePageRange;

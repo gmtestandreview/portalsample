@@ -1005,7 +1005,11 @@ describe('ta/manage forwarding equivalence', () => {
 
     const real = readFileSync(join(process.cwd(), wrapperSource), 'utf8');
     const mutated = real.replace(
-      'const TAApplicationManage = () => <AppDetails />;',
+      lines(
+        'const TAApplicationManage = () => {',
+        '  return <AppDetails />;',
+        '};',
+      ),
       lines(
         'const TAApplicationManage = () => {',
         '  useState(0);',

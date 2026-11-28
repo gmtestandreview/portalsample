@@ -17,7 +17,7 @@ import type { NotificationSeverity } from '../../storage/types';
 export interface BaseAlertProps {
   id?: string | undefined;
   testId?: string | undefined;
-  children?: ReactNode | undefined;
+  children?: ReactNode;
   canClose?: boolean | undefined;
   onClose?: (() => void) | undefined;
   className?: string | undefined;
@@ -30,7 +30,7 @@ export type AlertProps = Omit<BaseAlertProps, 'variant'>;
 
 export interface NotificationMessageProps {
   id?: string | undefined;
-  message?: ReactNode | undefined;
+  message?: ReactNode;
   severity?: NotificationSeverity | undefined;
   canClose?: boolean | undefined;
   onClose?: (() => void) | undefined;

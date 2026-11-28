@@ -3,6 +3,10 @@ import { describe, expect, it, onTestFinished, vi } from 'vitest';
 
 import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
+vi.mock('@react-router/dev/vite', () => ({
+  reactRouter: () => ({ name: 'react-router' }),
+}));
+
 interface VitePlugin {
   name: string;
   transformIndexHtml?: (html: string) => string;
@@ -36,7 +40,6 @@ interface ViteConfig {
     emptyOutDir: boolean;
     sourcemap: boolean;
     rolldownOptions: {
-      input: Record<string, string>;
       output: {
         entryFileNames: string;
         chunkFileNames: string;
@@ -50,6 +53,27 @@ interface ViteConfig {
             test: RegExp;
           }[];
         };
+      };
+    };
+  };
+  modulePreload: {
+    resolveDependencies: (
+      filename: string,
+      dependencies: string[],
+      options: { hostId: string; hostType: 'html' | 'js' },
+    ) => string[];
+  };
+}
+
+interface RedirectViteConfig {
+  build: {
+    outDir: string;
+    emptyOutDir: boolean;
+    rolldownOptions: {
+      input: Record<string, string>;
+      output: {
+        entryFileNames: string;
+        chunkFileNames: string;
       };
     };
   };
@@ -156,6 +180,11 @@ const viteConfigModule = (async () => {
 })();
 
 await viteConfigModule;
+
+const redirectViteConfigModule =
+  await import('../../../vite.redirect.config.mts');
+const redirectViteConfig =
+  redirectViteConfigModule.default as RedirectViteConfig;
 
 const prepareViteConfigTest = () => {
   const previous = captureEnvironment();
@@ -264,28 +293,53 @@ describe('vite config', () => {
     ]);
   });
 
-  it('defines both HTML entry points for multi-page build', () => {
+  it('filters module preloads for the standalone redirect entry', () => {
     expect.hasAssertions();
 
     prepareViteConfigTest();
 
-    const input = config.build.rolldownOptions.input;
+    const dependencies = [
+      '/js/auth.abc.js',
+      '/js/rolldown-runtime.abc.js',
+      '/js/modulepreload-polyfill.abc.js',
+      '/js/app.abc.js',
+    ];
 
-    expect(input['main']).toMatch(/index\.html$/);
-    expect(input['redirect']).toMatch(/redirect\.html$/);
+    expect(
+      config.modulePreload.resolveDependencies('redirect.js', dependencies, {
+        hostId: '/redirect.html',
+        hostType: 'html',
+      }),
+    ).toStrictEqual(dependencies.slice(0, 3));
+    expect(
+      config.modulePreload.resolveDependencies('app.js', dependencies, {
+        hostId: '/index.html',
+        hostType: 'html',
+      }),
+    ).toStrictEqual(dependencies);
   });
 
-  it('keeps the redirect entry as a separate hashed output contract', () => {
+  it('keeps the redirect entry in its separate hashed build config', () => {
     expect.hasAssertions();
 
-    prepareViteConfigTest();
+    const { build } = redirectViteConfig;
+    const { input, output } = build.rolldownOptions;
 
-    const { input, output } = config.build.rolldownOptions;
-
-    expect(Object.keys(input)).toStrictEqual(['main', 'redirect']);
-    expect(input['redirect']).toMatch(/redirect\.html$/);
-    expect(output.entryFileNames).toBe('js/[name].[hash:8].js');
-    expect(output.chunkFileNames).toBe('js/[name].[hash:8].js');
+    expect([
+      build.outDir,
+      build.emptyOutDir,
+      Object.keys(input),
+      input['redirect']?.endsWith('redirect.html') ?? false,
+      output.entryFileNames,
+      output.chunkFileNames,
+    ]).toStrictEqual([
+      'dist/client',
+      false,
+      ['redirect'],
+      true,
+      'js/[name].[hash:8].js',
+      'js/[name].[hash:8].js',
+    ]);
   });
 
   it('produces hashed output in the js/ and assets/ directories', () => {
@@ -352,7 +406,6 @@ describe('vite config', () => {
       matches('react-runtime', '/node_modules/react-dom/client.js'),
       matches('react-runtime', '/node_modules/react-router/index.js'),
       matches('auth', '/node_modules/@azure/msal-react/index.js'),
-      matches('forms', '/node_modules/formik/index.js'),
       matches('forms', '/node_modules/yup/index.js'),
       matches('ui', '/node_modules/react-bootstrap/index.js'),
       matches('utilities', '/node_modules/lodash/get.js'),
@@ -361,18 +414,7 @@ describe('vite config', () => {
         'react-runtime',
         '/ClientApp/src/authentication/redirectBridge.ts',
       ),
-    ]).toStrictEqual([
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      false,
-    ]);
+    ]).toStrictEqual([true, true, true, true, true, true, true, true, false]);
   });
 
   it('keeps the complete legacy-to-Vite mapping synchronized with the design', () => {

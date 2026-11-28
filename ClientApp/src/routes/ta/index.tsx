@@ -1,7 +1,7 @@
 import { useMsal } from '@azure/msal-react';
 import { useNavigate, useParams } from 'react-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import WizardForm from '../../components/forms/WizardForm';
+import RhfWizardForm from '../../components/forms/WizardForm/RhfWizardForm';
 import type { WizardFormProps } from '../../components/forms/WizardForm/types';
 import WizardStep from '../../components/forms/WizardForm/WizardStep';
 import useBodyClass from '../../components/Utilities/useBodyClass';
@@ -17,7 +17,7 @@ import ApplicationAndInstrument from './applicationAndInstrument';
 import applicationAndInstrumentProps from './applicationAndInstrumentProps';
 import SummaryAndSubmit from './summaryAndSubmit';
 import summaryAndSubmitProps from './summaryAndSubmitProps';
-import SupportingDocuments from './supportingDocuments';
+import RhfSupportingDocuments from './rhfSupportingDocuments';
 import supportingDocumentsProps from './supportingDocumentsProps';
 import organisationAndContactProps from './organisationAndContactProps';
 import OrganisationAndContact from './organisationAndContact';
@@ -73,7 +73,7 @@ const ApplicationForTypeApproval = () => {
     },
   };
 
-  const isLoading = useRef(false);
+  const isLoadingRef = useRef(false);
   const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
   useEffect(() => {
@@ -95,13 +95,13 @@ const ApplicationForTypeApproval = () => {
         }
       }
     };
-    if (!isLoading.current) {
+    if (!isLoadingRef.current) {
       void loadApplicationSteps();
     }
     return () => {
-      isLoading.current = true;
+      isLoadingRef.current = true;
     };
-  }, [accounts, id, instance, isLoading, navigate, statuses]);
+  }, [accounts, id, instance, isLoadingRef, navigate, statuses]);
 
   if (!account?.details) return null;
   const accountDetails = account.details;
@@ -110,7 +110,7 @@ const ApplicationForTypeApproval = () => {
       <p>Loading...</p>
     </BlockUISpinner>
   ) : (
-    <WizardForm {...applicationForTypeApprovalProps}>
+    <RhfWizardForm {...applicationForTypeApprovalProps}>
       <WizardStep
         {...organisationAndContactProps(
           id ?? '',
@@ -145,7 +145,7 @@ const ApplicationForTypeApproval = () => {
           bannerTitle,
         )}
       >
-        <SupportingDocuments
+        <RhfSupportingDocuments
           name='form.documents'
           isSummary={false}
           onUploadAttachment={onUploadAttachments}
@@ -172,7 +172,7 @@ const ApplicationForTypeApproval = () => {
       >
         <SummaryAndSubmit name='' />
       </WizardStep>
-    </WizardForm>
+    </RhfWizardForm>
   );
 };
 

@@ -398,4 +398,46 @@ describe('rhf select input behavior', () => {
 
     expect(container.querySelector('form')).toBeEmptyDOMElement();
   });
+
+  it('renders the selected display text in a read-only box when readOnly', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness defaultValue='cert'>
+        <RhfSelectInput
+          name='category'
+          label='Category'
+          options={options}
+          inlineHelp='Some help'
+          readOnly
+        />
+      </Harness>,
+    );
+
+    const box = screen.getByRole('textbox', { name: 'Category' });
+
+    expect(box).toHaveValue('Certificate');
+    expect(box).toHaveAttribute('readonly');
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(screen.getByText('Some help')).toBeInTheDocument();
+  });
+
+  it('falls back to the raw value in the read-only box when no option matches', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness defaultValue='unknown-id'>
+        <RhfSelectInput
+          name='category'
+          label='Category'
+          options={options}
+          readOnly
+        />
+      </Harness>,
+    );
+
+    expect(screen.getByRole('textbox', { name: 'Category' })).toHaveValue(
+      'unknown-id',
+    );
+  });
 });

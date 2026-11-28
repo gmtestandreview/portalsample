@@ -130,7 +130,8 @@ export const useBranchSelection = () => {
       direction = 'desc';
     }
 
-    const sorted = branches?.sort((a, b) => {
+    const sorted = branches?.slice();
+    sorted?.sort((a, b) => {
       const aValue = toSortableText(Reflect.get(a, key));
       const bValue = toSortableText(Reflect.get(b, key));
 

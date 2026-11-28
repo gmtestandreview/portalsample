@@ -1,16 +1,16 @@
 import Row from 'react-bootstrap/Row';
-import TextInput from '../../components/Inputs/TextInput';
-import Checkbox from '../../components/Inputs/Checkbox';
-import AddressLookup from '../../components/Inputs/AddressLookup';
-import HidableField from '../../components/forms/HidableField';
-import NumberInput from '../../components/Inputs/NumberInput';
-import OrganisationNameLookup from '../../components/Inputs/OrganisationNameLookup';
+import RhfTextInput from '../../components/Inputs/RhfTextInput';
+import RhfCheckbox from '../../components/Inputs/RhfCheckbox';
+import RhfAddressLookup from '../../components/Inputs/RhfAddressLookup';
+import RhfHidableField from '../../components/forms/RhfHidableField';
+import RhfNumberInput from '../../components/Inputs/RhfNumberInput';
+import RhfOrganisationNameLookup from '../../components/Inputs/RhfOrganisationNameLookup';
 
 const AccountDetails = () => (
   <>
     <Row className='mb-4'>
       <h2>Organisation details</h2>
-      <TextInput
+      <RhfTextInput
         label='Entity name'
         name='name'
         readonly
@@ -22,14 +22,8 @@ const AccountDetails = () => (
           </>
         }
       />
-      <NumberInput
-        label='ABN'
-        name='abn'
-        format='## ### ### ###'
-        readonly
-        allowLeadingZeros
-      />
-      <OrganisationNameLookup
+      <RhfNumberInput label='ABN' name='abn' format='## ### ### ###' readonly />
+      <RhfOrganisationNameLookup
         name='businessOrTradingName'
         label='Business or Trading name (optional)'
         placeholder='Enter the business or trading name'
@@ -49,7 +43,7 @@ const AccountDetails = () => (
         // loading={isLoading}
       />
       <div className='mb-4'>
-        <OrganisationNameLookup
+        <RhfOrganisationNameLookup
           name='branchOrLocationName'
           label='Branch or Location name (optional)'
           placeholder='Enter the branch or location name'
@@ -70,25 +64,25 @@ const AccountDetails = () => (
           }
           optionsFieldName='branchName'
         />
-        <HidableField name='isDefaultOrganisation'>
-          <Checkbox
+        <RhfHidableField name='isDefaultOrganisation'>
+          <RhfCheckbox
             label='Set this Entity, Business, Branch and/or location name as my default'
             name='isDefaultOrganisation'
             containerClassName='mb-0'
           />
-        </HidableField>
+        </RhfHidableField>
       </div>
     </Row>
     <Row className='mb-4'>
       <h3 className='mb-2'>Business web address</h3>
-      <TextInput
+      <RhfTextInput
         label='Business website address (optional)'
         name='businessWebsiteAddress'
       />
     </Row>
     <Row className='mb-4'>
       <h3 className='mb-2'>Business street address</h3>
-      <AddressLookup
+      <RhfAddressLookup
         name='streetAddress'
         label='Address'
         maxResults={10}
@@ -97,19 +91,19 @@ const AccountDetails = () => (
       />
 
       <h3 className='mb-2'>Business postal address</h3>
-      <Checkbox
+      <RhfCheckbox
         label='Same as street address'
         name='postalAddressSameAsStreetAddress'
       />
-      <HidableField name='postalAddress'>
-        <AddressLookup
+      <RhfHidableField name='postalAddress'>
+        <RhfAddressLookup
           name='postalAddress'
           label='Postal address'
           maxResults={10}
           key='postalAddress'
           placeholder='Enter the main business postal address'
         />
-      </HidableField>
+      </RhfHidableField>
     </Row>
     {/*         <Row className='mb-4'>
             <h2>Organisation contact details</h2>

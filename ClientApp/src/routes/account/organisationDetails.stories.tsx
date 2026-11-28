@@ -6,8 +6,8 @@ import OrganisationDetails from './organisationDetails';
 /**
  * `OrganisationDetails` is the organisation section of the account create/update flow.
  * It composes the entity name, ABN, trading/branch name lookups, web address and
- * street/postal address fields. Every field is Formik-bound, so the story provides an
- * initial-values context matching the field names.
+ * street/postal address fields. Every field is React Hook Form-bound, so the story provides a
+ * default-values context matching the field names.
  */
 const meta = preview.meta({
   title: 'Routes/Account/OrganisationDetails',
@@ -16,8 +16,8 @@ const meta = preview.meta({
   parameters: {
     layout: 'padded',
     portal: {
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           name: 'Acme Metrology Pty Ltd',
           abn: '12345678901',
           businessOrTradingName: 'Acme Metrology',

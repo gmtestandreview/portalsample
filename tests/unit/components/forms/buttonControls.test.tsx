@@ -1,130 +1,96 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useFormikContext } from 'formik';
+import type { ReactNode } from 'react';
+import RhfForm from '@/components/forms/RhfForm';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import SubmitFormButton from '@/components/forms/SubmitFormButton';
-import { FormikWrapper } from '../../helpers/formik';
 
 interface ButtonFormValues {
-  saveAndExit: boolean;
-  saveAndExitClick?: boolean;
-  submitClick?: boolean;
+  name: string;
 }
 
-type ButtonSubmit = (values: ButtonFormValues) => void | Promise<void>;
+type ButtonSubmit = (values: ButtonFormValues) => undefined | Promise<unknown>;
 
-function ValuesProbe() {
-  const { values } = useFormikContext<Record<string, unknown>>();
-  return <pre data-testid='values'>{JSON.stringify(values)}</pre>;
-}
+const renderButtons = (children: ReactNode) => {
+  const onSubmit = vi.fn<ButtonSubmit>();
+  const onSaveAndExit = vi.fn<ButtonSubmit>();
+
+  render(
+    <RhfForm<ButtonFormValues>
+      initialValues={{ name: 'Alex' }}
+      onSubmit={onSubmit}
+      onSaveAndExit={onSaveAndExit}
+    >
+      {({ onFormSubmit }) => <form onSubmit={onFormSubmit}>{children}</form>}
+    </RhfForm>,
+  );
+
+  return { onSubmit, onSaveAndExit };
+};
 
 describe('form button controls', () => {
-  it('renders SaveAndExitButton default text and submits after click', async () => {
+  it('renders SaveAndExitButton default text and runs the save and exit intent', async () => {
     expect.hasAssertions();
 
-    const onSubmit = vi.fn<ButtonSubmit>();
-    render(
-      <FormikWrapper
-        initialValues={{ saveAndExit: false, saveAndExitClick: false }}
-        onSubmit={onSubmit}
-      >
-        <SaveAndExitButton />
-        <ValuesProbe />
-      </FormikWrapper>,
-    );
+    const { onSubmit, onSaveAndExit } = renderButtons(<SaveAndExitButton />);
 
     await userEvent.click(screen.getByTestId('save-and-exit-button'));
 
     await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
     });
-    await waitFor(() => {
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExit":true',
-      );
-    });
-    await waitFor(() => {
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExitClick":false',
-      );
-    });
+
+    expect(onSaveAndExit.mock.calls[0]?.[0]).toStrictEqual({ name: 'Alex' });
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('renders SaveAndExitButton via render prop', async () => {
     expect.hasAssertions();
 
-    const onSubmit = vi.fn<ButtonSubmit>();
-    render(
-      <FormikWrapper
-        initialValues={{ saveAndExit: false, saveAndExitClick: false }}
-        onSubmit={onSubmit}
-      >
-        <SaveAndExitButton>
-          {(onClick) => (
-            <button type='button' onClick={onClick}>
-              Custom save
-            </button>
-          )}
-        </SaveAndExitButton>
-      </FormikWrapper>,
+    const { onSaveAndExit } = renderButtons(
+      <SaveAndExitButton>
+        {(onClick) => (
+          <button type='button' onClick={onClick}>
+            Custom save
+          </button>
+        )}
+      </SaveAndExitButton>,
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'Custom save' }));
 
     await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
     });
   });
 
-  it('renders SubmitFormButton default text and submits after click', async () => {
+  it('renders SubmitFormButton default text and runs the next intent', async () => {
     expect.hasAssertions();
 
-    const onSubmit = vi.fn<ButtonSubmit>();
-    render(
-      <FormikWrapper
-        initialValues={{ saveAndExit: true, submitClick: false }}
-        onSubmit={onSubmit}
-      >
-        <SubmitFormButton />
-        <ValuesProbe />
-      </FormikWrapper>,
-    );
+    const { onSubmit, onSaveAndExit } = renderButtons(<SubmitFormButton />);
 
     await userEvent.click(screen.getByTestId('submit-button'));
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
-    await waitFor(() => {
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExit":false',
-      );
-    });
-    await waitFor(() => {
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"submitClick":false',
-      );
-    });
+
+    expect(onSubmit.mock.calls[0]?.[0]).toStrictEqual({ name: 'Alex' });
+    expect(onSaveAndExit).not.toHaveBeenCalled();
   });
 
   it('renders SubmitFormButton via render prop', async () => {
     expect.hasAssertions();
 
-    const onSubmit = vi.fn<ButtonSubmit>();
-    render(
-      <FormikWrapper
-        initialValues={{ saveAndExit: false, submitClick: false }}
-        onSubmit={onSubmit}
-      >
-        <SubmitFormButton>
-          {(onClick) => (
-            <button type='button' onClick={onClick}>
-              Custom submit
-            </button>
-          )}
-        </SubmitFormButton>
-      </FormikWrapper>,
+    const { onSubmit } = renderButtons(
+      <SubmitFormButton>
+        {(onClick) => (
+          <button type='button' onClick={onClick}>
+            Custom submit
+          </button>
+        )}
+      </SubmitFormButton>,
     );
 
     await userEvent.click(

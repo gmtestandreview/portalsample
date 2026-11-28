@@ -1,10 +1,10 @@
-import type { FormikValues } from 'formik';
+import type { FormValues } from '../types';
 import type { WizardStepProps } from './types';
 import ErrorBoundary from '../../ErrorBoundary';
 import { ai } from '../../../instrumentation/AppInsightsService';
 import GoogleAnalytics from '../../../analytics/GoogleAnalyticsTracker';
 
-const WizardStep = <T extends FormikValues>(
+const WizardStep = <T extends FormValues>(
   props: Readonly<WizardStepProps<T>>,
 ) => {
   const { children } = props;

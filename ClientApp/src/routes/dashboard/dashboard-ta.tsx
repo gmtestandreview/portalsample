@@ -61,7 +61,7 @@ const DashboardTA = () => {
   const [requests, setRequests] = useState<
     PatternApprovalDashboardDetailsDto[]
   >([]);
-  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reload, setReload] = useState(false);
   const accountContext = useAccountContext();
@@ -88,8 +88,10 @@ const DashboardTA = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [activeTab, setActiveTab] = useState(DashboardTab.Drafts);
   const [totalCount, setTotalCount] = useState(0);
-  const lastBranchResetOrganisationIdRef = useRef<number>();
-  const initialFiltersLoadedRef = useRef(false);
+  const lastBranchResetOrganisationIdRef = useRef<number | undefined>(
+    undefined,
+  );
+  const [initialFiltersLoaded, setInitialFiltersLoaded] = useState(false);
 
   useHtmlTitle('Dashboard Pattern/type approval | NMI Services portal');
   useBodyClass(['dashboard', 'dashboard-ta']);
@@ -145,31 +147,42 @@ const DashboardTA = () => {
     [],
   );
 
-  // Set values from the userprofile
-  useEffect(() => {
-    if (initialFiltersLoadedRef.current) {
-      return;
-    }
-    if (accountDetails?.userProfile) {
-      if (accountDetails.userProfile.patternApprovalDashboard) {
-        const tabToSet: string | null | undefined =
-          SessionStorageCache().getItem('set-tabop-after-save');
-        const p = accountDetails.userProfile.patternApprovalDashboard;
-        const tabFromSession = tabToSet ?? p.filterActiveTab;
-        const updatedP = {
-          ...p,
-          filterActiveTab: tabFromSession,
-        };
-        setActiveTab(toDashboardTab(tabFromSession) ?? DashboardTab.Drafts);
-        setCurrentPage(updatedP.filterCurrentPage ?? 1);
-        SessionStorageCache().removeItem('set-tabop-after-save');
+  // Set values from the userprofile on first load only. Done during render,
+  // guarded by `initialFiltersLoaded`, instead of from an effect.
+  const patternApprovalProfile =
+    accountDetails?.userProfile?.patternApprovalDashboard;
+  if (!initialFiltersLoaded && patternApprovalProfile) {
+    const tabToSet: string | null | undefined = SessionStorageCache().getItem(
+      'set-tabop-after-save',
+    );
+    const tabFromSession = tabToSet ?? patternApprovalProfile.filterActiveTab;
+    const updatedP = {
+      ...patternApprovalProfile,
+      filterActiveTab: tabFromSession,
+    };
+    setActiveTab(toDashboardTab(tabFromSession) ?? DashboardTab.Drafts);
+    setCurrentPage(updatedP.filterCurrentPage ?? 1);
+    setInitialFilters(updatedP);
+    setInitialFiltersLoaded(true);
+  }
 
-        // Only need to do this on first load`
-        setInitialFilters(updatedP);
-        initialFiltersLoadedRef.current = true;
-      }
+  // The one-shot tab hint is consumed once the profile has been applied.
+  useEffect(() => {
+    if (initialFiltersLoaded) {
+      SessionStorageCache().removeItem('set-tabop-after-save');
     }
-  }, [accountDetails?.userProfile]);
+  }, [initialFiltersLoaded]);
+
+  // Loading is true while a request is in flight and also while the data cannot
+  // be requested yet (account, filters or MSAL not ready), derived rather than
+  // stored.
+  const canLoadData =
+    !!accountContext &&
+    !!accountDetails?.organisationCRMGuid &&
+    !!initialFilters &&
+    inProgress === InteractionStatus.None &&
+    accounts.length > 0;
+  const isDataLoading = isFetching || !canLoadData;
 
   const savedUserProfile = accountDetails?.userProfile;
   const branchSelectionModalMode = accountDetails?.branchSelectionModalMode;
@@ -223,7 +236,6 @@ const DashboardTA = () => {
       void navigate('/services-we-offer');
       return;
     }
-    setIsDataLoading(true); // Dashboard data
     const loadDataForDisplay = async () => {
       if (
         !accountContext ||
@@ -251,7 +263,7 @@ const DashboardTA = () => {
           accountDetails.showBranchSelector ||
             !accountDetails.userAcceptedTermsOfUse,
         );
-        setIsDataLoading(true);
+        setIsFetching(true);
         const { actualYear, actualStatus } = resolveFilterParams(
           initialFilters.filterYearType,
           initialFilters.filterStatusType,
@@ -284,11 +296,11 @@ const DashboardTA = () => {
         }));
         AppLogger.info('Dashboard load error values', problemDetails);
       } finally {
-        setIsDataLoading(false);
+        setIsFetching(false);
         setReload(false);
+        setDeleteSuccess(false);
       }
     };
-    setDeleteSuccess(false);
     void loadDataForDisplay();
   }, [
     accountContext,

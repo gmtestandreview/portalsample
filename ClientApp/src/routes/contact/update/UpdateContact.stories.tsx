@@ -132,8 +132,8 @@ export const ConfirmationCancelThenConfirmSaves = meta.story({
       await canvas.findByRole('heading', { name: 'Home destination' }),
     ).toBeVisible();
     await expect(state.observed.savedBodies).toHaveLength(1);
-    await expect(state.observed.savedBodies[0]).toMatchObject({
-      formStep: { contact: { firstName: 'Jordan', lastName: 'Rivera' } },
+    await expect(state.observed.savedBodies[0]).toEqual({
+      formStep: contactForm,
     });
     await expect(state.observed.contactCompletedCount).toBe(1);
   },

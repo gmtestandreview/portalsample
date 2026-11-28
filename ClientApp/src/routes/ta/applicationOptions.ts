@@ -3,27 +3,6 @@ import {
   PatternApprovalRequiredValues,
 } from '../../api/web-api-client';
 
-export const applicationTypes = [
-  {
-    key: 'new',
-    id: 'appl-new',
-    label: 'New Certificate of Approval (CoA)',
-    value: PatternApprovalRequiredValues.NewCertificate,
-  },
-  {
-    key: 'var',
-    id: 'appl-var',
-    label: 'Variation or request a minor edit',
-    value: PatternApprovalRequiredValues.Variation,
-  },
-  {
-    key: 'oth',
-    id: 'appl-oth',
-    label: 'Other options',
-    value: PatternApprovalRequiredValues.OtherApproval,
-  },
-];
-
 export const newCertificateSubOptions = [
   {
     label: 'NMI Pattern Approval Certificate',
@@ -82,5 +61,32 @@ export const otherApprovalSubOptions = [
     value: PatternApprovalRequiredValueOptions.CertificateCancellation,
     id: 'q-appl-oth-withdrawcert',
     descriptor: 'Discontinue an existing certificate',
+  },
+];
+
+export const applicationTypes = [
+  {
+    key: 'new',
+    id: 'appl-new',
+    label: 'New Certificate of Approval (CoA)',
+    value: PatternApprovalRequiredValues.NewCertificate,
+    hideFieldName: 'isApplNewHide',
+    subOptions: newCertificateSubOptions,
+  },
+  {
+    key: 'var',
+    id: 'appl-var',
+    label: 'Variation or request a minor edit',
+    value: PatternApprovalRequiredValues.Variation,
+    hideFieldName: 'isApplVariationHide',
+    subOptions: variationSubOptions,
+  },
+  {
+    key: 'oth',
+    id: 'appl-oth',
+    label: 'Other options',
+    value: PatternApprovalRequiredValues.OtherApproval,
+    hideFieldName: 'isApplOtherHide',
+    subOptions: otherApprovalSubOptions,
   },
 ];

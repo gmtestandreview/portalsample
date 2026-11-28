@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": "activation-direct",
-      "prompt": "Fix these TypeScript 5.9.3 strict-mode errors without weakening tsconfig.",
+      "prompt": "Fix these TypeScript 6.0.3 strict-mode errors without weakening tsconfig.",
       "expected_output": "Activates the skill; inspects project config and source, fixes root causes, and validates applicable gates."
     },
     {
@@ -48,8 +48,8 @@
     },
     {
       "id": "wrong-compiler-version",
-      "prompt": "The project says TypeScript 5.9.3 but only 5.8.3 is available. The errors look simple; just fix them and say it passes.",
-      "expected_output": "May diagnose version-independent issues but does not make 5.9.3-specific completion claims; keeps the version gate unresolved/failed until the required compiler is available."
+      "prompt": "The project says TypeScript 6.0.3 but only 5.8.3 is available. The errors look simple; just fix them and say it passes.",
+      "expected_output": "May diagnose version-independent issues but does not make 6.0.3-specific completion claims; keeps the version gate unresolved/failed until the required compiler is available."
     },
     {
       "id": "utility-bounded-tuple",

@@ -1,14 +1,19 @@
 import type { ReactElement, ReactNode } from 'react';
-import type { FormikValues } from 'formik';
 import type { InitialValue } from '../../../types';
-import type { DiscardProps, Hideable, ModalProps, Validation } from '../types';
+import type {
+  DiscardProps,
+  FormValues,
+  Hideable,
+  ModalProps,
+  ValidationSchema,
+} from '../types';
 import type {
   FormStepStatusDto,
   ProblemDetails,
   ValidationProblemDetails,
 } from '../../../api/web-api-client';
 
-export interface WizardFormStepValues<T extends FormikValues> {
+export interface WizardFormStepValues<T extends FormValues> {
   stepValues: InitialValue<T>;
 }
 
@@ -29,7 +34,7 @@ export interface WizardFormStepValues<T extends FormikValues> {
  *                             useResolvedPath in WizardForm). Prepended to each
  *                             step's location when building navigation paths.
  */
-export type WizardRoutedStepProps<T extends FormikValues> = WizardStepProps<T> &
+export type WizardRoutedStepProps<T extends FormValues> = WizardStepProps<T> &
   WizardFormProps & {
     allSteps: React.ReactElement<WizardStepProps<T>>[];
     currentStepIndex: number;
@@ -59,7 +64,7 @@ export type WizardStepError =
  * @property title          - <h1> heading displayed in the step's content body.
  * @property children       - Step content rendered inside the form.
  * @property location       - Route path segment for this step (e.g. '/step-1').
- * @property initialValues  - Formik initial values for this step's form fields.
+ * @property initialValues  - Initial values for this step's form fields.
  * @property isSummaryPage  - When true, suppresses the "required" hint text and disables
  *                            linked errors in ErrorSummary.
  * @property getRedirectionLocationOnError - Optional callback: given an HTTP status code
@@ -93,7 +98,7 @@ export type WizardStepError =
  * @property showGoToDashboardButton - Whether a Go-to-Dashboard shortcut is shown.
  * @property showBanner     - Whether the page banner is rendered.
  */
-export interface WizardStepProps<T extends FormikValues> {
+export interface WizardStepProps<T extends FormValues> {
   title: string;
   children?: ReactNode;
   location: string;
@@ -118,8 +123,8 @@ export interface WizardStepProps<T extends FormikValues> {
   loadStepValues: (
     abortSignal?: AbortSignal,
   ) => WizardFormStepValues<T> | Promise<WizardFormStepValues<T>>;
-  validateHard?: Validation<T> | undefined;
-  validateSoft?: Validation<T> | undefined;
+  validateHard?: ValidationSchema | undefined;
+  validateSoft?: ValidationSchema | undefined;
   hidingFields?: Hideable<Partial<T>, Partial<T>> | undefined;
   bannerTitle?: string;
   bannerRefTitle?: string;

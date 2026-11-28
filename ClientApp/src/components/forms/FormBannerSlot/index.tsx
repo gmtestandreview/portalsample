@@ -18,8 +18,8 @@ interface FormBannerSlotProps {
 }
 
 /**
- * The banner of a form shell. It holds no form-library state: Save and exit
- * adapts to the surrounding shell itself, so Formik and RHF shells share it.
+ * The banner of a form. It holds no form-library state: Save and exit adapts
+ * to the surrounding form itself.
  */
 const FormBannerSlot = ({
   banner,

@@ -256,7 +256,7 @@ const renderModal = (opts: RenderOptions = {}) => {
 
   return render(
     <MemoryRouter>
-      <MsalContext.Provider value={msalContextValue}>
+      <MsalContext value={msalContextValue}>
         <AccountStateCtx.Provider
           value={{
             isLoading: false,
@@ -302,7 +302,7 @@ const renderModal = (opts: RenderOptions = {}) => {
             </ModalStateCtx.Provider>
           </AccountDispatchCtx.Provider>
         </AccountStateCtx.Provider>
-      </MsalContext.Provider>
+      </MsalContext>
     </MemoryRouter>,
   );
 };
@@ -589,16 +589,15 @@ describe('branch selector modal', () => {
 
   // ── sorting ─────────────────────────────────────────────────────────────
 
-  it('toggles sort direction from asc to desc and covers all getArrow icon paths', async () => {
+  it('sorts branches in both directions without reordering the input', async () => {
     // Branch with undefined businessListName exercises the ?? '' fallback in toSortableText
     expect.hasAssertions();
 
     resetBranchSelectorMocks();
 
-    getOrganisationsByABN.mockResolvedValueOnce([
-      ...mockBranches,
-      mockBranchUndefinedName,
-    ]);
+    const originalBranches = [...mockBranches, mockBranchUndefinedName];
+    const originalOrder = [...originalBranches];
+    getOrganisationsByABN.mockResolvedValueOnce(originalBranches);
 
     renderModal();
 
@@ -612,12 +611,19 @@ describe('branch selector modal', () => {
     // getArrow for businessListName now returns primary-down (direction=asc)
     fireEvent.click(sortBtn);
 
+    expect(originalBranches).toStrictEqual(originalOrder);
+    expect(screen.getAllByRole('radio').at(-1)).toHaveAccessibleName(
+      'ACME Sydney Office',
+    );
+
     // Second click: same key, direction 'asc' → 'desc'
     // getArrow returns primary-up (direction=desc); sort comparison uses -comparison
     fireEvent.click(sortBtn);
 
-    // Three radio buttons still visible after sorting
     expect(screen.getAllByRole('radio')).toHaveLength(3);
+    expect(screen.getAllByRole('radio').at(0)).toHaveAccessibleName(
+      'ACME Sydney Office',
+    );
   });
 
   // ── save — SelectAndEditOrg ─────────────────────────────────────────────

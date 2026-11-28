@@ -12,8 +12,8 @@ const meta = preview.meta({
     layout: 'padded',
     portal: {
       initialEntries: ['/request-for-quote/123/organisation-and-contact'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           sourceReferenceId: 'RFQ-2023-000123',
           name: 'Storybook Organisation',
           businessOrTradingName: 'Precision Testing',
@@ -46,7 +46,8 @@ const meta = preview.meta({
           previousQuoteOrReportNumber: 'Q230123',
           testingAndCalibrationRequirements:
             'Calibrate across the range used for field verification.',
-          preferredInstrumentOrArtefactAvailabilityDate: new Date('2026-06-01'),
+          preferredInstrumentOrArtefactAvailabilityDate:
+            '2026-06-01T00:00:00+00:00',
           measurementReportAndCertificateRequired: 'MeasurementReportOnly',
         },
       },
@@ -63,8 +64,8 @@ export const InstrumentAndRequestStep = meta.story({
   parameters: {
     portal: {
       initialEntries: ['/request-for-quote/123/instrument-and-request'],
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           hasSerialNumber: 'Yes',
           serialNumber: 'THERM-001',
           manufacturer: 'Fluke',
@@ -76,7 +77,8 @@ export const InstrumentAndRequestStep = meta.story({
           previousQuoteOrReportNumber: 'Q230123',
           testingAndCalibrationRequirements:
             'Calibrate across the range used for field verification.',
-          preferredInstrumentOrArtefactAvailabilityDate: new Date('2026-06-01'),
+          preferredInstrumentOrArtefactAvailabilityDate:
+            '2026-06-01T00:00:00+00:00',
           measurementReportAndCertificateRequired: 'MeasurementReportOnly',
         },
       },
@@ -111,112 +113,6 @@ export const InstrumentAndRequestStep = meta.story({
   },
 });
 
-export const OrganisationAndContactValidation = meta.story({
-  render: () => <OrganisationAndContact />,
-  parameters: {
-    portal: {
-      initialEntries: ['/request-for-quote/123/organisation-and-contact'],
-      formik: {
-        initialValues: {
-          name: 'Storybook Organisation',
-          businessOrTradingName: '',
-          branchOrLocationName: '',
-          abn: '12345678901',
-          organisationCount: '2',
-          isCorrectBranchOrLocation: '',
-          isPrincipalContact: 'No',
-          currentContact: {
-            title: 'Ms',
-            firstName: 'Taylor',
-            lastName: 'Nguyen',
-            email: 'taylor.nguyen@example.com',
-          },
-          contact: {
-            title: '',
-            firstName: '',
-            lastName: '',
-            email: '',
-            businessPhone: '',
-          },
-        },
-        initialErrors: {
-          isCorrectBranchOrLocation:
-            'Select whether this is the correct branch or location.',
-          contact: {
-            firstName: 'Enter a first name.',
-            lastName: 'Enter a last name.',
-            email: 'Enter an email address.',
-          },
-        },
-        initialTouched: {
-          isCorrectBranchOrLocation: true,
-          contact: {
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-      },
-    },
-  },
-});
-
-export const InstrumentAndRequestValidation = meta.story({
-  render: () => <InstrumentAndRequest />,
-  parameters: {
-    portal: {
-      initialEntries: ['/request-for-quote/123/instrument-and-request'],
-      formik: {
-        initialValues: {
-          hasSerialNumber: 'Yes',
-          serialNumber: '',
-          manufacturer: '',
-          model: '',
-          description: '',
-          numberOfItems: '',
-          measurementCategory: '',
-          instrumentOrArtefactType: '',
-          previousQuoteOrReportNumber: '',
-          testingAndCalibrationRequirements: '',
-          preferredInstrumentOrArtefactAvailabilityDate: '',
-          measurementReportAndCertificateRequired: '',
-        },
-        initialErrors: {
-          serialNumber: 'Enter a serial number.',
-          manufacturer: 'Enter a manufacturer.',
-          model: 'Enter a model.',
-          measurementCategory: 'Select a measurement category.',
-          instrumentOrArtefactType: 'Select an instrument or artefact type.',
-          testingAndCalibrationRequirements:
-            'Enter testing or calibration requirements.',
-          measurementReportAndCertificateRequired:
-            'Select a measurement report option.',
-        },
-        initialTouched: {
-          serialNumber: true,
-          manufacturer: true,
-          model: true,
-          measurementCategory: true,
-          instrumentOrArtefactType: true,
-          testingAndCalibrationRequirements: true,
-          measurementReportAndCertificateRequired: true,
-        },
-      },
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    // Same settled-state contract as Instrument And Request Step: the heading is behind
-    // the component's BlockUISpinner branch and appears only once /api/lookup resolves.
-    const heading = await canvas.findByRole('heading', {
-      name: 'Instrument/artefact details',
-    });
-
-    await expect(heading).toBeVisible();
-    // The seeded validation state survives the lookup settling rather than being
-    // cleared by the re-render it causes.
-    await expect(
-      canvas.getByText('Select a measurement category.'),
-    ).toBeVisible();
-  },
-});
+// Required-field validation is exercised against the real schemas and wizard
+// shell in RequestForQuoteWizard.stories.tsx (DifferentContactRequiresContactDetails,
+// InstrumentStepBlocksInvalidSubmit); this file only renders the steps in isolation.

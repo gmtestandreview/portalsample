@@ -1,27 +1,18 @@
 import { useMsal } from '@azure/msal-react';
-import Row from 'react-bootstrap/Row';
 import { Alert } from 'react-bootstrap';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import TextInput from '../../components/Inputs/TextInput';
 import type { ReportRecipientProps } from './types';
-import {
-  AcceptQuoteClient,
-  ReportAddressTypeValues,
-} from '../../api/web-api-client';
+import { AcceptQuoteClient } from '../../api/web-api-client';
 import type {
   AddressDetailsDto,
   ReportRecipientStep,
 } from '../../api/web-api-client';
-import { prefixedPropertyOf } from '../../utils';
-import AddressLookup from '../../components/Inputs/AddressLookup';
 import { useAccountState } from '../../authentication/hooks';
-import { getFormattedAddress } from '../common/helperFunctions';
-import ReportRecipientFormikBridge from './reportRecipientFormikBridge';
+import ReportRecipientFormFields from './reportRecipientFormFields';
 import AppLogger from '../../instrumentation/AppLogger';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
-
-const getName = prefixedPropertyOf<ReportRecipientStep>('reportRecipient');
+import ReportRecipientSummary from './summary/ReportRecipientSummary';
 
 type ReportRecipientLoadResult =
   | { kind: 'loaded'; step: ReportRecipientStep }
@@ -42,7 +33,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
   >();
   const account = useAccountState();
   const homeAccountId = account?.details?.homeAccountId;
-  const requestGeneration = useRef(0);
+  const requestGenerationRef = useRef(0);
 
   const getAcceptQuotePreInfo =
     useCallback(async (): Promise<ReportRecipientLoadResult> => {
@@ -69,13 +60,13 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
     }, [accounts, homeAccountId, id, instance]);
 
   useEffect(() => {
-    const currentGeneration = ++requestGeneration.current;
+    const currentGeneration = ++requestGenerationRef.current;
     let isActive = true;
 
     const loadDataForDisplay = async () => {
       setIsLoading(true);
       const result = await getAcceptQuotePreInfo();
-      if (!isActive || requestGeneration.current !== currentGeneration) {
+      if (!isActive || requestGenerationRef.current !== currentGeneration) {
         return;
       }
       if (result.kind === 'loaded') {
@@ -133,49 +124,19 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
         </Alert>
       )}
       {!isSummary && (
-        <ReportRecipientFormikBridge
+        <ReportRecipientFormFields
           streetAddress={streetAddress}
           postalAddress={postalAddress}
         />
       )}
       {isSummary && (
-        <Row className='mb-4'>
-          <h2 className='h3 my-3'>Report recipient organisation</h2>
-          <TextInput
-            label='Organisation name for report'
-            name={getName('organisationName')}
-            isSummary={isSummary}
-          />
-          {reportRecipientStep?.reportAddressType ===
-            ReportAddressTypeValues.Other && (
-            <AddressLookup
-              name={getName('businessStreetAddress')}
-              label='Organisation address for report'
-              maxResults={10}
-              key='businessStreetAddress'
-              placeholder='Start typing the business street address'
-              isSummary={isSummary}
-            />
-          )}
-          {reportRecipientStep?.reportAddressType ===
-            ReportAddressTypeValues.BusinessAddress && (
-            <>
-              <div className='form-label mb-0'>
-                Organisation address for report
-              </div>
-              <p>{getFormattedAddress(streetAddress)}</p>
-            </>
-          )}
-          {reportRecipientStep?.reportAddressType ===
-            ReportAddressTypeValues.PostalAddress && (
-            <>
-              <div className='form-label mb-0'>
-                Organisation address for report
-              </div>
-              <p>{getFormattedAddress(postalAddress)}</p>
-            </>
-          )}
-        </Row>
+        <ReportRecipientSummary
+          values={props.summaryValues ?? {}}
+          hidden={props.summaryHidden ?? {}}
+          reportAddressType={reportRecipientStep?.reportAddressType}
+          streetAddress={streetAddress}
+          postalAddress={postalAddress}
+        />
       )}
     </>
   );

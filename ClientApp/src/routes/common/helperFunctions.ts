@@ -17,13 +17,18 @@ import type { AccountDetails } from '../../authentication/accountContext';
 import { HttpStatusCode } from '../../types';
 import { DashboardTab } from '../../components/SearchFilter/types';
 import type { UserProfile } from '../../components/SearchFilter/types';
-import { DashboardItemStatus, PaDashboardItemStatus } from './enums';
+import {
+  DashboardItemStatus,
+  Environment,
+  PaDashboardItemStatus,
+  QuoteStatus,
+  ReportStatus,
+} from './enums';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import { base64toBlob } from '../../utils';
 import { toHttpStatusCode } from '../../utils/apiEnumMappings';
 import { DashBoardNotifications } from './dashboardNotifications';
-import { Environment, QuoteStatus, ReportStatus } from './enums';
 import type { SelectInputOption } from '../../components/Inputs/SelectInput/types';
 import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from './openWindow';
 import DOMPurify from 'dompurify';
@@ -324,7 +329,7 @@ export const openPdfPageInNewTab = (fileUrl: string, pageNumber: string) => {
 export const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
-    const el = document.querySelector<HTMLElement>('[id^="#notif-"]');
+    const el = document.querySelector<HTMLElement>('[id^="notif-"]');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
   }, 100);

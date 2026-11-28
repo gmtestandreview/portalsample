@@ -15,7 +15,7 @@ import {
 } from 'react-aria-components/Menu';
 import { Popover } from '../Popover/Popover';
 import { Text } from '../Content/Content';
-import React from 'react';
+import type React from 'react';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import './Menu.css';
 

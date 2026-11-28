@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { ReportAddressTypeValues, State } from '@/api/web-api-client';
@@ -13,7 +13,6 @@ import {
   reportRecipientSaveValidation,
   reportRecipientSubmitValidation,
 } from '@/routes/acceptQuote/validation';
-import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import { defined } from '../../helpers/defined';
 
@@ -78,16 +77,6 @@ vi.mock(
 
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
-// The edit form renders the RHF twin; the summary branch keeps the Formik one.
-vi.mock(
-  '@/components/Inputs/AddressLookup',
-  () =>
-    ({
-      default: ({ label }: { label: string }) => (
-        <div data-testid='address-lookup'>{label}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule31>,
-);
 vi.mock(
   '@/components/Inputs/RhfAddressLookup',
   () =>
@@ -131,36 +120,46 @@ interface StepHarnessProps {
   onSubmit?: (values: ReportRecipientStep) => void;
 }
 
-// Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
+// The RHF harness uses the same hard/soft schemas and hidden field rules as the routed shell.
+type TestFormValues = ReportRecipientStep &
+  Record<string, any> & {
+    saveAndExit?: boolean;
+  };
+
 function StepHarness({
   id = 'RFQ-1',
   values = {},
   isSummary,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
+  const initialValues = values as TestFormValues;
+  const handleSubmit = (submitted: TestFormValues) => {
+    onSubmit(submitted);
+    return Promise.resolve();
+  };
+
   return (
-    <Formik<ReportRecipientStep & { saveAndExit?: boolean }>
-      initialValues={values}
-      initialStatus={{ hidden: hidingFields }}
-      enableReinitialize
-      validate={(formValues) =>
-        validateForm(
-          formValues.saveAndExit
-            ? reportRecipientSaveValidation
-            : reportRecipientSubmitValidation,
-          hidingFields,
-        )(formValues)
-      }
-      onSubmit={(submitted) => {
-        onSubmit(removeHidden(submitted, submitted, hidingFields));
-      }}
+    <RhfForm<TestFormValues>
+      initialValues={initialValues}
+      hidingFields={hidingFields}
+      validateHard={reportRecipientSubmitValidation}
+      validateSoft={reportRecipientSaveValidation}
+      onSubmit={handleSubmit}
+      onSaveAndExit={handleSubmit}
     >
-      <Form noValidate>
-        <ReportRecipient id={id} isSummary={isSummary} />
-        <button type='submit'>Continue</button>
-        <SaveAndExitButton />
-      </Form>
-    </Formik>
+      {({ onFormSubmit }) => (
+        <form noValidate onSubmit={onFormSubmit}>
+          <ReportRecipient
+            id={id}
+            isSummary={isSummary}
+            summaryValues={{ reportRecipient: values }}
+            summaryHidden={{}}
+          />
+          <button type='submit'>Continue</button>
+          <SaveAndExitButton />
+        </form>
+      )}
+    </RhfForm>
   );
 }
 
@@ -180,6 +179,38 @@ describe('reportRecipient behavior', () => {
       },
     });
   };
+
+  it('renders the report recipient summary without a form context', async () => {
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
+    mocks.getReportRecipient.mockResolvedValue({
+      reportAddressType: ReportAddressTypeValues.Other,
+      rfqOrganisation: {
+        streetAddress,
+        postalAddress,
+        postalAddressSameAsStreetAddress: false,
+      },
+    });
+
+    render(
+      <ReportRecipient
+        id='RFQ-1'
+        isSummary
+        summaryValues={{
+          reportRecipient: {
+            organisationName: 'Acme Labs',
+            reportAddressType: ReportAddressTypeValues.Other,
+            businessStreetAddress: postalAddress,
+          },
+        }}
+        summaryHidden={{}}
+      />,
+    );
+
+    await expect(screen.findByText('Acme Labs')).resolves.toBeInTheDocument();
+    expect(screen.getByText(/PO Box 9/)).toBeInTheDocument();
+  });
 
   it('describes the street and postal address options from the loaded organisation', async () => {
     expect.hasAssertions();
@@ -472,11 +503,12 @@ describe('reportRecipient behavior', () => {
       reportAddressType: ReportAddressTypeValues.Other,
       rfqOrganisation: { streetAddress, postalAddress },
     });
-    renderStep({ isSummary: true });
+    renderStep({
+      isSummary: true,
+      values: { businessStreetAddress: postalAddress },
+    });
 
-    await expect(
-      screen.findByTestId('address-lookup'),
-    ).resolves.toBeInTheDocument();
+    await expect(screen.findByText(/PO Box 9/)).resolves.toBeInTheDocument();
   });
 
   it('reloads the recipient when the quotation id changes', async () => {

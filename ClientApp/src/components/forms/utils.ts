@@ -159,11 +159,53 @@ export const validateForm =
     return errors;
   };
 
+const isPlainRecord = (value: unknown): value is Record<string, unknown> => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const prototype: unknown = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+};
+
+/**
+ * Drops objects that are empty only because a control registered a field under
+ * them. React Hook Form creates a parent object (for example `streetAddress`
+ * or `form`) as soon as a nested field registers, even when no value was ever
+ * loaded or typed; such parents stay absent. An empty object is kept
+ * when the loaded values already had that path, so a saved `{}` round-trips.
+ */
+const removeUnloadedEmptyObjects = (
+  values: Record<string, unknown>,
+  loaded: unknown,
+): Record<string, unknown> => {
+  const loadedEntries = new Map(
+    Object.entries(isPlainRecord(loaded) ? loaded : {}),
+  );
+  const entries = Object.entries(values).flatMap(([key, child]) => {
+    if (!isPlainRecord(child)) {
+      return [[key, child] as const];
+    }
+    const loadedChild = loadedEntries.get(key);
+    const pruned = removeUnloadedEmptyObjects(child, loadedChild);
+    return Object.keys(pruned).length === 0 && loadedChild === undefined
+      ? []
+      : [[key, pruned] as const];
+  });
+  return Object.fromEntries(entries);
+};
+
 /**
  * The payload the wizard sends: hidden fields stripped, then empty values
- * dropped. Shared by the form shells so both submit the same shape.
+ * dropped, then empty objects that only registration created. Shared by the
+ * form shells so both submit the same shape; `loaded` is the step's loaded
+ * values.
  */
 export const normalizeSubmitValues = <T extends FormValues>(
   values: T,
   hidden: Hideable<Partial<T>, Partial<T>>,
-): T => removeEmptyKeys(removeHidden(values, values, hidden));
+  loaded?: unknown,
+): T =>
+  removeUnloadedEmptyObjects(
+    removeEmptyKeys(removeHidden(values, values, hidden)),
+    loaded,
+  ) as T;

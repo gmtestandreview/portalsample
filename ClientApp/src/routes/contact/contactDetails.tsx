@@ -1,6 +1,6 @@
 import Row from 'react-bootstrap/Row';
 import { Alert } from 'react-bootstrap';
-import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
+import RhfContactDetails from '../../components/forms/CommonForms/RhfContactDetails';
 
 const getContactFieldName = (localName: string) => localName;
 
@@ -32,7 +32,7 @@ const ContactDetails = () => {
       <Row className='mb-4'>
         <h2 className='mb-2 h3'>Contact</h2>
         <p className='mb-4'>Please fill out your contact details</p>
-        <ContactDetailsInput
+        <RhfContactDetails
           key='contact'
           name={getContactFieldName('contact')}
           roleLabel='Role (optional)'

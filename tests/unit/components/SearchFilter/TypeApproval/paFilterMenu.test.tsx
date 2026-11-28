@@ -7,8 +7,6 @@ import { PatternApprovalStatusEnumDto } from '@/api/web-api-client';
 import type { AccountDispatchContext } from '@/authentication/accountContext';
 import { DashboardTab } from '@/components/SearchFilter/types';
 import PaFilterMenu from '@/components/SearchFilter/TypeApproval/paFilterMenu';
-import type { FieldHookConfig } from 'formik';
-import type { RadioButtonGroupProps } from '@/components/Inputs/RadioButtonGroup/types';
 
 const mocks = vi.hoisted(() => ({
   setUserProfile: vi.fn<AccountDispatchContext['setUserProfile']>(),
@@ -31,39 +29,6 @@ vi.mock(
     ({
       trackGAEvent: mocks.trackGAEvent,
     }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
-);
-
-vi.mock(
-  import('@/components/Inputs/RadioButtonGroup'),
-  (() =>
-    ({
-      default: <T,>({
-        legend,
-        name,
-        options,
-        onChange,
-        disabled,
-      }: Readonly<
-        RadioButtonGroupProps<T> & FieldHookConfig<T> & { disabled?: boolean }
-      >) => (
-        <fieldset>
-          <legend>{legend}</legend>
-          {options.map((option) => (
-            <label key={String(option.value)} htmlFor={option.id}>
-              <input
-                id={option.id}
-                type='radio'
-                name={name}
-                value={String(option.value)}
-                disabled={disabled}
-                onChange={onChange}
-              />
-              {option.label}
-            </label>
-          ))}
-        </fieldset>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule52>) as unknown as __DynamicPartialMockFactory<__TestMockModule52>,
 );
 
 const renderMenu = (

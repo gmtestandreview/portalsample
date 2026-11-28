@@ -79,15 +79,17 @@ export const useDashboardFilters = ({
     }
   };
 
-  // Set values from the userprofile
-  useEffect(() => {
-    if (savedUserProfile) {
-      const p = mapToUserProfile(savedUserProfile);
-      setActiveTab(p.filterActiveTab ?? DashboardTab.Drafts);
-      setCurrentPage(p.filterCurrentPage ?? defaultFilter.filterCurrentPage);
-      setInitialFilters((prevState) => prevState ?? p);
-    }
-  }, [savedUserProfile]);
+  // Set values from the userprofile whenever a new one arrives. Done during
+  // render (guarded by the last profile applied) instead of from an effect.
+  const [appliedUserProfile, setAppliedUserProfile] =
+    useState<typeof savedUserProfile>(undefined);
+  if (savedUserProfile && savedUserProfile !== appliedUserProfile) {
+    setAppliedUserProfile(savedUserProfile);
+    const p = mapToUserProfile(savedUserProfile);
+    setActiveTab(p.filterActiveTab ?? DashboardTab.Drafts);
+    setCurrentPage(p.filterCurrentPage ?? defaultFilter.filterCurrentPage);
+    setInitialFilters((prevState) => prevState ?? p);
+  }
 
   // Set to default userprofile page number when the branch is changed.
   // The reset fires once per branch selection. Keying on the selection itself

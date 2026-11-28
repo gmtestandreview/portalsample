@@ -1,13 +1,13 @@
 import preview from '../../../../.storybook/preview';
 import type { ReactNode } from 'react';
-import { Formik, Form } from 'formik';
-import { expect, fn, userEvent, within } from 'storybook/test';
-import TextInput from '../Inputs/TextInput';
-import SelectInput from '../Inputs/SelectInput';
-import RadioButtonGroup from '../Inputs/RadioButtonGroup';
-import DatePicker from '../Inputs/DatePicker';
-import TextAreaInput from '../Inputs/TextAreaInput';
-import Checkbox from '../Inputs/Checkbox';
+import { FormProvider, useForm } from 'react-hook-form';
+import { expect, userEvent, within } from 'storybook/test';
+import RhfTextInput from '../Inputs/RhfTextInput';
+import RhfSelectInput from '../Inputs/RhfSelectInput';
+import RhfRadioButtonGroup from '../Inputs/RhfRadioButtonGroup';
+import RhfDatePicker from '../Inputs/RhfDatePicker';
+import RhfTextAreaInput from '../Inputs/RhfTextAreaInput';
+import RhfCheckbox from '../Inputs/RhfCheckbox';
 
 const stateOptions = [
   { value: 'NSW', displayText: 'New South Wales' },
@@ -27,17 +27,21 @@ const yesNoOptions = [
 
 const emptyInitialValues: Record<string, unknown> = {};
 
-const FormikWrapper = ({
+const RhfStoryForm = ({
   children,
   initialValues = emptyInitialValues,
 }: {
   children: ReactNode;
   initialValues?: Record<string, unknown>;
-}) => (
-  <Formik initialValues={initialValues} onSubmit={fn()}>
-    <Form>{children}</Form>
-  </Formik>
-);
+}) => {
+  const methods = useForm({ defaultValues: initialValues });
+
+  return (
+    <FormProvider {...methods}>
+      <form>{children}</form>
+    </FormProvider>
+  );
+};
 
 const meta = preview.meta({
   title: 'Forms/Inputs',
@@ -46,7 +50,7 @@ const meta = preview.meta({
 
 export const AllInputsShowcase = meta.story({
   render: () => (
-    <FormikWrapper
+    <RhfStoryForm
       initialValues={{
         firstName: '',
         lastName: '',
@@ -58,85 +62,85 @@ export const AllInputsShowcase = meta.story({
       }}
     >
       <h2 className='h4 mb-4'>Form input primitives</h2>
-      <TextInput
+      <RhfTextInput
         name='firstName'
         label='First name'
         placeholder='Enter first name'
       />
-      <TextInput
+      <RhfTextInput
         name='lastName'
         label='Last name'
         placeholder='Enter last name'
       />
-      <SelectInput<string>
+      <RhfSelectInput
         name='state'
         label='State or territory'
         options={stateOptions}
         addBlank
         defaultDisplayText='Please select a state'
       />
-      <RadioButtonGroup<string>
+      <RhfRadioButtonGroup<string>
         name='yesNo'
         legend='Has this instrument been calibrated before?'
         options={yesNoOptions}
         displayHorizontally
       />
-      <DatePicker
+      <RhfDatePicker
         name='dateOfBirth'
         label='Date of birth'
         placeholder='dd/mm/yyyy'
         calendarButtonTitle='Open calendar'
       />
-      <TextAreaInput name='notes' label='Additional notes' />
-      <Checkbox name='agree' label='I agree to the terms and conditions' />
-    </FormikWrapper>
+      <RhfTextAreaInput name='notes' label='Additional notes' />
+      <RhfCheckbox name='agree' label='I agree to the terms and conditions' />
+    </RhfStoryForm>
   ),
 });
 
 export const TextInputDefault = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ name: '' }}>
-      <TextInput
+    <RhfStoryForm initialValues={{ name: '' }}>
+      <RhfTextInput
         name='name'
         label='Organisation name'
         placeholder='Enter name'
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const TextInputWithHelp = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ abn: '' }}>
-      <TextInput
+    <RhfStoryForm initialValues={{ abn: '' }}>
+      <RhfTextInput
         name='abn'
         label='ABN'
         inlineHelp='Your 11-digit Australian Business Number as registered with the ATO.'
         placeholder='00 000 000 000'
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const TextInputWithExpandableHelp = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ serialNumber: '' }}>
-      <TextInput
+    <RhfStoryForm initialValues={{ serialNumber: '' }}>
+      <RhfTextInput
         name='serialNumber'
         label='Serial number'
         inlineHelpTitle='Where to find the serial number'
         inlineHelp='The serial number is printed on the identification plate attached to the instrument, usually on the rear or side panel.'
         placeholder='e.g. SN123456'
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const TextInputDisabled = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ email: 'user@example.com' }}>
-      <TextInput name='email' label='Email address' disabled type='email' />
-    </FormikWrapper>
+    <RhfStoryForm initialValues={{ email: 'user@example.com' }}>
+      <RhfTextInput name='email' label='Email address' disabled />
+    </RhfStoryForm>
   ),
   play: async ({ canvas }) => {
     const email = canvas.getByLabelText('Email address');
@@ -148,9 +152,9 @@ export const TextInputDisabled = meta.story({
 
 export const TextInputReadOnly = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ referenceId: 'RFQ-2024-001234' }}>
-      <TextInput name='referenceId' label='Reference ID' readonly />
-    </FormikWrapper>
+    <RhfStoryForm initialValues={{ referenceId: 'RFQ-2024-001234' }}>
+      <RhfTextInput name='referenceId' label='Reference ID' readonly />
+    </RhfStoryForm>
   ),
   play: async ({ canvas }) => {
     const reference = canvas.getByLabelText('Reference ID');
@@ -162,85 +166,84 @@ export const TextInputReadOnly = meta.story({
 
 export const SelectInputDefault = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ state: '' }}>
-      <SelectInput<string>
+    <RhfStoryForm initialValues={{ state: '' }}>
+      <RhfSelectInput
         name='state'
         label='State or territory'
         options={stateOptions}
         addBlank
         defaultDisplayText='Please select a state'
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const SelectInputHorizontal = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ state: 'VIC' }}>
-      <SelectInput<string>
+    <RhfStoryForm initialValues={{ state: 'VIC' }}>
+      <RhfSelectInput
         name='state'
         label='State or territory'
         options={stateOptions}
-        displayHorizontally
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const RadioButtonGroupVertical = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ hasInstrument: '' }}>
-      <RadioButtonGroup<string>
+    <RhfStoryForm initialValues={{ hasInstrument: '' }}>
+      <RhfRadioButtonGroup<string>
         name='hasInstrument'
         legend='Are you submitting an instrument for calibration?'
         options={yesNoOptions}
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const RadioButtonGroupHorizontal = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ hasInstrument: 'Yes' }}>
-      <RadioButtonGroup<string>
+    <RhfStoryForm initialValues={{ hasInstrument: 'Yes' }}>
+      <RhfRadioButtonGroup<string>
         name='hasInstrument'
         legend='Are you submitting an instrument for calibration?'
         options={yesNoOptions}
         displayHorizontally
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const DatePickerDefault = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ dateRequired: '' }}>
-      <DatePicker
+    <RhfStoryForm initialValues={{ dateRequired: '' }}>
+      <RhfDatePicker
         name='dateRequired'
         label='Date required'
         placeholder='dd/mm/yyyy'
         calendarButtonTitle='Open calendar'
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
 });
 
 export const TextAreaDefault = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ description: '' }}>
-      <TextAreaInput name='description' label='Description' />
-    </FormikWrapper>
+    <RhfStoryForm initialValues={{ description: '' }}>
+      <RhfTextAreaInput name='description' label='Description' />
+    </RhfStoryForm>
   ),
 });
 
 export const CheckboxDefault = meta.story({
   render: () => (
-    <FormikWrapper initialValues={{ agree: false }}>
-      <Checkbox
+    <RhfStoryForm initialValues={{ agree: false }}>
+      <RhfCheckbox
         name='agree'
         label='I agree to the terms and conditions of the NMI Services portal.'
       />
-    </FormikWrapper>
+    </RhfStoryForm>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

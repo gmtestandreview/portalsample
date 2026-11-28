@@ -110,13 +110,13 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/WizardForm'),
+  import('../../../../ClientApp/src/components/forms/WizardForm/RhfWizardForm'),
   (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <section data-testid='wizard-form'>{children}</section>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule60>) as unknown as __DynamicPartialMockFactory<__TestMockModule60>,
+    }) satisfies __ExactMockModule<__TestMockModule173>) as unknown as __DynamicPartialMockFactory<__TestMockModule173>,
 );
 
 vi.mock(
@@ -154,7 +154,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
+  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
   (() =>
     ({
       default: (props: typeof documentsStep.props) => {
@@ -169,7 +169,7 @@ vi.mock(
           />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule141>) as unknown as __DynamicPartialMockFactory<__TestMockModule141>,
+    }) satisfies __ExactMockModule<__TestMockModule130>) as unknown as __DynamicPartialMockFactory<__TestMockModule130>,
 );
 
 const statuses = [{ name: 'Organisation and contact', status: 'current' }];

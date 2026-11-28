@@ -1,15 +1,20 @@
 import { createContext, useContext } from 'react';
-import type { FormEvent } from 'react';
+import type { SyntheticEvent } from 'react';
 import type { SubmitMode } from './wizardYupResolver';
 
 export interface RhfFormApi {
   /**
    * Validates with the mode's schema, then calls the matching handler. Never
-   * rejects: a handler that throws is logged, as Formik's handleSubmit did.
+   * rejects: a handler that throws is logged.
    */
   submit: (mode: SubmitMode) => Promise<void>;
   /** Native form submit (Enter key, submit button): behaves as `next`. */
-  onFormSubmit: (event?: FormEvent) => void;
+  onFormSubmit: (event?: SyntheticEvent<HTMLFormElement>) => void;
+  /**
+   * A step whose own data failed to load calls this so the shell cannot save or
+   * complete it while the fields are not shown. While blocked, `submit` is a no-op.
+   */
+  setSubmitBlocked: (blocked: boolean) => void;
 }
 
 export const RhfFormApiContext = createContext<RhfFormApi | null>(null);
@@ -22,7 +27,3 @@ export const useRhfFormApi = (): RhfFormApi => {
   }
   return api;
 };
-
-/** True under `RhfForm`. Shell-neutral controls use it to pick their adapter. */
-export const useIsRhfShell = (): boolean =>
-  useContext(RhfFormApiContext) !== null;

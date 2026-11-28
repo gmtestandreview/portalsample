@@ -176,6 +176,24 @@ describe('rhfAddressLookup selection', () => {
     );
   });
 
+  it('fills optional address lines when a matched address omits them', async () => {
+    expect.hasAssertions();
+
+    resetMocks([
+      { ...match, addressLine2: undefined, addressLine3: undefined },
+    ]);
+    renderLookup();
+
+    await search('barton');
+    await userEvent.click(
+      await screen.findByRole('option', { name: /1 National Circuit/ }),
+    );
+
+    await waitFor(() => {
+      expect(formValue()).toMatchObject({ line2: '', line3: '' });
+    });
+  });
+
   it('falls back to blanks and the default label for sparse matches', async () => {
     expect.hasAssertions();
 

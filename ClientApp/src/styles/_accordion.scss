@@ -395,3 +395,26 @@
     }
   }
 }
+// .Messages .and . Timeline
+// PA
+#recent-timeline-toggle,
+#older-timeline-toggle {
+  [class^='icon-'],
+  [class*=' icon-'] {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    transform-origin: center !important;
+    transition: transform 0.2s;
+  }
+  &[aria-expanded='true'] {
+    [class^='icon-'],
+    [class*='icon-'] {
+      -webkit-transform: rotate(90deg);
+      -moz-transform: rotate(90deg);
+      -o-transform: rotate(90deg);
+      transform: rotate(90deg);
+    }
+  }
+}

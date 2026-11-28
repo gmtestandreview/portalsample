@@ -402,7 +402,7 @@ Implementation status identifiers include `QuoteDrafted`, `QuoteAvailable`,
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
 `ClientApp/src/routes/dashboard/dashboard.helpers.ts:114-148`,
-`ClientApp/src/routes/quotation/index.tsx:192-199` **Plain English:**
+`ClientApp/src/routes/quotation/index.tsx:168-175` **Plain English:**
 Immediately after a customer accepts a quote and returns to the dashboard, the
 portal optimistically shows the record as accepted before CRM has propagated the
 status change. **Specification:**
@@ -1261,7 +1261,7 @@ Then   postalAddress: addressSchema applies (all required fields enforced)
 ### RULE-050: NMI ABN Hardcoded in Contract Display
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:397` _(corrected
+`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:423` _(corrected
 2026-09-02, CRD-044 - previously cited 382, which is a different element)_
 **Plain English:** NMI's Australian Business Number is hardcoded in the Accept
 Quote summary page as part of the legal contract display. **Specification:**
@@ -1276,7 +1276,7 @@ Any change to NMI's registered ABN or address requires a code deployment.
 ```
 
 **Parameters:** Both values are string literals in
-`summaryAndAccept.tsx:397-403` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
+`summaryAndAccept.tsx:423-429` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
 High
 
 ---
@@ -1284,7 +1284,7 @@ High
 ### RULE-051: NMI Registered Address Hardcoded in Contract Display
 
 **Category:** Policy **Priority:** P1 **Source:**
-`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:399-403` **Plain
+`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:425-429` **Plain
 English:** The National Measurement Institute's registered postal address is
 hardcoded as literal JSX in the quote acceptance summary, immediately below the
 ABN (RULE-050), and is presented to the customer as part of the contract they
@@ -1299,11 +1299,11 @@ stated. See `RULES-REGISTER-001`._
 ```text
 Rendered verbatim in the accept-quote summary, one <span> per line:
 
-  National Measurement Institute        (line 372)
-  ABN 74 599 608 295                    (line 374 - RULE-050)
-  36 Bradfield Road                     (line 376)
-  West Lindfield NSW 2070               (line 378)
-  Australia                             (line 380)
+  National Measurement Institute        (line 420)
+  ABN 74 599 608 295                    (line 423 - RULE-050)
+  36 Bradfield Road                     (line 425)
+  West Lindfield NSW 2070               (line 427)
+  Australia                             (line 429)
 
 No conditional logic, no environment lookup, no API call. The value is identical for every user,
 every organisation and every environment, including production.

@@ -1,9 +1,9 @@
 import preview from '../../../../../.storybook/preview';
-import { useFormikContext } from 'formik';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import { http, HttpResponse } from 'msw/http';
-import AddressLookup from './index';
-import ManualAddressInput from './ManualAddressInput';
+import RhfAddressLookup from '../RhfAddressLookup';
+import RhfManualAddressInput from '../RhfAddressLookup/RhfManualAddressInput';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
 const addressSearchHandler = http.get('/api/address/*', () =>
@@ -22,15 +22,14 @@ const addressSearchHandler = http.get('/api/address/*', () =>
 );
 
 const AddressValueProbe = () => {
-  const { values, setFieldValue } = useFormikContext<{
-    streetAddress: {
-      line1: string;
-      suburb: string;
-      state: string;
-      postcode: string;
-    };
-  }>();
-  const { line1, suburb, state, postcode } = values.streetAddress;
+  const { setValue } = useFormContext();
+  const streetAddress = useWatch({ name: 'streetAddress' }) as {
+    line1: string;
+    suburb: string;
+    state: string;
+    postcode: string;
+  };
+  const { line1, suburb, state, postcode } = streetAddress;
 
   return (
     <>
@@ -39,15 +38,15 @@ const AddressValueProbe = () => {
       </output>
       <button
         type='button'
-        onClick={() =>
-          void setFieldValue('streetAddress', {
-            ...values.streetAddress,
+        onClick={() => {
+          setValue('streetAddress', {
+            ...streetAddress,
             line1: '2 External Street',
             isManuallyEntered: true,
-          })
-        }
+          });
+        }}
       >
-        Set address from Formik
+        Set address from outside the lookup
       </button>
     </>
   );
@@ -55,7 +54,7 @@ const AddressValueProbe = () => {
 
 const meta = preview.meta({
   title: 'Components/Inputs/AddressLookup',
-  component: AddressLookup,
+  component: RhfAddressLookup,
   decorators: [withPortalProviders],
 });
 
@@ -72,8 +71,8 @@ export const Default = meta.story({
   parameters: {
     docs: { story: { inline: false } },
     portal: {
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           streetAddress: {
             searchText: '',
             addressLine1: '',
@@ -87,7 +86,7 @@ export const Default = meta.story({
   },
   render: () => (
     <>
-      <AddressLookup
+      <RhfAddressLookup
         name='streetAddress'
         label='Street address'
         maxResults={5}
@@ -129,8 +128,8 @@ export const ManualEntry = meta.story({
   },
   parameters: {
     portal: {
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           streetAddress: {
             line1: '',
             line2: '',
@@ -144,9 +143,9 @@ export const ManualEntry = meta.story({
     },
   },
   render: () => (
-    // Do not pass label — ManualAddressInput spreads extra props onto each
-    // TextInput via {...rest}, which would override their individual field labels.
-    <ManualAddressInput name='streetAddress' />
+    // Do not pass label — RhfManualAddressInput spreads extra props onto each
+    // RhfTextInput via {...rest}, which would override their individual field labels.
+    <RhfManualAddressInput name='streetAddress' />
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -160,15 +159,15 @@ export const ManualEntry = meta.story({
   },
 });
 
-export const ExternalFormikUpdate = meta.story({
+export const ExternalFormUpdate = meta.story({
   args: {
     name: 'streetAddress',
     label: 'Street address',
   },
   parameters: {
     portal: {
-      formik: {
-        initialValues: {
+      rhf: {
+        defaultValues: {
           streetAddress: {
             line1: '',
             line2: '',
@@ -185,7 +184,7 @@ export const ExternalFormikUpdate = meta.story({
   },
   render: () => (
     <>
-      <AddressLookup name='streetAddress' label='Street address' />
+      <RhfAddressLookup name='streetAddress' label='Street address' />
       <AddressValueProbe />
     </>
   ),
@@ -194,7 +193,9 @@ export const ExternalFormikUpdate = meta.story({
     const user = userEvent.setup();
 
     await user.click(
-      canvas.getByRole('button', { name: 'Set address from Formik' }),
+      canvas.getByRole('button', {
+        name: 'Set address from outside the lookup',
+      }),
     );
     await expect(canvas.getByLabelText(/address line 1/i)).toHaveValue(
       '2 External Street',

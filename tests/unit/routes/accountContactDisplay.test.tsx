@@ -2,57 +2,69 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/TextInput'),
+  '../../../ClientApp/src/components/forms/CommonForms/RhfContactDetails',
+  () =>
+    ({
+      default: ({ name, roleLabel }: { name: string; roleLabel: string }) => (
+        <div data-testid='contact-details-input' data-name={name}>
+          {roleLabel}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule168>,
+);
+
+vi.mock(
+  '../../../ClientApp/src/components/Inputs/RhfTextInput',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`text-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>,
+    }) satisfies __ExactMockModule<__TestMockModule162>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/NumberInput',
+  '../../../ClientApp/src/components/Inputs/RhfNumberInput',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`number-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule30>,
+    }) satisfies __ExactMockModule<__TestMockModule163>,
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/Checkbox'),
+  '../../../ClientApp/src/components/Inputs/RhfCheckbox',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`checkbox-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule79>,
+    }) satisfies __ExactMockModule<__TestMockModule164>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/AddressLookup',
+  '../../../ClientApp/src/components/Inputs/RhfAddressLookup',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`address-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule31>,
+    }) satisfies __ExactMockModule<__TestMockModule165>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/OrganisationNameLookup',
+  '../../../ClientApp/src/components/Inputs/RhfOrganisationNameLookup',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`organisation-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule80>,
+    }) satisfies __ExactMockModule<__TestMockModule166>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/HidableField',
+  '../../../ClientApp/src/components/forms/RhfHidableField',
   () =>
     ({
       default: ({
@@ -62,19 +74,7 @@ vi.mock(
         children: React.ReactNode;
         name: string;
       }) => <div data-testid={`hidable-${name}`}>{children}</div>,
-    }) satisfies __ExactMockModule<__TestMockModule70>,
-);
-
-vi.mock(
-  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
-  () =>
-    ({
-      default: ({ name, roleLabel }: { name: string; roleLabel: string }) => (
-        <div data-testid='contact-details-input' data-name={name}>
-          {roleLabel}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule71>,
+    }) satisfies __ExactMockModule<__TestMockModule167>,
 );
 
 describe('account and contact display sections', () => {

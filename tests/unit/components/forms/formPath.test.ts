@@ -72,6 +72,18 @@ describe('form path set in', () => {
     });
   });
 
+  it('copies existing arrays along the path without mutating them', () => {
+    expect.hasAssertions();
+
+    const source = { list: [{ name: 'a' }, { name: 'b' }] };
+    const result = setIn(source, 'list[1].name', 'x');
+
+    expect(result).toStrictEqual({ list: [{ name: 'a' }, { name: 'x' }] });
+    expect(result.list).not.toBe(source.list);
+    expect(source.list[1]?.name).toBe('b');
+    expect(setIn([1, 2], '0', 5)).toStrictEqual([5, 2]);
+  });
+
   it('returns the original object when the value is unchanged', () => {
     expect.hasAssertions();
 
@@ -86,5 +98,40 @@ describe('form path set in', () => {
       a: { c: 2 },
     });
     expect(setIn({ a: 1, b: 2 }, 'a', undefined)).toStrictEqual({ b: 2 });
+  });
+});
+
+describe('form path keys', () => {
+  it('keeps quoted bracket keys whole and unescapes them', () => {
+    expect.hasAssertions();
+
+    const values = { a: { 'b.c': 1, backslash: 2 } };
+
+    expect(getIn(values, 'a["b.c"]')).toBe(1);
+    expect(getIn(values, "a['b.c']")).toBe(1);
+    expect(getIn(values, String.raw`a["back\slash"]`)).toBe(2);
+    expect(setIn(values, 'a["b.c"]', 3)).toStrictEqual({
+      a: { 'b.c': 3, backslash: 2 },
+    });
+  });
+
+  it('reads an empty first key for a leading dot and an empty key for adjacent dots', () => {
+    expect.hasAssertions();
+
+    expect(getIn({ '': { a: 1 } }, '.a')).toBe(1);
+    expect(getIn({ a: { '': { b: 2 } } }, 'a..b')).toBe(2);
+  });
+
+  it('copies class instances along the path with their prototype', () => {
+    expect.hasAssertions();
+
+    class Box {
+      readonly label = 'box';
+    }
+
+    const result = setIn({ box: new Box() }, 'box.label', 'changed');
+
+    expect(result.box).toBeInstanceOf(Box);
+    expect(result.box.label).toBe('changed');
   });
 });

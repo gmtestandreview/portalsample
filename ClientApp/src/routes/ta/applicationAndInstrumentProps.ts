@@ -9,6 +9,7 @@ import {
   type ApplicationAndInstrumentStepDto,
   CRMLookupTypes,
   LookupClient,
+  PatternApprovalRequiredValues,
 } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import { createAuthenticatedClient } from '../../authentication/authenticatedClient';
@@ -57,6 +58,10 @@ const loadApplicationAndInstrument =
         ]);
         const appAndInstrumentDto: ApplicationAndInstrumentStepDto = {
           ...appAndInstrument,
+          // A step that has not been saved yet starts as a new certificate.
+          patternApprovalType:
+            appAndInstrument.patternApprovalType ??
+            PatternApprovalRequiredValues.NewCertificate,
           instrumentCategoryLookup: instCatResult,
           instrumentTypeLookup: instTypeResult,
           instrumentTypeContent: infoPanelresult,

@@ -60,7 +60,7 @@ defects in production, not artefacts of the snapshot.
 
 | Layer               | Value                                                                                                                                                                                                                                                                 |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend**        | React 18.3.1 SPA (`createRoot`), React Router 7.18.2 (`createBrowserRouter`)                                                                                                                                                                                          |
+| **Frontend**        | React 19.3.1 SPA (`createRoot`), React Router 7.18.2 (`createBrowserRouter`)                                                                                                                                                                                          |
 | **Backend**         | **none in this repository.** The SPA calls a co-hosted ASP.NET API at same-origin relative paths (`/api/...`); the client is NSwag-generated into `ClientApp/src/api/web-api-client.ts` with an empty `baseUrl`. The backend lives in a separate repository and team. |
 | **Database**        | **none.** No DB driver, ORM, migration tool, or connection string exists in this repo. Client-side persistence is `sessionStorage` only (`ClientApp/src/storage/**`).                                                                                                 |
 | **Runtime**         | Node.js **>= 24.21.0** (`engines` + `devEngines.runtime` with `onFail: "error"`); local dev pinned to **24.21.0** via `.node-version`                                                                                                                                 |
@@ -305,7 +305,7 @@ reach Resolved only when closure evidence is recorded.
 | Rendering target    | Browser SPA, no SSR                                 | `ClientApp/src/index.tsx` — `createRoot`                           |
 | Package manager     | npm 11.17.0                                         | `packageManager` field + `package-lock.json`                       |
 | Module/build system | **Vite 8:** production, Storybook, and test tooling | `vite.config.mts`; `@storybook/react-vite`                         |
-| React version       | 18.3.1                                              | `node_modules/react/package.json`                                  |
+| React version       | 19.3.1                                              | `node_modules/react/package.json`                                  |
 | Node.js             | >= 24.21.0 required; 24.21.0 pinned locally         | `engines`, `devEngines.runtime` (`onFail: error`), `.node-version` |
 | CSP                 | Trusted Types policy + DOMPurify                    | `ClientApp/src/trustedtypes.ts`                                    |
 
@@ -317,16 +317,16 @@ Versions are **as installed**. "Used by" is the count of files under
 `ClientApp/src` importing the package, excluding vendored trees.
 
 Lodash has no direct application dependency or first-party import. It remains
-installed transitively through Formik, `slate-dom`, and `slate-react`; the
-Lodash type package remains transitive through `slate-react`.
+installed transitively through `slate-dom` and `slate-react`; the Lodash type
+package remains transitive through `slate-react`.
 
 | Dependency                                | Installed  | Used by | Role                                                                                                           |
 | ----------------------------------------- | ---------- | ------: | -------------------------------------------------------------------------------------------------------------- |
-| `react`                                   | 18.3.1     |       — | UI rendering (`createRoot`)                                                                                    |
-| `react-dom`                               | 18.3.1     |       — | DOM reconciler                                                                                                 |
+| `react`                                   | 19.3.1     |       — | UI rendering (`createRoot`)                                                                                    |
+| `react-dom`                               | 19.3.1     |       — | DOM reconciler                                                                                                 |
 | `react-router`                            | **7.18.2** |       — | Client-side routing; **41 registered routes** in `App.tsx`                                                     |
 | `react-aria-components`                   | **1.19.0** |  **67** | Accessible UI primitives — the largest UI dependency by import count, and central to the WCAG 2.2 AA programme |
-| `formik`                                  | 2.4.9      |      63 | Form state across all multi-step wizards                                                                       |
+| `react-hook-form`                         | 7.92.0     |       — | Form state across all multi-step wizards                                                                       |
 | `yup`                                     | 1.7.1      |      13 | Schema validation; extended with 19 custom string methods                                                      |
 | `@azure/msal-browser`                     | 5.25.0     |       — | Azure AD B2C OAuth2 + PKCE with redirect bridge                                                                |
 | `@azure/msal-react`                       | 5.7.2      |       — | React bindings (`MsalProvider`, hooks)                                                                         |
@@ -368,7 +368,7 @@ false:**
 
 | Tool               | Installed                                                                             | Purpose                                                                                                                                                                                                 |
 | ------------------ | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TypeScript         | **5.9.3**                                                                             | Type checking (`tsc --noEmit`), `strict: true`                                                                                                                                                          |
+| TypeScript         | **6.0.3**                                                                             | Type checking (`tsc --noEmit`), `strict: true`                                                                                                                                                          |
 | ESLint             | **10.9.0**                                                                            | Flat config `eslint.config.mjs`; with `typescript-eslint` 8.67.0, `@eslint-react/eslint-plugin` 5.18.6, `eslint-plugin-react-hooks` 7.1.1, `@stylistic/eslint-plugin` 5.10.0, `eslint-plugin-storybook` |
 | remark             | 12.0.1 (CLI)                                                                          | MDX/Markdown linting — `npm run lint:mdx --frail`                                                                                                                                                       |
 | Vite               | **8.3.5**                                                                             | Production, Storybook, and Vitest Browser Mode pipeline                                                                                                                                                 |

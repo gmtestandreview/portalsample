@@ -1,5 +1,6 @@
 import { defineMain } from '@storybook/react-vite/node';
 import remarkGfm from 'remark-gfm';
+import type { PluginOption } from 'vite';
 import { clientDirectives } from './clientDirectives.ts';
 import { onLog } from './rollupOnLog.ts';
 import {
@@ -12,6 +13,27 @@ import {
 // which can exhaust Node's heap before the tests finish starting. Keep the
 // provider in production builds, where the visual-test workflow is supported.
 const isStorybookDevelopment = process.env['NODE_ENV'] !== 'production';
+
+const excludeReactRouterFrameworkPlugins = (
+  plugins: PluginOption[] = [],
+): PluginOption[] =>
+  plugins.flatMap((plugin) => {
+    if (Array.isArray(plugin)) {
+      return excludeReactRouterFrameworkPlugins(plugin);
+    }
+
+    const pluginName =
+      typeof plugin === 'object' &&
+      plugin !== null &&
+      'name' in plugin &&
+      typeof plugin.name === 'string'
+        ? plugin.name
+        : undefined;
+
+    return pluginName?.startsWith('react-router') || pluginName === 'prerender'
+      ? []
+      : [plugin];
+  });
 
 export default defineMain({
   framework: '@storybook/react-vite',
@@ -70,6 +92,9 @@ export default defineMain({
         },
       },
     },
+    'storybook-addon-remix-react-router',
+    'storybook-addon-code-editor',
+    'storybook-addon-oversight',
   ],
 
   docs: {
@@ -87,7 +112,15 @@ export default defineMain({
     // this compatibility layer until Bootstrap 6 enables a complete @use
     // migration. The build settings below isolate the preview runtime and
     // preserve Storybook's client directive on each output chunk.
-    return mergeConfig(viteConfig, {
+    // Storybook has no React Router framework config. These app plugins
+    // require Vite's configFile to create their child compiler, which the
+    // Storybook builder does not provide.
+    const storybookViteConfig = {
+      ...viteConfig,
+      plugins: excludeReactRouterFrameworkPlugins(viteConfig.plugins),
+    };
+
+    return mergeConfig(storybookViteConfig, {
       plugins: [clientDirectives()],
       server: {
         watch: {

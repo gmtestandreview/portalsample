@@ -1,5 +1,5 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { describe, expect, it, vi } from 'vitest';
 import {
   InvoiceSentToValues,
@@ -73,47 +73,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// Stub form-input children — they require Formik context which is outside this component's scope
-vi.mock(
-  import('@/components/Inputs/TextInput'),
-  () =>
-    ({
-      default: ({
-        inlineHelp,
-        name,
-      }: {
-        inlineHelp?: React.ReactNode;
-        name: string;
-      }) => (
-        <div data-testid={`text-input`} data-name={name}>
-          {inlineHelp}
-        </div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule29>,
-);
-vi.mock(
-  import('@/components/Inputs/RadioButtonGroup'),
-  () =>
-    ({
-      default: ({ name }: { name: string }) => (
-        <div data-testid={`radio-group`} data-name={name} />
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule52>,
-);
-vi.mock(
-  '@/components/forms/HidableField',
-  () =>
-    ({
-      default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule70>,
-);
-vi.mock(
-  import('@/components/forms/CommonForms/ContactDetails'),
-  () =>
-    ({
-      default: () => <div data-testid='contact-details' />,
-    }) satisfies __ExactMockModule<__TestMockModule71>,
-);
+// Stub the spinner; the RHF form inputs render for real inside RhfForm below.
 vi.mock(
   import('@/components/BlockUISpinner'),
   () =>
@@ -151,26 +111,42 @@ function deferred<T>() {
 const defaultProps = { id: 'TEST-001' };
 const PaymentDetails = paymentDetails;
 
+const paymentDetailsTree = (
+  props: React.ComponentProps<typeof PaymentDetails> = defaultProps,
+) => (
+  <RhfForm
+    initialValues={
+      props.isSummary
+        ? { paymentDetails: {} }
+        : {
+            purchaseOrderNo: '',
+            invoiceSentTo: InvoiceSentToValues.SamePerson,
+            contact: {},
+          }
+    }
+    hidingFields={{}}
+    onSubmit={() => undefined}
+    onSaveAndExit={() => undefined}
+  >
+    {({ onFormSubmit }) => (
+      <form noValidate onSubmit={onFormSubmit}>
+        <PaymentDetails
+          {...props}
+          summaryValues={
+            props.summaryValues ?? {
+              paymentDetails: {},
+              requestForQuote: { contact: {} },
+            }
+          }
+        />
+      </form>
+    )}
+  </RhfForm>
+);
+
 const renderPaymentDetails = (
   props: React.ComponentProps<typeof PaymentDetails> = defaultProps,
-) =>
-  render(
-    <Formik
-      initialValues={
-        props.isSummary
-          ? { paymentDetails: {} }
-          : {
-              purchaseOrderNo: '',
-              invoiceSentTo: InvoiceSentToValues.SamePerson,
-              contact: {},
-            }
-      }
-      initialStatus={{ hidden: {} }}
-      onSubmit={vi.fn<() => void>()}
-    >
-      <PaymentDetails {...props} />
-    </Formik>,
-  );
+) => render(paymentDetailsTree(props));
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -311,31 +287,33 @@ describe('payment details', () => {
       ).toHaveAttribute('name', 'invoiceSentTo');
     });
 
-    it('prefixes key names with paymentDetails. in summary mode', async () => {
+    it('renders read-only payment values in summary mode', async () => {
       expect.hasAssertions();
       expect.hasAssertions();
 
       resetPaymentDetailsMocks();
 
-      mockGetPaymentDetails.mockResolvedValue(
-        makePreInfo('Standard', 'Q-SUMMARY-001'),
-      );
-      renderPaymentDetails({ ...defaultProps, isSummary: true });
+      renderPaymentDetails({
+        ...defaultProps,
+        isSummary: true,
+        summaryValues: {
+          paymentDetails: {
+            purchaseOrderNo: 'PO-SUMMARY-001',
+            invoiceSentTo: InvoiceSentToValues.SamePerson,
+          },
+          requestForQuote: { contact: {} },
+        },
+      });
 
-      expect(screen.getByTestId('text-input')).toHaveAttribute(
-        'data-name',
-        'paymentDetails.purchaseOrderNo',
-      );
       await expect(
-        screen.findByText(/Q-SUMMARY-001/),
+        screen.findByText('PO-SUMMARY-001'),
       ).resolves.toBeInTheDocument();
-      expect(screen.getByTestId('radio-group')).toHaveAttribute(
-        'data-name',
-        'paymentDetails.invoiceSentTo',
-      );
+      expect(
+        screen.getByText('The main contact person for this request'),
+      ).toBeInTheDocument();
     });
 
-    it('includes the loaded quotation ID in summary help copy', async () => {
+    it('includes the loaded quotation ID in purchase-order help copy', async () => {
       expect.hasAssertions();
       expect.hasAssertions();
 
@@ -345,7 +323,7 @@ describe('payment details', () => {
         makePreInfo('Standard', 'RFQ-2026-042'),
       );
 
-      renderPaymentDetails({ ...defaultProps, isSummary: true });
+      renderPaymentDetails({ ...defaultProps, isSummary: false });
 
       await expect(
         screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
@@ -358,7 +336,7 @@ describe('payment details', () => {
 
     resetPaymentDetailsMocks();
 
-    const view = renderPaymentDetails({ ...defaultProps, isSummary: true });
+    const view = renderPaymentDetails({ ...defaultProps, isSummary: false });
 
     await waitFor(() => {
       expect(mockGetPaymentDetails).toHaveBeenCalledWith('TEST-001');
@@ -367,21 +345,13 @@ describe('payment details', () => {
     mockGetPaymentDetails.mockResolvedValueOnce(
       makePreInfo('Prepaid', 'Q-TEST-002'),
     );
-    view.rerender(
-      <Formik
-        initialValues={{ paymentDetails: {} }}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<() => void>()}
-      >
-        <PaymentDetails id='TEST-002' isSummary />
-      </Formik>,
-    );
+    view.rerender(paymentDetailsTree({ id: 'TEST-002', isSummary: false }));
 
     await waitFor(() => {
       expect(mockGetPaymentDetails).toHaveBeenCalledWith('TEST-002');
     });
 
-    expect(screen.getByText(/Q-TEST-002/)).toBeInTheDocument();
+    await expect(screen.findByText(/Q-TEST-002/)).resolves.toBeInTheDocument();
   });
 
   it('keeps the latest payment request authoritative when responses resolve out of order', async () => {
@@ -399,19 +369,7 @@ describe('payment details', () => {
 
     const view = renderPaymentDetails();
 
-    view.rerender(
-      <Formik
-        initialValues={{
-          purchaseOrderNo: '',
-          invoiceSentTo: InvoiceSentToValues.SamePerson,
-          contact: {},
-        }}
-        initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn<() => void>()}
-      >
-        <PaymentDetails id='TEST-002' />
-      </Formik>,
-    );
+    view.rerender(paymentDetailsTree({ id: 'TEST-002' }));
 
     await waitFor(() => {
       expect(mockGetPaymentDetails.mock.calls).toStrictEqual([

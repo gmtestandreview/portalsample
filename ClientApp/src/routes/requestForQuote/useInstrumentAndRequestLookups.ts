@@ -1,6 +1,5 @@
-import { useFormikContext } from 'formik';
-import { useEffect, useRef, useState } from 'react';
-import type { ChangeEvent } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { CRMLookupTypes, LookupClient } from '../../api/web-api-client';
 import type {
@@ -35,32 +34,26 @@ const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
 // the rendered component because `isLoading` gates the only call site.
 export const useInstrumentAndRequestLookups = () => {
   const { accounts, instance } = useMsal();
-  const context = useFormikContext<InstrumentAndRequestStep>();
-  const measurementCategory = context.getFieldMeta('measurementCategory')
-    .value as string | undefined;
-  const isLoadingMeasurementCategories = useRef(false);
+  const { resetField, setValue } = useFormContext<InstrumentAndRequestStep>();
+  const measurementCategory = useWatch<InstrumentAndRequestStep>({
+    name: 'measurementCategory',
+  }) as string | undefined;
+  const isLoadingMeasurementCategoriesRef = useRef(false);
   const [measurementCategories, setMeasurementCategories] =
     useState<LookupResponse[]>();
   const [artefactTypes, setArtefactTypes] = useState<LookupResponse[]>();
-  const [artefactTypesSelected, setArtefactTypesSelected] =
-    useState<SelectInputOption<string>[]>();
-  const noMeasurementId = useRef('');
-  const noInstrumentId = useRef('');
-  const [
-    isInstrumentOrArtefactTypeDisabled,
-    setIsInstrumentOrArtefactTypeDisabled,
-  ] = useState(false);
+  const [noMeasurementId, setNoMeasurementId] = useState('');
 
   useEffect(() => {
     if (
       measurementCategories !== undefined ||
       accounts.length === 0 ||
-      isLoadingMeasurementCategories.current
+      isLoadingMeasurementCategoriesRef.current
     ) {
       return;
     }
 
-    isLoadingMeasurementCategories.current = true;
+    isLoadingMeasurementCategoriesRef.current = true;
     const loadMeasurementCategories = async () => {
       try {
         const client = new LookupClient();
@@ -73,38 +66,34 @@ export const useInstrumentAndRequestLookups = () => {
           client.getLookup(CRMLookupTypes.TCArtefactTypePortalCategory),
         ]);
         const [sorted, lastId] = sortList(result, 'No measurement', 'label');
-        noMeasurementId.current = lastId;
+        setNoMeasurementId(lastId);
         setMeasurementCategories(sorted);
         setArtefactTypes(artefactTypeResult);
       } catch (e) {
         AppLogger.error('Failed to retrieve look ups', e as Error);
-        isLoadingMeasurementCategories.current = false;
+        isLoadingMeasurementCategoriesRef.current = false;
       }
     };
     void loadMeasurementCategories();
   }, [accounts, instance, measurementCategories]);
 
-  useEffect(() => {
-    if (measurementCategories === undefined || artefactTypes === undefined) {
-      return;
+  // The artefact options and the disabled flag follow from the lookups and the
+  // selected category, so derive them instead of syncing state from an effect.
+  const lookupsLoaded =
+    measurementCategories !== undefined && artefactTypes !== undefined;
+  const artefactTypesSelected = useMemo(() => {
+    if (artefactTypes === undefined || !lookupsLoaded) {
+      return undefined;
     }
-
     if (measurementCategory === undefined) {
-      setArtefactTypesSelected([]);
-      setIsInstrumentOrArtefactTypeDisabled(false);
-      return;
+      return [] as SelectInputOption<string>[];
     }
-
-    const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
-      artefactTypes,
-      measurementCategory,
-    );
-    noInstrumentId.current = lastId;
-    setArtefactTypesSelected(options);
-    setIsInstrumentOrArtefactTypeDisabled(
-      measurementCategory === noMeasurementId.current,
-    );
-  }, [artefactTypes, measurementCategories, measurementCategory]);
+    return getArtefactTypeOptions(artefactTypes, measurementCategory).options;
+  }, [artefactTypes, lookupsLoaded, measurementCategory]);
+  const isInstrumentOrArtefactTypeDisabled =
+    lookupsLoaded &&
+    measurementCategory !== undefined &&
+    measurementCategory === noMeasurementId;
 
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];
@@ -116,26 +105,21 @@ export const useInstrumentAndRequestLookups = () => {
     return options;
   };
 
-  const onMeasurementCategoryChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    setIsInstrumentOrArtefactTypeDisabled(false);
-    void context.setFieldValue('instrumentOrArtefactType', '');
-    void context.setFieldTouched('instrumentOrArtefactType', false);
-    if (artefactTypes !== undefined) {
-      const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
-        artefactTypes,
-        event.target.value,
-      );
-      noInstrumentId.current = lastId;
-      setArtefactTypesSelected(options);
-      if (event.target.value === noMeasurementId.current) {
-        void context.setFieldValue(
-          'instrumentOrArtefactType',
-          noInstrumentId.current,
-        );
-        setIsInstrumentOrArtefactTypeDisabled(true);
-      }
+  const onMeasurementCategoryChange = (value: string) => {
+    // Clears the value and untouches the field (setValue('') then resetField touched): untouch
+    // the field but keep its saved baseline, dirty state and error, then clear
+    // the value so it still reads as changed (the unsaved-changes prompt relies
+    // on that). "No measurement" then applies the "no instrument" default.
+    resetField('instrumentOrArtefactType', {
+      keepDirty: true,
+      keepError: true,
+    });
+    setValue('instrumentOrArtefactType', '', { shouldDirty: true });
+    if (artefactTypes !== undefined && value === noMeasurementId) {
+      const { noInstrumentId } = getArtefactTypeOptions(artefactTypes, value);
+      setValue('instrumentOrArtefactType', noInstrumentId, {
+        shouldDirty: true,
+      });
     }
   };
 

@@ -130,8 +130,8 @@
 
 ## 5) Form Conventions
 
-- **All forms use Formik** — never use raw React controlled inputs for form
-  state.
+- **All forms use React Hook Form** — never use raw React controlled inputs for
+  form state.
 - **Multi-step forms**: Use `<WizardForm>` + `<WizardStep>` compound components.
   Each step gets its own `location`, `initialValues`, `onSaveAndNext`,
   `onSaveAndExit`, and `validateHard`/`validateSoft` Yup schemas.

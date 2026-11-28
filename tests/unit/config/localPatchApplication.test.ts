@@ -57,6 +57,10 @@ async function createPatchFixture() {
       'node_modules/@storybook/addon-mcp/dist/preset.js',
       'node_modules/@storybook/addon-mcp/dist/preset.js',
     ],
+    [
+      'node_modules/@react-router/dev/dist/vite.js',
+      'node_modules/@react-router/dev/dist/vite.js',
+    ],
   ];
 
   for (const [source, destination] of packageFiles) {
@@ -112,6 +116,12 @@ describe('repository-owned local patches', () => {
         root,
       ),
     ).resolves.toContain('function normalizeTestRunData(data)');
+    await expect(
+      readTextFile(
+        join(root, 'node_modules/@react-router/dev/dist/vite.js'),
+        root,
+      ),
+    ).resolves.toContain('envDir: false');
 
     const firstRun = await Promise.all([
       readTextFile(

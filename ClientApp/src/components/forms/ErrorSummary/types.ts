@@ -4,11 +4,8 @@ import type {
   ValidationProblemDetails,
 } from '../../../api/web-api-client';
 
-export interface FormikErrorsSummaryProps {
+export interface ErrorSummaryProps {
   disableLinkedError?: boolean;
-}
-
-export interface ErrorSummaryProps extends FormikErrorsSummaryProps {
   serverErrors?: ProblemDetails | ValidationProblemDetails;
   prefixToRemove?: string;
   isWafViolation?: boolean;

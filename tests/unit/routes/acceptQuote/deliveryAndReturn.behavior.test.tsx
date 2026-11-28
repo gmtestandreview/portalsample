@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, Formik } from 'formik';
+import RhfForm from '@/components/forms/RhfForm';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -8,6 +8,8 @@ import {
   ReturnAddressTypeValues,
   ReturnContactTypeValues,
   ReturnMethodValues,
+  ShipmentModeValues,
+  ShipmentPriorityValues,
   type DeliveryAndReturnStep,
 } from '@/api/web-api-client';
 import DeliveryAndReturn from '@/routes/acceptQuote/deliveryAndReturn';
@@ -16,7 +18,6 @@ import {
   deliveryAndReturnSubmitValidation,
 } from '@/routes/acceptQuote/validation';
 import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
-import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import { defined } from '../../helpers/defined';
 
@@ -85,17 +86,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-// The lookup talks to the address service; stand in a marker element. The edit
-// form renders the RHF twin once migrated; the summary keeps the Formik one.
-vi.mock(
-  import('@/components/Inputs/AddressLookup') as unknown as string,
-  () =>
-    ({
-      default: ({ label }: { label: string }) => (
-        <div data-testid='address-lookup'>{label}</div>
-      ),
-    }) satisfies __ExactMockModule<__TestMockModule31>,
-);
+// The lookup talks to the address service; stand in a marker element.
 vi.mock(
   import('@/components/Inputs/RhfAddressLookup') as unknown as string,
   () =>
@@ -122,39 +113,46 @@ const postalAddress = {
 };
 
 interface StepHarnessProps {
+  id?: string | null;
   values?: DeliveryAndReturnStep;
   onSubmit?: (values: DeliveryAndReturnStep) => void;
 }
 
-// Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
+// The RHF harness uses the same hard/soft schemas and hidden field rules as the routed shell.
+type TestFormValues = DeliveryAndReturnStep &
+  Record<string, any> & {
+    saveAndExit?: boolean;
+  };
+
 function StepHarness({
+  id = 'RFQ-1',
   values = {},
   onSubmit = vi.fn<(...args: unknown[]) => void>(),
 }: Readonly<StepHarnessProps>) {
+  const initialValues = values as TestFormValues;
+  const handleSubmit = (submitted: TestFormValues) => {
+    onSubmit(submitted);
+    return Promise.resolve();
+  };
+
   return (
     <MemoryRouter>
-      <Formik<DeliveryAndReturnStep & { saveAndExit?: boolean }>
-        initialValues={values}
-        initialStatus={{ hidden: hidingFields }}
-        enableReinitialize
-        validate={(formValues) =>
-          validateForm(
-            formValues.saveAndExit
-              ? deliveryAndReturnSaveValidation
-              : deliveryAndReturnSubmitValidation,
-            hidingFields,
-          )(formValues)
-        }
-        onSubmit={(submitted) => {
-          onSubmit(removeHidden(submitted, submitted, hidingFields));
-        }}
+      <RhfForm<TestFormValues>
+        initialValues={initialValues}
+        hidingFields={hidingFields}
+        validateHard={deliveryAndReturnSubmitValidation}
+        validateSoft={deliveryAndReturnSaveValidation}
+        onSubmit={handleSubmit}
+        onSaveAndExit={handleSubmit}
       >
-        <Form noValidate>
-          <DeliveryAndReturn id='RFQ-1' />
-          <button type='submit'>Continue</button>
-          <SaveAndExitButton />
-        </Form>
-      </Formik>
+        {({ onFormSubmit }) => (
+          <form noValidate onSubmit={onFormSubmit}>
+            <DeliveryAndReturn id={id ?? undefined} />
+            <button type='submit'>Continue</button>
+            <SaveAndExitButton />
+          </form>
+        )}
+      </RhfForm>
     </MemoryRouter>
   );
 }
@@ -291,7 +289,7 @@ describe('deliveryAndReturn behavior: visibility', () => {
     expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
   });
 
-  it('keeps rendering and logs when the step fails to load', async () => {
+  it('logs and shows an error instead of the form when the step fails to load', async () => {
     expect.hasAssertions();
 
     resetDeliveryAndReturnBehaviorMocks();
@@ -307,7 +305,81 @@ describe('deliveryAndReturn behavior: visibility', () => {
       );
     });
 
-    expect(screen.getByTestId('info-summary')).toBeInTheDocument();
+    await expect(
+      screen.findByText(/could not load your delivery and return/i),
+    ).resolves.toBeInTheDocument();
+    expect(screen.queryByText('Return method')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
+  });
+
+  it('blocks Continue and Save and exit while the step failed to load', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    mocks.getDeliveryAndReturn.mockRejectedValue(new Error('boom'));
+    const user = userEvent.setup();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
+    renderStep({
+      values: {
+        returnContactType: ReturnContactTypeValues.SamePerson,
+        returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+        returnMethod: ReturnMethodValues.ClientToArrange,
+      },
+      onSubmit,
+    });
+    await screen.findByText(/could not load your delivery and return/i);
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await user.click(screen.getByRole('button', { name: 'Save and exit' }));
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('allows submit again once a reload succeeds', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    mocks.getDeliveryAndReturn.mockRejectedValueOnce(new Error('boom'));
+    const user = userEvent.setup();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
+    const values = {
+      returnContactType: ReturnContactTypeValues.SamePerson,
+      returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+      returnMethod: ReturnMethodValues.ClientToArrange,
+    };
+    const { rerender } = renderStep({ values, onSubmit });
+    await screen.findByText(/could not load your delivery and return/i);
+
+    rerender(<StepHarness id='RFQ-2' values={values} onSubmit={onSubmit} />);
+    await waitForLoad();
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('clears the loading spinner and loaded data when the id becomes undefined', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    const { rerender } = renderStep();
+    await waitForLoad();
+
+    mocks.getDeliveryAndReturn.mockReturnValue(new Promise(() => undefined));
+    rerender(<StepHarness id='RFQ-2' />);
+    await screen.findByText('Loading...');
+
+    rerender(<StepHarness id={null} />);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    });
+
+    expect(screen.queryByText(/1 Street Road/)).not.toBeInTheDocument();
   });
 });
 
@@ -378,7 +450,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     });
   });
 
-  it('strips only the hidden return address (the carrier and contact wrappers do not strip)', async () => {
+  it('strips stale hidden carrier, contact and return address values before submit', async () => {
     expect.hasAssertions();
 
     resetDeliveryAndReturnBehaviorMocks();
@@ -391,7 +463,15 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
         returnAddressType: ReturnAddressTypeValues.BusinessAddress,
         returnMethod: ReturnMethodValues.ClientToArrange,
         carrierName: 'stale',
+        carrierAccountNumber: 'stale',
+        carrierContactPerson: 'stale',
+        carrierContactPhone: '0400000000',
         packagingNotes: 'stale',
+        insuranceNotes: 'stale',
+        specialInstructions: 'stale',
+        customsValue: 1,
+        shipmentMode: ShipmentModeValues.Road,
+        shipmentPriority: ShipmentPriorityValues.Standard,
         contact: { firstName: 'stale' },
         returnAddress: { line1: 'stale' },
       },
@@ -409,9 +489,44 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
       returnContactType: 'SamePerson',
       returnAddressType: 'BusinessAddress',
       returnMethod: 'ClientToArrange',
-      carrierName: 'stale',
-      packagingNotes: 'stale',
-      contact: { firstName: 'stale' },
+    });
+  });
+
+  it('keeps carrier and contact values while they are visible', async () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
+
+    const user = userEvent.setup();
+    const onSubmit = vi.fn<(values: DeliveryAndReturnStep) => void>();
+    renderStep({
+      values: {
+        returnContactType: ReturnContactTypeValues.DifferentPerson,
+        returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+        returnMethod: ReturnMethodValues.ClientWillProvide,
+        carrierName: 'Carrier Co',
+        carrierAccountNumber: 'ACC-1',
+        contact: {
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          phone: '0400000000',
+        },
+      },
+      onSubmit,
+    });
+    await waitForLoad();
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    expect(submittedValues(onSubmit)).toMatchObject({
+      carrierName: 'Carrier Co',
+      carrierAccountNumber: 'ACC-1',
+      contact: { firstName: 'Ada' },
     });
   });
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Spinner } from 'react-bootstrap';
-import './index.scss';
+import '../../styles/_blockuispinner.scss';
 
 interface BlockUISpinnerProps {
   children: ReactNode;

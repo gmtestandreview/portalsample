@@ -16,11 +16,7 @@ function InputContextProvider({
 }: Readonly<{ disabled: boolean; children: ReactNode }>) {
   const inputContextValue = useMemo(() => ({ disabled }), [disabled]);
 
-  return (
-    <InputContext.Provider value={inputContextValue}>
-      {children}
-    </InputContext.Provider>
-  );
+  return <InputContext value={inputContextValue}>{children}</InputContext>;
 }
 
 export function InputGroup(props: Readonly<InputGroupProps>) {
