@@ -88,7 +88,7 @@ styling decisions; pre-flight setup (Phase 4) confirms the target environment is
 safe; and migration execution (Phase 5) moves components in confidence-ordered
 batches drawn directly from Section 9 of the readiness assessment.
 
-**Tech Stack:** React 18.3.1 · TypeScript 5.9.3 · React Router v6.30.3 · MSAL
+**Tech Stack:** React 18.3.1 · TypeScript 6.0.3 · React Router v6.30.3 · MSAL
 Browser v3.30 / MSAL React v2.2 · Formik 2.4.9 + Yup 1.7.1 · Bootstrap 5.3.8 ·
 NSwag-generated API client · Azure App Insights v3.4.1 · Google Analytics
 (react-ga4) · DOMPurify 3.4.4 · Storybook 10 (Vite adapter) · Vitest ·

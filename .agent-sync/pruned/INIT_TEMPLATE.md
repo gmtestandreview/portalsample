@@ -70,7 +70,7 @@ both are load-bearing.
 
 ## Tech Stack
 
-**Frontend:** React 18.3.1 (functional components + hooks), React Router 7.18.2
+**Frontend:** React 19.3.1 (functional components + hooks), React Router 7.18.2
 (`createBrowserRouter`) **Backend:** **none in this repository.** The SPA calls
 a co-hosted ASP.NET API at same-origin relative paths (`/api/...`). The client
 is NSwag-generated into `ClientApp/src/api/web-api-client.ts` with an empty

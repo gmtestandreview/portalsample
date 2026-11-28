@@ -165,6 +165,9 @@
     "vitest": "5.1.1"
   },
   "overrides": {
+    "@etchteam/storybook-addon-a11y-interaction-tests": {
+      "postcss-selector-parser": "7.1.8"
+    },
     "@mizchi/lsmcp": {
       "glob": "13.0.6"
     },

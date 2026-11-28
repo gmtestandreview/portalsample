@@ -117,7 +117,7 @@ mcp_context7_get-library-docs({
 
    ```
    # JavaScript
-   package.json → "react": "^18.3.1"
+   package.json → "react": "^19.3.1"
 
    # Python
    requirements.txt → django==4.2.0
@@ -391,7 +391,7 @@ Your workflow:
 
    ```
    read/readFile on "package.json" or "frontend/package.json" or "api/package.json"
-   Extract: "react": "^18.3.1" → Current version is 18.3.1
+   Extract: "react": "^19.3.1" → Current version is 19.3.1
    ```
 
    **Python**:
@@ -471,7 +471,7 @@ Your workflow:
 
    ```
    # JavaScript Example
-   📦 Current: React 18.3.1 (from your package.json)
+   📦 Current: React 19.3.1 (from your package.json)
    🆕 Latest:  React 19.0.0 (from npm registry)
    Status: Upgrade available! (1 major version behind)
 
@@ -517,7 +517,7 @@ get -
 
    ```
    ⚠️ Version Status
-   📦 Your version: React 18.3.1
+   📦 Your version: React 19.3.1
    ✨ Latest stable: React 19.0.0 (released Nov 2024)
    📊 Status: 1 major version behind
    ```
@@ -532,7 +532,7 @@ get -
    **JavaScript Example**:
 
    ```markdown
-   ## React 18.3.1 → 19.0.0 Upgrade Guide
+   ## React 19.3.1 → 19.0.0 Upgrade Guide
 
    ### Breaking Changes:
 

@@ -311,7 +311,7 @@ export default defineConfig(
     files: reactTypeScriptFiles,
     settings: {
       'react-x': {
-        version: '18.3.1',
+        version: '19.3.1',
       },
     },
     name: 'nmi/react-typescript',

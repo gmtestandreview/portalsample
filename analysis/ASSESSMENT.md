@@ -74,7 +74,7 @@ maintenance cost without the risk of a full rebuild.
 
 | Layer                   | Technology                                                   | Version           |
 | ----------------------- | ------------------------------------------------------------ | ----------------- |
-| Language                | TypeScript                                                   | ^5.9.3            |
+| Language                | TypeScript                                                   | ^6.0.3            |
 | UI framework            | React (functional components + hooks)                        | ^18.3.1           |
 | Routing                 | React Router v6 (`createBrowserRouter`)                      | ^6.30.3           |
 | Auth                    | Azure AD B2C via `@azure/msal-browser` / `@azure/msal-react` | ^3.30.0 / ^2.2.0  |

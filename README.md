@@ -10,8 +10,8 @@ with a full local development, testing, and Storybook toolchain.
 
 | Layer               | Technology                                                 |
 | ------------------- | ---------------------------------------------------------- |
-| UI framework        | React 18 (functional components, hooks)                    |
-| Language            | TypeScript 5                                               |
+| UI framework        | React 19 (functional components, hooks)                    |
+| Language            | TypeScript 6                                               |
 | Routing             | React Router v7                                            |
 | Auth                | Azure AD B2C (`@azure/msal-browser` / `@azure/msal-react`) |
 | Forms               | React Hook Form + Yup with custom string extensions        |

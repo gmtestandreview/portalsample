@@ -91,7 +91,7 @@ disproportionate to line count.
 | Concern          | Technology                           | Version                  | Notes                                                |
 | ---------------- | ------------------------------------ | ------------------------ | ---------------------------------------------------- |
 | UI Framework     | React                                | 18.3.1                   | Functional components, hooks throughout              |
-| Language         | TypeScript                           | 5.9.3                    | `any` suppressions present at auth boundary          |
+| Language         | TypeScript                           | 6.0.3                    | `any` suppressions present at auth boundary          |
 | Routing          | React Router v6                      | 6.30.3                   | `createBrowserRouter`; all routes eager-loaded       |
 | Auth             | Azure AD B2C (MSAL)                  | browser 3.30 / react 2.2 | Runtime config via `window.*`                        |
 | Forms            | Formik + Yup                         | 2.4.9 / 1.7.1            | Custom Yup string extensions                         |

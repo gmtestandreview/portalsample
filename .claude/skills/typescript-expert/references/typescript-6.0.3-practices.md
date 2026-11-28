@@ -1,4 +1,4 @@
-# TypeScript 5.9.3 Practices
+# TypeScript 6.0.3 Practices
 
 Load this reference for compiler configuration, module resolution, typed ESLint,
 SonarQube, or project-reference decisions. The project configuration remains
@@ -6,16 +6,16 @@ authoritative where it intentionally differs.
 
 ## Version target
 
-This skill targets TypeScript 5.9.3. Verify the actual compiler before making
+This skill targets TypeScript 6.0.3. Verify the actual compiler before making
 version-specific changes. Do not silently use TypeScript 6 behavior or assume
 that a globally installed compiler matches the project.
 
 Official references:
 
-- TypeScript 5.9 release notes:
-  <https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-9.html>
-- TypeScript 5.9.3 release:
-  <https://github.com/microsoft/TypeScript/releases/tag/v5.9.3>
+- TypeScript 6.0 release notes:
+  <https://www.typescriptlang.org/docs/handbook/release-notes/typescript-6-0.html>
+- TypeScript 6.0.3 release:
+  <https://github.com/microsoft/TypeScript/releases/tag/v6.0.3>
 - TSConfig reference: <https://www.typescriptlang.org/tsconfig/>
 
 ## Strictness baseline
@@ -67,16 +67,16 @@ fix it once in the mock factory.
 When one widened type feeds a generated DTO that is not widened, convert once at
 that boundary (omit undefined keys) instead of widening the DTO's consumers.
 
-## TypeScript 5.9 configuration guidance
+## TypeScript 6.0 configuration guidance
 
-TypeScript 5.9's simplified `tsc --init` enables strong defaults including
+TypeScript 6.0's simplified `tsc --init` enables strong defaults including
 `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`,
 `noUncheckedSideEffectImports`, `verbatimModuleSyntax`, `isolatedModules`,
 `moduleDetection: "force"`, and `skipLibCheck`.
 
 Treat module/transpilation options as environment-dependent:
 
-- `module: "node20"` is the stable TypeScript 5.9 mode for Node 20 behavior.
+- `module: "node20"` is the stable TypeScript 6.0 mode for Node 20 behavior.
 - `nodenext` tracks modern Node semantics and can change with newer Node/TS.
 - `moduleResolution: "bundler"` is for bundler-managed resolution and does not
   enforce every Node runtime import constraint.
@@ -124,7 +124,7 @@ References:
 
 ## SonarQube / Sonar way
 
-This skill is pinned to TypeScript 5.9.3. When the project upgrades TypeScript
+This skill is pinned to TypeScript 6.0.3. When the project upgrades TypeScript
 or SonarQube, verify analyzer/compiler compatibility in the project's current
 Sonar documentation rather than assuming this reference remains current.
 
@@ -151,7 +151,7 @@ References:
 
 ## Update boundary
 
-When upgrading this skill beyond TypeScript 5.9.3, review together: the pinned
+When upgrading this skill beyond TypeScript 6.0.3, review together: the pinned
 compiler version, `references/tsconfig-strict.json`, module-mode guidance,
 typescript-eslint guidance, Sonar compatibility, and deterministic diagnostic
 tests. Do not update only the frontmatter version.

@@ -7,7 +7,7 @@ feasibility must be resolved before implementation clearance. **Baseline:**
 
 This proposal replaces the September plan's single coordinated programme with
 three independently releasable stages. It preserves the overall requested
-outcome: exact React/React DOM 18.3.1 and TypeScript 5.9.3, tested Node 24.21.0,
+outcome: exact React/React DOM 18.3.1 and TypeScript 6.0.3, tested Node 24.21.0,
 reviewed direct dependencies, zero audit findings, no deprecated lock metadata,
 and eventual removal of all overrides.
 
@@ -128,7 +128,7 @@ suite, actual affected runtime components and their current tests. Telemetry
 changes remain a separate commit with separate rollback.
 
 - [ ] Preserve exact React/React DOM 18.3.1, React 18 types and TypeScript
-      5.9.3. Preserve the user-owned react-hook-form range unless separately
+      6.0.3. Preserve the user-owned react-hook-form range unless separately
       authorized.
 - [ ] Upgrade compatible direct dependencies from the refreshed matrix. Group
       date-fns/react-datepicker together. Include the actual current Slate/MSW

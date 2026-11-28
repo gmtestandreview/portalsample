@@ -314,7 +314,7 @@ unrelated TODOs were identified; no TODOS.md change is proposed.
 
 - Implementing upgrades, replacing the patch tool, removing Qdrant or lsmcp, or
   changing approvals.
-- Updating React beyond 18.3.1 or TypeScript beyond 5.9.3.
+- Updating React beyond 18.3.1 or TypeScript beyond 6.0.3.
 - Formik/react-hook-form feature migration or normalizing user-owned baseline
   ranges.
 - Entra/hosting changes, staging credential use, production header verification,

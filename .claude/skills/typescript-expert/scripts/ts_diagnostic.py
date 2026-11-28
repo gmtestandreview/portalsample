@@ -693,7 +693,7 @@ def build_parser() -> argparse.ArgumentParser:
         help='Optional workspace root for hoisted node_modules/package-manager metadata.',
     )
     parser.add_argument('--tsconfig', default='tsconfig.json')
-    parser.add_argument('--expect-ts', default='5.9.3')
+    parser.add_argument('--expect-ts', default='6.0.3')
     parser.add_argument('--timeout', type=int, default=180)
     parser.add_argument('--strict', action='store_true')
     parser.add_argument(

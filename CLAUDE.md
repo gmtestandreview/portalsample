@@ -36,7 +36,7 @@ Markdown headings; do not use emphasis as headings or weaken
 
 ## Stack
 
-React 18, TypeScript, React Router v7, Azure AD B2C/MSAL, React Hook Form/Yup,
+React 19, TypeScript, React Router v7, Azure AD B2C/MSAL, React Hook Form/Yup,
 Bootstrap 5/SCSS, NSwag API client, Application Insights/Google Analytics, Vite
 8, Trusted Types, and DOMPurify.
 
